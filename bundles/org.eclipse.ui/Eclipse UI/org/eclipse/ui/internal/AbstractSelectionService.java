@@ -173,6 +173,9 @@ public void partActivated(IWorkbenchPart newPart) {
 			// Fire an event if there's an active provider
 			activeProvider.addSelectionChangedListener(selListener);
 			fireSelection(newPart, activeProvider.getSelection());
+		} else {
+			//Reset active part. activeProvider may not be null next time this method is called.
+			activePart = null;
 		}
 	}
 	// No need to fire an event if no active provider, since this was done in reset()
