@@ -10,8 +10,6 @@ import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,6 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -202,14 +202,14 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			layout.marginHeight= 7;
 			border.setLayout(layout);
 			
-			CTabFolder folder= new CTabFolder(border, SWT.BORDER | SWT.FLAT);
+			TabFolder folder= new TabFolder(border, SWT.NONE);
 			folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 			folder.setLayout(new TabFolderLayout());
 
 			for (int i= 0; i < numPages; i++) {			
 				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
 
-				final CTabItem item= new CTabItem(folder, SWT.NONE);
+				final TabItem item= new TabItem(folder, SWT.NONE);
 				item.setText(descriptor.getLabel());
 				item.addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
@@ -311,7 +311,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	}
 	
 	private void turnToPage(SelectionEvent event) {
-		final CTabItem item= (CTabItem)event.item;
+		final TabItem item= (TabItem)event.item;
 		if (item.getControl() == null) {
 			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
 
