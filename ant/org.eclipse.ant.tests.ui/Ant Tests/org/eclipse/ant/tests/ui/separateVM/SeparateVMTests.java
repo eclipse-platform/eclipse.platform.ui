@@ -34,6 +34,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.IHyperlink;
 
 public class SeparateVMTests extends AbstractAntUIBuildTest {
+	
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.6.2";
 		
     public SeparateVMTests(String name) {
         super(name);
@@ -197,7 +199,10 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     public void testAntHome() throws CoreException {
       	launch("environmentVar");
       	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
-      	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + ConsoleLineTracker.getMessage(1), ConsoleLineTracker.getMessage(1).trim().endsWith("org.apache.ant"));
-		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().endsWith("org.apache.ant"));
+      	String message= ConsoleLineTracker.getMessage(1);
+      	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, message.endsWith("org.apache.ant") || message.endsWith(PLUGIN_VERSION));
+      	message= ConsoleLineTracker.getMessage(2);
+		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, message.endsWith("org.apache.ant") || message.endsWith(PLUGIN_VERSION));
+		
     }
 }
