@@ -533,9 +533,10 @@ public class DefaultUndoManager implements IUndoManager {
 				if (c != ' ' && c != '\t')
 					return false;
 			}
+			return true;
 		}
 		
-		return true;
+		return false;
 	}
 	
 	/**
@@ -604,6 +605,7 @@ public class DefaultUndoManager implements IUndoManager {
 				commit();
 				fCurrent.fStart= fCurrent.fEnd= start;
 				fTextBuffer.append(newText);
+				commit();
 			}
 		} else {
 			if (length == 0) {
