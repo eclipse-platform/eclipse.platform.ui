@@ -882,6 +882,19 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		return (IPreferenceFilter[]) result.toArray(new IPreferenceFilter[result.size()]);
 	}
 
+	private boolean containsKeys(IEclipsePreferences root) throws BackingStoreException {
+		final boolean result[] = new boolean[] {false};
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+				if (node.keys().length != 0)
+					result[0] = true;
+				return !result[0];
+			}
+		};
+		root.accept(visitor);
+		return result[0];
+	}
+
 	/*
 	 * Return true if the given tree contains information that the specified filter is interested
 	 * in, and false otherwise.
@@ -899,9 +912,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			if (mapping == null) {
 				// if we are the root check to see if the scope exists
 				if (tree.parent() == null && tree.nodeExists(scope))
-					return true;
+					return containsKeys((IEclipsePreferences) tree.node(scope)) ;
 				// otherwise check to see if we are in the right scope
-				if (scopeMatches(scope, tree))
+				if (scopeMatches(scope, tree) && containsKeys(tree))
 					return true;
 				continue;
 			}
