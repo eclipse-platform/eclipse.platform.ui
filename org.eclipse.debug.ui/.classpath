@@ -10,6 +10,7 @@
         path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar" sourcepath="C:/eclipse/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
     <classpathentry kind="lib"
         path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="C:/eclipse/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
-    <classpathentry kind="src" path="/org.eclipse.ui"/>
+    <classpathentry kind="lib"
+        path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar" sourcepath="C:/eclipse/plugins/org.eclipse.ui/workbenchsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
