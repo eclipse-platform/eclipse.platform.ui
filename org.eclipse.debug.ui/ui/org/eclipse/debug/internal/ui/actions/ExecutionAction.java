@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchWizard;
 import org.eclipse.debug.internal.ui.LaunchWizardDialog;
@@ -32,8 +33,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorPart;
@@ -46,13 +49,23 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public abstract class ExecutionAction extends Action implements IActionDelegate {
 	
+	
 	/**
-	 * @see Action#run()
+	 * @see IAction#runWithEvent(Event)
+	 */
+	public void runWithEvent(Event event) {
+		boolean controlHeld = (event.stateMask & SWT.CONTROL) != 0;
+		if (controlHeld) {
+			runLaunchConfiguration();
+		} else {
+			runOldStyleLaunch();
+		}
+	}
+	
+	/**
+	 * @see IAction#run()
 	 */
 	public void run() {
-		/*
-		 * Switch to run new launch configurations - OFF
-		 */
 		//runLaunchConfiguration();
 		runOldStyleLaunch();
 	}
@@ -209,7 +222,7 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 		} else {
 			launchers= new ArrayList(2);
 
-			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("ExecutionAction.Error_occurred_retrieving_default_launcher_3"), null); //$NON-NLS-1$
+			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIMessages.getString("Error_occurred_retrieving_default_launcher_3"), null); //$NON-NLS-1$
 			for (int i = 0; i < projects.length; i++) {
 				IProject project= projects[i];
 				ILauncher defaultLauncher= null;
@@ -230,7 +243,7 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 				}
 			}
 			if (!status.isOK()) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("ExecutionAction.Error_finding_default_launchers_4"), ActionMessages.getString("ExecutionAction.Exceptions_occurred_determining_the_default_launcher(s)._5"), status); //$NON-NLS-2$ //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("Error_finding_default_launchers_4"), DebugUIMessages.getString("Exceptions_occurred_determining_the_default_launcher(s)._5"), status); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 			if (launchers.isEmpty()) {
 				launchers= Arrays.asList(getLaunchManager().getLaunchers(getMode()));

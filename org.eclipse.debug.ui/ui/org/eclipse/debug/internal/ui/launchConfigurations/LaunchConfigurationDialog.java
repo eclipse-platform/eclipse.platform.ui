@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  
 import java.util.Arrays;
 
-import java.util.Comparator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -16,7 +15,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -44,6 +42,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -113,6 +112,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	private Button fRadioRunButton;
 	private Button fRadioDebugButton;
+	
+	/**
+	 * Background color for everything in the 'wizard' banner area at the top of the dialog
+	 */
+	private Color fBannerBackground;
 	
 	/**
 	 * Image for the launch mode
@@ -193,7 +197,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected static final String LAUNCH_STATUS_OK_MESSAGE = "Ready to launch";
 	protected static final String LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE 
-															= "Select the type of launch configuration to create";
+										= "Select a configuration to launch or a config type to create a new configuration";
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -272,6 +276,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Composite composite = (Composite)super.createDialogArea(parent);
 		GridLayout topLevelLayout = (GridLayout) composite.getLayout();
 		topLevelLayout.numColumns = 2;
+		topLevelLayout.marginHeight = 0;
+		topLevelLayout.marginWidth = 0;
 
 		// Build the launch configuration banner area
 		// and put it into the composite.
@@ -562,6 +568,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		return fSortedConfigNames;
 	}
 	
+	protected void clearConfigNameCache() {
+		fSortedConfigNames = null;
+	}
+	
 	protected void setStatusErrorMessage(String message) {
 		setStatusMessage(message);
 		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_FAIL));
@@ -578,13 +588,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		setStatusMessage(LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE);
 		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));		
 		getStatusImageLabel().setVisible(false);
-	}
-	
-	protected void enableStatusDependentButtons(boolean enable) {
-		boolean dirty = isWorkingCopyDirty();
-		getSaveButton().setEnabled(enable && dirty);
-		getSaveAndLaunchButton().setEnabled(enable && dirty);
-		getLaunchButton().setEnabled(enable);
 	}
 	
 	/**
@@ -611,7 +614,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.marginWidth = 5;
 		c.setLayout(layout);
 		
 		GridData gd;
@@ -688,7 +691,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.marginWidth = 5;
 		c.setLayout(layout);
 		
 		GridData gd;
@@ -753,11 +756,33 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		topLayout.marginWidth = 0;
 		topLayout.numColumns = 4;
 		comp.setLayout(topLayout);
+		comp.setBackground(getBannerBackground());
 		GridData gd;
 		
-		fModeLabel = new Label(comp, SWT.NONE);
+		Composite statusImageComp = new Composite(comp, SWT.NONE);
+		statusImageComp.setBackground(getBannerBackground());
+		GridLayout statusImageLayout = new GridLayout();
+		statusImageLayout.marginHeight = 0;
+		statusImageLayout.marginWidth = 4;
+		statusImageComp.setLayout(statusImageLayout);
+		
+		setStatusImageLabel(new Label(statusImageComp, SWT.NONE));
+		getStatusImageLabel().setAlignment(SWT.RIGHT);
+		getStatusImageLabel().setBackground(getBannerBackground());
+		// This is necessary so that the 'status image label' gets sized properly
+		// but doesn't appear yet
+		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
+		getStatusImageLabel().setVisible(false);
+		
+		setMessageLabel(new Label(comp, SWT.NONE));
+		getMessageLabel().setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		getMessageLabel().setBackground(getBannerBackground());
+		getMessageLabel().setAlignment(SWT.LEFT);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		getMessageLabel().setLayoutData(gd);
 		
 		Composite radioComposite = new Composite(comp, SWT.NONE);
+		radioComposite.setBackground(getBannerBackground());
 		GridLayout radioLayout = new GridLayout();
 		radioLayout.numColumns = 1;
 		radioComposite.setLayout(radioLayout);
@@ -765,8 +790,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		//radioComposite.setLayoutData(gd);
 		
 		setRadioRunButton(new Button(radioComposite, SWT.RADIO));
+		getRadioRunButton().setBackground(getBannerBackground());
 		getRadioRunButton().setText("Run");
 		setRadioDebugButton(new Button(radioComposite, SWT.RADIO));
+		getRadioDebugButton().setBackground(getBannerBackground());
 		getRadioDebugButton().setText("Debug");
 		getRadioDebugButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -774,18 +801,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			}
 		});
 		
-		setMessageLabel(new Label(comp, SWT.NONE));
-		getMessageLabel().setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-		getMessageLabel().setAlignment(SWT.RIGHT);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		getMessageLabel().setLayoutData(gd);
-		
-		setStatusImageLabel(new Label(comp, SWT.NONE));
-		getStatusImageLabel().setAlignment(SWT.RIGHT);
-		// This is necessary so that the 'status image label' gets sized properly
-		// but doesn't appear yet
-		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
-		getStatusImageLabel().setVisible(false);
+		fModeLabel = new Label(comp, SWT.NONE);
 		
 		return comp;
 	}
@@ -819,12 +835,16 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		return fConfigTree;
 	}
 	
-	protected IStructuredSelection getTreeViewerSelection() {
-		return (IStructuredSelection)getTreeViewer().getSelection();
+	protected Object getTreeViewerFirstSelectedElement() {
+		IStructuredSelection selection = (IStructuredSelection)getTreeViewer().getSelection();
+		if (selection == null) {
+			return null;
+		}
+		return selection.getFirstElement();
 	}
 		
 	/**
-	 * Content prodiver for launch configuration tree
+	 * Content provider for launch configuration tree
 	 */
 	class LaunchConfigurationContentProvider implements ITreeContentProvider {
 		
@@ -1154,6 +1174,16 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		return fStatusImageLabel;
 	}
 	
+	/**
+	 * Return the banner background color using a lazy fetching policy
+	 */
+	protected Color getBannerBackground() {
+		if (fBannerBackground == null) {
+			fBannerBackground = getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		}
+		return fBannerBackground;
+	}
+	
  	/**
  	 * Sets the configuration to display/edit.
  	 * Updates the tab folder to contain the appropriate pages.
@@ -1403,7 +1433,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		fSortedConfigNames = null;
+		clearConfigNameCache();
 		getTreeViewer().refresh();		
 	}
 
@@ -1503,9 +1533,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	protected void constructNewConfig() {	
 		try {
 			ILaunchConfigurationType type = null;
-			IStructuredSelection sel = getTreeViewerSelection();;
-			
-			Object obj = sel.getFirstElement();
+
+			Object obj = getTreeViewerFirstSelectedElement();
 			if (obj instanceof ILaunchConfiguration) {
 				type = ((ILaunchConfiguration)obj).getType();
 			} else {
@@ -1531,16 +1560,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	protected void handleDeletePressed() {
 		try {
-			IStructuredSelection selection = getTreeViewerSelection();
-			if (selection != null) {
-				Object firstElement = selection.getFirstElement();
-				if (firstElement != null) {
-					if (firstElement instanceof ILaunchConfiguration) {
-						ILaunchConfiguration config = (ILaunchConfiguration) firstElement;
-						clearLaunchConfiguration();
-						config.delete();
-					}
-				}
+			Object firstElement = getTreeViewerFirstSelectedElement();
+			if (firstElement instanceof ILaunchConfiguration) {
+				ILaunchConfiguration config = (ILaunchConfiguration) firstElement;
+				clearLaunchConfiguration();
+				config.delete();
 			}
 		} catch (CoreException ce) {
 		}
@@ -1550,8 +1574,39 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Notification the 'copy' button has been pressed
 	 */
 	protected void handleCopyPressed() {
-		
+		Object selectedElement = getTreeViewerFirstSelectedElement();
+		if (selectedElement instanceof ILaunchConfiguration) {
+			ILaunchConfiguration selectedConfig = (ILaunchConfiguration) selectedElement;
+			String newName = generateNewNameFrom(selectedConfig.getName());
+			try {
+				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
+				ILaunchConfigurationType configType = newWorkingCopy.getType();
+				
+				IStructuredSelection selection = new StructuredSelection(configType);
+				setTreeViewerSelection(selection);
+				setLaunchConfiguration(newWorkingCopy);
+			} catch (CoreException ce) {				
+			}			
+		}
 	}	
+	
+	/**
+	 * Construct a new config name using the name of the given config as a starting point.
+	 * The new name is guaranteed not to collide with any existing config name.
+	 */
+	protected String generateNewNameFrom(String startingName) {
+		String newName = startingName;
+		int index = 1;
+		while (configExists(newName)) {
+			StringBuffer buffer = new StringBuffer(startingName);
+			buffer.append(" (copy#");
+			buffer.append(String.valueOf(index));
+			buffer.append(')');	
+			index++;
+			newName = buffer.toString();		
+		}		
+		return newName;
+	}
 	
 	/**
 	 * Notification the 'save & launch' button has been pressed
@@ -1565,12 +1620,18 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Notification that the 'save' button has been pressed
 	 */
 	protected void handleSavePressed() {
+		ILaunchConfiguration config = null;
 		try {
-			getWorkingCopy().doSave();
+			config = getWorkingCopy().doSave();
 		} catch (CoreException ce) {			
 		}	
 		setLastSavedName(getWorkingCopy().getName());	
-		enableStatusDependentButtons(true);
+		setWorkingCopyUserDirty(false);
+		
+		setEnableStateEditButtons();
+
+		//IStructuredSelection selection = new StructuredSelection(config);
+		//setTreeViewerSelection(selection);
 	}
 	
 	/**

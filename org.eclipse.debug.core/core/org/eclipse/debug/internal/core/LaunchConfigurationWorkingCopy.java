@@ -140,6 +140,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 							LaunchConfigurationWorkingCopy.this.getOriginal().delete();
 						}
 					}
+					resetDirty();
 				}
 			};
 			
