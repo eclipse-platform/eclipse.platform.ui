@@ -1,14 +1,22 @@
+/**********************************************************************
+Copyright (c) 2000, 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
@@ -28,11 +36,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
 		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.RESOLVE_MARKER_ACTION);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IAction.
+	/**
+	 * Returns whether this action should be enabled given the selection.
 	 */
-	public boolean isEnabled() {
-		IMarker marker = getMarker();
+	public boolean shouldEnable(IStructuredSelection selection) {
+		IMarker marker = (IMarker) selection.getFirstElement();
 		if (marker == null)
 			return false;
 		IWorkbench workbench = getTaskList().getViewSite().getWorkbenchWindow().getWorkbench();
@@ -44,6 +52,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	 */
 	public void run() {
 		IMarker marker = getMarker();
+		if (marker == null) {
+			return;
+		}
 		getTaskList().cancelEditing();
 		IMarkerResolution[] resolutions = getResolutions(marker);
 		if (resolutions.length == 0) {

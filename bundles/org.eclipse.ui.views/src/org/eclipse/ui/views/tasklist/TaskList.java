@@ -140,7 +140,7 @@ public class TaskList extends ViewPart {
 	private TaskAction purgeCompletedAction;
 	private TaskAction gotoTaskAction;
 	private TaskAction selectAllAction;
-	private TaskAction resolveMarkerAction;
+	private ResolveMarkerAction resolveMarkerAction;
 	private TaskAction filtersAction;
 	private MarkCompletedAction markCompletedAction;
 	private TaskAction propertiesAction;
@@ -902,7 +902,8 @@ void makeActions() {
 	resolveMarkerAction = new ResolveMarkerAction(this, "resolve"); //$NON-NLS-1$
 	resolveMarkerAction.setText(TaskListMessages.getString("Resolve.text")); //$NON-NLS-1$
 	resolveMarkerAction.setToolTipText(TaskListMessages.getString("Resolve.tooltip")); //$NON-NLS-1$
-
+	resolveMarkerAction.setEnabled(false);
+	
 	// Sort by ->	
 	sortByCategoryAction = new SortByAction(this,"sortByCategory", 0);
 	sortByCategoryAction.setText(TaskListMessages.getString("SortByCategory.text")); //$NON-NLS-1$
@@ -1120,6 +1121,8 @@ void selectionChanged(SelectionChangedEvent event) {
 		removeTaskAction.setEnabled(false);
 		gotoTaskAction.setEnabled(false);
 		propertiesAction.setEnabled(false);
+		markCompletedAction.setEnabled(false);
+		resolveMarkerAction.setEnabled(false);
 		return;
 	};
 
@@ -1161,6 +1164,7 @@ void selectionChanged(SelectionChangedEvent event) {
 	
 	
 	markCompletedAction.setEnabled(markCompletedAction.shouldEnable(selection));
+	resolveMarkerAction.setEnabled(resolveMarkerAction.shouldEnable(selection));
 }
 
 /* (non-Javadoc)
