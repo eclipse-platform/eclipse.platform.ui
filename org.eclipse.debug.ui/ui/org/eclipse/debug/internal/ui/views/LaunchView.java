@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.RemoveTerminatedAction;
 import org.eclipse.debug.internal.ui.ShowQualifiedAction;
 import org.eclipse.debug.internal.ui.TerminateAllAction;
 import org.eclipse.debug.internal.ui.TerminateAndRemoveActionDelegate;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -51,7 +50,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewSite;
@@ -63,7 +61,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPartListener, IPerspectiveListener, IPageListener {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -268,36 +266,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 
 	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-	}
-	
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {			
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
 	 * When the perspective is changed back to a page containing
 	 * a debug view, we must update the actions and source.
 	 * 
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
+		super.partActivated(part);
 		if (part == this) {
 			updateActions();
 			showMarkerForCurrentSelection();

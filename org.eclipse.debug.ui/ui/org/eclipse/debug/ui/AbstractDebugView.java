@@ -35,10 +35,15 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.MessagePage;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -57,6 +62,12 @@ import org.eclipse.ui.texteditor.IUpdate;
  * <li>Hooks a double-click listener, and invokes the
  * 		<code>DOUBLE_CLICK_ACTION</code> when the mouse 
  * 		is double-clicked.</li>
+ * <li>Provides a mechanism for displaying an error message
+ * 		in the view, via the <code>PageBookView</code> mechanism.
+ * 		By default, a page book is created with a page showing
+ * 		this view's viewer. A message page is also created
+ * 		and shown when <code>showMessage(String)</code> is
+ * 		called.</li>
  * </ul>
  * <p>
  * This class may be subclassed.
@@ -69,13 +80,18 @@ import org.eclipse.ui.texteditor.IUpdate;
  * </p>
  */
 
-public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter, IDoubleClickListener {
+public abstract class AbstractDebugView extends PageBookView implements IDebugViewAdapter, IDoubleClickListener {
 	
 	/**
 	 * Underlying viewer that displays the contents of
 	 * this view.
 	 */
 	private Viewer fViewer = null;
+	
+	/**
+	 * This view's message page.
+	 */
+	private MessagePage fMessagePage = null;
 	
 	/**
 	 * Map of actions. Keys are strings, values
@@ -132,6 +148,41 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	}
 	
 	/**
+	 * A page in this view's page book that contains this
+	 * view's viewer.
+	 */
+	class ViewerPage extends Page {
+		/**
+		 * @see IPage#createControl(Composite)
+		 */
+		public void createControl(Composite parent) {
+			Viewer viewer = createViewer(parent);
+			setViewer(viewer);			
+		}
+
+		/**
+		 * @see IPage#getControl()
+		 */
+		public Control getControl() {
+			return getDefaultControl();
+		}
+
+		/*
+		 * @see IPage#setFocus()
+		 */
+		public void setFocus() {
+			Viewer viewer= getViewer();
+			if (viewer != null) {
+				Control c = viewer.getControl();
+				if (!c.isFocusControl()) {
+					c.setFocus();
+				}
+			}
+		}
+
+}
+	
+	/**
 	 * Creates this view's underlying viewer and actions.
 	 * Hooks a pop-up menu to the underlying viewer's control,
 	 * as well as a key listener. When the delete key is pressed,
@@ -153,25 +204,40 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see #fillContextMenu(IMenuManager)
 	 */
 	public final void createPartControl(Composite parent) {
-		Viewer viewer = createViewer(parent);
-		setViewer(viewer);
+		super.createPartControl(parent);
 		createActions();
 		initializeToolBar();
 		createContextMenu(getViewer().getControl());
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, getHelpContextId()));
-		viewer.getControl().addKeyListener(new KeyAdapter() {
+		getViewer().getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
 		});
-		if (viewer instanceof StructuredViewer) {
-			((StructuredViewer)viewer).addDoubleClickListener(this);	
+		if (getViewer() instanceof StructuredViewer) {
+			((StructuredViewer)getViewer()).addDoubleClickListener(this);	
 		}
 		// notify the selection manager that a debug view has been
 		// created/realized.
 		DebugSelectionManager.getDefault().registerView(this);
+		// create the message page
+		setMessagePage(new MessagePage());
+		getMessagePage().createControl(getPageBook());
+		initPage(getMessagePage());
+	}	
+	
+	/**
+	 * The default page for a debug view is its viewer.
+	 * 
+	 * @see PageBookView#createDefaultPage(PageBook)
+	 */
+	protected final IPage createDefaultPage(PageBook book) {
+		ViewerPage page = new ViewerPage();
+		page.createControl(book);
+		initPage(page);
+		return page;
 	}	
 	/**
 	 * Creates and returns this view's underlying viewer.
@@ -344,19 +410,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 		asyncExec(r);
 	}
-	
-	/**
-	 * @see IWorkbenchPart#setFocus()
-	 */
-	public void setFocus() {
-		Viewer viewer= getViewer();
-		if (viewer != null) {
-			Control c = viewer.getControl();
-			if (!c.isFocusControl()) {
-				c.setFocus();
-			}
-		}
-	}	
 	
 	/**
 	 * Sets the viewer for this view.
@@ -572,6 +625,85 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			view = page.findView(id);
 		}
 		return view;	
+	}
+	
+	/**
+	 * @see PageBookView#isImportant(IWorkbenchPart)
+	 */
+	protected boolean isImportant(IWorkbenchPart part) {
+		return false;
+	}
+
+	/**
+	 * @see PageBookView#doCreatePage(IWorkbenchPart)
+	 */
+	protected PageRec doCreatePage(IWorkbenchPart part) {
+		return null;
+	}
+
+	/**
+	 * @see PageBookView#doDestroyPage(IWorkbenchPart, PageRec)
+	 */
+	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
+	}
+
+	/**
+	 * @see PageBookView#getBootstrapPart()
+	 */
+	protected IWorkbenchPart getBootstrapPart() {
+		return null;
+	}
+
+	/**
+	 * Returns the default control for this view. By defuault,
+	 * this view's viewer's control is returned. Subclasses
+	 * should override if required - for example, if this
+	 * view has its viewer nested inside other controls.
+	 * 
+	 * @return this view's default control.
+	 */ 
+	protected Control getDefaultControl() {
+		Viewer viewer = getViewer();
+		if (viewer != null) {
+			return viewer.getControl();
+		} 
+		return null;
+	}
+	
+	/**
+	 * Sets this view's message page
+	 * 
+	 * @param page message page
+	 */
+	private void setMessagePage(MessagePage page) {
+		fMessagePage = page;
+	}
+	
+	/**
+	 * Returns this view's message page
+	 * 
+	 * @return message page
+	 */
+	protected MessagePage getMessagePage() {
+		return fMessagePage;
+	}	
+	
+	/**
+	 * Shows the given message in this view's message'
+	 * page. Makes the message page the visible page.
+	 * 
+	 * @param message the message to display
+	 */
+	protected void showMessage(String message) {
+		getMessagePage().setMessage(message);
+		getPageBook().showPage(getMessagePage().getControl());
+	}
+	
+	/**
+	 * Shows this view's viewer page.
+	 */
+	protected void showViewer() {
+		getPageBook().showPage(getDefaultPage().getControl());
 	}
 	
 }	

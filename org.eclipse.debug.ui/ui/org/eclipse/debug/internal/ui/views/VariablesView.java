@@ -669,6 +669,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */	
 	protected SourceViewerConfiguration getDetailViewerConfiguration() {
 		return fSourceViewerConfiguration;
+	}
+	
+	/**
+	 * @see AbstractDebugView#getDefaultControl()
+	 */
+	protected Control getDefaultControl() {
+		return getSashForm();
 	}	
 	
 }
