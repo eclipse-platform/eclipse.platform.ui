@@ -162,6 +162,32 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String MB_ADDITIONS = "additions";	// Group. //$NON-NLS-1$
 	
+	 /**
+	  * Name of group for adding goto actions (value <code>"goto"</code>).
+	  */
+	public static final String MB_GOTO_ADDITIONS = "goto";	// Group. //$NON-NLS-1$
+	
+	/**
+	 * Name of group for adding new entries to the open actions (value <code>"open"</code>).
+	 */
+	public static final String MB_OPEN_ADDITIONS = "open";	// Group. //$NON-NLS-1$
+	
+	/**
+	 * Name of group for adding refactor actions (value <code>"refactor"</code>).
+	 */
+	public static final String MB_REFACTOR_ADDITIONS = "refactor";	// Group. //$NON-NLS-1$
+	
+	/**
+	 * Name of group for adding new workbench state actions (value <code>"workbenchstate"</code>).
+	 */
+	public static final String MB_WORKBENCH_STATE_ADDITIONS = "workbenchstate";	// Group. //$NON-NLS-1$
+	
+	/**
+	 * Name of end of additions identifier (value <code>"-end"</code>).
+	 */
+	public static final String MB_ADDITIONS_END = "-end";	// Group. //$NON-NLS-1$
+	
+	
 // Standard file actions:
 	/**
 	 * File menu: name of group for start of menu (value <code>"fileStart"</code>).
