@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  */
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -16,6 +15,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -25,14 +26,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
-import org.eclipse.team.internal.ccvs.ui.wizards.*;
+import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -40,6 +38,8 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	TableViewer table;
 	CVSTag result;
 	IProject project;
+	
+	private static final int TABLE_HEIGHT_HINT = 350;
 	
 	/**
 	 * MergeWizardStartPage constructor.
@@ -53,7 +53,9 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	}
 	protected TableViewer createTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = TABLE_HEIGHT_HINT;
+		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, true));
 		table.setLayout(layout);
@@ -80,6 +82,15 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		table = createTable(composite);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
+		table.setSorter(new ViewerSorter() {
+			public int compare(Viewer v, Object o1, Object o2) {
+				int result = super.compare(v, o1, o2);
+				if (o1 instanceof TagElement && o2 instanceof TagElement) {
+					return -result;
+				}
+				return result;
+			}
+		});
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				TagElement element = (TagElement)((IStructuredSelection)table.getSelection()).getFirstElement();
@@ -96,6 +107,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		setControl(composite);
 
 		initialize();
+		setPageComplete(false);
 	}
 	private void initialize() {
 		ITeamProvider provider = TeamPlugin.getManager().getProvider(project);

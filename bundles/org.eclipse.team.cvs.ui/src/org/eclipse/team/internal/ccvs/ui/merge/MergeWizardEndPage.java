@@ -6,14 +6,13 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  */
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -24,12 +23,8 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -68,6 +63,15 @@ public class MergeWizardEndPage extends CVSWizardPage {
 		tree = createTree(composite);
 		tree.setContentProvider(new WorkbenchContentProvider());
 		tree.setLabelProvider(new WorkbenchLabelProvider());
+		tree.setSorter(new ViewerSorter() {
+			public int compare(Viewer v, Object o1, Object o2) {
+				int result = super.compare(v, o1, o2);
+				if (o1 instanceof TagElement && o2 instanceof TagElement) {
+					return -result;
+				}
+				return result;
+			}
+		});
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((IStructuredSelection)tree.getSelection()).getFirstElement();
@@ -82,6 +86,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 		});
 		setControl(composite);
 		tree.setInput(new ProjectElement(remote));
+		setPageComplete(false);
 	}
 	protected TreeViewer createTree(Composite parent) {
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
