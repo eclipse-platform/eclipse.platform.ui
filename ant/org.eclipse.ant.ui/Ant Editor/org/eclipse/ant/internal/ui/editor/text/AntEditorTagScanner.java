@@ -32,7 +32,7 @@ public class AntEditorTagScanner extends RuleBasedScanner {
 	
     public AntEditorTagScanner() {
     	fStringToken= new Token(
-                			new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_STRING)));
+                			new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.STRING_COLOR)));
                     
 		IRule[] rules= new IRule[3];
 
@@ -46,14 +46,14 @@ public class AntEditorTagScanner extends RuleBasedScanner {
         setRules(rules);
         
         setDefaultReturnToken(
-        		new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_TAG))));
+        		new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TAG_COLOR))));
     }
     
     /**
      * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
      */
     public void adaptToColorChange() {
-    	((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_TAG)));
-    	fStringToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_STRING)));
+    	((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TAG_COLOR)));
+    	fStringToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.STRING_COLOR)));
     }
 }

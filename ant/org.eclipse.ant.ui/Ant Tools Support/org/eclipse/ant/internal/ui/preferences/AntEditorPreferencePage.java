@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
