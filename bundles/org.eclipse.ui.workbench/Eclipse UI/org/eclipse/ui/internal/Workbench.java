@@ -579,7 +579,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		windowManager = new WindowManager();
 		WorkbenchColors.startup();
 		initializeFonts();
-		initializeAcceleratorConfiguration();
+		initializeConfiguration();
 		initializeSingleClickOption();
 
 		boolean avoidDeadlock = true;
@@ -694,18 +694,19 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
-	/**
-	 * Initialize the workbench AcceleratorConfiguration with the stored values.
-	 */
-	private void initializeAcceleratorConfiguration() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		
-		if (id == null)
-			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 
+	private void initializeConfiguration() {
+		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();		
+		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+
+		if (configuration == null || configuration.length() == 0)
+			configuration = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+
+		if (configuration == null)
+			configuration = ""; //$NON-NLS-1$
+		
 		KeyManager keyManager = KeyManager.getInstance();
-		keyManager.getKeyMachine().setConfiguration(id);
+		keyManager.getKeyMachine().setConfiguration(configuration);
 		keyManager.update();
 	}
 	/**
