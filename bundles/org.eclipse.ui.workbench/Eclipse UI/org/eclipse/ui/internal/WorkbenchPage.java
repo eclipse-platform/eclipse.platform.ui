@@ -1533,6 +1533,8 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		// Update MRU list.
 		Workbench wb = (Workbench)window.getWorkbench();
 		wb.getPerspectiveHistory().add(desc);
+		
+		updateVisibility(null,persp);
 	}
 }
 /**
