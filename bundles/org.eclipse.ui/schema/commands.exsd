@@ -101,9 +101,6 @@
                <documentation>
                   &lt;p&gt;This is deprecated.  We don&apos;t believe in categories anymore.&lt;/p&gt;
                </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -111,9 +108,6 @@
 
    <element name="activeKeyConfiguration">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
 &lt;p&gt;This is deprecated.  Please use &lt;code&gt;org.eclipse.ui/KEY_CONFIGURATION_ID&lt;/code&gt; in &lt;code&gt;plugin_customization.ini&lt;/code&gt; instead.&lt;/p&gt;
@@ -139,9 +133,6 @@
 
    <element name="category">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;In the UI, commands are often organized by category to make them more manageable. This element is used to define these categories. Commands can add themselves to at most one category. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
 &lt;p&gt;This is deprecated.  We just don&apos;t believe in categories anymore.&lt;/p&gt;
@@ -236,9 +227,6 @@
 
    <element name="handlerSubmission">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
 &lt;/p&gt;
@@ -330,9 +318,6 @@ This particular API should still be considered experimental.  While you may use 
 
    <element name="keyConfiguration">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.&lt;/p&gt;
 &lt;p&gt;This is deprecated.  Use the bindings extension point instead.&lt;/p&gt;
@@ -389,9 +374,6 @@ This particular API should still be considered experimental.  While you may use 
 
    <element name="keyBinding">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;This element allows one to assign key sequences to commands.&lt;/p&gt;
 &lt;p&gt;This is deprecated.  Use the bindings extension point&lt;/p&gt;
