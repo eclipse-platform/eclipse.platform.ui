@@ -103,7 +103,7 @@ public class PluginActionContributionItem extends ActionContributionItem {
         if (activityObject == null) 
             return super.isVisible();
 
-        Collection activeObjects = objectManager.getActiveObjects();
+        Collection activeObjects = objectManager.getEnabledObjects();
         // check for visibility only if the active objects contains this object.
         if (activeObjects.contains(activityObject)) {
             return super.isVisible();

@@ -49,7 +49,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             			IWorkbenchConstants.PL_VIEWS, false);
             if (objectManager != null) {
                 ArrayList filtered = new ArrayList();
-                Collection activeObjects = objectManager.getActiveObjects();                
+                Collection activeObjects = objectManager.getEnabledObjects();                
     			for (int i = 0; i < categories.length; i++) {
                     if (activeObjects.contains(WorkbenchActivityHelper.createViewCategoryIdKey(categories[i].getId()))) {
                         filtered.add(categories[i]);
@@ -72,7 +72,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 						.getObjectActivityManager(
 							IWorkbenchConstants.PL_VIEWS, false);              
                 if (objectManager != null) {
-					Collection activeObjects = objectManager.getActiveObjects();
+					Collection activeObjects = objectManager.getEnabledObjects();
                     ArrayList filtered = new ArrayList();
                     for (Iterator i = list.iterator(); i.hasNext();) {
                         IViewDescriptor desc = (IViewDescriptor) i.next();

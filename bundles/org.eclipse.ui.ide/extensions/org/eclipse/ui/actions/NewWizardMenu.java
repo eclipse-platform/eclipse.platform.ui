@@ -109,7 +109,7 @@ public class NewWizardMenu extends ContributionItem {
 				
 				if (manager != null) {
 					// prune away all IDs that arent active based on the managers opinion.
-					actions.retainAll(manager.getActiveObjects());
+					actions.retainAll(manager.getEnabledObjects());
 				}
 				
 				if(actions.size() > 0)

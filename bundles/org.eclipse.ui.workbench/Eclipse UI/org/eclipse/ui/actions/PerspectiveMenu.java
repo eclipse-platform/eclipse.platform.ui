@@ -218,7 +218,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
         IObjectActivityManager activityManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
         if (activityManager != null) {
             // prune all non-active contributions.
-            ids.retainAll(activityManager.getActiveObjects());
+            ids.retainAll(activityManager.getEnabledObjects());
         }
 
 		for (int i = 0; i < ids.size(); i++) {

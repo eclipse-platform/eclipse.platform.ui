@@ -126,7 +126,7 @@ public class ShowViewMenu extends ContributionItem {
         IObjectActivityManager objectManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, false);
         if (objectManager != null) {
             // prune off all filtered views
-            viewIds.retainAll(objectManager.getActiveObjects());
+            viewIds.retainAll(objectManager.getEnabledObjects());
         }
         // add all open views
         viewIds = addOpenedViews(page, viewIds);
