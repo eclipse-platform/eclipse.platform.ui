@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.internal.commands.old;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -895,7 +897,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		buttonTest.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				//dumpCommandsByCategory();
+				dumpCommandsByCategory();
 			}	
 		});
 
@@ -1903,7 +1905,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	/*
 	private void dumpCommandsByCategory() {
 		try {
 			Writer writer = new FileWriter("c:\\commands.html");		
@@ -1968,5 +1969,4 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			System.out.println(eIO);
 		}
 	}
-	*/
 }

@@ -26,45 +26,4 @@ package org.eclipse.ui.commands;
  */
 public interface IKeyStroke {
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	char getCharacter();
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */		
-	int getKeyCode();
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	boolean isAlt();
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	boolean isCommand();
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	boolean isControl();
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	boolean isShift();
 }
