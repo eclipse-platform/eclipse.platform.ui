@@ -579,19 +579,15 @@ protected void handleShellCloseEvent() {
  * </p>
  */
 protected void initializeBounds() {
-
-
 	if (resizeListener != null) {
 		shell.removeListener(SWT.Resize,resizeListener);
 	}
-	
 	if (resizeHasOccurred) { // Check if shell size has been set already.
 		return;
 	}
 
 	Point size = getInitialSize();
 	Point location = getInitialLocation(size);
-
 	shell.setBounds(getConstrainedShellBounds(new Rectangle(location.x, location.y, size.x, size.y)));
 }
 /**
