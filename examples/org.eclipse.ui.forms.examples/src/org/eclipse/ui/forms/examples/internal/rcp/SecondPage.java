@@ -47,12 +47,13 @@ public class SecondPage extends FormPage {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
-				Section.TWISTIE | Section.DESCRIPTION);
+				Section.TWISTIE|Section.TITLE_BAR);
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
 			toolkit.getColors().getColor(FormColors.SEPARATOR));
-		toolkit.createCompositeSeparator(section);
+		FormText description = toolkit.createFormText(section, true);
+		section.setDescriptionControl(description);
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -68,7 +69,7 @@ public class SecondPage extends FormPage {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		b.setLayoutData(gd);
 		section.setText(title);
-		section.setDescription("This section has a tree and a button.");
+		section.setDescription("<form><p>This section has a <b>tree</b> and a button. It also has <a>a link</a> in the description.</p></form>");
 		section.setClient(client);
 		section.setExpanded(true);
 		section.addExpansionListener(new ExpansionAdapter() {

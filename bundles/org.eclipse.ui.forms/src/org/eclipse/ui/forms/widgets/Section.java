@@ -11,11 +11,17 @@
 package org.eclipse.ui.forms.widgets;
 
 import java.util.Hashtable;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * A variation of the expandable composite that adds optional description below
@@ -28,6 +34,12 @@ import org.eclipse.swt.widgets.*;
  * colors are supplied by the toolkit. The toolkit initializes these colors
  * based on the system colors. For this reason, it is recommended to create the
  * section by the toolkit instead of through its own constructor.
+ * <p>
+ * Since 3.1, it is possible to set a control to be used for section
+ * description. If used, <code>DESCRIPTION</code> style should not be set. A
+ * typical way to take advantage of the new method is to set an instance of
+ * <code>FormText</code> to provide for hyperlinks and images in the
+ * description area.
  * 
  * @since 3.0
  */
@@ -37,7 +49,7 @@ public final class Section extends ExpandableComposite {
 	 */
 	public static final int DESCRIPTION = 1 << 7;
 
-	private Label descriptionLabel;
+	private Control descriptionControl;
 
 	private Control separator;
 
@@ -65,8 +77,9 @@ public final class Section extends ExpandableComposite {
 
 	Section(Composite parent, int cstyle, int style) {
 		super(parent, cstyle, style);
+		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
-			descriptionLabel = new Label(this, SWT.WRAP);
+			descriptionControl = new Label(this, SWT.WRAP | rtl);
 		}
 	}
 
@@ -104,14 +117,14 @@ public final class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Sets the description text. Has no effect of DESCRIPTION style was not
+	 * Sets the description text. Has no effect if DESCRIPTION style was not
 	 * used to create the control.
 	 * 
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		if (descriptionLabel != null)
-			descriptionLabel.setText(description);
+		if (descriptionControl instanceof Label)
+			((Label) descriptionControl).setText(description);
 	}
 
 	/**
@@ -121,8 +134,8 @@ public final class Section extends ExpandableComposite {
 	 *         not used to create the control.
 	 */
 	public String getDescription() {
-		if (descriptionLabel != null)
-			return descriptionLabel.getText();
+		if (descriptionControl instanceof Label)
+			return ((Label) descriptionControl).getText();
 		return null;
 	}
 
@@ -158,8 +171,9 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (descriptionLabel != null)
-			descriptionLabel.setBackground(bg);
+		if (descriptionControl != null
+				&& (getExpansionStyle() & DESCRIPTION) != 0)
+			descriptionControl.setBackground(bg);
 	}
 
 	/**
@@ -170,18 +184,43 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (descriptionLabel != null)
-			descriptionLabel.setForeground(fg);
+		if (descriptionControl != null
+				&& (getExpansionStyle() & DESCRIPTION) != 0)
+			descriptionControl.setForeground(fg);
 	}
 
 	/**
-	 * Returns the control used to render the description.
+	 * Returns the control used to render the description. In 3.1, this method
+	 * was promoted to public.
 	 * 
 	 * @return description control or <code>null</code> if DESCRIPTION style
-	 *         was not used to create the control.
+	 *         was not used to create the control and description control was
+	 *         not set by the client.
+	 * @see #setDescriptionControl(org.eclipse.swt.widgets.Control)
 	 */
-	protected Control getDescriptionControl() {
-		return descriptionLabel;
+	public Control getDescriptionControl() {
+		return descriptionControl;
+	}
+
+	/**
+	 * Sets the description control of this section. The control must not be
+	 * <samp>null</samp> and must be a direct child of this container. If
+	 * defined, contol will be placed below the title text and the separator and
+	 * will be hidden int he collapsed state.
+	 * <p>
+	 * This method and <code>DESCRIPTION</code> style are mutually exclusive.
+	 * Use the method only if you want to create the description control
+	 * yourself.
+	 * 
+	 * @since 3.1
+	 * @param descriptionControl
+	 *            the control that will be placed below the title text.
+	 */
+	public void setDescriptionControl(Control descriptionControl) {
+		Assert.isTrue((getExpansionStyle() & DESCRIPTION) != 0);
+		Assert.isTrue(descriptionControl != null
+				&& descriptionControl.getParent().equals(this));
+		this.descriptionControl = descriptionControl;
 	}
 
 	/**
