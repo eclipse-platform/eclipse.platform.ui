@@ -2293,8 +2293,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			Throwable t= x.getTargetException();
-			if (t instanceof CoreException)
-				throw new PartInitException(((CoreException) t).getStatus());
+			if (t instanceof CoreException) {
+                CoreException e= (CoreException)t;
+                if (e.getStatus().getException() != null)
+                    throw new PartInitException(e.getStatus());
+            }
 			throw new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
 		}
 	}
