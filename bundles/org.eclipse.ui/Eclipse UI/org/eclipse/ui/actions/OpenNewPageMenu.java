@@ -34,6 +34,7 @@ import java.util.*;
  * </p><p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @deprecated Workbench no longer exposes the concept of "pages" in the user ui model
  */
 public class OpenNewPageMenu extends PerspectiveMenu {
 	private IAdaptable pageInput;
