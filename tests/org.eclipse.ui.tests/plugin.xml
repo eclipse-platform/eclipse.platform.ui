@@ -135,6 +135,12 @@
             class="org.eclipse.ui.tests.adaptable.AdaptedResourceNavigator"
             id="org.eclipse.ui.tests.adaptable.adaptedHierarchy">
       </view>
+      <view
+            name="NullTitle"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.NullTitleView"
+            id="org.eclipse.ui.tests.NullTitleView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
