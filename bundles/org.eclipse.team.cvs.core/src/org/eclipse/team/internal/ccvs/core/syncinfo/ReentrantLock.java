@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -24,6 +27,8 @@ public class ReentrantLock {
 	private final static boolean DEBUG = Policy.DEBUG_THREADING;
 	private Thread thread;
 	private int nestingCount;
+	
+	private Set readOnlyThreads = new HashSet();
 	
 	public ReentrantLock() {
 		this.thread = null;
@@ -67,5 +72,13 @@ public class ReentrantLock {
 		Assert.isLegal(thread == thisThread,
 			"Thread attempted to read nesting count of a lock it did not own"); //$NON-NLS-1$
 		return nestingCount;
+	}
+	
+	public boolean isReadOnly() {
+		return readOnlyThreads.contains(thread);
+	}
+	
+	public void addReadOnlyThread(Thread thread) {
+		readOnlyThreads.add(thread);
 	}
 }

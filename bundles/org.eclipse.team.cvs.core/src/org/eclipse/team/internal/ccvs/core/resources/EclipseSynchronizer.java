@@ -55,7 +55,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
  * @see FolderSyncInfo
  */
 public class EclipseSynchronizer {	
-	private boolean isWorkspaceModifiable = true;
 	private static final String IS_DIRTY_INDICATOR = SyncInfoCache.IS_DIRTY_INDICATOR;
 	private static final String NOT_DIRTY_INDICATOR = SyncInfoCache.NOT_DIRTY_INDICATOR;
 	private static final String RECOMPUTE_INDICATOR = SyncInfoCache.RECOMPUTE_INDICATOR; 
@@ -1258,22 +1257,6 @@ public class EclipseSynchronizer {
 	}
 	
 	/**
-	 * Run the given ICVSRunnable ensuring that the workspace lock is never acquired
-	 * 
-	 * @param job
-	 * @param monitor
-	 * @throws CVSException
-	 */
-	public void runWithoutWorkspaceLock(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		try {
-			isWorkspaceModifiable = false;
-			EclipseSynchronizer.this.run(job, monitor);
-		} finally {
-			isWorkspaceModifiable = true;
-		}
-	}
-	
-	/**
 	 * Method isEdited returns true if a "cvs edit" was performed on the given
 	 * file and no commit or unedit has yet been performed.
 	 * @param iResource
@@ -1421,10 +1404,23 @@ public class EclipseSynchronizer {
 	}
 	
 	/**
+	 * If this method return false, the caller should not perform any workspace modification
+	 * operations. The danger of performing such an operation is deadlock.
+	 * 
 	 * @return boolean
 	 */
-	public boolean isWorkspaceModifiable() {
-		return isWorkspaceModifiable;
+	protected boolean isWorkspaceModifiable() {
+		return !lock.isReadOnly();
+	}
+	
+	/**
+	 * Register the given thread as a thread that should be resitricted to having read-only access.
+	 * If a thread is not registered, it is expected that they obtain the workspace lock before
+	 * accessing any CVS sync information.
+	 * @param thread
+	 */
+	public void addReadOnlyThread(Thread thread) {
+		lock.addReadOnlyThread(thread);
 	}
 
 }

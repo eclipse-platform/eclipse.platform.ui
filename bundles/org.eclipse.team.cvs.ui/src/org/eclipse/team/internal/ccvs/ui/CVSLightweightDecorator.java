@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -35,7 +34,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -92,18 +90,7 @@ public class CVSLightweightDecorator
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
 		try {
-			final boolean[] isDirty = new boolean[] { false };
-
-			EclipseSynchronizer.getInstance().runWithoutWorkspaceLock(new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					// file is dirty or file has been merged by an update
-					if(!cvsResource.isIgnored()) {
-						isDirty[0] = cvsResource.isModified();
-					}
-				}
-			}, null);
-
-			return isDirty[0];
+			return !cvsResource.isIgnored() && cvsResource.isModified();
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
 			CVSUIPlugin.log(e.getStatus());
@@ -156,6 +143,11 @@ public class CVSLightweightDecorator
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
+		
+		// Make sure that the decorator thread only has read access to the CVS sync info.
+		// This will register the thread on each decoration but it's the only way we
+		// know of to ensure the proper thread is registered.
+		EclipseSynchronizer.getInstance().addReadOnlyThread(Thread.currentThread());
 		
 		IResource resource = getResource(element);
 		if (resource == null || resource.getType() == IResource.ROOT)

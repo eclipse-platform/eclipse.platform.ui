@@ -102,17 +102,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		}
 		return new FolderSyncInfo(repository, root, tag, isStatic);
 	}
-		
-	/**
-	 * Method getBytes converts an array of bytes into a single byte array
-	 * @param infos
-	 * @return byte[]
-	 */
-	private byte[] getBytes(byte[][] infos) throws CVSException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		SyncFileWriter.writeLines(out, infos);
-		return out.toByteArray();
-	}
 	
 	/**
 	 * Convert a byte array that was created using getBytes(Map)

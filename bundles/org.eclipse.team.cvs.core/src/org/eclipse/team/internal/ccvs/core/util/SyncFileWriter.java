@@ -123,32 +123,6 @@ public class SyncFileWriter {
 		return result;
 	}
 	
-	/**
-	 * Writes the CVS/Entries, CVS/Entries.log and CVS/Permissions files to the
-	 * specified folder using the data contained in the specified ResourceSyncInfo instance.
-	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
-	 */
-	public static void writeAllResourceSync(IContainer parent, ResourceSyncInfo[] infos) throws CVSException {
-		try {
-			IFolder cvsSubDir = createCVSSubdirectory(parent);
-			
-			// format file contents
-			String[] entries = new String[infos.length];
-			for (int i = 0; i < infos.length; i++) {
-				ResourceSyncInfo info = infos[i];
-				entries[i] = info.getEntryLine();
-			}
-	
-			// write Entries
-			writeLines(cvsSubDir.getFile(ENTRIES), entries);
-			
-			// delete Entries.log
-			cvsSubDir.getFile(ENTRIES_LOG).delete(IResource.NONE, null);
-		} catch(CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
 	public static void writeAllResourceSync(IContainer parent, byte[][] infos) throws CVSException {
 		try {
 			IFolder cvsSubDir = createCVSSubdirectory(parent);
@@ -514,21 +488,6 @@ public class SyncFileWriter {
 			try {
 				for (int i = 0; i < contents.length; i++) {
 					os.write(contents[i].getBytes());
-					os.write(0x0A); // newline byte
-				}
-			} finally {
-				os.close();
-			}
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	public static void writeLines(OutputStream os, byte[][] contents) throws CVSException {
-		try {
-			try {
-				for (int i = 0; i < contents.length; i++) {
-					os.write(contents[i]);
 					os.write(0x0A); // newline byte
 				}
 			} finally {
