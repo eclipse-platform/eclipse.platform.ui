@@ -328,6 +328,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	public void dispose() {
 		super.dispose();
+		fThreadTimer.stop();
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.getLaunchManager().removeLaunchListener(this);
 	}
