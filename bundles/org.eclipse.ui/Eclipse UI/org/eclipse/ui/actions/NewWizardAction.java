@@ -38,6 +38,12 @@ public class NewWizardAction extends Action {
 	 */
 	private static final int SIZING_WIZARD_HEIGHT = 500;
 
+	/**
+	 * The id of the category to show or <code>null</code> to
+	 * show all the categories.
+	 */
+	private String categoryId = null;
+	
 /**
  *	Create a new instance of this class
  */
@@ -50,12 +56,27 @@ public NewWizardAction() {
 	setAccelerator(SWT.CTRL | 'N'); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }
+/**
+ * Returns the id of the category of wizards to show
+ * or <code>null</code> to show all categories.
+ */
+public String getCategoryId() {
+	return categoryId;
+}
+/**
+ * Sets the id of the category of wizards to show
+ * or <code>null</code> to show all categories.
+ */
+public void setCategoryId(String id) {
+	categoryId = id;
+}
 /* (non-Javadoc)
  * Method declared on IAction.
  */
 public void run() {
 	IWorkbench workbench = PlatformUI.getWorkbench();
 	NewWizard wizard = new NewWizard();
+	wizard.setCategoryId(categoryId);
 
 	ISelection selection = workbench.getActiveWorkbenchWindow().getSelectionService().getSelection();
 	IStructuredSelection selectionToPass = StructuredSelection.EMPTY;

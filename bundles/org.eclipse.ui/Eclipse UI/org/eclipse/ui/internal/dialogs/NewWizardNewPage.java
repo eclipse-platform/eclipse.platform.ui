@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Workbook;
 import org.eclipse.ui.internal.misc.WorkbookPage;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
@@ -93,7 +94,10 @@ protected Control createControl(Composite parent) {
 	categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 	categoryTreeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 	categoryTreeViewer.addSelectionChangedListener(this);
-	categoryTreeViewer.setInput(wizardCategories);
+	if (wizardCategories.getParent(wizardCategories) == null)
+		categoryTreeViewer.setInput(wizardCategories);
+	else
+		categoryTreeViewer.setInput(new RootElementProxy(wizardCategories));
 	tree.setFont(wizardFont);
 
 	// wizard actions pane...create SWT table directly to
@@ -334,6 +338,25 @@ protected void storeSelectedCategoryAndWizard() {
 		settings.put(
 			STORE_SELECTED_WIZARD_ID,
 			selectedWizard.getID());
+	}
+}
+
+private static final class RootElementProxy extends WorkbenchAdapter implements IAdaptable {
+	private WizardCollectionElement[] elements;
+	
+	public RootElementProxy(WizardCollectionElement element) {
+		super();
+		elements = new WizardCollectionElement[] {element};
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		return null;
+	}
+
+	public Object[] getChildren(Object o) {
+		return elements;
 	}
 }
 }
