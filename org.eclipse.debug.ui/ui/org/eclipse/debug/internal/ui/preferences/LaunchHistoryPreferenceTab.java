@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -78,6 +79,10 @@ public class LaunchHistoryPreferenceTab {
 	/**
 	 * Launch group.	 */
 	private LaunchHistory fLaunchHistory;
+	
+	/**
+	 * Tab image	 */
+	private Image fImage;
 	
 	/**
 	 * Constructs a launch history preference tab for the given launch history
@@ -609,4 +614,13 @@ public class LaunchHistoryPreferenceTab {
 		return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
 	} 
 	
+	protected void setImage(Image image) {
+		fImage = image;
+	}
+	
+	protected void dispose() {
+		if (fImage != null) {
+			fImage.dispose();
+		}
+	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -108,11 +109,13 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
 		tab.setText(history.getLaunchGroup().getLabel());
 		ImageDescriptor descriptor = history.getLaunchGroup().getImageDescriptor();
+		Image image = null;
 		if (descriptor != null) {
-			tab.setImage(descriptor.createImage());
-			// TODO: dispose image
+			image = descriptor.createImage();
+			tab.setImage(image);
 		}
 		LaunchHistoryPreferenceTab prefTab = new LaunchHistoryPreferenceTab(history);
+		prefTab.setImage(image);
 		tab.setControl(prefTab.createControl(tabFolder));	
 		return prefTab;	
 	}
@@ -161,6 +164,17 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_HISTORY_PREFERENCE_PAGE);
+	}
+
+	/**
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		for (int i = 0; i < fTabs.length; i++) {
+			LaunchHistoryPreferenceTab tab = fTabs[i];
+			tab.dispose();
+		}
 	}
 
 }
