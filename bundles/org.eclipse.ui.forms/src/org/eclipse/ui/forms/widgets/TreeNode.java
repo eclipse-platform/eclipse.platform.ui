@@ -62,9 +62,10 @@ public final class TreeNode extends ToggleHyperlink {
 		int x = 1;
 		int y = 0;
 		gc.setFont(getFont());
-		int height = gc.getFontMetrics().getHeight();
-		y = height / 2 - 4;
-		y = Math.max(y, 0);
+		//int height = gc.getFontMetrics().getHeight();
+		//y = height / 2 - 4;
+		//y = Math.max(y, 0);
+		y = 2;
 		return new Rectangle(x, y, 8, 8);
 	}
 }
