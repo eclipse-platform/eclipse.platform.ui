@@ -69,14 +69,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * @see Job.schedule()
 	 */
 	public void schedule(Job job);
-	
-	/**
-	 * Use the half busy cursor in this part during the execution
-	 * of this job.
-	 * @param job
-	 * @deprecated Use schedule (Job,long,boolean) instead
-	 */
-	public void useHalfBusyCursor(Job job);
+
 	
 	/**
 	 * Add an IPropertyChangeListener to the list of listeners
