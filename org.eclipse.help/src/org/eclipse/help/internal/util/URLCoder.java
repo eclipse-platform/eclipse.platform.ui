@@ -41,7 +41,7 @@ public class URLCoder {
 		for (int i = 0; i < len;) {
 			switch (encodedURL.charAt(i)) {
 				case '%' :
-					if (len > i + 3) {
+					if (len >= i + 3) {
 						os.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
 					}
 					i += 3;
@@ -67,7 +67,7 @@ public class URLCoder {
 				case '%' :
 					if ((len > i + 1) && encodedURL.charAt(i + 1) != 'u') {
 						// byte encoded as %XX
-						if (len > i + 3) {
+						if (len >= i + 3) {
 							tempOs = new ByteArrayOutputStream(1);
 							tempOs.write(Integer.parseInt(encodedURL.substring(i + 1, i + 3), 16));
 							try {
@@ -80,7 +80,7 @@ public class URLCoder {
 
 					} else {
 						// char escaped to the form %uHHLL
-						if (len > i + 6) {
+						if (len >= i + 6) {
 							tempOs = new ByteArrayOutputStream(2);
 							tempOs.write(Integer.parseInt(encodedURL.substring(i + 2, i + 4), 16));
 							tempOs.write(Integer.parseInt(encodedURL.substring(i + 4, i + 6), 16));
