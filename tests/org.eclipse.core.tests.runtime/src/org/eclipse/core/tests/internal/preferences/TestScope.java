@@ -23,7 +23,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 	public static final String SCOPE = "test"; //$NON-NLS-1$
 	private String qualifier;
 	private int segmentCount;
-	private EclipsePreferences loadLevel;
+	private IEclipsePreferences loadLevel;
 
 	public TestScope() {
 		this(null, null);
@@ -54,9 +54,9 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 			// Make it relative to this node rather than navigating to it from the root.
 			// Walk backwards up the tree starting at this node.
 			// This is important to avoid a chicken/egg thing on startup.
-			EclipsePreferences node = this;
+			IEclipsePreferences node = this;
 			for (int i = 2; i < segmentCount; i++)
-				node = (EclipsePreferences) node.parent();
+				node = (IEclipsePreferences) node.parent();
 			loadLevel = node;
 		}
 		return loadLevel;
@@ -78,7 +78,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return new TestScope(nodeParent, nodeName);
 	}
 
-	public boolean isDirty() {
+	boolean isDirty() {
 		return dirty;
 	}
 
