@@ -86,7 +86,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	private RefactorActionGroup refactorActions;
 	private SyncViewerShowPreferencesAction showPreferences;
 	private RefreshAction refreshAction;
-	private ComparisonCriteriaActionGroup comparisonCriteria;
+	private ComparisonCriteriaActionGroup comparisonCriteriaGroup;
 	private Action collapseAll;
 	private Action expandAll;
 	private WorkingSetFilterActionGroup workingSetGroup;
@@ -126,7 +126,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		refactorActions = new RefactorActionGroup(view);
 		gotoNext = new NavigateAction(view, this, INavigableControl.NEXT);		
 		gotoPrevious = new NavigateAction(view, this, INavigableControl.PREVIOUS);
-		comparisonCriteria = new ComparisonCriteriaActionGroup(input);
+		comparisonCriteriaGroup = new ComparisonCriteriaActionGroup(input);
 		
 		toggleLayoutTable = new ToggleViewLayoutAction(participant, TeamSubscriberParticipant.TABLE_LAYOUT);
 		toggleLayoutTree = new ToggleViewLayoutAction(participant, TeamSubscriberParticipant.TREE_LAYOUT);
@@ -464,7 +464,6 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 			
 			// toolbar
 			manager.add(refreshAction);
-			manager.add(comparisonCriteria);
 			manager.add(new Separator());		
 			manager.add(gotoNext);
 			manager.add(gotoPrevious);
@@ -484,8 +483,11 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		MenuManager layoutMenu = new MenuManager(Policy.bind("action.layout.label")); //$NON-NLS-1$		
 		layoutMenu.add(toggleLayoutTable);
 		layoutMenu.add(toggleLayoutTree);
+		MenuManager comparisonCriteria = new MenuManager(Policy.bind("action.comparisonCriteria.label")); //$NON-NLS-1$
+		comparisonCriteriaGroup.addActionsToMenuMgr(comparisonCriteria);
 		workingSetGroup.fillActionBars(actionBars);
 		menu.add(new Separator());
+		menu.add(comparisonCriteria);
 		menu.add(layoutMenu);
 		menu.add(new Separator());
 		menu.add(showPreferences);

@@ -137,6 +137,15 @@ public class ComparisonCriteriaActionGroup extends Action implements IMenuCreato
 		// do nothing - this is a menu
 	}
 	
+	public void addActionsToMenuMgr(IMenuManager menu) {
+		ComparisonCriteria currentComparisonCriteria = input.getSubscriber().getCurrentComparisonCriteria();
+		for (int i = 0; i < actions.length; i++) {
+			ComparisonCriteriaAction action = actions[i];			
+			action.setChecked(action.getComparisonCriteria() == currentComparisonCriteria);
+			menu.add(action);
+		}
+	}
+	
 	protected void addActionToMenu(Menu parent, Action action) {
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
