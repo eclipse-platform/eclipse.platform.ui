@@ -23,7 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -146,8 +146,13 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getTitle
 	 */
 	public String getTitle() {
-		String title = window.getShell().getText();
-		return title;
+		Shell shell =  window.getShell();
+		if (shell != null) {
+			return shell.getText();
+		} else {
+			// @issue need to be able to configure title before window's controls created
+			return ""; //$NON-NLS-1$
+		}
 	}
 	
 	/* (non-javadoc)
@@ -157,7 +162,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		if (title == null) {
 			throw new IllegalArgumentException();
 		}
-		window.getShell().setText(title);
+		Shell shell =  window.getShell();
+		if (shell != null) {
+			shell.setText(title);
+		} else {
+			// @issue need to be able to configure title before window's controls created
+		}
 	}
 	
 	/* (non-javadoc)
@@ -172,6 +182,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowTitleBar(boolean show) {
 		showTitleBar = show;
+		// @issue need to be able to reconfigure after window's controls created
 	}
 
 	/* (non-javadoc)
@@ -186,6 +197,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowMenuBar(boolean show) {
 		showMenuBar = show;
+		// @issue need to be able to reconfigure after window's controls created
 	}
 
 	/* (non-javadoc)
@@ -200,6 +212,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowToolBar(boolean show) {
 		showToolBar = show;
+		// @issue need to be able to reconfigure after window's controls created
 	}
 
 	/* (non-javadoc)
@@ -214,6 +227,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowShortcutBar(boolean show) {
 		showShortcutBar = show;
+		// @issue need to be able to reconfigure after window's controls created
 	}
 
 	/* (non-javadoc)
@@ -228,6 +242,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowStatusLine(boolean show) {
 		showStatusLine = show;
+		// @issue need to be able to reconfigure after window's controls created
 	}
 	
 	/* (non-javadoc)
