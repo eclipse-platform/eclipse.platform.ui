@@ -919,6 +919,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private void processImport(Attributes attributes) {
 		String pluginID = attributes.getValue("plugin"); //$NON-NLS-1$
 		String featureID = attributes.getValue("feature"); //$NON-NLS-1$
+		String idMatch = attributes.getValue("id-match"); //$NON-NLS-1$
 
 		if (!(pluginID == null ^ featureID == null)) {
 			internalError(Policy.bind("DefaultFeatureParser.PluginAndFeatureId"));
@@ -962,6 +963,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			imp.setVersion(ver);
 			imp.setFeatureImport(featureID != null);
 			imp.setMatchingRuleName(match);
+			imp.setMatchingIdRuleName(idMatch);
 
 			if (imp.isPatch()) {
 				// patch reference must be perfect.
