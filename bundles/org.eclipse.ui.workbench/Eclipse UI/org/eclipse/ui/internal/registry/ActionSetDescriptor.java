@@ -20,7 +20,6 @@ public class ActionSetDescriptor extends WorkbenchAdapter
 	private String category;
 	private boolean visible;
 	private String description;
-	private String className;
 	private IConfigurationElement configElement;
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_LABEL="label";//$NON-NLS-1$
