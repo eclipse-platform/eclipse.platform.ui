@@ -31,7 +31,7 @@ public class BasicTest extends JUnitTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BasicTest.class);
 		return new CompatibleTestSetup(suite);
-		//return new CompatibleTestSetup(new BasicTest("testBranchingWithLocalChanges"));
+		//return new CompatibleTestSetup(new BasicTest("testReadOnly"));
 	}
 	public void setUp() throws Exception {
 		env1.setUp();
@@ -359,13 +359,18 @@ public class BasicTest extends JUnitTestCase {
 		env1.setIgnoreExceptions(false);
 	}
 
-	public void testReadOnly() throws Exception {			
+	public void testReadOnly() throws Exception {
+		
+		// Checkout a read-only copy
 		env1.execute("co",new String[]{"-r"},EMPTY_ARGS,new String[]{"proj2"},"");
-		env1.execute("update",new String[0],EMPTY_ARGS,new String[]{"proj2"},"");
-		env1.deleteFile("");
-		env1.writeToFile("tmp.txt",new String[0]);
-		env1.deleteFile("tmp.txt");	
-		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"},"");
+		// Checkout and modify a writable copy
+		env2.execute("co",new String[]{},EMPTY_ARGS,new String[]{"proj2"},"");
+		env2.appendToFile("proj2/f1/c.txt",new String[] {"AppendIt2" });
+		// Update the read only copy
+		env1.execute("update",new String[] {"-r"},EMPTY_ARGS,new String[]{"proj2"},"");
+		
+		// Update the read-only copy to writable
+		env1.execute("update",new String[] {},EMPTY_ARGS,new String[]{"proj2"},"");
 	}
 	
 	public void testQuestionables() throws Exception {			

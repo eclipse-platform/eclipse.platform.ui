@@ -22,14 +22,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -58,7 +64,7 @@ public class CVSProviderTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testMakeBranch"));
+		//return new CVSTestSetup(new CVSProviderTest("testReadOnly"));
 	}
 	
 	public void testAdd() throws TeamException, CoreException {
@@ -91,8 +97,20 @@ public class CVSProviderTest extends EclipseTest {
 		*/
 	}
 	
-	public void testDelete() throws TeamException, CoreException {
-		// Not supported yet
+	public void testDeleteHandling() throws TeamException, CoreException {
+		
+		IProject project = createProject("testDeleteHandling", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		
+		// Delete a file and ensure that it is an outgoing deletion
+		project.getFile("deleted.txt").delete(false, false, null);
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(project.getFile("deleted.txt"));
+		assertTrue("File is not outgoing deletion", file.getSyncInfo().isDeleted());
+		
+		// Delete a folder and ensure that the file is managed but doesn't exist
+		// (Special behavior is provider by the CVS move/delete hook but this is not part of CVS core)
+		project.getFolder("folder1").delete(false, false, null);
+		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
+		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
 	}
 	
 	public void testCheckin() throws TeamException, CoreException, IOException {
@@ -111,8 +129,23 @@ public class CVSProviderTest extends EclipseTest {
 		assertLocalStateEqualsRemote(project);
 	}
 	
-	public void testMoved() throws TeamException, CoreException {
-		// Not supported yet
+	public void testMoveHandling() throws TeamException, CoreException {
+		IProject project = createProject("testMoveHandling", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		
+		// Move a file and ensure that it is an outgoing deletion at the source and unmanaged at the destination
+		project.getFile("deleted.txt").move(new Path("moved.txt"), false, false, null);
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(project.getFile("deleted.txt"));
+		assertTrue("Source is not outgoing deletion", file.getSyncInfo().isDeleted());
+		file = CVSWorkspaceRoot.getCVSFileFor(project.getFile("moved.txt"));
+		assertTrue("Destination not in proper state", ! file.isManaged());
+		
+		// Move a folder and ensure the source is deleted
+		project.getFolder("folder1").move(new Path("moved"), false, false, null);
+		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
+		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
+		folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("moved"));
+		assertTrue("Deleted folder should not be managed", ! folder.isManaged());
+		assertTrue("Deleted folder should not be a CVS folder", ! folder.isCVSFolder());
 	}
 	
 	public void testUpdate() throws TeamException, CoreException, IOException {
@@ -235,6 +268,11 @@ public class CVSProviderTest extends EclipseTest {
 		// get the remote conetns
 		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		assertEquals(project, copy);
+	}
+	
+	public void testReadOnly() throws TeamException, CoreException, IOException {
+		IProject project = createProject("testReadOnly", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		// Need to check the project out as read-only
 	}
 	
 	public void testCleanLineDelimiters() throws TeamException, CoreException, IOException {

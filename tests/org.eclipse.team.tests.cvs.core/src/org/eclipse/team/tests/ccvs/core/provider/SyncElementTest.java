@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
@@ -802,5 +803,31 @@ public class SyncElementTest extends EclipseTest {
 		assertTrue(project.exists());
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("sync should be in sync", tree, resourceNames, inSync);
-	}	
+	}
+	
+	public void testFolderDeletion() throws TeamException, CoreException {
+		
+		IProject project = createProject("testFolderDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		
+		// Delete a folder and ensure that the file is managed but doesn't exist
+		// (Special behavior is provider by the CVS move/delete hook but this is not part of CVS core)
+		project.getFolder("folder1").delete(false, false, null);
+		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
+		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
+		
+		// The folder should show up as an incomming addition
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertSyncEquals("testFolderDeletion sync check", tree,
+						 new String[] { "folder1", "folder1/a.txt"},
+						 new int[] { IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
+						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION});
+		
+		// Update and ensure everything is back
+		updateProject(project, null, false);		 			  					 			  
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertSyncEquals("testFolderDeletion sync check", tree,
+						 new String[] { "folder1", "folder1/a.txt"},
+						 new int[] { IRemoteSyncElement.IN_SYNC,
+						 			  IRemoteSyncElement.IN_SYNC});
+	}
 }
