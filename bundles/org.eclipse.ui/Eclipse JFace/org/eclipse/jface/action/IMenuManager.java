@@ -13,7 +13,11 @@ import org.eclipse.swt.widgets.MenuItem;
  * An <code>IMenuManager</code> is also an <code>IContributionItem</code>,
  * allowing sub-menus to be nested in parent menus.
  * <p>
- * This package also provides a concrete menu manager implementation,
+ * This interface is internal to the framework; it should not be implemented outside
+ * the framework.
+ * </p>
+ * <p>
+ * This package provides a concrete menu manager implementation,
  * {@link MenuManager <code>MenuManager</code>}.
  * </p>
  */
