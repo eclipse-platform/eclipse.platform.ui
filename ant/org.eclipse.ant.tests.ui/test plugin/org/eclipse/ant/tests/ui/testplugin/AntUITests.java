@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -21,12 +21,13 @@ import org.eclipse.ant.tests.ui.BuildTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
 import org.eclipse.ant.tests.ui.editor.TaskDescriptionProviderTest;
+import org.eclipse.ant.tests.ui.editor.formatter.FormattingPreferencesTest;
+import org.eclipse.ant.tests.ui.editor.formatter.NonParsingXMLFormatterTest;
 import org.eclipse.ant.tests.ui.externaltools.MigrationTests;
 import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
 
 /**
  * Test suite for the Ant UI
- * 
  */
 public class AntUITests extends TestSuite {
 
@@ -41,6 +42,8 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
         suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
         suite.addTest(new TestSuite(MigrationTests.class));
+        suite.addTest(new TestSuite(FormattingPreferencesTest.class));
+        suite.addTest(new TestSuite(NonParsingXMLFormatterTest.class));
         return suite;
     }
 }
