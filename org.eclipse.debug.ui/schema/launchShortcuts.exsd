@@ -10,6 +10,8 @@
 appears in the run and/or debug cascade menus to launch the workbench selection or active editor.
       </documentation>
    </annotation>
+   
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
 
    <element name="extension">
       <complexType>
