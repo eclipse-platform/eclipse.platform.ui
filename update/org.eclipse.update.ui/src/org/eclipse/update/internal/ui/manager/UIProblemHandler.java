@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.manager;
 
 import org.eclipse.update.core.IProblemHandler;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
@@ -17,4 +18,12 @@ public class UIProblemHandler implements IProblemHandler {
 		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
 		return MessageDialog.openQuestion(UpdateUIPlugin.getActiveWorkbenchShell(), title, problemText);
 	}
+	/*
+	 * @see IProblemHandler#reportProblem(String, MultiStatus)
+	 */
+	public boolean reportProblem(String problemText, MultiStatus status) {
+		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
+		return MessageDialog.openQuestion(UpdateUIPlugin.getActiveWorkbenchShell(), title, problemText);
+	}
+
 }

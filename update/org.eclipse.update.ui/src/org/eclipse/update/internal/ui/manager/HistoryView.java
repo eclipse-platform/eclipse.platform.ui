@@ -281,7 +281,7 @@ protected void makeActions() {
 			if (target == null) return;
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
-				localSite.preserve(target);
+				localSite.addToPreservedConfigurations(target);
 				localSite.save();
 				viewer.refresh(savedFolder);
 			}

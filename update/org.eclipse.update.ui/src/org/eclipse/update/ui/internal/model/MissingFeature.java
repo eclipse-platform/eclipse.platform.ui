@@ -228,5 +228,11 @@ public class MissingFeature implements IFeature {
 		return null;
 	}
 
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry)
+	 */
+	public void remove(IPluginEntry entry) throws CoreException {
+	}
+
 }
 
