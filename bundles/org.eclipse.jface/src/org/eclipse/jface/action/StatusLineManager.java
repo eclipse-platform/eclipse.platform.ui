@@ -11,6 +11,7 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -57,6 +58,20 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
 public StatusLineManager() {
     // do nothing
 }
+
+/**
+ * Creates and returns this manager's status line control. 
+ * Does not create a new control if one already exists.
+ *
+ * @param parent the parent control
+ * @param style the style for the control
+ * @return the status line control
+ * @since 3.0 before 3.0, the return type was the package-private class <code>StatusLine</code>
+ */
+public Control createControl(Composite parent) {
+    return createControl(parent, SWT.NONE);
+}
+
 /**
  * Creates and returns this manager's status line control. 
  * Does not create a new control if one already exists.
