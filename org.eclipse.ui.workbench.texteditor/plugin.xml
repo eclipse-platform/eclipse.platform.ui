@@ -431,6 +431,18 @@
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        keySequence="Ctrl+Shift+E">
 	  </keyBinding>
+      <keyBinding
+            platform="gtk"
+            commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            keySequence="">
+      </keyBinding>
+      <keyBinding
+            platform="gtk"
+	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            keySequence="Esc Ctrl+E">
+      </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.findNext"
 	        contextId="org.eclipse.ui.textEditorScope"
