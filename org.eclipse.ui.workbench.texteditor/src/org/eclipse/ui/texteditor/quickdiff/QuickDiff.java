@@ -148,7 +148,7 @@ public class QuickDiff {
 		IPluginRegistry registry= Platform.getPluginRegistry();
 		List list= new ArrayList();
 
-		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.getPluginId(), REFERENCE_PROVIDER_EXTENSION_POINT);
+		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
 			ReferenceProviderDescriptor desc= new ReferenceProviderDescriptor(elements[i]);
 			if (fDefaultDescriptor == null && desc.getDefault())

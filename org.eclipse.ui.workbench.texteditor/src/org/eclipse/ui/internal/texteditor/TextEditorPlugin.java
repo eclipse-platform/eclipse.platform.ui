@@ -134,6 +134,12 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 			fLastEditPositionDependentActions.remove(action);
 	}
 	
+	/**
+	 * Returns the shared text colors of this plug-in.
+	 *
+	 * @since 3.0 
+	 * @return the shared text colors
+	 */
 	public ISharedTextColors getSharedTextColors() {
 		if (fSharedTextColors == null)
 			fSharedTextColors= new SharedTextColors();
@@ -150,8 +156,4 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 		}
 		super.shutdown();
 	}
-	
-	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
-	}	
 }
