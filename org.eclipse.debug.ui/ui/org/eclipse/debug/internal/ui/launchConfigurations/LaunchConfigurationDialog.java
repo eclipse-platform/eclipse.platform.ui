@@ -960,7 +960,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridLayout pmLayout = new GridLayout();
 		pmLayout.numColumns = 3;
 		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
-		Button cancelButton = createButton(getProgressMonitorPart(), ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true);
+		Button cancelButton = createButton(getProgressMonitorPart(), ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
 		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
