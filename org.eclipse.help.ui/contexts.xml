@@ -22,6 +22,7 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 <!-- Search Menu: Help -->   
    <context  id="helpSearchMenu" >
       <description>This action will open the Search dialog that allows documentation searching.</description>
+	  <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
    </context>
 
    <context  id="prefPageBrowsers" >
