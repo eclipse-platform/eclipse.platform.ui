@@ -34,7 +34,7 @@ public abstract class LaunchVariable implements ILaunchVariable {
 	/**
 	 * Variable description or <code>null</code> if none
 	 */
-	private String fDescription;
+	protected String fDescription;
 			
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

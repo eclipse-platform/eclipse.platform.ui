@@ -58,8 +58,13 @@ public interface ISimpleLaunchVariable extends ILaunchVariable {
 	 */
 	public String getValue();
 	/**
-	 * Sets the text value of this variable
+	 * Sets the text value of this variable.
 	 * @param value the value to assign to this variable
 	 */
 	public void setValue(String value);
+	/**
+	 * Sets the description of this variable.
+	 * @param description the description to assign to this variable
+	 */
+	public void setDescription(String description);
 }

@@ -94,9 +94,23 @@ public class SimpleLaunchVariable extends LaunchVariable implements ISimpleLaunc
 	 */
 	public void setValue(String value) {
 		fValue= value;
+		fireSimpleVariableChanged();
+	}
+
+	/**
+	 * @see ISimpleLaunchVariable#setDescription(String)
+	 */
+	public void setDescription(String description) {
+		fDescription= description;
+		fireSimpleVariableChanged();
+	}
+	
+	/**
+	 * Fires notification that this variable has changed.
+	 */
+	private void fireSimpleVariableChanged() {
 		LaunchVariableManager manager = (LaunchVariableManager)DebugPlugin.getDefault().getLaunchVariableManager();
 		manager.simpleLaunchVariableChanged(this);
-		
 	}
 
 }
