@@ -72,7 +72,7 @@ public String getAttribute(String attributeName, String defaultValue);
  */
 public boolean getAttribute(String attributeName, boolean defaultValue);
 /**
- * Returns a Map with all the attributes for the marker.  The result is an an Map
+ * Returns a Map with all the attributes for the marker.  The result is a Map
  * whose keys are attributes names and whose values are attribute values.
  * Each value an instance of one of the following classes: <code>String</code>, 
  * <code>Integer</code>, or <code>Boolean</code>. If the marker has no
