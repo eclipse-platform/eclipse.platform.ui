@@ -230,8 +230,9 @@ class IndexingOperation {
 	 */
 	private void add(ITopic topic, Set hrefs) {
 		String href = topic.getHref();
-		if (href != null && !href.equals("") && !href.startsWith("http://")) //$NON-NLS-1$ //$NON-NLS-2$
-			hrefs.add(href);
+		if (href != null
+                && !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            hrefs.add(href);
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++)
 			add(subtopics[i], hrefs);

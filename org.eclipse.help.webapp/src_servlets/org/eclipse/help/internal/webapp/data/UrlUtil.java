@@ -112,7 +112,7 @@ public class UrlUtil {
 	public static String getHelpURL(String url) {
 		if (url == null || url.length() == 0)
 			url = "about:blank"; //$NON-NLS-1$
-		else if (url.startsWith("http:/")); //$NON-NLS-1$
+		else if (url.startsWith("http:/") || url.startsWith("https:/")); //$NON-NLS-1$ //$NON-NLS-2$
 		else if (url.startsWith("file:/") || url.startsWith("jar:file:/")) //$NON-NLS-1$ //$NON-NLS-2$
 			url = "../topic/" + url; //$NON-NLS-1$
 		else

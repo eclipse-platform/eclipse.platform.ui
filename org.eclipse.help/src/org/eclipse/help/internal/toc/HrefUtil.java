@@ -46,6 +46,7 @@ public class HrefUtil {
 			// already normalized
 			return href;
 		if (href.startsWith("http:") //$NON-NLS-1$
+				|| href.startsWith("https:") //$NON-NLS-1$
 				|| href.startsWith("file:") //$NON-NLS-1$
 				|| href.startsWith("jar:")) //$NON-NLS-1$
 			// external doc
