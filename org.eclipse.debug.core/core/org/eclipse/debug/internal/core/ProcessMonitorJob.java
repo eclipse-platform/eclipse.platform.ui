@@ -15,9 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
- 
 /**
- * Monitors a system process, wiating for it to terminate, and
+ * Monitors a system process, waiting for it to terminate, and
  * then notifies the associated runtime process.
  */
 public class ProcessMonitorJob extends Job {
