@@ -9,12 +9,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 /**
  * This class needs to be used with PR_1G1N9GZ_2Test.
  */
-public class PR_1G1N9GZ_1Test extends EclipseWorkspaceTest {
+public class PR_1G1N9GZ_1Test extends WorkspaceSessionTest {
 public PR_1G1N9GZ_1Test() {
 }
 public PR_1G1N9GZ_1Test(String name) {

@@ -5,9 +5,9 @@ package org.eclipse.core.tests.resources.usecase;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public abstract class SnapshotTest extends EclipseWorkspaceTest {
+public abstract class SnapshotTest extends WorkspaceSessionTest {
 
 	/** project names */
 	static final String PROJECT_1 = "MyProject";

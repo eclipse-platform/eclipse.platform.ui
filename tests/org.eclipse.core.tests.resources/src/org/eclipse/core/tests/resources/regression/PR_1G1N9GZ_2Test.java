@@ -9,11 +9,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  *
  */
-public class PR_1G1N9GZ_2Test extends EclipseWorkspaceTest {
+public class PR_1G1N9GZ_2Test extends WorkspaceSessionTest {
 public PR_1G1N9GZ_2Test() {
 }
 public PR_1G1N9GZ_2Test(String name) {
@@ -34,7 +34,7 @@ public void testSaveWorkspace() {
 	}
 }
 public void cleanUp() throws CoreException {
-	IProject[] projects = getWorkspace().getRoot().getProjects();
-	getWorkspace().delete(projects, true, null);
+	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+	getWorkspace().save(true, null);
 }
 }

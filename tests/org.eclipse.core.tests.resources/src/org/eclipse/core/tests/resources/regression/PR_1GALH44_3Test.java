@@ -9,14 +9,14 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  * 1GALH44: ITPCORE:WINNT - SEVERE: Walkback saving workspace trees
  * 
  * This class needs to be used with PR_1GALH44_1Test.
  * This class needs to be used with PR_1GALH44_2Test.
  */
-public class PR_1GALH44_3Test extends EclipseWorkspaceTest {
+public class PR_1GALH44_3Test extends WorkspaceSessionTest {
 public PR_1GALH44_3Test() {
 }
 public PR_1GALH44_3Test(String name) {
@@ -37,7 +37,7 @@ public void testCrashedEnvironment() {
 	}
 }
 public void cleanUp() throws CoreException {
-	IProject[] projects = getWorkspace().getRoot().getProjects();
-	getWorkspace().delete(projects, true, null);
+	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+	getWorkspace().save(true, null);
 }
 }

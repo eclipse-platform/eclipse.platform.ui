@@ -10,13 +10,13 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  * 1GALH44: ITPCORE:WINNT - SEVERE: Walkback saving workspace trees
  * 
  * This class needs to be used with PR_1GALH44_1Test.
  */
-public class PR_1GALH44_2Test extends EclipseWorkspaceTest {
+public class PR_1GALH44_2Test extends WorkspaceSessionTest {
 public PR_1GALH44_2Test() {
 }
 public PR_1GALH44_2Test(String name) {
