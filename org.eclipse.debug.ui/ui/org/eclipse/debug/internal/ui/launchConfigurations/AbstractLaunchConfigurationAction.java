@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
@@ -84,7 +85,15 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 				return;
 			}
 		}
-		performAction();
+		Runnable r = new Runnable() {
+			/**
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				performAction();
+			}
+		};
+		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 	
 	/**

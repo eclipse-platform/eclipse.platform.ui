@@ -26,11 +26,25 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 */
 	public static final String ID_DELETE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DELETE_ACTION";
 	
+	class Confirmation implements IConfirmationRequestor {
+		/**
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractLaunchConfigurationAction.IConfirmationRequestor#getConfirmation()
+		 */
+		public boolean getConfirmation() {
+			IStructuredSelection selection = getStructuredSelection();
+			// Make the user confirm the deletion
+			String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configurations__1") : LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configuration__2"); //$NON-NLS-1$ //$NON-NLS-2$
+			return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Confirm_Launch_Configuration_Deletion_3"), dialogMessage); //$NON-NLS-1$
+		}
+
+	}
+	
 	/**
 	 * Constructs an action to delete launch configuration(s) 
 	 */
 	public DeleteLaunchConfigurationAction(Viewer viewer) {
 		super("Dele&te", viewer);
+		setConfirmationRequestor(new Confirmation());
 	}
 
 	/**
@@ -38,13 +52,6 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 */
 	protected void performAction() {
 		IStructuredSelection selection = getStructuredSelection();
-
-		// Make the user confirm the deletion
-		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configurations__1") : LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configuration__2"); //$NON-NLS-1$ //$NON-NLS-2$
-		boolean ok = MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Confirm_Launch_Configuration_Deletion_3"), dialogMessage); //$NON-NLS-1$
-		if (!ok) {
-			return;
-		}
 
 		getViewer().getControl().setRedraw(false);
 		Iterator iterator = selection.iterator();
