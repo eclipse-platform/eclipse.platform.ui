@@ -144,14 +144,6 @@ protected void configureShell(Shell shell) {
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
-protected Control createContents(Composite parent) {
-	Control contents = super.createContents(parent);
-	projectNameField.setFocus();
-	return contents;
-}
-/* (non-Javadoc)
- * Method declared on Dialog.
- */
 protected Control createDialogArea(Composite parent) {
 	// page group
 	Composite composite = (Composite) super.createDialogArea(parent);

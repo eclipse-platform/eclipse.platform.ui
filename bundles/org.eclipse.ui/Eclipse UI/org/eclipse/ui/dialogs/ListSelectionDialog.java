@@ -138,15 +138,6 @@ protected void configureShell(Shell shell) {
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
-protected Control createContents(Composite parent) {
-	Control result = super.createContents(parent);
-	listViewer.getControl().setFocus();
-	return result;
-}
-
-/* (non-Javadoc)
- * Method declared on Dialog.
- */
 protected Control createDialogArea(Composite parent) {
 	// page group
 	Composite composite = (Composite)super.createDialogArea(parent);
@@ -169,6 +160,7 @@ protected Control createDialogArea(Composite parent) {
 	// initialize page
 	if (getInitialSelections() != null && !getInitialSelections().isEmpty())
 		checkInitialSelections();
+
 	
 	return composite;
 }
