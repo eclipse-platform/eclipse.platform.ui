@@ -11,6 +11,7 @@ package org.eclipse.core.internal.refresh;
 
 import java.util.*;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -31,7 +32,7 @@ public class RefreshJob extends WorkspaceJob {
 	private final List fRequests;
 
 	public RefreshJob() {
-		super(AutorefreshMessages.getString("RefreshJob.refresh_manager_job")); //$NON-NLS-1$
+		super(Policy.bind("refresh.jobName")); //$NON-NLS-1$
 		setPriority(Job.LONG);
 		setSystem(true);
 		setRule(ResourcesPlugin.getWorkspace().getRoot());
@@ -75,13 +76,13 @@ public class RefreshJob extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
-		String msg = AutorefreshMessages.getString("RefreshJob.problems_occurred_refreshing"); //$NON-NLS-1$
+		String msg = Policy.bind("refresh.refreshErr"); //$NON-NLS-1$
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 		try {
 			if (RefreshManager.DEBUG)
 				System.out.println(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
 			IResource[] toRefresh = getRequests();
-			monitor.beginTask(AutorefreshMessages.getString("RefreshJob.refresh_manager_task"), toRefresh.length); //$NON-NLS-1$					
+			monitor.beginTask(Policy.bind("refresh.task"), toRefresh.length); //$NON-NLS-1$					
 			for (int i = 0; i < toRefresh.length; i++) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();

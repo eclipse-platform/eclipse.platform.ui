@@ -10,6 +10,7 @@
 package org.eclipse.core.internal.refresh;
 import java.util.ArrayList;
 
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
@@ -30,7 +31,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * Creates a new polling monitor.
 	 */
 	public PollingMonitor(RefreshManager manager) {
-		super(AutorefreshMessages.getString("PollingMonitor.polling_monitor_job")); //$NON-NLS-1$
+		super(Policy.bind("refresh.pollJob")); //$NON-NLS-1$
 		this.manager = manager;
 		setPriority(Job.LONG);
 		setSystem(true);
@@ -51,7 +52,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		try {
 			if (RefreshManager.DEBUG)
 				System.out.println(RefreshManager.DEBUG_PREFIX+"started polling"); //$NON-NLS-1$
-			monitor.beginTask(AutorefreshMessages.getString("PollingMonitor.polling_monitor_task"), resourceRoots.size()); //$NON-NLS-1$
+			monitor.beginTask("", resourceRoots.size()); //$NON-NLS-1$
 			IResource[] roots = getRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (monitor.isCanceled())

@@ -9,7 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.refresh;
 
-import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -194,7 +193,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				resources.add(resource);
 		}
 		if (RefreshManager.DEBUG)
-			System.out.println(MessageFormat.format(AutorefreshMessages.getString("MonitorManager.added_monitor"), new Object[]{monitor, resource})); //$NON-NLS-1$
+			System.out.println(RefreshManager.DEBUG_PREFIX + " added monitor (" + monitor + ") on resource: " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	private void removeMonitor(IRefreshMonitor monitor, IResource resource) {
 		// synchronized: protect the collection during remove
