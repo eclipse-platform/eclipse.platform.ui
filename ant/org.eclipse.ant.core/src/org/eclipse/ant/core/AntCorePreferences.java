@@ -360,7 +360,7 @@ public class AntCorePreferences {
 	 * Convert a list of tokens into an array using "," as the tokenizer.
 	 */
 	protected String[] getArrayFromString(String list) {
-		String separator= ",";
+		String separator= ","; //$NON-NLS-1$
 		if (list == null || list.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
 		}
