@@ -147,24 +147,25 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public ILibrary[] getRuntimeLibraries() {
-		ArrayList allLibraries = new ArrayList();
-		ArrayList allBundes = new ArrayList();
-		allBundes.add(bundleOsgi);
+		Bundle[] allBundles;
 		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundleOsgi);
-		if (fragments != null)
-			allBundes.addAll(Arrays.asList(fragments));
-
-		for (Iterator iter = allBundes.iterator(); iter.hasNext();) {
-			Bundle element = (Bundle) iter.next();
+		if (fragments != null) {
+			allBundles = new Bundle[fragments.length + 1];
+			allBundles[0] = bundleOsgi;
+			System.arraycopy(fragments, 0, allBundles, 1, fragments.length);
+		} else
+			allBundles = new Bundle[] {bundleOsgi};
+		ArrayList allLibraries = new ArrayList();
+		for (int i = 0; i < allBundles.length; i++)
 			try {
-				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH));
-				for (int i = 0; i < classpathElements.length; i++) {
-					allLibraries.add(new Library(classpathElements[i].getValue()));
-				}
+				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) allBundles[i].getHeaders().get(Constants.BUNDLE_CLASSPATH));
+				if (classpathElements == null)
+					continue;
+				for (int j = 0; j < classpathElements.length; j++)
+					allLibraries.add(new Library(classpathElements[j].getValue()));
 			} catch (BundleException e) {
-				//Ignore because by the time we get there the errors will have already been logged.
+				//Ignore because by the time we get here the errors will have already been logged.
 			}
-		}
 		return (ILibrary[]) allLibraries.toArray(new ILibrary[allLibraries.size()]);
 	}
 
@@ -207,9 +208,8 @@ public class PluginDescriptor implements IPluginDescriptor {
 		BundleSpecification[] specs = description.getRequiredBundles();
 
 		IPluginPrerequisite[] resolvedPrerequisites = new IPluginPrerequisite[specs.length];
-		for (int j = 0; j < specs.length; j++) {
+		for (int j = 0; j < specs.length; j++)
 			resolvedPrerequisites[j] = new PluginPrerequisite(specs[j]);
-		}
 		return resolvedPrerequisites;
 	}
 
