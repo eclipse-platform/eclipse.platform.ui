@@ -401,8 +401,7 @@ public class TaskList extends ViewPart {
 			}
 		}
 
-		String platform = SWT.getPlatform();
-		boolean text = "gtk".equals(platform) || "carbon".equals(platform); //$NON-NLS-1$
+		boolean text = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
