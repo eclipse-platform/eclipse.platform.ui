@@ -78,7 +78,7 @@ public class FormToolkit {
 						textBorder = true;
 				}
 				if (!inactiveBorder
-						&& (c instanceof Text || c instanceof Canvas
+						&& (c instanceof Text /*|| c instanceof Canvas */
 								|| c instanceof CCombo || textBorder)) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;

@@ -142,6 +142,8 @@ public class FormView extends ViewPart {
 		label = toolkit.createLabel(form.getBody(), "This text goes into column 3 and consumes only one cell too", SWT.WRAP);
 		label.setLayoutData(new TableWrapData(TableWrapData.FILL));
 		form.getBody().setBackground(form.getBody().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));*/
+		
+		toolkit.paintBordersFor(form.getBody());
 	}
 	/**
 	 * Passing the focus request to the form.
