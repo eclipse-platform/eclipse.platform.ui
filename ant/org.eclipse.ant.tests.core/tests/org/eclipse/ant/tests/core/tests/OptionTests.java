@@ -115,7 +115,7 @@ public class OptionTests extends AbstractAntTest {
 				buffer.append(readBuffer, 0, n);
 				n= in.read(readBuffer);
 			}
-			assertTrue("File should have ended with echo3", buffer.toString().endsWith("echo3"));
+			assertTrue("File should have started with Buildfile", buffer.toString().startsWith("Buildfile"));
 		} finally {
 			in.close();
 			stream.close();
