@@ -150,7 +150,7 @@ public class ExtensionsParser extends DefaultHandler {
 			String oldValue = currentConfigElement.getValueAsIs();
 			if (oldValue == null) {
 				if (value.trim().length() != 0)
-					currentConfigElement.setValue(value);
+					currentConfigElement.setValue(translate(value));
 			} else {
 				currentConfigElement.setValue(oldValue + value);
 			}

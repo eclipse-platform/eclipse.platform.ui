@@ -40,7 +40,7 @@ public class RegistryCacheReader {
 	private boolean flushableExtensions = true;
 	protected File cacheFile;
 
-	public static final byte REGISTRY_CACHE_VERSION = 6;
+	public static final byte REGISTRY_CACHE_VERSION = 7;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
