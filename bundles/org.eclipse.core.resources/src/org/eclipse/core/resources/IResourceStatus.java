@@ -149,6 +149,14 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int INVALID_RESOURCE_NAME = 278;		
 
+	/** Status code constant (value 279) indicating that the 
+	 * file in the file system is marked as read-only.
+	 * Severity: error. Category: local file system.
+	 * @since 3.0
+	 */
+	public static final int READ_ONLY = 279;
+	
+	
 	// Workspace constants [300-398]
 	// Information Only [300-332]
 

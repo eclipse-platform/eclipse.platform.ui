@@ -1720,15 +1720,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// if validation is turned off then just return
 		if (!shouldValidate) {
 			String message = Policy.bind("resources.readOnly2"); //$NON-NLS-1$
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, message, null);
+			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.READ_ONLY, message, null);
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isReadOnly()) {
 					IPath filePath = files[i].getFullPath();
 					message = Policy.bind("resources.readOnly", filePath.toString()); //$NON-NLS-1$
-					result.add(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, filePath, message));
+					result.add(new ResourceStatus(IResourceStatus.READ_ONLY, filePath, message));
 				}
 			}
-			return result.isOK() ? Status.OK_STATUS : (IStatus) result;
+			return result.getChildren().length == 0 ? Status.OK_STATUS : (IStatus) result;
 		}
 		// first time through the validator hasn't been initialized so try and create it
 		if (validator == null)
