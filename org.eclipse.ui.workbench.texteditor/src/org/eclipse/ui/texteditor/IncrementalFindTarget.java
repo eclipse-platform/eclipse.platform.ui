@@ -596,7 +596,8 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @see ITextListener#textChanged(TextEvent)
 	 */
 	public void textChanged(TextEvent event) {
-		leave();
+		if (event.getDocumentEvent() != null)
+			leave();
 	}
 
 	/*
