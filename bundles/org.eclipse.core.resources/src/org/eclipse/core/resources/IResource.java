@@ -11,7 +11,6 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.*;
-import java.io.InputStream;
 
 /**
  * The workspace analog of file system files
