@@ -13,10 +13,13 @@ package org.eclipse.ui;
  * <code>null</code>.  It has no methods.  It simply indicates the 
  * desire to receive null selection events through the existing 
  * <code>selectionChanged</code> method.
+ * Either the part or the selection may be <code>null</code>.
  * </p>
  *
  * @see ISelectionListener#selectionChanged
  * @see IActionDelegate#selectionChanged
+ * 
+ * @since 2.0
  */
 public interface INullSelectionListener {
 }

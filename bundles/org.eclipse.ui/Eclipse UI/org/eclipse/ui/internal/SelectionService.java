@@ -4,11 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import java.util.*;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.*;
 
 /**
  * Perspective selection notifier.
@@ -18,38 +17,46 @@ public class SelectionService implements ISelectionService, IPartListener {
 	private IWorkbenchPart activePart;
 	private ISelectionProvider activeProvider;
 	
-	private org.eclipse.jface.viewers.ISelectionChangedListener
-		selListener = new org.eclipse.jface.viewers.ISelectionChangedListener() {
+	/**
+	 * The JFace selection listener to hook on the active part's selection provider.
+	 */
+	private ISelectionChangedListener
+		selListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fireSelection(activePart, event.getSelection());
 			}			
 		};
+
 /**
- * PerspSelectionNotifier constructor comment.
+ * Creates a new SelectionService.
  */
 public SelectionService() {
-	super();
 }
-/*
- * Adds an ISelectionListener to the service.
+
+/* (non-Javadoc)
+ * Method declared on ISelectionService.
  */
 public void addSelectionListener(ISelectionListener l) {
 	listeners.add(l);
 }
-/*
- * Removes an ISelectionListener from the service.
+
+/* (non-Javadoc)
+ * Method declared on ISelectionService.
  */
 public void removeSelectionListener(ISelectionListener l) {
 	listeners.remove(l);
 }
+
 /**
  * Fires a selection event to all listeners.
+ * 
+ * @param sel the selection or <code>null</code> if no active selection
  */
 protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 	Object [] array = listeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final ISelectionListener l = (ISelectionListener)array[nX];
-		if (sel != null || l instanceof INullSelectionListener) {
+		if ((part != null && sel != null) || l instanceof INullSelectionListener) {
 			Platform.run(new SafeRunnableAdapter() {
 				public void run() {
 					l.selectionChanged(part, sel);
@@ -64,6 +71,7 @@ protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 		}
 	}
 }
+
 /**
  * Returns the selection.
  */
@@ -91,10 +99,12 @@ public void partActivated(IWorkbenchPart newPart) {
 	if (activePart != null) {
 		activeProvider = activePart.getSite().getSelectionProvider();
 		if (activeProvider != null) {
+			// Fire an event if there's an active provider
 			activeProvider.addSelectionChangedListener(selListener);
 			fireSelection(newPart, activeProvider.getSelection());
 		}
 	}
+	// No need to fire an event if no active provider, since this was done in reset()
 }
 /**
  * Notifies the listener that a part has been brought to the front.
@@ -115,7 +125,7 @@ public void partClosed(IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been deactivated.
  */
-public void partDeactivated(org.eclipse.ui.IWorkbenchPart part) {
+public void partDeactivated(IWorkbenchPart part) {
 	// Unhook selection from the part.
 	if (part == activePart) {
 		reset();
