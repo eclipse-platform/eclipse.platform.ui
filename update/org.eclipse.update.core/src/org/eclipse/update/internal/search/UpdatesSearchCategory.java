@@ -107,18 +107,9 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		public boolean isUpdatable() {
 			if (parent == null)
 				return true;
-			if (ref instanceof IIncludedFeatureReference) {
-				return ((IIncludedFeatureReference) ref).getMatch()
-					!= IUpdateConstants.RULE_PERFECT;
-			}
 			return false;
 		}
 
-		public int getMatch() {
-			if (ref instanceof IIncludedFeatureReference)
-				return ((IIncludedFeatureReference) ref).getMatch();
-			return IUpdateConstants.RULE_PERFECT;
-		}
 	}
 
 	private static class Hit {
@@ -165,14 +156,11 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	class UpdateQuery implements IUpdateSearchQuery {
 		IFeature candidate;
 		IQueryUpdateSiteAdapter adapter;
-		int match = IImport.RULE_PERFECT;
 
 		public UpdateQuery(
 			IFeature candidate,
-			int match,
 			IURLEntry updateEntry) {
 			this.candidate = candidate;
-			this.match = match;
 			if (updateEntry != null && updateEntry.getURL() != null)
 				adapter =
 					new QueryUpdateSiteAdapter(
@@ -244,22 +232,16 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			for (int i = 0; i < refs.length; i++) {
 				ISiteFeatureReference ref = refs[i];
 				try {
-					if (isNewerVersion(candidate.getVersionedIdentifier(),
-						ref.getVersionedIdentifier(),
-						match)) {
+					// accept the same feature if the installed
+					// feature is broken
+					if ((broken || missingOptionalChildren)
+						&& candidate.getVersionedIdentifier().equals(
+							ref.getVersionedIdentifier()))
 						hits.add(new Hit(candidate, ref));
-					} else {
-						// accept the same feature if the installed
-						// feature is broken
-						if ((broken || missingOptionalChildren)
-							&& candidate.getVersionedIdentifier().equals(
-								ref.getVersionedIdentifier()))
-							hits.add(new Hit(candidate, ref));
-						else {
-							// check for patches
-							if (isPatch(candidate, ref))
-								hits.add(new Hit(candidate, ref, true));
-						}
+					else {
+						// check for patches
+						if (isPatch(candidate, ref))
+							hits.add(new Hit(candidate, ref, true));
 					}
 				} catch (CoreException e) {
 				}
@@ -396,12 +378,11 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		for (int i = 0; i < queries.length; i++) {
 			Candidate candidate = (Candidate) allCandidates.get(i);
 			IFeature feature = candidate.getFeature(null);
-			int match = candidate.getMatch();
 			IURLEntry updateEntry = candidate.getUpdateEntry();
 			if (feature == null) {
 				queries[i] = null;
 			} else {
-				queries[i] = new UpdateQuery(feature, match, updateEntry);
+				queries[i] = new UpdateQuery(feature, updateEntry);
 			}
 		}
 		return queries;
@@ -426,7 +407,11 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	public IFeature [] getFeatures() {
 		return features;
 	}
-	
+	/**
+	 * @param fvi
+	 * @param cvi
+	 * @return fvi < cvi
+	 */
 	private boolean isNewerVersion(
 		VersionedIdentifier fvi,
 		VersionedIdentifier cvi) {
@@ -441,43 +426,6 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		if (mode.equals(UpdateCore.EQUIVALENT_VALUE))
 			return cv.isEquivalentTo(fv);
 		else if (mode.equals(UpdateCore.COMPATIBLE_VALUE))
-			return cv.isCompatibleWith(fv);
-		else
-			return false;
-	}
-
-	private boolean isNewerVersion(
-		VersionedIdentifier fvi,
-		VersionedIdentifier cvi,
-		int match) {
-		if (!fvi.getIdentifier().equals(cvi.getIdentifier()))
-			return false;
-		PluginVersionIdentifier fv = fvi.getVersion();
-		PluginVersionIdentifier cv = cvi.getVersion();
-		String mode = getUpdateVersionsMode();
-		boolean greater = cv.isGreaterThan(fv);
-		if (!greater)
-			return false;
-		int userMatch = IImport.RULE_GREATER_OR_EQUAL;
-		if (mode.equals(UpdateCore.EQUIVALENT_VALUE))
-			userMatch = IImport.RULE_EQUIVALENT;
-		else if (mode.equals(UpdateCore.COMPATIBLE_VALUE))
-			userMatch = IImport.RULE_COMPATIBLE;
-		// By default, use match rule defined in the preferences
-		int resultingMatch = userMatch;
-		//If match has been encoded in the feature reference,
-		// pick the most conservative of the two values.
-		if (match != IImport.RULE_PERFECT) {
-			if (match == IImport.RULE_EQUIVALENT
-				|| userMatch == IImport.RULE_EQUIVALENT)
-				resultingMatch = IImport.RULE_EQUIVALENT;
-			else
-				resultingMatch = IImport.RULE_COMPATIBLE;
-		}
-
-		if (resultingMatch == IImport.RULE_EQUIVALENT)
-			return cv.isEquivalentTo(fv);
-		else if (resultingMatch == IImport.RULE_COMPATIBLE)
 			return cv.isCompatibleWith(fv);
 		else
 			return false;

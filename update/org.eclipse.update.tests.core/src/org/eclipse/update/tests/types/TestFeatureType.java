@@ -81,7 +81,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
 		ISite site = SiteManager.getSite(SOURCE_HTTP_SITE);
-		IFeature feature = site.getFeatureReferences()[0].getFeature();
+		IFeature feature = site.getFeatureReferences()[0].getFeature(null);
 		
 		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
 		
@@ -99,7 +99,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		String featurePath = dataPath+"FeatureTypeExamples/site1/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		
 		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
 
@@ -121,7 +121,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		String featurePath = dataPath+"FeatureTypeExamples/site2/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		
 		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
 		
@@ -140,7 +140,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		try {
-			ref.getFeature();
+			ref.getFeature(null);
 			assertTrue("id found, should not be found",false);
 		} catch (CoreException e){
 			if (e.getMessage().indexOf("org.eclipse.update.core.unknowntype.jar")==-1){

@@ -55,7 +55,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
 		ref.resolve(site.getURL(), null);
-		return ref.getFeature();
+		return ref.getFeature(null);
 	}
 
 	public void testRemoveFeature() throws Exception {
@@ -67,9 +67,9 @@ public class TestRemove extends UpdateManagerTestCase {
 		IFeatureReference ref = localSite.install(remoteFeature, null, null);
 
 		// then remove it
-		assertNotNull("Feature is null",ref.getFeature());
-		String featureRef = ref.getFeature().getVersionedIdentifier().toString();
-		localSite.remove(ref.getFeature(), null);
+		assertNotNull("Feature is null",ref.getFeature(null));
+		String featureRef = ref.getFeature(null).getVersionedIdentifier().toString();
+		localSite.remove(ref.getFeature(null), null);
 
 		// verify
 		String site = TARGET_FILE_SITE.getFile();

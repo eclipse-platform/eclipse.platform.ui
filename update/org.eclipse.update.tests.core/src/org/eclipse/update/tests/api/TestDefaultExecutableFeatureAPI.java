@@ -41,7 +41,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		remoteFeature = new DefaultFeature(feature,site);
 
 		}

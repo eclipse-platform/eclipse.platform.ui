@@ -34,7 +34,7 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * equivalent to getFeature(false,null);
 	 * 
 	 * @return the referenced feature
-	 * @deprecated use getFeature(IProgressMonitor) instead
+	 * @deprecated use getFeature(IProgressMonitor)
 	 * @since 2.0 
 	 */
 	public IFeature getFeature() throws CoreException;
@@ -48,13 +48,13 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * @param configuredSite the configured site to search for the Feature. If 
 	 * the configured site is <code>null</code> the search will be done in the current configured site.
 	 * @return the referenced feature
-	 * @deprecated use getFeature(boolean,IConfiguredSite,IProgressMonitor)
 	 * instead
 	 * @since 2.0.2
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
+	 * @deprecated use getFeature(IProgressMonitor)
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite) throws CoreException;
 
@@ -75,6 +75,7 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * feedback from pioneering adopters on the understanding that any code that
 	 * uses this API will almost certainly be broken (repeatedly) as the API
 	 * evolves.
+	 * @deprecated use getFeature(IProgressMonitor)
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite, IProgressMonitor monitor) throws CoreException;
 
@@ -100,6 +101,7 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * @see IUpdateConstants#RULE_GREATER_OR_EQUAL
 	 * @return int representation of feature matching rule.
 	 * @since 2.0.2
+	 * @deprecated since 3.0 included feature version is exactly specified
 	 */
 	public int getMatch();
 	

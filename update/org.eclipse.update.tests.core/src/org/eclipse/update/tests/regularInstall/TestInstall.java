@@ -62,7 +62,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
 		ref.setType(getDefaultInstallableFeatureType());
 		ref.resolve(site.getURL(), null);
-		return ref.getFeature();
+		return ref.getFeature(null);
 	}
 
 	public void testFileSite() throws Exception {
@@ -113,7 +113,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("features2.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}
@@ -188,7 +188,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("helpFeature.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}

@@ -297,7 +297,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 			IFeature child = null;
 			for (int i = 0; i < children.length; i++) {
 				try {
-					child = children[i].getFeature(true, configSite, null);
+					child = children[i].getFeature(null);
 				} catch (CoreException e) {
 					//nothing
 				}

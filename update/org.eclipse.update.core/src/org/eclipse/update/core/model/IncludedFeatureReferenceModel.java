@@ -27,7 +27,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 
 	// since 2.0.2
 	private boolean isOptional;
-	private int matchingRule;
 	private int searchLocation;
 	
 	// since 2.1
@@ -44,7 +43,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	public IncludedFeatureReferenceModel() {
 		super();
 		isOptional(false);
-		setMatchingRule(IImport.RULE_PERFECT);
 		setSearchLocation(IUpdateConstants.SEARCH_ROOT);
 	}
 	
@@ -60,7 +58,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 		super((FeatureReferenceModel)includedFeatureRef);
 		isOptional(includedFeatureRef.isOptional());
 		setLabel(includedFeatureRef.getLabel());
-		setMatchingRule(includedFeatureRef.getMatch());
 		setSearchLocation(includedFeatureRef.getSearchLocation());
 		setArch(includedFeatureRef.getOSArch());
 		setWS(includedFeatureRef.getWS());
@@ -74,12 +71,10 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	public IncludedFeatureReferenceModel(IFeatureReference featureReference) {
 		super((FeatureReferenceModel)featureReference);
 		isOptional(false);
-		setMatchingRule(IImport.RULE_PERFECT);
 		setSearchLocation(IUpdateConstants.SEARCH_ROOT);
 		setLabel(getLabel());		
 	}
 
-		
 	/**
 	 * Returns the matching rule for this included feature.
 	 * The rule will determine the ability of the included feature to move version 
@@ -93,9 +88,10 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	 * @see IImport#RULE_GREATER_OR_EQUAL
 	 * @return int representation of feature matching rule.
 	 * @since 2.0.2
+	 * @deprecated since 3.0 included feature version is exactly specified
 	 */
 	public int getMatch(){
-		return matchingRule;
+		return Import.RULE_PERFECT;
 	}
 
 	/**
@@ -140,9 +136,9 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	/**
 	 * Sets the matchingRule.
 	 * @param matchingRule The matchingRule to set
+	 * @deprecated since 3.0 included feature version is exactly specified
 	 */
 	public void setMatchingRule(int matchingRule) {
-		this.matchingRule = matchingRule;
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		ISite remoteSite =
 			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"));
-		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
+		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature, null, null);
 
@@ -76,7 +76,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		// verify child Feature
 		IFeature childFeature =
-			remoteFeature.getIncludedFeatureReferences()[0].getFeature();
+			remoteFeature.getIncludedFeatureReferences()[0].getFeature(null);
 		entries = childFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 		pluginName = entries[0].getVersionedIdentifier().toString();
@@ -127,7 +127,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("rootfeature.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}
@@ -186,7 +186,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		// verify child Feature
 		IFeature childFeature =
-			remoteFeature.getIncludedFeatureReferences()[0].getFeature();
+			remoteFeature.getIncludedFeatureReferences()[0].getFeature(null);
 		entries = childFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 		pluginName = entries[0].getVersionedIdentifier().toString();
@@ -247,7 +247,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("rootfeature.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}

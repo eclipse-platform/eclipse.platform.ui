@@ -562,11 +562,7 @@ public class OperationValidator implements IOperationValidator {
 		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child;
-				if (configuredFeatures == null)
-					child = children[i].getFeature(null);
-				else
-					child = getBestMatch(children[i], configuredFeatures);
+				IFeature child = children[i].getFeature(null);
 				features =
 				computeFeatureSubtree(
 						top,
@@ -583,69 +579,6 @@ public class OperationValidator implements IOperationValidator {
 		// no cycles for this feature during DFS
 		visitedFeatures.remove(feature);
 		return features;
-	}
-	/*
-	 * This method fixes the defect 34241. Included feature reference of the
-	 * feature from the remote server always returns a perfect match. However,
-	 * the actual install behaviour is different if that feature already exists
-	 * (as disabled) while a better one is enabled. This typically happens
-	 * through branch updates or patches.  To avoid this problem, we need to
-	 * check if a better feature that still matches the reference is enabled in
-	 * the current configuration. If it is, it will be used instead of the
-	 * 'perfect' match. If not, we should default to the old behaviour.
-	 */
-
-	private static IFeature getBestMatch(
-		IIncludedFeatureReference ref,
-		ArrayList configuredFeatures)
-		throws CoreException {
-		int match = ref.getMatch();
-		ISite site = ref.getSite();
-		IConfiguredSite csite = site.getCurrentConfiguredSite();
-		// If the feature is from the remote server and
-		// it can handle better features, see if you can
-		// resolve locally.
-		if (csite == null && match != IUpdateConstants.RULE_PERFECT) {
-			// there is a chance that there is a better match
-			// in the platform
-			VersionedIdentifier vid = ref.getVersionedIdentifier();
-			PluginVersionIdentifier version = vid.getVersion();
-
-			for (int i = 0; i < configuredFeatures.size(); i++) {
-				IFeature feature = (IFeature) configuredFeatures.get(i);
-				VersionedIdentifier fvid = feature.getVersionedIdentifier();
-				if (fvid.getIdentifier().equals(vid.getIdentifier())) {
-					// Feature found in local configuration.
-					// Ignore if the same version.
-					// Use it if better
-					PluginVersionIdentifier fversion = fvid.getVersion();
-					if (fversion.isGreaterThan(version)) {
-						boolean matches = false;
-						switch (match) {
-							case IImport.RULE_COMPATIBLE :
-								matches =
-									fvid.getVersion().isCompatibleWith(
-										vid.getVersion());
-								break;
-							case IImport.RULE_EQUIVALENT :
-								matches =
-									fvid.getVersion().isEquivalentTo(
-										vid.getVersion());
-								break;
-							case IImport.RULE_GREATER_OR_EQUAL :
-								matches =
-									fvid.getVersion().isGreaterOrEqualTo(
-										vid.getVersion());
-								break;
-						}
-						if (matches)
-							return feature;
-					}
-				}
-			}
-		}
-		// fallback - just get the feature from the reference.
-		return ref.getFeature(null);
 	}
 
 	private static void checkLicense(IFeature feature, ArrayList status) {
@@ -888,7 +821,7 @@ public class OperationValidator implements IOperationValidator {
 		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child = getBestMatch(children[i], configuredFeatures);
+				IFeature child = children[i].getFeature(null);
 				checkForCycles(child, candidates, configuredFeatures);
 			} catch (CoreException e) {
 				if (!children[i].isOptional())
@@ -1375,28 +1308,7 @@ public class OperationValidator implements IOperationValidator {
 			PluginVersionIdentifier fversion = fvid.getVersion();
 			PluginVersionIdentifier cversion = cvid.getVersion();
 
-			int match = child.getMatch();
-			boolean matched = false;
-
-			switch (match) {
-				case IUpdateConstants.RULE_EQUIVALENT :
-					if (fversion.isEquivalentTo(cversion))
-						matched = true;
-					break;
-				case IUpdateConstants.RULE_COMPATIBLE :
-					if (fversion.isCompatibleWith(cversion))
-						matched = true;
-					break;
-				case IUpdateConstants.RULE_GREATER_OR_EQUAL :
-					if (fversion.isGreaterOrEqualTo(cversion))
-						matched = true;
-					break;
-				default :
-					if (fversion.equals(cversion))
-						matched = true;
-
-			}
-			if (matched) {
+			if (fversion.equals(cversion)) {
 				// included and matched; return true if optionality is not
 				// important or it is and the inclusion is optional
 				return optionalOnly == false || child.isOptional();

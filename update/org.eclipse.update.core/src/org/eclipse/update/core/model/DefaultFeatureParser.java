@@ -834,11 +834,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 		boolean isOptional = "true".equalsIgnoreCase(optional);
 		includedFeature.isOptional(isOptional);
 
-		// match
-		String ruleName = attributes.getValue("match");
-		int rule = UpdateManagerUtils.getMatchingRule(ruleName);
-		includedFeature.setMatchingRule(rule);
-
 		// search location
 		String locationName = attributes.getValue("search-location");
 		// bug 27030
@@ -866,7 +861,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			debug("End process Includes tag: id:" //$NON-NLS-1$
 			+id + " ver:" + ver); //$NON-NLS-1$
-			debug("name =" + name + " optional=" + optional + " match=" + ruleName + " search-location=" + locationName);
+			debug("name =" + name + " optional=" + optional + " search-location=" + locationName);
 			debug("os=" + os + " ws=" + ws + " arch=" + arch);
 		}
 	}

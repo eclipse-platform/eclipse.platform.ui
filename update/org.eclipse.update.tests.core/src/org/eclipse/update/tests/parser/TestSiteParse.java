@@ -174,7 +174,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of archives", archives.length == 0);
 
 		try {
-			((FeatureReference) featureRef[0]).getFeature();
+			((FeatureReference) featureRef[0]).getFeature(null);
 		} catch (CoreException e) {
 			Throwable e1 = e.getStatus().getException();
 			if (e1.getMessage().indexOf("not-eclipse") == -1) {
@@ -200,7 +200,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of archives", archives.length == 0);
 
 		try {
-			((FeatureReference) featureRef[0]).getFeature();
+			((FeatureReference) featureRef[0]).getFeature(null);
 		} catch (CoreException e) {
 			Throwable e1 = e.getStatus().getException();
 			String msg = e1.getMessage().replace(File.separatorChar, '/');

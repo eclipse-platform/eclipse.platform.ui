@@ -83,10 +83,7 @@ public class ConfiguredFeatureAdapter
 				boolean childConfigured = configured;
 				boolean updated = false;
 				try {
-					feature =
-						fref.getFeature(
-							!configured,
-							getConfiguredSite(),
+					feature = fref.getFeature(
 							new SubProgressMonitor(subMonitor, 1));
 					childConfigured =
 						adapter.getConfiguredSite().isConfigured(feature);

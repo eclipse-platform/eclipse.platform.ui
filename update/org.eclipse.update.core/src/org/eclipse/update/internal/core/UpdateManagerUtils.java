@@ -452,7 +452,7 @@ public class UpdateManagerUtils {
 					children = possibleParentFeature.getIncludedFeatureReferences();
 					for (int j = 0; j < children.length; j++) {
 						try {
-							compareFeature = children[j].getFeature(true,null,null); // compare with the 'real' feature, not the best match
+							compareFeature = children[j].getFeature(null);
 						} catch (CoreException e) {
 							UpdateCore.warn("", e);
 						}

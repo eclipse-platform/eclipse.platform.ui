@@ -38,7 +38,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(remoteSite);
 		ref.setURL(url);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 
 		String prov = feature.getProvider();
 		assertEquals("Object Technology International", prov);

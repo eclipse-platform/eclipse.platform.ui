@@ -53,7 +53,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
-		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
+		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		remove(remoteFeature,instSites[0].getSite());		
 		instSites[0].getSite().install(remoteFeature,null,null);
 		

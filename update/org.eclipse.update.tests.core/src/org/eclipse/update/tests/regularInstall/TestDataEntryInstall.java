@@ -40,7 +40,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		IFeature remoteFeature = null;
 		
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			remoteFeature = featuresRef[i].getFeature(null);
 			localSite.install(remoteFeature, null,null);
 
 			// verify
@@ -75,7 +75,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		IFeature remoteFeature = null;
 		
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			remoteFeature = featuresRef[i].getFeature(null);
 			localSite.install(remoteFeature, null,null);
 
 			// verify

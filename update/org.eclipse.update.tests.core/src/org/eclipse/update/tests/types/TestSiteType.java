@@ -37,7 +37,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 		String featurePath = dataPath + "SiteTypeExamples/site1/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 
 		assertTrue(site.getSiteContentProvider() instanceof SiteURLContentProvider);
 		assertTrue(((Site) site).getType().equals("org.eclipse.update.core.http"));

@@ -787,7 +787,7 @@ public class ConfigurationView
 				IFeature childFeature;
 				try {
 					childFeature =
-						included[i].getFeature(!configured, csite, null);
+						included[i].getFeature(null);
 				} catch (CoreException e) {
 					childFeature = new MissingFeature(included[i]);
 				}

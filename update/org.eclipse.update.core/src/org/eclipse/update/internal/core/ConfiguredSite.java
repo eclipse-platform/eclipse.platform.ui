@@ -365,7 +365,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					// where children are on the local site
 					try {
 						IFeature installedChildren = optionalfeatures[j].getFeature(null);
-						if (installedChildren.equals(optionalFeatureToConfigure.getFeature(true, null, null))) {
+						if (installedChildren.equals(optionalFeatureToConfigure.getFeature(null))) {
 							childrenToInstall.add(optionalFeatureToConfigure);
 							break;
 						}
@@ -436,7 +436,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			IIncludedFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < childrenRef.length; i++) {
 				try {
-					IFeature child = childrenRef[i].getFeature(true, null, null); // disable the exact feature
+					IFeature child = childrenRef[i].getFeature(null); // disable the exact feature
 					unconfigure(child, includePatches, true); // check for parent as we should be the only parent.
 				} catch (CoreException e) {
 					// skip any bad children

@@ -44,8 +44,8 @@ public class TestBackward extends UpdateManagerTestCase {
 		
 		((ConfiguredSite)oldConfigSite).setUpdatable(true);	
 		assertNotNull("Reference is null",featureRef);
-		remove(featureRef.getFeature(),oldConfigSite);	
-		oldConfigSite.install(featureRef.getFeature(),null,null);
+		remove(featureRef.getFeature(null),oldConfigSite);	
+		oldConfigSite.install(featureRef.getFeature(null),null,null);
 		site.save();
 	
 		

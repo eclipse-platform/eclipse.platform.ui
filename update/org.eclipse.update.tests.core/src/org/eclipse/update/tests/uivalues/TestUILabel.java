@@ -42,7 +42,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
-			IFeature feature = remoteFeatures[i].getFeature();
+			IFeature feature = remoteFeatures[i].getFeature(null);
 			System.out.println("feature:"+feature.getVersionedIdentifier()+"->"+feature.getLabel());
 			print(feature.getLicense(),"License");
 			print(feature.getCopyright(),"Copyright");			

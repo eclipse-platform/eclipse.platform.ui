@@ -830,7 +830,6 @@ public class Feature extends FeatureModel implements IFeature {
 								newRef.setLabel(
 									((FeatureReferenceModel) include)
 										.getLabel());
-							newRef.setMatchingRule(include.getMatch());
 							newRef.setSearchLocation(
 								include.getSearchLocation());
 							return newRef;

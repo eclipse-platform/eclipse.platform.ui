@@ -68,7 +68,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	/**
 	 * Returns the feature this reference points to 
 	 * @return the feature on the Site
-	 * @deprecated
+	 * @deprecated use getFeaure(IProgressMonitor)
 	 */
 	public IFeature getFeature() throws CoreException {
 		return getFeature(null);
@@ -181,7 +181,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		// we need the exact match or we may have an infinite loop
 		versionId = new VersionedIdentifier(getURL().toExternalForm(), null);
 		try {
-			versionId = getFeature().getVersionedIdentifier();
+			versionId = getFeature(null).getVersionedIdentifier();
 		} catch (CoreException e) {
 			UpdateCore.warn("", e);
 		}
@@ -195,7 +195,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		if (super.getLabel() != null)
 			return super.getLabel();
 		try {
-			return getFeature().getLabel();
+			return getFeature(null).getLabel();
 		} catch (CoreException e) {
 			return getVersionedIdentifier().toString();
 		}
@@ -211,7 +211,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public String getOS() {
 		if (super.getOS() == null && getURL()!=null)
 			try {
-				return getFeature().getOS();
+				return getFeature(null).getOS();
 			} catch (CoreException e) {
 				return null;
 			}
@@ -228,7 +228,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public String getWS() {
 		if (super.getWS() == null && getURL()!=null)
 			try {
-				return getFeature().getWS();
+				return getFeature(null).getWS();
 			} catch (CoreException e) {
 				return null;
 			}
@@ -245,7 +245,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public String getOSArch() {
 		if (super.getOSArch() == null && getURL()!=null)
 			try {
-				return getFeature().getOSArch();
+				return getFeature(null).getOSArch();
 			} catch (CoreException e) {
 				return null;
 			}
@@ -261,7 +261,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public String getNL() {
 		if (super.getNL() == null && getURL()!=null)
 			try {
-				return getFeature().getNL();
+				return getFeature(null).getNL();
 			} catch (CoreException e) {
 				return null;
 			}
@@ -276,7 +276,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	public boolean isPatch() {
 		if (super.getPatch() == null)
 			try {
-				return getFeature().isPatch();
+				return getFeature(null).isPatch();
 			} catch (CoreException e) {
 				return false;
 			}

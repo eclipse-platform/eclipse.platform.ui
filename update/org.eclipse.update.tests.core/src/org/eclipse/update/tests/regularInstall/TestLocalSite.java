@@ -178,7 +178,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
-		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
 		// we are not checking if this is read only
@@ -217,7 +217,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeatureReference[] refs = configSite2.getConfiguredFeatures();
 		IFeature feature2 = null;
 		for (int i = 0; i < refs.length; i++) {
-			IFeature feature3 = refs[i].getFeature();			
+			IFeature feature3 = refs[i].getFeature(null);			
 			if ("org.eclipse.update.core.tests.feature3_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
 				feature2 = feature3;
 			}		
@@ -261,7 +261,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
-		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
@@ -282,7 +282,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// but force re-read of xml File
 		InternalSiteManager.localSite=null;
 		site = SiteManager.getLocalSite();
-		feature = remoteSite.getFeatureReferences()[0].getFeature();
+		feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
 		// check
@@ -300,7 +300,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		boolean found = false;
 		IFeature feature2 = null;
 		for (int i = 0; i < refs.length; i++) {
-			IFeature feature3 = refs[i].getFeature();			
+			IFeature feature3 = refs[i].getFeature(null);			
 			if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
 				feature2 = feature3;
 				found = true;
@@ -349,7 +349,7 @@ public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
 
 	ILocalSite site = SiteManager.getLocalSite();
 	ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
-	IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+	IFeature feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		
 	// we are not checking if this is read only
 	IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
@@ -371,7 +371,7 @@ public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
 	// but force re-read of xml File
 	InternalSiteManager.localSite=null;
 	site = SiteManager.getLocalSite();
-	feature = remoteSite.getFeatureReferences()[0].getFeature();
+	feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 	int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
 	// check
@@ -389,7 +389,7 @@ public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
 	boolean found = false;
 	IFeature feature2 = null;
 	for (int i = 0; i < refs.length; i++) {
-		IFeature feature3 = refs[i].getFeature();			
+		IFeature feature3 = refs[i].getFeature(null);			
 		if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
 			feature2 = feature3;
 			found = true;
@@ -406,7 +406,7 @@ public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
 	configSite2.setEnabled(true);
 	refs = configSite2.getConfiguredFeatures();	
 	for (int i = 0; i < refs.length; i++) {
-		IFeature feature3 = refs[i].getFeature();			
+		IFeature feature3 = refs[i].getFeature(null);			
 		if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
 			feature2 = feature3;
 			found = true;

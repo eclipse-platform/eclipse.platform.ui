@@ -28,8 +28,6 @@ public class IncludedFeatureReference
 	extends IncludedFeatureReferenceModel
 	implements IIncludedFeatureReference {
 
-	private IFeature bestMatchFeature;
-
 	/**
 	 * Construct a included feature reference
 	 * 
@@ -58,38 +56,6 @@ public class IncludedFeatureReference
 	 */
 	public IncludedFeatureReference(IFeatureReference featureReference) {
 		super(featureReference);
-	}
-
-	/**
-	* Method matches.
-	* @param identifier
-	* @param id
-	* @param options
-	* @return boolean
-	*/
-	private boolean matches(
-		VersionedIdentifier baseIdentifier,
-		VersionedIdentifier id) {
-		if (baseIdentifier == null || id == null)
-			return false;
-		if (!id.getIdentifier().equals(baseIdentifier.getIdentifier()))
-			return false;
-
-		switch (getMatch()) {
-			case IImport.RULE_PERFECT :
-				return id.getVersion().isPerfect(baseIdentifier.getVersion());
-			case IImport.RULE_COMPATIBLE :
-				return id.getVersion().isCompatibleWith(
-					baseIdentifier.getVersion());
-			case IImport.RULE_EQUIVALENT :
-				return id.getVersion().isEquivalentTo(
-					baseIdentifier.getVersion());
-			case IImport.RULE_GREATER_OR_EQUAL :
-				return id.getVersion().isGreaterOrEqualTo(
-					baseIdentifier.getVersion());
-		}
-		UpdateCore.warn("Unknown matching rule:" + getMatch());
-		return false;
 	}
 
 	/*
@@ -131,114 +97,31 @@ public class IncludedFeatureReference
 	/**
 	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite)
-	 * @deprecated
+	 * @deprecated use getFeature(IProgressMonitor)
 	 */
 	public IFeature getFeature(
 		boolean perfectMatch,
 		IConfiguredSite configuredSite)
 		throws CoreException {
-		return getFeature(perfectMatch, configuredSite, null);
+		return getFeature(null);
 	}
 
 	/**
 	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite,IProgressMonitor)
+	 * @deprecated use getFeature(IProgressMonitor)
 	 */
 	public IFeature getFeature(
 		boolean perfectMatch,
 		IConfiguredSite configuredSite,
 		IProgressMonitor monitor)
 		throws CoreException {
-		// if perfect match is asked or if the feature is disabled
-		// we return the exact match 		
-		if (perfectMatch
-			|| getMatch() == IImport.RULE_PERFECT
-			|| isDisabled()) {
-			//
-			if (isUninstalled())
-				throw new CoreException(
-					new Status(
-						IStatus.ERROR,
-						UpdateCore
-							.getPlugin()
-							.getDescriptor()
-							.getUniqueIdentifier(),
-						IStatus.OK,
-						Policy.bind("IncludedFeatureReference.featureUninstalled", getFeatureIdentifier()),
-						null));
-			else
-				return super.getFeature(monitor);
-		} else {
-			if (bestMatchFeature == null) {
-				// find best match
-				if (configuredSite == null)
-					configuredSite = getSite().getCurrentConfiguredSite();
-				IFeatureReference bestMatchReference =
-					getBestMatch(configuredSite);
-				IFeature localBestMatchFeature =
-					getFeature(bestMatchReference, monitor);
-				// during reconciliation, we may not have the currentConfiguredSite yet
-				// do not preserve the best match
-				if (configuredSite == null)
-					return localBestMatchFeature;
-				else
-					bestMatchFeature = localBestMatchFeature;
-			}
-			return bestMatchFeature;
-		}
+			return getFeature(monitor);
 	}
 
-	/*
-	 * Method getBestMatch.
-	 * @param enabledFeatures
-	 * @param identifier
-	 * @param options
-	 * @return Object
-	 */
-	private IIncludedFeatureReference getBestMatch(IConfiguredSite configuredSite)
-		throws CoreException {
-		IncludedFeatureReference newRef = null;
-
-		if (configuredSite == null)
-			return this;
-		IFeatureReference[] enabledFeatures =
-			configuredSite.getConfiguredFeatures();
-
-		// find the best feature based on match from enabled features
-		for (int ref = 0; ref < enabledFeatures.length; ref++) {
-			if (enabledFeatures[ref] != null) {
-				VersionedIdentifier id =
-					enabledFeatures[ref].getVersionedIdentifier();
-				if (matches(getVersionedIdentifier(), id)) {
-					if (newRef == null
-						|| id.getVersion().isGreaterThan(
-							newRef.getVersionedIdentifier().getVersion())) {
-						newRef =
-							new IncludedFeatureReference(enabledFeatures[ref]);
-						newRef.setMatchingRule(getMatch());
-						newRef.isOptional(isOptional());
-						newRef.setLabel(getLabel());
-					}
-				}
-			}
-		}
-
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS) {
-			UpdateCore.warn(
-				"Found best match feature:"
-					+ newRef
-					+ " for feature reference "
-					+ this.getURLString());
-		}
-
-		if (newRef != null)
-			return newRef;
-		else
-			return this;
-	}
 	/**
 	 * @see org.eclipse.update.core.IFeatureReference#getFeature()
-	 * @deprecated
+	 * @deprecated use getFeature(IProgressMonitor)
 	 */
 	public IFeature getFeature() throws CoreException {
 		return getFeature(null);
@@ -248,6 +131,10 @@ public class IncludedFeatureReference
 	 * (IProgressMonitor)
 	 */
 	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
-		return getFeature(false, null, monitor);
+		if (isUninstalled())
+			throw new CoreException(new Status(IStatus.ERROR, UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(), IStatus.OK, Policy.bind("IncludedFeatureReference.featureUninstalled",
+					getFeatureIdentifier()), null));
+		else
+			return super.getFeature(monitor);
 	}
 }

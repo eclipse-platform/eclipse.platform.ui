@@ -47,7 +47,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 		if (featuresRef.length==0) fail ("no feature found");
 	
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			remoteFeature = featuresRef[i].getFeature(null);
 			remove(remoteFeature,localSite);			
 			localSite.install(remoteFeature, null,null);
 			
@@ -103,7 +103,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 	
 		for (int i = 0; i < featuresRef.length; i++) {
 			try {
-				remoteFeature = featuresRef[i].getFeature();
+				remoteFeature = featuresRef[i].getFeature(null);
 			} catch (CoreException e){
 				Throwable e1 = e.getStatus().getException();
 				String msg = e1.getMessage().replace(File.separatorChar,'/');

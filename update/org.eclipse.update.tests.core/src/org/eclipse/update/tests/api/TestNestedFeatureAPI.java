@@ -36,7 +36,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 
@@ -51,7 +51,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 
@@ -63,7 +63,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		IFeature rootFeature = getRootFeature();
 		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
 		IFeature childFeature = getChildFeature();
-		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature());
+		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature(null));
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 
@@ -91,7 +91,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 
@@ -103,7 +103,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		IFeature rootFeature = getRootFeature2();
 		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
 		IFeature childFeature = getChildFeature2();
-		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature());
+		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature(null));
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 
@@ -131,7 +131,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-		IFeature feature = ref.getFeature();
+		IFeature feature = ref.getFeature(null);
 		return feature;
 	}
 

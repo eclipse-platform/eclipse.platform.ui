@@ -42,7 +42,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
 		IFeatureReference featureRef = remoteSite.getFeatureReferences()[0];
 		IFeatureReference featureRef2 = remoteSite.getFeatureReferences()[1];
-		IFeature feature = featureRef.getFeature();
+		IFeature feature = featureRef.getFeature(null);
 		
 		// old config, no features installed
 		IInstallConfiguration old = site.getCurrentConfiguration();
@@ -63,10 +63,10 @@ public class TestRevert extends UpdateManagerTestCase {
 		site.save();
 
 		// unconfigure it
-		configSite.unconfigure(installedFeature.getFeature());
+		configSite.unconfigure(installedFeature.getFeature(null));
 
 		// install another feature
-		IFeature feature2 = featureRef2.getFeature();
+		IFeature feature2 = featureRef2.getFeature(null);
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration();
 		IConfiguredSite anotherConfigSite = newConfig2.getConfiguredSites()[0];
 		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		

@@ -709,8 +709,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			}
 		}
 
-		// find "unique" top level features (latest version)
-		ArrayList topFeatures = computeTopFeatures(allPossibleConfiguredFeatures, configuredSite);
+		// find top level features
+		ArrayList topFeatures = computeTopFeatures(allPossibleConfiguredFeatures);
 
 		// find non efix top level features
 		ArrayList topNonEfixFeatures = getNonEfixFeatures(topFeatures);
@@ -757,67 +757,42 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	}
 
 	/*
-	 * 
+	 *  
 	 */
-	private static ArrayList computeTopFeatures(ArrayList features, IConfiguredSite configuredSite) {
-
+	private static ArrayList computeTopFeatures(ArrayList features) {
+		/* map of Feature by VersionedIdentifier */
+		Map topFeatures = new HashMap(features.size());
 		// start with the features passed in
-		ArrayList result = new ArrayList();
-		result.addAll(features);
-		IFeature[] list = (IFeature[]) result.toArray(new IFeature[0]);
-
+		for (Iterator it = features.iterator(); it.hasNext();) {
+			IFeature f = ((IFeature) it.next());
+			topFeatures.put(f.getVersionedIdentifier(), f);
+		}
 		// remove all features that nest in some other feature
-		for (int i = 0; i < list.length; i++) {
-			IIncludedFeatureReference[] children = null;
+		for (Iterator it = features.iterator(); it.hasNext();) {
 			try {
-				children = list[i].getIncludedFeatureReferences();
+				IIncludedFeatureReference[] children = ((IFeature) it.next()).getIncludedFeatureReferences();
+				for (int j = 0; j < children.length; j++) {
+					try {
+						topFeatures.remove(children[j].getVersionedIdentifier());
+					} catch (CoreException e1) {
+						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+							UpdateCore.warn("", e1);
+					}
+				}
 			} catch (CoreException e) {
 				UpdateCore.warn("", e);
 			}
-
-			if (children != null) {
-				for (int j = 0; j < children.length; j++) {
-					// fix 71730: remove all possible matching children
-					removeMatchingFeatures(children[j], result);
-				}
-			}
 		}
-
+		ArrayList list = new ArrayList();
+		list.addAll(topFeatures.values());
 		// debug
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 			UpdateCore.debug("Computed top-level features");
-			for (int i = 0; i < result.size(); i++) {
-				UpdateCore.debug("   " + ((IFeature) result.get(i)).getVersionedIdentifier().toString());
+			for (int i = 0; i < topFeatures.size(); i++) {
+				UpdateCore.debug("   " + ((IFeature) list.get(i)).getVersionedIdentifier().toString());
 			}
 		}
-
-		// eliminate duplicate versions (keep latest)
-		list = (IFeature[]) result.toArray(new IFeature[0]);
-		for (int i = 0; i < list.length - 1; i++) {
-			IFeature left = list[i];
-			VersionedIdentifier leftVid = left.getVersionedIdentifier();
-			for (int j = i + 1; j < list.length; j++) {
-				IFeature right = list[j];
-				VersionedIdentifier rightVid = right.getVersionedIdentifier();
-				if (leftVid.getIdentifier().equals(rightVid.getIdentifier())) {
-					// duplicate versions ... keep latest
-					IFeature oldest = null;
-					// bug 31940. If right>left remove left ELSE REMOVE RIGHT
-					if (rightVid.getVersion().isGreaterOrEqualTo(leftVid.getVersion()))
-						oldest = left;
-					else
-						oldest = right;
-					result.remove(oldest);
-					// debug
-					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-						UpdateCore.debug("Removing \"duplicate\" " + oldest.getVersionedIdentifier().toString());
-					}
-				}
-			}
-		}
-
-		// return resulting top level features
-		return result;
+		return list;
 	}
 
 	/*
@@ -860,8 +835,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		for (int j = 0; j < children.length; j++) {
 			IFeature child = null;
 			try {
-				// 71730 expand with best match (i.e not perfect match)
-				child = children[j].getFeature(false, configuredSite, null);
+				child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
 					UpdateCore.warn("", e);
@@ -887,67 +861,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return result;
 	}
 
-	/*
-	 * remove all possible matching childrens from the list of possible root
-	 */
-	private static void removeMatchingFeatures(IIncludedFeatureReference featureReference, ArrayList possibleRootFeaturesArray) {
-
-		if (possibleRootFeaturesArray == null || possibleRootFeaturesArray.isEmpty())
-			return;
-
-		IFeature[] possibleRootFeatures = new IFeature[possibleRootFeaturesArray.size()];
-		possibleRootFeaturesArray.toArray(possibleRootFeatures);
-
-		// find the all the possible matching features in the list of possible root features 
-		// remove the exact feature of each found feature reference from the list of possible root
-		//boolean isIncludedFeatureReference;
-		for (int ref = 0; ref < possibleRootFeatures.length; ref++) {
-			try {
-				if (possibleRootFeatures[ref] != null) {
-					VersionedIdentifier possibleRootFeatureRefID = possibleRootFeatures[ref].getVersionedIdentifier();
-					if (matches(featureReference, possibleRootFeatureRefID)) {
-					//	isIncludedFeatureReference = possibleRootFeatures[ref] instanceof IIncludedFeatureReference;
-					//	if (isIncludedFeatureReference) {
-					//		possibleRootFeaturesArray.remove(((IIncludedFeatureReference) possibleRootFeatures[ref]).getFeature(true, null, null));
-					//	} else {
-					//		possibleRootFeaturesArray.remove(possibleRootFeatures[ref].getFeature(null));
-					//	}
-					possibleRootFeaturesArray.remove(possibleRootFeatures[ref]);
-					}
-				}
-			} catch (CoreException e) {
-				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-					UpdateCore.warn("", e);
-			}
-		}
-
-	}
-
-	/*
-	 * returns true if the VersionedIdentifier can be a best match for the
-	 * feature Reference.
-	 */
-	private static boolean matches(IIncludedFeatureReference featureReference, VersionedIdentifier id) throws CoreException {
-		VersionedIdentifier baseIdentifier = featureReference.getVersionedIdentifier();
-		if (baseIdentifier == null || id == null)
-			return false;
-		if (!id.getIdentifier().equals(baseIdentifier.getIdentifier()))
-			return false;
-
-		switch (featureReference.getMatch()) {
-			case IImport.RULE_PERFECT :
-				return id.getVersion().isPerfect(baseIdentifier.getVersion());
-			case IImport.RULE_COMPATIBLE :
-				return id.getVersion().isCompatibleWith(baseIdentifier.getVersion());
-			case IImport.RULE_EQUIVALENT :
-				return id.getVersion().isEquivalentTo(baseIdentifier.getVersion());
-			case IImport.RULE_GREATER_OR_EQUAL :
-				return id.getVersion().isGreaterOrEqualTo(baseIdentifier.getVersion());
-		}
-		UpdateCore.warn("Unknown matching rule:" + featureReference.getMatch());
-		return false;
-	}
-	
 	/*
 	 * get the list of enabled patches
 	 */
@@ -1191,11 +1104,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		for (int j = 0; j < children.length; j++) {
 			IFeature child = null;
-			try { // fix 71730, expand with the best match in the configured site
-				child = children[j].getFeature(false, configuredSite,null);
+			try {
+				child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!children[j].isOptional())
-				UpdateCore.warn("", e);
+					UpdateCore.warn("", e);
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null){
