@@ -35,6 +35,27 @@ public interface IExternalToolConstants {
 	 * (value <code>refreshVariables</code>).
 	 */
 	public static final String EXTENSION_POINT_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$}
+	// ------- Refresh Variables -------
+	/**
+	 * Variable that expands to the workspace root object (value <code>workspace</code>).
+	 */
+	public static final String VAR_WORKSPACE = "workspace"; //$NON-NLS-1$
+	/**
+	 * Variable that expands to the project resource (value <code>project</code>).
+	 */
+	public static final String VAR_PROJECT = "project"; //$NON-NLS-1$
+	/**
+	 * Variable that expands to the container resource (value <code>container</code>).
+	 */
+	public static final String VAR_CONTAINER = "container"; //$NON-NLS-1$
+	/**
+	 * Variable that expands to a resource (value <code>resource</code>).
+	 */
+	public static final String VAR_RESOURCE = "resource"; //$NON-NLS-1$
+	/**
+	 * Variable that expands to the working set object (value <code>working_set</code>).
+	 */
+	public static final String VAR_WORKING_SET = "working_set"; //$NON-NLS-1$
 	// ------- Tool Types -------
 	/**
 	 * External tool type for programs such as executables, batch files, 

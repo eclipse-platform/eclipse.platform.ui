@@ -75,29 +75,8 @@ public interface IVariableConstants {
 	 * Variable that expands to the current editor selected text (value <code>editor_sel_text</code>).
 	 */
 	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
-	// ------- Refresh Variables -------
 	/**
-	 * Variable that expands to the workspace root object (value <code>workspace</code>).
-	 */
-	public static final String VAR_WORKSPACE = "workspace"; //$NON-NLS-1$
-	/**
-	 * Variable that expands to the project resource (value <code>project</code>).
-	 */
-	public static final String VAR_PROJECT = "project"; //$NON-NLS-1$
-	/**
-	 * Variable that expands to the container resource (value <code>container</code>).
-	 */
-	public static final String VAR_CONTAINER = "container"; //$NON-NLS-1$
-	/**
-	 * Variable that expands to a resource (value <code>resource</code>).
-	 */
-	public static final String VAR_RESOURCE = "resource"; //$NON-NLS-1$
-	/**
-	 * Variable that expands to the working set object (value <code>working_set</code>).
-	 */
-	public static final String VAR_WORKING_SET = "working_set"; //$NON-NLS-1$
-	/**
-	 * Extension point to declare external tool variables. 
+	 * Extension point to declare launch configuration variables. 
 	 * (value<code>launchConfigurationVariables</code>).
 	 */
 	public static final String EXTENSION_POINT_CONFIGURATION_VARIABLES = "launchConfigurationVariables"; //$NON-NLS-1$
