@@ -252,7 +252,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 					}
 				} else {
 					// have a local and a remote			
-					if (!isDirty && !isOutOfDate) {
+					if (!isDirty && !isOutOfDate && base != null) {
 						// ignore, there is no change;
 					} else if (!isDirty && isOutOfDate) {
 						description = INCOMING | CHANGE;
