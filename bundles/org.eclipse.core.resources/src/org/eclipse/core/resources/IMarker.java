@@ -199,6 +199,7 @@ public interface IMarker extends IAdaptable {
 	 * declared as persistent. 
 	 *
 	 * @see #getAttribute
+	 * @since 2.1 
 	 */
 	public static final String TRANSIENT = "transient"; //$NON-NLS-1$
 	
@@ -212,6 +213,7 @@ public interface IMarker extends IAdaptable {
 	 * when performing any operations on markers.
 	 *
 	 * @see #getAttribute
+	 * @since 2.1 
 	 */
 	public static final String USER_EDITABLE = "userEditable"; //$NON-NLS-1$
 
