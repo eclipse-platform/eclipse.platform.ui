@@ -66,8 +66,8 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.tools.ant.*;
-//import org.apache.tools.ant.input.DefaultInputHandler;
-//import org.apache.tools.ant.input.InputHandler;
+import org.apache.tools.ant.input.DefaultInputHandler;
+import org.apache.tools.ant.input.InputHandler;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.runtime.*;
 
@@ -725,7 +725,7 @@ public class InternalAntRunner {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
 		}
 		
-	/*	args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
 			if (args.length == 0) {
 				throw new BuildException("You must specify a classname when using the -inputhandler argument");
@@ -735,7 +735,7 @@ public class InternalAntRunner {
 		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
 			throw new BuildException("Only one input handler class may be specified.");
-		}*/
+		}
 		return true;
 	}
 	
@@ -899,7 +899,7 @@ public class InternalAntRunner {
 	 * Ensures that -D properties take precedence.	 * 	 */
 	protected void processProperties(List commands) {
 		//MULTIPLE property files are allowed
-		/*String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while(args != null) {
 			if (args.length == 0) {
 				String message= InternalAntMessages.getString("You must specify a property filename when using the -propertyfile argument");
@@ -914,9 +914,9 @@ public class InternalAntRunner {
 		}
 		if (propertyFiles != null) {
 			loadPropertyFiles();
-		}*/
+		}
 		
-		String[] args = (String[]) commands.toArray(new String[commands.size()]);
+		args = (String[]) commands.toArray(new String[commands.size()]);
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
@@ -1158,7 +1158,7 @@ public class InternalAntRunner {
      *                           implementation could not be loaded.
      */
     private void addInputHandler(Project project) {
-       /* InputHandler handler = null;
+        InputHandler handler = null;
         if (inputHandlerClassname == null) {
             handler = new DefaultInputHandler();
         } else {
@@ -1172,7 +1172,7 @@ public class InternalAntRunner {
                 throw new BuildException(msg, e);
             }
         }
-        project.setInputHandler(handler);*/
+        project.setInputHandler(handler);
     }
 
 }
