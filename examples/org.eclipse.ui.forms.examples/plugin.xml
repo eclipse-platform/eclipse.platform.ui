@@ -114,6 +114,7 @@
             id="org.eclipse.ui.forms.examples.helpView"/>
       <view
             allowMultiple="false"
+            icon="icons/help.gif"
             class="org.eclipse.help.ui.internal.views.HelpView"
             category="org.eclipse.ui.forms.examples"
             name="Help"
@@ -129,6 +130,7 @@
                relationship="right"
                id="org.eclipse.ui.forms.examples.views.FormView">
          </view>
+         <actionSet id="org.eclipse.ui.forms.examples.help"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -148,6 +150,23 @@
             adaptableType="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
          <adapter type="org.eclipse.help.ui.internal.views.IContextHelpProvider"/>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Help"
+            description="Help view"
+            visible="true"
+            id="org.eclipse.ui.forms.examples.help">
+         <action
+               toolbarPath="org.eclipse.search.searchActionSet/Search"
+               label="Show Help View"
+               icon="icons/help.gif"
+               tooltip="Show Help"
+               class="org.eclipse.ui.forms.examples.views.ShowHelpAction"
+               style="push"
+               id="org.eclipse.ui.forms.examples.showHelp"/>
+      </actionSet>
    </extension>
 
 </plugin>
