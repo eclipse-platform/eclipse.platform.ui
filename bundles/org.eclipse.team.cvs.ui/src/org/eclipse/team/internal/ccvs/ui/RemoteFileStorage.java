@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
 public class RemoteFileStorage extends PlatformObject implements IStorage {
 	ICVSRemoteFile file;
@@ -57,7 +58,11 @@ public class RemoteFileStorage extends PlatformObject implements IStorage {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 	public IPath getFullPath() {
-		return new Path(file.getName());
+		ICVSRepositoryLocation location = file.getRepository();
+		IPath path = new Path(location.getRootDirectory());
+		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
+		path = path.append(file.getRepositoryRelativePath());
+		return path;
 	}
 	public String getName() {
 		return file.getName();

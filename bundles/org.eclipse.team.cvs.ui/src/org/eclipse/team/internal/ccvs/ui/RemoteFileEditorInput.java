@@ -7,9 +7,12 @@ package org.eclipse.team.internal.ccvs.ui;
  
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -89,9 +92,11 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 */
 	public String getFullPath() {
 		//use path to make sure slashes are correct
-		// to do. For now, just return the name
-		//return new Path(file.getProjectName()).append(file.getProjectRelativePath()).toString();
-		return getName();
+		ICVSRepositoryLocation location = file.getRepository();
+		IPath path = new Path(location.getRootDirectory());
+		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
+		path = path.append(file.getRepositoryRelativePath());
+		return path.toString();
 	}
 	/**
 	 * Returns the image descriptor for this input.
@@ -171,8 +176,6 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 * @return the tool tip text
 	 */
 	public String getToolTipText() {
-		//use path to make sure slashes are correct
-		return getName();
-		//return new Path(file.getProjectName()).append(file.getProjectRelativePath()).toString();
+		return getFullPath();
 	}
 }
