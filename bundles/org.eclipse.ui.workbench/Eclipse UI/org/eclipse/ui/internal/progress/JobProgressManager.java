@@ -29,7 +29,7 @@ public class JobProgressManager
 	private ArrayList listeners = new ArrayList();
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection filteredJobs = new ArrayList();
+	private Collection filteredJobs = Collections.synchronizedList(new ArrayList());
 	boolean debug = false;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
