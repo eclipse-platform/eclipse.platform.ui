@@ -1060,9 +1060,6 @@ public class Main {
 		try {
 			is = url.openStream();
 			props.load(is);
-			// check to see if we have complete config file
-			if (!PROP_EOF.equals(props.getProperty(PROP_EOF)))
-				throw new IOException("Incomplete configuration file: " + url.toExternalForm()); //$NON-NLS-1$
 		} finally {
 			if (is != null)
 				try {
