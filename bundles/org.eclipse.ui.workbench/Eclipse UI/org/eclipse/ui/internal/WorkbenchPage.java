@@ -331,6 +331,9 @@ public void activate(IWorkbenchPart part) {
 	// Sanity check.
 	if (!certifyPart(part))
 		return;
+	
+	if(window.isClosing())
+		return;
 		
 	// If zoomed, unzoom.
 	if (isZoomed() && partChangeAffectsZoom(getReference(part)))
@@ -687,7 +690,9 @@ public boolean closeAllEditors(boolean save) {
 		firePartClosed(editor);
 		disposePart(editor);		
 	}
-	if (deactivate)
+	
+	
+	if (!window.isClosing() && deactivate)
 		activate(activationList.getActive());
 		
 	// Notify interested listeners
@@ -2434,6 +2439,8 @@ private void updateVisibility(Perspective oldPersp, Perspective newPersp) {
 }
 
 private void activateOldPart(Perspective newPersp) {
+	if(window.isClosing())
+		return;
 	if (newPersp != null) {
 		String oldID = newPersp.getOldPartID();
 		IWorkbenchPart prevOldPart = null;

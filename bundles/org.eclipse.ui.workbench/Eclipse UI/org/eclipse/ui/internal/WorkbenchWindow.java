@@ -386,7 +386,7 @@ public boolean close() {
 	return ret[0];
 }
 
-private boolean isClosing() {
+protected boolean isClosing() {
 	return closing || workbench.isClosing();
 }
 /**
