@@ -22,7 +22,7 @@
 
 
 <!-- Extension points -->
-   <extension-point id="browser" name="%browser_extention_point_name"/>
+   <extension-point id="browser" name="%browser_extention_point_name" schema="schema/browser.mxsd"/>
 
 <!-- Default Help UI  -->
    <extension
@@ -41,9 +41,9 @@
       </page>
       <page
             name="%appserver_preferences_page_name"
+            category="org.eclipse.help.ui.browsersPreferancePage"
             class="org.eclipse.help.ui.internal.AppserverPreferencePage"
-            id="org.eclipse.help.ui.appserverPreferancePage"
-            category="org.eclipse.help.ui.browsersPreferancePage">
+            id="org.eclipse.help.ui.appserverPreferancePage">
       </page>
    </extension>
 <!-- Context Help contribution -->
@@ -238,22 +238,22 @@
             id="org.eclipse.help.ui.helpsearchhitsorter">
       </sorter>
    </extension>
-
 <!-- Help Working Set Page -->
-<extension point="org.eclipse.ui.workingSets">
-	<workingSet
-		id="org.eclipse.help.ui.HelpWorkingSetPage"
-		icon="icons/workingset.gif"
-		name="%HelpWorkingSet"
-		pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage">
-	</workingSet>
-</extension>
-
-<extension
-    point = "org.eclipse.ui.elementFactories">
-    <factory id ="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
-      class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
-	</factory>
-</extension>
+   <extension
+         point="org.eclipse.ui.workingSets">
+      <workingSet
+            name="%HelpWorkingSet"
+            pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage"
+            icon="icons/workingset.gif"
+            id="org.eclipse.help.ui.HelpWorkingSetPage">
+      </workingSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
+            id="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
+      </factory>
+   </extension>
 
 </plugin>
