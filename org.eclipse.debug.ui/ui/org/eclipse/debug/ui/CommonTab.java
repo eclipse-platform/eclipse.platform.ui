@@ -105,7 +105,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);		
+		comp.setLayout(topLayout);
+		comp.setFont(font);
 
 		createVerticalSpacer(comp, 1);
 		
