@@ -50,6 +50,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
+	private PinEditorAction pinEditorAction;
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -301,6 +302,7 @@ private void createToolBar() {
 	}
 	toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 	toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	toolbar.add(pinEditorAction);
 }
 /**
  * Remove the property change listener
@@ -442,6 +444,12 @@ private void makeActions() {
 
 	closeAllAction = new CloseAllAction(window);
 	partService.addPartListener(closeAllAction);
+		
+	pinEditorAction = new PinEditorAction(window);
+	partService.addPartListener(pinEditorAction);
+	pinEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
+	pinEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
+	pinEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));	
 
 	aboutAction = new AboutAction(window);
 	aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));

@@ -26,7 +26,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 /**
  * A collection of views and editors in a workbench.
  */
@@ -46,7 +46,7 @@ public class WorkbenchPage implements IWorkbenchPage
 	private Perspective activePersp;
 	private ViewFactory viewFactory;
 	private ArrayList perspList = new ArrayList(1);
-
+	private int reuseEditors = 0;
 	private Listener mouseDownListener;
 /**
  * Constructs a new page with a given perspective and input.
@@ -601,7 +601,7 @@ private void firePartDeactivated(IWorkbenchPart part) {
 /**
  * Fire part open out.
  */
-private void firePartOpened(IWorkbenchPart part) {
+public void firePartOpened(IWorkbenchPart part) {
 	partListeners.firePartOpened(part);
 	selectionService.partOpened(part);
 }
@@ -924,7 +924,7 @@ protected void onDeactivate() {
 public IEditorPart openEditor(IFile file) 
 	throws PartInitException
 {
-	return openEditor(file, true);
+	return openEditor(new FileEditorInput(file),null,true,false,null);
 }
 /**
  * See IWorkbenchPage.
@@ -932,81 +932,7 @@ public IEditorPart openEditor(IFile file)
 public IEditorPart openEditor(IFile file, String editorID)
 	throws PartInitException 
 {
-	return openEditor(file, editorID, true);
-}
-/**
- * See IWorkbenchPage.
- */
-private IEditorPart openEditor(IFile file, String editorID, boolean activate)
-	throws PartInitException 
-{
-	// If part is added / removed always unzoom.
-	if (isZoomed())
-		zoomOut();
-		
-	// Update the default editor for this file.
-	WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
-		file, editorID);
-	
-	// If an editor is already open for the input just activate it.
-	FileEditorInput input = new FileEditorInput(file);
-	IEditorPart editor = getEditorManager().findEditor(input);
-	if (editor != null) {
-		setEditorAreaVisible(true);
-		if (activate)
-			activate(editor);
-		else
-			bringToTop(editor);
-		return editor;
-	}
-
-	// Otherwise, create a new one.
-	editor = getEditorManager().openEditor(editorID, input);
-	if (editor != null) {
-		firePartOpened(editor);
-		setEditorAreaVisible(true);
-		if (activate)
-			activate(editor);
-		else
-			bringToTop(editor);
-		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
-	}
-	return editor;
-}
-/**
- * See IWorkbenchPage.
- */
-private IEditorPart openEditor(IFile file, boolean activate) 
-	throws PartInitException
-{
-	// If part is added / removed always unzoom.
-	if (isZoomed())
-		zoomOut();
-		
-	// If an editor already exists for the input use it.
-	FileEditorInput input = new FileEditorInput(file);
-	IEditorPart editor = getEditorManager().findEditor(input);
-	if (editor != null) {
-		setEditorAreaVisible(true);
-		if (activate)
-			activate(editor);
-		else
-			bringToTop(editor);
-		return editor;
-	}
-
-	// Otherwise, create a new one.
-	editor = getEditorManager().openEditor(input,false);
-	if (editor != null) {
-		firePartOpened(editor);
-		setEditorAreaVisible(true);
-		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
-		if (activate)
-			activate(editor);
-		else
-			bringToTop(editor);
-	}
-	return editor;
+	return openEditor(new FileEditorInput(file),editorID,true,true,file);
 }
 /**
  * See IWorkbenchPage.
@@ -1038,9 +964,9 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
 	// Create a new editor.
 	IEditorPart editor = null;
 	if (editorID == null)
-		editor = openEditor(file, activate);
+		editor = openEditor(new FileEditorInput(file),null,activate,false,null);
 	else 
-		editor = openEditor(file, editorID, activate);
+		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file);
 
 	// Goto the bookmark.
 	if (editor != null)
@@ -1061,9 +987,23 @@ public IEditorPart openEditor(IEditorInput input, String editorID)
 public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
 	throws PartInitException
 {
+	return openEditor(input,editorID,activate,true,null);
+}
+/**
+ * See IWorkbenchPage.
+ */
+private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file) 
+	throws PartInitException
+{
 	// If part is added / removed always unzoom.
 	if (isZoomed())
 		zoomOut();
+	
+	if(file != null) {
+		// Update the default editor for this file.
+		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
+			file, editorID);
+	}
 		
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
@@ -1075,11 +1015,15 @@ public IEditorPart openEditor(IEditorInput input, String editorID, boolean activ
 			bringToTop(editor);
 		return editor;
 	}
-
+
 	// Otherwise, create a new one.
-	editor = getEditorManager().openEditor(editorID, input);
+	if(useEditorID)
+		editor = getEditorManager().openEditor(editorID, input);
+	else
+		editor = getEditorManager().openEditor((IFileEditorInput)input,true);
+		
 	if (editor != null) {
-		firePartOpened(editor);
+		//firePartOpened(editor);
 		setEditorAreaVisible(true);
 		if (activate)
 			activate(editor);
@@ -1476,5 +1420,35 @@ public void updateTitle(IWorkbenchPart part) {
  */
 private void zoomOut() {
 	getPersp().getPresentation().zoomOut();
+}
+/**
+ * See IWorkbenchPage.
+ */
+public boolean getReuseEditors() {
+	//reuseEditors == 0 -> use the global preference IPreferenceConstants.REUSE_EDITORS.
+	//reuseEditors == 1 -> do not reuse editors
+	//reuseEditors == 2 -> reuse editors.
+	if(reuseEditors == 2)
+		return true;
+	else if(reuseEditors == 1)
+		return false;
+	
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	return store.getBoolean(IPreferenceConstants.REUSE_EDITORS);
+}
+/**
+ * See IWorkbenchPage.
+ */
+public void setReuseEditors(boolean reuse) {
+	if(reuse)
+		reuseEditors = 2;
+	else
+		reuseEditors = 1;
+}
+/**
+ * See IWorkbenchPage.
+ */
+public void clearReuseEditors() {
+	reuseEditors = 0;
 }
 }

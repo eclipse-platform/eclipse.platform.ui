@@ -254,17 +254,10 @@ public IEditorPart openEditor(String editorID, IEditorInput input)
 /*
  * @see IWorkbenchPage.
  */
-public IEditorPart openEditor(IFileEditorInput input) throws PartInitException {
-	return openEditor(input,true);
-}
-/*
- * @see IWorkbenchPage.
- */
 public IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
 	throws PartInitException
 {
 	IFile file = input.getFile();
-	
 	// If there is a registered editor for the file use it.
 	EditorDescriptor desc = (EditorDescriptor)getEditorRegistry().
 		getDefaultEditor(file);
@@ -291,11 +284,81 @@ public IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	return openEditor(desc, input);
 }
 /*
+ *
+ */
+private IReusableEditor findReusableEditor(EditorDescriptor desc) {
+	
+	if(!page.getReuseEditors())
+		return null;
+	
+	IEditorPart editors[] = getEditors();
+	IReusableEditor dirtyEditor = null;
+	IWorkbenchPart activePart = page.getActivePart();
+	//Find IReusableEditor with the same descriptor id.
+	for(int i = 0;i < editors.length;i++) {
+		IEditorPart editor = editors[i];
+		if(editor == activePart)
+			continue;
+		if(!(editor instanceof IReusableEditor))
+			continue;
+		IReusableEditor reusableEditor = (IReusableEditor)editor;
+		EditorSite site = (EditorSite)reusableEditor.getEditorSite();
+		if(!site.getReuseEditor())
+			continue;
+		IEditorInput editorInput = reusableEditor.getEditorInput(); 
+		EditorDescriptor oldDesc = site.getEditorDescriptor();
+		if(oldDesc == null)
+			oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
+		if(desc.getId().equals(oldDesc.getId())) {
+			if(editor.isDirty()) {
+				dirtyEditor = reusableEditor;
+				continue;
+			}
+			return reusableEditor;
+		}
+	}
+	if(dirtyEditor == null)
+		return null;
+	
+	//Should we have a global preference "Allways open new Editor when dirty"?
+	//if(openNewWhenDirty)
+	//	return null;
+	MessageDialog dialog = new MessageDialog(
+		window.getShell(),
+		WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"),
+		null,	// accept the default window icon
+		WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[]{dirtyEditor.getEditorInput().getName()}),
+		MessageDialog.QUESTION, 
+		new String[] {
+			IDialogConstants.YES_LABEL,
+			IDialogConstants.NO_LABEL,
+			WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, 
+		0);
+	int result = dialog.open();
+	if(result == 0) { //YES
+		ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
+		pmd.open();
+		dirtyEditor.doSave(pmd.getProgressMonitor());
+		pmd.close();
+	} else if(result == 2) {
+		return null;
+	}
+	return dirtyEditor;
+}
+/*
  * See IWorkbenchPage.
  */
 private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 	throws PartInitException {
 	if (desc.isInternal()) {
+		IReusableEditor reusableEditor = findReusableEditor(desc);
+		if(reusableEditor != null) {
+			reusableEditor.setInput(input);
+			// Record the happy event.
+			Workbench wb = (Workbench)window.getWorkbench();
+			wb.getEditorHistory().add(input, desc);
+			return reusableEditor;
+		}
 		return openInternalEditor(desc, input, true);
 	} else
 		if (desc.isOpenInPlace()) {
@@ -390,6 +453,7 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				// Record the happy event.
 				Workbench wb = (Workbench)window.getWorkbench();
 				wb.getEditorHistory().add(input, desc);
+				page.firePartOpened(part);
 			} catch (PartInitException e) {
 				ex[0] = e;
 			}
