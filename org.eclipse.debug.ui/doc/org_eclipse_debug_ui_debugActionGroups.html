@@ -13,9 +13,8 @@
 <p><b><i>Identifier: </i></b>org.eclipse.debug.ui.debugActionGroups </p>
 
 <p><b><i>Description: </i></b>This extension point provides a mechanism to specify the visibility of action
-groups.  Any view that returns an instance of
-IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class) will have its context menu and toolbar
-affected by the visibility of the action groups.
+groups.  Any view that returns an instance of IDebugView when queried with #getAdapter(IDebugView.class) will
+ have its context menu and toolbar affected by the visibility of the action groups.
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
@@ -45,8 +44,7 @@ affected by the visibility of the action groups.
 <p><b><i>Examples:</i></b> </p>
 
 <p>The following is an example of a debug action group extension point.  In all 
-debug views (views that return an instance of
-IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class)), the actions listed will not be visible in the toolbar or context menu of the view. </p>
+debug views (views that return an instance of IDebugView when queried with #getAdapter(IDebugView.class)), the actions listed will not be visible in the toolbar or context menu of the view. </p>
 
 <pre>
 &lt;extension point = "org.eclipse.debug.ui.debugActionGroups"&gt;
