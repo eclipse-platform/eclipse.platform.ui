@@ -121,10 +121,6 @@ public class ProjectOrderTest extends EclipseWorkspaceTest {
 		IWorkspaceRoot root = ws.getRoot();
 		IProject p0 = root.getProject("p0");
 		IProject p1 = root.getProject("p1");
-		IProject p2 = root.getProject("p2");
-		IProject p3 = root.getProject("p3");
-		IProject p4 = root.getProject("p4");
-		IProject p5 = root.getProject("p5");
 
 		IProject[] projects = new IProject[] {
 		};
