@@ -119,6 +119,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/** The viewer's annotation hover */
 	protected IAnnotationHover fAnnotationHover;
 	/** 
+	 * The viewer's overview ruler annotation hover
+	 * @since 3.0
+	 */
+	protected IAnnotationHover fOverviewRulerAnnotationHover;
+	/** 
 	 * The viewer's information presenter
 	 * @since 2.0
 	 */
@@ -228,6 +233,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	public void setAnnotationHover(IAnnotationHover annotationHover) {
 		fAnnotationHover= annotationHover;
 	}
+
+	/**
+	 * Sets the overview ruler's annotation hover of this source viewer.
+	 * The annotation hover provides the information to be displayed in a hover
+	 * popup window if requested over the overview rulers area. The annotation
+	 * hover is assumed to be line oriented.
+	 *
+	 * @param annotationHover the hover to be used, <code>null</code> is a valid argument
+	 * @since 3.0
+	 */
+	public void setOverviewRulerAnnotationHover(IAnnotationHover annotationHover) {
+		fOverviewRulerAnnotationHover= annotationHover;
+	}
 	
 	/*
 	 * @see ISourceViewer#configure(SourceViewerConfiguration)
@@ -265,6 +283,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		getTextWidget().setTabs(configuration.getTabWidth(this));
 		
 		setAnnotationHover(configuration.getAnnotationHover(this));
+		setOverviewRulerAnnotationHover(configuration.getOverviewRulerAnnotationHover(this));
 		
 		setHoverControlCreator(configuration.getInformationControlCreator(this));
 		
@@ -313,8 +332,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * After this method has been executed the caller knows that any installed overview hover has been installed.
 	 */
 	protected void ensureOverviewHoverManagerInstalled() {
-		if (fOverviewRuler != null &&  fAnnotationHover != null  && fOverviewRulerHoveringController == null && fHoverControlCreator != null)	{
-			fOverviewRulerHoveringController= new OverviewRulerHoverManager(fOverviewRuler, this, fAnnotationHover, fHoverControlCreator);
+		if (fOverviewRuler != null &&  fOverviewRulerAnnotationHover != null  && fOverviewRulerHoveringController == null && fHoverControlCreator != null)	{
+			fOverviewRulerHoveringController= new OverviewRulerHoverManager(fOverviewRuler, this, fOverviewRulerAnnotationHover, fHoverControlCreator);
 			fOverviewRulerHoveringController.install(fOverviewRuler.getControl());
 		}
 	}

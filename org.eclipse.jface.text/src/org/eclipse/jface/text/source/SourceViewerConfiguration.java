@@ -187,6 +187,20 @@ public class SourceViewerConfiguration {
 	}
 
 	/**
+	 * Returns the annotation hover which will provide the information to be
+	 * shown in a hover popup window when requested for the overview ruler
+	 * of the given source viewer.This implementation always returns the general
+	 * annotation hover returned by <code>getAnnotationHover</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an annotation hover or <code>null</code> if no hover support should be installed
+	 * @since 3.0
+	 */
+	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
+		return getAnnotationHover(sourceViewer);
+	}
+
+	/**
 	 * Returns the SWT event state masks for which text hover are configured for
 	 * the given content type.
 	 *
