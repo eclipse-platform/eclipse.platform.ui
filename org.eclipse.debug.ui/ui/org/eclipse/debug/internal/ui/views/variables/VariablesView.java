@@ -217,6 +217,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private HashMap fExpandedVariables = new HashMap(10);
 	
 	/**
+	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
+	 * can reset the focus properly when re-activated.
+	 */
+	private Viewer fFocusViewer = null;
+	
+	/**
 	 * These are used to initialize and persist the position of the sash that
 	 * separates the tree viewer from the detail pane.
 	 */
@@ -423,6 +429,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
+				setFocusViewer(getVariablesViewer());
 			}
 		});
 		variablesViewer.addSelectionChangedListener(getTreeSelectionChangedListener());
@@ -448,6 +455,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				setAction(SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(DETAIL_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
+				setFocusViewer((Viewer)getDetailViewer());
 			}
 		});
 		// add a context menu to the detail area
@@ -1030,4 +1038,33 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			tViewer.setExpandedState(o, !expanded);
 		}
 	}	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		if (getFocusViewer() == null) {
+			super.setFocus();
+		} else {
+			getFocusViewer().getControl().setFocus();
+		}
+	}
+	
+	/**
+	 * Sets the viewer that has focus.
+	 * 
+	 * @param viewer
+	 */
+	protected void setFocusViewer(Viewer viewer) {
+		fFocusViewer = viewer;
+	}
+	
+	/**
+	 * Returns the viewer that has focus, or <code>null</code>.
+	 * 
+	 * @return Viewer
+	 */
+	protected Viewer getFocusViewer() {
+		return fFocusViewer;
+	}
+
 }
