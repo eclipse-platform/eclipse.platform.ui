@@ -271,7 +271,7 @@ public abstract class Window {
 			windowManager.remove(this);
 			windowManager = null;
 		}
-		return true;
+		return false;
 	}
 
 	/**
