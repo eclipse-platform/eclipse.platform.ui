@@ -34,7 +34,7 @@ UL {
 }
 
 #root {
-	margin-left:4px;
+	margin-left:8px;
 }
   
 UL.expanded {
@@ -101,7 +101,7 @@ A.book {
 	background-position:center left;
 	background-repeat:no-repeat;
 	margin-top:5px;
-	margin-left:-24px;
+	margin-left:-20px;
 }
 
 
@@ -115,7 +115,7 @@ A.book {
   if (isMozilla)
   	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:15px;  }</style>";
   else if (isIE)
- 	extraStyle =  "<style type='text/css'>A {	height:18px; } </style>";
+ 	extraStyle =  "<style type='text/css'>A {height:18px; } </style>";
  	
  document.write(extraStyle);
 </script>
