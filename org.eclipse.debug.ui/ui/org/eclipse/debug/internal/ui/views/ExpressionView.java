@@ -110,4 +110,14 @@ public class ExpressionView extends VariablesView {
 		}
 		getDetailViewer().setEditable(frame != null);
 	}
+	
+	/**
+	 * Do nothing - the input to this view never changes - 
+	 * it is always the expression manager.
+	 * 
+	 * @see VariablesView#setViewerInput(IStructuredSelection)
+	 */
+	protected void setViewerInput(IStructuredSelection ssel) {
+	}
+
 }
