@@ -572,7 +572,7 @@ private void initRenameKey() {
 		// Listen on key released instead of pressed just in case some
 		// menu bar item sets up an accelerator on F2.
 		public void keyReleased(KeyEvent event) {
-			if (event.keyCode == SWT.F2 && renameResourceAction.isEnabled()) {
+			if (event.keyCode == SWT.F2 && event.stateMask == 0 && renameResourceAction.isEnabled()) {
 				renameResourceAction.run();
 			}
 		}
