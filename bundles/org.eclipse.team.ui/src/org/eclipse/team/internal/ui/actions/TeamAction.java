@@ -165,6 +165,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	protected Shell getShell() {
 		if (shell != null) {
 			return shell;
+		} else if (targetPart != null) {
+		    return targetPart.getSite().getShell();
 		} else {
 			IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 			if (workbench == null) return null;
