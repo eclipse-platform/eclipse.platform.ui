@@ -529,6 +529,10 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 private void unableToOpenPerspective(PerspectiveDescriptor persp,IStatus status) {
 	PerspectiveRegistry perspRegistry = (PerspectiveRegistry) WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	perspRegistry.deletePerspective(persp);
+	// If this is a predefined perspective, we will not be able to delete
+	// the perspective (we wouldn't want to).  But make sure to delete the
+	// customized portion.
+	persp.deleteCustomDefinition();
 	String title = WorkbenchMessages.getString("Perspective.problemRestoringTitle");  //$NON-NLS-1$
 	String msg = WorkbenchMessages.getString("Perspective.errorReadingState"); //$NON-NLS-1$
 	if(status == null) {
