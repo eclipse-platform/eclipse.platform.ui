@@ -265,6 +265,7 @@ public class AntModel {
     	    	}
     			resolveBuildfile();
     			endReporting();
+    			project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
     			fIncrementalTarget= null;
     		}
     	}
@@ -331,9 +332,9 @@ public class AntModel {
 				return null;
 			}
 			//nodes don't know their lengths due to parsing error --> full parse
-				textToParse = prepareForFullIncremental(input);
-				return textToParse;
-			}
+			textToParse = prepareForFullIncremental(input);
+			return textToParse;
+		}
 		
 		while (node != null && !(node instanceof AntTargetNode)) {
 			node= node.getParentNode();
@@ -521,18 +522,18 @@ public class AntModel {
 					}
 				} else {
 					if (node == null) {
-					originalOffset= getOffset(line, 1);
-					nonWhitespaceOffset= originalOffset;
-					try {
-						nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
-					} catch (BadLocationException be) {
+						originalOffset= getOffset(line, 1);
+						nonWhitespaceOffset= originalOffset;
+						try {
+							nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
+						} catch (BadLocationException be) {
+						}
+							length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
+						} else {
+							nonWhitespaceOffset= node.getOffset();
+							length= node.getLength();
 					}
-						length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
-					} else {
-						nonWhitespaceOffset= node.getOffset();
-						length= node.getLength();
 				}
-			}
 			}
 			notifyProblemRequestor(e, nonWhitespaceOffset, length, severity);
 		} catch (BadLocationException e1) {
