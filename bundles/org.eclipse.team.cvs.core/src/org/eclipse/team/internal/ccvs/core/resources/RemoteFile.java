@@ -137,45 +137,48 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSRemoteFile#getContents()
 	 */
 	public InputStream getContents(IProgressMonitor monitor) throws CVSException {
-		if (contents == null) {
-			// First, check to see if there's a cached contents for the file
-			InputStream cached = getCachedContents();
-			if (cached != null) {
-				return cached;
-			}
-
-			// We need to fetch the contents from the server
-			monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
-			Session.run(getRepository(), parent, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					IStatus status = Command.UPDATE.execute(
-						Command.NO_GLOBAL_OPTIONS,
-						new LocalOption[] { 
-							Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
-							Update.IGNORE_LOCAL_CHANGES },
-						new ICVSResource[] { RemoteFile.this },
-						null,
-						monitor);
-					if (status.getCode() == CVSStatus.SERVER_ERROR) {
-						throw new CVSServerException(status);
-					}
-				}
-			}, Policy.subMonitorFor(monitor, 100));
-			monitor.done();
-
-			// If the update succeeded but no contents were retreived from the server
-			// than we can assume that the remote file has no contents.
+		monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
+		try {
 			if (contents == null) {
-				// The above is true unless there is a cache file
-				cached = getCachedContents();
+				// First, check to see if there's a cached contents for the file
+				InputStream cached = getCachedContents();
 				if (cached != null) {
 					return cached;
-				} else {
-					contents = new byte[0];
+				}
+	
+				// We need to fetch the contents from the server
+				Session.run(getRepository(), parent, false, new ICVSRunnable() {
+					public void run(IProgressMonitor monitor) throws CVSException {
+						IStatus status = Command.UPDATE.execute(
+							Command.NO_GLOBAL_OPTIONS,
+							new LocalOption[] { 
+								Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
+								Update.IGNORE_LOCAL_CHANGES },
+							new ICVSResource[] { RemoteFile.this },
+							null,
+							monitor);
+						if (status.getCode() == CVSStatus.SERVER_ERROR) {
+							throw new CVSServerException(status);
+						}
+					}
+				}, Policy.subMonitorFor(monitor, 100));
+	
+				// If the update succeeded but no contents were retreived from the server
+				// than we can assume that the remote file has no contents.
+				if (contents == null) {
+					// The above is true unless there is a cache file
+					cached = getCachedContents();
+					if (cached != null) {
+						return cached;
+					} else {
+						contents = new byte[0];
+					}
 				}
 			}
+			return new ByteArrayInputStream(contents);
+		} finally {
+			monitor.done();
 		}
-		return new ByteArrayInputStream(contents);
 	}
 	
 	/*
