@@ -11,7 +11,7 @@ package org.eclipse.help;
  * The help system UI is entirely optional.
  * Clients may provide a UI for presenting help to the user by implementing this
  * interface and including the name of their class in the 
- * <code>&LT;config&GT;</code> element in an extension to the platform's help 
+ * <code>&lt;config&gt;</code> element in an extension to the platform's help 
  * support extension point (<code>"org.eclipse.help.support"</code>).
  * </p>
  * <p>
