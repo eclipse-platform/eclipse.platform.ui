@@ -108,14 +108,26 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	private Button fLaunchButton;
 	
+	/**
+	 * The mutually exclusive radio buttons that specify the launch mode
+	 */
 	private Button fRadioRunButton;
 	private Button fRadioDebugButton;
 	
+	/**
+	 * Image for the launch mode
+	 */
+	private Label fModeLabel;
+	
+	/**
+	 * The status area message
+	 */
 	private Label fMessageLabel;
 	
+	/**
+	 * The status area image
+	 */
 	private Label fStatusImageLabel;
-	
-	private Label fModeLabel;
 	
 	/**
 	 * The text widget displaying the name of the
@@ -147,6 +159,19 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private ILaunchConfigurationTab[] fTabs;
 	
 	/**
+	 * Indicates whether callbacks on 'launchConfigurationChanged' should be treated
+	 * as user changes.
+	 */
+	private boolean fChangesAreUserChanges = false;
+	
+	/**
+	 * Indicates whether the current working copy has been dirtied by the user.
+	 * This is the same as the more general notion of 'isDirty' on ILaunchConfigurationWorkingCopy,
+	 * except that initializing defaults does not count as user dirty.
+	 */
+	private boolean fWorkingCopyUserDirty = false;
+	
+	/**
 	 * Id for 'Save & Launch' button.
 	 */
 	protected static final int ID_SAVE_AND_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
@@ -163,9 +188,12 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	
 	protected static final String DEFAULT_NEW_CONFIG_NAME = "New configuration";
 	
+	/**
+	 * Status area messages
+	 */
 	protected static final String LAUNCH_STATUS_OK_MESSAGE = "Ready to launch";
 	protected static final String LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE 
-															= "Select a launcher in the tree to define a new configuration";
+															= "Select the type of launch configuration to create";
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -328,6 +356,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		try {
+			setChangesAreUserChanges(false);
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
 			workingCopy.initializeDefaults(getWorkbenchSelection());
 		} catch (CoreException ce) {
@@ -535,21 +564,18 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	
 	protected void setStatusErrorMessage(String message) {
 		setStatusMessage(message);
-		getMessageLabel().setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
 		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_FAIL));
 		getStatusImageLabel().setVisible(true);
 	}
 	
 	protected void setStatusOKMessage() {
 		setStatusMessage(LAUNCH_STATUS_OK_MESSAGE);
-		getMessageLabel().setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));		
 		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));
 		getStatusImageLabel().setVisible(true);
 	}
 	
 	protected void setStatusStartingFromScratchMessage() {
 		setStatusMessage(LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE);
-		getMessageLabel().setForeground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		getStatusImageLabel().setImage(DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_OK));		
 		getStatusImageLabel().setVisible(false);
 	}
@@ -584,6 +610,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Composite c = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		c.setLayout(layout);
 		
 		GridData gd;
@@ -592,6 +620,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		gd = new GridData(GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
+		gd.heightHint = 375;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -658,6 +687,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Composite c = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		c.setLayout(layout);
 		
 		GridData gd;
@@ -688,7 +719,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 350;
+		gd.heightHint = 375;
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
 		setTabFolder(tabFolder);
@@ -1142,6 +1173,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 		// update the name field
 	 		getNameTextWidget().setText(config.getName());
 	 		
+	 		// Reset internal flags so user edits are recognized as making the
+	 		// working copy 'user dirty'
+	 		setChangesAreUserChanges(true);
+	 		setWorkingCopyUserDirty(false);
+	 		
 	 		// update the tabs with the new working copy
 	 		ILaunchConfigurationTab[] tabs = getTabs();
 	 		for (int i = 0; i < tabs.length; i++) {
@@ -1163,6 +1199,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	protected void clearLaunchConfiguration() {
  		setWorkingCopy(null);
  		setWorkingCopyVerifyState(false);
+		setChangesAreUserChanges(false);
+ 		setWorkingCopyUserDirty(false);
  		setLastSavedName(null);
  		getNameTextWidget().setText(""); 
  		disposeExistingTabs();
@@ -1243,6 +1281,22 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	
  	protected boolean getWorkingCopyVerifyState() {
  		return fWorkingCopyVerifyState;
+ 	}
+ 	
+ 	protected void setChangesAreUserChanges(boolean state) {
+ 		fChangesAreUserChanges = state;
+ 	}
+ 	
+ 	protected boolean areChangesUserChanges() {
+ 		return fChangesAreUserChanges;
+ 	}
+ 	
+ 	protected void setWorkingCopyUserDirty(boolean dirty) {
+ 		fWorkingCopyUserDirty = dirty;
+ 	}
+ 	
+ 	protected boolean isWorkingCopyUserDirty() {
+ 		return fWorkingCopyUserDirty;
  	}
  	
  	protected void setWorkbenchSelection(Object selection) {
@@ -1357,13 +1411,9 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see ILaunchConfigurationListener#launchConfigurationChanged(ILaunchConfiguration)
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		/*
-		if (configuration.isWorkingCopy()) {
-			if (getWorkingCopy().equals(configuration)) {
-				setEnableStateEditButtons();
-			}
+		if (areChangesUserChanges()) {
+			setWorkingCopyUserDirty(true);
 		}
-		*/
 	}
 
 	/**
@@ -1387,13 +1437,13 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		// If the working copy doesn't verify, show user dialog asking if they wish
 		// to discard their changes.  Otherwise, if the working copy is dirty,
 		// show a slightly different 'save changes' dialog.
-		if (!getWorkingCopyVerifyState()) {
+		if (isWorkingCopyUserDirty() && !getWorkingCopyVerifyState()) {
 			StringBuffer buffer = new StringBuffer("The configuration \"");
 			buffer.append(getWorkingCopy().getName());
 			buffer.append("\" CANNOT be saved.  Do you wish to discard changes?");
 			return MessageDialog.openQuestion(getShell(), "Discard changes?", buffer.toString());
 		} else {
-			if (isWorkingCopyDirty()) {
+			if (isWorkingCopyUserDirty()) {
 				return showSaveChangesDialog();
 			} else {
 				return true;
@@ -1461,6 +1511,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			} else {
 				type = (ILaunchConfigurationType)obj;
 			}
+			setChangesAreUserChanges(false);
 			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
 			Object workbenchSelection = getWorkbenchSelection();
 			if (workbenchSelection != null) {

@@ -73,6 +73,8 @@ public class PerspectiveTab implements ILaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
+		createVerticalSpacer(comp, 3);
+
 		Label label = new Label(comp, SWT.HORIZONTAL | SWT.LEFT);
 		label.setText("Open/switch perspective when launched:");
 		gd = new GridData();
@@ -382,6 +384,17 @@ public class PerspectiveTab implements ILaunchConfigurationTab {
 		}
 		
 	}	
+
+	/**
+	 * Create some empty space 
+	 */
+	protected void createVerticalSpacer(Composite comp, int columnWidth) {
+		Label label = new Label(comp, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnWidth;
+		label.setLayoutData(gd);
+	}
+		
 }
 	
 
