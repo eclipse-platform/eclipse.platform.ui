@@ -57,7 +57,8 @@ final class RoleParser {
 		
 		for(int i = 0; i < activityBindingValues.length; i ++){
 			Activity activity = (Activity) activities.get(activityBindingValues[i]);
-			activity.setEnabled(enabled);
+			if(activity != null)
+				activity.setEnabled(enabled);
 		}
 		
 		return newRole;
