@@ -75,7 +75,7 @@ public class TextModel implements ITextModel {
 			if (child.getNodeType() == Node.TEXT_NODE) {
 				// Make an implicit paragraph
 				String text = child.getNodeValue();
-				if (text != null && !isIgnorableWhiteSpace(text)) {
+				if (text != null && !isIgnorableWhiteSpace(text, true)) {
 					Paragraph p = new Paragraph(true);
 					p.parseRegularText(text, expandURLs, getHyperlinkSettings(), null);
 					paragraphs.add(p);
@@ -167,7 +167,7 @@ public class TextModel implements ITextModel {
 			if (child.getNodeType() == Node.TEXT_NODE) {
 				String value = child.getNodeValue();
 
-				if (value != null && !isIgnorableWhiteSpace(value)) {
+				if (value != null && !isIgnorableWhiteSpace(value, false)) {
 					p.parseRegularText(value, expandURLs, getHyperlinkSettings(), null);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -192,9 +192,10 @@ public class TextModel implements ITextModel {
 		}
 	}
 	
-	private boolean isIgnorableWhiteSpace(String text) {
+	private boolean isIgnorableWhiteSpace(String text, boolean ignoreSpaces) {
 		for (int i=0; i<text.length(); i++) {
 			char c = text.charAt(i);
+			if (ignoreSpaces && c== ' ') continue;
 			if (c=='\n' || c=='\r' || c=='\f') continue;
 			return false;
 		}
