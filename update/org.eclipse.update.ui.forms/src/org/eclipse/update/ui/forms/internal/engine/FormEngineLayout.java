@@ -10,17 +10,24 @@
  *******************************************************************************/
 package org.eclipse.update.ui.forms.internal.engine;
 
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.ILayoutExtension;
 
 /**
  * @version 	1.0
  * @author
  */
-public class FormEngineLayout extends Layout {
+public class FormEngineLayout extends Layout implements ILayoutExtension {
+
+	public int getMaximumWidth(Composite parent, boolean changed) {
+		return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
+	}
+
+	public int getMinimumWidth(Composite parent, boolean changed) {
+		return 30;
+	}
 
 	/*
 	 * @see Layout#computeSize(Composite, int, int, boolean)
@@ -33,6 +40,9 @@ public class FormEngineLayout extends Layout {
 		boolean changed) {
 		FormEngine engine = (FormEngine) composite;
 		int innerWidth = wHint;
+		if (engine.isLoading()) {
+			return computeLoading(engine);
+		}
 		if (innerWidth != SWT.DEFAULT)
 			innerWidth -= engine.marginWidth * 2;
 		Point textSize = computeTextSize(engine, innerWidth);
@@ -40,6 +50,18 @@ public class FormEngineLayout extends Layout {
 		int textHeight = textSize.y + 2 * engine.marginHeight;
 		Point result = new Point(textWidth, textHeight);
 		return result;
+	}
+	
+	private Point computeLoading(FormEngine engine) {
+		GC gc = new GC(engine);
+		gc.setFont(engine.getFont());
+		FontMetrics fm = gc.getFontMetrics();
+		String loadingText = engine.getLoadingText();
+		Point size = gc.textExtent(loadingText);
+		gc.dispose();
+		size.x += 2 * engine.marginWidth;
+		size.y += 2 * engine.marginHeight;
+		return size;
 	}
 
 	private Point computeTextSize(FormEngine engine, int wHint) {

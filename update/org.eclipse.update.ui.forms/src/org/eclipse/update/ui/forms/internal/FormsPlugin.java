@@ -44,6 +44,8 @@ public class FormsPlugin extends AbstractUIPlugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
+		FormsPlugin inst = FormsPlugin.getDefault();
+		if (inst==null) return key;
 		ResourceBundle bundle = FormsPlugin.getDefault().getResourceBundle();
 		try {
 			return bundle.getString(key);

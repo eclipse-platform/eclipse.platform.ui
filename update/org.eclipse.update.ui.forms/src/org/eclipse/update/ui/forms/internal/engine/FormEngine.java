@@ -46,6 +46,18 @@ public class FormEngine extends Canvas {
 	public boolean getFocus() {
 		return hasFocus;
 	}
+	
+	public boolean isLoading() {
+		return loading;
+	}
+	
+	public String getLoadingText() {
+		return loadingText;
+	}
+	
+	public void setLoadingText(String loadingText) {
+		this.loadingText = loadingText;
+	}
 
 	public int getParagraphSpacing(int lineHeight) {
 		return lineHeight / 2;

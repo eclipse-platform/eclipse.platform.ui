@@ -7,8 +7,9 @@
 package org.eclipse.welcome.internal.portal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
@@ -18,14 +19,13 @@ import org.eclipse.update.ui.forms.internal.*;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class WelcomePortalForm extends ScrollableSectionForm {
+public class WelcomePortalForm extends WebForm {
 	private WelcomePortalPart portal;
 	private IConfigurationElement pageConfig;
 
 	public WelcomePortalForm(WelcomePortalPart portal, IConfigurationElement pageConfig) {
 		this.portal = portal;
 		this.pageConfig = pageConfig;
-		//setVerticalFit(true);
 		setHeadingVisible(false);
 	}
 	
@@ -37,27 +37,25 @@ public class WelcomePortalForm extends ScrollableSectionForm {
 		return portal;
 	}
 	
-	protected Composite createParent(Composite root) {
-		Composite parent =  super.createParent(root);
-		((ScrolledComposite)parent).setExpandHorizontal(true);
-		return parent;
-	}
-	
-	protected void createFormClient(Composite parent) {
-		GridLayout layout = new GridLayout();
+	protected void createContents(Composite parent) {
+		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
 		layout.numColumns = getInteger(pageConfig, "numColumns", 1);
-		layout.marginWidth = 10;
+		layout.topMargin = 0;
+		layout.leftMargin = layout.rightMargin = 10;
 		layout.horizontalSpacing=15;
+		layout.verticalSpacing = 5;
+		//parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		layout.makeColumnsEqualWidth=true;
 		SelectableFormLabel customize = getFactory().createSelectableLabel(parent, "Customize...");
 		getFactory().turnIntoHyperlink(customize, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 			}
 		});
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.horizontalSpan = layout.numColumns;
-		customize.setLayoutData(gd);
+		TableData td = new TableData();
+		td.align = TableData.CENTER;
+		td.colspan = layout.numColumns;
+		customize.setLayoutData(td);
 		
 		IConfigurationElement [] sectionRefs = pageConfig.getChildren("section");
 		for (int i=0; i<sectionRefs.length; i++) {
@@ -68,9 +66,10 @@ public class WelcomePortalForm extends ScrollableSectionForm {
 			PortalSection section = new PortalSection(desc, this);
 			Control control = section.createControl(parent, getFactory());
 			int span = getInteger(sectionRef, "span", 1);
-			gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-			gd.horizontalSpan = span;
-			control.setLayoutData(gd);
+			td = new TableData(TableData.FILL, TableData.TOP);
+			td.colspan = span;
+			td.grabHorizontal = true;
+			control.setLayoutData(td);
 			registerSection(section);
 		}
 	}

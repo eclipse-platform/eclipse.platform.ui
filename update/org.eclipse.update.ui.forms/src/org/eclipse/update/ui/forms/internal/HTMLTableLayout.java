@@ -444,8 +444,19 @@ private TableData [] createEmptyRow() {
 		      columnWidths = minColumnWidths;
 		}
 		else if (parentWidth > maxWidth) {
-		   tableWidth = maxWidth;
-		   columnWidths = maxColumnWidths;
+			if (makeColumnsEqualWidth) {
+				columnWidths = new int [numColumns];
+				int colSpace = parentWidth - leftMargin - rightMargin;
+				colSpace -= (numColumns-1)*horizontalSpacing;
+				int col = colSpace/numColumns;
+				for (int i=0; i<numColumns; i++) {
+					columnWidths[i] = col;
+				}
+			}
+			else {
+		   		tableWidth = maxWidth;
+		   		columnWidths = maxColumnWidths;
+			}
 		}
 		else {
 			columnWidths = new int [numColumns];

@@ -16,6 +16,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.update.ui.forms"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
 
 
@@ -81,7 +82,20 @@
             numColumns="2"
             id="org.eclipse.update.ui.win32.homePage">
          <section
+               span="2"
+               id="community.news.remote">
+         </section>
+         <section
+               id="search">
+         </section>
+         <section
                id="tasks.softwareUpdates">
+         </section>
+         <section
+               id="quickStart">
+         </section>
+         <section
+               id="tipsAndTricks">
          </section>
       </page>
       <page
@@ -94,9 +108,6 @@
             id="org.eclipse.update.ui.win32.community">
          <section
                id="community.links">
-         </section>
-         <section
-               id="community.articles.remote">
          </section>
          <section
                id="community.articles">
@@ -112,6 +123,15 @@
       <section
             name="Software Updates"
             id="tasks.softwareUpdates">
+         <form>
+            &lt;p&gt;
+&lt;a href=&quot;action&quot; arg=&quot;org.eclipse.update.ui:org.eclipse.update.internal.ui.InstallWizardAction&quot;&gt;
+Find updates for the currently installed features
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href=&quot;action&quot; arg=&quot;org.eclipse.update.ui:org.eclipse.update.internal.ui.ConfigurationManagerAction&quot;&gt;
+Manage my workbench configuration&lt;/a&gt;&lt;/p&gt;
+         </form>
       </section>
       <section
             name="Eclipse Community Sites"
@@ -121,20 +141,43 @@
          </form>
       </section>
       <section
-            name="New Eclipse Articles (remote)"
-            id="community.articles.remote">
+            name="New Eclipse Articles"
+            id="community.articles">
          <form
                url="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-update-home/welcome-articles.xml"
                type="remote">
          </form>
       </section>
       <section
-            name="New Eclipse Articles"
-            id="community.articles">
-         <form>
-            &lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Builders/builders.html&quot;&gt;Project Natures and Builders&lt;/a&gt; John Arthorne (IBM) January 27, 2003&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Decorators/decorators.html&quot;&gt;Understanding Decorators in Eclipse&lt;/a&gt; Balaji Krish-Sampath (IBM) January 16, 2003&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;url&quot; arg=&quot;http://eclipse.org/articles/Article-Launch-Framework/launch.html&quot;&gt;We Have Lift-off: The Launching Framework in Eclipse&lt;/a&gt; Joe Szurszewski (IBM) January 8, 2003&lt;/li&gt;
+            name="Headlines"
+            id="community.news.remote">
+         <form
+               url="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-update-home/welcome-news.xml"
+               type="remote">
+         </form>
+      </section>
+      <section
+            name="Get Help"
+            id="search">
+         <form
+               type="custom"
+               class="org.eclipse.welcome.internal.portal.HelpSection">
+         </form>
+      </section>
+      <section
+            name="Quick Start"
+            id="quickStart">
+         <form
+               type="dynamic"
+               class="org.eclipse.welcome.internal.actions.WelcomeContentProvider">
+         </form>
+      </section>
+      <section
+            name="Tips and Tricks"
+            id="tipsAndTricks">
+         <form
+               type="dynamic"
+               class="org.eclipse.welcome.internal.actions.TipsAndTricksContentProvider">
          </form>
       </section>
    </extension>

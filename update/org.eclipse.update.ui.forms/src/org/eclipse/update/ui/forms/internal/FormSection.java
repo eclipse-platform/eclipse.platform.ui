@@ -61,9 +61,19 @@ public abstract class FormSection implements IPropertyChangeListener {
 		public int getMaximumWidth(Composite parent, boolean flush) {
 			int maxWidth = 0;
 			if (client != null) {
-				Point csize =
-					client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
-				maxWidth = csize.x;
+				if (client instanceof Composite) {
+					Layout cl = ((Composite) client).getLayout();
+					if (cl instanceof ILayoutExtension)
+						maxWidth =
+							((ILayoutExtension) cl).getMaximumWidth(
+								(Composite) client,
+								flush);
+				}
+				if (maxWidth == 0) {
+					Point csize =
+						client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+					maxWidth = csize.x;
+				}
 			}
 			if (headerPainted && header != null) {
 				Point hsize =
