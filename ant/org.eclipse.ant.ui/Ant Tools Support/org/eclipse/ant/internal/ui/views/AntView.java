@@ -469,6 +469,16 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (getProjects().length == 0) {		
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		}
+		setProjectViewerSelectionAfterDeletion();
+	}
+
+	private void setProjectViewerSelectionAfterDeletion() {
+		Object[] children= projectContentProvider.getChildren(projectContentProvider.getRootNode());
+		if (children.length > 0) {
+			ViewerSorter sorter= projectViewer.getSorter();
+			sorter.sort(projectViewer, children);
+			projectViewer.setSelection(new StructuredSelection(children[0]));
+		}
 	}
 
 	/**
@@ -487,6 +497,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			removeProjectFromContentProviders(project);
 		}
 		projectViewer.refresh();
+		setProjectViewerSelectionAfterDeletion();
 	}
 
 	/**
