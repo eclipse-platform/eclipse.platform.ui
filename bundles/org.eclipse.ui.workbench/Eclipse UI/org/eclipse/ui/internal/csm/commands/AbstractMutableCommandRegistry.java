@@ -15,8 +15,7 @@ import java.util.List;
 
 import org.eclipse.ui.internal.util.Util;
 
-public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry 
-	implements IMutableCommandRegistry {
+public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
 	}

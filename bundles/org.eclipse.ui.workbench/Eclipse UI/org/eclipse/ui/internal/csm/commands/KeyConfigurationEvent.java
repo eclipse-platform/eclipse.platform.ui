@@ -21,8 +21,9 @@ final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean nameChanged;
+	private boolean parentIdChanged;
 
-	KeyConfigurationEvent(IKeyConfiguration keyConfiguration, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
+	KeyConfigurationEvent(IKeyConfiguration keyConfiguration, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged, boolean parentIdChanged) {
 		if (keyConfiguration == null)
 			throw new NullPointerException();
 		
@@ -31,6 +32,7 @@ final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
+		this.parentIdChanged = parentIdChanged;
 	}
 
 	public IKeyConfiguration getKeyConfiguration() {
@@ -51,5 +53,9 @@ final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 
 	public boolean hasNameChanged() {
 		return nameChanged;
+	}
+	
+	public boolean hasParentIdChanged() {
+		return parentIdChanged;
 	}
 }

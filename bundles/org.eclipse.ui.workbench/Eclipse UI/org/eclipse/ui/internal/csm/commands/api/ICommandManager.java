@@ -66,13 +66,55 @@ public interface ICommandManager {
 	Set getActiveCommandIds();
 
 	/**
-	 * Returns a handle to an command given an identifier.
+	 * <p>
+	 * Returns the set of identifiers to active key configurations. This set is 
+	 * not necessarily a subset of the set of identifiers to defined key 
+	 * configurations.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the set of identifiers to active key configurations. This set may 
+	 * 		   be empty, but is guaranteed not to be <code>null</code>. If this 
+	 * 		   set is not empty, it is guaranteed to only contain instances of 
+	 *         <code>String</code>.
+	 */	
+	Set getActiveKeyConfigurationIds();	
+
+	/**
+	 * Returns a handle to a category given an identifier.
+	 *
+	 * @param categoryId an identifier. Must not be <code>null</code>
+	 * @return           a handle to a category.
+	 */	
+	ICategory getCategory(String categoryId);	
+	
+	/**
+	 * Returns a handle to a command given an identifier.
 	 *
 	 * @param commandId an identifier. Must not be <code>null</code>
-	 * @return          a handle to an command.
+	 * @return          a handle to a command.
 	 */	
 	ICommand getCommand(String commandId);
 
+	/**
+	 * <p>
+	 * Returns the set of identifiers to defined categories.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the set of identifiers to defined categories. This set may be 
+	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
+	 *         is not empty, it is guaranteed to only contain instances of 
+	 *         <code>String</code>.
+	 */	
+	Set getDefinedCategoryIds();	
+	
 	/**
 	 * <p>
 	 * Returns the set of identifiers to defined commands.
@@ -88,6 +130,22 @@ public interface ICommandManager {
 	 *         <code>String</code>.
 	 */	
 	Set getDefinedCommandIds();
+	
+	/**
+	 * <p>
+	 * Returns the set of identifiers to defined key configurations.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *
+	 * @return the set of identifiers to defined key configurations. This set 
+	 * 		   may be empty, but is guaranteed not to be <code>null</code>. If 
+	 * 		   this set is not empty, it is guaranteed to only contain instances 
+	 * 		   of <code>String</code>.
+	 */	
+	Set getDefinedKeyConfigurationIds();	
 
 	/**
 	 * <p>
@@ -104,7 +162,15 @@ public interface ICommandManager {
 	 *         is not empty, it is guaranteed to only contain instances of 
 	 *         <code>String</code>.
 	 */	
-	Set getEnabledCommandIds();	
+	Set getEnabledCommandIds();
+	
+	/**
+	 * Returns a handle to a key configuration given an identifier.
+	 *
+	 * @param keyConfigurationId an identifier. Must not be <code>null</code>
+	 * @return          	     a handle to a key configuration.
+	 */	
+	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);	
 	
 	/**
 	 * Unregisters an instance of <code>ICommandManagerListener</code> 
@@ -131,6 +197,18 @@ public interface ICommandManager {
 	 *                         <code>String</code>.	
 	 */
 	void setActiveCommandIds(Set activeCommandIds);
+
+	/**
+	 * Sets the set of identifiers to active key configurations. 
+	 *
+	 * @param activeKeyConfigurationIds the set of identifiers to active key 
+	 * 									configurations. This set may be empty, 
+	 * 									but it must not be <code>null</code>. If 
+	 * 									this set is not empty, it must only 
+	 * 									contain instances of 
+	 * 									<code>String</code>.	
+	 */
+	void setActiveKeyConfigurationIds(Set activeKeyConfigurationIds);	
 	
 	/**
 	 * Sets the set of identifiers to enabled commands. 

@@ -21,22 +21,30 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 	private final static int HASH_INITIAL = KeySequenceBinding.class.getName().hashCode();
 
 	private KeySequence keySequence;
+	private int match;	
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	KeySequenceBinding(KeySequence keySequence) {	
+	KeySequenceBinding(KeySequence keySequence, int match) {	
 		if (keySequence == null)
 			throw new NullPointerException();
+		
+		if (match < 0)
+			throw new IllegalArgumentException();		
 
 		this.keySequence = keySequence;
 	}
 
 	public int compareTo(Object object) {
 		KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		int compareTo = Util.compare(keySequence, castedObject.keySequence);		
-		return compareTo;	
+		int compareTo = match - castedObject.match;		
+
+		if (compareTo == 0)
+			compareTo = Util.compare(keySequence, castedObject.keySequence);	
+		
+		return compareTo;
 	}
 	
 	public boolean equals(Object object) {
@@ -46,6 +54,7 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 		KeySequenceBinding castedObject = (KeySequenceBinding) object;	
 		boolean equals = true;
 		equals &= Util.equals(keySequence, castedObject.keySequence);
+		equals &= match == castedObject.match;
 		return equals;
 	}
 
@@ -53,10 +62,15 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 		return keySequence;
 	}
 	
+	public int getMatch() {
+		return match;	
+	}	
+	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
+			hashCode = hashCode * HASH_FACTOR + match;
 			hashCodeComputed = true;
 		}
 			
@@ -68,6 +82,8 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
 			stringBuffer.append(keySequence);
+			stringBuffer.append(',');
+			stringBuffer.append(match);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -26,14 +26,14 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
-	protected List activeKeyConfigurationDefinitions;
-	protected List categoryDefinitions; 
-	protected List commandDefinitions; 
-	protected List contextBindingDefinitions;
+	private List activeKeyConfigurationDefinitions;
+	private List categoryDefinitions; 
+	private List commandDefinitions; 
+	private List contextBindingDefinitions;
 	private IExtensionRegistry extensionRegistry;
-	protected List imageBindingDefinitions;
-	protected List keyConfigurationDefinitions;	
-	protected List keySequenceBindingDefinitions;
+	private List imageBindingDefinitions;
+	private List keyConfigurationDefinitions;	
+	private List keySequenceBindingDefinitions;
 	
 	public ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)

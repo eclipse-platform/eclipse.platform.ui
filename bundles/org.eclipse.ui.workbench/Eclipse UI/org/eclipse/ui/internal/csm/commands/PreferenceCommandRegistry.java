@@ -41,15 +41,19 @@ public final class PreferenceCommandRegistry extends AbstractMutableCommandRegis
 
 		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-				if (KEY.equals(propertyChangeEvent.getProperty())) {
+				if (KEY.equals(propertyChangeEvent.getProperty()))
 					try {
 						load();
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
-				}
 			}
 		});
+		
+		try {
+			load();
+		} catch (IOException eIO) {
+		}
 	}
 
 	public void load() 

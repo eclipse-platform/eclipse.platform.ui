@@ -613,7 +613,7 @@ final class Persistence {
 		return KeySupport.convertAcceleratorToKeyStroke(stroke);
 	}
 
-	public static int[] parseDeprecatedSequence(String string) {
+	private static int[] parseDeprecatedSequence(String string) {
 		if (string == null)
 			throw new NullPointerException();
 			
@@ -627,7 +627,7 @@ final class Persistence {
 		return strokes;		
 	}
 
-	public static int parseDeprecatedStroke(String string) {
+	private static int parseDeprecatedStroke(String string) {
 		if (string == null)
 			throw new NullPointerException();
 		

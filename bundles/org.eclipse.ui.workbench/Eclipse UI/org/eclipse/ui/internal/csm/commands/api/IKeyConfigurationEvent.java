@@ -56,4 +56,9 @@ public interface IKeyConfigurationEvent {
 	 * TODO javadoc
 	 */		
 	boolean hasNameChanged();
+	
+	/**
+	 * TODO javadoc
+	 */		
+	boolean hasParentIdChanged();
 }

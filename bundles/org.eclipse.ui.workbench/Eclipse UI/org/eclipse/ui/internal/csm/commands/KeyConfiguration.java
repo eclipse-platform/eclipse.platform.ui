@@ -33,6 +33,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 	private String description;
 	private String id;
 	private String name;
+	private String parentId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
@@ -72,8 +73,12 @@ final class KeyConfiguration implements IKeyConfiguration {
 				if (compareTo == 0) {		
 					compareTo = Util.compare(id, castedObject.id);			
 				
-					if (compareTo == 0)
+					if (compareTo == 0) {
 						compareTo = Util.compare(name, castedObject.name);
+
+						if (compareTo == 0)
+							compareTo = Util.compare(parentId, castedObject.parentId);
+					}
 				}
 			}
 		}
@@ -92,6 +97,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
 		return equals;
 	}
 
@@ -114,6 +120,14 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 		return name;
 	}	
+
+	public String getParentId()
+		throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
+		return parentId;
+	}		
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
@@ -123,6 +137,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
 			
@@ -161,6 +176,8 @@ final class KeyConfiguration implements IKeyConfiguration {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
@@ -224,4 +241,16 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 		return false;
 	}
+	
+	boolean setParentId(String parentId) {
+		if (!Util.equals(parentId, this.parentId)) {
+			this.parentId = parentId;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}	
 }
