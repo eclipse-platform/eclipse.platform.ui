@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -96,7 +95,13 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			shell.setSize(shellSize.x, shellSize.y - viewerHeight);
 			detailsButton.setText(ProgressMessages
 					.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
-		} else {
+		} else {			
+			//Abort if there are no jobs visible
+			if(ProgressManager.getInstance().getRootElements(false).length == 0){
+				detailsButton.setEnabled(false);
+				return;
+			}
+				
 			viewer = new NewProgressViewer(viewerComposite, SWT.MULTI
 					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			viewer.setUseHashlookup(true);
@@ -111,7 +116,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return ((Comparable) e1).compareTo(e2);
 				}
 			});
-			IContentProvider provider = new ProgressTreeContentProvider(viewer,
+			
+			ProgressTreeContentProvider provider = new ProgressTreeContentProvider(viewer,
 					true);
 			viewer.setContentProvider(provider);
 			viewer.setInput(provider);
