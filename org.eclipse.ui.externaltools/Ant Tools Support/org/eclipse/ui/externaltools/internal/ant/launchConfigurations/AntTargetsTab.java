@@ -471,4 +471,24 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
 	}
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
+	 */
+	public boolean canSave() {
+		return isValid(null);
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		setErrorMessage(null);
+		setMessage(null);
+		
+		if (executeTargetsTable.getTable().getItemCount() == 0) {
+			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
+			return false;
+		}
+		return super.isValid(launchConfig);
+	}
 }
