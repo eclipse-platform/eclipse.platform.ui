@@ -94,7 +94,7 @@ protected OutputStream createStream(File target, boolean append) throws CoreExce
 		if (target.isDirectory())
 			message = Policy.bind("localstore.notAFile", path);
 		else
-			message = Policy.bind("localstore.couldNotRead", path);
+			message = Policy.bind("localstore.couldNotWrite", path);
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), message, e);
 	}
 }
