@@ -18,7 +18,7 @@
 document describes the cheat sheet content file structure as a series of
 DTD fragments.</p>
 
-<h2><code>cheatsheet</code> Element</h2>
+<h2><code>cheatsheet</code>  element</h2>
 <pre>&lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
 &lt;!ATTLIST cheatsheet&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
@@ -31,12 +31,12 @@ DTD fragments.</p>
   <li><b>title</b>
     - the title of the cheat sheet
 </ul>
-<pre>&lt;!ELEMENT intro ()&gt;&nbsp;
+<pre>&lt;!ELEMENT intro EMPTY&gt;&nbsp;
 &lt;!ATTLIST intro&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &gt;</pre>
 
-<h2><code>intro</code> Element</h2>
+<h2><code>intro</code>  element</h2>
 
 <p>The &lt;intro&gt; element is used to describe the cheat sheet introduction to be displayed.
 The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
@@ -47,7 +47,18 @@ The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
     browser
   </li>
 </ul>
-<h2><code>item</code> Element</h2>
+
+<h3>Text formatting and line breaks</h3>
+<p>In the cheat sheet content file, you should keep all text on the same line as the &lt;intro&gt; or &lt;item&gt; tag.
+At execution time, the cheat sheet automatically wraps the text to make it show up correctly in
+UI. A line break in the text in the cheat sheet content file is interpreted as a line break in the displayed cheat sheet.</p>
+
+<p>[TODO (lorne)&nbsp; - Many editors do not well with arbitrary length lines.
+It would be better to have a more HTML-like convention where line breaks are not
+significant, and there embedded tags (like &lt;br&gt;) are used to indicate line
+breaks.]</p>
+
+<h2><code>item</code>  element</h2>
 <pre>&lt;!ELEMENT item (subitem*)&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
@@ -108,7 +119,11 @@ into sub-steps. &lt;item&gt; attributes are as follows:</p>
     item's help link, this document is shown in the help browser</li>
 </ul>
 
-<h2><code>subitem</code> Element</h2>
+<p>The org.eclipse.ui.cheatsheets.cheatSheetItemExtension allows additional custom controls
+for the item to be displayed in the UI. Contributions to this extension point
+declare the names of additional, string-valued attributes that may appear on &lt;item&gt; elements.</p>
+
+<h2><code>subitem</code>  element</h2>
 <pre>&lt;!ELEMENT subitem EMPTY&gt;&nbsp;
 &lt;!ATTLIST subitem&nbsp;
 &nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
@@ -174,67 +189,18 @@ actionparamN are the same as &lt;item&gt;):</p>
 
 <h2>Example</h2>
 
-<p>The following is an example of a cheat sheet content file: 
+<p>The following is a very simple example of a cheat sheet content file: 
 </p>
 
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;&nbsp; 
-&lt;cheatSheet title=&quot;Hello World Demo&quot; version=&quot;1.0&quot;&gt; 
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;cheatSheet title=&quot;Two-step program&quot;&gt;
 &nbsp; 
-&lt;intro&nbsp; 
-      href=&quot;/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm&quot;&gt; 
-Welcome to the hello world cheat sheet. 
-This cheat sheet will help you to build the famous &quot;hello world&quot;
-application and try it out. You will create a java project, and
-a Java class that will print &quot;hello world&quot; in the console when run. 
-Let's get started! 
-&lt;/intro&gt;
-&nbsp; 
-&lt;item 
-      title=&quot;Open the Java Perspective&quot;&nbsp; 
-      href=&quot;/org.eclipse.platform.doc.user/concepts/concepts-4.htm&quot; 
-      kind=&quot;manual&quot;&nbsp; 
-      pluginId=&quot;org.eclipse.ui.cheatsheet.sample&quot; 
-      class=&quot;org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction&quot;&gt;
-To begin, open the Java Perspective in the Eclipse workbench.&nbsp; 
-You may do this by clicking Window-&gt;Open Perspective-&gt;Java in the
-tool bar at the top of the workbench. When you have done this, press
-the &quot;click when done&quot; button below.
-&lt;/item&gt; 
-&nbsp; 
+  &lt;intro&gt;Welcome to the 2-step program.&lt;/intro&gt;
+
+  &lt;item title=&quot;Step 1&quot; kind=&quot;manual&quot;&gt;Press the button to proceed to step 2.&lt;/item&gt;
+  &lt;item title=&quot;Step 2&quot; kind=&quot;manual&quot;&gt;Press the button to complete the 2-step program.&lt;/item&gt;
 &lt;/cheatSheet&gt;
 </pre>
-Figure 1: Example cheat sheet xml
-
-<h2>Text formatting</h2>
-<p>In the cheat sheet content file, you should keep all text on the same line as the &lt;intro&gt; or &lt;item&gt; tag.
-At execution time, the cheat sheet automatically wraps the text to make it show up correctly in
-UI. A line break in the text in the cheat sheet content file is interpreted as a line break in the displayed cheat sheet.</p>
-
-<h2>Item extensions</h2>
-<p>If you need extend an item’s assistance capabilities to launch additional support tools besides help topics, you can use the item extension mechanism to display additional custom controls to the left of help link  button. To accomplish this, you need to do these two things:Use the extension point to extend the cheat sheet &lt;item&gt; 
-In the cheat sheet content XML file, use the newly defined &lt;item&gt; attribute that supports the item extension.</p>
-
-<h4>Extension point for item extensions</h4>
-<p>In the cheat sheet content plugin's plugin.xml file, use the extension point, org.eclipse.ui.cheatsheets.cheatSheetItemExtension, as follows: 
-&lt;extension point="org.eclipse.ui.cheatsheets.cheatSheetItemExtension"&gt; 
-        &lt;itemExtension 
-                itemAttribute="extensionlink" 
-                class="org.example.actions.ItemExtensionAction"&gt; 
-        &lt;/itemExtension&gt; 
-&lt;/extension&gt; 
-In the above example extension point, the itemAttribute="" attribute specifies the name of the attribute to use when defining the &lt;item&gt; that will have the item extension included. You can use the same item extension for more than one &lt;item&gt;. 
-The class="" attribute is a class that implements the org.eclipse.ui.cheatsheets.ICheatSheetItemExtensionElement interface. This class is called to handle the following: 
-·        Parsing of the information in the cheat sheet content XML file. 
-·        Creation of the custom control.</p>
-<h3>Defining &lt;item&gt; that uses the item extension</h3>
-<p>In the cheat sheet content XML file, the &lt;item&gt; element that you wish to have the item extension needs to use the item extension attribute. The value of the itemAttribute in the &lt;itemExtension&gt; element is the attribute that you will use in the &lt;item&gt; definition. Here is an example of the &lt;item&gt; element that has the extensionlink attribute as defined in the above extension point example. 
-&lt;item 
-        id="0" 
-        href="/org.eclipse.platform.doc.user/concepts/concepts-4.htm" 
-        title="Open the Java Perspective" 
-        extensionlink=”input data required by extension”        actionphrase="2"        pluginId="org.eclipse.ui.cheatsheet.sample" 
-        class="org.eclipse.ui.cheatsheets.sample.pattern.actions.LaunchPatternSelectionDialogAction"&gt;To begin, open the Java Perspective in the Eclipse workbench. 
-You may do this by clicking window-&gt;open perspective-&gt;Java in the toolbar at the top of the workbench.  When you have done this, press the "click when done" button below.&lt;/item&gt;</p>
 
 </body>
 </html>
