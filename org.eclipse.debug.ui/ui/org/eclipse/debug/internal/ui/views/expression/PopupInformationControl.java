@@ -82,7 +82,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	/**
 	 * ActionHandler for closeAction
 	 */
-	private List submissions;
+	private HandlerSubmission submission;
 	
 	/**
 	 * Handler used to close this popup, or <code>null</code> if none
@@ -209,7 +209,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		
-		commandSupport.removeHandlerSubmissions(submissions);
+		commandSupport.removeHandlerSubmission(submission);
 		contextSupport.unregisterShell(shell);
 	}
 	
@@ -219,16 +219,15 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 */
 	private void register() {
 		if (closeHandler != null) {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		
-		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, commandId, closeHandler, Priority.MEDIUM));
-		
-		commandSupport.addHandlerSubmissions(submissions);
-		
-		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			
+			IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+			
+			submission = new HandlerSubmission(null, shell, null, commandId, closeHandler, Priority.MEDIUM);
+			commandSupport.addHandlerSubmission(submission);
+			
+			contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
 		}
 	}	
 	
