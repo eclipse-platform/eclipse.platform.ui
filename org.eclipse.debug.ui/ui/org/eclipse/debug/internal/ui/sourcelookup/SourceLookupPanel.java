@@ -356,7 +356,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.1")); //$NON-NLS-1$
 				return;
 			}
-			//set new values in director so memento returned in correct
+			//set new values in director so memento returned is correct
 			fLocator.setSourceContainers(fPathViewer.getEntries());
 			fLocator.setFindDuplicates(fDuplicatesButton.getSelection());
 						
