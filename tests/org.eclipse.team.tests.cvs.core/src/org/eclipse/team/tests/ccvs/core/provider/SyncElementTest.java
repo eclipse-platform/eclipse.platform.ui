@@ -117,10 +117,10 @@ public class SyncElementTest extends EclipseTest {
 		for (int i=0;i<resources.length;i++) {
 			try {
 				getChild(tree, new Path(resources[i]));
-				assertTrue(message + ": resource " + resources[i] + " still exists in some form", false);
 			} catch (AssertionFailedError e) {
-				// The getChild should assert because the child doesn't exists
+				break;
 			}
+			assertTrue(message + ": resource " + resources[i] + " still exists in some form", false);
 		}
 	}
 	
