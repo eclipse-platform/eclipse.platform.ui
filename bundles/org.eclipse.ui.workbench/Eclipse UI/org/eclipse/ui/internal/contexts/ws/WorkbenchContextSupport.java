@@ -452,6 +452,12 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                             }
                             break;
                         }
+                        if (CONTEXT_ID_DIALOG_AND_WINDOW.equals(parentId)) {
+                            if ((!window) && (!dialog)) {
+                                contextIdItr.remove();
+                            }
+                            break;
+                        }
 
                         context = mutableContextManager.getContext(parentId);
                         parentId = context.getParentId();
