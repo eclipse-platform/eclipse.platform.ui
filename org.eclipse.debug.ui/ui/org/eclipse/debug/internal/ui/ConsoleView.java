@@ -88,7 +88,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		fConsoleViewer.getControl().setFocus();
+		if (fConsoleViewer != null) {
+			fConsoleViewer.getControl().setFocus();
+		}
 	}
 	
 	/** 

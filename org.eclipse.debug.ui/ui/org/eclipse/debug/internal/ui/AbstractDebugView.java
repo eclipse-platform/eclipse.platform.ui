@@ -112,7 +112,10 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		getViewer().getControl().setFocus();
+		StructuredViewer viewer= getViewer();
+		if (viewer != null) {
+			viewer.getControl().setFocus();
+		}
 	}
 	
 	protected void setViewer(StructuredViewer viewer) {

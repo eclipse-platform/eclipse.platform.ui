@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -132,12 +133,15 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 * @see IWorkbenchPart
 	 */
 	public void setFocus() {
-		Control c = getViewer().getControl();
-		if (!c.isFocusControl()) {
-			c.setFocus();
-			//ensure that all downstream listeners
-			//know the current selection..switching from another view
-			DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
+		StructuredViewer viewer= getViewer();
+		if (viewer != null) {
+			Control c = viewer.getControl();
+			if (!c.isFocusControl()) {
+				c.setFocus();
+				//ensure that all downstream listeners
+				//know the current selection..switching from another view
+				DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
+			}
 		}
 	}
 	
