@@ -143,11 +143,10 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 				markerSingleton = new ResourceComparator(includeMarkerDeltas);
 			}
 			return markerSingleton;
-		} else {
-			if (noMarkerSingleton == null) {
-				noMarkerSingleton = new ResourceComparator(includeMarkerDeltas);
-			}
-			return noMarkerSingleton;
 		}
+		if (noMarkerSingleton == null) {
+			noMarkerSingleton = new ResourceComparator(includeMarkerDeltas);
+		}
+		return noMarkerSingleton;
 	}
 }

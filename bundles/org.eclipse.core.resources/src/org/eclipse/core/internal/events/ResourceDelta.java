@@ -348,8 +348,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		//use old info for removals, and new info for added or changed
 		if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
 			return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_PHANTOM);
-		else
-			return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_PHANTOM);
+		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_PHANTOM);
 	}
 
 	/**
@@ -360,8 +359,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		//use old info for removals, and new info for added or changed
 		if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
 			return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-		else
-			return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 	}
 
 	protected void setChildren(ResourceDelta[] children) {
