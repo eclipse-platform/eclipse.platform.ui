@@ -87,7 +87,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	private int fSeverity;
 	private boolean fIsTemporary;
 	private String fMessage;
-	private String fAnnotationType;
+	private String fMarkerType;
 
 	private boolean fIsInitialized= false;
 
@@ -153,17 +153,17 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	/**
 	 * Creates a new editor annotation.
 	 * 
-	 * @param annotationType the type of this annotation
+	 * @param markerType the marker type of this annotation
 	 * @param severity the severity of this annotation
 	 * @param isTemporary <code>true</code> if this is a temporary annotation
 	 * @param message the message of this annotation
 	 */
-	public DefaultAnnotation(String annotationType, int severity, boolean isTemporary, String message) {
+	public DefaultAnnotation(String markerType, int severity, boolean isTemporary, String message) {
 		Assert.isTrue(severity == IMarker.SEVERITY_INFO || severity == IMarker.SEVERITY_WARNING || severity == IMarker.SEVERITY_ERROR);
 		fSeverity= severity;
 		fIsTemporary= isTemporary;
 		fMessage= message;
-		fAnnotationType= annotationType;
+		fMarkerType= markerType;
 	}
 	
 	/**
@@ -172,16 +172,16 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	 */
 	protected void initialize() {
 		
-		String name= getUnknownImageName(fAnnotationType);
+		String name= getUnknownImageName(fMarkerType);
 		int layer= 1;
 		
-		if (isAnnotationType(fAnnotationType, IMarker.TASK)) {
+		if (isAnnotationType(fMarkerType, IMarker.TASK)) {
 			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
 			layer= TASK_LAYER;
-		} else if (isAnnotationType(fAnnotationType, IMarker.BOOKMARK)) {
+		} else if (isAnnotationType(fMarkerType, IMarker.BOOKMARK)) {
 			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
 			layer= BOOKMARK_LAYER;
-		} else if (isAnnotationType(fAnnotationType, IMarker.PROBLEM)) {
+		} else if (isAnnotationType(fMarkerType, IMarker.PROBLEM)) {
 			switch (fSeverity) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
@@ -259,7 +259,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		if (fImage != null)
 			return fImage;
 		
-		final String key= fAnnotationType + fSeverity;
+		final String key= fMarkerType + fSeverity;
 		
 		Object descriptor= fgType2Descriptor.get(key);
 		if (descriptor == NO_DESCRIPTOR)
@@ -276,7 +276,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 			 * @see WorkspaceModifyOperation
 			 */
 			public void execute(IProgressMonitor monitor) throws CoreException,InvocationTargetException, InterruptedException {
-				IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fAnnotationType);
+				IMarker tempMarker= ResourcesPlugin.getWorkspace().getRoot().createMarker(fMarkerType);
 				tempMarker.setAttribute(IMarker.SEVERITY, fSeverity);
 				if (tempMarker.exists()) {
 					IWorkbenchAdapter adapter= (IWorkbenchAdapter) tempMarker.getAdapter(IWorkbenchAdapter.class);
@@ -315,7 +315,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	}
 
 	public String getMarkerType() {
-		return fAnnotationType;
+		return fMarkerType;
 	}
 	
 	/*
