@@ -93,6 +93,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			return part.getTitleImage();
 		if(image != null)
 			return image;
+		if(imageDescritor == null)
+			return null;
 		ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 		image = (Image)imageCache.get(imageDescritor);
 		if(image != null) {
