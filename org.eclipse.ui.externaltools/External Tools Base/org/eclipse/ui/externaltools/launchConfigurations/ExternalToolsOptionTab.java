@@ -109,7 +109,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent e) {
 				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
 				if (dialog.open() == SelectionDialog.OK) {
-					argumentField.append(dialog.getForm().getSelectedVariable());
+					argumentField.insert(dialog.getForm().getSelectedVariable());
 				}
 			}
 		});
