@@ -244,7 +244,7 @@ public interface IBreakpointManager {
      * 
      * @param breakpoint the breakpoint
      * @return the name of the given breakpoint's type or <code>null</code>
-     * @since 3.0
+     * @since 3.1
      */
     public String getTypeName(IBreakpoint breakpoint);
 	
