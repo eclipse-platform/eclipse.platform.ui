@@ -679,6 +679,14 @@ public void restoreState(IMemento memento) {
 		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(descriptor.getId());
 	if (desc != null)
 		descriptor = desc;
+		
+	// Create the toolbar layout.
+	IMemento layoutMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	if (layoutMem != null) {
+		toolBarLayout = new CoolBarLayout();
+		toolBarLayout.restoreState(layoutMem);
+	}
+	
 	this.memento = memento;
 }
 
@@ -906,6 +914,11 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 public void saveState(IMemento memento)
 {
 	saveState(memento, descriptor, true);
+	// Save the toolbar layout.
+	if (toolBarLayout != null) {
+		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		toolBarLayout.saveState(childMem);
+	}
 }
 /**
  * Save the layout.
@@ -1021,7 +1034,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	// Save the layout.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
 	presentation.saveState(childMem);
-
+	
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);

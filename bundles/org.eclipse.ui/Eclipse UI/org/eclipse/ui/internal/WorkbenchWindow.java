@@ -1143,6 +1143,8 @@ public void setActivePage(final IWorkbenchPage in) {
 			updateTitle();
 			updateActionSets();
 			shortcutBar.update(false);
+			if (newPage.getPerspective() != null)
+				newPage.setToolbarLayout();
 		}
 	});
 }

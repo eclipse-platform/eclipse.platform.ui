@@ -1881,6 +1881,19 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 	wb.getPerspectiveHistory().add(newDesc);
 }
 /**
+ * Save the toolbar layout for the given perspective.
+ */
+protected void saveToolbarLayout() {
+	Perspective persp = getActivePerspective(); 
+	if (persp == null) return;
+	IToolBarManager toolsMgr = window.getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		CoolBarLayout layout = coolBarMgr.getLayout();
+		persp.setToolBarLayout(layout);
+	}
+}
+/**
  * Save the state of the page.
  */
 public void saveState(IMemento memento) {
@@ -1909,6 +1922,9 @@ public void saveState(IMemento memento) {
 	if (getActivePart() != null)
 	 	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,getActivePart().getSite().getId());
 
+	// Save the toolbar layout for the current perspective.
+	saveToolbarLayout();
+	
 	// Save each perspective in opened order
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
@@ -1996,20 +2012,14 @@ private void setPerspective(Perspective newPersp) {
 	Perspective oldPersp = getActivePerspective();
 	if (oldPersp == newPersp)
 		return;
-	if(newPersp != null)
-		newPersp.restoreState();
-	
+
 	// Save the toolbar layout for the perspective before the
 	// active part is closed, so that any editor-related tool
 	// items are saved as part of the layout.
-	IToolBarManager toolsMgr = window.getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		if (oldPersp != null) {
-			CoolBarLayout layout = coolBarMgr.getLayout();
-			oldPersp.setToolBarLayout(layout);
-		} 
-	}
+	saveToolbarLayout();
+
+	if(newPersp != null)
+		newPersp.restoreState();	
 	
 	// Deactivate active part.
 	IWorkbenchPart oldActivePart = activePart;
@@ -2059,14 +2069,7 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
-	IToolBarManager mgr = window.getToolsManager();
-	if (mgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)mgr;
-		if (newPersp != null) {
-			CoolBarLayout layout = newPersp.getToolBarLayout();
-			coolBarMgr.setLayout(newPersp.getToolBarLayout());
-		}
-	}
+	setToolbarLayout();
 }
 /**
  * Sets the perspective.  
@@ -2080,6 +2083,19 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 			busySetPerspective(desc);
 		}
 	});
+}
+/**
+ * Restore the toolbar layout for the active perspective.
+ */
+protected void setToolbarLayout() {
+	Perspective persp = getActivePerspective(); 
+	if (persp == null) return;
+	IToolBarManager mgr = window.getToolsManager();
+	if (mgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)mgr;
+		CoolBarLayout layout = persp.getToolBarLayout();
+		coolBarMgr.setLayout(layout);
+	}
 }
 /**
  * Sets the active working set for the workbench page.

@@ -253,7 +253,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		ArrayList newItems = new ArrayList(coolItems.length);
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
-			newItems.add(item);
+			newItems.add(item.getId());
 		}
 		layout.items = newItems;
 		layout.itemSizes = coolBar.getItemSizes();
@@ -454,7 +454,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		CoolItem[] coolItems = coolBar.getItems();
 		ArrayList currentCoolItemIds = getCoolItemIds();
 		ArrayList newItems = new ArrayList();
-		ArrayList layoutItems = layout.items;
 		int maxItemCount = Math.max(coolItems.length, layout.items.size());
 		// the maximum possible number of items that need to be visited
 		int[] itemOrder = new int[maxItemCount];
@@ -466,7 +465,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		for (int i = 0; i < coolItems.length; i++) {
 			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
-			int index = layoutItems.indexOf(item);
+			int index = layout.items.indexOf(item.getId());
 			if (index != -1) {
 				// index = new visual position, i = current visual position 
 				// and i must be original visual position
@@ -551,16 +550,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 
 		// restore the wrap indices after the new item order is restored, wrap on the same items that 
 		// were specified in the layout
-		CoolBarContributionItem[] wrapItems = new CoolBarContributionItem[layout.itemWrapIndices.length];
+		String[] wrapItems = new String[layout.itemWrapIndices.length];
 		for (int i = 0; i < layout.itemWrapIndices.length; i++) {
-			wrapItems[i] = (CoolBarContributionItem) layout.items.get(layout.itemWrapIndices[i]);
+			wrapItems[i] = (String) layout.items.get(layout.itemWrapIndices[i]);
 		}
 		int[] wrapIndices = new int[wrapItems.length];
 		currentCoolItemIds = getCoolItemIds();
 		int j = 0;
 		int numItems = itemSizes.length;
 		for (int i = 0; i < wrapItems.length; i++) {
-			int index = currentCoolItemIds.indexOf(wrapItems[i].getId());
+			int index = currentCoolItemIds.indexOf(wrapItems[i]);
 			if (index != -1) {
 				wrapIndices[j] = index;
 				j++;

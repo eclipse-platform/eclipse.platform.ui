@@ -145,4 +145,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_WORKING_SET = "workingSet";	//$NON-NLS-1$		
 	public static final String TAG_ITEM = "item";	//$NON-NLS-1$			
 	public static final String TAG_EDIT_PAGE_ID = "editPageId";	//$NON-NLS-1$
+	public static final String TAG_TOOLBAR_LAYOUT = "toolbarLayout";	//$NON-NLS-1$
+	public static final String TAG_ITEM_SIZE = "itemSize";	//$NON-NLS-1$
+	public static final String TAG_ITEM_WRAP_INDEX = "wrapIndex";	//$NON-NLS-1$
+	public static final String TAG_INDEX = "index";	//$NON-NLS-1$
 }
