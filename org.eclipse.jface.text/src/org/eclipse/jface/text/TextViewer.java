@@ -271,9 +271,9 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Internal document listener.
+	 * Internal document listener on the visible document.
 	 */
-	class DocumentListener implements IDocumentListener {
+	class VisibleDocumentListener implements IDocumentListener {
 		
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged
@@ -281,12 +281,14 @@ public class TextViewer extends Viewer implements
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			if (e.getDocument() == getVisibleDocument())
 				fWidgetCommand.setEvent(e);
+			handleVisibleDocumentAboutToBeChanged(e);
 		}
 		
 		/*
 		 * @see IDocumentListener#documentChanged
 		 */
-		public void documentChanged(final DocumentEvent e) {
+		public void documentChanged(DocumentEvent e) {
+			handleVisibleDocumentChanged(e);
 			if (fWidgetCommand.event == e)
 				updateTextListeners(fWidgetCommand);
 			fLastSentSelectionChange= null;
@@ -1166,8 +1168,8 @@ public class TextViewer extends Viewer implements
 	private WidgetCommand fWidgetCommand= new WidgetCommand();	
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
-	/** Document listener */
-	private DocumentListener fDocumentListener= new DocumentListener();
+	/** Listener on the visible document */
+	private VisibleDocumentListener fVisibleDocumentListener= new VisibleDocumentListener();
 	/** Verify listener */
 	private TextVerifyListener fVerifyListener= new TextVerifyListener();
 	/** The most recent widget modification as document command */
@@ -1499,10 +1501,10 @@ public class TextViewer extends Viewer implements
 			fTextHoverManager= null;
 		}
 		
-		if (fDocumentListener !=null) {
+		if (fVisibleDocumentListener !=null) {
 			if (fVisibleDocument != null)
-				fVisibleDocument.removeDocumentListener(fDocumentListener);
-			fDocumentListener= null;
+				fVisibleDocument.removeDocumentListener(fVisibleDocumentListener);
+			fVisibleDocumentListener= null;
 		}
 
 		if (fDocumentAdapter != null) {
@@ -2534,7 +2536,7 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null) {
 			int top= fTextWidget.getTopIndex();
-			return widgetlLine2ModelLine(top);
+			return widgetLine2ModelLine(top);
 		}
 			
 		return -1;
@@ -2597,7 +2599,7 @@ public class TextViewer extends Viewer implements
 			if (startLine + lines < endLine) {
 				int widgetTopIndex= fTextWidget.getTopIndex();
 				int widgetBottomIndex= widgetTopIndex + lines -1;
-				return widgetlLine2ModelLine(widgetBottomIndex);
+				return widgetLine2ModelLine(widgetBottomIndex);
 			}
 				
 			return endLine;
@@ -2619,7 +2621,7 @@ public class TextViewer extends Viewer implements
 			int top= fTextWidget.getTopIndex();
 			try {
 				top= getVisibleDocument().getLineOffset(top);
-				return widgetlLine2ModelLine(top);
+				return widgetLine2ModelLine(top);
 			} catch (BadLocationException ex) {
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndexStartOffset")); //$NON-NLS-1$
@@ -2976,8 +2978,8 @@ public class TextViewer extends Viewer implements
 		}
 		
 		if (fVisibleDocument != null) {
-			if (fDocumentListener != null)
-				fVisibleDocument.removeDocumentListener(fDocumentListener);
+			if (fVisibleDocumentListener != null)
+				fVisibleDocument.removeDocumentListener(fVisibleDocumentListener);
 			if (fVisibleDocument != document)
 				freeSlaveDocument(fVisibleDocument);
 		}
@@ -2990,9 +2992,31 @@ public class TextViewer extends Viewer implements
 		
 		if (fVisibleDocument != null) {
 			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
-			if (fDocumentListener != null)
-				fVisibleDocument.addDocumentListener(fDocumentListener);
+			if (fVisibleDocumentListener != null)
+				fVisibleDocument.addDocumentListener(fVisibleDocumentListener);
 		}
+	}
+	
+	/**
+	 * Hook method called when the visible document is about to be changed.
+	 * <p>
+	 * Subclasses may override.
+	 * 
+	 * @param event the document event
+	 * @since 3.0
+	 */
+	protected void handleVisibleDocumentAboutToBeChanged(DocumentEvent event) {
+	}
+
+	/**
+	 * Hook method called when the visible document has been changed.
+	 * <p>
+	 * Subclasses may override.
+	 * 
+	 * @param event the document event
+	 * @since 3.0
+	 */
+	protected void handleVisibleDocumentChanged(DocumentEvent event) {
 	}
 	
 	/**
@@ -4507,12 +4531,19 @@ public class TextViewer extends Viewer implements
 		
 		return null;
 	}
-
+	
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension3#widgetlLine2ModelLine(int)
 	 * @since 2.1
 	 */
 	public int widgetlLine2ModelLine(int widgetLine) {
+		return widgetLine2ModelLine(widgetLine);
+	}
+
+	/**
+	 * @see ITextViewerExtension5#widgetLine2ModelLine(int)
+	 */
+	public int widgetLine2ModelLine(int widgetLine) {
 		if (fInformationMapping == null)
 			return widgetLine;
 		
