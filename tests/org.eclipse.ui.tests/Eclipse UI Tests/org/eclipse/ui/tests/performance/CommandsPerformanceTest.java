@@ -376,8 +376,37 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 	/**
 	 * <p>
+	 * Tests how long it takes to access the cache if no conditions have
+	 * changed. It measures how long it takes to look up the computation from
+	 * the cache one million times. In this test, the look-up is done in reverse --
+	 * from command identifier to trigger.
+	 * </p>
+	 * 
+	 * @throws ParseException
+	 *             If "CTRL+F" can't be parsed for some strange reason.
+	 */
+	public final void testBindingCacheHitHardReverse() throws ParseException {
+		// Constants
+		final int cacheHits = 1000000;
+		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
+
+		// Compute once.
+		bindingManager.getPartialMatches(keySequence);
+
+		// Time how long it takes to access the cache;
+		startMeasuring();
+		for (int i = 0; i < cacheHits; i++) {
+			bindingManager.getActiveBindingsFor("command1");
+		}
+		stopMeasuring();
+		commitMeasurements();
+		assertPerformance();
+	}
+
+	/**
+	 * <p>
 	 * Tests how long it takes to access the cache if the conditions have
-	 * change, but the cache contains a matching entry. It measures how long it
+	 * changed, but the cache contains a matching entry. It measures how long it
 	 * takes to look up the computation from the cache forty thousand times.
 	 * </p>
 	 * 

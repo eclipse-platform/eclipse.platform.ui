@@ -70,6 +70,36 @@ public final class BindingManager implements IContextManagerListener,
 	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 
 	/**
+	 * </p>
+	 * A utility method for adding entries to a map. The map is checked for
+	 * entries at the key. If such an entry exists, it is expected to be a
+	 * <code>Collection</code>. The value is then appended to the collection.
+	 * If no such entry exists, then a collection is created, and the value
+	 * added to the collection.
+	 * </p>
+	 * 
+	 * @param map
+	 *            The map to modify; if this value is <code>null</code>, then
+	 *            this method simply returns.
+	 * @param key
+	 *            The key to look up in the map; may be <code>null</code>.
+	 * @param value
+	 *            The value to look up in the map; may be <code>null</code>.
+	 */
+	private static final void addReverseLookup(final Map map, final Object key,
+			final Object value) {
+		final Object currentValue = map.get(key);
+		if (currentValue != null) {
+			final Collection values = (Collection) currentValue;
+			values.add(value);
+		} else { // currentValue == null
+			final Collection values = new ArrayList(1);
+			values.add(value);
+			map.put(key, values);
+		}
+	}
+
+	/**
 	 * <p>
 	 * Takes a fully-specified string, and converts it into an array of
 	 * increasingly less-specific strings. So, for example, "en_GB" would become
@@ -116,12 +146,20 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
-	 * The active bindings. This is a map of tirggers (
+	 * The active bindings. This is a map of triggers (
 	 * <code>TriggerSequence</code>) to command ids (<code>String</code>).
 	 * This value will only be <code>null</code> if the active bindings have
 	 * not yet been computed. Otherwise, this value may be empty.
 	 */
 	private Map activeBindings = null;
+
+	/**
+	 * The active bindings indexed by command id. This is a map of command ids (<code>String</code>)
+	 * to triggers ( <code>TriggerSequence</code>). This value will only be
+	 * <code>null</code> if the active bindings have not yet been computed.
+	 * Otherwise, this value may be empty.
+	 */
+	private Map activeBindingsByCommandId = null;
 
 	/**
 	 * The scheme that is currently active. An active scheme is the one that is
@@ -140,17 +178,17 @@ public final class BindingManager implements IContextManagerListener,
 	private String[] activeSchemeIds = null;
 
 	/**
+	 * The number of bindings in the <code>bindings</code> array.
+	 */
+	private int bindingCount = 0;
+
+	/**
 	 * The array of all bindings currently handled by this manager. This array
 	 * is the raw list of bindings, as provided to this manager. This value may
 	 * be <code>null</code> if there are no bindings. The size of this array
 	 * is not necessarily the number of bindings.
 	 */
 	private Binding[] bindings = null;
-
-	/**
-	 * The number of bindings in the <code>bindings</code> array.
-	 */
-	private int bindingCount = 0;
 
 	/**
 	 * A cache of the bindings previously computed by this manager. This value
@@ -383,7 +421,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method completes in <code>O(1)</code>.
 	 */
 	private final void clearSolution() {
-		setActiveBindings(null, null);
+		setActiveBindings(null, null, null);
 	}
 
 	/**
@@ -395,9 +433,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method does not deal with caching.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
-	 * is the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
 	 * </p>
 	 * 
 	 * @param activeContextTree
@@ -412,9 +449,16 @@ public final class BindingManager implements IContextManagerListener,
 	 *            <code>TriggerSequence</code>) to command identifiers (
 	 *            <code>String</code>). This value must not be
 	 *            <code>null</code> and must be empty.
+	 * @param triggersByCommandId
+	 *            The empty of map that is intended to be filled with command
+	 *            identifiers (<code>String</code>) to triggers (
+	 *            <code>TriggerSequence</code>). This value must either be
+	 *            <code>null</code> (indicating that these values are not
+	 *            needed), or empty (indicating that this map should be
+	 *            computed).
 	 */
 	private final void computeBindings(final Map activeContextTree,
-			final Map commandIdsByTrigger) {
+			final Map commandIdsByTrigger, final Map triggersByCommandId) {
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
 		 */
@@ -502,17 +546,27 @@ public final class BindingManager implements IContextManagerListener,
 				if (match instanceof Binding) {
 					bindings.add(match);
 					commandIdsByTrigger.put(trigger, bindings);
+					addReverseLookup(triggersByCommandId, ((Binding) match)
+							.getCommandId(), trigger);
 
 				} else if (match instanceof Collection) {
 					bindings.addAll(resolveConflicts((Collection) match));
 					commandIdsByTrigger.put(trigger, bindings);
+					
+					final Iterator matchItr = bindings.iterator();
+					while (matchItr.hasNext()) {
+						addReverseLookup(triggersByCommandId,
+								((Binding) matchItr.next()).getCommandId(),
+								trigger);
+					}
 				}
 
 			} else {
 				// We are building the flat map of trigger to commands.
 				if (match instanceof Binding) {
-					commandIdsByTrigger.put(trigger, ((Binding) match)
-							.getCommandId());
+					final String commandId = ((Binding) match).getCommandId();
+					commandIdsByTrigger.put(trigger, commandId);
+					addReverseLookup(triggersByCommandId, commandId, trigger);
 
 				} else if (match instanceof Collection) {
 					final Binding winner = resolveConflicts((Collection) match,
@@ -524,7 +578,10 @@ public final class BindingManager implements IContextManagerListener,
 							System.out.println("BINDINGS >>     " + match); //$NON-NLS-1$
 						}
 					} else {
-						commandIdsByTrigger.put(trigger, winner.getCommandId());
+						final String commandId = winner.getCommandId();
+						commandIdsByTrigger.put(trigger, commandId);
+						addReverseLookup(triggersByCommandId, commandId,
+								trigger);
 					}
 				}
 			}
@@ -703,9 +760,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
-	 * not yet computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * not yet computed, then this completes in <code>O(nn)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @return The map of triggers (<code>TriggerSequence</code>) to command
@@ -723,14 +779,35 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * <p>
+	 * Returns the active bindings indexed by command identifier.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(nn)</code>, where
+	 * <code>n</code> is the number of bindings.
+	 * </p>
+	 * 
+	 * @return The map of command ids (<code>String</code>) to triggers (<code>TriggerSequence</code>)
+	 *         which are currently active. This value may be <code>null</code>
+	 *         if there are no active bindings, and it may be empty.
+	 */
+	private final Map getActiveBindingsByCommandId() {
+		if (activeBindingsByCommandId == null) {
+			recomputeBindings();
+		}
+
+		return Collections.unmodifiableMap(activeBindingsByCommandId);
+	}
+
+	/**
+	 * <p>
 	 * Computes the bindings for the current state of the application, but
 	 * disregarding the current contexts. This can be useful when trying to
 	 * display all the possible bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
-	 * is the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
 	 * </p>
 	 * 
 	 * @return A map of trigger (<code>TriggerSequence</code>) to bindings (
@@ -773,7 +850,7 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
-		computeBindings(null, commandIdsByTrigger);
+		computeBindings(null, commandIdsByTrigger, null);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
 		return Collections.unmodifiableMap(commandIdsByTrigger);
 	}
@@ -785,9 +862,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * display all the possible bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
-	 * is the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
 	 * </p>
 	 * 
 	 * @return All of the active bindings (<code>Binding</code>), not sorted
@@ -816,12 +892,9 @@ public final class BindingManager implements IContextManagerListener,
 	 * method operates in O(n) time over the number of bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n)</code>, where <code>n</code> is
-	 * the number of active bindings. If the active bindings are not yet
-	 * computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
-	 * </p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(nn)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @param commandId
@@ -832,17 +905,12 @@ public final class BindingManager implements IContextManagerListener,
 	 *         never be <code>null</code>, but it may be empty.
 	 */
 	public final Collection getActiveBindingsFor(final String commandId) {
-		final Iterator entryItr = getActiveBindings().entrySet().iterator();
-		final Collection bindings = new ArrayList();
-		while (entryItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) entryItr.next();
-			final String entryCommandId = (String) entry.getValue();
-			if (entryCommandId.equals(commandId)) {
-				bindings.add(entry.getKey());
-			}
+		final Object object = getActiveBindingsByCommandId().get(commandId);
+		if (object instanceof Collection) {
+			return (Collection) object;
 		}
-
-		return bindings;
+		
+		return Collections.EMPTY_LIST;
 	}
 
 	/**
@@ -923,9 +991,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the bindings aren't
-	 * currently computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * currently computed, then this completes in <code>O(n)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -950,9 +1017,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the bindings aren't
-	 * currently computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * currently computed, then this completes in <code>O(n)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -985,9 +1051,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
-	 * not yet computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * not yet computed, then this completes in <code>O(n)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @return A map of prefixes (<code>TriggerSequence</code>) to a map of
@@ -1071,9 +1136,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the bindings aren't
-	 * currently computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * currently computed, then this completes in <code>O(n)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -1093,9 +1157,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the bindings aren't
-	 * currently computed, then this completes in <code>O(n+mn)</code>, where
-	 * <code>n</code> is the number of bindings and <code>m</code> is the
-	 * number of deletion markers.
+	 * currently computed, then this completes in <code>O(n)</code>, where
+	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
 	 * @param trigger
@@ -1185,16 +1248,16 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>CachedBindingSet</code> representing these bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn+pn)</code>, where <code>n</code>
-	 * is the number of bindings, <code>m</code> is the number of deletion
-	 * markers, and <code>p</code> is the average number of triggers in a
-	 * trigger sequence.
+	 * This method completes in <code>O(n+pn)</code>, where <code>n</code>
+	 * is the number of bindings, and <code>p</code> is the average number of
+	 * triggers in a trigger sequence.
 	 * </p>
 	 */
 	private final void recomputeBindings() {
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
-			setActiveBindings(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+			setActiveBindings(Collections.EMPTY_MAP, Collections.EMPTY_MAP,
+					Collections.EMPTY_MAP);
 			return;
 		}
 
@@ -1223,7 +1286,7 @@ public final class BindingManager implements IContextManagerListener,
 				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
 			}
 			setActiveBindings(commandIdsByTrigger, existingCache
-					.getPrefixTable());
+					.getTriggersByCommandId(), existingCache.getPrefixTable());
 			return;
 		}
 
@@ -1234,9 +1297,12 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
-		computeBindings(activeContextTree, commandIdsByTrigger);
+		final Map triggersByCommandId = new HashMap();
+		computeBindings(activeContextTree, commandIdsByTrigger,
+				triggersByCommandId);
 		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
-		setActiveBindings(commandIdsByTrigger,
+		existingCache.setTriggersByCommandId(triggersByCommandId);
+		setActiveBindings(commandIdsByTrigger, triggersByCommandId,
 				buildPrefixTable(commandIdsByTrigger));
 		existingCache.setPrefixTable(prefixTable);
 	}
@@ -1334,13 +1400,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * Attempts to remove deletion markers from the collection of bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
-	 * is the number of bindings and <code>m</code> is the number of deletion
-	 * markers.
-	 * </p>
-	 * <p>
-	 * TODO Performance: Remove the nested loop from this method. Lower the
-	 * complexity bound.
+	 * This method completes in <code>O(n)</code>, where <code>n</code>
+	 * is the number of bindings.
 	 * </p>
 	 * 
 	 * @param bindings
@@ -1670,10 +1731,15 @@ public final class BindingManager implements IContextManagerListener,
 	 * appropriately.
 	 * 
 	 * @param activeBindings
-	 *            This is a map of tirggers ( <code>TriggerSequence</code>)
+	 *            This is a map of triggers ( <code>TriggerSequence</code>)
 	 *            to command ids (<code>String</code>). This value will only
 	 *            be <code>null</code> if the active bindings have not yet
 	 *            been computed. Otherwise, this value may be empty.
+	 * @param activeBindingsByCommandId
+	 *            This is a map of command ids (<code>String</code>) to
+	 *            triggers ( <code>TriggerSequence</code>). This value will
+	 *            only be <code>null</code> if the active bindings have not
+	 *            yet been computed. Otherwise, this value may be empty.
 	 * @param prefixTable
 	 *            A map of prefixes (<code>TriggerSequence</code>) to a map
 	 *            of available completions (possibly <code>null</code>, which
@@ -1683,8 +1749,9 @@ public final class BindingManager implements IContextManagerListener,
 	 *            <code>null</code> if there is no existing solution.
 	 */
 	private final void setActiveBindings(final Map activeBindings,
-			final Map prefixTable) {
+			final Map activeBindingsByCommandId, final Map prefixTable) {
 		this.activeBindings = activeBindings;
+		this.activeBindingsByCommandId = activeBindingsByCommandId;
 		this.prefixTable = prefixTable;
 
 		fireBindingManagerChanged(new BindingManagerEvent(this, true, false,

@@ -62,7 +62,7 @@ final class CachedBindingSet {
 
 	/**
 	 * The map representing the resolved state of the bindings. This is a map of
-	 * a trigger (<code>Trigger</code>) to command id (<code>String</code>).
+	 * a trigger (<code>TriggerSequence</code>) to command id (<code>String</code>).
 	 * This value may be <code>null</code> if it has not yet been initialized.
 	 */
 	private Map commandIdsByTrigger = null;
@@ -131,6 +131,14 @@ final class CachedBindingSet {
 	 * </p>
 	 */
 	private final String[] schemeIds;
+
+	/**
+	 * The map representing the resolved state of the bindings. This is a map of
+	 * a command id (<code>String</code>) to triggers (<code>Collection</code>
+	 * of <code>TriggerSequence</code>). This value may be <code>null</code>
+	 * if it has not yet been initialized.
+	 */
+	private Map triggersByCommandId = null;
 
 	/**
 	 * Constructs a new instance of <code>CachedBindingSet</code>.
@@ -239,6 +247,18 @@ final class CachedBindingSet {
 	}
 
 	/**
+	 * Returns the map of triggers indexed by command identifiers.
+	 * 
+	 * @return A map of command identifiers (<code>String</code>) to
+	 *         triggers (<code>Collection</code> of
+	 *         <code>TriggerSequence</code>). This value may be
+	 *         <code>null</code> if this was not yet initialized.
+	 */
+	final Map getTriggersByCommandId() {
+		return triggersByCommandId;
+	}
+
+	/**
 	 * Computes the hash code for this cached binding set. The hash code is
 	 * based only on the immutable values. This allows the set to be created and
 	 * checked for in a hashed collection <em>before</em> doing any
@@ -265,7 +285,7 @@ final class CachedBindingSet {
 	 * 
 	 * @param commandIdsByTrigger
 	 *            The map to set; must not be <code>null</code>. This is a
-	 *            map of triggers (<code>Trigger</code>) to command
+	 *            map of triggers (<code>TriggerSequence</code>) to command
 	 *            identifiers (<code>String</code>).
 	 */
 	final void setCommandIdsByTrigger(final Map commandIdsByTrigger) {
@@ -291,10 +311,27 @@ final class CachedBindingSet {
 	 */
 	final void setPrefixTable(final Map prefixTable) {
 		if (prefixTable == null) {
-			throw new NullPointerException(
-					"Cannot set a null prefix table"); //$NON-NLS-1$
+			throw new NullPointerException("Cannot set a null prefix table"); //$NON-NLS-1$
 		}
 
 		this.prefixTable = prefixTable;
+	}
+
+	/**
+	 * Sets the map of triggers indexed by command identifiers.
+	 * 
+	 * @param triggersByCommandId
+	 *            The map to set; must not be <code>null</code>. This is a
+	 *            map of command identifiers (<code>String</code>) to
+	 *            triggers (<code>Collection</code> of
+	 *            <code>TriggerSequence</code>).
+	 */
+	final void setTriggersByCommandId(final Map triggersByCommandId) {
+		if (triggersByCommandId == null) {
+			throw new NullPointerException(
+					"Cannot set a null binding resolution"); //$NON-NLS-1$
+		}
+
+		this.triggersByCommandId = triggersByCommandId;
 	}
 }
