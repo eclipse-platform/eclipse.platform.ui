@@ -81,7 +81,7 @@ public class KeySequence implements Comparable {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static KeySequence parse(String string)
+	public static KeySequence getInstance(String string)
 		throws ParseException {
 		if (string == null)
 			throw new NullPointerException();
@@ -90,7 +90,7 @@ public class KeySequence implements Comparable {
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_STROKE_DELIMITERS);
 				
 		while (stringTokenizer.hasMoreTokens())
-			keyStrokes.add(KeyStroke.parse(stringTokenizer.nextToken()));
+			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
 			
 		return new KeySequence(keyStrokes);
 	}

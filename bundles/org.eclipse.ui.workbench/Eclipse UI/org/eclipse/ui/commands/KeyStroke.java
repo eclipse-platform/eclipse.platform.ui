@@ -166,7 +166,7 @@ public class KeyStroke implements Comparable {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static KeyStroke parse(String string)
+	public static KeyStroke getInstance(String string)
 		throws ParseException {
 		if (string == null)
 			throw new NullPointerException();
