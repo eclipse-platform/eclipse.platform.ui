@@ -597,9 +597,10 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 			for (int i= 0; i < listeners.length; i++) {
 				if (listeners[i] != null) {
 					if (!listeners[i].verifyKey(e) || !e.doit)
-						return;
+						break;
 				}
 			}
+			fAutoAssistListener.verifyKey(e);
 		}
 				
 		/*
