@@ -13,6 +13,7 @@ package org.eclipse.core.internal.jobs;
 import java.util.*;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -131,7 +132,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#cancel(java.lang.String)
 	 */
-	public void cancel(String family) {
+	public void cancel(Object family) {
 		synchronized (lock) {
 			for (Iterator it = select(family).iterator(); it.hasNext();) {
 				((Job)it.next()).cancel();
@@ -229,7 +230,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#find(java.lang.String)
 	 */
-	public Job[] find(String family) {
+	public Job[] find(Object family) {
 		List members = select(family);
 		return (Job[]) members.toArray(new Job[members.size()]);
 	}
@@ -319,7 +320,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Adds all family members in the list of jobs to the collection
 	 */
-	private void select(List members, String family, InternalJob firstJob) {
+	private void select(List members, Object family, InternalJob firstJob) {
 		if (firstJob == null)
 			return;
 		InternalJob job = firstJob;
@@ -332,7 +333,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Returns a list of all jobs known to the job manager that belong to the given family.
 	 */
-	private List select(String family) {
+	private List select(Object family) {
 		List members = new ArrayList();
 		synchronized (lock) {
 			for (Iterator it = running.iterator(); it.hasNext();) {
@@ -402,7 +403,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#sleep(String)
 	 */
-	public void sleep(String family) {
+	public void sleep(Object family) {
 		synchronized (lock) {
 			for (Iterator it = select(family).iterator(); it.hasNext();) {
 				((Job)it.next()).sleep();
@@ -451,20 +452,73 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#wait(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#wait(org.eclipse.core.runtime.jobs.Job)
 	 */
-	public void wait(Job job, IProgressMonitor monitor) {
+	public void wait(Job job) throws InterruptedException {
+		IJobChangeListener listener = null;
+		final Semaphore barrier = new Semaphore(null);
 		synchronized (lock) {
+			if (job.getState() == Job.NONE)
+				return;
+			//the semaphore will be released when the job is done
+			barrier.acquire(Long.MAX_VALUE);
+			listener = new JobChangeAdapter() {
+				public void done(Job job, IStatus result) {
+					synchronized (barrier) {
+						barrier.release();
+					}
+				}
+			};
+			job.addJobChangeListener(listener);
 			//compute set of all jobs that must run before this one
 			//add a listener that removes jobs from the blocking set when they finish
-			
 		}
 		//wait until listener notifies this thread.
+		try {
+			barrier.acquire(Long.MAX_VALUE);
+		} finally {
+			job.removeJobChangeListener(listener);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see IJobManager#wait(String, IProgressMonitor)
 	 */
-	public void wait(String family, IProgressMonitor monitor) {
+	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException {
+		IJobChangeListener listener = null;
+		final List jobs;
+		final int jobCount;
+		synchronized (lock) {
+			jobs = Collections.synchronizedList(select(family));
+			jobCount = jobs.size();
+			if (jobCount == 0)
+				return;
+			listener = new JobChangeAdapter() {
+				public void done(Job job, IStatus result) {
+					jobs.remove(job);
+				}
+			};
+			addJobChangeListener(listener);
+		}
+		//spin until all jobs are completed
+
+		try {
+			monitor.beginTask(Policy.bind("jobs.waitForFamily"), jobCount); //$NON-NLS-1$
+			monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobCount))); //$NON-NLS-1$
+			int jobsLeft;
+			int reportedWorkDone = 0;
+			while ((jobsLeft = jobs.size()) > 0) {
+				int actualWorkDone = jobCount - jobsLeft;
+				if (reportedWorkDone < actualWorkDone) {
+					monitor.worked(actualWorkDone - reportedWorkDone);
+					reportedWorkDone = actualWorkDone;
+					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
+				}
+				Thread.sleep(200);
+			}
+		} finally {
+			monitor.done();
+			removeJobChangeListener(listener);
+		}
 	}
 	/**
 	 * Implementation of wakeUp()
@@ -487,7 +541,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobFamily#wakeUp(String)
 	 */
-	public void wakeUp(String family) {
+	public void wakeUp(Object family) {
 		synchronized (lock) {
 			for (Iterator it = select(family).iterator(); it.hasNext();) {
 				((Job)it.next()).wakeUp();
