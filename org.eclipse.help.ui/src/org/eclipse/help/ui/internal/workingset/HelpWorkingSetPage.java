@@ -8,6 +8,7 @@ package org.eclipse.help.ui.internal.workingset;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
@@ -26,7 +27,8 @@ import org.eclipse.ui.help.*;
 public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
 	public final static String PAGE_ID = "helpWorkingSetPage";
-	public final static String PAGE_TITLE = "Help Working Set";
+	public final static String PAGE_TITLE = WorkbenchResources.getString("WorkingSetPageTitle");
+	public final static String PAGE_DESCRIPTION = WorkbenchResources.getString("WorkingSetPageDescription");
 
 	private Text workingSetName;
 	private CheckboxTreeViewer tree;
@@ -41,7 +43,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 	 */
 	public HelpWorkingSetPage() {
 		super(PAGE_ID, PAGE_TITLE, null);
-		setDescription("help working set description");
+		setDescription(PAGE_DESCRIPTION);
 		firstCheck = true;
 	}
 
@@ -57,7 +59,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		setControl(composite);
 
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText("WorkingSetName");
+		label.setText(WorkbenchResources.getString("WorkingSetName"));
 		GridData gd =
 			new GridData(
 				GridData.GRAB_HORIZONTAL
@@ -77,7 +79,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		workingSetName.setFocus();
 
 		label = new Label(composite, SWT.WRAP);
-		label.setText("WorkingSetContent");
+		label.setText(WorkbenchResources.getString("WorkingSetContent"));
 		gd =
 			new GridData(
 				GridData.GRAB_HORIZONTAL
@@ -188,15 +190,14 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		String newText = workingSetName.getText();
 
 		if (newText.equals(newText.trim()) == false)
-			errorMessage =
-				"The name must not have leading or trailing whitespace";
+			errorMessage = WorkbenchResources.getString("WE030");
 		if (newText.equals("")) {
 			if (firstCheck) {
 				setPageComplete(false);
 				firstCheck = false;
 				return;
 			} else
-				errorMessage = "The name must not be empty";
+				errorMessage = WorkbenchResources.getString("WE031");
 		}
 
 		firstCheck = false;
@@ -211,12 +212,12 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 					.getWorkingSets();
 			for (int i = 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
-					errorMessage = "The working set already exists";
+					errorMessage = WorkbenchResources.getString("WE032");
 				}
 			}
 		}
 		if (errorMessage == null && tree.getCheckedElements().length == 0)
-			errorMessage = "Need to select something";
+			errorMessage = WorkbenchResources.getString("WE033");
 
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
