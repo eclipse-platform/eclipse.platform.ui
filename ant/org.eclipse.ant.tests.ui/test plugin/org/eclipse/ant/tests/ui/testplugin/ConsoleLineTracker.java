@@ -1,7 +1,7 @@
 package org.eclipse.ant.tests.ui.testplugin;
 
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,10 +39,12 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
-	public synchronized void init(IConsole c) {
-		ConsoleLineTracker.console= c;
-		lines= new ArrayList();
-		consoleClosed= false;
+	public void init(IConsole c) {
+	    synchronized(lines) {
+	        ConsoleLineTracker.console= c;
+	        lines= new ArrayList();
+	        consoleClosed= false;
+	    }
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 				lines.wait(20000);
 			} catch (InterruptedException ie) {
 			}
-	}
+		}
 	}
 
 	/* (non-Javadoc)
