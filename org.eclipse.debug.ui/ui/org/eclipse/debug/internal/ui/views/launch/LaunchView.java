@@ -41,6 +41,9 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -71,6 +74,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener {
@@ -80,7 +84,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * instruction pointer.  This marker is transient.
 	 */
 	private IMarker fInstructionPointer;
-	private boolean fShowingMarker = false;
+	private boolean fShowingEditor = false;
+	private int fLastCharStart= -1;
+	private int fLastCharEnd= -1;
+	private int fLastLine= -1;
 	
 	// marker attributes
 	private final static String[] fgStartEnd = 
@@ -134,13 +141,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Creates a launch view and an instruction pointer marker for the view
 	 */
 	public LaunchView() {
-		try {
-			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
-			DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/**
@@ -322,7 +324,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateObjects();
-		showMarkerForCurrentSelection();
+		showEditorForCurrentSelection();
 	}
 			
 	/**
@@ -349,7 +351,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
 		updateObjects();
-		showMarkerForCurrentSelection();
+		showEditorForCurrentSelection();
 	}
 
 	/**
@@ -366,7 +368,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (getSite().getPage().equals(page)) {
 			setActive(true);
 			updateObjects();
-			showMarkerForCurrentSelection();
+			showEditorForCurrentSelection();
 		}
 	}
 	
@@ -392,10 +394,20 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 		
 	/**
-	 * Returns the configured instruction pointer.
-	 * Selection is based on the line number OR char start and char end.
+	 * Returns the configured instruction pointer or <code>null</code> if an
+	 * exception occurs creating the marker. Selection is based on the line
+	 * number OR char start and char end.
 	 */
 	protected IMarker getInstructionPointer(final int lineNumber, final int charStart, final int charEnd) {
+		
+		if (fInstructionPointer == null) {
+			try {
+				fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+				return null;
+			}
+		}
 		
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -420,17 +432,17 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}		
 	
 	/**
-	 * Opens a marker for the current selection if it is a stack frame.
+	 * Opens an editor for the current selection if it is a stack frame.
 	 * Otherwise, nothing will happen.
 	 */
-	protected void showMarkerForCurrentSelection() {
+	protected void showEditorForCurrentSelection() {
 		// ensure this view is visible in the active page
 		if (!isActive()) {
 			return;
 		}		
-		if (!fShowingMarker) {
+		if (!fShowingEditor) {
 			try {
-				fShowingMarker = true;
+				fShowingEditor = true;
 				ISelection selection= getViewer().getSelection();
 				Object obj= null;
 				if (selection instanceof IStructuredSelection) {
@@ -441,7 +453,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 				
 				IStackFrame stackFrame= (IStackFrame) obj;
-				
 				if (!stackFrame.isSuspended()) {
 					return;
 				}
@@ -456,20 +467,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 				
 				if (getEditorInput() != null && getEditorId() != null) {
-					int lineNumber= 0;
-					int start = -1;
-					int end = -1;
-					try {
-						lineNumber= stackFrame.getLineNumber();
-						start= stackFrame.getCharStart();
-						end= stackFrame.getCharEnd();
-					} catch (DebugException de) {
-						DebugUIPlugin.log(de);
-					}
-					openEditorAndSetMarker(getEditorInput(), getEditorId(), stackFrame, lineNumber, start, end);
+					openEditorForStackFrame(stackFrame);
 				}
 			} finally {
-				fShowingMarker= false;
+				fShowingEditor= false;
 			}
 		}
 	}
@@ -528,17 +529,94 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Get the active window and open/bring to the front an editor on the source element.
 	 * Selection is based on the line number OR the char start and end.
 	 */
-	protected void openEditorAndSetMarker(IEditorInput input, String editorId, IStackFrame stackFrame, int lineNumber, int charStart, int charEnd) {
-		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
-		if (dwindow == null) {
+	protected void openEditorForStackFrame(IStackFrame stackFrame) {
+		IEditorPart editor= openEditor();
+		if (editor == null) {
 			return;
 		}
-		
-		IWorkbenchPage page= dwindow.getActivePage();
+
+		int lineNumber= 0;
+		int charStart = -1;
+		int charEnd = -1;
+		try {
+			lineNumber= stackFrame.getLineNumber();
+			charStart= stackFrame.getCharStart();
+			charEnd= stackFrame.getCharEnd();
+		} catch (DebugException de) {
+			DebugUIPlugin.log(de);
+		}
+		if (lineNumber >= 0 || charStart >= 0) {
+			if (editor instanceof ITextEditor) {
+				selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
+				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
+			} else {
+				IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
+				if (marker != null) {
+					editor.gotoMarker(marker);
+				}
+			}
+			fLastCharStart= charStart;
+			fLastCharEnd= charEnd;
+			fLastLine= lineNumber;
+		}
+	}
+	
+	/**
+	 * Highlights the given line or character range in the given editor
+	 */
+	private void selectAndReveal(ITextEditor editor, int lineNumber, int charStart, int charEnd) {
+		lineNumber--; // Document line numbers are 0-based. Debug line numbers are 1-based.
+		if (charStart > 0 && charEnd > charStart) {
+			editor.selectAndReveal(charStart, charEnd - charStart);
+		}
+		int offset= -1;
+		int length= -1;
+		IRegion region= getLineInformation((ITextEditor)editor, lineNumber);
+		if (region == null) {
+			return;
+		}
+		if (charStart > 0) {
+			offset= charStart;
+		} else { 
+			offset= region.getOffset();
+		}
+		length= region.getLength();
+		editor.selectAndReveal(offset, length);
+	}
+	
+	/**
+	 * Returns the line information for the given line in the given editor
+	 */
+	private IRegion getLineInformation(ITextEditor editor, int lineNumber) {
+		IDocumentProvider provider= editor.getDocumentProvider();
+		IEditorInput input= editor.getEditorInput();
+		IRegion region= null;
+		try {
+			provider.connect(input);
+			IDocument document= provider.getDocument(input);
+			region= document.getLineInformation(lineNumber);
+			provider.disconnect(input);
+		} catch (CoreException e) {
+		} catch (BadLocationException e) {
+		}
+		return region;
+	}
+
+	/**
+	 * Opens the editor used to display the source for an element selected in
+	 * this view and returns the editor that was opened or <code>null</code> if
+	 * no editor could be opened.
+	 */
+	private IEditorPart openEditor() {
+		IWorkbenchWindow window= getSite().getWorkbenchWindow();
+		if (window == null) {
+			return null;
+		}
+		IWorkbenchPage page= window.getActivePage();
 		if (page == null) {
-			return;
+			return null;
 		}
-		
+
 		if (fEditorIndex >= 0) {
 			// first restoration of editor re-use
 			IEditorReference[] refs = page.getEditorReferences();
@@ -548,28 +626,18 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			fEditorIndex = -1;
 		}
 
-		//  if there is an editor in the debug page with the newInput
-		//     page bringToTop(editorAlreadyOpened)
-		//  else if editorToBeReused is null or 
-		//    if editorToBeReused is pinned or 
-		//    if editorToBeReused is dirty or 
-		//    if keep editors opened (debug preference)
-		//        editorToBeReused = page openEditor
-		//  else if editorToBeReused is instance of IReusableEditor
-		//        editorToBeReused.setInput(newInput)
-		//  else
-		//        page close editorToBeReused
-		//        editorToBeReused = page openEditor
-        		
 		IEditorPart editor = null;
 		if (fReuseEditor) {
+			IEditorInput input= getEditorInput();
 			editor = page.getActiveEditor();
 			if (editor != null) {
+				// The active editor is the one we want to reuse
 				if (!editor.getEditorInput().equals(input)) {
 					editor = null;
 				}
 			}
 			if (editor == null) {
+				// Try to find the editor we want to reuse and activate it
 				IEditorReference[] refs = page.getEditorReferences();
 				for (int i = 0; i < refs.length; i++) {
 					IEditorPart refEditor= refs[i].getEditor(true);
@@ -578,39 +646,35 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 						page.bringToTop(editor);
 						break;
 					}
-				}	
+				}
 			}
 			if (editor == null) {
 				if (fEditor == null || fEditor.isDirty() || page.isEditorPinned(fEditor)) {
-					editor = openEditor(page, input, editorId, false);
+					editor = openEditor(page, input, getEditorId(), false);
 					fEditor = editor;
-				} else if (fEditor instanceof IReusableEditor && editorId.equals(fEditor.getSite().getId())) {
+				} else if (fEditor instanceof IReusableEditor && getEditorId().equals(fEditor.getSite().getId())) {
 					((IReusableEditor)fEditor).setInput(input);
 					editor = fEditor;
 					page.bringToTop(editor);
 				} else {
 					page.closeEditor(fEditor, false);
-					editor = openEditor(page, input, editorId, false);
+					editor = openEditor(page, input, getEditorId(), false);
 					fEditor = editor;
 				}
-			}		
+			}
 		} else {
-			editor = openEditor(page, input, editorId, false);
+			// Open a new editor
+			editor = openEditor(page, getEditorInput(), getEditorId(), false);
 		}
-				
-		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
-			//have an editor and either a lineNumber or a starting character
-			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
-			editor.gotoMarker(marker);
-		}
-		
-		// If the editor is a text editor, add an instruction pointer annotation to it
-		if (editor != null && editor instanceof ITextEditor) {
-			InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
-		}		
+		return editor;
 	}
 	
-	protected IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id, boolean activate) {
+	/**
+	 * Opens an editor in the workbench and returns the editor that was opened
+	 * or <code>null</code> if an error occurred while attempting to open the
+	 * editor.
+	 */
+	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id, boolean activate) {
 		final IEditorPart[] editor = new IEditorPart[] {null};
 		Runnable r = new Runnable() {
 			public void run() {
@@ -633,7 +697,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * the debugger.
 	 */
 	public void clearSourceSelection() {		
-		
 		cleanup();
 		
 		// Get the active editor
@@ -654,19 +717,17 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		int startLine= textSelection.getStartLine();
 		
 		// Check to see if the current selection looks the same as the last 'programmatic'
-		// selection in fInstructionPointer.  If not, it must be a user selection, which
+		// selection.  If not, it must be a user selection, which
 		// we leave alone.  In practice, we can leave alone any user selections on other lines,
 		// but if the user makes a selection on the same line as the last programmatic selection,
 		// it will get cleared.
-		int lastCharStart= fInstructionPointer.getAttribute(IMarker.CHAR_START, -1);
-		if (lastCharStart == -1) {
+		if (fLastCharStart == -1) {
 			// subtract 1 since editor is 0-based
-			if (fInstructionPointer.getAttribute(IMarker.LINE_NUMBER, -1) - 1 != startLine) {
+			if (fLastLine - 1 != startLine) {
 				return;
 			}
 		} else {
-			int lastCharEnd= fInstructionPointer.getAttribute(IMarker.CHAR_END, -1);
-			if ((lastCharStart != startChar) || (lastCharEnd != endChar)) {
+			if ((fLastCharStart != startChar) || (fLastCharEnd != endChar)) {
 				return;			     
 			}
 		}
