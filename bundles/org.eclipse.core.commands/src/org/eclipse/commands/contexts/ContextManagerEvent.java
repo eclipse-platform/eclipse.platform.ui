@@ -47,8 +47,8 @@ public final class ContextManagerEvent {
      *            the instance of the interface that changed; must not be
      *            <code>null</code>.
      * @param contextId
-     *            The context identifier that was added or removed; must not be
-     *            <code>null</code>.
+     *            The context identifier that was added or removed; may be
+     *            <code>null</code> if the active contexts are changing.
      * @param contextIdAdded
      *            Whether the context identifier became defined (otherwise, it
      *            became undefined).
@@ -58,7 +58,7 @@ public final class ContextManagerEvent {
     public ContextManagerEvent(final ContextManager contextManager,
             final String contextId, final boolean contextIdAdded,
             final boolean activeContextsChanged) {
-        if ((contextManager == null) || (contextId == null)) {
+        if (contextManager == null) {
             throw new NullPointerException();
         }
 

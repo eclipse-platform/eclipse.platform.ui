@@ -126,6 +126,18 @@ public final class ContextManager implements IContextListener {
     }
 
     /**
+     * Returns the set of active context identifiers.
+     * 
+     * @return The set of active context identifiers; this value may be
+     *         <code>null</code> if no active contexts have been set yet. If
+     *         the set is not <code>null</code>, then it contains only
+     *         instances of <code>String</code>.
+     */
+    public final Set getActiveContextIds() {
+        return activeContextIds;
+    }
+
+    /**
      * Gets the context with the given identifier. If no such context currently
      * exists, then the context will be created (but be undefined).
      * 
