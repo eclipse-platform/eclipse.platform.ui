@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -423,9 +422,9 @@ public class RemoteTreeViewer extends TreeViewer {
     protected synchronized void restoreExpansionState() {
     }
 
-	protected void doUpdateItem(final Item item, final Object element) {
+	protected void doUpdateItem(Item item, Object element) {
 		// update icon and label
-		final ILabelProvider provider= (ILabelProvider) getLabelProvider();
+		ILabelProvider provider= (ILabelProvider) getLabelProvider();
 		String text= provider.getText(element);
 		if ("".equals(item.getText()) || !DebugViewInterimLabelProvider.PENDING_LABEL.equals(text)) { //$NON-NLS-1$
 			// If an element already has a label, don't set the label to
@@ -433,29 +432,13 @@ public class RemoteTreeViewer extends TreeViewer {
 			// updated.
 			item.setText(text);
 		}
-        
-        //bug 86034 getImage() causes host-target communication. Should not be called in UI Thread.
-        Job job = new Job("Update Image") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor monitor) {
-                final Image image = provider.getImage(element);
-                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    public void run() {
-                        if (!item.isDisposed()) {
-                            if (item.getImage() != image) {
-                                item.setImage(image);
-                            }                        
-                        }
-                    }
-                });
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.schedule();
-        
-        if (provider instanceof IColorProvider) {
-            IColorProvider cp = (IColorProvider) provider;
-            TreeItem treeItem = (TreeItem) item;
+		Image image = provider.getImage(element);
+		if (item.getImage() != image) {
+			item.setImage(image);
+		}
+		if (provider instanceof IColorProvider) {
+			IColorProvider cp = (IColorProvider) provider;
+			TreeItem treeItem = (TreeItem) item;
 			treeItem.setForeground(cp.getForeground(element));
 			treeItem.setBackground(cp.getBackground(element));
 		}
