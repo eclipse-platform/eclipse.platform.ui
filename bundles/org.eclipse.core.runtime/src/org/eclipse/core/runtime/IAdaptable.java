@@ -25,10 +25,12 @@ package org.eclipse.core.runtime;
  *         [do IFoo things with x]
  * </pre>
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface, or obtain a default implementation
+ * of this interface by subclassing <code>PlatformObject</code>.
  * </p>
  * @see IAdapterFactory
  * @see IAdapterManager
+ * @see PlatformObject
  */
 public interface IAdaptable {
 	/**

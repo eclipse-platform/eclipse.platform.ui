@@ -33,6 +33,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * </p>
  *
  * @see Platform#getAdapterManager()
+ * @see IAdaptable
  */
 public abstract class PlatformObject implements IAdaptable {
 	/**
