@@ -119,7 +119,7 @@ public abstract class GenericListViewer extends ContentViewer {
 	 */
 	private void createItems(Object[] elements, GenericListItem parent, int indent) {
 		for (int i = 0; i < elements.length; i++) {
-			Color color = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+			Color color = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 			final GenericListItem newItem = createListItem(elements[i], color, this);
 			final Object element = elements[i];
 			
