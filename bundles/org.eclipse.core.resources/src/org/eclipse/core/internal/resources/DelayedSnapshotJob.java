@@ -40,22 +40,15 @@ public class DelayedSnapshotJob extends Job {
 			return Status.CANCEL_STATUS;
 		if (ResourcesPlugin.getWorkspace() == null)
 			return Status.OK_STATUS;
-		IStatus result = Status.OK_STATUS;
 		try {
 			EventStats.startSnapshot();
-			long start = System.currentTimeMillis();
-			if (Policy.DEBUG_SAVE_SNAPSHOTS)
-				Policy.debug("Starting snapshot..."); //$NON-NLS-1$
-			result = saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
-			if (Policy.DEBUG_SAVE_SNAPSHOTS)
-				Policy.debug("Finished snapshot in " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
+			return saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 		} catch (CoreException e) {
-			result = e.getStatus();
+			return e.getStatus();
 		} finally {
 			saveManager.operationCount = 0;
 			saveManager.snapshotRequested = false;
 			EventStats.endSnapshot();
 		}
-		return result;
 	}
 }

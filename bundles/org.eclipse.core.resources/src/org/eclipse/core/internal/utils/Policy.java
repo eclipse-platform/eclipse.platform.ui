@@ -53,7 +53,6 @@ public class Policy {
 	public static boolean DEBUG_SAVE_SYNCINFO = false;
 	public static boolean DEBUG_SAVE_TREE = false;
 	public static boolean DEBUG_SAVE_METAINFO = false;
-	public static boolean DEBUG_SAVE_SNAPSHOTS = false;
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 
 	public static boolean DEBUG_AUTO_REFRESH = false;
@@ -85,7 +84,6 @@ public class Policy {
 			DEBUG_SAVE_SYNCINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/syncinfo")); //$NON-NLS-1$ 
 			DEBUG_SAVE_TREE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/tree")); //$NON-NLS-1$ 
 			DEBUG_SAVE_METAINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/metainfo")); //$NON-NLS-1$ 
-			DEBUG_SAVE_SNAPSHOTS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/snapshots")); //$NON-NLS-1$ 
 			DEBUG_SAVE_MASTERTABLE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/mastertable")); //$NON-NLS-1$ 
 			DEBUG_SAVE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save")); //$NON-NLS-1$ 
 
