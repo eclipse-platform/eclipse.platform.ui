@@ -83,6 +83,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TEXT_FONT),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
@@ -100,6 +101,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
+		store.setDefault(PREF_SAVE_ALL_EDITORS, false);
 		//store.setDefault(USE_SPLINES, false);
 		store.setDefault(USE_SINGLE_LINE, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
@@ -227,6 +229,11 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
 		
+		// a spacer
+		new Label(composite, SWT.NONE);
+
+		addCheckBox(composite, "ComparePreferencePage.saveBeforePatching.label", PREF_SAVE_ALL_EDITORS, 0);	//$NON-NLS-1$
+		
 		return composite;
 	}
 	
@@ -245,7 +252,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
 		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
 		
-		// a filler
+		// a spacer
 		new Label(composite, SWT.NONE);
 
 		fFontEditor= addTextFontEditor(composite, "ComparePreferencePage.textFont.label", TEXT_FONT);	//$NON-NLS-1$
@@ -253,7 +260,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		fFontEditor.setPreferencePage(this);
 		fFontEditor.load();
 		
-		// a filler
+		// a spacer
 		new Label(composite, SWT.NONE);
 		
 		Label previewLabel= new Label(composite, SWT.NULL);
