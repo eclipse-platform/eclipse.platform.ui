@@ -903,22 +903,24 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see org.eclipse.debug.core.IBreakpointManager#setEnabled(boolean)
 	 */
 	public void setEnabled(final boolean enabled) {
-		fEnabled= enabled;
-        IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
-                IBreakpoint[] breakpoints = getBreakpoints();
-                for (int i = 0; i < breakpoints.length; i++) {
-                    IBreakpoint breakpoint = breakpoints[i];
-                    breakpoint.getMarker().setAttribute(IBreakpoint.SKIP, !enabled);
+        if (fEnabled != enabled) {
+    		fEnabled= enabled;
+            IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+                public void run(IProgressMonitor monitor) throws CoreException {
+                    IBreakpoint[] breakpoints = getBreakpoints();
+                    for (int i = 0; i < breakpoints.length; i++) {
+                        IBreakpoint breakpoint = breakpoints[i];
+                        breakpoint.getMarker().setAttribute(IBreakpoint.SKIP, !enabled);
+                    }
                 }
+            };
+            try {
+                ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE ,null);
+            } catch (CoreException e) {
+                DebugPlugin.log(e);
             }
-        };
-        try {
-            ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE ,null);
-        } catch (CoreException e) {
-            DebugPlugin.log(e);
+    		new BreakpointManagerNotifier().notify(enabled);
         }
-		new BreakpointManagerNotifier().notify(enabled);
 	}
 
 	/* (non-Javadoc)
