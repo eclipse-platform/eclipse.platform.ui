@@ -182,7 +182,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 }
