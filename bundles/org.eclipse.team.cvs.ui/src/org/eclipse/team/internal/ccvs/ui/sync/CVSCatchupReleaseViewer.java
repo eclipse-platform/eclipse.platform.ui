@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  */
  
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
@@ -24,7 +25,9 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -170,15 +173,24 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				if (element instanceof ITeamNode) {					
 					ITeamNode node = (ITeamNode)element;
 					IResource resource = node.getResource();
-					if (resource.exists() && resource.getType() == IResource.FILE) {
+					if (resource.exists()) {
 						try {
-							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
-							ResourceSyncInfo info = cvsFile.getSyncInfo();
-							KSubstOption option = info != null && info.getKeywordMode() != null ?
-								KSubstOption.fromMode(info.getKeywordMode()) :
-								KSubstOption.fromPattern(resource.getName());
-							postfix.append("(" + option.getShortDisplayText() + ")");
-						} catch(CVSException e) {
+							if (resource.getType() == IResource.FILE) {
+								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+								ResourceSyncInfo info = cvsFile.getSyncInfo();
+								KSubstOption option = info != null && info.getKeywordMode() != null ?
+									KSubstOption.fromMode(info.getKeywordMode()) :
+									KSubstOption.fromPattern(resource.getName());
+								postfix.append("(" + option.getShortDisplayText() + ")");
+							} else if (resource instanceof IContainer) {
+								ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
+								CVSTag tag = cvsFolder.getFolderSyncInfo().getTag();
+								if (tag != null) {
+									postfix.append(" ");
+									postfix.append(tag.getName());
+								}
+							}
+						} catch (CVSException e) {
 							ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 						}
 					}
