@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 /**
  * The quick start (Welcome...) action.
  * 
- * @deprecated the IDE now use the new intro mechanism
+ * @deprecated the IDE now uses the new intro mechanism
  */
 public class QuickStartAction
 		extends Action 
