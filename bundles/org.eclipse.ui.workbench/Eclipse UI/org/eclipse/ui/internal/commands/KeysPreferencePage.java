@@ -66,9 +66,9 @@ import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.contexts.registry.ContextDefinition;
 import org.eclipse.ui.internal.contexts.registry.IContextDefinition;
 import org.eclipse.ui.internal.contexts.registry.IContextRegistry;
+import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.ParseException;
 
 public class KeysPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -189,7 +189,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Table tableCommandsForKeySequence;
 	private Table tableKeySequencesForCommand;
 	private Text textDescription; 
-	private Text textKeySequence;
+	private KeySequenceText textKeySequence;
 	private SortedMap tree;
 	private IWorkbench workbench;	
 
@@ -633,7 +633,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		compositeKeySequence.setLayoutData(gridData);
-		textKeySequence = new Text(compositeKeySequence, SWT.BORDER | SWT.LEFT);
+		textKeySequence = new KeySequenceText(compositeKeySequence);
 		gridData = new GridData();
 		gridData.widthHint = 300;
 		textKeySequence.setLayoutData(gridData);
@@ -808,11 +808,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private KeySequence getKeySequence() {
-		try {
-			return KeySequence.getInstance(textKeySequence.getText());
-		} catch (ParseException eParse) {
-			return KeySequence.getInstance();		
-		}
+        return textKeySequence.getKeySequence();
 	}
 
 	private void modifiedTextKeySequence() {
@@ -830,6 +826,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 		
 	private void selectedButtonClear() {
+		textKeySequence.clear();
 	}
 
 	private void selectedButtonRemove() {
@@ -937,7 +934,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
-		textKeySequence.setText(keySequence.toString());
+        textKeySequence.setKeySequence(keySequence, null);
 	}
 
 	/*
