@@ -377,7 +377,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		private final TreeViewer fViewer; 
 
 		public Preview(Composite composite) {
-			fImageCache= new DeviceResourceManager(composite.getDisplay());
+			fImageCache= new LocalResourceManager(JFaceResources.getResources());
 			fViewer = new TreeViewer(composite);
 			fViewer.getControl().setLayoutData(SWTUtils.createHVFillGridData());
 			fViewer.setContentProvider(this);
