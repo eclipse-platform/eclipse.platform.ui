@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
@@ -41,6 +42,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.internal.dialogs.ViewLabelProvider;
 
 /**
@@ -98,13 +102,27 @@ public class GroupBreakpointsByDialog extends Dialog {
 		
 		Composite parentComposite= (Composite) super.createDialogArea(parent);
 		Composite composite= new Composite(parentComposite, SWT.NONE);
-		GridLayout layout= new GridLayout(2, false);
-		composite.setLayout(layout);
+		composite.setLayout(new GridLayout());
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint= 400;
 		data.heightHint= 400;
 		composite.setLayoutData(data);
+		composite.setFont(parent.getFont());
 		
+		initializeContent();
+		
+		createAvailableViewer(composite, labelProvider);
+		createSelectedViewer(composite, labelProvider);
+		
+		updateViewers();
+		Dialog.applyDialogFont(parentComposite);
+		return parentComposite;
+	}
+	
+	/**
+	 * 
+	 */
+	private void initializeContent() {
 		IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
 		for (int i = 0; i < factories.length; i++) {
 			fAvailableContainersProvider.addAvailable(factories[i]);
@@ -114,44 +132,32 @@ public class GroupBreakpointsByDialog extends Dialog {
 		while (iter.hasNext()) {
 			fSelectedContainersProvider.addSelected((IBreakpointContainerFactory) iter.next());
 		}
-		
-		Label label= new Label(composite, SWT.NONE);
-		label.setText("Available Containers:");
-		data= new GridData();
-		data.horizontalSpan= 2;
-		label.setLayoutData(data);
-		
-		fAvailableViewer= new TableViewer(composite);
-		fAvailableViewer.setContentProvider(fAvailableContainersProvider);
-		fAvailableViewer.setLabelProvider(labelProvider);
-		fAvailableViewer.setInput(new Object());
-		fAvailableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleAddPressed();
-			}
-		});
-		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateAddButton();
-			}
-		});
-		
-		fAddButton= new Button(composite, SWT.PUSH);
-		fAddButton.setText("Add");
-		fAddButton.addSelectionListener(fSelectionListener);
-		
-		label= new Label(composite, SWT.NONE);
+	}
+
+	/**
+	 * @param parent
+	 * @param labelProvider
+	 * @param composite
+	 */
+	private void createSelectedViewer(Composite parent, ILabelProvider labelProvider) {
+		Label label= new Label(parent, SWT.NONE);
 		label.setText("Displayed Containers:");
-		data= new GridData();
-		data.horizontalSpan= 2;
-		label.setLayoutData(data);
+		label.setLayoutData(new GridData());
+
+		Composite selectedComposite= new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns= 2;
+		selectedComposite.setLayout(layout);
+		selectedComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		selectedComposite.setFont(parent.getFont());
 		
-		fSelectedViewer= new TreeViewer(composite);
+		fSelectedViewer= new TreeViewer(selectedComposite);
 		fSelectedViewer.setContentProvider(fSelectedContainersProvider);
 		fSelectedViewer.setLabelProvider(labelProvider);
 		fSelectedViewer.setInput(new Object());
-		fSelectedViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		Tree tree = fSelectedViewer.getTree();
+		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tree.setFont(parent.getFont());
 		fSelectedViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 handleRemovePressed();
@@ -163,27 +169,62 @@ public class GroupBreakpointsByDialog extends Dialog {
 			}
 		});
 		
-		Composite buttonComposite= new Composite(composite, SWT.NONE);
+		Composite buttonComposite= new Composite(selectedComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		buttonComposite.setLayoutData(new GridData());
 		
-		fRemoveButton= new Button(buttonComposite, SWT.PUSH);
-		fRemoveButton.setText("Remove");
+		fRemoveButton= SWTUtil.createPushButton(buttonComposite, "&Remove", null);
 		fRemoveButton.addSelectionListener(fSelectionListener);
 		
-		fMoveUpButton= new Button(buttonComposite, SWT.PUSH);
-		fMoveUpButton.setText("Move Up");
+		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, "Move &Up", null);
 		fMoveUpButton.addSelectionListener(fSelectionListener);
 		
-		fMoveDownButton= new Button(buttonComposite, SWT.PUSH);
-		fMoveDownButton.setText("Move Down");
+		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, "Move &Down", null);
 		fMoveDownButton.addSelectionListener(fSelectionListener);
-		
-		updateViewers();
-		
-		return parentComposite;
 	}
-	
+
+	/**
+	 * @param parent
+	 * @param labelProvider
+	 * @param composite
+	 */
+	private void createAvailableViewer(Composite parent, ILabelProvider labelProvider) {
+		Label label= new Label(parent, SWT.NONE);
+		label.setText("Available Containers:");
+		label.setLayoutData(new GridData());
+		
+		Composite availableComposite= new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns= 2;
+		availableComposite.setLayout(layout);
+		availableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		fAvailableViewer= new TableViewer(availableComposite);
+		fAvailableViewer.setContentProvider(fAvailableContainersProvider);
+		fAvailableViewer.setLabelProvider(labelProvider);
+		fAvailableViewer.setInput(new Object());
+		Table table = fAvailableViewer.getTable();
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.setFont(parent.getFont());
+		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleAddPressed();
+			}
+		});
+		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateAddButton();
+			}
+		});
+		
+		Composite buttonComposite= new Composite(availableComposite, SWT.NONE);
+		buttonComposite.setLayout(layout);
+		buttonComposite.setLayoutData(new GridData());
+		
+		fAddButton= SWTUtil.createPushButton(buttonComposite, "&Add", null);
+		fAddButton.addSelectionListener(fSelectionListener);
+	}
+
 	public List getSelectedContainers() {
 		return fResult;
 	}
@@ -414,4 +455,14 @@ public class GroupBreakpointsByDialog extends Dialog {
 			super.dispose();
 		}
 	}
+	
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
+    protected void configureShell(Shell shell) {
+        super.configureShell(shell);
+        shell.setText("Group Breakpoints");
+    }
 }
