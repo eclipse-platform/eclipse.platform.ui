@@ -121,6 +121,7 @@ HTML {
 
 <script language="JavaScript">
 
+var bRestore = false;
 // Preload images
 <%
 ToolbarButton[] buttons = data.getButtons();
@@ -196,10 +197,12 @@ function maximizedChanged(maximizedNotRestored){
 		document.getElementById("maximize_restore").src="<%=data.getRestoreImage()%>";
 		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getRestoreTooltip()%>");
 		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getRestoreTooltip()%>");
+		bRestore = true;
 	}else{
 		document.getElementById("maximize_restore").src="<%=data.getMaximizeImage()%>";
 		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getMaximizeTooltip()%>");
 		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getMaximizeTooltip()%>");
+		bRestore = false;
 	}
 }
 
@@ -217,6 +220,26 @@ function setButtonState(buttonName, pressed) {
 	}else{
 		document.getElementById("tdb_"+buttonName).className="button";
 	}
+}
+
+function setWindowStatus(buttonName){
+	<%
+	for (int i=0; i<buttons.length; i++) {
+		String name = buttons[i].getName();%>
+		if (buttonName == "<%=name%>"){
+			if (buttonName == "maximize_restore"){
+				if (bRestore){
+					window.status = "<%=data.getRestoreTooltip()%>";
+				}else{
+					window.status = "<%=data.getMaximizeTooltip()%>";
+				}
+			}else{
+				window.status = "<%=buttons[i].getTooltip()%>";
+			}
+		}
+	<%	
+	}
+	%>
 }
 </script>
 
@@ -267,7 +290,7 @@ if(buttons.length > 0){
 %>
 						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].isOn()?"buttonOn":"button"%>" height=18>
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
-							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
+							   onmouseover="javascript:setWindowStatus('<%=buttons[i].getName()%>');return true;" 
 							   onmouseout="window.status='';"
 							   id="b<%=i%>">
 							   <img src="<%=buttons[i].getOnImage()%>" 
