@@ -55,7 +55,8 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	
 	public boolean showAncestor(Object element) {
 		if (element instanceof ICompareInput)
-			return (((ICompareInput)element).getKind() & Differencer.DIRECTION_MASK) == Differencer.CONFLICTING;
+			return true;	// fix for #45239: Show ancestor for incoming and outgoing changes
+			//return (((ICompareInput)element).getKind() & Differencer.DIRECTION_MASK) == Differencer.CONFLICTING;
 		return false;
 	}
 
