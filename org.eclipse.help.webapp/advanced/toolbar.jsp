@@ -68,6 +68,14 @@ BODY {
 	border-bottom:1px solid ButtonShadow;
 }
 
+<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
+// maximize (last) button should not jump
+%>
+#b<%=data.getButtons().length-1%>:hover{
+	border:1px solid <%=prefs.getToolbarBackground()%>;
+}
+<%}%>
+
 .separator {
 	background-color: ThreeDShadow;
 	height:100%;
@@ -135,9 +143,21 @@ function setTitle(label)
 	text.nodeValue = label;
 }
 
-
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
-%>/**
+%>
+function registerMaximizedChangedListener(){
+	// get to the frameset
+	var p = parent;
+	while (p && !p.registerMaximizeListener)
+		p = p.parent;
+	
+	if (p!= null){
+		p.registerMaximizeListener('<%=data.getName()%>Toolbar', maximizedChanged);
+	}
+}
+registerMaximizedChangedListener();
+
+/**
  * Handler for double click: maximize/restore this view
  * Note: Mozilla browsers prior to 1.2.1 do not support programmatic frame resizing well.
  */
@@ -146,24 +166,41 @@ function mouseDblClickHandler(e) {
 	var target=<%=data.isIE()?"window.event.srcElement":"e.target"%>;
 	if (target.tagName && (target.tagName == "A" || target.tagName == "IMG"))
 		return;
-		
+	toggleFrame();
+	return false;
+}		
+function restore_maximize(button)
+{
+	toggleFrame();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+function toggleFrame(){
 	// get to the frameset
 	var p = parent;
 	while (p && !p.toggleFrame)
 		p = p.parent;
 	
-	if (p!= null)
+	if (p!= null){
 		p.toggleFrame('<%=data.getTitle()%>');
-	
+	}
 	document.selection.clear;	
-	return false;
 }
+
+function maximizedChanged(maximizedNotRestored){
+	if(maximizedNotRestored){
+		document.getElementById("maximize_restore").src="<%=data.getRestoreImage()%>";
+	}else{
+		document.getElementById("maximize_restore").src="<%=data.getMaximizeImage()%>";
+	}
+}
+
 <%=data.isIE()?
 	"document.ondblclick = mouseDblClickHandler;"
 :
 	"document.addEventListener('dblclick', mouseDblClickHandler, true);"%>
 <%}%>
-
 
 function setButtonState(buttonName, pressed) {
 	if(!document.getElementById("tdb_"+buttonName))
@@ -174,8 +211,6 @@ function setButtonState(buttonName, pressed) {
 		document.getElementById("tdb_"+buttonName).className="button";
 	}
 }
-
-
 </script>
 
 <%

@@ -37,11 +37,24 @@ if (data.isMozilla()){
 </style>
 
 <script language="JavaScript">
-
-// vars to keep track of frame sizes before max/restore
+<%-- map of maximize listener functions indexed by name --%>
+var maximizeListeners=new Object();
+function registerMaximizeListener(name, listener){
+	maximizeListeners[name]=listener;
+}
+function notifyMaximizeListeners(maximizedNotRestored){
+	for(i in maximizeListeners){
+		try{
+			maximizeListeners[i](maximizedNotRestored);
+		}catch(exc){}
+	}
+}
+<%-- vars to keep track of frame sizes before max/restore --%>
 var leftCols = "<%=isRTL?"70.5%":"29.5%"%>";
 var rightCols = "<%=isRTL?"29.5%":"70.5%"%>";
-
+<%--
+param title "" for content frame
+--%>
 function toggleFrame(title)
 {
 	var frameset = document.getElementById("helpFrameset"); 
@@ -53,6 +66,7 @@ function toggleFrame(title)
 	if (left == "*" || right == "*") {
 		// restore frames
 		frameset.setAttribute("cols", leftCols+","+rightCols);
+		notifyMaximizeListeners(false);
 	} else {
 		// the "cols" attribute is not always accurate, especially after resizing.
 		// offsetWidth is also not accurate, so we do a combination of both and 
@@ -94,7 +108,8 @@ if(isRTL) {
 			frameset.setAttribute("cols", "*,100%");
 <%
 }
-%>
+%>	
+		notifyMaximizeListeners(true);
 	}
 }
 </script>

@@ -51,7 +51,7 @@ public class ToolbarData extends RequestData {
 
 		List buttonList = new ArrayList();
 		for (int i = 0; i < names.length; i++) {
-					if(states[i].startsWith("hid")){
+			if(states[i].startsWith("hid")){
 				continue;
 			}
 			if ("".equals(names[i]))
@@ -65,11 +65,26 @@ public class ToolbarData extends RequestData {
 						actions[i],
 						"on".equalsIgnoreCase(states[i])));
 		}
+		// add implicit maximize/restore button on all toolbars
+		if (isIE() || isMozilla()
+				&& "1.2.1".compareTo(getMozillaVersion()) <= 0) {
+			buttonList.add(new ToolbarButton("maximize_restore",
+					"",
+					preferences.getImagesDirectory() + "/" + "maximize.gif",
+					"restore_maximize", false));
+		}
 		buttons = (ToolbarButton[])buttonList.toArray(new ToolbarButton[buttonList.size()]);
 	}
 
 	public ToolbarButton[] getButtons() {
 		return buttons;
+	}
+
+	public String getName() {
+		if (request.getParameter("view") == null)
+			return "";
+		else
+			return request.getParameter("view");
 	}
 
 	public String getTitle() {
@@ -83,5 +98,11 @@ public class ToolbarData extends RequestData {
 
 	public String getScript() {
 		return request.getParameter("script");
+	}
+	public String getMaximizeImage() {
+		return preferences.getImagesDirectory() + "/e_maximize.gif";
+	}
+	public String getRestoreImage() {
+		return preferences.getImagesDirectory() + "/e_restore.gif";
 	}
 }
