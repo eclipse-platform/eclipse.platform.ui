@@ -4,14 +4,11 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import java.io.StringWriter;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The FilterAction is the class that adds the filter views to a ResourceNavigator.
@@ -56,30 +53,12 @@ public void run() {
 		String[] selectedPatterns = new String[results.length];
 		System.arraycopy(results, 0, selectedPatterns, 0, results.length);
 		filter.setPatterns(selectedPatterns);
-		saveInPreferences(selectedPatterns);
-		TreeViewer viewer = getResourceViewer();
+		getNavigator().setFiltersPreference(selectedPatterns);
+		Viewer viewer = getResourceViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.refresh();
 		viewer.getControl().setRedraw(true);
 	}
 }
-/**
- * Save the supplied patterns in the preferences for the UI plugin.
- * They are saved in the format: pattern,pattern.
- */
-private void saveInPreferences(String[] patterns) {
 
-	StringWriter writer = new StringWriter();
-
-	for (int i = 0; i < patterns.length; i++) {
-		if (i != 0)
-			writer.write(ResourcePatternFilter.COMMA_SEPARATOR);
-		writer.write(patterns[i]);
-	}
-
-	getNavigator().getPlugin().getPreferenceStore().setValue(
-		ResourcePatternFilter.FILTERS_TAG,
-		writer.toString());
-
-}
 }

@@ -30,7 +30,7 @@ public IResourceNavigatorPart getNavigator() {
 /**
  * Returns the resource viewer
  */
-protected TreeViewer getResourceViewer() {
+protected Viewer getResourceViewer() {
 	return getNavigator().getResourceViewer();
 }
 /**

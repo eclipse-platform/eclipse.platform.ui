@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -35,7 +36,7 @@ import org.eclipse.ui.views.internal.framelist.FrameList;
  */
 public class ResourceNavigator
 	extends ViewPart
-	implements ISetSelectionTarget, IResourceNavigatorPart {
+	implements ISetSelectionTarget, IResourceTreeNavigatorPart {
 	private TreeViewer viewer;
 	private IDialogSettings settings;
 	private IMemento memento;
@@ -309,13 +310,21 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	public ResourceSorter getResourceSorter() {
-		return (ResourceSorter) getResourceViewer().getSorter();
+		return (ResourceSorter) getTreeViewer().getSorter();
 	}
+	/**
+	 * Returns the resource viewer which shows the resource hierarchy.
+	 * @since 2.0
+	 */
+	public Viewer getResourceViewer() {
+		return getTreeViewer();
+	}
+	
 	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
 	 * @since 2.0
 	 */
-	public TreeViewer getResourceViewer() {
+	public TreeViewer getTreeViewer() {
 		return viewer;
 	}
 	/**
@@ -362,7 +371,7 @@ public class ResourceNavigator
 				return path.makeRelative().toString();
 			}
 		} else {
-			return ((ILabelProvider) getResourceViewer().getLabelProvider()).getText(
+			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(
 				element);
 		}
 	}
@@ -658,7 +667,7 @@ public class ResourceNavigator
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		getResourceViewer().getTree().setFocus();
+		getTreeViewer().getTree().setFocus();
 	}
 	/**
 	 * Note: For experimental use only.
@@ -668,7 +677,7 @@ public class ResourceNavigator
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		DecoratingLabelProvider provider =
-			(DecoratingLabelProvider) getResourceViewer().getLabelProvider();
+			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
 		provider.setLabelDecorator(decorator);
 	}
 	/**
@@ -676,7 +685,7 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	public void setResourceSorter(ResourceSorter sorter) {
-		TreeViewer viewer = getResourceViewer();
+		TreeViewer viewer = getTreeViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.setSorter(sorter);
 		viewer.getControl().setRedraw(true);
@@ -710,7 +719,7 @@ public class ResourceNavigator
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
 			ILabelProvider labelProvider =
-				(ILabelProvider) getResourceViewer().getLabelProvider();
+				(ILabelProvider) getTreeViewer().getLabelProvider();
 			setTitle(
 				ResourceNavigatorMessages.format(
 					"ResourceNavigator.title",
@@ -720,4 +729,25 @@ public class ResourceNavigator
 		}
 	}
 
+	/**
+ 	* Set the values of the filter preference to be the 
+ 	* strings in preference values
+ 	*/
+
+	public void setFiltersPreference(String[] patterns){
+	
+		StringWriter writer = new StringWriter();
+
+		for (int i = 0; i < patterns.length; i++) {
+			if (i != 0)
+				writer.write(ResourcePatternFilter.COMMA_SEPARATOR);
+			writer.write(patterns[i]);
+		}
+
+		getPlugin().getPreferenceStore().setValue(
+			ResourcePatternFilter.FILTERS_TAG,
+			writer.toString());
+	
+	}
+		
 }

@@ -32,13 +32,13 @@ public class ResourceNavigatorActionFactory extends ActionFactory {
 	public ResourceNavigatorActionFactory(
 		FrameList frameList,
 		Shell shell,
-		IResourceNavigatorPart navigatorPart) {
+		IResourceTreeNavigatorPart navigatorPart) {
 
 		gotoFactory = new GotoActionFactory(frameList, navigatorPart);
 		openActionFactory =
 			new OpenActionFactory(navigatorPart.getSite(), shell);
 		refactorFactory =
-			new RefactorActionFactory(navigatorPart.getResourceViewer());
+			new RefactorActionFactory(navigatorPart.getTreeViewer());
 		workbenchFactory =
 			new WorkbenchStateActionFactory(
 				navigatorPart.getResourceViewer().getControl());
