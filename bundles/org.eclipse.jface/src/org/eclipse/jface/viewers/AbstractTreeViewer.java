@@ -1134,8 +1134,19 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			return false;
 		
 		if(cp.hasChildren(element)){
-			if(getFilters().length > 0)//If there are filters be sure there is anything
-				return getFilteredChildren(element).length > 0;
+			ViewerFilter[] filters = getFilters();
+			if(filters.length > 0){//If there are filters be sure there is anything
+				Object[] result = getRawChildren(element);
+				if (filters.length >0) {
+					for (int i = 0; i < filters.length; i++) {
+						ViewerFilter filter = filters[i];
+						result = filter.filter(this, element, result);
+						if(result.length == 0)
+							return false;
+					}
+					return true;//Still elements left so return true
+				}
+			}
 			return true;//No filters then hasChildren is enough
 		}	
 		
