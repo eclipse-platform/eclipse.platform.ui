@@ -302,18 +302,14 @@ public Font get(String symbolicName) {
  */
 private void handleDisplayDispose() {
 
-	if (stringToFont == null)
-		return;
-		
 	for (Iterator e = stringToFont.values().iterator(); e.hasNext();) {
 		Object next = e.next();
 		if (next instanceof Font) {
 			((Font) next).dispose();
 		}
 	}
-	
-	stringToFont = null;
-	listeners = null;
+	stringToFont.clear();
+	listeners.clear();
 }
 /**
  * Hook a dispose listener on the SWT display.
