@@ -238,13 +238,15 @@ protected Button getButton(int index) {
 protected int getMinimumMessageWidth() {
 	return convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 }
-/* (non-Javadoc)
- * Method declared on Dialog.
- * Sets a return code of -1 since none of the dialog buttons were pressed to close the dialog.
+/**
+ *  Handle the shell close. Set the return code to <code>SWT.DEFAULT</code>
+ *  as there has been no explicit close by the user.
+ * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
  */
 protected void handleShellCloseEvent() {
+	//Sets a return code of SWT.DEFAULT since none of the dialog buttons were pressed to close the dialog.
 	super.handleShellCloseEvent();
-	setReturnCode(-1);
+	setReturnCode(SWT.DEFAULT);
 }
 /** 
  * Convenience method to open a simple confirm (OK/Cancel) dialog.
