@@ -599,15 +599,16 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 	
 	/**
-	 * Restires the persisted checked state of the specified action that was
-	 * stored in preferences.
+	 * Restores the persisted checked state of the specified action that was
+	 * stored in preferences. If the action is disabled, its persisted state
+	 * is not restored (because a disabled action cannot be run).
 	 * 
 	 * @param action the action whose checked state will be restored
 	 * @since 2.1
 	 */
 	protected void initActionState(IAction action) {
 		String id = action.getId();
-		if (id != null) {
+		if (id != null && action.isEnabled()) {
 			String prefKey = generatePreferenceKey(action);
 			boolean checked = getPreferenceStore().getBoolean(prefKey);
 			action.setChecked(checked);
