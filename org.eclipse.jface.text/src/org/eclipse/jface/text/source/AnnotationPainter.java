@@ -291,7 +291,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						else
 							position= decoration.fPosition;
 						
-						if (!position.isDeleted()) {
+						if (position != null && !position.isDeleted()) {
 							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
 							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
 						} else {
