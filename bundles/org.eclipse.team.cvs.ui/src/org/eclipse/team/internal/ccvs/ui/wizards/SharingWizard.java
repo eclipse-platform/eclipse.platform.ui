@@ -60,6 +60,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	// The page that prompts the user for module name.
 	private ModuleSelectionPage modulePage;
 	
+	// The page that tells the user what's going to happen.
+	private SharingWizardFinishPage finishPage;
+	
 	public SharingWizard() {
 		setNeedsProgressMonitor(true);
 	}		
@@ -78,6 +81,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			addPage(createLocationPage);
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), null);
 			addPage(modulePage);
+			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("Ready to Share Project"), null);
+			addPage(finishPage);
 		}
 	}
 	public boolean canFinish() {
@@ -110,6 +115,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		}
 		if (page == createLocationPage) {
 			return modulePage;
+		}
+		if (page == modulePage) {
+			return finishPage;
 		}
 		return null;
 	}
