@@ -80,8 +80,10 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			previous = entry;
 			entry.next = this;
 			entry.previous = null;
-		} else
+		} else {
+			Assert.isTrue(previous.next() == this, "Blocked job list is corrupt");
 			previous.addLast(entry);
+		}
 	}
 	protected boolean belongsTo(Object family) {
 		return false;
