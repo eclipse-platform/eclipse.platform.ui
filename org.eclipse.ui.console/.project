@@ -3,12 +3,6 @@
 	<name>org.eclipse.ui.console</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.help</project>
-		<project>org.eclipse.jface.text</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.workbench.texteditor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
