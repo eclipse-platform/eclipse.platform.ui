@@ -22,14 +22,16 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		try {		
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);
 		
-			featureStream = contentProvider.getFeatureManifestReference().asURL().openStream();
+			ContentReference manifest = contentProvider.getFeatureManifestReference();
+			featureStream = manifest.getInputStream();
 			FeatureModelFactory factory = (FeatureModelFactory) this;
 			feature = (Feature)factory.parseFeature(featureStream);
 			feature.setSite(site);
 			
 			feature.setFeatureContentProvider(contentProvider);
 			
-			feature.resolve(url, getResourceBundle(url));
+			URL manifestUrl = manifest.asURL();
+			feature.resolve(manifestUrl, getResourceBundle(manifestUrl));
 			feature.markReadOnly();			
 			
 		} catch (IOException e) {

@@ -81,8 +81,19 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 		ContentReference result = null;
 		ContentReference[] featureContentReference =getFeatureEntryArchiveReferences();		
 		try {			
-			JarContentReference localContentReference = (JarContentReference)asLocalReference(featureContentReference[0],null);
-			result = peek(localContentReference,Feature.FEATURE_XML,contentSelector,null);
+			JarContentReference featureJarReference = (JarContentReference)asLocalReference(featureContentReference[0],null);
+			// we need to unpack locally for browser references to be resolved correctly
+			FeatureContentProvider.ContentSelector sel = new FeatureContentProvider.ContentSelector();
+			ContentReference[] featureReferences = unpack(featureJarReference, sel, null);
+			result = null;
+			for (int i=0; featureReferences!=null && i<featureReferences.length; i++) {
+				if (featureReferences[i].getIdentifier().equals(Feature.FEATURE_XML)) {
+					result = featureReferences[i];
+					break;
+				}
+			}
+			if (result == null)
+				throw  newCoreException("Error retrieving manifest file in  feature :" + featureContentReference[0].getIdentifier(), null);
 		} catch (IOException e){
 			throw  newCoreException("Error retrieving manifest file in  feature :" + featureContentReference[0].getIdentifier(), e);
 		}

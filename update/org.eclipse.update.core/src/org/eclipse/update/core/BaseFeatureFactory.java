@@ -38,7 +38,9 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 	protected ResourceBundle getResourceBundle(URL url) throws IOException, CoreException {
 		ResourceBundle bundle = null;
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			// make sure we have a directory
+			URL dirURL = new URL(url,".");
+			ClassLoader l = new URLClassLoader(new URL[] { dirURL }, null);
 			bundle = ResourceBundle.getBundle(Feature.FEATURE_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
