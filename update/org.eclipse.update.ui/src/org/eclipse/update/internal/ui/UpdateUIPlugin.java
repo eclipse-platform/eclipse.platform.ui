@@ -14,6 +14,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -244,5 +245,16 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		} catch (CoreException e) {
 			log(e.getStatus(), true); //$NON-NLS-1$
 		}
+	}
+	public static void informRestartNeeded() {
+		String title = UpdateUIPlugin.getResourceString("RestartTitle");
+		String message = UpdateUIPlugin.getResourceString("RestartMessage");
+		boolean restart =
+			MessageDialog.openConfirm(
+				getActiveWorkbenchShell(),
+				title,
+				message);
+		if (restart)
+			PlatformUI.getWorkbench().restart();
 	}
 }

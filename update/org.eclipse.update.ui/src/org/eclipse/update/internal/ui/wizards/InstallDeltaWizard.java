@@ -102,19 +102,8 @@ public class InstallDeltaWizard
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
-				if (processed>0) informRestartNeeded();
+				if (processed>0) UpdateUIPlugin.informRestartNeeded();
 			}
 		});
 	}
-	private void informRestartNeeded() {
-		String title = UpdateUIPlugin.getResourceString(KEY_WTITLE);
-		String message= UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
-		boolean restart =
-			MessageDialog.openConfirm(
-				getShell(),
-				title,
-				message);
-		if (restart)
-			PlatformUI.getWorkbench().restart();
-	}	
 }

@@ -236,13 +236,17 @@ public class TargetPage extends BannerPage {
 		String path = dd.open();
 		if (path != null) {
 			File file = new File(path);
-			addConfiguredSite(getContainer().getShell(), config, file);
+			addConfiguredSite(getContainer().getShell(), config, file, false);
 		}
 	}
 	
-	public static boolean addConfiguredSite(Shell shell, IInstallConfiguration config, File file) {
+	public static boolean addConfiguredSite(Shell shell, IInstallConfiguration config, File file, boolean linked) {
 		try {
-			IConfiguredSite csite = config.createConfiguredSite(file);
+			IConfiguredSite csite = null;
+			if (linked) 
+				csite = config.createLinkedConfiguredSite(file);
+			else
+				csite = config.createConfiguredSite(file);
 			IStatus status = csite.verifyUpdatableStatus();
 			if (status.isOK())
 				config.addConfiguredSite(csite);

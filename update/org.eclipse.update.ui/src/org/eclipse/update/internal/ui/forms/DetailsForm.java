@@ -770,7 +770,7 @@ public class DetailsForm extends PropertyWebForm {
 					dialog.getShell().setSize(600, 500);
 					dialog.open();
 					if (wizard.isSuccessfulInstall())
-						showRestartMessage(job);
+						UpdateUIPlugin.informRestartNeeded();
 				}
 			});
 		}
@@ -899,39 +899,5 @@ public class DetailsForm extends PropertyWebForm {
 		} else {
 			return new PendingChange(currentFeature, type);
 		}
-	}
-
-	private void showRestartMessage(PendingChange job) {
-		String titleKey;
-		String messageKey;
-		switch (job.getJobType()) {
-			case PendingChange.INSTALL :
-				titleKey = KEY_DIALOG_TITLE;
-				messageKey = KEY_DIALOG_MESSAGE;
-				break;
-			case PendingChange.CONFIGURE :
-				titleKey = KEY_DIALOG_CTITLE;
-				messageKey = KEY_DIALOG_CMESSAGE;
-				break;
-			case PendingChange.UNCONFIGURE :
-				titleKey = KEY_DIALOG_UCTITLE;
-				messageKey = KEY_DIALOG_UCMESSAGE;
-				break;
-			case PendingChange.UNINSTALL :
-				titleKey = KEY_DIALOG_UTITLE;
-				messageKey = KEY_DIALOG_UMESSAGE;
-				break;
-			default :
-				return;
-		}
-		String title = UpdateUIPlugin.getResourceString(titleKey);
-		String message = UpdateUIPlugin.getResourceString(messageKey);
-		boolean restart =
-			MessageDialog.openConfirm(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
-				title,
-				message);
-		if (restart)
-			PlatformUI.getWorkbench().restart();
 	}
 }

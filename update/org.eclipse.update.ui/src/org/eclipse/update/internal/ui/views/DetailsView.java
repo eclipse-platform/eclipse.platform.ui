@@ -45,7 +45,8 @@ public class DetailsView extends MultiPageView {
 	public static final String CONFIG_PAGE = "Config";
 	public static final String INSTALL_CONFIGURATION_PAGE = "InstallConfiguration";
 	public static final String INSTALL_SITE_PAGE = "InstallSite";
-	public static final String CDROM_PAGE = "MyComputer";
+	public static final String MY_COMPUTER_PAGE = "MyComputer";
+	public static final String EXTENSION_ROOT_PAGE = "ExtensionRoot";
 	public static final String SEARCH_PAGE = "Search";
 	public static final String DISCOVERY_PAGE = "Discovery";
 	public static final String UNKNOWN_PAGE = "Unknown";
@@ -83,7 +84,8 @@ public class DetailsView extends MultiPageView {
 			INSTALL_CONFIGURATION_PAGE,
 			new InstallConfigurationPage(this, "Snapshot"));
 		addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
-		addPage(CDROM_PAGE, new MyComputerPage(this, "MyComputer"));
+		addPage(MY_COMPUTER_PAGE, new MyComputerPage(this, "MyComputer"));
+		addPage(EXTENSION_ROOT_PAGE, new ExtensionRootPage(this, "ExtensionRoot"));
 		addPage(SEARCH_PAGE, new SearchPage(this, "Search"));
 		addPage(DISCOVERY_PAGE, new DiscoveryFolderPage(this, "Discovery Sites"));
 		addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
@@ -193,7 +195,11 @@ public class DetailsView extends MultiPageView {
 					return;
 				}
 				if (el instanceof MyComputer) {
-					showPageWithInput(CDROM_PAGE, el);
+					showPageWithInput(MY_COMPUTER_PAGE, el);
+					return;
+				}
+				if (el instanceof ExtensionRoot) {
+					showPageWithInput(EXTENSION_ROOT_PAGE, el);
 					return;
 				}
 				if (el instanceof DiscoveryFolder) {

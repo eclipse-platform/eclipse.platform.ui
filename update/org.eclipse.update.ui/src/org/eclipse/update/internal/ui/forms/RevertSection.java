@@ -135,7 +135,7 @@ private static final String KEY_DIALOG_MESSAGE="InstallConfigurationPage.RevertS
 				} finally {
 					monitor.done();
 					if (success)
-						informRestartNeeded();
+						UpdateUIPlugin.informRestartNeeded();
 				}
 			}
 		};
@@ -154,20 +154,4 @@ private static final String KEY_DIALOG_MESSAGE="InstallConfigurationPage.RevertS
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}
-	
-	
-	
-	public static void informRestartNeeded(){
-		String title = UpdateUIPlugin.getResourceString(KEY_DIALOG_TITLE);
-		String message= UpdateUIPlugin.getResourceString(KEY_DIALOG_MESSAGE);
-		// defect 15439
-		boolean restart =
-			MessageDialog.openConfirm(
-				UpdateUIPlugin.getActiveWorkbenchShell(),
-				title,
-				message);
-		if (restart)
-			PlatformUI.getWorkbench().restart();
-	}	
-	
 }

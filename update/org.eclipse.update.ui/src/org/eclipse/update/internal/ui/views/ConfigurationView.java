@@ -56,6 +56,7 @@ public class ConfigurationView
 	private Action showUnconfFeaturesAction;
 	private Action revertAction;
 	private Action preserveAction;
+	private Action unlinkAction;
 	private Action removePreservedAction;
 	private Action propertiesAction;
 	private IUpdateModelChangedListener modelListener;
@@ -63,6 +64,7 @@ public class ConfigurationView
 	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
 	private static final String KEY_PRESERVE =
 		"ConfigurationView.Popup.preserve";
+	private static final String KEY_UNLINK = "ConfigurationView.Popup.unlink";
 	private static final String KEY_REMOVE_PRESERVED =
 		"ConfigurationView.Popup.removePreserved";
 	private static final String KEY_HISTORY_FOLDER =
@@ -295,13 +297,13 @@ public class ConfigurationView
 			}
 			return false;
 		} /**
-																					 * @see ITreeContentProvider#getParent(Object)
-																					 */
+																											 * @see ITreeContentProvider#getParent(Object)
+																											 */
 		public Object getParent(Object child) {
 			return null;
 		} /**
-																					 * @see ITreeContentProvider#hasChildren(Object)
-																					 */
+																											 * @see ITreeContentProvider#hasChildren(Object)
+																											 */
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				return ((ConfiguredFeatureAdapter) parent)
@@ -309,8 +311,8 @@ public class ConfigurationView
 			}
 			return true;
 		} /**
-																					 * @see IStructuredContentProvider#getElements(Object)
-																					 */
+																											 * @see IStructuredContentProvider#getElements(Object)
+																											 */
 		public Object[] getElements(Object input) {
 			return getChildren(input);
 		}
@@ -692,6 +694,13 @@ public class ConfigurationView
 		};
 		removePreservedAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_REMOVE_PRESERVED));
+
+		unlinkAction = new Action() {
+			public void run() {
+				performUnlink();
+			}
+		};
+		unlinkAction.setText(UpdateUIPlugin.getResourceString(KEY_UNLINK));
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
@@ -718,9 +727,22 @@ public class ConfigurationView
 		if (config != null) {
 			manager.add(removePreservedAction);
 		}
+		IConfiguredSite site = getSelectedSite(obj);
+		if (site != null) {
+			IInstallConfiguration cfg = site.getInstallConfiguration();
+			if (cfg.isCurrent()) {
+				try {
+					if (site.isExtensionSite() && !site.isNativelyLinked()) {
+						manager.add(unlinkAction);
+					}
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+		}
 		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);	
-		manager.add(new Separator());	
+		drillDownAdapter.addNavigationActions(manager);
+		manager.add(new Separator());
 		super.fillContextMenu(manager);
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration)
@@ -728,6 +750,27 @@ public class ConfigurationView
 
 		//defect 14684
 		//super.fillContextMenu(manager);
+	}
+
+	private IConfiguredSite getSelectedSite(Object obj) {
+		if (obj instanceof ConfigurationSiteAdapter) {
+			return ((ConfigurationSiteAdapter) obj).getConfigurationSite();
+		}
+		return null;
+	}
+
+	private void performUnlink() {
+		IConfiguredSite site = getSelectedSite(getSelectedObject());
+		if (site == null)
+			return;
+		IInstallConfiguration config = site.getInstallConfiguration();
+		config.removeConfiguredSite(site);
+		try {
+			getLocalSite().save();
+			UpdateUIPlugin.informRestartNeeded();
+		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+		}
 	}
 
 	private void registerListeners() {
@@ -757,28 +800,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-										 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-										 */
+													 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+													 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-										 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-										 */
+													 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+													 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-										 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-										 */
+													 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+													 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-										 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-										 */
+													 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+													 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-										 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-										 */
+													 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+													 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**

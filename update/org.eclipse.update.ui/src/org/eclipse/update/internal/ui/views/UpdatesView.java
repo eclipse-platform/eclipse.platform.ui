@@ -60,8 +60,10 @@ public class UpdatesView
 	private static final String KEY_RESTART_MESSAGE =
 		"UpdatesView.restart.message";
 	private static final String KEY_CONFIRM_DELETE = "ConfirmDelete.title";
-	private static final String KEY_CONFIRM_DELETE_MULTIPLE="ConfirmDelete.multiple";
-	private static final String KEY_CONFIRM_DELETE_SINGLE="ConfirmDelete.single";
+	private static final String KEY_CONFIRM_DELETE_MULTIPLE =
+		"ConfirmDelete.multiple";
+	private static final String KEY_CONFIRM_DELETE_SINGLE =
+		"ConfirmDelete.single";
 
 	private Action propertiesAction;
 	private Action newAction;
@@ -390,9 +392,11 @@ public class UpdatesView
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
 		refreshAction.setToolTipText(refreshAction.getText());
 		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
-		refreshAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_D);		
-		refreshAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_H);
-		
+		refreshAction.setDisabledImageDescriptor(
+			UpdateUIPluginImages.DESC_REFRESH_NAV_D);
+		refreshAction.setHoverImageDescriptor(
+			UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+
 		fileFilterAction = new Action() {
 			public void run() {
 				if (fileFilterAction.isChecked()) {
@@ -503,6 +507,8 @@ public class UpdatesView
 
 	private Object getSelectedObject() {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		if (sel.isEmpty() || sel.size() > 1)
+			return null;
 		return sel.getFirstElement();
 	}
 
@@ -647,24 +653,15 @@ public class UpdatesView
 				.addConfiguredSite(
 					viewer.getControl().getShell(),
 					config,
-					dir)) {
+					dir,
+					true)) {
 				InstallWizard.makeConfigurationCurrent(config);
 				InstallWizard.saveLocalSite();
+				UpdateUIPlugin.informRestartNeeded();
 			}
 		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
 		}
-	}
-	private void informRestartNeeded() {
-		String title = UpdateUIPlugin.getResourceString(KEY_RESTART_TITLE);
-		String message = UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
-		boolean restart =
-			MessageDialog.openConfirm(
-				viewer.getControl().getShell(),
-				title,
-				message);
-		if (restart)
-			PlatformUI.getWorkbench().restart();
 	}
 
 	private boolean confirmDeletion(IStructuredSelection ssel) {
@@ -672,11 +669,16 @@ public class UpdatesView
 		String message;
 
 		if (ssel.size() > 1) {
-			message = UpdateUIPlugin.getFormattedMessage(KEY_CONFIRM_DELETE_MULTIPLE,
-					""+ssel.size());
+			message =
+				UpdateUIPlugin.getFormattedMessage(
+					KEY_CONFIRM_DELETE_MULTIPLE,
+					"" + ssel.size());
 		} else {
 			Object obj = ssel.getFirstElement().toString();
-			message = UpdateUIPlugin.getFormattedMessage(KEY_CONFIRM_DELETE_SINGLE, obj.toString());
+			message =
+				UpdateUIPlugin.getFormattedMessage(
+					KEY_CONFIRM_DELETE_SINGLE,
+					obj.toString());
 		}
 		return MessageDialog.openConfirm(
 			viewer.getControl().getShell(),
