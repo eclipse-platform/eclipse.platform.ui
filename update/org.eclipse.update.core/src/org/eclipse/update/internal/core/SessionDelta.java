@@ -114,8 +114,12 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		}
 
 		// remove the file from the file system
-		if (file != null)
+		if (file != null){
 			UpdateManagerUtils.removeFromFileSystem(file);
+			UpdateManagerPlugin.warn("Removing SessionDelta:"+file);
+		} else {
+			UpdateManagerPlugin.warn("Unable to remove SessionDelta. File is null");
+		}
 			
 		saveLocalSite();
 	}

@@ -58,6 +58,9 @@ public class InstallChangeParser extends DefaultHandler {
 
 		InputSource source = new InputSource(changeStream);
 		parser.parse(source);
+		
+		// 16366
+		if (change!=null) change.setFile(file);
 	}
 
 	/*
