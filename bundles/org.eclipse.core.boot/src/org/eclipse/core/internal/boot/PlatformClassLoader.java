@@ -109,4 +109,8 @@ public synchronized void setImports(DelegatingURLClassLoader[] loaders) {
 		delegates[i] = new DelegateLoader(loaders[i], false);
 	imports = delegates;
 }
+
+protected String getClassloaderId() {
+	return InternalBootLoader.RUNTIMENAME;
+}
 }

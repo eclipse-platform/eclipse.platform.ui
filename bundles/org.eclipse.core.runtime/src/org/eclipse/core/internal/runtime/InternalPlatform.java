@@ -274,6 +274,10 @@ public static void endSplash() {
 		return;
 		
 	splashDown = true;
+	if (DelegatingURLClassLoader.MONITOR_PLUGINS)
+		PluginStats.setBooting(false);
+	if (DelegatingURLClassLoader.MONITOR_CLASSES)
+		ClassStats.setBooting(false);
 	run(endOfInitializationHandler);
 }
 

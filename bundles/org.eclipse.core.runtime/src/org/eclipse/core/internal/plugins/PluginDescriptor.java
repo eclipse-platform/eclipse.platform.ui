@@ -11,14 +11,21 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;import org.eclipse.core.internal.boot.PlatformClassLoader;import org.eclipse.core.internal.boot.PlatformURLHandler;import org.eclipse.core.internal.boot.URLContentFilter;import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.*;
 import java.util.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.BundleStats;
+import org.eclipse.core.internal.boot.ClassloaderStats;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.PlatformClassLoader;
+import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.boot.URLContentFilter;
+import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 
 public class PluginDescriptor extends PluginDescriptorModel implements IPluginDescriptor {
 
@@ -176,10 +183,14 @@ synchronized void doPluginActivation() throws CoreException {
 	// check if already activated or pending
 	if (pluginActivationEnter()) {
 		try {
+			if (DelegatingURLClassLoader.MONITOR_PLUGINS)			
+				PluginStats.startPluginActivation(this.getUniqueIdentifier());			
 			internalDoPluginActivation();
 			errorExit = false;
 		} finally {
 			pluginActivationExit(errorExit);
+			if (DelegatingURLClassLoader.MONITOR_PLUGINS)			
+				PluginStats.endPluginActivation(this.getUniqueIdentifier());			
 		}
 	}
 }
@@ -548,6 +559,8 @@ public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResou
 	ResourceBundle newBundle = null;
 	try {
 		newBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, targetLocale, resourceLoader);
+		if (DelegatingURLClassLoader.MONITOR_BUNDLES) 
+			ClassloaderStats.loadedBundle(getUniqueIdentifier(), new BundleStats(getUniqueIdentifier(), DEFAULT_BUNDLE_NAME+".properties", newBundle));
 		bundle = newBundle;
 		locale = targetLocale;
 	} catch (MissingResourceException e) {

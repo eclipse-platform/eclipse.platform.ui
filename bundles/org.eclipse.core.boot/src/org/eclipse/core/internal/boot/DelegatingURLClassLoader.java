@@ -57,6 +57,15 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
 	
+	// flag and file name for the runtime spy
+	public static boolean MONITOR_PLUGINS = false;
+	public static boolean MONITOR_CLASSES = false;
+	public static boolean MONITOR_BUNDLES = false;
+	public static String TRACE_FILENAME = "runtime.traces";
+	public static String TRACE_FILTERS = "trace.properties";
+	public static boolean TRACE_CLASSES = false;
+	public static boolean TRACE_PLUGINS = false;
+	
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 
 	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode() & ((VM.class.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) == 0);
@@ -451,8 +460,16 @@ protected Class findClassParents(String name, boolean resolve) {
 		ClassLoader parent = getParent();
 		if (parent == null)
 			return findSystemClass(name);
-		return parent.loadClass(name);
+
+		if (MONITOR_CLASSES)	
+			ClassloaderStats.startLoadingClass(BootLoader.PI_BOOT, name);
+		Class result = parent.loadClass(name);
+		if (MONITOR_CLASSES)		
+			ClassloaderStats.endLoadingClass(BootLoader.PI_BOOT, name, true);
+		return result;
 	} catch (ClassNotFoundException e) {
+		if (MONITOR_CLASSES)		
+			ClassloaderStats.endLoadingClass(BootLoader.PI_BOOT, name, false);
 	}
 	return null;
 }
@@ -910,5 +927,35 @@ protected void setImportedLoaders(DelegateLoader[] loaders) {
 }
 public String toString() {
 	return "Loader [" + debugId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+}
+
+protected Class findClass(String name) throws ClassNotFoundException {
+	boolean found = false;
+	Class result = null;
+	try {
+		if (MONITOR_CLASSES)	
+			ClassloaderStats.startLoadingClass(getClassloaderId(), name);
+		result = super.findClass(name);
+		found = true;
+	} catch (ClassNotFoundException e) {
+		throw e;
+	} finally {
+		if (MONITOR_CLASSES)		
+			ClassloaderStats.endLoadingClass(getClassloaderId(), name, found);
+	}
+	return result;
+}
+
+protected abstract String getClassloaderId();
+
+public InputStream getResourceAsStream(String name) {
+	InputStream result = super.getResourceAsStream(name);
+	if (MONITOR_BUNDLES) {
+		if (result != null && name.endsWith(".properties")) {
+			ClassloaderStats.loadedBundle(getClassloaderId(), new BundleStats(getClassloaderId(), name, result));
+			result = super.getResourceAsStream(name);
+		}
+	}
+	return result;
 }
 }

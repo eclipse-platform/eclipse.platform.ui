@@ -106,6 +106,16 @@ public final class InternalBootLoader {
 	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug"; //$NON-NLS-1$
 	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug"; //$NON-NLS-1$
 
+	// option names for spy
+	private static final String OPTION_MONITOR_PLUGINS = BootLoader.PI_BOOT+"/monitor/plugins";
+	private static final String OPTION_MONITOR_CLASSES = BootLoader.PI_BOOT+"/monitor/classes";
+	private static final String OPTION_MONITOR_BUNDLES = BootLoader.PI_BOOT+"/monitor/bundles";
+
+	private static final String OPTION_TRACE_CLASSES = BootLoader.PI_BOOT + "/trace/classLoading";
+	private static final String OPTION_TRACE_FILENAME = BootLoader.PI_BOOT+"/trace/filename";
+	private static final String OPTION_TRACE_FILTERS = BootLoader.PI_BOOT+"/trace/filters";			
+	private static final String OPTION_TRACE_PLUGINS = BootLoader.PI_BOOT+"/trace/pluginActivation";
+
 	// command line arguments
 	private static final String DEBUG = "-debug"; //$NON-NLS-1$
 	private static final String DATA = "-data"; //$NON-NLS-1$
@@ -861,7 +871,16 @@ public static void setupOptions() {
 	PlatformURLConnection.DEBUG_CONNECT = getBooleanOption(OPTION_URL_DEBUG_CONNECT, true);
 	PlatformURLConnection.DEBUG_CACHE_LOOKUP = getBooleanOption(OPTION_URL_DEBUG_CACHE_LOOKUP, true);
 	PlatformURLConnection.DEBUG_CACHE_COPY = getBooleanOption(OPTION_URL_DEBUG_CACHE_COPY, true);
-	PlatformConfiguration.DEBUG = getBooleanOption(OPTION_CONFIGURATION_DEBUG,false);
+	PlatformConfiguration.DEBUG = getBooleanOption(OPTION_CONFIGURATION_DEBUG, false);
+	
+	DelegatingURLClassLoader.MONITOR_PLUGINS = getBooleanOption(OPTION_MONITOR_PLUGINS, DelegatingURLClassLoader.MONITOR_PLUGINS);
+	DelegatingURLClassLoader.MONITOR_CLASSES = getBooleanOption(OPTION_MONITOR_CLASSES, DelegatingURLClassLoader.MONITOR_CLASSES);
+	DelegatingURLClassLoader.MONITOR_BUNDLES = getBooleanOption(OPTION_MONITOR_BUNDLES, DelegatingURLClassLoader.MONITOR_BUNDLES);
+
+	DelegatingURLClassLoader.TRACE_FILENAME = options.getProperty(OPTION_TRACE_FILENAME, DelegatingURLClassLoader.TRACE_FILENAME); 
+	DelegatingURLClassLoader.TRACE_FILTERS = options.getProperty(OPTION_TRACE_FILTERS, DelegatingURLClassLoader.TRACE_FILTERS);
+	DelegatingURLClassLoader.TRACE_CLASSES = getBooleanOption(OPTION_TRACE_CLASSES, DelegatingURLClassLoader.TRACE_CLASSES);		
+	DelegatingURLClassLoader.TRACE_PLUGINS = getBooleanOption(OPTION_TRACE_PLUGINS, DelegatingURLClassLoader.TRACE_PLUGINS);		
 }
 /**
  * Initializes the execution context for this run of the platform.  The context
@@ -970,5 +989,11 @@ public static String[] startup(URL pluginPathLocation/*R1.0 compatibility*/, Str
 	running = true;
 	starting = false;
 	return applicationArgs;
+}
+
+public  static String getBootDir()  {
+	if (BOOTDIR == null) 
+		initializeBootDir();
+	return BOOTDIR;
 }
 }

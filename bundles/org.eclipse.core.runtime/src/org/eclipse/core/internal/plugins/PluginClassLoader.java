@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.runtime.Policy;
-import java.io.File;
 import java.util.*;
 import java.net.URL;
 
@@ -214,5 +213,8 @@ protected boolean shouldLookForClass(String name) {
 		throw new DelegatingLoaderException(message);
 	}
 	return true;
+}
+protected String getClassloaderId() {
+	return descriptor.getId();
 }
 }
