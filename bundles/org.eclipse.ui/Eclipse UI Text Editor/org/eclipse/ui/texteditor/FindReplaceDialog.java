@@ -56,9 +56,12 @@ class FindReplaceDialog extends Dialog {
 		public void shellDeactivated(ShellEvent e) {
 			storeSettings();
 
+			fGlobalRadioButton.setSelection(true);
+			fSelectedRangeRadioButton.setSelection(false);
+
 			if (fTarget != null && (fTarget instanceof IFindReplaceTargetExtension))
 				((IFindReplaceTargetExtension) fTarget).setScope(null);
-
+			
 			fOldScope= null;
 
 			fActiveShell= null;			
@@ -989,10 +992,13 @@ class FindReplaceDialog extends Dialog {
 		if (wrapSearch) { // search the whole text
 			findReplacePosition= 0;
 			forwardSearch= true;
-		} else if (forwardSearch) {
-			if (fTarget.getSelectionText() != null) { // the cursor is always set to the end of selected text
-				findReplacePosition= fTarget.getSelection().x;
-			}
+		} else if (fTarget.getSelectionText() != null) {
+			// the cursor is set to the end or beginning of the selected text
+			Point selection= fTarget.getSelection();
+			if (forwardSearch)
+				findReplacePosition= selection.x;
+			else
+				findReplacePosition= selection.x + selection.y;
 		}
 
 		int length= findString.length();
@@ -1074,7 +1080,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void updateFindHistory() {
 		if (okToUse(fFindField)) {
+			fFindField.removeModifyListener(fFindModifyListener);
 			updateHistory(fFindField, fFindHistory);
+			fFindField.addModifyListener(fFindModifyListener);
 		}
 	}
 
@@ -1193,7 +1201,7 @@ class FindReplaceDialog extends Dialog {
 			history.clear();
 			for (int i= 0; i < findHistory.length; i++)
 				history.add(findHistory[i]);
-		}
+		}		
 		
 		String[] replaceHistory= s.getArray("replacehistory"); //$NON-NLS-1$
 		if (replaceHistory != null) {

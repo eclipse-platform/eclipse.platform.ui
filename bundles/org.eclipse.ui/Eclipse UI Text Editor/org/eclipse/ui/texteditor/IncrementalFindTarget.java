@@ -239,9 +239,11 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	
 			switch (event.keyCode) {
 			
-			// ALT, CTRL == leave	
+			// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave	
 			case SWT.ALT:
 			case SWT.CTRL:
+			case SWT.ARROW_LEFT:
+			case SWT.ARROW_RIGHT:
 				leave();
 				break;
 			

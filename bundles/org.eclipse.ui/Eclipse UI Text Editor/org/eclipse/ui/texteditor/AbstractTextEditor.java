@@ -325,7 +325,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				StyledText text= fSourceViewer.getTextWidget();
 				text.addVerifyKeyListener(this);
 				fKeyBindingService= getEditorSite().getKeyBindingService();
-				// fKeyBindingService.enable(true);
+				fKeyBindingService.enable(true);
 				fIsInstalled= true;
 			}
 		}
