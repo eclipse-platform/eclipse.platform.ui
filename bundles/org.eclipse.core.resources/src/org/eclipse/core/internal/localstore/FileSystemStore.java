@@ -70,7 +70,14 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 		}
-		write(destination, read(target), false, monitor);
+		try {
+			write(destination, read(target), false, monitor);
+		} catch (CoreException e) {
+			//if we failed to write, try to cleanup the half written file
+			if (!destination.isDirectory())
+				destination.delete();
+			throw e;
+		}
 		// update the destination timestamp on disk
 		long stat = CoreFileSystemLibrary.getStat(target.getAbsolutePath());
 		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
@@ -294,16 +301,9 @@ public void transferStreams(InputStream source, OutputStream destination, String
  */
 public void write(File target, InputStream content, boolean append, IProgressMonitor monitor) throws CoreException {
 	try {
-		try {
-			String path = target.getAbsolutePath();
-			writeFolder(new File(target.getParent()));
-			transferStreams(content, createStream(target, append), path, monitor);
-		} catch (CoreException e) {
-			//if we failed to write, try to cleanup the half written file
-			if (!target.isDirectory())
-				target.delete();
-			throw e;
-		}
+		String path = target.getAbsolutePath();
+		writeFolder(new File(target.getParent()));
+		transferStreams(content, createStream(target, append), path, monitor);
 	} finally {
 		try {
 			content.close();

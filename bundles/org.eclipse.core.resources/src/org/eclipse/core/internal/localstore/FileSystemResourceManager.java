@@ -489,7 +489,8 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 		// add entry to History Store.
 		UniversalUniqueIdentifier uuid = null; // uuid to locate the file on history
 		if (keepHistory && localFile.exists())
-			uuid = historyStore.addState(target.getFullPath(), location, lastModified, !append);
+			//never move to the history store, because then the file is missing if write fails
+			uuid = historyStore.addState(target.getFullPath(), location, lastModified, false);
 		getStore().write(localFile, content, append, monitor);
 		// get the new last modified time and stash in the info
 		lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
@@ -561,21 +562,6 @@ public void writeSilently(IProject target) throws CoreException {
 	
 	//for backwards compatibility, ensure the old .prj file is deleted
 	getWorkspace().getMetaArea().clearOldDescription(target);
-}
-private void addFilesToHistoryStore(IPath key, IPath localLocation, boolean move) throws CoreException {
-	java.io.File localFile = localLocation.toFile();
-	if (!localFile.exists())
-		return;
-	long lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
-	if (localFile.isFile()) {
-		historyStore.addState(key, localLocation, lastModified, move);
-		return;
-	}
-	String[] children = localFile.list();
-	if (children == null)
-		return;
-	for (int i = 0; i < children.length; i++)
-		addFilesToHistoryStore(key.append(children[i]), localLocation.append(children[i]), move);
 }
 /** 
  * Returns the real name of the resource on disk. Returns null if no local
