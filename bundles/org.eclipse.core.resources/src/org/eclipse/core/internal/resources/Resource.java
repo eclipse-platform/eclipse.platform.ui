@@ -589,6 +589,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 
 			workspace.beginOperation(true);
 			IPath originalLocation = getLocation();
+			boolean wasLinked = isLinked();
 			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status, updateFlags);
@@ -625,7 +626,9 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
 			//update any aliases of this resource
-			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
+			//note that deletion of a linked resource cannot affect other resources
+			if (!wasLinked)
+				workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

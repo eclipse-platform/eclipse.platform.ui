@@ -203,29 +203,33 @@ public class AliasManager implements IManager, ILifecycleListener {
 				return;
 			IPath aliasPath = null;
 			switch (match.getType()) {
-				case IResource.PROJECT:
+				case IResource.PROJECT :
 					//first check if there is a linked resource that blocks the project location
 					if (suffix.segmentCount() > 0) {
-						IResource testResource = ((IProject)match).findMember(suffix.segment(0));
+						IResource testResource = ((IProject) match).findMember(suffix.segment(0));
 						if (testResource != null && testResource.isLinked())
 							return;
 					}
 					//there is an alias under this project
 					aliasPath = match.getFullPath().append(suffix);
 					break;
-				case IResource.FOLDER:
+				case IResource.FOLDER :
 					aliasPath = match.getFullPath().append(suffix);
 					break;
-				case IResource.FILE:
+				case IResource.FILE :
 					if (suffix.segmentCount() == 0)
 						aliasPath = match.getFullPath();
 					break;
 			}
 			if (aliasPath != null)
-				if (aliasType == IResource.FILE)
+				if (aliasType == IResource.FILE) {
 					aliases.add(workspace.getRoot().getFile(aliasPath));
-				else
-					aliases.add(workspace.getRoot().getFolder(aliasPath));
+				} else {
+					if (aliasPath.segmentCount() == 1)
+						aliases.add(workspace.getRoot().getProject(aliasPath.lastSegment()));
+					else
+						aliases.add(workspace.getRoot().getFolder(aliasPath));
+				}
 		}
 		/**
 		 * Sets the resource that we are searching for aliases for.
