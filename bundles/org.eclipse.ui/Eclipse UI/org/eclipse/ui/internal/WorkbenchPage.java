@@ -131,6 +131,9 @@ private void activatePart(final IWorkbenchPart part, final boolean switchActions
  * Add a fast view.
  */
 public void addFastView(IViewPart view) {
+	if (activePersp == null)
+		return;
+		
 	// If view is zoomed unzoom.
 	if (isZoomed() && partChangeAffectsZoom(view))
 		zoomOut();
@@ -167,7 +170,7 @@ public void addSelectionListener(ISelectionListener l) {
  */
 public void bringToTop(IWorkbenchPart part) {
 	// Sanity check.
-	if (!certifyPart(part))
+	if (activePersp == null || !certifyPart(part))
 		return;
 		
 	// If zoomed then ignore.
@@ -306,6 +309,9 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 private IViewPart busyShowView(String viewID, boolean activate) 
 	throws PartInitException
 {
+	if (activePersp == null)
+		return null;
+
 	// If this view is already visible just return.
 	IViewPart view = getPersp().findView(viewID);
 	if (view != null) {
@@ -492,7 +498,8 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
  * the specified part using keyboard.
  */
 public void openTracker(ViewPane pane) {
-	activePersp.openTracker(pane);
+	if (activePersp != null)
+		activePersp.openTracker(pane);
 }
 /**
  * Cycles the editors forward or backward.
@@ -605,6 +612,9 @@ private void disposePerspective(Perspective persp) {
  * Edits the action sets.
  */
 public boolean editActionSets() {
+	if (activePersp == null)
+		return false;
+		
 	// Create list dialog.
 	ActionSetSelectionDialog dlg =
 		new ActionSetSelectionDialog(
@@ -636,7 +646,10 @@ private Perspective findPerspective(IPerspectiveDescriptor desc) {
  * See IWorkbenchPage@findView.
  */
 public IViewPart findView(String id) {
-	return getPersp().findView(id);
+	if (activePersp != null)
+		return getPersp().findView(id);
+	else
+		return null;
 }
 /**
  * Fire part activation out.
@@ -685,7 +698,10 @@ public IActionBars getActionBars() {
  * Returns an array of the visible action sets. 
  */
 public IActionSetDescriptor[] getActionSets() {
-	return getPersp().getActionSets();
+	if (activePersp != null)
+		return getPersp().getActionSets();
+	else
+		return new IActionSetDescriptor[0];
 }
 /**
  * @see IWorkbenchPage
@@ -727,7 +743,10 @@ public IEditorPart [] getEditors() {
  * Returns the docked views.
  */
 public IViewPart [] getFastViews() {
-	return getPersp().getFastViews();
+	if (activePersp != null)
+		return getPersp().getFastViews();
+	else
+		return new IViewPart[0];
 }
 /**
  * @see IWorkbenchPage
@@ -764,7 +783,10 @@ protected Listener getMouseDownListener() {
  * This is List of Strings.
  */
 public ArrayList getNewWizardActions() {
-	return getPersp().getNewWizardActions();
+	if (activePersp != null)
+		return getPersp().getNewWizardActions();
+	else
+		return new ArrayList();
 }
 /**
  * Answer the current prespective for this window.
@@ -778,14 +800,20 @@ private Perspective getPersp() {
 public IPerspectiveDescriptor getPerspective() {
 	if (deferredActivePersp != null)
 		return deferredActivePersp;
-	return getPersp().getDesc();
+	if (activePersp != null)
+		return getPersp().getDesc();
+	else
+		return null;
 }
 /**
  * Returns the perspective actions for this page.
  * This is List of Strings.
  */
 public ArrayList getPerspectiveActions() {
-	return getPersp().getPerspectiveActions();
+	if (activePersp != null)
+		return getPersp().getPerspectiveActions();
+	else
+		return new ArrayList();
 }
 /*
  * Returns the selection within the <code>IWorkbenchPage</code>
@@ -798,7 +826,10 @@ public ISelection getSelection() {
  * This is List of Strings.
  */
 public ArrayList getShowViewActions() {
-	return getPersp().getShowViewActions();
+	if (activePersp != null)
+		return getPersp().getShowViewActions();
+	else
+		return new ArrayList();
 }
 /**
  * Returns the unprotected window.
@@ -820,7 +851,10 @@ public ViewFactory getViewFactory() {
  * See IWorkbenchPage.
  */
 public IViewPart [] getViews() {
-	return getPersp().getViews();
+	if (activePersp != null)
+		return getPersp().getViews();
+	else
+		return new IViewPart[0];
 }
 /**
  * See IWorkbenchPage.
@@ -832,16 +866,18 @@ public IWorkbenchWindow getWorkbenchWindow() {
  * @see IWorkbenchPage
  */
 public void hideActionSet(String actionSetID) {
-	getPersp().hideActionSet(actionSetID);
-	window.updateActionSets();
-	window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
+	if (activePersp != null) {
+		getPersp().hideActionSet(actionSetID);
+		window.updateActionSets();
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
+	}
 }
 /**
  * See IPerpsective
  */
 public void hideView(IViewPart view) {
 	// Sanity check.	
-	if (!certifyPart(view))
+	if (activePersp == null || !certifyPart(view))
 		return;
 		
 	// If part is added / removed always unzoom.
@@ -994,14 +1030,20 @@ public boolean isEditorAreaVisible() {
  * Returns whether the view is fast.
  */
 public boolean isFastView(IViewPart part) {
-	return getPersp().isFastView(part);
+	if (activePersp != null)
+		return getPersp().isFastView(part);
+	else
+		return false;
 }
 /**
  * Return the active fast view or null if there are no
  * fast views or if there are all minimized.
  */
 public IViewPart getActiveFastView() {
-	return getPersp().getActiveFastView();
+	if (activePersp != null)
+		return getPersp().getActiveFastView();
+	else
+		return null;
 }
 /**
  * Return true if the perspective has a dirty editor.
@@ -1209,6 +1251,9 @@ private boolean partChangeAffectsZoom(IWorkbenchPart part) {
  * Removes a fast view.
  */
 public void removeFastView(IViewPart view) {
+	if (activePersp == null)
+		return;
+
 	// If parts change always update zoom.
 	if (isZoomed())
 		zoomOut();
@@ -1285,7 +1330,17 @@ private void restoreState(IMemento memento) {
 		} catch (WorkbenchException e) {
 		}
 	}
-	activePersp = activePerspective;
+	
+	// Make sure we have a valid perspective to work with,
+	// otherwise return.
+	if (activePerspective != null)
+		activePersp = activePerspective;
+	else if (perspList.size() > 0)
+		activePersp = (Perspective) perspList.get(0);
+	
+	if (activePersp == null)
+		return;
+		
 	window.firePerspectiveActivated(this, activePersp.getDesc());
 
 	// Restore active part.
@@ -1329,6 +1384,9 @@ public boolean saveEditor(org.eclipse.ui.IEditorPart editor, boolean confirm) {
  * Saves the current perspective.
  */
 public void savePerspective() {
+	if (activePersp == null)
+		return;
+		
 	// Always unzoom.
 	if (isZoomed())
 		zoomOut();
@@ -1339,6 +1397,9 @@ public void savePerspective() {
  * Saves the perspective.
  */
 public void savePerspectiveAs(IPerspectiveDescriptor desc) {
+	if (activePersp == null)
+		return;
+		
 	// Always unzoom.
 	if (isZoomed())
 		zoomOut();
@@ -1399,7 +1460,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 		return;
 	
 	// Notify perspective.  It may deactivate fast view.
-	if(getPersp() != null)
+	if (getPersp() != null)
 		getPersp().partActivated(newPart);
 	
 	// We will switch actions only if the part types are different.
@@ -1501,9 +1562,11 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
  * @see IWorkbenchPage
  */
 public void showActionSet(String actionSetID) {
-	getPersp().showActionSet(actionSetID);
-	window.updateActionSets();
-	window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
+	if (activePersp != null) {
+		getPersp().showActionSet(actionSetID);
+		window.updateActionSets();
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
+	}
 }
 /**
  * See IWorkbenchPage.
@@ -1542,11 +1605,10 @@ private IViewPart showView(final String viewID, final boolean activate)
  * is deactivated.  Otherwise, it is activated.
  */
 public void toggleFastView(IViewPart part) {
-	Perspective persp = getPersp();
-	if (persp != null) {
-		persp.toggleFastView(part);
+	if (activePersp != null) {
+		activePersp.toggleFastView(part);
 		// if the fast view has been deactivated
-		if (part != persp.getActiveFastView()) {
+		if (part != activePersp.getActiveFastView()) {
 			setActivePart(activationList.getPreviouslyActive());
 		}
 	}
@@ -1556,6 +1618,9 @@ public void toggleFastView(IViewPart part) {
  * If the part is already in zoom then zoom out.
  */
 public void toggleZoom(IWorkbenchPart part) {
+	if (activePersp == null)
+		return;
+
 	// If target part is detached ignore.
 	PartPane pane = ((PartSite)(part.getSite())).getPane();
 	if (pane.getWindow() instanceof DetachedWindow) 
@@ -1620,7 +1685,8 @@ public void updateTitle(IWorkbenchPart part) {
  * Zooms out a zoomed in part.
  */
 private void zoomOut() {
-	getPersp().getPresentation().zoomOut();
+	if (activePersp != null)
+		getPersp().getPresentation().zoomOut();
 }
 /**
  * See IWorkbenchPage.
