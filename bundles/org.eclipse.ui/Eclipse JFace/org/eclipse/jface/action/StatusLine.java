@@ -97,9 +97,9 @@ import org.eclipse.swt.widgets.*;
 				return;
 			
 			// Make sure cancel button and progress bar are at the end.
-			fProgressBar.moveBelow(null);
-			fToolBar.moveAbove(fProgressBar);
 			fMessageLabel.moveAbove(null);
+			fToolBar.moveBelow(fMessageLabel);
+			fProgressBar.moveBelow(fToolBar);
 			
 			Rectangle rect= composite.getClientArea();
 			Control[] children= composite.getChildren();
@@ -122,15 +122,44 @@ import org.eclipse.swt.widgets.*;
 			int diff= rect.width-totalWidth;
 			ws[0]+= diff;	// make the first StatusLabel wider
 			
+			// Check against minimum recommended width
+			final int msgMinWidth = rect.width/3;
+			if (ws[0] < msgMinWidth) {
+				diff = ws[0] - msgMinWidth;
+				ws[0] = msgMinWidth;
+			} else {
+				diff = 0;
+			}
+			
+			// Take space away from the contributions first.
+			for (int i = count -1; i >= 0 && diff < 0; --i) {
+				int min = Math.min(ws[i], -diff);
+				ws[i] -= min;
+				diff += min + GAP;
+			}
+			
 			int x= rect.x;
 			int y= rect.y;
 			int h= rect.height;
 			for (int i= 0; i < count; i++) {
 				Control w= children[i];
-				if (ws[i] > 0) {
-					w.setBounds(x, y, ws[i], h);
-					x+= ws[i] + GAP;
+				/*
+				 * Workaround for Linux Motif:
+				 * Even if the progress bar and cancel button are
+				 * not set to be visible ad of width 0, they still
+				 * draw over the first pixel of the editor 
+				 * contributions.
+				 * 
+				 * The fix here is to draw the progress bar and
+				 * cancel button off screen if they are not visible.
+				 */
+				if (w == fProgressBar && !fProgressIsVisible ||
+					w == fToolBar && !fCancelButtonIsVisible) {
+					w.setBounds(x + rect.width, y, ws[i], h);
+					continue;
 				}
+				w.setBounds(x, y, ws[i], h);
+				if (ws[i] > 0) x+= ws[i] + GAP;
 			}
 		}
 	}
