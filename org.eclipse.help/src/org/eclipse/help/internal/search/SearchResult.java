@@ -66,6 +66,8 @@ public class SearchResult {
 			}
 			String href = doc.get("name");
 			IToc toc = findTocForTopic(href);
+			if (scope != null && toc == null)
+				continue;
 			ITopic topic = toc==null? null : toc.getTopic(href);
 
 			// Create topic
