@@ -229,4 +229,14 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		if (isDirty()) {
+			super.activated(workingCopy);
+		}
+	}
+
 }
