@@ -32,6 +32,7 @@ public class TextSegment extends ParagraphSegment {
 	private boolean wrapAllowed = true;
 
 	protected Vector areaRectangles = new Vector();
+	private ArrayList textFragments;
 
 	class AreaRectangle {
 		Rectangle rect;
@@ -60,7 +61,7 @@ public class TextSegment extends ParagraphSegment {
 		}
 	}
 
-	class SelectionRange {
+	static class SelectionRange {
 		public int start;
 
 		public int stop;
@@ -72,6 +73,15 @@ public class TextSegment extends ParagraphSegment {
 		public void reset() {
 			start = -1;
 			stop = -1;
+		}
+	}
+	
+	static class TextFragment {
+		int index;
+		int length;
+		public TextFragment(int index, int length) {
+			this.index = index;
+			this.length = length;
 		}
 	}
 
@@ -120,6 +130,7 @@ public class TextSegment extends ParagraphSegment {
 
 	void setText(String text) {
 		this.text = cleanup(text);
+		textFragments = null;
 	}
 
 	void setColorId(String colorId) {
@@ -128,6 +139,7 @@ public class TextSegment extends ParagraphSegment {
 
 	void setFontId(String fontId) {
 		this.fontId = fontId;
+		textFragments = null;
 	}
 
 	public boolean contains(int x, int y) {
@@ -202,28 +214,20 @@ public class TextSegment extends ParagraphSegment {
 			return newLine;
 		}
 
-		BreakIterator wb = BreakIterator.getLineInstance();
-		wb.setText(text);
+		//BreakIterator wb = BreakIterator.getLineInstance();
+		//wb.setText(text);
 		
-		ArrayList breaks = null;
+		computeTextFragments(gc);
 		
-		if (computeHeightOnly) {
-			breaks = new ArrayList();
-			locator.breaks.put(this, breaks);
-		}
-
 		int lineStart = 0;
 		int cursor = 0;
 		int width = 0;
 		Point lineExtent = new Point(0,0);
 
-		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
-			String word = text.substring(cursor, loc);
-			Point extent = gc.textExtent(word);
-			if (breaks!=null)
-				breaks.add(new Integer(loc));
+		for (int i=0; i<textFragments.size(); i++) {
+			TextFragment textFragment = (TextFragment)textFragments.get(i);
 
-			if (locator.x + lineExtent.x + extent.x > wHint) {
+			if (locator.x + lineExtent.x + textFragment.length > wHint) {
 				// overflow
 				String line = text.substring(lineStart, cursor);
 				int lineWidth = locator.x + lineExtent.x;
@@ -244,9 +248,9 @@ public class TextSegment extends ParagraphSegment {
 				width = Math.max(width, lineWidth);
 				newLine = true;
 			}
-			cursor = loc;
-			lineExtent.x += extent.x;
-			lineExtent.y = Math.max(extent.y, lineExtent.y);	
+			cursor = textFragment.index;
+			lineExtent.x += textFragment.length;
+			lineExtent.y = Math.max(lineHeight, lineExtent.y);	
 		}
 		
 		String lastString = text.substring(lineStart, cursor);
@@ -525,18 +529,17 @@ public class TextSegment extends ParagraphSegment {
 			int lineStart = 0;
 			int lastLoc = 0;
 			Point lineExtent = new Point(0,0);
-			ArrayList breaks = (ArrayList)locator.breaks.get(this);
 			//System.out.println("Nbreaks: "+breaks.size());
 
 			//for (int breakLoc = wb.first(); breakLoc != BreakIterator.DONE; breakLoc = wb
 			//		.next()) {
-			for (int i=0; i<breaks.size(); i++) {
-				int breakLoc = ((Integer)breaks.get(i)).intValue();
+			computeTextFragments(gc);
+			for (int i=0; i<textFragments.size(); i++) {
+				TextFragment fragment = (TextFragment)textFragments.get(i);
+				int breakLoc = fragment.index;
 				if (breakLoc == 0)
 					continue;
-				String word = text.substring(lastLoc, breakLoc);
-				Point extent = gc.textExtent(word);
-				int ewidth = extent.x;
+				int ewidth = fragment.length;
 				if (isSelectable())
 					ewidth += 2;
 				if (locator.x + lineExtent.x + ewidth > width) {
@@ -565,8 +568,8 @@ public class TextSegment extends ParagraphSegment {
 					lineExtent.y = 0;
 				}
 				lastLoc = breakLoc;
-				lineExtent.x += extent.x;
-				lineExtent.y = Math.max(extent.y, lineExtent.y);
+				lineExtent.x += fragment.length;
+				lineExtent.y = Math.max(lineHeight, lineExtent.y);
 			}
 			String lastLine = text.substring(lineStart, lastLoc);
 			int ly = locator.getBaseline(lineHeight - fm.getLeading());
@@ -582,6 +585,21 @@ public class TextSegment extends ParagraphSegment {
 		}
 		if (oldFont != null) {
 			gc.setFont(oldFont);
+		}
+	}
+	private void computeTextFragments(GC gc) {
+		if (textFragments!=null)
+			return;
+		textFragments = new ArrayList();
+		BreakIterator wb = BreakIterator.getLineInstance();
+		wb.setText(getText());
+		int cursor = 0;
+		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
+			if (loc==0) continue;
+			String word = text.substring(cursor, loc);
+			Point extent = gc.textExtent(word);
+			textFragments.add(new TextFragment(loc, extent.x));
+			cursor = loc;
 		}
 	}
 }

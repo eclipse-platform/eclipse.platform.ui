@@ -120,13 +120,11 @@ public class Paragraph {
 		ArrayList heights = new ArrayList();
 		hloc.heights = heights;
 		hloc.rowCounter = 0;
-		hloc.breaks = new Hashtable();
 		for (int j = 0; j < segments.length; j++) {
 			ParagraphSegment segment = segments[j];
 			segment.advanceLocator(gc, width, hloc, resourceTable, true);
 		}
 		hloc.collectHeights();
-		loc.breaks = hloc.breaks;
 		loc.heights = heights;
 		loc.rowCounter = 0;
 	}
@@ -184,7 +182,6 @@ public class Paragraph {
 					doSelect = true;
 				segment.layout(gc, width, loc, resourceTable, doSelect);
 			}
-			loc.breaks = null;
 			loc.heights = null;
 			loc.y += loc.rowHeight;
 			height = loc.rowHeight;
