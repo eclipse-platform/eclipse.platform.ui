@@ -1,9 +1,12 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
 import java.io.*;
 import java.util.*;
 
@@ -143,6 +146,9 @@ public void addFastView(IViewPart view) {
 	ViewPane pane = getPane(view);
 	if (!isFastView(view)) {
 		presentation.removePart(pane);
+		// We are drag-enabling the pane because it has been disabled
+		// when it was removed from the perspective presentation.
+		presentation.enableDrag(pane);
 		fastViews.add(view);
 		pane.setFast(true);
 		Control ctrl = pane.getControl();
@@ -604,6 +610,11 @@ public void removeFastView(IViewPart view) {
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
 			ctrl.setEnabled(true); // Modify focus support.
+		// We are disabling the pane because it will be enabled when it
+		// is added to the presentation. When a pane is enabled a drop
+		// listener is added to it, and we do not want to have multiple
+		// listeners for a pane
+		presentation.disableDrag(pane);	
 		presentation.addPart(pane);
 	}
 }
@@ -1160,6 +1171,7 @@ public IViewPart showView(String viewID)
 		//Refresh the part as there might have been an error when showing
 		part = pane.getViewPart();
 		fastViews.add(part);
+		presentation.enableDrag(pane);
 	}
 	return part;
 }

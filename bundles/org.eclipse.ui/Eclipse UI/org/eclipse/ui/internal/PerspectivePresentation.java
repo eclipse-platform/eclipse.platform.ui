@@ -7,14 +7,13 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import java.util.*;
-import java.util.List;
+
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ViewPart;
 
 /**
  * A perspective presentation is a collection of parts with a layout.
@@ -632,7 +631,7 @@ private void disableAllDrag() {
 /**
  * disableDragging.
  */
-private void disableDrag(ViewPane part) {
+/*package*/ void disableDrag(ViewPane part) {
 	// remove view from the drag sources
 	if (dragParts.containsKey(part)){
 		PartDragDrop partDragDrop = (PartDragDrop)dragParts.get(part);
@@ -703,7 +702,7 @@ private void enableAllDrop() {
 /**
  * enableDrag
  */
-private void enableDrag(ViewPane part) {
+/*package*/ void enableDrag(ViewPane part) {
 	// allow d&d to start from the view's title bar
 	Control control = part.getDragHandle();
 	if (control != null) {
@@ -1091,6 +1090,14 @@ private void onPartDrop(PartDropEvent e) {
 	// If invalid drop position ignore.
 	if (e.relativePosition == PartDragDrop.INVALID)
 		return;
+	
+	if (e.dragSource instanceof ViewPane) {
+		IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
+		if (isFastView(view)) {
+			WorkbenchPage page = (WorkbenchPage)view.getSite().getPage();
+			page.removeFastView(view);
+		}
+	}
 		
 	switch (e.relativePosition) {
 		case PartDragDrop.OFFSCREEN:
