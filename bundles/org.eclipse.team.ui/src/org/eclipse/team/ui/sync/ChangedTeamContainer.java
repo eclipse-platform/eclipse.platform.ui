@@ -35,6 +35,13 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 		return mergeResource.getName();
 	}
 
+	/**
+	 * Returns the team resource managed by this object.
+	 */
+	public MergeResource getMergeResource() {
+		return mergeResource;
+	}
+
 	/*
 	 * Method declared on IDiffContainer
 	 */
