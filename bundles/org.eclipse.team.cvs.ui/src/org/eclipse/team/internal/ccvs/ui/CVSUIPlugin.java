@@ -251,9 +251,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 					try {
 						Utils.runWithProgress(parent, cancelable, runnable);
 					} catch (InvocationTargetException e) {
-						exception[1] = e;
+						exception[0] = e;
 					} catch (InterruptedException e) {
-						exception[1] = e;
+						exception[0] = e;
 					}
 				}
 			};
