@@ -11,6 +11,8 @@
 package org.eclipse.ui.browser.internal;
 
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
@@ -22,7 +24,15 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	protected HashMap browserIdMap = new HashMap();
 
 	public DefaultBrowserSupport() {
-		// do nothing
+		BrowserManager.getInstance().addObserver(new Observer() {
+			public void update(Observable o, Object arg) {
+				//TODO I am not sure what we should do here
+				//The preferences have changed so maybe we should
+				//close the opened browser in addition to clearing
+				//the table
+				browserIdMap.clear();
+			}
+		});
 	}
 
 	protected IWebBrowser getExistingWebBrowser(String browserId) {

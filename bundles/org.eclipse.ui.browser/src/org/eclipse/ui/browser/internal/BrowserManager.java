@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.IMemento;
@@ -24,7 +25,7 @@ import org.eclipse.ui.XMLMemento;
 /**
  * 
  */
-public class BrowserManager {
+public class BrowserManager extends Observable {
 	protected List browsers;
 	protected IBrowserDescriptor currentBrowser;
 	
@@ -107,6 +108,8 @@ public class BrowserManager {
 			
 			if (currentBrowser == null && browsers.size() > 0)
 				currentBrowser = (IBrowserDescriptor) browsers.get(0);
+			setChanged();
+			notifyObservers();
 		} else {
 			setupDefaultBrowsers();
 			saveBrowsers();
