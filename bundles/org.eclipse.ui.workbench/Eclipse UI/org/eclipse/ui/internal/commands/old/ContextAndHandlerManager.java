@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -42,18 +41,15 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.commands.ICommandHandler;
-import org.eclipse.ui.commands.ICommandHandlerService;
-import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
-import org.eclipse.ui.commands.ICommandHandlerServiceListener;
-import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.ICommandManagerEvent;
+import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.commands.registry.old.ContextBinding;
@@ -70,46 +66,60 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
+	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
+		public void commandManagerChanged(ICommandManagerEvent commandManagerEvent) {
+			update();
+		}
+	};
+
 	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
 		public void contextManagerChanged(IContextManagerEvent contextManagerEvent) {
 			update();
 		}
 	};
-
-	private final ICommandHandlerServiceListener handlerServiceListener = new ICommandHandlerServiceListener() {
-		public void commandHandlerServiceChanged(ICommandHandlerServiceEvent commandHandlerServiceEvent) {
-			update();
+	
+	private final IPageListener pageListener = new IPageListener() {
+		public void pageActivated(IWorkbenchPage workbenchPage) {
+			update();		
+		}
+			
+		public void pageClosed(IWorkbenchPage workbenchPage) {
+			update();		
+		}
+			
+		public void pageOpened(IWorkbenchPage workbenchPage) {
+			update();		
 		}
 	};
 
 	private final IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
-			partEvent();
+			update();
 		}
 			
 		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
 		}
 			
 		public void partClosed(IWorkbenchPart workbenchPart) {
-			partEvent();
+			update();
 		}
 			
 		public void partDeactivated(IWorkbenchPart workbenchPart) {
-			partEvent();
+			update();
 		}
 			
 		public void partOpened(IWorkbenchPart workbenchPart) {
-			partEvent();
+			update();
 		}
 	};
 
 	private final ShellListener shellListener = new ShellAdapter() {
 		public void shellActivated(ShellEvent shellEvent) {
-			shellEvent();
+			update();
 		}
 
 		public void shellDeactivated(ShellEvent shellEvent) {
-			shellEvent();
+			update();
 		}
 	};
 
@@ -121,84 +131,28 @@ public class ContextAndHandlerManager implements IContextResolver {
 	};
 
 	private AcceleratorMenu acceleratorMenu;		
-	private IContextActivationService activeWorkbenchPartContextService;
-	private ICommandHandlerService activeWorkbenchPartHandlerService;
 	private WorkbenchWindow workbenchWindow;
-	private IContextActivationService workbenchWindowContextService;
-	private ICommandHandlerService workbenchWindowHandlerService;
 	private Map contextsByCommand;
+	private ICommandManager commandManager;
 	private IContextManager contextManager;
-	private boolean start = false;
 
 	public ContextAndHandlerManager(WorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;	
+		reset();
 		IWorkbench workbench = workbenchWindow.getWorkbench();
+		commandManager = ((Workbench) workbench).getCommandManager(); // TODO temporary cast
+		commandManager.addCommandManagerListener(commandManagerListener);				
 		contextManager = ((Workbench) workbench).getContextManager(); // TODO temporary cast
 		contextManager.addContextManagerListener(contextManagerListener);		
-		workbenchWindowHandlerService = ((WorkbenchWindow) workbenchWindow).getHandlerService();
-		workbenchWindowHandlerService.addCommandHandlerServiceListener(handlerServiceListener);
 		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
-		reset();
-
-		this.workbenchWindow.addPageListener(new IPageListener() {			
-			public void pageActivated(IWorkbenchPage workbenchPage) {
-				workbenchPage.addPartListener(partListener);		
-			}
-			
-			public void pageClosed(IWorkbenchPage workbenchPage) {
-				workbenchPage.removePartListener(partListener);			
-			}
-			
-			public void pageOpened(IWorkbenchPage workbenchPage) {
-				workbenchPage.addPartListener(partListener);			
-			}
-		});
-		
-		workbenchWindow.getPartService().addPartListener(partListener);						
-		
+		this.workbenchWindow.addPageListener(pageListener);		
+		this.workbenchWindow.getPartService().addPartListener(partListener);		
 		Shell shell = workbenchWindow.getShell();
 		
 		if (shell != null)
 			shell.addShellListener(shellListener);
 
-		partEvent();
-	}
-
-	private void partEvent() {
-		IContextActivationService activeWorkbenchPartContextService = null;
-		ICommandHandlerService activeWorkbenchPartHandlerService = null;
-		IWorkbenchPage activeWorkbenchPage = workbenchWindow.getActivePage();
-	 
-		if (activeWorkbenchPage != null) {
-			IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage.getActivePart();
-	
-			if (activeWorkbenchPart != null) {
-				IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart.getSite();
-			
-				if (activeWorkbenchPartSite != null) {
-					activeWorkbenchPartContextService = ((PartSite) activeWorkbenchPartSite).getContextActivationService();
-					activeWorkbenchPartHandlerService = ((PartSite) activeWorkbenchPartSite).getHandlerService();
-				}
-			}
-		}
-
-		if (this.activeWorkbenchPartHandlerService != activeWorkbenchPartHandlerService) {
-			if (this.activeWorkbenchPartHandlerService != null)
-				this.activeWorkbenchPartHandlerService.removeCommandHandlerServiceListener(handlerServiceListener);				
-			
-			this.activeWorkbenchPartHandlerService = activeWorkbenchPartHandlerService;
-			
-			if (this.activeWorkbenchPartHandlerService != null)
-				this.activeWorkbenchPartHandlerService.addCommandHandlerServiceListener(handlerServiceListener);
-				
-			start = true;
-			update();				
-		}
-	}
-
-	private void shellEvent() {
-		start = true;
 		update();
 	}
 
@@ -218,12 +172,12 @@ public class ContextAndHandlerManager implements IContextResolver {
 		Map childSequenceMapForMode = keyMachine.getSequenceMapForMode();
 
 		if (childSequenceMapForMode.isEmpty()) {
-			clear();
-			ICommandHandler handler = getHandler((String) sequenceMapForMode.get(childMode));
+			clear();			
+			ICommandHandler commandHandler = (ICommandHandler) commandManager.getCommandHandlersById().get((String) sequenceMapForMode.get(childMode));
 			
-			if (handler != null && handler.isEnabled())
+			if (commandHandler != null && commandHandler.isEnabled())
 				try {			
-					handler.execute(event);
+					commandHandler.execute(event);
 				} catch (Exception e) {
 					// TODO
 				}
@@ -232,34 +186,6 @@ public class ContextAndHandlerManager implements IContextResolver {
 			modeContributionItem.setText(KeySupport.formatSequence(childMode, true));
 			update();	
 		}
-	}
-
-	private ICommandHandler getHandler(String command) {
-		if (command != null) {
-			if (activeWorkbenchPartHandlerService != null) {
-				SortedMap handlerMap = activeWorkbenchPartHandlerService.getCommandHandlersById();
-				
-				if (handlerMap != null) {
-					Object object = handlerMap.get(command);
-					
-					if (object instanceof ICommandHandler)
-						return (ICommandHandler) object;
-				}
-			}
-
-			if (workbenchWindowHandlerService != null) {
-				SortedMap handlerMap = workbenchWindowHandlerService.getCommandHandlersById();
-				
-				if (handlerMap != null) {
-					Object object = handlerMap.get(command);
-					
-					if (object instanceof ICommandHandler)
-						return (ICommandHandler) object;
-				}
-			}
-		}
-		
-		return null;
 	}
 
 	public void update() {
@@ -291,9 +217,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 			String command = (String) entry.getValue();		
 
 			if (sequence.isChildOf(mode, false)) {
-				ICommandHandler handler = getHandler(command);
+				ICommandHandler commandHandler = (ICommandHandler) commandManager.getCommandHandlersById().get(command);
 				
-				if (handler != null)
+				if (commandHandler != null)
 					strokeSetForMode.add(sequence.getStrokes().get(size));	
 			}
 		}
@@ -304,9 +230,6 @@ public class ContextAndHandlerManager implements IContextResolver {
 			   	
 		while (iterator.hasNext())
 			accelerators[i++] = ((Stroke) iterator.next()).getValue();
-		
-		if (!start)
-			return;
 		
 		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Shell shell = workbenchWindow.getShell();

@@ -74,7 +74,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -380,6 +382,15 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 {
 	super();
 	init(w, null, input);
+}
+
+private ICommandHandlerService commandHandlerService;
+
+public ICommandHandlerService getCommandHandlerService() {
+	if (commandHandlerService == null) 
+		commandHandlerService = new CommandHandlerService();
+		
+	return commandHandlerService;
 }
 
 private IContextActivationService contextActivationService;

@@ -79,9 +79,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 import org.eclipse.ui.internal.commands.old.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.old.Manager;
@@ -421,15 +419,6 @@ public class WorkbenchWindow
 			contextAndHandlerManager.update();
 	}
 
-	private ICommandHandlerService handlerService;
-
-	public ICommandHandlerService getHandlerService() {
-		if (handlerService == null)
-			handlerService = new CommandHandlerService();
-
-		return handlerService;
-	}
-
 	void registerActionSets(IActionSet[] actionSets) {
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
@@ -442,7 +431,7 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						getHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
+						((Workbench) getWorkbench()).getCommandHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
@@ -452,7 +441,7 @@ public class WorkbenchWindow
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			getHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
+			((Workbench) getWorkbench()).getCommandHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
 	}
 
 	/*
@@ -1171,7 +1160,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getHandlerService(), workbench.getContextActivationService());
+			keyBindingService = new KeyBindingService(workbench.getCommandHandlerService(), workbench.getContextActivationService());
 			updateActiveActions();
 		}
 

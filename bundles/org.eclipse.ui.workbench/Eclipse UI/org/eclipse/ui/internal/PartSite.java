@@ -78,6 +78,15 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
+
+	private ICommandHandlerService commandHandlerService;
+
+	public ICommandHandlerService getCommandHandlerService() {
+		if (commandHandlerService == null) 
+			commandHandlerService = new CommandHandlerService();
+		
+		return commandHandlerService;
+	}
 	
 	private IContextActivationService contextActivationService;	
 	
@@ -256,7 +265,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getHandlerService(), getContextActivationService());
+			keyBindingService = new KeyBindingService(getCommandHandlerService(), getContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
@@ -272,14 +281,14 @@ public class PartSite implements IWorkbenchPartSite {
 								IAction action = actionDescriptors[i].getAction();
 				
 								if (action != null && action.getActionDefinitionId() != null)
-								keyBindingService.registerAction(action);
+									keyBindingService.registerAction(action);
 							}
 						}
 					}
 				}				
 			}			
 			
-			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$
+			keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
 		}
 
 		return keyBindingService;
@@ -287,12 +296,5 @@ public class PartSite implements IWorkbenchPartSite {
 
 	protected String getInitialScopeId() {
 		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
-	}
-
-	public ICommandHandlerService getHandlerService() {
-		if (handlerService == null)
-			handlerService = new CommandHandlerService();
-
-		return handlerService;		
 	}
 }
