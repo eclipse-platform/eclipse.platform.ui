@@ -140,6 +140,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * @see StyledTextContent#setText(String)
 	 */
 	public void setText(String text) {
+		if (text == null) text = " ";
 		processLineBreaks(text);
 		processStyles(text);
 	}
@@ -160,15 +161,35 @@ public class StyledLineWrapper implements StyledTextContent {
 	 */
 	private void processLineBreaks(String text)
 	{	
-		// create a new set of lines
-		lines = new ArrayList();
-		
 		// Create the original lines with style stripped
-		StringTokenizer st = new StringTokenizer(getUnstyledText(text), "\r\n");
-		while (st.hasMoreTokens()) {
-			lines.add(st.nextToken());
+		lines = new ArrayList();
+		System.out.println(text);
+		char[] textChars = getUnstyledText(text).toCharArray();
+		int start = 0;
+		for (int i=start; i<textChars.length; i++)
+		{
+			char ch = textChars[i];				
+			if (ch == SWT.CR) {
+				System.err.println(start + "  "  + i);
+				lines.add(new String(textChars, start, i-start));
+				start = i+1;
+				// see if the next character is an LF
+				if (i+1 < textChars.length) {
+					ch = textChars[i+1];
+					if (ch == SWT.LF) 
+						start++;
+				}
+			} else if (ch == SWT.LF) {
+				System.err.println(start + "  "  + i);
+				lines.add(new String(textChars, start, i-start));
+				start = i+1;
+			} 
+			else if (i == textChars.length-1)
+			{
+				lines.add(new String(textChars, start, i-start+1));
+			}
 		}
-
+		
 		// Break long lines
 		for (int i = 0; i < lines.size(); i++) {
 			String line = (String) lines.get(i);
@@ -186,6 +207,7 @@ public class StyledLineWrapper implements StyledTextContent {
 			}
 		}
 	}
+
 	/**
 	 * Returns the text without the style
 	 */
