@@ -172,9 +172,13 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	private void addAnnotations(IEditorPart editor, Match[] matches) {
 		HashMap map= new HashMap(matches.length);
 		for (int i= 0; i < matches.length; i++) {
-			Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
-			fMatchesToAnnotations.put(matches[i], annotation);
-			map.put(annotation, new Position(matches[i].getOffset(), matches[i].getLength()));
+			int offset= matches[i].getOffset();
+			int length= matches[i].getLength();
+			if (offset >= 0 && length >= 0) {
+				Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+				fMatchesToAnnotations.put(matches[i], annotation);
+				map.put(annotation, new Position(matches[i].getOffset(), matches[i].getLength()));
+			}
 		}
 		addAnnotations(editor, map);
 	}
