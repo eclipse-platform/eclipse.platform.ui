@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -94,7 +95,6 @@ final class Persistence {
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$	
 	final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
-	final static String TAG_PRIORITY = "priority"; //$NON-NLS-1$
 
 	private static KeySequence deprecatedSequenceToKeySequence(int[] sequence) {
 		List keyStrokes = new ArrayList();
@@ -370,14 +370,8 @@ final class Persistence {
             IConfigurationElement configurationElement) {
         final String commandId = configurationElement
                 .getAttribute(TAG_COMMAND_ID);
-        final String priorityString = configurationElement
-                .getAttribute(TAG_PRIORITY);
-        int priority = 4;
-        if (priorityString != null) {
-            priority = Integer.parseInt(priorityString);
-        }
-        return new HandlerProxy(commandId, new Integer(priority),
-                configurationElement);
+
+        return new HandlerProxy(commandId, configurationElement);
     }
 
 	static KeyConfigurationDefinition readKeyConfigurationDefinition(

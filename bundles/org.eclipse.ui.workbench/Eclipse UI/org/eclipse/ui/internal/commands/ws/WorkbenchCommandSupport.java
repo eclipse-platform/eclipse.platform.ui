@@ -93,15 +93,39 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     private Shell activeShell;
 
+    /**
+     * The active workbench site when the handler submissions were last
+     * processed. This value may be <code>null</code> if no workbench site is
+     * selected.
+     */
     private IWorkbenchSite activeWorkbenchSite;
 
+    /**
+     * The active workbench window when the handler submissions were last
+     * processed. This value may be <code>null</code> if Eclipse is not the
+     * active application.
+     */
     private IWorkbenchWindow activeWorkbenchWindow;
 
-    private Map handlerSubmissionsByCommandId = new HashMap();
+    /**
+     * The map of the handler submissions indexed by command identifier. This
+     * value is never <code>null</code>, but may be empty. The command
+     * identifiers are strings, and the handler submissions are instances of
+     * <code>HandlerSubmission</code>.
+     */
+    private final Map handlerSubmissionsByCommandId = new HashMap();
 
-    private IMutableCommandManager mutableCommandManager;
+    /**
+     * The mutable command manager that should be notified of changes to the
+     * list of active handlers. This value is never <code>null</code>.
+     */
+    private final IMutableCommandManager mutableCommandManager;
 
-    private IPageListener pageListener = new IPageListener() {
+    /**
+     * A listener for changes in the active page. Changes to the active page
+     * causes the handler submissions to be reprocessed.
+     */
+    private final IPageListener pageListener = new IPageListener() {
 
         public void pageActivated(IWorkbenchPage workbenchPage) {
             processHandlerSubmissions(false);
@@ -116,7 +140,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
-    private IPartListener partListener = new IPartListener() {
+    /**
+     * A listener for changes in the active part. Changes to the active part
+     * causes the handler submissions to be reprocessed.
+     */
+    private final IPartListener partListener = new IPartListener() {
 
         public void partActivated(IWorkbenchPart workbenchPart) {
             processHandlerSubmissions(false);
@@ -139,7 +167,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
-    private IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
+    /**
+     * A listener for changes in the active perspective. Changes to the active
+     * perspective causes the handler submissions to be reprocessed.
+     */
+    private final IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
 
         public void perspectiveActivated(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor) {
@@ -152,7 +184,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
-    private Workbench workbench;
+    /**
+     * The workbench this class is supporting. This value should never be
+     * <code>null</code>.
+     */
+    private final Workbench workbench;
 
     /**
      * Constructs a new instance of <code>WorkbenchCommandSupport</code>
@@ -179,13 +215,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
         while (handlerItr.hasNext()) {
             final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
-            final String commandId = (String) proxy
-                    .getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
-            final Integer priority = (Integer) proxy
-                    .getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
-            // TODO trace back and remove field 'priority'. no longer used..
-            final HandlerSubmission submission = new HandlerSubmission(
-                    null, null, null, commandId, proxy, Priority.LOW /* priority.intValue() */);
+            final String commandId = proxy.getCommandId();
+            final HandlerSubmission submission = new HandlerSubmission(null,
+                    null, null, commandId, proxy, Priority.LOW);
             submissions.add(submission);
         }
 
@@ -233,6 +265,15 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         return mutableCommandManager;
     }
 
+    /**
+     * Processes incoming handler submissions, and decides which handlers should
+     * be active. If <code>force</code> is <code>false</code>, then it will
+     * only reconsider handlers if the state of the workbench has changed.
+     * 
+     * @param force
+     *            Whether to force reprocessing of the handlers -- regardless of
+     *            whether the workbench has changed.
+     */
     private void processHandlerSubmissions(boolean force) {
         processHandlerSubmissions(force, workbench.getDisplay()
                 .getActiveShell());
@@ -242,6 +283,16 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * If you use this method, I will break your legs.
      * 
      * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
+     * 
+     * @param force
+     *            Whether to force reprocessing of the handlers -- regardless of
+     *            whether the workbench has changed.
+     * @param newActiveShell
+     *            The shell that is now active. This could be the same as the
+     *            current active shell, or it could indicate that a new shell
+     *            has become active. This value can be <code>null</code> if
+     *            there is no active shell currently (this can happen during
+     *            shell transitions).
      */
     public void processHandlerSubmissions(boolean force,
             final Shell newActiveShell) {
@@ -318,16 +369,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             && activeWorkbenchSite2 != newWorkbenchSite)
                             continue;
 
-                    // TODO remove code dependant on this before 3.0
-                    IWorkbenchWindow activeWorkbenchWindow2 = null /*
-                                                                    * handlerSubmission
-                                                                    * .getActiveWorkbenchWindow()
-                                                                    */;
-
-                    if (activeWorkbenchWindow2 != null
-                            && ((activeWorkbenchWindow2 != newWorkbenchWindow) || activeWorkbenchWindow2
-                                    .getShell() != activeShell)) continue;
-
                     Shell activeShell2 = handlerSubmission.getActiveShell();
 
                     if (activeShell2 != null && activeShell2 != activeShell)
@@ -341,17 +382,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                         .getActiveWorkbenchPartSite());
 
                         if (compareTo == 0) {
-                            // TODO remove code dependant on this before 3.0
-                            compareTo = Util.compare(activeWorkbenchWindow2,
-                                    null
-                            /*
-                             * bestHandlerSubmission .getActiveWorkbenchWindow()
-                             */);
-
-                            if (compareTo == 0)
-                                    compareTo = Util.compare(activeShell2,
-                                            bestHandlerSubmission
-                                                    .getActiveShell());
+                            compareTo = Util.compare(activeShell2,
+                                    bestHandlerSubmission.getActiveShell());
 
                             if (compareTo == 0)
                                     compareTo = Util
@@ -426,6 +458,15 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         processHandlerSubmissions(true);
     }
 
+    /**
+     * Sets the active context identifiers on the mutable command manager this
+     * class interacts with.
+     * 
+     * @param activeContextIds
+     *            The new set of active context identifiers. This should be a
+     *            set of string values. It may be empty, but it should never be
+     *            <code>null</code>.
+     */
     public void setActiveContextIds(Set activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
     }

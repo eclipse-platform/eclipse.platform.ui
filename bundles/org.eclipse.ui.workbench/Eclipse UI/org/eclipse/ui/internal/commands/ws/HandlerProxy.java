@@ -35,16 +35,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public final class HandlerProxy extends AbstractHandler {
 
     /**
-     * The name of the attribute containing the command identifier.
-     */
-    public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-
-    /**
-     * The name of the attribute containing the priority.
-     */
-    public static final String ATTRIBUTE_PRIORITY = "priority"; //$NON-NLS-1$
-
-    /**
      * The name of the configuration element attribute which contains the
      * information necessary to instantiate the real handler.
      */
@@ -71,52 +61,45 @@ public final class HandlerProxy extends AbstractHandler {
     private IHandler handler;
 
     /**
-     * The priority of this handler in the system. The priority is an integer
-     * value. The greater the integer, the higher the priority.
-     */
-    private final Integer priority;
-
-    /**
      * Constructs a new instance of <code>HandlerProxy</code> with all the
      * information it needs to try to avoid loading until it is needed.
      * 
      * @param newCommandId
      *            The identifier for the command to which this proxy should be
      *            associated; must not be <code>null</code>.
-     * @param newPriority
-     *            The priority at which this proxy should exist. The higher the
-     *            number, the more priority it has.
      * @param newConfigurationElement
      *            The configuration element from which the real class can be
      *            loaded at run-time.
      */
-    public HandlerProxy(final String newCommandId, final Integer newPriority,
+    public HandlerProxy(final String newCommandId,
             final IConfigurationElement newConfigurationElement) {
         commandId = newCommandId;
-        priority = newPriority;
         configurationElement = newConfigurationElement;
         handler = null;
     }
 
+    /**
+     * @see IHandler#execute(Map)
+     */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
-        if (loadHandler()) {
-            return handler.execute(parameterValuesByName);
-        }
-        
+        if (loadHandler()) { return handler.execute(parameterValuesByName); }
+
         return null;
     }
 
-    // this method is no longer part of IHandler. lets try to remove this..
-    public Object getAttributeValue(String attributeName) {
-        if (handler == null) {
-            if (ATTRIBUTE_ID.equals(attributeName))
-                return commandId;
-            else if (ATTRIBUTE_PRIORITY.equals(attributeName)) return priority;
-        }
-
-        return getAttributeValuesByName().get(attributeName);
+    /**
+     * An accessor for the identifier of the command to which the proxied
+     * handler should be associated.
+     * 
+     * @return The command identifier; should never be <code>null</code>.
+     */
+    final String getCommandId() {
+        return commandId;
     }
 
+    /**
+     * @see IHandler#getAttributeValuesByName()
+     */
     public Map getAttributeValuesByName() {
         if (loadHandler())
             return handler.getAttributeValuesByName();

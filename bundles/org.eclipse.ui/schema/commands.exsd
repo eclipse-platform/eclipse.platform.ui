@@ -288,6 +288,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -297,13 +304,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element-->
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -378,13 +378,6 @@ This particular API should still be considered experimental.  While you may use 
                <appInfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="priority" type="string">
-            <annotation>
-               <documentation>
-                  The priority of this handler.  In the event of all other conditions being equal between two possible handlers, a comparison of the priorities will be done.  If the handler with the higher priority will become the active handler.  If the comparison is still a tie, both will be inactive.  The default value is 4.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
