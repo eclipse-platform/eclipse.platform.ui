@@ -33,19 +33,17 @@ public interface IRemoteResource extends IAdaptable {
 	public String getName();
 	
 	/**
-	 * Return the parent folder of the remote resource. 
-	 * 
-	 * @return the parent of the remote resource.
-	 */
-	public IRemoteFolder getParent();
-	
-	/**
 	 * Return the type of the resource. 
 	 * 
 	 * @return the type of the remote resource
 	 * (either <code>ROOT</code>, <code>FILE</code> or <code>FOLDER</code>)
 	 */
 	public int getType();
+	
+	/**
+	 * Return the repository
+	 */
+	public ICVSRepositoryLocation getRepository();
 
 }
 

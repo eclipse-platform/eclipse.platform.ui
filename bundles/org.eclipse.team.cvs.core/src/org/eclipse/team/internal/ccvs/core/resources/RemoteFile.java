@@ -5,33 +5,50 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ILogEntry;
+import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.api.CVSFileNotFoundException;
+import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.ccvs.core.IRemoteFile;
 
 /**
- * This class provides the implementation of IRemoteFile
+ * This class provides the implementation of IRemoteFile and IManagedFile for
+ * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements IRemoteFile {
+public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedFile  {
 
+	// cache for file properties provided by cvs commands
+	private FileProperties info;
+	
+	// cache for file contents received from the server
+	private ByteArrayOutputStream bos;
+	
+	protected RemoteFolder parent;
+	
 	/**
 	 * Constructor for RemoteFile.
 	 */
 	protected RemoteFile(RemoteFolder parent, String name, String tag) {
-		super(parent, name, tag);
+		super(name, tag);
+		this.parent = parent;
 	}
 
 	/**
@@ -40,19 +57,18 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	public InputStream getContents(final IProgressMonitor monitor) throws TeamException {
 			
 		// Perform a "cvs update..."
-		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), getParentPath(), new String[] {getName()});
 		List localOptions = getLocalOptionsForTag();
 		Client.execute(
 			Client.UPDATE,
 			Client.EMPTY_ARGS_LIST, 
 			(String[])localOptions.toArray(new String[localOptions.size()]),
 			new String[]{getName()}, 
-			folder,
+			getParent(),
 			monitor,
-			CVSTeamProvider.getPrintStream(),
-			getConnection(),
+			getPrintStream(),
+			(CVSRepositoryLocation)getRepository(),
 			null);
-		return ((RemoteManagedFile)folder.getChild(getName())).getCachedContents();
+		return getCachedContents();
 	}
 
 	/**
@@ -61,17 +77,16 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
 		
 		// Perform a "cvs log..." with a custom message handler
-		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), getParentPath(), new String[] {getName()});
 		final List entries = new ArrayList();
 		Client.execute(
 			Client.LOG,
 			Client.EMPTY_ARGS_LIST, 
 			Client.EMPTY_ARGS_LIST,
 			new String[]{getName()}, 
-			folder,
+			getParent(),
 			monitor,
-			CVSTeamProvider.getPrintStream(),
-			getConnection(),
+			getPrintStream(),
+			(CVSRepositoryLocation)getRepository(),
 			new IResponseHandler[] {new LogHandler(this, entries)});
 		return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
 	}
@@ -79,9 +94,6 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	/**
 	 * @see IRemoteFile#getRevision()
 	 */
-	public String getRevision(IProgressMonitor monitor) throws CVSException {
-		return tag;
-	}
 	public String getRevision() {
 		return tag;
 	}
@@ -93,8 +105,154 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 		return FILE;
 	}
 	
-	public RemoteFile toRemoteFileRevision(String revision) {
+	public RemoteFile toRevision(String revision) {
 		return new RemoteFile(parent, getName(), revision);
+	}
+	
+		/**
+	 * @see IManagedFile#getSize()
+	 */
+	public long getSize() {
+		return 0;
+	}
+
+	/**
+	 * @see IManagedFile#getFileInfo()
+	 */
+	public FileProperties getFileInfo() throws CVSException {
+		return info;
+	}
+
+	/**
+	 * @see IManagedResource#getRelativePath(IManagedFolder)
+	 */
+	public String getRelativePath(IManagedFolder ancestor) throws CVSException {
+		if (ancestor == this)
+			return "";
+		String result = parent.getRelativePath(ancestor);
+		if (result.length() == 0)
+			return getName();
+		else
+			return result + Client.SERVER_SEPARATOR + getName();
+	}
+	
+	/**
+	 * @see IManagedResource#getRemoteLocation(IManagedFolder)
+	 */
+	public String getRemoteLocation(IManagedFolder stopSearching) throws CVSException {
+		return parent.getRemoteLocation(stopSearching) + Client.SERVER_SEPARATOR + getName();
+	}
+	
+	/**
+	 * Get the remote path for the receiver relative to the repository location path
+	 */
+	public String getRemotePath() {
+		String parentPath = parent.getRemotePath();
+		return parentPath + Client.SERVER_SEPARATOR + getName();
+	}
+	
+	/**
+	 * Return the server root directory for the repository
+	 */
+	public ICVSRepositoryLocation getRepository() {
+		return parent.getRepository();
+	}
+	
+	/**
+	 * @see IManagedFile#setFileInfo(FileProperties)
+	 */
+	public void setFileInfo(FileProperties fileInfo) throws CVSException {
+		info = fileInfo;
+	}
+
+	protected void setRevision(String revision) {
+		tag = revision;
+	}
+		
+	/**
+	 * @see IManagedFile#sendTo(OutputStream, IProgressMonitor, boolean)
+	 */
+	public void sendTo(
+		OutputStream outputStream,
+		IProgressMonitor monitor,
+		boolean binary)
+		throws CVSException {
+			
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+	}
+
+	/**
+	 * @see IManagedFile#receiveFrom(InputStream, IProgressMonitor, long, boolean)
+	 */
+	public void receiveFrom(
+		InputStream inputStream,
+		IProgressMonitor monitor,
+		long size,
+		boolean binary,
+		boolean readOnly)
+		throws CVSException {
+			
+		// NOTE: This should be changed such that the client or connection handles
+		// the proper transfer
+		try {
+			bos = new ByteArrayOutputStream();
+			if (binary)
+				ManagedFile.transferWithProgress(inputStream, bos, (long)size, monitor, "");
+			else
+				ManagedFile.transferText(inputStream, bos, (long)size, monitor, "", false);
+		} catch (IOException ex) {
+			throw ManagedFile.wrapException(ex);
+		}
+	}
+
+	/**
+	 * @see IManagedFile#getTimeStamp()
+	 */
+	public String getTimeStamp() throws CVSFileNotFoundException {
+		return null;
+	}
+
+	/**
+	 * @see IManagedFile#setTimeStamp(String)
+	 */
+	public void setTimeStamp(String date) throws CVSException {
+	}
+
+	/**
+	 * @see IManagedFile#isDirty()
+	 */
+	public boolean isDirty() throws CVSException {
+		return false;
+	}
+
+	/**
+	 * @see IManagedFile#moveTo(IManagedFile)
+	 */
+	public void moveTo(IManagedFile mFile) throws CVSException, ClassCastException {		
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+	}
+
+	/**
+	 * @see IManagedFile#getContent()
+	 */
+	public String[] getContent() throws CVSException {
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
+	}
+
+	/**
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object arg0) {
+		return 0;
+	}
+	
+	/**
+	 * Return an InputStream which contains the contents of the remote file.
+	 */
+	private InputStream getCachedContents() {
+		InputStream is = new ByteArrayInputStream(bos.toByteArray());
+		bos = null;
+		return is;
 	}
 }
 

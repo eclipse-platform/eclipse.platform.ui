@@ -5,15 +5,20 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
  
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IRemoteResource;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -21,19 +26,12 @@ import org.eclipse.team.ccvs.core.IRemoteRoot;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements IRemoteResource {
+public abstract class RemoteResource extends PlatformObject implements IRemoteResource, IManagedResource {
 
 	protected String name;
-	protected RemoteFolder parent;
-	protected IRemoteRoot root;
 	protected String tag;
-	
-	protected RemoteResource(RemoteFolder parent, String name) {
-		this(parent, name, null);
-	}
-	
-	protected RemoteResource(RemoteFolder parent, String name, String tag) {
-		this.parent = parent;
+
+	protected RemoteResource(String name, String tag) {
 		this.name = name;
 		this.tag = tag;
 	}
@@ -44,46 +42,10 @@ public abstract class RemoteResource extends PlatformObject implements IRemoteRe
 	public String getName() {
 		return name;
 	}
-	
-	/**
-	 * @see IRemoteResource#getParent()
-	 */
-	public IRemoteFolder getParent() {
-		return parent;
-	}
-	
-	/**
-	 * Get the path of the parent, starting at the root
-	 */
-	public String getParentPath() {
-		return parent.getFullPath();
-	}
-	
-	/**
-	 * Return the IRemoteRoot that is the ancestor of the receiver
-	 */
-	public IRemoteRoot getRemoteRoot() {
-		return root;
-	}
-	
-	/**
-	 * Get the full path for the receiver, starting at the root
-	 */
-	public String getFullPath() {
-		String parentPath = parent.getFullPath();
-		if (parentPath.length() == 0)
-			return getName();
-		else
-			return parentPath + Client.SERVER_SEPARATOR + getName();
-	}
-	
-	/**
-	 * Return the CVSRepositoryLocation representing the remote repository
-	 */
-	public CVSRepositoryLocation getConnection() {
-		return parent.getConnection();
-	}
 
+	/*
+	 * Get the local options for including a tag in a CVS command
+	 */
 	protected List getLocalOptionsForTag() {
 		List localOptions = new ArrayList();
 		if ((tag != null) && (!tag.equals("HEAD"))) {
@@ -92,5 +54,84 @@ public abstract class RemoteResource extends PlatformObject implements IRemoteRe
 		}
 		return localOptions;
 	}
+	
+	/**
+	 * @see IRemoteResource#getType()
+	 */
+	public int getType() {
+		return 0;
+	}
+
+	public abstract String getRemotePath();
+	
+	public abstract ICVSRepositoryLocation getRepository();
+	
+	/*
+	 * @see IManagedResource#isFolder()
+	 */
+	public boolean isFolder() {
+		return getType() != FILE;
+	}
+
+	/*
+	 * @see IManagedResource#delete()
+	 */
+	public void delete() {
+	}
+
+	/*
+	 * @see IManagedResource#exists()
+	 */
+	public boolean exists() {
+		return true;
+	}
+
+	/*
+	 * @see IManagedResource#getParent()
+	 */
+	public IManagedFolder getParent() {
+		throw new UnsupportedOperationException(Policy.bind("RemoteManagedResource.invalidOperation"));
+	}
+
+	/*
+	 * @see IManagedResource#isIgnored()
+	 */
+	public boolean isIgnored() throws CVSException {
+		return false;
+	}
+
+	/*
+	 * @see IManagedResource#isManaged()
+	 */
+	public boolean isManaged() throws CVSException {
+		return true;
+	}
+
+	/*
+	 * @see IManagedResource#unmanage()
+	 */
+	public void unmanage() throws CVSException {
+		throw new CVSException(Policy.bind("RemoteManagedResource.invalidOperation"));
+	}
+
+	/*
+	 * @see IManagedResource#accept(IManagedVisitor)
+	 */
+	public void accept(IManagedVisitor visitor) throws CVSException {
+		// We need to do nothing here
+	}
+
+	/*
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object arg0) {
+		return 0;
+	}
+	
+	
+	protected PrintStream getPrintStream() {
+		return CVSTeamProvider.getPrintStream();
+	}
+
 }
 

@@ -42,6 +42,6 @@ public interface IRemoteFile extends IRemoteResource {
 	 * The revision depends on any tagging associated with the remote parent used
 	 * to access the file. 
 	 */
-	public String getRevision(IProgressMonitor monitor) throws TeamException;
+	public String getRevision() throws TeamException;
 }
 

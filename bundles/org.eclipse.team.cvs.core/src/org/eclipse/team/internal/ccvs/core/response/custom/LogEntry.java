@@ -20,7 +20,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	private CVSTag[] tags;
 
 	public LogEntry(RemoteFile file, String revision, String author, String date, String comment, String state, CVSTag[] tags) {
-		this.file = file.toRemoteFileRevision(revision);
+		this.file = file.toRevision(revision);
 		this.author = author;
 		this.date = date;
 		this.comment = comment;

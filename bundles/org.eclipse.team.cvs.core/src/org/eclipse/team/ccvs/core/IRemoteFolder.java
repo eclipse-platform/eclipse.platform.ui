@@ -31,6 +31,12 @@ public interface IRemoteFolder extends IRemoteResource {
 	 * @throws TeamException if problems occur contacting the server.
 	 */
 	public IRemoteResource[] getMembers(IProgressMonitor monitor) throws TeamException;
+	
+	/**
+	 * Returns a new instance that is the same as the receiver except for the tag.
+	 */
+	public IRemoteFolder forTag(String tagName);
+
 
 }
 

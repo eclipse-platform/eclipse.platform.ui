@@ -36,8 +36,8 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteRoot;
 import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
@@ -432,7 +432,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 							RemoteResource resource = (RemoteResource)resources[i];
 							if (projects != null) 
 								project = projects[i];
-							checkout(resource.getConnection(), project, resource.getFullPath(), null, monitor);
+							checkout(resource.getRepository(), project, resource.getRemotePath(), null, monitor);
 						}
 					}
 					catch (TeamException e) {
@@ -453,7 +453,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 	
-	private static void checkout(CVSRepositoryLocation repository, IProject project, String sourceModule, String tag, IProgressMonitor monitor) throws TeamException {
+	private static void checkout(ICVSRepositoryLocation repository, IProject project, String sourceModule, String tag, IProgressMonitor monitor) throws TeamException {
 		try {
 			
 			// Create the project if one wasn't passed.
@@ -486,7 +486,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					root,
 					monitor,
 					getPrintStream(),
-					repository,
+					(CVSRepositoryLocation)repository,
 					null);
 					
 			// Create, open and/or refresh the project
@@ -504,7 +504,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
 			
 			// Cache the repository userinfo
-			repository.updateCache();
+			((CVSRepositoryLocation)repository).updateCache();
 			
 			snapshot(monitor);
 			
@@ -855,8 +855,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 */
-	public static IRemoteRoot getRemoteRoot(Properties configuration) throws TeamException {
-		return new RemoteRoot(buildRepository(configuration));
+	public static IRemoteFolder getRemoteRoot(Properties configuration) throws TeamException {
+		return new RemoteFolder(buildRepository(configuration), Path.EMPTY, null);
 	}
 	
 	/**

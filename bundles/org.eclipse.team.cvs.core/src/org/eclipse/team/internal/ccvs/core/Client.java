@@ -214,11 +214,50 @@ public class Client {
 						IResponseHandler[] customHandlers) 
 						throws CVSException {
 				
+		execute(request,
+				globalOptions,
+				localOptions,
+				arguments,
+				mRoot,
+				monitor,
+				messageOut,
+				connection,
+				customHandlers,
+				true);
+	}
+	
+		/**
+	 * Creates a new client connection for the given cvs repository location.
+	 * 
+	 * Sets up the three main objects of the program:
+	 * 
+	 * commandDispatcher  => Knows about commands (update, commit ...)
+	 * responseDispatcher => Reacts on input from the server
+	 * requestSender     => Knows how to send requests to the server
+	 * 
+	 * @see commandDispatcher
+	 * @see RequestSender
+	 * @see responseDispatcher
+	 * 
+	 */
+	public static void execute(String request, 
+						String[] globalOptions, 
+						String[] localOptions, 
+						String[] arguments,
+						IManagedFolder mRoot,
+						IProgressMonitor monitor, 
+						PrintStream messageOut,
+						Connection connection,
+						IResponseHandler[] customHandlers,
+						boolean firstTime) 
+						throws CVSException {
+				
 		ResponseDispatcher responseDispatcher = new ResponseDispatcher(connection, customHandlers);
 		RequestSender requestSender = new RequestSender(connection);
 		CommandDispatcher commandDispatcher = new CommandDispatcher(responseDispatcher, requestSender);
 		
-		initialize(responseDispatcher, requestSender, connection, mRoot, monitor, messageOut);
+		if (firstTime)
+			initialize(responseDispatcher, requestSender, connection, mRoot, monitor, messageOut);
 
 		commandDispatcher.execute(request,
 								globalOptions,
