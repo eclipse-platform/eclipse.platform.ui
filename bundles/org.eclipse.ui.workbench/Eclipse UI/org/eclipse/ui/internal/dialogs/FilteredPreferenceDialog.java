@@ -102,7 +102,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		} 
 	    
 	    stackLayout.topControl = filteredViewer.getControl();
-	    return stackComposite;
+	    return treeArea;
 	}
 
 	/**
