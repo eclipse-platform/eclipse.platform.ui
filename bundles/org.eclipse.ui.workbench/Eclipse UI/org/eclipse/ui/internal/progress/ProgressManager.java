@@ -57,29 +57,23 @@ import org.eclipse.ui.internal.util.BundleUtility;
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
  */
-public class ProgressManager extends ProgressProvider
-		implements
-			IProgressService {
+public class ProgressManager extends ProgressProvider implements IProgressService {
 	//The property for whether or not the job is running in the
 	//dialog.
-	private static final String IN_DIALOG = "inDialog";
-	public static final QualifiedName PROPERTY_IN_DIALOG =
-		new QualifiedName(JobView.PROPERTY_PREFIX,IN_DIALOG);
-
+	private static final String IN_DIALOG = "inDialog"; //$NON-NLS-1$
+	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
+			JobView.PROPERTY_PREFIX, IN_DIALOG);
 	private static ProgressManager singleton;
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
-	final private Map familyListeners = Collections
-			.synchronizedMap(new HashMap());
+	final private Map familyListeners = Collections.synchronizedMap(new HashMap());
 	final Object familyKey = new Object();
-	final private Collection listeners = Collections
-			.synchronizedList(new ArrayList());
+	final private Collection listeners = Collections.synchronizedList(new ArrayList());
 	final Object listenerKey = new Object();
 	final ErrorNotificationManager errorManager = new ErrorNotificationManager();
 	final private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 	IJobChangeListener changeListener;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
-	
 	private static final String PROGRESS_20 = "progress20.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_40 = "progress40.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
@@ -103,8 +97,8 @@ public class ProgressManager extends ProgressProvider
 	public static final String MINIMIZE_KEY = "MINIMIZE_FLOATING"; //$NON-NLS-1$
 	public static final String MAXIMIZE_KEY = "MAXIMIZE_FLOATING"; //$NON-NLS-1$
 	//A list of keys for looking up the images in the image registry
-	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY,
-			PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY};
+	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY,
+			PROGRESS_80_KEY, PROGRESS_100_KEY};
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 	/**
 	 * Get the progress manager currently in use.
@@ -294,8 +288,7 @@ public class ProgressManager extends ProgressProvider
 		Platform.getJobManager().setProgressProvider(this);
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
-		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
-				ProgressManager.PROGRESS_FOLDER);
+		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID, ProgressManager.PROGRESS_FOLDER);
 		try {
 			setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);
 			setUpImage(iconsRoot, PROGRESS_40, PROGRESS_40_KEY);
@@ -329,21 +322,26 @@ public class ProgressManager extends ProgressProvider
 			public void aboutToRun(IJobChangeEvent event) {
 				JobInfo info = getJobInfo(event.getJob());
 				refreshJobInfo(info);
-				Iterator startListeners = busyListenersForJob(event.getJob())
-						.iterator();
+				Iterator startListeners = busyListenersForJob(event.getJob()).iterator();
 				while (startListeners.hasNext()) {
-					IJobBusyListener next = (IJobBusyListener) startListeners
-							.next();
+					IJobBusyListener next = (IJobBusyListener) startListeners.next();
 					next.incrementBusy(event.getJob());
 				}
 				if (event.getJob().isUser()) {
-					boolean inDialog = WorkbenchPlugin
-							.getDefault()
-							.getPreferenceStore()
-							.getBoolean(
-									IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
+					boolean inDialog = WorkbenchPlugin.getDefault().getPreferenceStore()
+							.getBoolean(IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
 					if (inDialog) {
-						showInDialog(null,event.getJob(),false);
+						final IJobChangeEvent finalEvent = event;
+						WorkbenchJob showJob = new WorkbenchJob(ProgressMessages.getString("ProgressManager.showInDialogName")) { //$NON-NLS-1$
+							/* (non-Javadoc)
+							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+							 */
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								showInDialog(null, finalEvent.getJob());
+								return Status.OK_STATUS;
+							}
+						};
+						showJob.schedule();
 						return;
 					}
 				}
@@ -356,25 +354,21 @@ public class ProgressManager extends ProgressProvider
 			public void done(IJobChangeEvent event) {
 				if (!PlatformUI.isWorkbenchRunning())
 					return;
-				Iterator startListeners = busyListenersForJob(event.getJob())
-						.iterator();
+				Iterator startListeners = busyListenersForJob(event.getJob()).iterator();
 				while (startListeners.hasNext()) {
-					IJobBusyListener next = (IJobBusyListener) startListeners
-							.next();
+					IJobBusyListener next = (IJobBusyListener) startListeners.next();
 					next.decrementBusy(event.getJob());
 				}
 				JobInfo info = getJobInfo(event.getJob());
 				if (event.getResult().getSeverity() == IStatus.ERROR) {
-					errorManager.addError(event.getResult(), event.getJob()
-							.getName());
+					errorManager.addError(event.getResult(), event.getJob().getName());
 				}
 				jobs.remove(event.getJob());
 				//Only refresh if we are showing it
 				removeJobInfo(info);
 				//If there are no more left then refresh all on the last
 				// displayed one
-				if (hasNoRegularJobInfos()
-						&& !isNonDisplayableJob(event.getJob(), false))
+				if (hasNoRegularJobInfos() && !isNonDisplayableJob(event.getJob(), false))
 					refreshAll();
 			}
 			/*
@@ -425,8 +419,7 @@ public class ProgressManager extends ProgressProvider
 		Display display;
 		if (PlatformUI.isWorkbenchRunning()) {
 			display = PlatformUI.getWorkbench().getDisplay();
-			if (!display.isDisposed()
-					&& (display.getThread() == Thread.currentThread()))
+			if (!display.isDisposed() && (display.getThread() == Thread.currentThread()))
 				return new EventLoopProgressMonitor(new NullProgressMonitor());
 		}
 		return super.getDefaultMonitor();
@@ -764,18 +757,12 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-				null);
+		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
 		dialog.setOpenOnRun(false);
-		//create the job that will open the dialog after a delay
-		scheduleProgressMonitorJob(dialog);
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		if (display == null)
-			return;
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];
 		//show a busy cursor until the dialog opens
-		BusyIndicator.showWhile(display, new Runnable() {
+		Runnable dialogWaitRunnable = new Runnable() {
 			public void run() {
 				try {
 					dialog.setOpenOnRun(false);
@@ -786,17 +773,32 @@ public class ProgressManager extends ProgressProvider
 					interrupt[0] = e;
 				}
 			}
-		});
+		};
+		busyCursorWhile(dialogWaitRunnable, dialog);
 		if (invokes[0] != null)
 			throw invokes[0];
 		if (interrupt[0] != null)
 			throw interrupt[0];
 	}
 	/**
+	 * Show the busy cursor while the runnable is running. Schedule
+	 * a job to replace it with a progress dialog.
+	 * @param dialogWaitRunnable
+	 * @param dialog
+	 */
+	private void busyCursorWhile(Runnable dialogWaitRunnable, ProgressMonitorJobsDialog dialog) {
+		//create the job that will open the dialog after a delay
+		scheduleProgressMonitorJob(dialog);
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		if (display == null)
+			return;
+		//show a busy cursor until the dialog opens
+		BusyIndicator.showWhile(display, dialogWaitRunnable);
+	}
+	/**
 	 * Schedule the job that will open the progress monitor dialog
 	 */
-	private void scheduleProgressMonitorJob(
-			final ProgressMonitorJobsDialog dialog) {
+	private void scheduleProgressMonitorJob(final ProgressMonitorJobsDialog dialog) {
 		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages
 				.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
 			/*
@@ -810,8 +812,7 @@ public class ProgressManager extends ProgressProvider
 					return Status.CANCEL_STATUS;
 				//If there is a modal shell open then wait
 				Shell[] shells = currentDisplay.getShells();
-				int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
-						| SWT.PRIMARY_MODAL;
+				int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
 				for (int i = 0; i < shells.length; i++) {
 					//Do not stop for shells that will not block the user.
 					if (shells[i].isVisible()) {
@@ -853,8 +854,7 @@ public class ProgressManager extends ProgressProvider
 	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job,
 	 *      org.eclipse.core.runtime.IProgressMonitor, int)
 	 */
-	public IProgressMonitor createMonitor(Job job, IProgressMonitor group,
-			int ticks) {
+	public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
 		JobMonitor monitor = progressFor(job);
 		if (group instanceof GroupInfo) {
 			GroupInfo groupInfo = (GroupInfo) group;
@@ -892,8 +892,7 @@ public class ProgressManager extends ProgressProvider
 			Iterator families = familyListeners.keySet().iterator();
 			while (families.hasNext()) {
 				Object next = families.next();
-				Collection currentListeners = (Collection) familyListeners
-						.get(next);
+				Collection currentListeners = (Collection) familyListeners.get(next);
 				if (currentListeners.contains(listener))
 					currentListeners.remove(listener);
 				if (currentListeners.isEmpty())
@@ -923,20 +922,48 @@ public class ProgressManager extends ProgressProvider
 			while (families.hasNext()) {
 				Object next = families.next();
 				if (job.belongsTo(next)) {
-					Collection currentListeners = (Collection) familyListeners
-							.get(next);
+					Collection currentListeners = (Collection) familyListeners.get(next);
 					returnValue.addAll(currentListeners);
 				}
 			}
 			return returnValue;
 		}
 	}
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void showInDialog(Shell shell, Job job) {
+		final boolean[] done = new boolean[1];
+		done[0] = false;
+		JobChangeAdapter adapter = new JobChangeAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void done(IJobChangeEvent event) {
+				done[0] = true;
+			}
+		};
+		job.addJobChangeListener(adapter);
+		
+		final ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(shell);
+		dialog.setJob(job);
+		dialog.create();
+		
+		//show a busy cursor until the dialog opens
+		Runnable dialogWait = new Runnable() {
+			public void run() {
+				while (!(done[0] || dialog.getShell() == null))
+					PlatformUI.getWorkbench().getDisplay().readAndDispatch();
+			}
+		};
+		
+		busyCursorWhile(dialogWait, dialog);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job, boolean)
 	 */
 	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
-		ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
-				shell);
-		dialog.setJobAndOpen(job, runImmediately);
+		showInDialog(shell, job);
 	}
 }

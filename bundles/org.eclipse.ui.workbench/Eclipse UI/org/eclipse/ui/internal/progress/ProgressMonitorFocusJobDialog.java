@@ -56,13 +56,9 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 * @param jobToWatch
 	 * @param running If true the dialog is opened right away
 	 */
-	public void setJobAndOpen(Job jobToWatch, boolean running) {
+	public void setJob(Job jobToWatch) {
 		job = jobToWatch;
 		addListenerToClose();
-		if (running)
-			setProgressAndOpen();
-		else
-			addListenerToOpen();
 	}
 	/**
 	 * Schedule the opening of the dialog.
@@ -110,7 +106,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					}
 				};
 				openJob.setSystem(true);
-				openJob.schedule(100);
+				openJob.schedule();
 			}
 		});
 	}
@@ -335,8 +331,15 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#open()
 	 */
 	public int open() {
-		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG,new Boolean(true));
-		return super.open();
+		if(job.getState() == Job.RUNNING){
+			job.setProperty(ProgressManager.PROPERTY_IN_DIALOG,new Boolean(true));
+			return super.open();
+		}
+		//Job isn't running yet so cancel the open until it is.
+		addListenerToOpen();
+		return CANCEL;
+			
+		
 	}
 	/*
 	 * (non-Javadoc)

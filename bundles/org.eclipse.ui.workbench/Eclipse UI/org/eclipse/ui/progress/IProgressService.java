@@ -61,19 +61,21 @@ public interface IProgressService {
 		throws InvocationTargetException, InterruptedException;
 	
 	/**
+	 * @deprecated. @see showInDialog(Shell,Job).
+	 */
+	public void showInDialog(Shell shell, Job job, boolean runImmediately);
+	
+	/**
 	 * Open a dialog on job when it starts to run and close it 
-	 * when the job is finished. If the job is already running 
-	 * open the dialog immediately and increment the progress
-	 * to the current point.
+	 * when the job is finished. Wait for LONG_OPERATION_MILLISECONDS
+	 * before opening the dialog. Do not open if it is already done.
 	 * 
 	 * Parent the dialog from the shell.
+	 * 
 	 * @param job The Job that will be reported in the dialog.
 	 * @param shell The Shell to parent the dialog from or 
 	 * <code>null</code> if the active shell is to be used.
-	 * @param runImmediately. If true open the dialog immediately.
-	 * If false then add a job listener and do not open the dialog
-	 * until it is about to run.
 	 */
-	public void showInDialog(Shell shell, Job job, boolean runImmediately);
+	public void showInDialog(Shell shell, Job job);
 
 }

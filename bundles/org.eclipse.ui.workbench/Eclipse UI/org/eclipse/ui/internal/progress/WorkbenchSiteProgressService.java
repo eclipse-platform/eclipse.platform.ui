@@ -273,7 +273,14 @@ public class WorkbenchSiteProgressService
 	 *      org.eclipse.core.runtime.jobs.Job, boolean)
 	 */
 	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
+		showInDialog(shell,job);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void showInDialog(Shell shell, Job job) {
 		site.getWorkbenchWindow().getWorkbench().getProgressService()
-				.showInDialog(shell, job, runImmediately);
+		.showInDialog(shell, job);
 	}
 }
