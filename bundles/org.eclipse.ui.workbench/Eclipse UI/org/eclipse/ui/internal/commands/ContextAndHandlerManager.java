@@ -311,11 +311,18 @@ public class ContextAndHandlerManager implements IContextResolver {
 		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Menu parent = workbenchWindow.getShell().getMenuBar();
 			
-			if (parent == null || parent.getItemCount() < 1)
+			if (parent == null || parent.isDisposed() || parent.getItemCount() < 1)
 				return;
 			
 			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
+			
+			if (parentItem == null || parentItem.isDisposed())
+				return;
+			
 			parent = parentItem.getMenu();
+
+			if (parent == null || parent.isDisposed())
+				return;
 				
 			if (acceleratorMenu != null)
 				acceleratorMenu.dispose();
