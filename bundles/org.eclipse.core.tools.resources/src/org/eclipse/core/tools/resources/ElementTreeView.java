@@ -29,34 +29,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 
+/**
+ * A spy view that shows detailed information about the workspace's element tree,
+ * including space usage for the tree, and all resource metadata including markers,
+ * sync info, and session properties.
+ */
 public class ElementTreeView extends SpyView implements IResourceChangeListener {
 
-	// The JFace widget used for showing the Element Tree info.  
-	protected TextViewer viewer;
-
-	private IAction updateAction;
-
 	class UpdateAction extends Action {
-
-		int resourceCount;
-		int teamPrivateCount;
-		int phantomCount;
-		int layerCount;
-		int nodeCount;
-		int markerCount;
-		int syncInfoCount;
-
-		//tree memory includes memory for strings and child array
-		int treeNodeMemory;
-		int stringMemory;
-		int markerMemory;
-		int syncInfoMemory;
-		DeepSize sessionPropertyMemory;
-
-		final Map strings = new HashMap();
-		List sortedList;
-		int nonIdenticalStrings;
-		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
 
 		class Counter implements Comparable {
 			int count = 1;
@@ -70,6 +50,10 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 				count++;
 			}
 
+			public int compareTo(Object o) {
+				return ((Counter) o).getCount() - count;
+			}
+
 			int getCount() {
 				return count;
 			}
@@ -78,45 +62,56 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 				return name;
 			}
 
-			public int compareTo(Object o) {
-				return ((Counter) o).getCount() - count;
-			}
-
 		}
+
+		int layerCount;
+		int markerCount;
+		int markerMemory;
+		int nodeCount;
+		int nonIdenticalStrings;
+		int phantomCount;
+
+		int resourceCount;
+		DeepSize sessionPropertyMemory;
+		List sortedList;
+		int stringMemory;
+
+		final Map strings = new HashMap();
+		int syncInfoCount;
+		int syncInfoMemory;
+		int teamPrivateCount;
+
+		//tree memory includes memory for strings and child array
+		int treeNodeMemory;
+		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
 
 		UpdateAction() {
-			super("Update view"); //$NON-NLS-1$
-			this.setToolTipText("Update"); //$NON-NLS-1$
-			this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
+			super("Update view");
+			this.setToolTipText("Update");
+			this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif"));
 		}
 
-		public void run() {
-			super.run();
-			reset();
-			countResources();
-			analyzeTrees();
-			analyzeStrings();
-			updateTextView();
-			reset();
+		void addToStringCount(String name) {
+			if (name == null)
+				return;
+			//want to track the number of non-identical strings
+			if (!DeepSize.ignore(name)) {
+				nonIdenticalStrings++;
+				//can't call sizeof because it will call isUnique again and weed out duplicates
+				stringMemory += basicSizeof(name);
+
+				//now want to count the number of duplicate equal but non-identical strings
+				Counter counter = (Counter) strings.get(name);
+				if (counter == null)
+					strings.put(name, new Counter(name));
+				else
+					counter.add();
+			}
 		}
 
-		void reset() {
-			resourceCount = 0;
-			teamPrivateCount = 0;
-			phantomCount = 0;
-			layerCount = 0;
-			nodeCount = 0;
-
-			treeNodeMemory = 0;
-			stringMemory = 0;
-			markerMemory = 0;
-			syncInfoMemory = 0;
-			sessionPropertyMemory = new DeepSize();
-
-			strings.clear();
-			DeepSize.reset();
-			sortedList = null;
-			nonIdenticalStrings = 0;
+		void analyzeStrings() {
+			sortedList = new ArrayList(strings.values());
+			Collections.sort(sortedList);
 		}
 
 		void analyzeTrees() {
@@ -129,78 +124,17 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			}
 		}
 
-		void visit(ElementTree tree) {
-			AbstractDataTreeNode node = org.eclipse.core.internal.dtree.SpySupport.getRootNode(tree.getDataTree());
-			visit(node);
-		}
-
-		void visit(AbstractDataTreeNode node) {
-			//			if ("CVS".equals(node.getName())) {
-			//				System.out.println("here");
-			//			}
-			nodeCount++;
-			addToStringCount(node);
-			treeNodeMemory += sizeof(node);
-			AbstractDataTreeNode[] children = node.getChildren();
-			for (int i = 0; i < children.length; i++)
-				visit(children[i]);
-		}
-
-		int sizeof(AbstractDataTreeNode node) {
-			int count = 12;//three slots for an empty object
-			if (node instanceof DataTreeNode) {
-				//count memory for data
-				count += 4;//reference to data
-				Object data = ((DataTreeNode) node).getData();
-				if (data instanceof ResourceInfo) {
-					count += sizeof((ResourceInfo) data);
-				}
-			}
-			//name
-			count += 4;//reference to name
-			//NOTE: space for name string is counted separately (see addToStringCount)
-
-			//children
-			count += 4;//reference to child array
-			AbstractDataTreeNode[] children = node.getChildren();
-			if (children != null && !DeepSize.ignore(children)) {
-				count += 16 + (4 * children.length);//object header plus slots
-			}
-			return count;
-		}
-
-		int sizeof(ResourceInfo resourceInfo) {
-			//object header plus all slots
-			int count = 12 + (13 * 4);
-
-			//markers
-			markerMemory += sizeof(resourceInfo.getMarkers());
-
-			//sync info
-			syncInfoMemory += sizeof(SpySupport.getSyncInfo(resourceInfo));
-
-			//session properties
-			sessionPropertyMemory.deepSize(SpySupport.getSessionProperties(resourceInfo));
-
-			if (resourceInfo.getClass() == RootInfo.class) {
-				count += 4;//ref to property store
-			}
-			if (resourceInfo.getClass() == ProjectInfo.class) {
-				count += 4 * 4;//four more slots
-			}
-			return count;
-		}
-
-		int basicSizeof(MarkerSet markerSet) {
-			if (markerSet == null)
+		int basicSizeof(Map map) {
+			if (map == null)
 				return 0;
-			int count = 20;//object size plus two slots
-			IMarkerSetElement[] elements = SpySupport.getElements(markerSet);
-			if (elements != null) {
-				count += 16 + 4 * elements.length;//size of elements array object
-				for (int i = 0; i < elements.length; i++)
-					if (elements[i] != null)
-						count += sizeof(elements[i]);
+
+			//formula taken from BundleStats
+			int count = (int) Math.round(44 + (16 + (map.size() * 1.25 * 4)) + (24 * map.size()));
+
+			for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+				Map.Entry entry = (Map.Entry) it.next();
+				count += sizeof(entry.getKey());
+				count += sizeof(entry.getValue());
 			}
 			return count;
 		}
@@ -223,20 +157,101 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			return count;
 		}
 
-		int basicSizeof(String str) {
-			return 44 + 2 * str.length();
-		}
-		int basicSizeof(Map map) {
-			if (map == null)
+		int basicSizeof(MarkerSet markerSet) {
+			if (markerSet == null)
 				return 0;
+			int count = 20;//object size plus two slots
+			IMarkerSetElement[] elements = SpySupport.getElements(markerSet);
+			if (elements != null) {
+				count += 16 + 4 * elements.length;//size of elements array object
+				for (int i = 0; i < elements.length; i++)
+					if (elements[i] != null)
+						count += sizeof(elements[i]);
+			}
+			return count;
+		}
 
-			//formula taken from BundleStats
-			int count = (int) Math.round(44 + (16 + (map.size() * 1.25 * 4)) + (24 * map.size()));
+		int basicSizeof(String str) {
+			return 36 + 2 * str.length();
+		}
 
-			for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				count += sizeof(entry.getKey());
-				count += sizeof(entry.getValue());
+		void countResources() {
+			// count the number of resources
+			resourceCount = 0;
+			markerCount = 0;
+			teamPrivateCount = 0;
+			phantomCount = 0;
+			syncInfoCount = 0;
+			IElementContentVisitor visitor = new IElementContentVisitor() {
+				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+					ResourceInfo info = (ResourceInfo) elementContents;
+					if (info == null)
+						return true;
+					resourceCount++;
+					if (info.isSet(ICoreConstants.M_TEAM_PRIVATE_MEMBER))
+						teamPrivateCount++;
+					if (info.isSet(ICoreConstants.M_PHANTOM))
+						phantomCount++;
+					MarkerSet markers = info.getMarkers();
+					if (markers != null)
+						markerCount += markers.size();
+					Map syncInfo = SpySupport.getSyncInfo(info);
+					if (syncInfo != null)
+						syncInfoCount += syncInfo.size();
+					return true;
+				}
+			};
+			new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
+		}
+
+		void reset() {
+			resourceCount = 0;
+			teamPrivateCount = 0;
+			phantomCount = 0;
+			layerCount = 0;
+			nodeCount = 0;
+
+			treeNodeMemory = 0;
+			stringMemory = 0;
+			markerMemory = 0;
+			syncInfoMemory = 0;
+			sessionPropertyMemory = new DeepSize();
+
+			strings.clear();
+			DeepSize.reset();
+			sortedList = null;
+			nonIdenticalStrings = 0;
+		}
+
+		public void run() {
+			super.run();
+			reset();
+			countResources();
+			analyzeTrees();
+			analyzeStrings();
+			updateTextView();
+			reset();
+		}
+
+		int sizeof(AbstractDataTreeNode node) {
+			int count = 12;//three slots for an empty object
+			if (node instanceof DataTreeNode) {
+				//count memory for data
+				count += 4;//reference to data
+				Object data = ((DataTreeNode) node).getData();
+				if (data instanceof ResourceInfo) {
+					count += sizeof((ResourceInfo) data);
+				}
+			}
+			//name
+			count += 4;//reference to name
+			//NOTE: space for name string is counted separately (see addToStringCount)
+
+			//children
+			count += 4;//reference to child array
+			AbstractDataTreeNode[] children = node.getChildren();
+			if (children != null && !DeepSize.ignore(children)) {
+				count += 16 + (4 * children.length);//object header plus slots
 			}
 			return count;
 		}
@@ -270,141 +285,26 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			return 0;
 		}
 
-		void addToStringCount(AbstractDataTreeNode node) {
-			String name = node.getName();
-			if (name == null)
-				return;
-			//want to track the number of non-identical strings
-			if (!DeepSize.ignore(name)) {
-				nonIdenticalStrings++;
-				//can't call sizeof because it will call isUnique again and weed out duplicates
-				stringMemory += basicSizeof(name);
+		int sizeof(ResourceInfo resourceInfo) {
+			//object header plus all slots
+			int count = 12 + (11 * 4);
 
-				//now want to count the number of duplicate equal but non-identical strings
-				Counter counter = (Counter) strings.get(name);
-				if (counter == null)
-					strings.put(name, new Counter(name));
-				else
-					counter.add();
+			//markers
+			markerMemory += sizeof(resourceInfo.getMarkers());
+
+			//sync info
+			syncInfoMemory += sizeof(SpySupport.getSyncInfo(resourceInfo));
+
+			//session properties
+			sessionPropertyMemory.deepSize(SpySupport.getSessionProperties(resourceInfo));
+
+			if (resourceInfo.getClass() == RootInfo.class) {
+				count += 4;//ref to property store
 			}
-		}
-
-		void analyzeStrings() {
-			sortedList = new ArrayList(strings.values());
-			Collections.sort(sortedList);
-		}
-
-		void countResources() {
-			// count the number of resources
-			resourceCount = 0;
-			markerCount = 0;
-			teamPrivateCount = 0;
-			phantomCount = 0;
-			syncInfoCount = 0;
-			IElementContentVisitor visitor = new IElementContentVisitor() {
-				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-					ResourceInfo info = (ResourceInfo) elementContents;
-					if (info == null)
-						return true;
-					resourceCount++;
-					if (info.isSet(ICoreConstants.M_TEAM_PRIVATE_MEMBER))
-						teamPrivateCount++;
-					if (info.isSet(ICoreConstants.M_PHANTOM))
-						phantomCount++;
-					MarkerSet markers = info.getMarkers();
-					if (markers != null)
-						markerCount += markers.size();
-					Map syncInfo = SpySupport.getSyncInfo(info);
-					if (syncInfo != null)
-						syncInfoCount += syncInfo.size();
-					return true;
-				}
-			};
-			new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
-		}
-
-		void updateTextView() {
-			final StringBuffer buffer = new StringBuffer();
-			buffer.append("Total resource count: " + prettyPrint(resourceCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tTeam private: " + prettyPrint(teamPrivateCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tPhantom: " + prettyPrint(phantomCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tMarkers: " + prettyPrint(markerCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tSyncInfo: " + prettyPrint(syncInfoCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("Number of layers: " + layerCount + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("Number of nodes: " + prettyPrint(nodeCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("Number of non-identical strings: " + prettyPrint(nonIdenticalStrings) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-
-			int sessionSize = sessionPropertyMemory.getSize();
-			int totalMemory = treeNodeMemory + stringMemory + markerMemory + syncInfoMemory + sessionSize;
-			buffer.append("Total memory used by nodes: " + prettyPrint(totalMemory) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tNodes and ResourceInfo: " + prettyPrint(treeNodeMemory) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tStrings: " + prettyPrint(stringMemory) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tMarkers: " + prettyPrint(markerMemory) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tSync info: " + prettyPrint(syncInfoMemory) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("\tSession properties: " + prettyPrint(sessionSize) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			//breakdown of session property size by class
-			List sortedEntries = sortEntrySet(sessionPropertyMemory.getSizes().entrySet());
-			for (Iterator it = sortedEntries.iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				buffer.append("\t\t" + entry.getKey() + ": " + prettyPrint(((Integer) entry.getValue()).intValue()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (resourceInfo.getClass() == ProjectInfo.class) {
+				count += 4 * 4;//four more slots
 			}
-
-			int max = 20;
-			int savings = 0;
-			buffer.append("The top " + max + " equal but non-identical strings are:\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int i = 0; i < sortedList.size() && ((Counter)sortedList.get(i)).getCount() > 1; i++) {
-				Counter c = (Counter) sortedList.get(i);
-				if (i < max)
-					buffer.append("\t" + c.getName() + "->" + prettyPrint(c.getCount()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				savings += ((c.getCount() - 1) * basicSizeof(c.getName()));
-			}
-			buffer.append("Potential savings of using unique strings: " + savings + "\n");
-			
-			//post changes to UI thread
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (!viewer.getControl().isDisposed()) {
-						IDocument doc = viewer.getDocument();
-						doc.set(buffer.toString());
-						viewer.setDocument(doc);
-					}
-				}
-			});
-		}
-
-		private String prettyPrint(int i) {
-			StringBuffer buf = new StringBuffer();
-			for (;;) {
-				if (i < 1000) {
-					String val = Integer.toString(i);
-					//pad with zeros if necessary
-					if (buf.length() > 0) {
-						if (val.length() < 2)
-							buf.append('0');
-						if (val.length() < 3)
-							buf.append('0');
-					}
-					buf.append(val);
-					return buf.toString();
-				}
-				if (i < 1000000) {
-					String val = Integer.toString(i / 1000);
-					//pad with zeros if necessary
-					if (buf.length() > 0) {
-						if (val.length() < 2)
-							buf.append('0');
-						if (val.length() < 3)
-							buf.append('0');
-					}
-					buf.append(val);
-					buf.append(',');
-					i = i % 1000;
-					continue;
-				}
-				buf.append(Integer.toString(i / 1000000));
-				buf.append(',');
-				i = i % 1000000;
-			}
+			return count;
 		}
 
 		/**
@@ -423,7 +323,78 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			});
 			return result;
 		}
+
+		void updateTextView() {
+			final StringBuffer buffer = new StringBuffer();
+			buffer.append("Total resource count: " + prettyPrint(resourceCount) + "\n");
+			buffer.append("\tTeam private: " + prettyPrint(teamPrivateCount) + "\n");
+			buffer.append("\tPhantom: " + prettyPrint(phantomCount) + "\n");
+			buffer.append("\tMarkers: " + prettyPrint(markerCount) + "\n");
+			buffer.append("\tSyncInfo: " + prettyPrint(syncInfoCount) + "\n");
+			buffer.append("Number of layers: " + layerCount + "\n");
+			buffer.append("Number of nodes: " + prettyPrint(nodeCount) + "\n");
+			buffer.append("Number of non-identical strings: " + prettyPrint(nonIdenticalStrings) + "\n");
+
+			int sessionSize = sessionPropertyMemory.getSize();
+			int totalMemory = treeNodeMemory + stringMemory + markerMemory + syncInfoMemory + sessionSize;
+			buffer.append("Total memory used by nodes: " + prettyPrint(totalMemory) + "\n");
+			buffer.append("\tNodes and ResourceInfo: " + prettyPrint(treeNodeMemory) + "\n");
+			buffer.append("\tStrings: " + prettyPrint(stringMemory) + "\n");
+			buffer.append("\tMarkers: " + prettyPrint(markerMemory) + "\n");
+			buffer.append("\tSync info: " + prettyPrint(syncInfoMemory) + "\n");
+			buffer.append("\tSession properties: " + prettyPrint(sessionSize) + "\n");
+			//breakdown of session property size by class
+			List sortedEntries = sortEntrySet(sessionPropertyMemory.getSizes().entrySet());
+			for (Iterator it = sortedEntries.iterator(); it.hasNext();) {
+				Map.Entry entry = (Map.Entry) it.next();
+				buffer.append("\t\t" + entry.getKey() + ": " + prettyPrint(((Integer) entry.getValue()).intValue()) + "\n");
+			}
+
+			int max = 20;
+			int savings = 0;
+			buffer.append("The top " + max + " equal but non-identical strings are:\n");
+			for (int i = 0; i < sortedList.size() && ((Counter) sortedList.get(i)).getCount() > 1; i++) {
+				Counter c = (Counter) sortedList.get(i);
+				if (i < max)
+					buffer.append("\t" + c.getName() + "->" + prettyPrint(c.getCount()) + "\n");
+				savings += ((c.getCount() - 1) * basicSizeof(c.getName()));
+			}
+			buffer.append("Potential savings of using unique strings: " + prettyPrint(savings) + "\n");
+
+			//post changes to UI thread
+			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!viewer.getControl().isDisposed()) {
+						IDocument doc = viewer.getDocument();
+						doc.set(buffer.toString());
+						viewer.setDocument(doc);
+					}
+				}
+			});
+		}
+
+		void visit(AbstractDataTreeNode node) {
+			//			if ("CVS".equals(node.getName())) {
+			//				System.out.println("here");
+			//			}
+			nodeCount++;
+			addToStringCount(node.getName());
+			treeNodeMemory += sizeof(node);
+			AbstractDataTreeNode[] children = node.getChildren();
+			for (int i = 0; i < children.length; i++)
+				visit(children[i]);
+		}
+
+		void visit(ElementTree tree) {
+			AbstractDataTreeNode node = org.eclipse.core.internal.dtree.SpySupport.getRootNode(tree.getDataTree());
+			visit(node);
+		}
 	}
+
+	private IAction updateAction;
+
+	// The JFace widget used for showing the Element Tree info.  
+	protected TextViewer viewer;
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -460,7 +431,6 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 		bars.getToolBarManager().add(updateAction);
 		bars.getToolBarManager().add(clearOutputAction);
-
 		bars.updateActionBars();
 
 		// creates a context menu with actions and adds it to the viewer control
@@ -479,20 +449,55 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 	}
 
 	/**
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		if (updateAction != null)
-			updateAction.run();
-	}
-
-	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		updateAction = null;
+	}
+
+	String prettyPrint(int i) {
+		StringBuffer buf = new StringBuffer();
+		for (;;) {
+			if (i < 1000) {
+				String val = Integer.toString(i);
+				//pad with zeros if necessary
+				if (buf.length() > 0) {
+					if (val.length() < 2)
+						buf.append('0');
+					if (val.length() < 3)
+						buf.append('0');
+				}
+				buf.append(val);
+				return buf.toString();
+			}
+			if (i < 1000000) {
+				String val = Integer.toString(i / 1000);
+				//pad with zeros if necessary
+				if (buf.length() > 0) {
+					if (val.length() < 2)
+						buf.append('0');
+					if (val.length() < 3)
+						buf.append('0');
+				}
+				buf.append(val);
+				buf.append(',');
+				i = i % 1000;
+				continue;
+			}
+			buf.append(Integer.toString(i / 1000000));
+			buf.append(',');
+			i = i % 1000000;
+		}
+	}
+
+	/**
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		if (updateAction != null)
+			updateAction.run();
 	}
 
 }
