@@ -78,15 +78,10 @@ public class CompareViewerPane extends ViewForm {
 	}
 	
 	/**
-	 * Sets the receiver's title text.
+	 * Set the pane's title text.
 	 * The value <code>null</code> clears it.
 	 * 
-	 * @param text the text to be displayed in the CompareViewerPane's title or null
-	 * 
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @param text the text to be displayed in the pane or null
 	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();
@@ -94,9 +89,10 @@ public class CompareViewerPane extends ViewForm {
 	}
 	
 	/**
-	 * Return the receiver's title text.
+	 * Set the pane's title Image.
+	 * The value <code>null</code> clears it.
 	 * 
-	 * @return the text of the CompareViewerPane's title or null
+	 * @param image the image to be displayed in the pane or null
 	 */
 	public void setImage(Image image) {
 		CLabel cl= (CLabel) getTopLeft();
