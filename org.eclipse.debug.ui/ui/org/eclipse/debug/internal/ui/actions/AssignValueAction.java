@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
@@ -80,7 +81,7 @@ public class AssignValueAction extends SelectionProviderAction {
 				}
 				Shell activeShell= window.getShell();
 				
-				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("AssignValueAction.2"), MessageFormat.format(ActionMessages.getString("AssignValueAction.3"), new String[] {value, variable.getName()}), new StatusInfo(StatusInfo.ERROR, ActionMessages.getString("AssignValueAction.4")));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("AssignValueAction.2"), MessageFormat.format(ActionMessages.getString("AssignValueAction.3"), new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.getString("AssignValueAction.4")));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);
