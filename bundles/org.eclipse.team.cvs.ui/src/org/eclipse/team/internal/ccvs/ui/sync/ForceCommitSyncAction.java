@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -75,6 +76,40 @@ public class ForceCommitSyncAction extends MergeAction {
 		ITeamNode[] changed = syncSet.getChangedNodes();
 		if (changed.length == 0) {
 			return syncSet;
+		}
+		
+		if (syncSet instanceof CVSSyncSet) {
+			CVSSyncSet cvsSyncSet = (CVSSyncSet)syncSet;
+			try {
+				if (cvsSyncSet.hasNonAddedChanges()) {
+					final int[] r = new int[1];
+					getShell().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							MessageDialog dialog = new MessageDialog(
+								getShell(),
+								Policy.bind("ForceCommitSyncAction.Outgoing_Changes_Not_Added_1"),  //$NON-NLS-1$
+								null,
+								Policy.bind("ForceCommitSyncAction.You_have_chosen_to_commit_new_resources_which_have_not_been_added_to_version_control._Do_you_wish_to_add_them_to_version_control_now__2"),  //$NON-NLS-1$
+								MessageDialog.QUESTION, 
+								new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
+								0);
+							r[0] = dialog.open();
+						}
+					});
+			 		switch (r[0]) {
+			 			case 0: // yes
+			 				break;
+			 			case 1: // no
+			 				cvsSyncSet.removeNonAddedChanges();
+			 				changed = syncSet.getChangedNodes();
+			 				break;
+			 			case 2: // cancel
+			 				return null;
+			 		}
+				}
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
 		}
 		List commits = new ArrayList();
 		List additions = new ArrayList();

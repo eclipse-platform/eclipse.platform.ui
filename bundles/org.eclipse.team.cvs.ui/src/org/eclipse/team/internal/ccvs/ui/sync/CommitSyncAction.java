@@ -31,18 +31,12 @@ public class CommitSyncAction extends ForceCommitSyncAction {
 	protected boolean isEnabled(ITeamNode node) {
 		// The commit action is enabled only for non-conflicting outgoing changes
 		CVSSyncSet set = new CVSSyncSet(new StructuredSelection(node));
-		try {
-			return set.hasCommitableChanges();
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
-			return false;
-		}
+		return set.hasOutgoingChanges();
 	}
 	
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
 		set.removeConflictingNodes();
 		set.removeIncomingNodes();
-		((CVSSyncSet)set).removeNonAddedChanges();
 	}
 	/**
 	 * @see MergeAction#getHelpContextID()

@@ -14,7 +14,9 @@ import java.util.Map;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffElement;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,6 +31,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -42,7 +45,9 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -60,10 +65,12 @@ import org.eclipse.team.internal.ccvs.ui.merge.OverrideUpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateWithForcedJoinAction;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -85,6 +92,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 
 	private Action confirmMerge;
 	private AddSyncAction addAction;
+	
+	private Action selectAdditions;
 	
 	private static class DiffOverlayIcon extends OverlayIcon {
 		private static final int HEIGHT = 16;
@@ -289,6 +298,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(ignoreAction);
 				manager.add(new Separator());
 				manager.add(confirmMerge);
+				manager.add(selectAdditions);
 				break;
 			case SyncView.SYNC_BOTH:
 				addAction.update(SyncView.SYNC_BOTH);
@@ -334,6 +344,50 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory")); //$NON-NLS-1$
 		addSelectionChangedListener(showInHistory);
+		
+		selectAdditions = new Action(Policy.bind("CVSCatchupReleaseViewer.Select_&Outgoing_Additions_1"), null) { //$NON-NLS-1$
+			public void run() {
+				List additions = new ArrayList();
+				DiffNode root = diffModel.getDiffRoot();
+				visit(root, additions);
+				setSelection(new StructuredSelection(additions));
+			}
+			private void visit(IDiffElement node, List additions) {
+				try {
+					if (node instanceof TeamFile) {
+						TeamFile file = (TeamFile)node;
+						if (file.getChangeDirection() == IRemoteSyncElement.OUTGOING) {
+							if (file.getChangeType() == IRemoteSyncElement.ADDITION) {
+								ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(file.getResource());
+								if (cvsResource.isManaged()) return;
+								additions.add(node);
+							}
+						}
+						return;
+					}
+					if (node instanceof ChangedTeamContainer) {
+						ChangedTeamContainer container = (ChangedTeamContainer)node;
+						if (container.getChangeDirection() == IRemoteSyncElement.OUTGOING) {
+							if (container.getChangeType() == IRemoteSyncElement.ADDITION) {
+								ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(container.getResource());
+								if (!((ICVSFolder)cvsResource).isCVSFolder()) {
+									additions.add(node);
+								}
+							}
+						}
+						
+					}
+					if (node instanceof DiffContainer) {
+						IDiffElement[] children = ((DiffContainer)node).getChildren();
+						for (int i = 0; i < children.length; i++) {
+							visit(children[i], additions);
+						}
+					}
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e.getStatus());
+				}
+			}
+		};
 		
 		// confirm merge
 		confirmMerge = new Action(Policy.bind("CVSCatchupReleaseViewer.confirmMerge"), null) { //$NON-NLS-1$
@@ -391,13 +445,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	}
 	
 	protected void mergeRecursive(IDiffElement element, List needsMerge) {
-		if(element instanceof DiffContainer) {
+		if (element instanceof DiffContainer) {
 			DiffContainer container = (DiffContainer)element;
 			IDiffElement[] children = container.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				mergeRecursive(children[i], needsMerge);
 			}
-		} else if(element instanceof TeamFile) {
+		} else if (element instanceof TeamFile) {
 			TeamFile file = (TeamFile)element;
 			needsMerge.add(file);			
 		}

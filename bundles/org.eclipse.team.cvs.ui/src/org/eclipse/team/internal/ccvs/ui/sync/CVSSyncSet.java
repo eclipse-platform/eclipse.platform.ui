@@ -5,7 +5,9 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -31,30 +33,32 @@ public class CVSSyncSet extends SyncSet {
 		super(nodeSelection);
 	}
 	
+	public ITeamNode[] getNonAddedNodes() throws CVSException {
+		List result = new ArrayList();
+		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
+			ITeamNode node = (ITeamNode)it.next();
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
+			if (cvsResource.isFolder()) {
+				if (!((ICVSFolder)cvsResource).isCVSFolder()) {
+					result.add(node);
+				}
+			} else if (!cvsResource.isManaged()) {
+				result.add(node);
+			}
+		}
+		return (ITeamNode[])result.toArray(new ITeamNode[result.size()]);
+	}
+	
 	public boolean hasNonAddedChanges() throws CVSException {
 		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
 			ITeamNode node = (ITeamNode)it.next();
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
-			if(cvsResource.isFolder()) {
-				if(! ((ICVSFolder)cvsResource).isCVSFolder()) {
+			if (cvsResource.isFolder()) {
+				if (!((ICVSFolder)cvsResource).isCVSFolder()) {
 					return true;
 				}
-			} else if(! cvsResource.isManaged()) {
+			} else if (!cvsResource.isManaged()) {
 				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean hasCommitableChanges() throws CVSException {
-		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
-			ITeamNode node = (ITeamNode)it.next();
-			// outgoing file that is added is a commit candidate
-			if (node.getChangeDirection() == IRemoteSyncElement.OUTGOING) {
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
-				if(!cvsResource.isFolder() && cvsResource.isManaged()) {
-					return true;
-				}
 			}
 		}
 		return false;
