@@ -671,23 +671,21 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#getInitialWindowPerspective
+	 * @see org.eclipse.ui.application.WorkbenchAdviser
 	 */
-	public IPerspectiveDescriptor getInitialWindowPerspective(IWorkbenchWindowConfigurer configurer) {
+	public String getInitialWindowPerspectiveId(IWorkbenchWindowConfigurer configurer) {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
 		
 		String perspectiveId = null;
 		if (index >=0 && welcomePerspectiveInfos != null && index < welcomePerspectiveInfos.size()) {
 			perspectiveId = ((AboutInfo) welcomePerspectiveInfos.get(index)).getWelcomePerspectiveId();
 		}
-
 		if (perspectiveId == null) {
 			perspectiveId = IDE.RESOURCE_PERSPECTIVE_ID;
 		}
-		
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		return reg.findPerspectiveWithId(perspectiveId);
+		return perspectiveId;
 	}
+
 
 	/*
 	 * Open the welcome editor for the primary feature or for a new installed features
