@@ -61,10 +61,6 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void update(IAction action, ISelection selection) {
-		if (isRunInBackground() && fgBackgroundActionManager.isJobRunning()) {
-			// Don't update enablement of background delegates while a job is running.
-			return;
-		}
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		for (int i= 0; i< launches.length; i++) {
