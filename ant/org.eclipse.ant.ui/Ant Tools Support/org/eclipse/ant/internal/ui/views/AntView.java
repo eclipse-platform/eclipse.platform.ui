@@ -291,7 +291,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		contentProvider = new AntViewContentProvider();
 		projectViewer.setContentProvider(contentProvider);
+		
 		filterInternalTargetsAction.setChecked(filterInternalTargets);
+		setFilterInternalTargets(filterInternalTargets);
+		
 		projectViewer.setLabelProvider(new AntModelLabelProvider());
 		if (fgTempMemento != null) {
 			restoreViewerInput(fgTempMemento);
