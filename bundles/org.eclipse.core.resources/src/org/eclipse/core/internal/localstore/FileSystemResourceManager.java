@@ -177,6 +177,43 @@ public boolean isDescriptionSynchronized(IProject target) {
 		return false;
 	return projectInfo.getLocalSyncInfo() == CoreFileSystemLibrary.getLastModified(descriptionFile.getLocation().toOSString());
 }
+/**
+ * Returns true if the given resource is synchronized with the filesystem
+ * to the given depth.  Returns false otherwise.
+ * @see IResource.isSynchronized
+ */
+public boolean isSynchronized(IResource resource, int depth) {
+	switch (resource.getType()) {
+		case IResource.ROOT:
+			if (depth == IResource.DEPTH_ZERO)
+				return true;
+			//check sync on child projects.
+			depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
+			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				if (!isSynchronized(projects[i], depth))
+					return false;
+			}
+			return true;
+		case IResource.PROJECT:
+			if (!resource.isAccessible())
+				return true;
+				//fall through
+		default:
+			IsSynchronizedVisitor visitor = new IsSynchronizedVisitor(Policy.monitorFor(null));
+			UnifiedTree tree = new UnifiedTree(resource);
+			try {
+				tree.accept(visitor, depth);
+			} catch (CoreException e) {
+				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+				return false;
+			} catch (IsSynchronizedVisitor.ResourceChangedException e) {
+				//visitor throws an exception if out of sync
+				return false;
+			}
+			return true;
+	}
+}
 public IPath locationFor(IResource target) {
 	switch (target.getType()) {
 		case IResource.ROOT :

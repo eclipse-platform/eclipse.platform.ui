@@ -780,6 +780,12 @@ public boolean isReadOnly() {
 		return false;
 	return CoreFileSystemLibrary.isReadOnly(location.toOSString());
 }
+/**
+ * @see IResource#isSynchronized(int)
+ */
+public boolean isSynchronized(int depth) {
+	return getLocalManager().isSynchronized(this, depth);
+}
 protected IPath makePathAbsolute(IPath target) {
 	if (target.isAbsolute())
 		return target;
@@ -1175,5 +1181,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 		}
 	}
 }
+
+
 
 }

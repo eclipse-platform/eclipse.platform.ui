@@ -63,8 +63,8 @@ import java.io.InputStream;
 public interface IResource extends IAdaptable {
 
 	/*====================================================================
-	 * Constants defining resource types:  There are three possible resource types
-	 * and their type constants are in the integer range 1 to 4 as defined below.
+	 * Constants defining resource types:  There are four possible resource types
+	 * and their type constants are in the integer range 1 to 8 as defined below.
 	 *====================================================================*/
 	 
 	/** 
@@ -1147,6 +1147,42 @@ public boolean isPhantom();
  *		<code>false</code> otherwise
  */
 public boolean isReadOnly();
+/**
+ * Returns whether this resource and its descendants to the given depth 
+ * are considered to be in sync with the local file system.  
+ * <p>
+ * A resource is considered to be in sync if all of the following 
+ * conditions are true:
+ * <ul>
+ * <li>The resource exists in both the workspace and the filesystem.</li>
+ * <li>The timestamp in the filesystem has not changed since the 
+ * last synchronization.</li>
+ * <li>The resource in the workspace is of the same type as the corresponding
+ * file in the filesystem (they are either both files or both folders).</li>
+ * </ul>
+ *  A resource is also considered to be in sync if it is missing from both
+ * the workspace and the filesystem.  In all other cases the resource is
+ * considered to be out of sync.
+ * </p>
+ * <p>
+ * This operation interrogates files and folders in the local file system;
+ * depending on the speed of the local file system and the requested depth,
+ * this operation may be time-consuming.
+ * </p>
+ * 
+ * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code>,
+ *   <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>)
+ * @return <code>true</code> if this resource and its descendants to the 
+ *    specified depth are synchronized, and <code>false</code> in all other
+ *    cases
+ * @see IResource#DEPTH_ZERO
+ * @see IResource#DEPTH_ONE
+ * @see IResource#DEPTH_INFINITE
+ * @see #refreshLocal
+ * @since 2.0
+ */
+public boolean isSynchronized(int depth);
+
 
 /**
  * Renames or relocates this project so that it is the project specified by the given project 
