@@ -2,3 +2,4 @@
 
 # Turn on debugging for the plugin.
 org.eclipse.team.core/debug=false# Shows stream debugging informationorg.eclipse.team.core/streams=false
+org.eclipse.team.core/refreshjob=false
