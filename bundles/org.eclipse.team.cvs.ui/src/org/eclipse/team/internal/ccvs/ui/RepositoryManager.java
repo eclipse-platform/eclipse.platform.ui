@@ -485,7 +485,7 @@ public class RepositoryManager {
 			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.update(providerResources, IResource.DEPTH_ZERO, subMonitor);
+			provider.update(providerResources, IResource.DEPTH_ZERO, null, false, subMonitor);
 		}		
 	}
 	/**
@@ -561,7 +561,7 @@ public class RepositoryManager {
 			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			provider.get(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+			provider.update(providerResources, IResource.DEPTH_INFINITE, null, true, subMonitor);
 		}
 	}
 

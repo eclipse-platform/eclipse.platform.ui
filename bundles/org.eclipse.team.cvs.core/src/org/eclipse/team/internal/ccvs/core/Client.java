@@ -53,13 +53,19 @@ public class Client {
 	public static final String WRAPPER_OPTION = "-W";
 	public static final String KB_OPTION = "-kb";
 	public static final String KO_OPTION = "-ko";
-	public static final String PRUNE_OPTION = "-P";
-	public static final String TAG_OPTION = "-r";
 	public static final String BRANCH_OPTION = "-b";
-	public static final String DEEP_OPTION = "-d";
 	public static final String IGNORE_LOCAL_OPTION = "-d";
 	public static final String LOCAL_OPTION = "-l";
 	public static final String MESSAGE_OPTION = "-m";
+	
+	// Update local options
+	public static final String PRUNE_OPTION = "-P";
+	public static final String CLEAR_STICKY = "-A";
+	public static final String IGNORE_LOCAL_CHANGES = "-C";
+	public static final String TAG_OPTION = "-r";
+	public static final String DATE_TAG_OPTION = "-D";
+	public static final String RETRIEVE_ABSENT_DIRECTORIES = "-d";
+	
 	
 	public static final String[] EMPTY_ARGS_LIST = new String[0];
 

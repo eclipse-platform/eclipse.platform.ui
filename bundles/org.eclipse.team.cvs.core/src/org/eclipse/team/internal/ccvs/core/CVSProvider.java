@@ -141,17 +141,14 @@ public class CVSProvider implements ICVSProvider {
 				localOptions.add(module);
 				module = sourceModule;
 			}
+			// Prune empty directories if pruning enabled
+			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
+				localOptions.add(Client.PRUNE_OPTION);
 			// Add the options related to the CVSTag
-			if ((tag == null) || (tag.getType() == tag.HEAD)) {
-				// Prune empty directories (since not implied as with -D or -r)
-				if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-					localOptions.add(Client.PRUNE_OPTION);
-			} else {
-				if (tag.getType() == CVSTag.DATE) {
-					localOptions.add("-D");
-					localOptions.add(tag.getName());
-				} else {
-					localOptions.add(Client.TAG_OPTION );
+			if (tag != null) {
+				String option = tag.getUpdateOption();
+				if (option != null) {
+					localOptions.add(option);
 					localOptions.add(tag.getName());
 				}
 			}

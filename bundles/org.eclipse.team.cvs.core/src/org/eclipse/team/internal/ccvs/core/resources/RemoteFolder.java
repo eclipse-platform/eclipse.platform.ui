@@ -249,10 +249,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add("-d");
-		if ((tag != null) && (tag.getType() != CVSTag.HEAD)) {
-			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag.getName());
+		localOptions.add(Client.RETRIEVE_ABSENT_DIRECTORIES);
+		if (tag != null) {
+			String option = tag.getUpdateOption();
+			if (option != null) {
+				localOptions.add(option);
+				localOptions.add(tag.getName());
+			}
 		}
 		
 		// Retrieve the children and any file revision numbers in a single connection

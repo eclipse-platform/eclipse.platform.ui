@@ -74,8 +74,8 @@ class Checkout extends Command {
 			return;
 		// If we are pruning (-P) or getting a sticky copy (-D or -r), then prune empty directories
 		if (Util.isOption(getLocalOptions(), Client.PRUNE_OPTION)
-				|| Util.isOption(getLocalOptions(), "-D")
-				|| Util.isOption(getLocalOptions(), "-r")) {
+				|| Util.isOption(getLocalOptions(), Client.DATE_TAG_OPTION)
+				|| Util.isOption(getLocalOptions(), Client.TAG_OPTION)) {
 			// Get the name of the resulting directory
 			String dir = Util.getOption(getLocalOptions(), "-d", false);
 			ICVSResource[] resources;

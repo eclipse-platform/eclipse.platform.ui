@@ -57,11 +57,16 @@ class Update extends Command {
 	}
 	
 	/**
-	 * On sucessful finish, prune empty directories if 
-	 * the -P option was specified.
+	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
 	protected void finished(boolean success) throws CVSException {
-		if (success && Util.isOption(getLocalOptions(), Client.PRUNE_OPTION)) {
+		// If we didn't succeed, don't do any post processing
+		if (!success)
+			return;
+		// If we are pruning (-P) or getting a sticky copy using -D, then prune empty directories
+		if (Util.isOption(getLocalOptions(), Client.PRUNE_OPTION) 
+			|| Util.isOption(getLocalOptions(), Client.DATE_TAG_OPTION)) {
+				
 			// Get the folders we want to work on
 			ICVSResource[] mWorkResources = getResourceArguments();
 			// Delete empty directories
@@ -69,6 +74,7 @@ class Update extends Command {
 			for (int i=0; i<mWorkResources.length; i++) {
 				mWorkResources[i].accept(visitor);
 			}
+			
 		}	
 	}
 }

@@ -523,27 +523,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 			
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);
-	
-		// Build the local options
-		List localOptions = new ArrayList();
-		localOptions.add("-C"); // Ignore any local changes
-		if (depth == IResource.DEPTH_INFINITE)
-			// if depth = infinite, look for new directories
-			localOptions.add(Client.DEEP_OPTION);
-		else
-			// If depth = zero or 1, use -l
-			localOptions.add(Client.LOCAL_OPTION);
-			
-		Client.execute(
-			Client.UPDATE,
-			getDefaultGlobalOptions(),
-			(String[])localOptions.toArray(new String[localOptions.size()]),
-			arguments,
-			managedProject,
-			progress,
-			getPrintStream());
+		// XXX Need to correct any outgoing additions or deletions so the remote contents will be retrieved properly
+		
+		// Perform an update, ignoring any local file modifications
+		update(resources, depth, null, true, progress);
 	}
 	
 	/*
@@ -875,8 +858,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/** 
 	 * Tag the resources in the CVS repository with the given tag.
 	 */
-	public void tag(IResource[] resources, int depth, String tag, boolean isBranch, IProgressMonitor progress) throws TeamException {
-			
+	public void tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		
+		// XXX These should generate CVSExceptions
+		Assert.isNotNull(tag);
+		Assert.isTrue(tag.getType() == CVSTag.VERSION || tag.getType() == CVSTag.BRANCH);
+		
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, depth, progress);
 		
@@ -885,12 +872,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// If the depth is not infinite, we want the -l option
 		if (depth != IResource.DEPTH_INFINITE)
 			localOptions.add(Client.LOCAL_OPTION);
-		if (isBranch)
+		if (tag.getType() == CVSTag.BRANCH)
 			localOptions.add(Client.BRANCH_OPTION);
 		
 		// The tag name is supposed to be the first argument
 		ArrayList args = new ArrayList();
-		args.add(tag);
+		args.add(tag.getName());
 		args.addAll(Arrays.asList(arguments));
 		arguments = (String[])args.toArray(new String[args.size()]);
 		
@@ -913,27 +900,43 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/**
-	 * Generally usefull update
+	 * Generally usefull update.
+	 * 
+	 * For the depth, only IResource.DEPTH_ONE and IResource.DEPTH_INFINITE are meaningfull for folders.
+	 * 
+	 * The tag parameter determines any stickyness after the update is run. If tag is null, any tagging on the
+	 * resources being updated remain the same. If the tag is a branch, version or date tag, then the resources
+	 * will be appropriatly tagged. If the tag is HEAD, then there will be no tag on the resources (same as -A
+	 * clear sticky option).
+	 * 
+	 * The ignoreLocalChanges parameter indicates whether -C should be used. This option only ignores local file 
+	 * modifications. It does not ignore local uncommitted sync changes (such as additions and removals).
 	 */
-	public void update(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	public void update(IResource[] resources, int depth, CVSTag tag, boolean ignoreLocalChanges, IProgressMonitor progress) throws TeamException {
 		// Build the local options
 		List localOptions = new ArrayList();
-		if (depth == IResource.DEPTH_INFINITE) {
-			// if depth = infinite, look for new directories
-			localOptions.add(Client.DEEP_OPTION);
-			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories())
-				localOptions.add(Client.PRUNE_OPTION);
+		if (ignoreLocalChanges) {
+			localOptions.add(Client.IGNORE_LOCAL_CHANGES);
 		}
-		else
-			// If depth = zero or 1, use -l
+		// Use the appropriate tag options
+		if (tag != null) {
+			if (tag.getType() == CVSTag.HEAD) {
+				localOptions.add(Client.CLEAR_STICKY);
+			} else {
+				localOptions.add(tag.getUpdateOption());
+				localOptions.add(tag.getName());
+			}
+		}
+		// Always look for absent directories
+		localOptions.add(Client.RETRIEVE_ABSENT_DIRECTORIES);
+		// Prune empty directories if pruning is enabled
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+			localOptions.add(Client.PRUNE_OPTION);
+		}
+		// If depth = zero or 1, use -l
+		if (depth != IResource.DEPTH_INFINITE) {
 			localOptions.add(Client.LOCAL_OPTION);
-		update(resources, depth, (String[])localOptions.toArray(new String[localOptions.size()]), progress);
-		
-	}
-	/*
-	 * CVS specific update
-	 */
-	private void update(IResource[] resources, int depth, String[] localOptions, IProgressMonitor progress) throws TeamException {
+		}
 			
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, depth, progress);
@@ -941,7 +944,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		Client.execute(
 			Client.UPDATE,
 			getDefaultGlobalOptions(),
-			localOptions,
+			(String[])localOptions.toArray(new String[localOptions.size()]),
 			arguments,
 			managedProject,
 			progress,

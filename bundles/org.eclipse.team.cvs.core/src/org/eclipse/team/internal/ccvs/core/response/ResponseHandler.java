@@ -94,7 +94,9 @@ public abstract class ResponseHandler implements IResponseHandler {
 		boolean isStatic = setStatic ? staticFolder : false;
 		
 		if (setTag) {
-			if(tag!=null) {
+			if(tag==null) {
+				newTag = null;
+			} else {
 				newTag = new CVSEntryLineTag(tag);
 			}
 		}		
