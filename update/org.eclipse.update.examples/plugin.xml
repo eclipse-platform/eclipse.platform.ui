@@ -4,6 +4,7 @@
    id="org.eclipse.update.examples"
    name="Update Example Plugin"
    version="1.0"
+   provider-name="International Business Machines Corp."
    class="org.eclipse.update.examples.ExamplesPlugin">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
