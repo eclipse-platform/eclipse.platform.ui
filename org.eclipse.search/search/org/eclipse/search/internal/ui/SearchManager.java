@@ -120,6 +120,7 @@ public class SearchManager implements IResourceChangeListener {
 	void setCurrentSearch(final Search search) {
 		if (fCurrentSearch == search)
 			return;
+			
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
@@ -143,6 +144,9 @@ public class SearchManager implements IResourceChangeListener {
 				// enable auto-building again
 				SearchPlugin.setAutoBuilding(true);				
 		}
+		
+		getPreviousSearches().remove(search);
+		getPreviousSearches().addFirst(search);
 	}
 
 	void internalSetCurrentSearch(final Search search, IProgressMonitor monitor) {
