@@ -52,6 +52,8 @@ public class AboutPluginsDialog extends Dialog {
 	};
 
 	private IPluginDescriptor[] info;
+
+	private AboutInfo aboutInfo;
 	private ProductInfo productInfo;
 	
 	private int lastColumnChosen = 0;	// initially sort by provider
@@ -65,6 +67,7 @@ public class AboutPluginsDialog extends Dialog {
 		super(parentShell);
 		info = Platform.getPluginRegistry().getPluginDescriptors();
 		sortByProvider();
+		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
 		productInfo = ((Workbench) PlatformUI.getWorkbench()).getProductInfo();
 	}
 
@@ -73,10 +76,15 @@ public class AboutPluginsDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		String title = aboutInfo.getAppName();
+		if (title ==  null) {
+			// backward compatibility
+			title = productInfo.getName();
+		}
 		newShell.setText(
 			WorkbenchMessages.format(
 				"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$
-				new Object[] { productInfo.getName()}));
+				new Object[] {title}));
 		WorkbenchHelp.setHelp(
 			newShell,
 			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
@@ -166,7 +174,7 @@ public class AboutPluginsDialog extends Dialog {
 		/* fill each row of the table with plugin registry info */
 		for (int i = 0; i < info.length; i++) {
 			String provider = info[i].getProviderName();
-			String pluginName = info[i].getUniqueIdentifier();
+			String pluginName = info[i].getLabel();
 			String version = info[i].getVersionIdentifier().toString();
 			String[] row = { provider, pluginName, version };
 			TableItem item = new TableItem(vendorInfo, SWT.NULL);
@@ -374,7 +382,7 @@ public class AboutPluginsDialog extends Dialog {
 		// Create new order of table items
 		for(int i = 0; i < items.length; i++) {
 			String provider = info[i].getProviderName();
-			String pluginName = info[i].getUniqueIdentifier();
+			String pluginName = info[i].getLabel();
 			String version = info[i].getVersionIdentifier().toString();
 			String [] row = { provider, pluginName, version };
 			items[i].setText(row);
@@ -416,10 +424,10 @@ public class AboutPluginsDialog extends Dialog {
 					String provider1, provider2, pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
 					provider1 = d1.getProviderName();
-					pluginId1 = d1.getUniqueIdentifier();
+					pluginId1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
 					provider2 = d2.getProviderName();
-					pluginId2 = d2.getUniqueIdentifier();
+					pluginId2 = d2.getLabel();
 					if (provider1.equals(provider2))
 						return coll.compare(pluginId1, pluginId2);
 					else
@@ -450,9 +458,9 @@ public class AboutPluginsDialog extends Dialog {
 					IPluginDescriptor d1, d2;
 					String pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
-					pluginId1 = d1.getUniqueIdentifier();
+					pluginId1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
-					pluginId2 = d2.getUniqueIdentifier();
+					pluginId2 = d2.getLabel();
 					return coll.compare(pluginId1, pluginId2);
 				}
 			});
@@ -483,10 +491,10 @@ public class AboutPluginsDialog extends Dialog {
 					String version1, version2, pluginId1, pluginId2;
 					d1 = (IPluginDescriptor) a;
 					version1 = d1.getVersionIdentifier().toString();
-					pluginId1 = d1.getUniqueIdentifier();
+					pluginId1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
 					version2 = d2.getVersionIdentifier().toString();
-					pluginId2 = d2.getUniqueIdentifier();
+					pluginId2 = d2.getLabel();
 					if (version1.equals(version2))
 						return coll.compare(pluginId1, pluginId2);
 					else

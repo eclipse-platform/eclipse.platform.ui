@@ -1017,8 +1017,15 @@ public void restoreState(IMemento memento) {
 			pageListeners.firePageOpened(result);
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
-			getShell().setText(workbench.getProductInfo().getName());
-			return;
+			String productName = workbench.getAboutInfo().getProductName();
+			if (productName == null) {
+				// backward compatibility
+				productName = workbench.getProductInfo().getName();
+			}
+			if (productName == null) {
+				productName = ""; //$NON-NLS-1$
+			}
+			getShell().setText(productName);
 		}
 	}
 		
@@ -1355,6 +1362,7 @@ public void updateActionSets() {
 			updateTitle();
 	}
 }
+
 /**
  * Updates the window title.
  */
@@ -1362,7 +1370,14 @@ public void updateTitle() {
 	if(updateDisabled)
 		return;
 		
-	String title = workbench.getProductInfo().getName();
+	String title = workbench.getAboutInfo().getProductName();
+	if (title == null) {
+		// backward compatibility
+		title = workbench.getProductInfo().getName();
+	}
+	if (title == null) {
+		title = ""; //$NON-NLS-1$
+	}
 	if (workspaceLocation != null)
 		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {title, workspaceLocation}); //$NON-NLS-1$
 	

@@ -810,8 +810,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
-		if (((Workbench) PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null)
+		if (((Workbench) PlatformUI.getWorkbench()).getAboutInfo().getWelcomePageURL() != null ||
+			// check product info for backward compatibility	
+			((Workbench) PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null) {
 			quickStartAction = new QuickStartAction(workbench);
+		}
 
 		// Actions for invisible accelerators
 		showViewMenuAction = new ShowViewMenuAction(window);

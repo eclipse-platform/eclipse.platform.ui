@@ -655,8 +655,14 @@ public void read(InputStream is) {
  * Reads the welcome file
  */
 public void readFile() {
-	ProductInfo info = ((Workbench)PlatformUI.getWorkbench()).getProductInfo();
+	AboutInfo info = ((Workbench)PlatformUI.getWorkbench()).getAboutInfo();
 	URL url = info.getWelcomePageURL();
+
+	if (url == null) {
+		// backward compatibility
+		ProductInfo prodInfo = ((Workbench)PlatformUI.getWorkbench()).getProductInfo();
+		url = prodInfo.getWelcomePageURL();
+	}
 
 	if (url == null)
 		// should not happen since we disable if none specified

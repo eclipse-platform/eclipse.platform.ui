@@ -8,6 +8,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.swt.SWT;
@@ -16,6 +17,8 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,6 +42,12 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
 
 /**
  * The workbench class represents the top of the ITP user interface.  Its primary
@@ -61,6 +70,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private boolean isClosing = false;
 	private IPluginDescriptor startingPlugin; // the plugin which caused the workbench to be instantiated
 	private String productInfoFilename;
+	private AboutInfo aboutInfo;
+	private AboutInfo[] featuresInfo;
 	private ProductInfo productInfo;
 	private PlatformInfo platformInfo;
 	private String[] commandLineArgs;
@@ -400,12 +411,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	/**
 	 * @return the product info object
+	 * 
+	 * @deprecated
 	 */
 	public ProductInfo getProductInfo() {
 		return productInfo;
 	}
 	/**
 	 * @return the platform info object
+	 * 
+	 * @deprecated
 	 */
 	public PlatformInfo getPlatformInfo() {
 		return platformInfo;
@@ -424,19 +439,40 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public IMarkerHelpRegistry getMarkerHelpRegistry() {
 		return WorkbenchPlugin.getDefault().getMarkerHelpRegistry();
 	}
-	/*
-	 * Return the current window manager being used by the workbench
+	/**
+	 * Returns the current window manager being used by the workbench
 	 */
 	protected WindowManager getWindowManager() {
 		return windowManager;
 	}
-	/*
-	 * Return the active AcceleratorConfiguration
+	
+	/**
+	 * Returns the about info.
+	 *
+	 * @return the about info
+	 */
+	public AboutInfo getAboutInfo() {
+		return aboutInfo;
+	}
+
+	/**
+	 * Returns the about info for all the non-primary configured features.
+	 *
+	 * @return the about info
+	 */
+	public AboutInfo[] getFeaturesInfo() {
+		if (featuresInfo == null)
+			readFeaturesInfo();
+		return featuresInfo;
+	}
+	
+	/**
+	 * Returns the active AcceleratorConfiguration
 	 */
 	public AcceleratorConfiguration getActiveAcceleratorConfiguration() {
 		return acceleratorConfiguration;
 	}
-	/*
+	/**
 	 * Answer the workbench state file.
 	 */
 	private File getWorkbenchStateFile() {
@@ -584,7 +620,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Initialize the product image obtained from the product info file
 	 */
 	private void initializeProductImage() {
-		ImageDescriptor descriptor = getProductInfo().getProductImageDescriptor();
+		ImageDescriptor descriptor = getAboutInfo().getWindowIcon();
+		if (descriptor == null) {
+			// backward compatibility
+			getProductInfo().getProductImageDescriptor();
+		}
 		if (descriptor == null) {
 			// if none was supplied we use a default
 			URL path = null;
@@ -711,8 +751,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private void openWelcomeDialog() {
 		// See if a welcome page is specified
-		ProductInfo info = ((Workbench) PlatformUI.getWorkbench()).getProductInfo();
+		AboutInfo info = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
 		URL url = info.getWelcomePageURL();
+		if (url == null) {
+			// backward compatibility
+			ProductInfo prodInfo = ((Workbench) PlatformUI.getWorkbench()).getProductInfo();
+			url = prodInfo.getWelcomePageURL();
+		}
 		if (url == null)
 			return;
 
@@ -772,17 +817,49 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	
 	/**
-	 * Reads the platform and product info.
-	 * This info contains the platform and product name, product images,
-	 * copyright etc.
+	 * Reads the about, platform and product info.
+	 * This info contains the info to show in the about dialog,
+	 * the platform and product name, product images, copyright etc.
 	 *
-	 * @return true if the method succeeds
+	 * @return true if the method succeeds 
 	 */
-	private boolean readPlatformAndProductInfo() {
+	private boolean readInfo() {
+		// determine the identifier of the "dominant" application 
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
+		
+		if (versionedFeatureId == null) {
+			aboutInfo = new AboutInfo(null, null); // Ok to pass null
+		} else {	
+			int index = versionedFeatureId.lastIndexOf("_"); //$NON-NLS-1$
+			if (index == -1)
+				aboutInfo = new AboutInfo(versionedFeatureId, null); 
+			else {
+				String mainPluginName = versionedFeatureId.substring(0, index);
+				PluginVersionIdentifier mainPluginVersion = null;
+				try {
+					mainPluginVersion =
+						new PluginVersionIdentifier(versionedFeatureId.substring(index + 1));
+				} catch (Exception e) {
+					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+						0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
+					WorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus);//$NON-NLS-1$
+				}
+				aboutInfo = new AboutInfo(mainPluginName, mainPluginVersion);
+			} 
+		}
+		
 		platformInfo = new PlatformInfo();
 		productInfo = new ProductInfo();
 
 		boolean success = true;
+
+		try {
+			aboutInfo.readINIFile();
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
+			success = false;
+		}
 
 		try {
 			platformInfo.readINIFile();
@@ -799,6 +876,78 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 
 		return success;
+	}
+
+	/**
+	 * Reads the about info for all the configured features.
+	 */
+	private void readFeaturesInfo() {
+		// get the list of versioned feature ids
+		ArrayList versionedFeatureIdentifiers = new ArrayList();
+		ILocalSite localSite;
+		try {
+			localSite = SiteManager.getLocalSite(); 
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Error obtaining configured features", e.getStatus()); //$NON-NLS-1$
+			featuresInfo = new AboutInfo[0];
+			return;
+		}
+		IInstallConfiguration installConfiguration = localSite.getCurrentConfiguration(); 
+		IConfiguredSite[] configuredSites = installConfiguration.getConfiguredSites(); 
+		for (int i = 0; i < configuredSites.length; i++) {
+			IFeatureReference[] featureReferences = configuredSites[i].getConfiguredFeatures();
+			for (int j = 0; j < featureReferences.length; j++) {
+				VersionedIdentifier id = null;
+				try {
+					id = featureReferences[j].getFeature().getVersionedIdentifier();
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Error obtaining feature", e.getStatus()); //$NON-NLS-1$
+				}
+				if (id != null)
+					versionedFeatureIdentifiers.add(id);
+			}	
+		}
+
+		// ensure a consistent ordering
+		Collections.sort(versionedFeatureIdentifiers, new Comparator() {
+			Collator coll = Collator.getInstance(Locale.getDefault());
+			public int compare(Object a, Object b) {
+				VersionedIdentifier v1, v2;
+				String featureId1, featureId2;
+				PluginVersionIdentifier versionId1, versionId2;
+				v1 = (VersionedIdentifier) a;
+				featureId1 = v1.getIdentifier();
+				versionId1 = v1.getVersion();
+				v2 = (VersionedIdentifier) b;
+				featureId2 = v2.getIdentifier();
+				versionId2 = v2.getVersion();
+				
+				if (featureId1.equals(featureId1)) {
+					if (versionId1.equals(versionId2)) 
+						return 0;
+					else if (versionId1.isGreaterThan(versionId2))
+						return 1;
+					else 
+						return -1;
+				} else {
+					return coll.compare(featureId1, featureId2);
+				}
+			}
+		});
+		
+		// get an AboutInfo for each id
+		VersionedIdentifier[] idArray = 
+			(VersionedIdentifier[])versionedFeatureIdentifiers.toArray(
+				new VersionedIdentifier[versionedFeatureIdentifiers.size()]);
+		featuresInfo = new AboutInfo[idArray.length];
+		for (int i = 0; i < idArray.length; i++) {
+			featuresInfo[i] = new AboutInfo(idArray[i].getIdentifier(), idArray[i].getVersion());
+			try {
+				featuresInfo[i].readINIFile();
+			} catch (CoreException e) {
+				WorkbenchPlugin.log("Error reading about info file for feature: " + idArray[i], e.getStatus()); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/**
@@ -850,10 +999,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		String[] commandLineArgs = new String[0];
 		if (arg != null && arg instanceof String[])
 			commandLineArgs = (String[]) arg;
-		if (!readPlatformAndProductInfo())
+		if (!readInfo())
 			return null;
-		if (getProductInfo().getAppName() != null)
-			Display.setAppName(getProductInfo().getAppName());
+		String appName = getAboutInfo().getAppName();
+		if (appName == null) 
+			// backward compatibility
+			appName = getProductInfo().getAppName();
+		if (appName != null)
+			Display.setAppName(appName);
 		Display display = new Display();
 		//Workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
