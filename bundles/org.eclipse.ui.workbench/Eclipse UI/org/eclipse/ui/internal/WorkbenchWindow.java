@@ -1177,9 +1177,41 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						coolBarMgr.markDirty();
 					}
 				}
+				
+				// We need to check if we have everything we need in the layout.
+				final ArrayList finalLayout = new ArrayList();
+				IContributionItem[] existingItems = coolBarMgr.getItems();
+				for (int i = 0; i < existingItems.length; i++) {
+			        IContributionItem existingItem = existingItems[i];
+			        
+			        /* This line shouldn't be necessary, but is here for
+			         * robustness.
+			         */
+			        if (existingItem == null) {
+			            continue;
+			        }
+			        
+				    boolean found = false;
+				    Iterator layoutItemItr = coolBarLayout.iterator();
+				    while (layoutItemItr.hasNext()) {
+				        IContributionItem layoutItem = (IContributionItem) layoutItemItr.next();
+				        if ((layoutItem != null) && (layoutItem.equals(existingItem))) {
+				            found = true;
+				            break;
+				        }
+				    }
+				    
+				    if (!found) {
+				        if (existingItem != null) {
+				            finalLayout.add(existingItem);
+				        }
+				    }
+				}
+				
 				// Set the cool bar layout to the given layout.
-				coolBarMgr.setLayout(coolBarLayout);
-			}else {
+				finalLayout.addAll(coolBarLayout);
+				coolBarMgr.setLayout(finalLayout);
+			} else {
 				// For older workbenchs
 				coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
 				if (coolBarMem != null) {
