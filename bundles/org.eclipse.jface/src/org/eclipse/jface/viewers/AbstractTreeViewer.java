@@ -187,8 +187,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
         Item[] items = getChildren(widget);
         for (int i = 0; i < items.length; i++) {
-            if (items[i].getData().equals(element))
+            if (items[i].getData().equals(element)) {
+            	//refresh the element in case it has new children
+            	refresh(element);
                 return;
+            }
         }
 
         int index = indexForElement(widget, element);
