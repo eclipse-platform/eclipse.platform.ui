@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -37,7 +38,6 @@ class WorkbenchMonitorProvider {
 		/**
 		 * Return a new instance of the receiver.
 		 * 
-		 * 
 		 * @param name
 		 */
 		public RefreshJob() {
@@ -62,7 +62,7 @@ class WorkbenchMonitorProvider {
 		/**
 		 * Set the message for the receiver. If it is a new message return a
 		 * boolean.
-	
+		 * 
 		 * @param newMessage
 		 * @return boolean. true if an update is required
 		 */
@@ -85,14 +85,11 @@ class WorkbenchMonitorProvider {
 	 * Get the progress monitor for a job. If it is a UIJob get the main
 	 * monitor from the status line. Otherwise get a background monitor.
 	 * 
-	 * 
 	 * @return IProgressMonitor
 	 */
 	IProgressMonitor getMonitor(Job job) {
 		if (job instanceof UIJob) {
-			IStatusLineManager manager = getStatusLineManager();
-			if (manager != null)
-				return manager.getProgressMonitor();
+			return getUIProgressMonitor();
 		}
 
 		return getBackgroundProgressMonitor();
@@ -102,12 +99,10 @@ class WorkbenchMonitorProvider {
 	 * Return the status line manager if there is one. Return null if one
 	 * cannot be found or it is not a IStatusLineWithProgressManager.
 	 * 
-	 * 
-	 * 
-	 * 
 	 * @return IStatusLineWithProgressManager
 	 */
 	private IStatusLineWithProgressManager getStatusLineManager() {
+
 		IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 		if (window != null && window instanceof WorkbenchWindow) {
 			IStatusLineManager manager = ((WorkbenchWindow) window).getStatusLineManager();
@@ -120,7 +115,7 @@ class WorkbenchMonitorProvider {
 	/**
 	 * Get a IProgressMonitor for the background jobs.
 	 * 
-	 * @return
+	 * @return IProgressMonitor
 	 */
 	private IProgressMonitor getBackgroundProgressMonitor() {
 		return new IProgressMonitor() {
@@ -203,13 +198,12 @@ class WorkbenchMonitorProvider {
 			 * Update the message for the receiver.
 			 */
 			private void updateMessage() {
-				if(refreshJob.setMessage(getDisplayString()))
+				if (refreshJob.setMessage(getDisplayString()))
 					refreshJob.schedule(100);
 			}
 
 			/**
 			 * Get the display string for the task.
-			 * 
 			 * @return String
 			 */
 			String getDisplayString() {
@@ -240,5 +234,109 @@ class WorkbenchMonitorProvider {
 
 			}
 		};
+	}
+
+	/**
+	 * Get a progress monitor for use with UIThreads. This monitor will use the status
+	 * line directly if possible.
+	 * @return IProgressMonitor
+	 */
+	private IProgressMonitor getUIProgressMonitor() {
+		return new IProgressMonitor() {
+
+			IProgressMonitor internalMonitor;
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+			 * int)
+			 */
+			public void beginTask(String name, int totalWork) {
+				getInternalMonitor().beginTask(name, totalWork);
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done()
+			 */
+			public void done() {
+				getInternalMonitor().done();
+
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+			 */
+			public void internalWorked(double work) {
+				getInternalMonitor().internalWorked(work);
+
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+			 */
+			public boolean isCanceled() {
+				return getInternalMonitor().isCanceled();
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+			 */
+			public void setCanceled(boolean value) {
+				getInternalMonitor().setCanceled(value);
+
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+			 */
+			public void setTaskName(String name) {
+				getInternalMonitor().setTaskName(name);
+
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+			 */
+			public void subTask(String name) {
+				getInternalMonitor().subTask(name);
+
+			}
+
+			/*
+			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+			 */
+			public void worked(int work) {
+				getInternalMonitor().worked(work);
+
+			}
+
+			/**
+			 * Get the monitor that is being wrapped. This is called lazily as
+			 * we will not be able to get the monitor for the workbench outside
+			 * of the UI Thread and so we will have to wait until the monitor
+			 * is accessed.
+			 * 
+			 * Return a NullProgressMonitor if the one from the workbench
+			 * cannot be found.
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * @return IProgressMonitor
+			 */
+			private IProgressMonitor getInternalMonitor() {
+				if (internalMonitor == null) {
+					IStatusLineWithProgressManager manager = getStatusLineManager();
+					if (manager == null)
+						internalMonitor = new NullProgressMonitor();
+					else
+						internalMonitor = manager.getProgressMonitor();
+				}
+				return internalMonitor;
+			}
+		};
+
 	}
 }
