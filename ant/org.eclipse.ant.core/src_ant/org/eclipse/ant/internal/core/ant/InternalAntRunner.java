@@ -726,7 +726,7 @@ public class InternalAntRunner {
 		return buildLogger;
 	}
 
-	/**
+	/*
 	 * We only have to do this because Project.fireBuildStarted is protected. If it becomes
 	 * public we should remove this method and call the appropriate one.
 	 */
@@ -738,7 +738,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	/**
+	/*
 	 * We only have to do this because Project.fireBuildFinished is protected. If it becomes
 	 * public we should remove this method and call the appropriate one.
 	 */
@@ -843,6 +843,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the message output level. Use -1 for none.
+	 * @param level The message output level
 	 */
 	public void setMessageOutputLevel(int level) {
 		messageOutputLevel = level;
@@ -853,6 +854,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the extra user arguments
+	 * @param args The extra user arguments
 	 */
 	public void setArguments(String[] args) {
 		extraArguments = args;
@@ -860,6 +862,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the execution targets.
+	 * @param executionTargets The targets to execute for the build
 	 */
 	public void setExecutionTargets(String[] executionTargets) {
 		targets = new Vector(executionTargets.length);
@@ -868,7 +871,7 @@ public class InternalAntRunner {
 		}
 	}
 	
-	/**
+	/*
 	 * Returns a String representation of the Ant version number as specified
 	 * in the version.txt file.
 	 */
@@ -890,7 +893,7 @@ public class InternalAntRunner {
 		return antVersionNumber;
 	}
 	
-	/**
+	/*
 	 * Returns whether the given version is compatible with the
 	 * current Ant version. A version is compatible if it is less
 	 * than or equal to the current version. 
@@ -943,7 +946,7 @@ public class InternalAntRunner {
 		return true;
 	}
 	
-	/**
+	/*
 	 * Looks for interesting command line arguments. 
 	 * Returns whether it is OK to run the script.
 	 */
@@ -1046,7 +1049,7 @@ public class InternalAntRunner {
 		return true;
 	}
 	
-	/**
+	/*
 	 * Checks for unrecognized arguments on the command line.
 	 * Since there is no syntactic way to distingush between
 	 * ant -foo target1 target2
@@ -1081,7 +1084,7 @@ public class InternalAntRunner {
 	}
 	
 
-	/**
+	/*
 	 * Checks for targets specified at the command line.	 */
 	private void processTargets(List commands) {
 		if (targets == null) {
@@ -1092,7 +1095,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	/**
+	/*
 	 * Creates the log file with the name specified by the user.
 	 * If the fileName is not absolute, the file will be created in the
 	 * working directory if specified or in the same directory as the location
@@ -1132,10 +1135,10 @@ public class InternalAntRunner {
 		return path.toFile();
 	}
 
-	/**
+	/*
 	 * Processes cmd line properties and adds the user properties
 	 * Any user properties that have been explicitly set are set as well.
-	 * Ensures that -D properties take precedence.	 * 	 */
+	 * Ensures that -D properties take precedence.	 */
 	private void processProperties(List commands) {
 		//MULTIPLE property files are allowed
 		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
@@ -1201,7 +1204,7 @@ public class InternalAntRunner {
 		}
 	}
 
-	/**
+	/*
 	 * Print the project description, if any
 	 */
 	private void printHelp(Project project) {
@@ -1211,7 +1214,7 @@ public class InternalAntRunner {
 		printTargets(project);
 	}
 
-	/**
+	/*
 	 * Logs a message with the client indicating the version of <b>Ant</b> that this class
 	 * fronts.
 	 */
@@ -1219,7 +1222,7 @@ public class InternalAntRunner {
 		logMessage(getCurrentProject(), Main.getAntVersion(), Project.MSG_INFO);
 	}
 
-	/**
+	/*
 	 * Logs a message with the client outlining the usage of <b>Ant</b>.
 	 */
 	private void printUsage() {
@@ -1299,7 +1302,7 @@ public class InternalAntRunner {
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
 	}
 
-	/**
+	/*
 	 * From a command line list, get the array of arguments of a given parameter.
 	 * The parameter and its argument are removed from the list.
 	 * 
@@ -1330,7 +1333,7 @@ public class InternalAntRunner {
 		return args;
 	}
 
-	/**
+	/*
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
 	private ArrayList getArrayList(String[] args) {
@@ -1349,6 +1352,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the build progress monitor.
+	 * @param monitor The progress monitor to use
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
@@ -1409,7 +1413,7 @@ public class InternalAntRunner {
         }
 	}
 	
-	/**
+	/*
      * Creates the InputHandler and adds it to the project.
      *
      * @exception BuildException if a specified InputHandler
@@ -1423,7 +1427,7 @@ public class InternalAntRunner {
 		setter.setInputHandler(project, inputHandlerClassname);
     }
 
-	/**
+	/*
 	 * Sets the Java class path in org.apache.tools.ant.types.Path
 	 */
 	private void setJavaClassPath() {
