@@ -107,7 +107,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
 	super(codePath, parent);
 	initialize();
-	if (resourcePath != null)
+	if (resourcePath != null && resourcePath.length > 0)
 		resourceLoader = new ResourceLoader(resourcePath);
 
 	if (codePath != null) {
@@ -517,6 +517,10 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
 		return false;
 	}
 
+System.out.println ("looking up: " + lib.toString());
+for (Iterator i = filterTable.keySet().iterator(); i.hasNext();)
+	System.out.println ("    " + i.next().toString());
+	
 	URLContentFilter filter = (URLContentFilter) filterTable.get(lib);
 	if (filter == null) {
 		if (DEBUG)
