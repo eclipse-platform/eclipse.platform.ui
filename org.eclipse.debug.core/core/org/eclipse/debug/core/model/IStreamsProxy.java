@@ -24,7 +24,6 @@ import java.io.IOException;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IProcess
- * @see org.eclipse.debug.core.DebugPlugin#newProcess(Process, String)
  */
 public interface IStreamsProxy {
 	/**
