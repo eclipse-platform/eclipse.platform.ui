@@ -23,6 +23,7 @@ public class ThrottlingProgressMonitor extends ProgressMonitorWrapper {
 		super(wrapped);
 		fThrottleRatio= throttleRatio;
 		fSubMilis= 0;
+		fLastCalled= 0;
 	}
 
 	public void internalWorked(double work) {
@@ -39,11 +40,14 @@ public class ThrottlingProgressMonitor extends ProgressMonitorWrapper {
 				}
 			}
 			fLastCalled= System.currentTimeMillis();
-			try {
-				Thread.sleep(sleepTime);
-			} catch (InterruptedException e) {
-				// ignore
-				e.printStackTrace();
+			if (sleepTime > 0) {
+				try {
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+					// ignore
+				}
+			} else {
+				Thread.yield();
 			}
 		} else {
 			fLastCalled= System.currentTimeMillis();
