@@ -81,6 +81,12 @@ public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 	}
 
 	/*
+	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performRevert()
+	 */
+	public void performRevert() {
+	}
+
+	/*
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#dispose()
 	 */
 	public void dispose() {

@@ -78,6 +78,13 @@ public interface ISpellingPreferenceBlock {
 	void performDefaults();
 
 	/**
+	 * Called when the user decided to dismiss all changes. Implementation
+	 * should reset any working copy changes to their previous values and
+	 * adjust the controls accordingly.
+	 */
+	void performRevert();
+
+	/**
 	 * Called when the preference page is being disposed. Implementations should
 	 * free any resources they are holding on to.
 	 */

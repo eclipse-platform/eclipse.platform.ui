@@ -119,6 +119,12 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 
 		/*
+		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performRevert()
+		 */
+		public void performRevert() {
+		}
+
+		/*
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#dispose()
 		 */
 		public void dispose() {
@@ -188,6 +194,8 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final Map fProviderControls;
 
 	private ForwardingStatusMonitor fStatusMonitor;
+
+	private ISpellingPreferenceBlock fCurrentBlock;
 	
 
 	public SpellingConfigurationBlock(OverlayPreferenceStore store, IPreferenceStatusMonitor statusMonitor) {
@@ -346,10 +354,13 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (sel.isEmpty())
 					return;
-				if (fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
-					MessageDialog.openError(viewer.getControl().getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message")); //$NON-NLS-1$ //$NON-NLS-2$
-					revertSelection();
-					return;
+				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
+					if (MessageDialog.openQuestion(viewer.getControl().getShell(), TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), TextEditorMessages.getString("SpellingConfigurationBlock.error.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+						fCurrentBlock.performRevert();
+					else {
+						revertSelection();
+						return;
+					}
 				}
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENGINE, ((SpellingEngineDescriptor) sel.getFirstElement()).getId());
 				updateListDependencies();
@@ -395,29 +406,27 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	void updateListDependencies() {
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
-		ISpellingPreferenceBlock prefs;
-		
 		if (desc == null) {
 			// safety in case there is no such descriptor
 			String message= TextEditorMessages.getString("SpellingConfigurationBlock.error.not_exist"); //$NON-NLS-1$
 			EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
-			prefs= new ErrorPreferences(message);
+			fCurrentBlock= new ErrorPreferences(message);
 		} else {
-			prefs= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
-			if (prefs == null) {
+			fCurrentBlock= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
+			if (fCurrentBlock == null) {
 				try {
-					prefs= desc.createPreferences();
-					fProviderPreferences.put(id, prefs);
+					fCurrentBlock= desc.createPreferences();
+					fProviderPreferences.put(id, fCurrentBlock);
 				} catch (CoreException e) {
 					EditorsPlugin.log(e);
-					prefs= new ErrorPreferences(e.getLocalizedMessage());
+					fCurrentBlock= new ErrorPreferences(e.getLocalizedMessage());
 				}
 			}
 		}
 		
 		Control control= (Control) fProviderControls.get(id);
 		if (control == null) {
-			control= prefs.createControl(fGroup);
+			control= fCurrentBlock.createControl(fGroup);
 			if (control == null) {
 				String message= TextEditorMessages.getString("SpellingConfigurationBlock.info.no_preferences"); //$NON-NLS-1$
 				control= new ErrorPreferences(message).createControl(fGroup);
@@ -430,7 +439,8 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fGroup.layout();
 		fGroup.getParent().layout();
 		
-		prefs.initialize(fStatusMonitor);
+		fStatusMonitor.statusChanged(new StatusInfo());
+		fCurrentBlock.initialize(fStatusMonitor);
 	}
 
 	public void initialize() {
