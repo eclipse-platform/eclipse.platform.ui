@@ -30,25 +30,17 @@ public class PreferencesService implements IPreferencesService {
 			InstanceScope.SCOPE, //
 			ConfigurationScope.SCOPE, //
 			DefaultScope.SCOPE};
-	private static Map defaultsRegistry = new HashMap();
 	private static final char EXPORT_ROOT_PREFIX = '!';
 	private static final float EXPORT_VERSION = 3;
-	private static IPreferencesService instance = null;
-
-	public static final String PT_PREFERENCES = "preferences"; //$NON-NLS-1$
-	static RootPreferences root = new RootPreferences();
-	private static Map scopeRegistry = new HashMap();
-	private static IStatus statusOK;
 	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
+
+	private static IPreferencesService instance = null;
+	private static final RootPreferences root = new RootPreferences();
+	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
+	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
 
 	private static IStatus createStatusError(String message, Exception e) {
 		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
-	}
-
-	private static IStatus createStatusOK() {
-		if (statusOK == null)
-			statusOK = new Status(IStatus.OK, Platform.PI_RUNTIME, IStatus.OK, "OK", null); //$NON-NLS-1$
-		return statusOK;
 	}
 
 	private static IStatus createStatusWarning(String message, Exception e) {
@@ -65,7 +57,7 @@ public class PreferencesService implements IPreferencesService {
 	 * See who is plugged into the extension point.
 	 */
 	private static void initializeScopes() {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, PT_PREFERENCES);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
 		if (point == null)
 			return;
 		IExtension[] extensions = point.getExtensions();
@@ -332,7 +324,7 @@ public class PreferencesService implements IPreferencesService {
 			String message = Policy.bind("preferences.exportProblems"); //$NON-NLS-1$
 			throw new CoreException(createStatusError(message, e));
 		}
-		return createStatusOK();
+		return Status.OK_STATUS;
 	}
 
 	/*
@@ -486,19 +478,6 @@ public class PreferencesService implements IPreferencesService {
 
 	public IEclipsePreferences getRootNode() {
 		return root;
-	}
-
-	/**
-	 * Return the IScope from the registry which defines the scope 
-	 * of the given preferences object. Return <code>null</code> if
-	 * there is no scope defined or if it cannot be determined.
-	 */
-	public IScope getScope(Preferences node) {
-		IPath path = new Path(node.absolutePath());
-		if (path.segmentCount() < 1)
-			return null;
-		String key = path.segment(0);
-		return (IScope) scopeRegistry.get(key);
 	}
 
 	/*
