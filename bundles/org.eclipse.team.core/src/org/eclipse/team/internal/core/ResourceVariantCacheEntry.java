@@ -92,11 +92,11 @@ public class ResourceVariantCacheEntry {
 		}
 	}
 	
-	private synchronized void endOperation() {
+	private void endOperation() {
 		lock.release();
 	}
 
-	private synchronized void beginOperation() {
+	private void beginOperation() {
 		lock.acquire();
 	}
 
