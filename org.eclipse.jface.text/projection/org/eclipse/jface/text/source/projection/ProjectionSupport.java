@@ -174,6 +174,11 @@ public class ProjectionSupport {
 	/**
 	 * Marks the given annotation type to be considered when creating summaries for
 	 * collapsed regions of the projection viewer.
+	 * <p>
+	 * A summary is an annotation that gets created out of all annotations with a
+	 * type that has been registered through this method and that are inside the
+	 * folded region.
+	 * </p>
 	 * 
 	 * @param annotationType the annotation type to consider
 	 */
@@ -190,6 +195,11 @@ public class ProjectionSupport {
 	 * collapsed regions of the projection viewer. This method has only an effect
 	 * when <code>addSummarizableAnnotationType</code> has been called before for
 	 * the give annotation type.
+	 * <p>
+	 * A summary is an annotation that gets created out of all annotations with a
+	 * type that has been registered through this method and that are inside the
+	 * folded region.
+	 * </p>
 	 * 
 	 * @param annotationType the annotation type to remove
 	 */
