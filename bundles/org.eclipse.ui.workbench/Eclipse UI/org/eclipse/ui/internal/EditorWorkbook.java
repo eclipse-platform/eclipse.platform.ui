@@ -612,7 +612,7 @@ public abstract class EditorWorkbook
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
 	 */
 	public int getType() {
-		return EDITOR | VIEW;
+		return EDITOR;
 	}
 	
 	/**
