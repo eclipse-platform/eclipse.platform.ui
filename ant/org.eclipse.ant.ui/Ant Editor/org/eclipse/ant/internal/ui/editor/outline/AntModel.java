@@ -1180,4 +1180,8 @@ public class AntModel {
 		}
 		return null;
 	}
+	
+	public void updateForInitialReconcile() {
+		fMarkerUpdater.updateForInitialReconcile();
+	}
 }
