@@ -382,50 +382,53 @@ public class AntClasspathBlock {
 	
 	private void tableSelectionChanged(IStructuredSelection selection, AntClasspathContentProvider contentProvider) {
 		
-		boolean notEmpty = !selection.isEmpty();
-		Iterator selected = selection.iterator();
-		boolean first = false;
-		boolean last = false;
+		boolean notEmpty= !selection.isEmpty();
+		boolean first= !notEmpty;
+		boolean last= !notEmpty;
 		boolean canRemove= true;
 		boolean canAdd= true;
-		while (selected.hasNext()) {
-			IClasspathEntry element = (IClasspathEntry) selected.next();
-			
-			if (element instanceof GlobalClasspathEntries) {
-				GlobalClasspathEntries global= (GlobalClasspathEntries)element;
-				canRemove= global.canBeRemoved();
-				canAdd= global.getType() != ClasspathModel.CONTRIBUTED;
-			}
-			IClasspathEntry parent= element.getParent();
-			if (parent instanceof GlobalClasspathEntries) {
-				canAdd= ((GlobalClasspathEntries)parent).getType() != ClasspathModel.CONTRIBUTED;
-				canRemove= canAdd;
-			}
-			Object[] childEntries = contentProvider.getChildren(parent);
-			List entries = Arrays.asList(childEntries);
-			int lastEntryIndex = entries.size() - 1;
-			if (!first && entries.indexOf(element) == 0) {
-				first = true;
-			}
-			if (!last && entries.indexOf(element) == lastEntryIndex) {
-				last = true;
-			}
-		}
-
-		if (canAdd) {
-			canAdd= resolveCurrentParent(selection) && notEmpty;
-		}
+        boolean canMove= true;
+        if (!resolveCurrentParent(selection)) {
+            //selection contains elements from multiple parents
+            canAdd= false;
+            canMove= false;
+            canRemove= false;
+        } else {
+            Iterator selected = selection.iterator();
+    		while (selected.hasNext()) {
+    			IClasspathEntry element = (IClasspathEntry) selected.next();
+    			
+    			if (element instanceof GlobalClasspathEntries) {
+    				GlobalClasspathEntries global= (GlobalClasspathEntries)element;
+    				canRemove= global.canBeRemoved();
+    				canAdd= global.getType() != ClasspathModel.CONTRIBUTED;
+                    canMove= false;
+    			}
+    			IClasspathEntry parent= element.getParent();
+    			if (parent instanceof GlobalClasspathEntries) {
+    				canAdd= ((GlobalClasspathEntries)parent).getType() != ClasspathModel.CONTRIBUTED;
+    				canRemove= canAdd;
+                    canMove= canAdd;
+    			}
+    			Object[] childEntries = contentProvider.getChildren(parent);
+    			List entries = Arrays.asList(childEntries);
+    			int lastEntryIndex = entries.size() - 1;
+    			if (!first && entries.indexOf(element) == 0) {
+    				first= true;
+    			}
+    			if (!last && entries.indexOf(element) == lastEntryIndex) {
+    				last= true;
+    			}
+    		}
+        }
 		
-		if (addJARButton != null) {
-			addJARButton.setEnabled(canAdd);
-		}
+		addJARButton.setEnabled(canAdd);
 		addExternalJARButton.setEnabled(canAdd);
 		addFolderButton.setEnabled(canAdd);
 		addVariableButton.setEnabled(canAdd);
 		removeButton.setEnabled(notEmpty && canRemove);
-		upButton.setEnabled((canRemove) && notEmpty && !first);
-		downButton.setEnabled((canRemove) && notEmpty && !last);
-		
+		upButton.setEnabled(canMove && !first);
+		downButton.setEnabled(canMove && !last);
 	}
 	
 	private boolean resolveCurrentParent(IStructuredSelection selection) {
