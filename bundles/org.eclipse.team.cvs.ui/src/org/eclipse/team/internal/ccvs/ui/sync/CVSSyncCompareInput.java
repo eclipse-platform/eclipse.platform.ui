@@ -7,12 +7,16 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -26,11 +30,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -149,7 +155,20 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 								if (isDirty((IFile)resource)) {
 									outgoing.add(resource);
 								}
-							}
+							} else {
+								try {
+									ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
+									if (folder.isCVSFolder()) {
+										return true;
+									} else {
+										outgoing.add(resource);
+										return false;
+									}
+								} catch (CVSException e) {
+									CVSUIPlugin.log(e.getStatus());
+									return false;
+								}
+							}	
 							return true;
 						}
 					});
@@ -159,16 +178,25 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 				CVSUIPlugin.log(e.getStatus());
 				return new IRemoteSyncElement[0];
 			}
+			
 			final TeamException[] exception = new TeamException[1];
-			final IFile[] files = (IFile[])outgoing.toArray(new IFile[outgoing.size()]);
-			final IRemoteSyncElement[] trees = new IRemoteSyncElement[files.length];
+			final Map providerMapping = getProviderMapping((IResource[])outgoing.toArray(new IResource[outgoing.size()]));
+			final IRemoteSyncElement[] trees = new IRemoteSyncElement[providerMapping.size()];
 			Session.run(null, null, true, new ICVSRunnable() {
 				public void run(IProgressMonitor monitor) throws CVSException {
-					int work = 1000 * resources.length;
+					int i = 0;
+					int work = 1000 * trees.length;
 					monitor.beginTask(null, work);
 					try {
-						for (int i = 0; i < trees.length; i++) {
-							trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(files[i], null, Policy.subMonitorFor(monitor, 1000));
+						for (Iterator iter = providerMapping.keySet().iterator(); iter.hasNext();) {
+							RepositoryProvider provider = (RepositoryProvider)iter.next();
+							List resourceList = (List)providerMapping.get(provider);
+							final TeamException[] exception = new TeamException[1];
+							trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(
+								provider.getProject(), 
+								(IResource[]) resourceList.toArray(new IResource[resourceList.size()]),
+								null /* tag */,
+								Policy.subMonitorFor(monitor, 1000));
 						}
 					} catch (TeamException e) {
 						exception[0] = e;
@@ -377,5 +405,22 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	 */
 	private static boolean isDirty(IFile file) {
 		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
+	}
+	
+	/*
+	 * Method copied from TeamAction. It should be put in a common place
+	 */
+	protected Map getProviderMapping(IResource[] resources) {
+		Map result = new HashMap();
+		for (int i = 0; i < resources.length; i++) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject());
+			List list = (List)result.get(provider);
+			if (list == null) {
+				list = new ArrayList();
+				result.put(provider, list);
+			}
+			list.add(resources[i]);
+		}
+		return result;
 	}
 }

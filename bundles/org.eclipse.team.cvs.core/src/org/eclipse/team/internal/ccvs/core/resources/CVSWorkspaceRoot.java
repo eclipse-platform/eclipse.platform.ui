@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -156,6 +158,22 @@ public class CVSWorkspaceRoot {
 			progress.done();
 			return tree;
 		}
+	}
+	
+	public static IRemoteSyncElement getRemoteSyncTree(IProject project, IResource[] resources, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(project);
+		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(project);
+		if (remote == null) {
+			return null;
+		}
+		ArrayList cvsResources = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			cvsResources.add(CVSWorkspaceRoot.getCVSResourceFor(resources[i]));
+		}
+		CVSRepositoryLocation location = (CVSRepositoryLocation)remote.getRepository();
+		ICVSRemoteResource base = RemoteFolderTreeBuilder.buildBaseTree(location, (ICVSFolder)managed, tag, progress);
+		remote = RemoteFolderTreeBuilder.buildRemoteTree(location, (ICVSFolder)managed, (ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]), tag, progress);
+		return new CVSRemoteSyncElement(true /*three way*/, project, base, remote);
 	}
 	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {

@@ -14,8 +14,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
@@ -125,4 +126,29 @@ public class Update extends Command {
 		localOptions = (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
 		return super.filterLocalOptions(session, globalOptions, localOptions);
 	}
+	
+	/**
+	 * We allow unmanaged resources as long as there parents are managed.
+	 * 
+	 * @see Command#checkResourcesManaged(ICVSResource[])
+	 */
+	protected void checkResourcesManaged(ICVSResource[] resources) throws CVSException {
+		for (int i = 0; i < resources.length; ++i) {
+			ICVSFolder folder;
+			if (resources[i].isFolder()) {
+				if (((ICVSFolder)resources[i]).isCVSFolder()) {
+					folder = (ICVSFolder)resources[i];
+				} else {
+					folder = resources[i].getParent();
+				}
+			}
+			else {
+				folder = resources[i].getParent();
+			}
+			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
+				throw new CVSException(Policy.bind("Command.argumentNotManaged", folder.getName()));//$NON-NLS-1$
+			}
+		}
+	}
+
 }

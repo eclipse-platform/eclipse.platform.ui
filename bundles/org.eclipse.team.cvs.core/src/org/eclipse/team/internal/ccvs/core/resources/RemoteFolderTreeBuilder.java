@@ -151,15 +151,25 @@ public class RemoteFolderTreeBuilder {
 	
 	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
- 		return builder.buildTree(monitor);
+ 		return builder.buildTree(new ICVSResource[] { root }, monitor);
 	}
-	
 	public static RemoteFile buildRemoteTree(CVSRepositoryLocation repository, ICVSFile file, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, file.getParent(), tag);
  		return builder.buildTree(file, monitor);
 	}
+		
+	/*
+	 * The provided resources must all be children of the same project
+	 */
+	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, ICVSFolder root, ICVSResource[] resources, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		if (resources.length == 0) {
+			resources = new ICVSResource[] { root };
+		}
+		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
+ 		return builder.buildTree(resources, monitor);
+	}
 	
-	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
+	private RemoteFolderTree buildTree(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		
 		// Make sure that the cvs commands are not quiet during this operations
 		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
@@ -167,13 +177,20 @@ public class RemoteFolderTreeBuilder {
 			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 			
 			monitor.beginTask(null, 100);
-	
+
+			// Get the arguments from the files
+			ArrayList arguments = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				ICVSResource resource = resources[i];
+				arguments.add(resource.getRelativePath(root));
+			}
+				
 			Policy.checkCanceled(monitor);
 			Session session = new Session(repository, root, false);
 			session.open(Policy.subMonitorFor(monitor, 10));
 			try {
 				Policy.checkCanceled(monitor);
-				fetchDelta(session, Session.CURRENT_LOCAL_FOLDER, Policy.subMonitorFor(monitor, 50));
+				fetchDelta(session, (String[]) arguments.toArray(new String[arguments.size()]), Policy.subMonitorFor(monitor, 50));
 				if (projectDoesNotExist) {
 					// We cannot handle the case where a project (i.e. the top-most CVS folder)
 					// has been deleted directly on the sever (i.e. deleted using rm -rf)
@@ -237,7 +254,6 @@ public class RemoteFolderTreeBuilder {
 			monitor.done();
 		}
 	}
-	
 	private RemoteFile buildTree(ICVSFile file, IProgressMonitor monitor) throws CVSException {
 		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 		try {
@@ -251,7 +267,7 @@ public class RemoteFolderTreeBuilder {
 			session.open(Policy.subMonitorFor(monitor, 10));
 			try {
 				Policy.checkCanceled(monitor);
-				fetchDelta(session, file.getName(), Policy.subMonitorFor(monitor, 50));
+				fetchDelta(session, new String[] { file.getName() }, Policy.subMonitorFor(monitor, 50));
 				if (projectDoesNotExist) {
 					return null;
 				}
@@ -501,7 +517,7 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * Returns the list of changed files
 	 */
-	private List fetchDelta(Session session, String argument, final IProgressMonitor monitor) throws CVSException {
+	private List fetchDelta(Session session, String[] arguments, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
@@ -561,7 +577,7 @@ public class RemoteFolderTreeBuilder {
 		IStatus status = Command.UPDATE.execute(session,
 			new GlobalOption[] { Command.DO_NOT_CHANGE },
 			updateLocalOptions,
-			new String[] { argument },
+			arguments,
 			new UpdateListener(listener),
 			monitor);
 		return changedFiles;
