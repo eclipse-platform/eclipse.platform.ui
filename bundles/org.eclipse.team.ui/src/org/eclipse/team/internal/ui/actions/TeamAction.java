@@ -367,6 +367,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @return IWorkbenchPage
 	 */
 	protected IWorkbenchPage getTargetPage() {
+		if (getTargetPart() == null) return TeamUIPlugin.getActivePage();
 		return getTargetPart().getSite().getPage();
 	}
 	

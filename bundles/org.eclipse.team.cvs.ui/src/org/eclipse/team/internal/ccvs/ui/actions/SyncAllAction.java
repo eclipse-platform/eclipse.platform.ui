@@ -23,6 +23,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ProjectSelectionDialog;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -32,6 +33,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Synchronize all CVS projects.
  */
 public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionDelegate {
+	
+	private IWorkbenchWindow window;
+	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
@@ -42,6 +46,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+		this.window = window;
 		this.shell = window.getShell();
 	}
 
@@ -94,6 +99,14 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	 */
 	protected IResource[] getSelectedResources() {
 		return new IResource[0];
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getTargetPage()
+	 */
+	protected IWorkbenchPage getTargetPage() {
+		if (window == null) return super.getTargetPage();
+		return window.getActivePage();
 	}
 
 }
