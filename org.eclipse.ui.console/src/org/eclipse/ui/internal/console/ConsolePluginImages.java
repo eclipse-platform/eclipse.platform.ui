@@ -60,14 +60,17 @@ public class ConsolePluginImages {
 		//local toolbars
 		declareRegistryImage(IConsoleConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_PIN, LOCALTOOL + "pin.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_LCL_LOCK, LOCALTOOL + "lock_co.gif"); //$NON-NLS-1$
 			
 		// disabled local toolbars
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_PIN, DLCL + "pin.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_DLCL_LOCK, DLCL + "lock_co.gif"); //$NON-NLS-1$
 		
 		// enabled local toolbars
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_PIN, ELCL + "pin.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalConsoleConstants.IMG_ELCL_LOCK, ELCL + "lock_co.gif"); //$NON-NLS-1$
 		
 		// Views
 		declareRegistryImage(IConsoleConstants.IMG_VIEW_CONSOLE, VIEW + "console_view.gif"); //$NON-NLS-1$				
