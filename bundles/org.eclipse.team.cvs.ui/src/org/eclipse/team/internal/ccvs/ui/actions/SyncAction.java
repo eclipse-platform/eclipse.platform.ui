@@ -11,14 +11,17 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -47,12 +50,41 @@ public class SyncAction extends WorkspaceTraversalAction {
 			WorkspaceSynchronizeParticipant participant = (WorkspaceSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(WorkspaceSynchronizeParticipant.ID, resources);
 			// If there isn't, create one and add to the manager
 			if (participant == null) {
-				participant = new WorkspaceSynchronizeParticipant(new ResourceScope(resources));
+                ISynchronizeScope scope;
+                if (includesAllCVSProjects(resources)) {
+                    scope = new WorkspaceScope();
+                } else {
+                    scope = new ResourceScope(resources);
+                }
+                participant = new WorkspaceSynchronizeParticipant(scope);
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			}
 			participant.refresh(resources, getTargetPart().getSite());
 		}
 	}
+
+    private boolean includesAllCVSProjects(IResource[] resources) {
+        // First, make sure all the selected thinsg are projects
+        for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+            if (resource.getType() != IResource.PROJECT)
+                return false;
+        }
+        IProject[] cvsProjects = getAllCVSProjects();
+        return cvsProjects.length == resources.length;
+    }
+
+    private IProject[] getAllCVSProjects() {
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        Set cvsProjects = new HashSet();
+        for (int i = 0; i < projects.length; i++) {
+            IProject project = projects[i];
+            if (RepositoryProvider.isShared(project) && RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
+                cvsProjects.add(project);
+            }
+        }
+        return (IProject[]) cvsProjects.toArray(new IProject[cvsProjects.size()]);
+    }
 
     /**
 	 * Refresh the subscriber directly and show the resulting synchronization state in a compare editor. If there
