@@ -11,6 +11,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Local .jar file content reference
@@ -107,8 +108,11 @@ public class JarContentReference extends ContentReference {
 	 * @since 2.0
 	 */
 	protected JarFile asJarFile() throws IOException {
-		if (this.jarFile == null)
+		if (this.jarFile == null){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+				UpdateManagerPlugin.getPlugin().debug("asJarFile :"+asFile());			
 			this.jarFile = new JarFile(asFile());
+		}
 		return jarFile;
 	}
 

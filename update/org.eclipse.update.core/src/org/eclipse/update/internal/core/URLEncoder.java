@@ -99,6 +99,10 @@ public final class URLEncoder {
 		return new URL(url.getProtocol(), url.getHost(), url.getPort(), encode(file, ref));
 	}
 	private static String encodeSegment(String segment) {
+		
+		// if we find a '%' in the string, consider the URL to be already encoded
+		if (segment.indexOf('%')!=-1) return segment;
+		
 		StringBuffer result = new StringBuffer(segment.length());
 
 		for (int i = 0; i < segment.length(); ++i) {

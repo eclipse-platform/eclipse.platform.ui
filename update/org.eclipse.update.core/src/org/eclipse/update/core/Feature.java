@@ -705,7 +705,7 @@ public class Feature extends FeatureModel implements IFeature {
 				}
 			}
 
-			// if not found, instanciate
+			// if not found, instanciate by mapping it based on the site.xml
 			if (!found) {
 				// in future we may ask for a factory to create the feature ref
 				FeatureReference newRef = new FeatureReference();
@@ -714,8 +714,9 @@ public class Feature extends FeatureModel implements IFeature {
 				if (parentRef instanceof FeatureReference) {
 					newRef.setType(((FeatureReference) parentRef).getType());
 				}
-				String featureURL = Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
-				newRef.setURLString(featureURL);
+				String featureID = Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
+				URL featureURL = getSite().getSiteContentProvider().getArchiveReference(featureID);
+				newRef.setURL(featureURL);
 				try {
 					newRef.resolve(getSite().getURL(), getResourceBundle(getSite().getURL()));
 					includedFeatureReferences.add(newRef);

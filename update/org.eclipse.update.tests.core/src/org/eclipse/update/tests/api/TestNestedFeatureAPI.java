@@ -133,4 +133,60 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	}
 
 
+	/**
+	 * the feature to test
+	 */
+	private IFeature getRootFeature3() throws MalformedURLException, CoreException {
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/"));
+		URL url =
+			UpdateManagerUtils.getURL(
+				site.getURL(),
+					Site.DEFAULT_INSTALLED_FEATURE_PATH
+					+ "rootfeature.jar",
+				null);
+		FeatureReference ref = new FeatureReference();
+		ref.setSite(site);
+		ref.setURL(url);
+		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+		IFeature feature = ref.getFeature();
+		return feature;
+	}
+
+	/**
+	 * the feature to test
+	 */
+	private IFeature getChildFeature3()
+		throws MalformedURLException, CoreException {
+
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/"));
+		URL url =
+			UpdateManagerUtils.getURL(
+				site.getURL(),
+					 Site.DEFAULT_INSTALLED_FEATURE_PATH
+					+ "childrenfeature.jar",
+				null);
+		FeatureReference ref = new FeatureReference();
+		ref.setSite(site);
+		ref.setURL(url);
+		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+		IFeature feature = ref.getFeature();
+		return feature;
+	}
+
+
+	/*
+	 * 
+	 */
+	public void testNested3() throws Exception {
+
+		IFeature rootFeature = getRootFeature3();
+		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
+		IFeature childFeature = getChildFeature3();
+		assertEquals(
+			"Children feature are not equal",
+			childFeature,
+			ref[0].getFeature());
+	}
+
+
 }

@@ -209,7 +209,7 @@ public class InstallConfiguration
 	 */
 	public void export(File exportFile) throws CoreException {
 		try {
-			Writer writer = new Writer(exportFile,"UTF8"); //$NON-NLS-1$
+			Writer writer = new Writer(exportFile, "UTF8"); //$NON-NLS-1$
 			writer.write(this);
 		} catch (FileNotFoundException e) {
 			throw Utilities.newCoreException(
@@ -309,25 +309,42 @@ public class InstallConfiguration
 
 			// IF primary feature URL or platform feature URL that we need to pass to runtime config
 			// is part of platform:base:, write it as platform:base: URL
-
-			// write the primary features
 			IFeatureReference[] configuredFeaturesRef =
 				configurationPolicy.getConfiguredFeatures();
 			for (int j = 0; j < configuredFeaturesRef.length; j++) {
 				IFeature feature = configuredFeaturesRef[j].getFeature();
+
+				// write the primary features				
 				if (feature.isPrimary()) {
+
 					String id = feature.getVersionedIdentifier().getIdentifier();
+
+					// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
+					IPluginEntry[] entries = feature.getPluginEntries();
+					URL url = null;
+					for (int k = 0; k < configuredFeaturesRef.length; k++) {
+						if (id.equalsIgnoreCase(entries[k].getVersionedIdentifier().getIdentifier())) {
+							url = getRuntimeConfigurationURL(entries[k], cSite);
+						}
+					}
+
 					String version = feature.getVersionedIdentifier().getVersion().toString();
 					String application = feature.getApplication();
-					URL url = feature.getURL(); // get the URL of teh plugin that corresponds to teh feature (pluginid = featureid)
 					IPlatformConfiguration.IFeatureEntry featureEntry =
 						runtimeConfiguration.createFeatureEntry(id, version, application, url);
 					runtimeConfiguration.configureFeatureEntry(featureEntry);
 				}
+
+				// write the platform features (features that contain special platform plugins)
+				IPluginEntry[] platformPlugins =
+					getPlatformPlugins(feature, runtimeConfiguration);
+				for (int k = 0; k < platformPlugins.length; k++) {
+					String id = platformPlugins[k].getVersionedIdentifier().getIdentifier();
+					URL url = getRuntimeConfigurationURL(platformPlugins[k], cSite);
+					runtimeConfiguration.setBootstrapPluginLocation(id, url);
+				}
 			}
 
-			// write the platform features (features that contain special platform plugins)
-			// FIXME
 		}
 
 		try {
@@ -366,14 +383,14 @@ public class InstallConfiguration
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
-			
+
 		//CONFIGURATION	
 		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		long time = (getCreationDate() != null) ? getCreationDate().getTime() : 0L;
 		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
-		
+
 		// site configurations
 		if (getConfigurationSitesModel() != null) {
 			ConfiguredSiteModel[] sites = getConfigurationSitesModel();
@@ -382,7 +399,7 @@ public class InstallConfiguration
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
-		
+
 		// activities
 		if (getActivityModel() != null) {
 			ConfigurationActivityModel[] activities = getActivityModel();
@@ -391,7 +408,7 @@ public class InstallConfiguration
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
-		
+
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
 		//$NON-NLS-1$ //$NON-NLS-2$
@@ -491,9 +508,81 @@ public class InstallConfiguration
 			} catch (Exception e) {
 			};
 		}
-
 		return true;
+	}
 
+	/*
+	 * returns the list of platform plugins of the feature or an empty list 
+	 * if the feature doesn't contain any platform plugins
+	 */
+	private IPluginEntry[] getPlatformPlugins(
+		IFeature feature,
+		IPlatformConfiguration runtimeConfiguration) {
+		Map featurePlatformPlugins = new HashMap();
+		String[] platformPluginID =
+			runtimeConfiguration.getBootstrapPluginIdentifiers();
+		IPluginEntry[] featurePlugins = feature.getPluginEntries();
+
+		for (int i = 0; i < platformPluginID.length; i++) {
+			for (int j = 0; j < featurePlugins.length; j++) {
+				if (platformPluginID[i]
+					.equals(featurePlugins[j].getVersionedIdentifier().getIdentifier())) {
+					featurePlatformPlugins.put(platformPluginID[i], featurePlugins[j]);
+				}
+			}
+		}
+
+		Collection values = featurePlatformPlugins.values();
+		if (values == null || values.size() == 0)
+			return new IPluginEntry[0];
+
+		IPluginEntry[] result = new IPluginEntry[values.size()];
+		Iterator iter = values.iterator();
+		int index = 0;
+		while (iter.hasNext()) {
+			result[index] = ((IPluginEntry) iter.next());
+			index++;
+		}
+		return result;
+	}
+
+	/*
+	 * returns the URL of the pluginEntry on the site
+	 * resolve the URL to use platform: URL if needed
+	 */
+	private URL getRuntimeConfigurationURL(
+		IPluginEntry entry,
+		ConfiguredSite cSite)
+		throws CoreException {
+
+		String rootString = cSite.getPlatformURLString();
+		String pluginPathID = getPathID(entry);
+		try {
+			ISiteContentProvider siteContentProvider =
+				cSite.getSite().getSiteContentProvider();
+			URL fullURL = siteContentProvider.getArchiveReference(pluginPathID);
+			URL rootURL = Platform.resolve(new URL(rootString));
+			String relativeString = UpdateManagerUtils.getURLAsString(rootURL, fullURL);
+			return new URL(new URL(rootString), relativeString);
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"InstallConfiguration.UnableToCreateURL",
+					rootString),
+				e);
+			//$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Returns the path identifier for a plugin entry.
+	 * <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code> 
+	 * @return the path identifier
+	 */
+	private String getPathID(IPluginEntry entry) {
+		return Site.DEFAULT_PLUGIN_PATH
+			+ entry.getVersionedIdentifier().toString()
+			+ FeatureContentProvider.JAR_EXTENSION;
 	}
 
 }

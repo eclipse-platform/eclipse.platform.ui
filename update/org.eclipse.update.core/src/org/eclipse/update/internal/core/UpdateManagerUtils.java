@@ -51,7 +51,9 @@ public class UpdateManagerUtils {
 	}
 
 	/**
-	 * return the url a relative String if the url contains the base url
+	 * return a relative String to rootURL 
+	 * if url contains rootURL so
+	 * new URL(rootURL, resultString) == url
 	 * 
 	 */
 	public static String getURLAsString(URL rootURL, URL url) {
