@@ -11,20 +11,17 @@
 package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
-import org.eclipse.team.internal.ui.synchronize.IRefreshSubscriberListener;
 import org.eclipse.ui.IWorkbenchSite;
 
 /**
  * A general refresh action that will refresh a subscriber in the background.
+ * 
+ * @since 3.0
  */
 public class RefreshAction extends Action {
 	
@@ -56,13 +53,34 @@ public class RefreshAction extends Action {
 		}					
 	}
 	
-	public static void run(IWorkbenchSite site, String description, IResource[] resources, final SubscriberSyncInfoCollector collector, IRefreshSubscriberListener listener) {
-		// Cancel the scheduled background refresh or any other refresh that is happening.
-		// The scheduled background refresh will restart automatically.
-		Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
-		RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", description), resources, collector); //$NON-NLS-1$
+	/**
+	 * Policy.bind("SyncViewRefresh.taskName");
+	 * 
+	 * @param site
+	 * @param taskName
+	 * @param description
+	 * @param resources
+	 * @param collector
+	 * @param listener
+	 */
+	public static void run(IWorkbenchSite site, String taskName, IResource[] resources, final SubscriberSyncInfoCollector collector, final IRefreshSubscriberListener listener) {
+		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector); //$NON-NLS-1$
+		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
+			public void refreshStarted(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshStarted(event);
+				}
+			}
+			public void refreshDone(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshDone(event);
+					RefreshSubscriberJob.removeRefreshListener(this);
+				}
+			}
+		};
+		
 		if (listener != null) {
-			RefreshSubscriberJob.addRefreshListener(listener);
+			RefreshSubscriberJob.addRefreshListener(autoListener);
 		}	
 		Utils.schedule(job, site);
 	}

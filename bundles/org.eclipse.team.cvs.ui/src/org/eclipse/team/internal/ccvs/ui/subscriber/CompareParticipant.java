@@ -21,7 +21,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
 
 public class CompareParticipant extends SubscriberParticipant {
 	
@@ -62,7 +62,7 @@ public class CompareParticipant extends SubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#doCreatePage(org.eclipse.team.ui.synchronize.ISynchronizeView)
 	 */
-	protected IPageBookViewPage doCreatePage(ISynchronizeView view) {
+	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
 		return new CompareParticipantPage(this, view);
 	}
 

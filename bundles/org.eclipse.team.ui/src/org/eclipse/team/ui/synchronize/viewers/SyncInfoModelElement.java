@@ -16,8 +16,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.variants.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.RemoteResourceTypedElement;
@@ -30,12 +30,8 @@ import org.eclipse.team.internal.ui.synchronize.RemoteResourceTypedElement;
  * display the compare result in a <code>DiffTreeViewer</code> and as the
  * input to any other compare/merge viewer.
  * <p>
- * You can access the {@link SyncInfoSet} this node was created from for quick access
- * to the underlying sync state model.
- * </p>
- * <p>
- * TODO: mention node builders and syncinfocompareinput and syncinfodifftree viewer
  * Clients typically use this class as is, but may subclass if required.
+ * </p>
  * @see DiffTreeViewer
  * @see Differencer
  */
@@ -45,29 +41,46 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	private SyncInfo info;
 	
 	/**
-	 * Construct a <code>SyncInfoModelElement</code> for the given resource. The {@link SyncInfoSet} 
-	 * that contains sync states for this resource must also be provided. This set is used
-	 * to access the underlying sync state model that is the basis for this node this helps for
-	 * providing quick access to the logical containment
+	 * Construct a <code>SyncInfoModelElement</code> for the given resource.
 	 * 
 	 * @param set The set associated with the diff tree veiwer
 	 * @param resource The resource for the node
 	 */
 	public SyncInfoModelElement(IDiffContainer parent, SyncInfo info) {
 		super(parent);
-		update(info);
-	}
-
-	public void update(SyncInfo info) {
 		this.info = info;
 		// update state
 		setKind(info.getKind());		
 		// local
 		setLeft(createLocalTypeElement(info));
 		// remote
-		setRight(createRemoteTypeElement(info));
+		setRight(createRemoteTypeElement(info));	
 		// base
 		setAncestor(createBaseTypeElement(info));
+			
+		fireChange();
+	}
+
+	public void update(SyncInfo info) {
+		this.info = info;
+		// update state
+		setKind(info.getKind());		
+		// never have to update the local, it's always the workspace resource
+		// remote
+		RemoteResourceTypedElement rightEl = (RemoteResourceTypedElement)getRight(); 
+		if(rightEl == null && info.getRemote() != null) {
+			setRight(createRemoteTypeElement(info));
+		} else if(rightEl != null){
+			rightEl.update(info.getRemote());
+		}
+		// base
+		RemoteResourceTypedElement ancestorEl = (RemoteResourceTypedElement)getRight(); 
+		if(ancestorEl == null && info.getBase() != null) {
+			setAncestor(createBaseTypeElement(info));
+		} else if(ancestorEl != null){
+			ancestorEl.update(info.getBase());
+		}
+		
 		fireChange();
 	}
 	

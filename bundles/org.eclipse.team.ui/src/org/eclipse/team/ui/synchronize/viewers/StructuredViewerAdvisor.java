@@ -10,21 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.viewers;
 
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Control;
@@ -34,6 +25,7 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -74,14 +66,21 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
  * @since 3.0
  */
 public abstract class StructuredViewerAdvisor {
-	
-	private SynchronizeModelProvider modelProvider;
-	private ListenerList listeners;
-	private String targetID;
-	private IWorkbenchPartSite site;
 
+	// Workbench site is used to register the context menu for the viewer
+	private IWorkbenchPartSite site;
+	// The id to use for registration of the context menu. If null then menu will not allow viewer contributions. 
+	private String targetID;
+
+	// The physical model shown to the user in the provided viewer. The information in 
+	// this set is transformed by the model provider into the actual logical model displayed
+	// in the viewer.
 	private SyncInfoSet set;
 	private StructuredViewer viewer;
+	private SynchronizeModelProvider modelProvider;
+	
+	// Listeners for model changes
+	private ListenerList listeners;
 	
 	/**
 	 * Create an advisor that will allow viewer contributions with the given <code>targetID</code>. This
@@ -199,6 +198,26 @@ public abstract class StructuredViewerAdvisor {
 	 */
 	public abstract boolean navigate(boolean next);
 
+	/**
+	 * Sets a new selection for this viewer and optionally makes it visible. The advisor will try and
+	 * convert the objects into the appropriate viewer objects. This is required because the model
+	 * provider controls the actual model elements in the viewer and must be consulted in order to
+	 * understand what objects can be selected in the viewer.
+	 * 
+	 * @param object the objects to select
+	 * @param reveal <code>true</code> if the selection is to be made visible, and
+	 *                  <code>false</code> otherwise
+	 */
+	 public void setSelection(Object[] objects, boolean reveal) {
+	 	Object[] viewerObjects = new Object[objects.length];
+	 	if (modelProvider != null) {
+			for (int i = 0; i < objects.length; i++) {
+				viewerObjects[i] = modelProvider.getMapping(objects[i]);
+			}
+			viewer.setSelection(new StructuredSelection(viewerObjects), reveal);
+		}
+	 }
+	
 	/**
 	 * Creates the model that will be shown in the viewers. This can be called before the
 	 * viewer has been created.
@@ -385,7 +404,7 @@ public abstract class StructuredViewerAdvisor {
 			if (ws != null) {
 				ws.registerContextMenu(getTargetID(), menuMgr, viewer);
 			} else {
-				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + getTargetID(), null);
+				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + getTargetID(), null); //$NON-NLS-1$
 			}
 		}
 	}

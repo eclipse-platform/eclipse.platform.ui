@@ -21,11 +21,12 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.subscriber.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.IPageBookViewPage;
 
 public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	
@@ -52,7 +53,7 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	 */
 	protected void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
-		String id = CVSMergeSubscriber.QUALIFIED_NAME;
+		String id = CVSMergeSubscriber.ID;
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(id); 
 			setInitializationData(descriptor);
@@ -103,7 +104,7 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createPage(org.eclipse.team.ui.synchronize.ISynchronizeView)
 	 */
-	protected IPageBookViewPage doCreatePage(ISynchronizeView view) {
+	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
 		return new MergeSynchronizePage(this, view);
 	}
 	

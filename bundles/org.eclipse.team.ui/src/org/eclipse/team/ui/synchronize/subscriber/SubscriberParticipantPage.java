@@ -11,6 +11,7 @@
 package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -21,10 +22,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.jobs.RefreshUserNotificationPolicy;
 import org.eclipse.team.internal.ui.synchronize.ChangesSection;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
@@ -58,7 +61,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	private NavigateAction gotoPrevious;
 	private Action configureSchedule;
 	private SyncViewerShowPreferencesAction showPreferences;
-	private TeamParticipantRefreshAction refreshAllAction;
+	private RefreshAction refreshAllAction;
 	private Action collapseAll;
 	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
@@ -101,7 +104,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		};
 		gotoNext = new NavigateAction(view, nav, true /*next*/);		
 		gotoPrevious = new NavigateAction(view, nav, false /*previous*/);
-		refreshAllAction = new TeamParticipantRefreshAction(getSite().getSelectionProvider(), getParticipant(), false, true /* refresh all */);
+		refreshAllAction = new RefreshAction(getSite().getSelectionProvider(), getParticipant().getName(), getParticipant().getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(getParticipant()), true /* refresh all */);
 		refreshAllAction.setWorkbenchSite(view.getSite());
 		collapseAll = new Action() {
 			public void run() {
@@ -297,8 +300,8 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		getSite().setSelectionProvider(viewer);		
 		return viewer;
 	}
-
-	public TreeViewerAdvisor getViewerConfiguration() {
+	
+	public StructuredViewerAdvisor getViewerConfiguration() {
 		return viewerAdvisor;
 	}
 	
@@ -308,5 +311,9 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	
 	protected SynchronizeViewerAdvisor createSynchronizeViewerAdvisor() {
 		return new SynchronizeViewerAdvisor(getSynchronizeView(), getParticipant());
+	}
+
+	public void setSelection(IResource[] resources, boolean reveal) {
+		getViewerConfiguration().setSelection(resources, reveal);
 	}
 }

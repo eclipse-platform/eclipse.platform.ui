@@ -23,16 +23,9 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.SynchronizePageDropDownAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantListener;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageBookViewPage;
-import org.eclipse.ui.part.MessagePage;
-import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.part.*;
 
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 

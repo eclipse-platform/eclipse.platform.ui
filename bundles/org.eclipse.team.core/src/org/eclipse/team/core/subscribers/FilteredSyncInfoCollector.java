@@ -71,6 +71,11 @@ public final class FilteredSyncInfoCollector implements ISyncInfoSetChangeListen
 		return filter;
 	}
 	
+	public void setFilter(SyncInfoFilter filter, IProgressMonitor monitor) {
+		this.filter = filter;
+		start(monitor);
+	}
+	
 	/**
 	 * Dispose of the collector. The collector cannot be restarted after it has been disposed.
 	 */

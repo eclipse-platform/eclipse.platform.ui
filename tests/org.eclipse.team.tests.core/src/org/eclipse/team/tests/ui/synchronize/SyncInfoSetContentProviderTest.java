@@ -17,8 +17,8 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider;
-import org.eclipse.team.ui.synchronize.viewers.CompressedFoldersModelProvider;
+import org.eclipse.team.internal.ui.synchronize.CompressedFoldersModelProvider;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
 
 /**
  * Tests for the SyncInfoSet content providers.

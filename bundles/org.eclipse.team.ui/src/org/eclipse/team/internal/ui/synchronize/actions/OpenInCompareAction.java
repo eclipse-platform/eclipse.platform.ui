@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -95,9 +94,7 @@ public class OpenInCompareAction extends Action {
 	 */
 	private static SyncInfoCompareInput getCompareInput(ISynchronizeParticipant participant, SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
-			CompareConfiguration cc = new CompareConfiguration();
-			//cc.setProperty(CompareConfiguration.USE_OUTLINE_VIEW, Boolean.TRUE);
-			return new SyncInfoCompareInput(cc, participant.getName(), info);
+			return new SyncInfoCompareInput(participant.getName(), info);
 		}
 		return null;
 	}				

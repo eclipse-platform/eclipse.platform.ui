@@ -2,16 +2,13 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberRefreshSchedule;
-import org.eclipse.team.internal.ui.Policy;
 
 
 public class ConfigureRefreshScheduleDialog extends DetailsDialog {

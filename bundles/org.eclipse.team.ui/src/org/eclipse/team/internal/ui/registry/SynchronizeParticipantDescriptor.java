@@ -23,12 +23,14 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public  static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	public  static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATT_TYPE = "type"; //$NON-NLS-1$	
-	private static final String TYPE_STATIC = "static"; //$NON-NLS-1$
+	private static final String ATT_TYPE_STATIC = "static"; //$NON-NLS-1$
+	private static final String ATT_SUPPORTS_REFRESH = "supportsRefresh"; //$NON-NLS-1$
 	
 	private String label;
 	private String className;
 	private String type;
 	private String id;
+	private boolean supportsRefresh;
 	private ImageDescriptor imageDescriptor;
 	private String description;
 	
@@ -82,13 +84,17 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		return imageDescriptor;
 	}
 
-	public String getLabel() {
+	public String getName() {
 		return label;
 	}
 
 	public boolean isStatic() {
 		if(type == null) return true;
-		return type.equals(TYPE_STATIC);
+		return type.equals(ATT_TYPE_STATIC);
+	}
+	
+	public boolean doesSupportRefresh() {
+		return supportsRefresh;
 	}
 	
 	/**
@@ -99,6 +105,12 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		label = configElement.getAttribute(ATT_NAME);
 		className = configElement.getAttribute(ATT_CLASS);
 		type = configElement.getAttribute(ATT_TYPE);
+		String supportsRefreshString = configElement.getAttribute(ATT_SUPPORTS_REFRESH);
+		if(supportsRefreshString == null) {
+			supportsRefresh = true;
+		} else {
+			supportsRefresh = Boolean.valueOf(supportsRefreshString).booleanValue();
+		}
 
 		// Sanity check.
 		if ((label == null) || (className == null) || (identifier == null)) {

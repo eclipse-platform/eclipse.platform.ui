@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.Assert;
 
 /**
  * RemoteResourceTypedElement
@@ -31,6 +32,7 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 	 * Creates a new content buffer for the given team node.
 	 */
 	public RemoteResourceTypedElement(IResourceVariant remote) {
+		Assert.isNotNull(remote);
 		this.remote = remote;
 	}
 
@@ -111,5 +113,16 @@ public class RemoteResourceTypedElement extends BufferedContent implements IType
 	 */
 	public void cacheContents(IProgressMonitor monitor) throws TeamException {
 		bufferedContents = remote.getStorage(monitor);		
+	}
+
+	/**
+	 * Update the remote handle in this typed element.
+	 * @param variant the new remote handle
+	 */
+	public void update(IResourceVariant variant) {
+		Assert.isNotNull(variant);
+		discardBuffer();
+		remote = variant;
+		fireContentChanged();
 	}
 }

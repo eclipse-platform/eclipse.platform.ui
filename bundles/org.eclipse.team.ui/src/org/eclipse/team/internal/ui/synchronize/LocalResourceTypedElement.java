@@ -10,20 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.eclipse.compare.IEditableContent;
-import org.eclipse.compare.IStreamContentAccessor;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
+import org.eclipse.compare.*;
 import org.eclipse.compare.internal.BufferedResourceNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -78,6 +70,7 @@ public class LocalResourceTypedElement extends ResourceNode {
 							file.create(is, false, pm);
 						fDirty= false;
 					} finally {
+						fireContentChanged();
 						if (is != null)
 							try {
 								is.close();
@@ -124,6 +117,7 @@ public class LocalResourceTypedElement extends ResourceNode {
 				} catch (CoreException ex) {
 				}
 			}
+			fireContentChanged();
 			return child;
 		}
 		

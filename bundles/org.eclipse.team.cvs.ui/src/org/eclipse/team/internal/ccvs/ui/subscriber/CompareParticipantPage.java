@@ -14,11 +14,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
 import org.eclipse.team.internal.ui.synchronize.actions.RemoveSynchronizeParticipantAction;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.subscriber.SynchronizeViewerAdvisor;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider;
 import org.eclipse.ui.IActionBars;
 
 public class CompareParticipantPage extends CVSSynchronizeViewPage {

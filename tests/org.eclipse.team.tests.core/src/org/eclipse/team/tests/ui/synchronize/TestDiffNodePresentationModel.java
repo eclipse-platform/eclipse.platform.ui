@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.tests.ui.views.ContentProviderTestView;
 import org.eclipse.team.tests.ui.views.TestTreeViewer;

@@ -137,6 +137,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Synchronizing.perspective"
+            label="%Synchronizing.perspective"
             icon="icons/full/cview16/synch_synch.gif"
             class="org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective"
             id="org.eclipse.team.ui.TeamSynchronizingPerspective">
@@ -193,14 +194,44 @@
          </showInPart>
       </perspectiveExtension>
    </extension>
-<!-- ***************** Action sets ********************** -->
+<!-- ***************** Actions ********************** -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="%Command.category.name"
+            description="%Command.category.description"
+            id="org.eclipse.team.ui.category.team">
+      </category>
+      <command
+            name="%Command.syncAll.name"
+            category="org.eclipse.team.ui.category.team"
+            description="%Command.syncAll.description"
+            id="org.eclipse.team.ui.synchronizeAll">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.team.ui.synchronizeAll"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+<!-- action sets -->
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%Team"
-            description="%ActionSet.description"
-            visible="false"
+            label="%Command.category.name"
+            description="%Command.category.description"
+            visible="true"
             id="org.eclipse.team.ui.actionSet">
+         <action
+               label="%Command.syncAll.name"
+               pulldown="true"
+               style="pulldown"
+               icon="icons/full/cview16/synch_synch.gif"
+               class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
+               toolbarPath="Normal/Team"
+               id="org.eclipse.team.ui.synchronizeAll">
+         </action>
       </actionSet>
    </extension>
 

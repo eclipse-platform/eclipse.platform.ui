@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -21,6 +22,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 
 /**
  * Reconcile an existing unshared local project with an existing remote folder.
@@ -44,11 +46,16 @@ public class ReconcileProjectOperation extends CVSOperation {
 			monitor.beginTask(null, 300);
 			ICVSRemoteFolder remote = CheckoutToRemoteFolderOperation.checkoutRemoteFolder(getShell(), folder, Policy.subMonitorFor(monitor, 100));
 			// TODO: make -in-sync should also be done by the subscriber
-//			makeFoldersInSync(project, remote, Policy.subMonitorFor(monitor, 100));
-			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().setRemote(project, (IResourceVariant)remote, Policy.subMonitorFor(monitor, 100));
+			//	makeFoldersInSync(project, remote, Policy.subMonitorFor(monitor, 100));
+			
+			final CVSWorkspaceSubscriber participant = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+			participant.setRemote(project, (IResourceVariant)remote, Policy.subMonitorFor(monitor, 100));
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					CVSUIPlugin.showInSyncView(getShell(), null, 0 /* no mode in particular */);
+					WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
+					if(participant != null) {
+						participant.refresh(new IResource[] {project});
+					}
 				}
 			});
 		} catch (InvocationTargetException e) {

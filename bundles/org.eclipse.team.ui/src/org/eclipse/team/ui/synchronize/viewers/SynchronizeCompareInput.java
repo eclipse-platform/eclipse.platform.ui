@@ -12,29 +12,25 @@ package org.eclipse.team.ui.synchronize.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.CompareViewerPane;
-import org.eclipse.compare.NavigationAction;
+import org.eclipse.compare.*;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -48,12 +44,14 @@ import org.eclipse.ui.progress.IProgressService;
  * 
  * @since 3.0
  */
-public class SynchronizeCompareInput extends CompareEditorInput {
+public class SynchronizeCompareInput extends CompareEditorInput implements IContentChangeListener {
 
 	private TreeViewerAdvisor diffViewerConfiguration;
 	private Viewer diffViewer;
 	private NavigationAction nextAction;
 	private NavigationAction previousAction;
+	
+	private boolean buffered = false;
 
 	/**
 	 * Create a <code>SynchronizeCompareInput</code> whose diff viewer is configured
@@ -69,6 +67,12 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 	public final Viewer createDiffViewer(Composite parent) {
 		this.diffViewer = internalCreateDiffViewer(parent, getViewerConfiguration());
 		diffViewer.getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
+		
+		// buffered merge mode, don't ask for save when switching nodes since contents will be buffered in diff nodes
+		// and saved when the input is saved.
+		if(isBuffered()) {
+			getCompareConfiguration().setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
+		}
 		
 		/*
 		 * This viewer can participate in navigation support in compare editor inputs. Note that
@@ -87,9 +91,9 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 		nextAction.setCompareEditorInput(this);
 		previousAction.setCompareEditorInput(this);
 		
-		
 		initializeToolBar(diffViewer.getControl().getParent());
 		initializeDiffViewer(diffViewer);
+		diffViewerConfiguration.navigate(true);
 		return diffViewer;
 	}
 
@@ -139,6 +143,7 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 							IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 							try {
 								node.cacheContents(new NullProgressMonitor());
+								hookContentChangeListener(node);
 							} catch (TeamException e) {
 								Utils.handle(e);
 							} finally {
@@ -153,6 +158,17 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 		}
 	}
 
+	private void hookContentChangeListener(DiffNode node) {
+		ITypedElement left = node.getLeft();
+		if(left instanceof IContentChangeNotifier) {
+			((IContentChangeNotifier)left).addContentChangeListener(this);
+		}
+		ITypedElement right = node.getRight();
+		if(right instanceof IContentChangeNotifier) {
+			((IContentChangeNotifier)right).addContentChangeListener(this);
+		}
+	}
+	
 	public void contributeToToolBar(ToolBarManager tbm) {	
 		if(nextAction != null && previousAction != null) { 
 			tbm.appendToGroup("navigation", nextAction); //$NON-NLS-1$
@@ -193,4 +209,68 @@ public class SynchronizeCompareInput extends CompareEditorInput {
 			throw new InvocationTargetException(e);
 		}
 	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		super.saveChanges(pm);
+		SynchronizeModelElement root = (SynchronizeModelElement)diffViewerConfiguration.getViewer().getInput();
+		if (root != null) {
+			try {
+				commit(pm, root);
+			} finally {
+				setDirty(false);
+			}
+		}
+	}
+
+	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
+		ITypedElement left = node.getLeft();
+		if (left instanceof LocalResourceTypedElement)
+			 ((LocalResourceTypedElement) left).commit(pm);
+
+		ITypedElement right = node.getRight();
+		if (right instanceof LocalResourceTypedElement)
+			 ((LocalResourceTypedElement) right).commit(pm);
+		
+		//node.getC
+		IDiffElement[] children = (IDiffElement[])node.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			commit(pm, (DiffNode)children[i]);			
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IContentChangeListener#contentChanged(org.eclipse.compare.IContentChangeNotifier)
+	 */
+	public void contentChanged(IContentChangeNotifier source) {
+		try {
+			if (isBuffered()) {
+				setDirty(true);
+			} else if (source instanceof DiffNode) {
+				commit(new NullProgressMonitor(), (DiffNode) source);
+			} else if (source instanceof LocalResourceTypedElement) {
+				 ((LocalResourceTypedElement) source).commit(new NullProgressMonitor());
+			}
+		} catch (CoreException e) {
+			Utils.handle(e);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		return TeamImages.getImageDescriptor(ISharedImages.IMG_COMPARE_VIEW);
+	}
+	
+	/**
+	 * Returns <code>true</code> if this compare input will buffer node content changes until the input is saved, 
+	 * otherwise content changes are saved to disk immediatly when each node is saved in the content merge viewer.
+	 */
+	public boolean isBuffered() {
+		return buffered;
+	}
 }

@@ -28,5 +28,11 @@ public interface IPreferenceIds {
 	public static final String SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES = PREFIX + "syncview__bkg_promptwhennochanges"; //$NON-NLS-1$
 	public static final String SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES = PREFIX + "syncview_bkg_promptwithchanges"; //$NON-NLS-1$
 	
-	public static final String SYNCVIEW_VIEW_SMART_MODE_SWITCH = PREFIX + "syncview_smartmode"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_DEFAULT_PARTICIPANT = PREFIX + "sychronizing_default_participant"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_COMPLETE_SHOW_DIALOG = PREFIX + "sychronizing_dontshow_complete_dialog"; //$NON-NLS-1$
+	
+	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE = PREFIX + "sychronizing_default_perspective_to_show"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT = PREFIX + "sychronizing_default_perspective_to_show_prompt"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS = PREFIX + "sychronizing_default_perspective_to_show_always"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER = PREFIX + "sychronizing_default_perspective_to_show_never"; //$NON-NLS-1$
 }

@@ -14,23 +14,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -171,7 +160,6 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 		manager.add(expandAllAction);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#getDiffNodeController()

@@ -10,51 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantRegistry;
 import org.eclipse.team.ui.ITeamUIConstants;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantListener;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.*;
 
 /**
  * Manages the registered synchronize participants. It handles notification of
@@ -160,7 +130,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 					participant.init(savedState);
 				} catch (PartInitException e2) {
 					participant = null;					
-					throw new TeamException(Policy.bind("SynchronizeManager.11"), e2);					
+					throw new TeamException(Policy.bind("SynchronizeManager.11"), e2);  //$NON-NLS-1$
 				} catch (CoreException e) {
 					participant = null;
 					throw TeamException.asTeamException(e);
@@ -329,16 +299,16 @@ public class SynchronizeManager implements ISynchronizeManager {
 		return (ISynchronizeParticipant[]) participants.toArray(new ISynchronizeParticipant[participants.size()]);
 	}
 
-	/**
-	 * Called to display the synchronize view in the given page. If the given
-	 * page is <code>null</code> the synchronize view is shown in the default
-	 * active workbench window.
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeManager#showSynchronizeViewInActivePage()
 	 */
-	public ISynchronizeView showSynchronizeViewInActivePage(IWorkbenchPage activePage) {
+	public ISynchronizeView showSynchronizeViewInActivePage() {
 		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 
-		if (!TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE).equals(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE_NONE)) {
+		boolean switchPerspectives = promptForPerspectiveSwitch();
+		IWorkbenchPage activePage = null;
+		if(switchPerspectives) {
 			try {
 				String pId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
 				activePage = workbench.showPerspective(pId, window);
@@ -357,6 +327,64 @@ public class SynchronizeManager implements ISynchronizeManager {
 			Utils.handleError(window.getShell(), pe, Policy.bind("SynchronizeView.16"), pe.getMessage()); //$NON-NLS-1$
 			return null;
 		}
+	}
+	
+	/**
+	 * Decides what action to take when switching perspectives and showing the synchronize view. Basically there are a
+	 * set of user preferences that control how perspective switching.
+	 */
+	private boolean promptForPerspectiveSwitch() {
+		// Decide if a prompt is even required
+		String option = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE);	
+		if(option.equals(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS)) {
+			return true;
+		} else if(option.equals(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER)) {
+			return false;
+		}
+		
+		// Otherwise determine if a prompt is required
+		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
+		String defaultSyncPerspective = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
+		String currentPerspective = null;
+		IPerspectiveDescriptor perspectiveDescriptor = registry.findPerspectiveWithId(defaultSyncPerspective);
+		IWorkbenchPage page = TeamUIPlugin.getActivePage();
+		if(page != null) {
+			IPerspectiveDescriptor p = page.getPerspective();
+			if(currentPerspective != null && currentPerspective.equals(defaultSyncPerspective)) {
+				perspectiveDescriptor = null;
+			}
+		}
+		
+		if(perspectiveDescriptor != null) {
+			String perspectiveName = perspectiveDescriptor.getLabel();
+			
+			MessageDialog m = new MessageDialog(Display.getDefault().getActiveShell(),
+						Policy.bind("SynchronizeManager.27"),  //$NON-NLS-1$
+						null,	// accept the default window icon
+						Policy.bind("SynchronizeManager.30", perspectiveDescriptor.getLabel()), //$NON-NLS-1$
+						MessageDialog.QUESTION, 
+						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, Policy.bind("SynchronizeManager.28"), Policy.bind("SynchronizeManager.29")}, //$NON-NLS-1$ //$NON-NLS-2$
+						0); 	// yes is the default
+		
+			int result = m.open();
+			switch (result) {
+				// yes
+				case 0 :
+					return true;
+				// no
+				case 1 :
+					return false;
+				// never
+				case 2 :
+					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER);
+					return false;
+				// always
+				case 3 :
+					TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS);
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/**

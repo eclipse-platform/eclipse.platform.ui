@@ -25,6 +25,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public interface ISynchronizeParticipantDescriptor {
 	/**
+	 * Returns the name of this participant. This can be shown to the user.
+	 * 
+	 * @return the name of this participant. This can be shown to the user.
+	 */
+	public String getName();
+	
+	/**
 	 * Returns a string describing this participant type.
 	 * 
 	 * @return a string describing this participant type.
@@ -56,4 +63,11 @@ public interface ISynchronizeParticipantDescriptor {
 	 * <code>false</code> otherwise
 	 */
 	public boolean isStatic();
+
+	/**
+	 * Returns if this participant supports a global refresh action.
+	 * 
+	 * @return if this participant supports a global refresh action.
+	 */
+	public boolean doesSupportRefresh();
 }

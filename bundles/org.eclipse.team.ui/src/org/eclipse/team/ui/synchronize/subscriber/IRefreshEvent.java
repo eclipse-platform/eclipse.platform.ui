@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.synchronize;
+package org.eclipse.team.ui.synchronize.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;

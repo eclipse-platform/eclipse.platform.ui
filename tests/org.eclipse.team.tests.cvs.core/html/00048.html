@@ -1,0 +1,50 @@
+<html><head><title>Refreshing with Remote</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><h2>Refreshing with Remote</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/05 17:12:22 $</p><body>
+
+
+<p>
+Synchronizing means ???
+</p>
+
+<h3>After a Synchronize has completed</h3>
+<p>Generally the sync view is shown AFTER the synchronize operation has completed. This way we don't interrupt the user's context. Why do
+people like to be prompted after? For some the synchronize operation can be very long, and they want to be told when they can view the 
+results.</p>
+ <ul>
+ <li>1st time and no changes, then simply prompt that there are no changes.
+ <li>1st time and there are changes in the workspace, then prompt asking about perspective switch next enumerate the types of changes in the workspace, and open sync view.
+ <li>other times and no changes, then simply prompt.
+ <li>other times and changes, then prompt enumerating the types of changes in the workspace, and open sync view.
+ <li>other times and changes and option to not prompt, open sync view.
+ </ul>
+
+<p>
+There are a couple of reasons someone may want to synchronize with the remote. There are currently
+two ways of running the refresh operation:
+<ul>
+<li>Directly from the synchronize view
+<li>From Team > Synchronize with Repository
+</ul>
+</p>
+<h3>Notice a file is out-of-sync in another view (e.g. packages explorer, types) and want to see the changes</h3>
+<p>In case you can select a file, it will be refreshed with the server, and if changes are found the compare editor is opened
+that will allow browsing the changes. If no changes are found, you will be prompted.</p>
+
+<h3>From another view would like to browse the outgoing/incoming changes for several resources</h3>
+<p>Select a folder or group of files and Team > Synchronize will open the sync view and automatically refresh with
+the remote repository.</p>
+
+<h3>In the sync view and would like to refresh to see if there are new changes from the server</h3>
+<p>
+
+</p>
+
+Assumption, the sync view may or may not be open when the synchronize is performed. Maybe we need a different prompt
+each case. One for Team > Sync and another for refresh from the sync view.
+
+</body></html>

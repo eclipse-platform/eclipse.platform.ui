@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.viewers;
 
-
 /**
- * Listener that gets informed when the <code>DiffNode</code> model created
- * by the configurator is created or updated.
+ * Listener that gets informed when the model created by the model provider is created or updated.
  * <p>
  * Clients may implement this interface.
  * </p>

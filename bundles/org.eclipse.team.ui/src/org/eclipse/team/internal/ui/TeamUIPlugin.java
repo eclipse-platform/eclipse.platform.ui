@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
+import org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
@@ -145,7 +146,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SMART_MODE_SWITCH, false);
+		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);		
+		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG, true);
+		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT);		 //$NON-NLS-1$
 	}
 	
 	/**
@@ -288,9 +291,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ISharedImages.IMG_CONFLICT_OVR, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
-		
-		
+			
 		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_VIEW, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_COMPARE_VIEW, baseURL);
 		
 		// Collapse all
 		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL, baseURL);

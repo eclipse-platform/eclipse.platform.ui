@@ -26,6 +26,7 @@ public interface ISharedImages {
 	public final String IMG_COLLAPSE_ALL_ENABLED = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	
 	public final String IMG_SYNC_VIEW = "cview16/synch_synch.gif"; //$NON-NLS-1$
+	public final String IMG_COMPARE_VIEW = "cview16/compare_view.gif"; //$NON-NLS-1$
 
 	 // local toolbars (colour)
 	 public final String IMG_DLG_SYNC_INCOMING = "clcl16/incom_synch.gif"; //$NON-NLS-1$

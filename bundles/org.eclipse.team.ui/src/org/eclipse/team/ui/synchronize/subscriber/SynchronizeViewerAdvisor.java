@@ -16,9 +16,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.synchronize.actions.*;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.internal.ui.jobs.RefreshUserNotificationPolicy;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenWithActionGroup;
+import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 
 /**
  * Overrides the SyncInfoDiffViewerConfiguration to configure the diff viewer
@@ -30,7 +33,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	private SubscriberParticipant participant;
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
-	private TeamParticipantRefreshAction refreshSelectionAction;
+	private RefreshAction refreshSelectionAction;
 
 	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(participant.getId(), view.getViewSite(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
@@ -46,7 +49,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 		super.initializeActions(treeViewer);
 		openWithActions = new OpenWithActionGroup(view, participant);
 		refactorActions = new RefactorActionGroup(view);
-		refreshSelectionAction = new TeamParticipantRefreshAction(treeViewer, participant, false /* refresh */, false);
+		refreshSelectionAction = new RefreshAction(view.getSite().getSelectionProvider(), getParticipant().getName(), getParticipant().getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(getParticipant()), true /* refresh all */);
 		refreshSelectionAction.setWorkbenchSite(view.getSite());
 	}
 

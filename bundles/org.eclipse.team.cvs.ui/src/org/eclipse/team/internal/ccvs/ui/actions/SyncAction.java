@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 
 /**
  * Action for catchup/release in popup menus.
@@ -27,7 +28,10 @@ public class SyncAction extends WorkspaceAction {
 		IResource[] resources = getResourcesToSync();
 		if (resources == null || resources.length == 0) return;
 		
-		CVSUIPlugin.showInSyncView(getShell(), resources, 0 /* no mode in particular */);
+		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
+		if(participant != null) {
+			participant.refresh(resources);
+		}
 	}
 	
 	protected IResource[] getResourcesToSync() {

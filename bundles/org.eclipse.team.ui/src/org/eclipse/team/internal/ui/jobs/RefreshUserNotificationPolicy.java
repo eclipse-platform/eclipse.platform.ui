@@ -1,37 +1,35 @@
 package org.eclipse.team.internal.ui.jobs;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+
+import org.eclipse.compare.CompareUI;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.IRefreshEvent;
-import org.eclipse.team.internal.ui.synchronize.IRefreshSubscriberListener;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.RefreshCompleteDialog;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.*;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoCompareInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+/**
+ * This class manages the notification and setup that occurs after a refresh is completed.
+ * 
+ * 
+ */
 public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener {
 
 	private SubscriberParticipant participant;
-	private boolean addIfNeeded;
 
-	public RefreshUserNotificationPolicy(SubscriberParticipant participant, boolean addIfNeeded) {
+	public RefreshUserNotificationPolicy(SubscriberParticipant participant) {
 		this.participant = participant;
-		this.addIfNeeded = addIfNeeded;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.team.internal.ui.jobs.IRefreshSubscriberListener#refreshStarted(org.eclipse.team.internal.ui.jobs.IRefreshEvent)
 	 */
 	public void refreshStarted(IRefreshEvent event) {
@@ -39,61 +37,49 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.team.internal.ui.jobs.IRefreshSubscriberListener#refreshDone(org.eclipse.team.internal.ui.jobs.IRefreshEvent)
 	 */
-	public void refreshDone(IRefreshEvent event) {
-		if(event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber()) return;
+	public void refreshDone(final IRefreshEvent event) {
+		// Ensure that this event was generated for this participant
+		if (event.getSubscriber() != participant.getSubscriberSyncInfoCollector().getSubscriber())
+			return;
 		
-		int type = event.getRefreshType();
-
-		boolean promptWithChanges = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WITH_CHANGES);
-		boolean promptWhenNoChanges = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES);
-		boolean promptWithChangesBkg = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES);
-		boolean promptWhenNoChangesBkg = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES);
-
-		boolean shouldPrompt = false;
-		SyncInfo[] infos = event.getChanges();
-
-		if (type == IRefreshEvent.USER_REFRESH) {
-			if (promptWhenNoChanges && infos.length == 0) {
-				shouldPrompt = true;
-			} else if (promptWithChanges && infos.length > 0) {
-				shouldPrompt = true;
-			}
-		} else {
-			if (promptWhenNoChangesBkg && infos.length == 0) {
-				shouldPrompt = true;
-			} else if (promptWithChangesBkg && infos.length > 0) {
-				shouldPrompt = true;
-			}
-		}
-
-		// If there are interesting changes, ensure the sync view is showing them
-		// Also, add the participant to the sync view only if changes have been found.
-		if (infos.length > 0) {
-			participant.setMode(SubscriberParticipant.INCOMING_MODE);
-			final ISynchronizeManager manager = TeamUI.getSynchronizeManager();
-			if (addIfNeeded) {
-				manager.addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
-				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-					public void run() {
-						ISynchronizeView view = manager.showSynchronizeViewInActivePage(null);
-						if (view != null) {
-							view.display(participant);
+		// Decide on what action to take after the refresh is completed
+		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+					boolean prompt = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG);
+				
+					SyncInfo[] infos = event.getChanges();
+					List selectedResources = new ArrayList();
+					selectedResources.addAll(Arrays.asList(event.getResources()));
+					for (int i = 0; i < infos.length; i++) {
+						selectedResources.add(infos[i].getLocal());
+					}
+					IResource[] resources = (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
+					
+					// If it's a file, simply show the compare editor
+					if (resources.length == 1 && resources[0].getType() == IResource.FILE) {
+						IResource file = resources[0];
+						SyncInfo info = participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().getSyncInfo(file);
+						if(info != null) {
+							CompareUI.openCompareEditor(new SyncInfoCompareInput(participant.getName(), info));
+							prompt = false;
 						}
 					}
-				});
-			}
-		}
-		
-		// Prompt user if preferences are set for this type of refresh.
-		if (shouldPrompt) {
-			notifyIfNeededModal(event);
-		}
+					
+					// ensure the synchronize views are shown
+					TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+					
+					
+					// Prompt user if preferences are set for this type of refresh.
+					if (prompt) {
+						notifyIfNeededModal(event);
+					}
+				}	
+		});
 		RefreshSubscriberJob.removeRefreshListener(this);
 	}
-
+	
 	private void notifyIfNeededModal(final IRefreshEvent event) {
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -115,4 +101,6 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 			}
 		}, message);
 	}
+	
+	
 }

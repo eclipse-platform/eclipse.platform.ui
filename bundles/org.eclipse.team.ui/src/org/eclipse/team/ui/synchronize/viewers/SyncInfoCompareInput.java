@@ -12,38 +12,21 @@ package org.eclipse.team.ui.synchronize.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.IContentChangeListener;
-import org.eclipse.compare.IContentChangeNotifier;
-import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -85,8 +68,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * is displayed to the user.
 	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
 	 */
-	public SyncInfoCompareInput(CompareConfiguration cc, String description, SyncInfo sync) {
-		super(cc);
+	public SyncInfoCompareInput(String description, SyncInfo sync) {
+		super(getDefaultCompareConfiguration());
 		Assert.isNotNull(sync);
 		Assert.isNotNull(description);
 		this.description = description;
@@ -96,6 +79,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		initializeResourceChangeListeners();
 	}
 	
+	private static CompareConfiguration getDefaultCompareConfiguration() {
+		CompareConfiguration cc = new CompareConfiguration();
+		//cc.setProperty(CompareConfiguration.USE_OUTLINE_VIEW, true);
+		return cc;
+	}
+
 	private void initializeContentChangeListeners() {
 		ITypedElement te = node.getLeft();
 		if (te instanceof IContentChangeNotifier) {
@@ -120,7 +109,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			IResourceDelta resourceDelta = delta.findMember(resource.getFullPath());
 			if (resourceDelta != null) {
 				if (editor != null && editor instanceof IReusableEditor) {
-					UIJob job = new UIJob("") {
+					UIJob job = new UIJob("") { //$NON-NLS-1$
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							node.update(node.getSyncInfo());
 							return Status.OK_STATUS;
@@ -133,6 +122,16 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		}
 	}
 
+	/**
+	 * We have to hook into the editors lifecycle in order to register/un-register resource
+	 * change listeners. CompareEditorInputs aren't aware of the lifecycle of its containing
+	 * editor
+	 * <p>
+	 * The side effect of not calling this method is that the input will not keep in sync with changes 
+	 * to the workspace resource.
+	 * </p>
+	 *  @param editor the editor showing this input
+	 */
 	public void setCompareEditor(IEditorPart editor) {
 		Assert.isNotNull(editor);
 		this.editor = editor;

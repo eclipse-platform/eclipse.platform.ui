@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.ui.synchronize.viewers.*;
 
 /**
  * An input that can be used with both {@link } and 

@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 
 public class ShowSynchronizeParticipantAction extends Action {
 	

@@ -263,7 +263,7 @@ public class ChangesSection extends Composite {
 			Label warning = new Label(composite, SWT.NONE);
 			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING));
 			
-			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.workingSetRemove"), SWT.WRAP);
+			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.workingSetRemove"), SWT.WRAP); //$NON-NLS-1$
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					participant.setWorkingSet(null);

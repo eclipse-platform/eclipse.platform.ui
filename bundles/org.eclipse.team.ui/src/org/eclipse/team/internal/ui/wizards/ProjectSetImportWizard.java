@@ -10,19 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,17 +22,10 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.core.IProjectSetSerializer;
-import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.ProjectSetContentHandler;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.core.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.ui.IImportWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

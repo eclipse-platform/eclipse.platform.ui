@@ -31,10 +31,9 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	
 	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
-	private BooleanFieldEditor promptWithChanges = null;
-	private BooleanFieldEditor promptWhenNoChanges = null;
-	private BooleanFieldEditor promptWithChangesBkg = null;
-	private BooleanFieldEditor promptWhenNoChangesBkg = null;
+	private BooleanFieldEditor promptAtEndOfSynchronize = null;
+	private BooleanFieldEditor useDefaultPerspective = null;
+	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
 		/*
@@ -69,25 +68,25 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		Group displayGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.8")); 		 //$NON-NLS-1$
-
-		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, displayGroup); //$NON-NLS-1$
+		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(compressFolders);
-		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, displayGroup); //$NON-NLS-1$
+		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(showSyncInLabels);
 		
-		Group promptGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.30")); //$NON-NLS-1$
+		new Label(getFieldEditorParent(), SWT.NONE);
 		
-		promptWhenNoChanges = new BooleanFieldEditor(SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES, Policy.bind("SyncViewerPreferencePage.16"), SWT.NONE, promptGroup); //$NON-NLS-1$
-		addField(promptWhenNoChanges);
-		promptWithChanges = new BooleanFieldEditor(SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, Policy.bind("SyncViewerPreferencePage.17"), SWT.NONE, promptGroup); //$NON-NLS-1$
-		addField(promptWithChanges);
+		promptAtEndOfSynchronize = new BooleanFieldEditor(SYNCHRONIZING_COMPLETE_SHOW_DIALOG, "Prompt at the end of a synchronize operation.", SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		addField(promptAtEndOfSynchronize);
 		
-		promptWhenNoChangesBkg = new BooleanFieldEditor(SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES, Policy.bind("SyncViewerPreferencePage.31"), SWT.NONE, promptGroup); //$NON-NLS-1$
-		addField(promptWhenNoChangesBkg);
-		promptWithChangesBkg = new BooleanFieldEditor(SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, Policy.bind("SyncViewerPreferencePage.32"), SWT.NONE, promptGroup); //$NON-NLS-1$
-		addField(promptWithChangesBkg);
-				
+		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, "Switch to the associated perspective when a synchronize operation completes", 3, 
+				new String[][] {
+								{"Always", SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS},
+								{"Never", SYNCHRONIZING_COMPLETE_PERSPECTIVE_NEVER},
+								{"Prompt", SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT}
+							},
+							getFieldEditorParent(), true);
+		addField(synchronizePerspectiveSwitch);
+		
 		Group perspectiveGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.15")); //$NON-NLS-1$
 		
 		createLabel(perspectiveGroup, Policy.bind("SynchronizationViewPreference.defaultPerspectiveDescription"), 1); //$NON-NLS-1$

@@ -16,9 +16,11 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -27,7 +29,12 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeDialog;
 
+/**
+ * Compare with revision will allow a user to browse the history of a file, compare with the
+ * other revisions and merge changes from other revisions into the workspace copy.
+ */
 public class CompareWithRevisionAction extends WorkspaceAction {
 	
 	/**
@@ -85,40 +92,49 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				CompareUI.openCompareEditorOnPage(
-				  new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]),
-				  getTargetPage());
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				CVSCompareRevisionsInput input = new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]);
+				// running with a null progress monitor is fine because we have already pre-fetched the log entries above.
+				input.run(new NullProgressMonitor());
+				SynchronizeDialog cd = createCompareDialog(getShell(), input);
+				cd.setBlockOnOpen(true);
+				cd.open();
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
 	
 	/**
+	 * Return the compare dialog to use to show the compare input.
+	 */
+	protected SynchronizeDialog createCompareDialog(Shell shell, CVSCompareRevisionsInput input) {
+		return  new SynchronizeDialog(getShell(), "Compare With Revision", input);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("CompareWithRevisionAction.compare"); //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
 	 */
 	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
 		return (!cvsResource.isFolder() && super.isEnabledForCVSResource(cvsResource));
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForMultipleResources()
 	 */
 	protected boolean isEnabledForMultipleResources() {
 		return false;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
 	 */
 	protected boolean isEnabledForAddedResources() {
 		return false;
 	}
-
 }

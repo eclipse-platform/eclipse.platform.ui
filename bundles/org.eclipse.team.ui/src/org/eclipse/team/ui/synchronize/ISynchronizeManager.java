@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Manages synchronization view participants. Clients can programatically add 
@@ -63,12 +62,12 @@ public interface ISynchronizeManager {
 	public ISynchronizeParticipant[] getSynchronizeParticipants();
 	
 	/**
-	 * Opens the synchronize view in the given page. Has no effect if the view is 
-	 * already open in that page. 
+	 * Opens the synchronize views in the perspective defined by the user in the team synchronize
+	 * perferences.
 	 * 
-	 * @return the opened synchronize view 
+	 * @return the opened synchronize view or <code>null</code> if it can't be opened.
 	 */
-	public ISynchronizeView showSynchronizeViewInActivePage(IWorkbenchPage page);
+	public ISynchronizeView showSynchronizeViewInActivePage();
 	
 	/**
 	 * Returns the registered synchronize participants with the given id. It is

@@ -11,15 +11,19 @@
             <topic label="Comparing" href="html/00008.html">
                 <topic label="Remote resources" href="html/00009.html">
                 </topic>
-                <topic label="Local resources with a repository" href="html/00039.html">
+                <topic label="Compare with another branch or version" href="html/00039.html">
                 </topic>
                 <topic label="Reverting deleted resources" href="html/00040.html">
+                </topic>
+                <topic label="File Revisions" href="html/00041.html">
                 </topic>
             </topic>
             <topic label="Synchronizing" href="html/00010.html">
                 <topic label="Sync View operations and selection" href="html/00011.html">
                 </topic>
                 <topic label="Sync View modes and working sets" href="html/00016.html">
+                </topic>
+                <topic label="Refreshing with Remote" href="html/00048.html">
                 </topic>
             </topic>
             <topic label="Merging" href="html/00012.html">
@@ -74,6 +78,18 @@
                 <topic label="Customizations" href="html/00037.html">
                 </topic>
                 <topic label="Decorations in the Synchronize pages" href="html/00038.html">
+                </topic>
+            </topic>
+            <topic label="CVS Console" href="html/00042.html">
+                <topic label="Preferences" href="html/00043.html">
+                </topic>
+            </topic>
+            <topic label="Replacing" href="html/00044.html">
+                <topic label="With latest" href="html/00045.html">
+                </topic>
+                <topic label="With another branch of version" href="html/00046.html">
+                </topic>
+                <topic label="With file revision" href="html/00047.html">
                 </topic>
             </topic>
         </topic>

@@ -307,7 +307,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						throw new InvocationTargetException(e);
 					}
 				}
-				CVSUIPlugin.showInSyncView(getContainer().getShell(), null, SubscriberParticipant.OUTGOING_MODE);
+				WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
+				if(participant != null) {
+					participant.refresh(new IResource[] {project});
+				}
 			}
 		} catch (InterruptedException e) {
 			return true;

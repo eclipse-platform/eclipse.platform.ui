@@ -19,34 +19,23 @@ import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantDialog;
 
 public class CompareWithTagAction extends WorkspaceAction {
 
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		IResource[] resources = getSelectedResources();
+		final IResource[] resources = getSelectedResources();
 		CVSTag tag = promptForTag(resources);
 		if (tag == null)
 			return;
-		IWorkbenchWindow wWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		IWorkbenchPage activePage = null;
-		if (wWindow != null) {
-			activePage = wWindow.getActivePage();
-		}
-		// Create the synchronize view participant
+		
+		// Run the comparison
 		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
-		CompareParticipant participant = (CompareParticipant)SubscriberParticipant.find(s);
-		boolean addParticipant = false;
-		if(participant == null) {
-			participant = new CompareParticipant(s);
-			addParticipant = true;
-		}
-		participant.refreshWithRemote(s.roots(), addParticipant);
+		CompareParticipant participant = new CompareParticipant(s);
+		SubscriberParticipantDialog openCompare = new SubscriberParticipantDialog(getShell(), CVSCompareSubscriber.ID_MODAL, participant, resources);
+		openCompare.run();
 	}
-
+	
 	protected CVSTag promptForTag(IResource[] resources) {
 		IProject[] projects = new IProject[resources.length];
 		for (int i = 0; i < resources.length; i++) {

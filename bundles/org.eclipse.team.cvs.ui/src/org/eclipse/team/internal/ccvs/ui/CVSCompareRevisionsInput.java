@@ -27,13 +27,12 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
-import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -41,13 +40,16 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	IFile resource;
 	ILogEntry[] editions;
 	TableViewer viewer;
-	Action getContentsAction;
-	Action getRevisionAction;
-	Action getAnnotateAction;
+	Action getRevisionAction;	
 	Shell shell;
 	
+	// Provide the widget for the history table
 	private HistoryTableProvider historyTableProvider;
 	
+	/**
+	 * Provide a wrapper for a resource node that doesn't buffer. Changes are saved directly to the
+	 * underlying file.
+	 */
 	class TypedBufferedContent extends ResourceNode {
 		public TypedBufferedContent(IFile resource) {
 			super(resource);
@@ -88,6 +90,9 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		public ITypedElement replace(ITypedElement child, ITypedElement other) {
 			return null;
 		}
+		public void fireChange() {
+			fireContentChanged();
+		}
 	}
 	
 	/**
@@ -121,6 +126,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			return super.getName();
 		}
 	};
+	
 	/**
 	 * A compare node that gets its label from the right element
 	 */
@@ -137,7 +143,9 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			}
 			return null;
 		}
-
+		public void fireContentChanges() {
+			fireChange();
+		}
 	};
 	/**
 	 * A content provider which knows how to get the children of the diff container
@@ -167,7 +175,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		this.shell = parent.getShell();
 		viewer = getHistoryTableProvider().createTable(parent);
 		Table table = viewer.getTable();
-		table.setData(CompareUI.COMPARE_VIEWER_TITLE, Policy.bind("CVSCompareRevisionsInput.structureCompare")); //$NON-NLS-1$
+		table.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle()); //$NON-NLS-1$
 	
 		viewer.setContentProvider(new VersionCompareContentProvider());
 
@@ -176,9 +184,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		mm.addMenuListener(
 			new IMenuListener() {
 				public void menuAboutToShow(IMenuManager mm) {
-					mm.add(getContentsAction);
 					mm.add(getRevisionAction);
-					mm.add(getAnnotateAction);
 				}
 			}
 		);
@@ -187,103 +193,30 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (!(selection instanceof IStructuredSelection)) {
-					getContentsAction.setEnabled(false);
 					getRevisionAction.setEnabled(false);
-					getAnnotateAction.setEnabled(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
-				getContentsAction.setEnabled(ss.size() == 1);
 				getRevisionAction.setEnabled(ss.size() == 1);
-				getAnnotateAction.setEnabled(ss.size() == 1);
 			}	
 		});
 		
 		// Add F1 help.
 		WorkbenchHelp.setHelp(table, IHelpContextIds.COMPARE_REVISIONS_VIEW);
-		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
-		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);
-		WorkbenchHelp.setHelp(getAnnotateAction, IHelpContextIds.GET_ANNOTATE_ACTION);
-		
 		return viewer;
 	}
-
+	
 	private void initLabels() {
 		CompareConfiguration cc = (CompareConfiguration)getCompareConfiguration();
-		String resourceName = resource.getName();	
-//		if (editions[0].isTeamStreamResource()) {
-//			setTitle(Policy.bind("CompareResourceEditorInput.compareResourceAndStream", new Object[] {resourceName, editions[0].getTeamStream().getName()}));
-//		} else {
-//			setTitle(Policy.bind("CompareResourceEditorInput.compareResourceAndVersions", new Object[] {resourceName}));
-//		}
-		setTitle(Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName})); //$NON-NLS-1$
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
-		
+		String resourceName = resource.getName();
 		String leftLabel = Policy.bind("CVSCompareRevisionsInput.workspace", new Object[] {resourceName}); //$NON-NLS-1$
 		cc.setLeftLabel(leftLabel);
 		String rightLabel = Policy.bind("CVSCompareRevisionsInput.repository", new Object[] {resourceName}); //$NON-NLS-1$
 		cc.setRightLabel(rightLabel);
 	}
-	private void initializeActions() {
-		
-		getAnnotateAction = new Action(Policy.bind("HistoryView.getAnnotateAction"), null) { //$NON-NLS-1$
-			public void run() {
-				try {
-						IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-						if (selection.size() != 1) return;
-						VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
-						ResourceEditionNode right = (ResourceEditionNode)node.getRight();
-						ICVSRemoteResource edition = right.getRemoteResource();
-						ShowAnnotationAction annotateAction = new ShowAnnotationAction();
-						annotateAction.execute(edition);
-
-				} catch (InterruptedException e) {
-					// Do nothing
-					return;
-				} catch (InvocationTargetException e) {
-					handle(e);
-				}
-			}
-		};
-		
-		getContentsAction = new Action(Policy.bind("HistoryView.getContentsAction"), null) { //$NON-NLS-1$
-			public void run() {
-				try {
-					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-							if (selection.size() != 1) return;
-							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
-							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
-							IResourceVariant edition = (IResourceVariant)right.getRemoteResource();
-							// Do the load. This just consists of setting the local contents. We don't
-							// actually want to change the base.
-							try {
-								monitor.beginTask(null, 100);
-								InputStream in = edition.getStorage(new SubProgressMonitor(monitor, 50)).getContents();
-								resource.setContents(in, false, true, new SubProgressMonitor(monitor, 50));
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							} finally {
-								monitor.done();
-							}
-						}
-					});
-				} catch (InterruptedException e) {
-					// Do nothing
-					return;
-				} catch (InvocationTargetException e) {
-					handle(e);
-				}
-				// recompute the labels on the viewer
-				updateCurrentEdition();
-				viewer.refresh();
-			}
-		};
-		
+	private void initializeActions() {		
 		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction"), null) { //$NON-NLS-1$
 			public void run() {
 				try {
@@ -315,6 +248,12 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				} catch (InvocationTargetException e) {
 					handle(e);
 				}
+				// fire change
+				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+				if (selection.size() != 1) return;
+				VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+				TypedBufferedContent left = (TypedBufferedContent)node.getLeft();
+				left.fireChange();
 				// recompute the labels on the viewer
 				viewer.refresh();
 			}
@@ -323,8 +262,8 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		initLabels();
 		DiffNode diffRoot = new DiffNode(Differencer.NO_CHANGE);
+		ITypedElement left = new TypedBufferedContent(resource);
 		for (int i = 0; i < editions.length; i++) {		
-			ITypedElement left = new TypedBufferedContent(resource);
 			ITypedElement right = new ResourceRevisionNode(editions[i]);
 			diffRoot.add(new VersionCompareDiffNode(left, right));
 		}
@@ -350,5 +289,34 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		}
 		return historyTableProvider;
 	}
-
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		super.saveChanges(pm);
+	}
+	
+	public void replaceLocalWithCurrentlySelectedRevision() throws CoreException {
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.size() != 1) return;
+		VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+		ResourceRevisionNode right = (ResourceRevisionNode)node.getRight();
+		TypedBufferedContent left = (TypedBufferedContent)node.getLeft();
+		left.setContent(Utils.readBytes(right.getContents()));
+	}
+	
+	public Viewer getViewer() {
+		return viewer;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
+	 */
+	public String getTitle() {
+		String resourceName = resource.getName();	
+		return Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName}); //$NON-NLS-1$
+	}
 }

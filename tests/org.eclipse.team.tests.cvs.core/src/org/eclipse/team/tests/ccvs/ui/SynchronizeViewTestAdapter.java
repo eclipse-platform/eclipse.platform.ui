@@ -22,11 +22,14 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 /**
  * SyncInfoSource that obtains SyncInfo from the SynchronizeView's SyncSet.
@@ -34,7 +37,12 @@ import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 public class SynchronizeViewTestAdapter extends SyncInfoSource {
 
 	public SynchronizeViewTestAdapter() {
-		TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage(null);
+			IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+			try {
+				activePage.showView(ISynchronizeView.VIEW_ID);
+			} catch (PartInitException e) {
+				throw new AssertionFailedError("Cannot show sync view in active page");
+			}
 	}
 	
 	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
@@ -96,8 +104,13 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		ISynchronizeParticipant participant = new MergeSynchronizeParticipant(mergeSubscriber);
 		synchronizeManager.addSynchronizeParticipants(
 				new ISynchronizeParticipant[] {participant});		
-		ISynchronizeView view = synchronizeManager.showSynchronizeViewInActivePage(null);
-		view.display(participant);
+		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+		try {
+			ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+			view.display(participant);
+		} catch (PartInitException e) {
+			throw new AssertionFailedError("Cannot show sync view in active page");
+		}
 		return mergeSubscriber;
 	}
 	
@@ -110,9 +123,14 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
 		ISynchronizeParticipant participant = new CompareParticipant(s);
 		synchronizeManager.addSynchronizeParticipants(
-				new ISynchronizeParticipant[] {participant});		
-		ISynchronizeView view = synchronizeManager.showSynchronizeViewInActivePage(null);
-		view.display(participant);
+				new ISynchronizeParticipant[] {participant});	
+		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+		try {
+			ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+			view.display(participant);
+		} catch (PartInitException e) {
+			throw new AssertionFailedError("Cannot show sync view in active page");
+		}
 		return s;
 	}
 	
@@ -123,7 +141,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
 			ISynchronizeParticipant participant = participants[i];
-			if(participant.getId().equals(CVSMergeSubscriber.QUALIFIED_NAME)) {
+			if(participant.getId().equals(CVSMergeSubscriber.ID)) {
 				TeamUI.getSynchronizeManager().removeSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			}
 		}

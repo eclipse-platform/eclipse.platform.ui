@@ -13,6 +13,7 @@ package org.eclipse.team.ui.synchronize;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -93,7 +94,27 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * participant
 	 */
 	public IPageBookViewPage createPage(ISynchronizeView view);
-		
+	
+	/**
+	 * Creates and returns a wizard page used to globally synchronize this participant. Participants
+	 * returning a wizard will get added to the global Team synchronize action and users can
+	 * easily initiate a synchronization on the participant. The implementor can decide exactly
+	 * what information is needed from the user to synchronize.
+	 * 
+	 * @return a wizard that prompts the user for information necessary to synchronize this
+	 * participant or <code>null</code> if this participant doesn't want to support global refresh.
+	 */
+	public IWizard createSynchronizeWizard();
+	
+	/**
+	 * Returns if this participant supports a global synchronize action and will return a wizard
+	 * if {@link #createSynchronizeWizard()} is called.
+	 * 
+	 * @return <code>true</code> if this participant supports a global synchronize action and
+	 * <code>false</code> otherwise.
+	 */
+	public boolean doesSupportSynchronize();
+	
 	/**
 	 * Initializes this participant with the given participant state.  
 	 * A memento is passed to the participant which contains a snapshot 

@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -116,6 +117,14 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public boolean isPersistent() {
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#doesSupportRefresh()
+	 */
+	public boolean doesSupportSynchronize() {
+		ISynchronizeParticipantDescriptor d = TeamUI.getSynchronizeManager().getParticipantDescriptor(getId());
+		return d == null ? false : d.doesSupportRefresh();
 	}
 	
 	/*
