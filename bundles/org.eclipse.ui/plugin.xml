@@ -2100,10 +2100,10 @@
             id="org.eclipse.ui.preferencePages.FileEditors">
       </page>
       <page
-            name="%PreferencePages.PathVariables"
+            name="%PreferencePages.LinkedResources"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.PathVariablesPreferencePage"
-            id="org.eclipse.ui.preferencePages.PathVariables">
+            class="org.eclipse.ui.internal.dialogs.LinkedResourcesPreferencePage"
+            id="org.eclipse.ui.preferencePages.LinkedResources">
       </page>
       <page
             name="%PreferencePages.FileStates"

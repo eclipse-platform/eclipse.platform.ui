@@ -51,7 +51,8 @@ public class PathVariablesGroup {
 
 	// parent shell
 	private Shell shell;
-	
+
+	private Label variableLabel;	
 	private Table variableTable;
 	private Button addButton;
 	private Button editButton;
@@ -170,7 +171,7 @@ public class PathVariablesGroup {
 		pageComponent.setFont(font);
 
 		// layout the table & its buttons
-		Label variableLabel = new Label(pageComponent, SWT.LEFT);
+		variableLabel = new Label(pageComponent, SWT.LEFT);
 		variableLabel.setText(WorkbenchMessages.getString("PathVariablesBlock.variablesLabel")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
@@ -249,6 +250,20 @@ public class PathVariablesGroup {
 		// now we must refresh the UI state
 		updateWidgetState(newVariableName);
 
+	}
+	/**
+	 * Returns the enabled state of the group's widgets.
+	 * Returns <code>true</code> if called prior to calling 
+	 * <code>createContents</code>.
+	 * 
+	 * @return boolean the enabled state of the group's widgets.
+	 * 	 <code>true</code> if called prior to calling <code>createContents</code>.
+	 */
+	public boolean getEnabled() {
+		if (variableTable != null && !variableTable.isDisposed()) {
+			return variableTable.getEnabled();
+		}
+		return true;
 	}
 	/**
 	 * Returns the selected variables.
@@ -465,6 +480,21 @@ public class PathVariablesGroup {
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		button.setLayoutData(data);
 		return data;
+	}
+	/**
+	 * Sets the enabled state of the group's widgets.
+	 * Does nothing if called prior to calling <code>createContents</code>.
+	 * 
+	 * @param enabled the new enabled state of the group's widgets
+	 */
+	public void setEnabled(boolean enabled) {
+		if (variableTable != null && !variableTable.isDisposed()) {
+			variableLabel.setEnabled(enabled);
+			variableTable.setEnabled(enabled);
+			addButton.setEnabled(enabled);
+			editButton.setEnabled(enabled);
+			removeButton.setEnabled(enabled);
+		}
 	}
 	/**
 	 * Updates the widget's current state: refreshes the table with the current 
