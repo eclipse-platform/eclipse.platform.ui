@@ -97,7 +97,11 @@ public class SearchObject extends NamedModelObject {
 		this.categoryId = id;
 		notifyObjectChanged(P_CATEGORY);
 	}
-
+	
+	public void setDisplay(Display display) {
+		backgroundProgress.setDisplay(display);
+	}
+	
 	public Hashtable getSettings() {
 		return settings;
 	}
@@ -170,9 +174,9 @@ public class SearchObject extends NamedModelObject {
 		if (searchInProgress)
 			return;
 		backgroundProgress.setDisplay(display);
-		IRunnableWithProgress operation = getSearchOperation(queries);
+		IRunnableWithProgress operation = getSearchOperation(display, queries);
 		searchThread =
-			new BackgroundThread(operation, backgroundProgress, Display.getDefault());
+			new BackgroundThread(operation, backgroundProgress, display);
 		searchInProgress = true;
 		searchThread.start();
 		Throwable throwable = searchThread.getThrowable();
@@ -208,11 +212,11 @@ public class SearchObject extends NamedModelObject {
 		backgroundProgress.setCanceled(true);
 	}
 
-	public IRunnableWithProgress getSearchOperation(final ISearchQuery[] queries) {
+	public IRunnableWithProgress getSearchOperation(final Display display, final ISearchQuery[] queries) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doSearch(queries, monitor);
+					doSearch(display, queries, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -220,26 +224,26 @@ public class SearchObject extends NamedModelObject {
 		};
 	}
 
-	private void doSearch(ISearchQuery[] queries, IProgressMonitor monitor)
+	private void doSearch(Display display, ISearchQuery[] queries, IProgressMonitor monitor)
 		throws CoreException {
 		result.clear();
-		asyncFireObjectChanged(this, P_REFRESH);
+		asyncFireObjectChanged(display, this, P_REFRESH);
 
 		ArrayList candidates = new ArrayList();
 
-		backgroundProgress.beginTask(
+		monitor.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_BEGIN),
 			IProgressMonitor.UNKNOWN);
 
 		if (getSearchMyComputer()) {
-			backgroundProgress.setTaskName(
+			monitor.setTaskName(
 				UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER));
 			initializeMyComputerSites(monitor);
 		}
 		computeSearchSources(candidates);
 		int ntasks = queries.length * (1 + candidates.size());
 
-		backgroundProgress.beginTask(
+		monitor.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_BEGIN),
 			ntasks);
 			
@@ -247,7 +251,7 @@ public class SearchObject extends NamedModelObject {
 			ISearchQuery query = queries[i];
 			ISiteAdapter site = query.getSearchSite();
 			if (site != null) {
-				searchOneSite(site, query, monitor);
+				searchOneSite(display, site, query, monitor);
 				if (monitor.isCanceled())
 					break;
 			}
@@ -258,7 +262,7 @@ public class SearchObject extends NamedModelObject {
 					break;
 				}
 				Object source = candidates.get(j);
-				searchOneSite((ISiteAdapter) source, query, monitor);
+				searchOneSite(display, (ISiteAdapter) source, query, monitor);
 				monitor.worked(1);
 			}
 			if (monitor.isCanceled())
@@ -266,7 +270,7 @@ public class SearchObject extends NamedModelObject {
 		}
 		searchInProgress = false;
 		monitor.done();
-		asyncFireObjectChanged(this, P_REFRESH);
+		asyncFireObjectChanged(display, this, P_REFRESH);
 	}
 
 	public void computeSearchSources(ArrayList sources) {
@@ -275,6 +279,7 @@ public class SearchObject extends NamedModelObject {
 	}
 
 	private void searchOneSite(
+		Display display,
 		ISiteAdapter siteAdapter,
 		ISearchQuery query,
 		IProgressMonitor monitor)
@@ -289,23 +294,26 @@ public class SearchObject extends NamedModelObject {
 		monitor.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 		IFeatureReference[] refs = site.getFeatureReferences();
 
+		ArrayList candidates = new ArrayList();
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
 			// filter out the feature for environment
 			if (getFilterEnvironment() && isValidEnvironment(candidate)==false) continue;
-			
-			if (query.matches(candidate)) {
-				// bingo - add this
-				SearchResultSite searchSite = findResultSite(site);
-				if (searchSite == null) {
-					searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);
-					result.add(searchSite);
-					asyncFireObjectAdded(this, searchSite);
-				}
-				SimpleFeatureAdapter featureAdapter = new SimpleFeatureAdapter(candidate);
-				searchSite.addCandidate(featureAdapter);
-				asyncFireObjectAdded(searchSite, featureAdapter);
+			candidates.add(candidate);
+		}
+		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
+		IFeature [] matches = query.getMatchingFeatures(array);
+		for (int i=0; i<matches.length; i++) {
+			// bingo - add this
+			SearchResultSite searchSite = findResultSite(site);
+			if (searchSite == null) {
+				searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);
+				result.add(searchSite);
+				asyncFireObjectAdded(display, this, searchSite);
 			}
+			SimpleFeatureAdapter featureAdapter = new SimpleFeatureAdapter(matches[i]);
+			searchSite.addCandidate(featureAdapter);
+			asyncFireObjectAdded(display, searchSite, featureAdapter);
 		}
 	}
 	
@@ -321,8 +329,7 @@ public class SearchObject extends NamedModelObject {
 		return EnvironmentUtil.isValidEnvironment(candidate);
 	}
 
-	private void asyncFireObjectAdded(final Object parent, final Object child) {
-		Display display = backgroundProgress.getDisplay();
+	private void asyncFireObjectAdded(Display display, final Object parent, final Object child) {
 		final UpdateModel model = getModel();
 		display.asyncExec(new Runnable() {
 			public void run() {
@@ -331,8 +338,7 @@ public class SearchObject extends NamedModelObject {
 		});
 	}
 
-	private void asyncFireObjectChanged(final Object obj, final String property) {
-		Display display = backgroundProgress.getDisplay();
+	private void asyncFireObjectChanged(Display display, final Object obj, final String property) {
 		final UpdateModel model = getModel();
 		display.asyncExec(new Runnable() {
 			public void run() {

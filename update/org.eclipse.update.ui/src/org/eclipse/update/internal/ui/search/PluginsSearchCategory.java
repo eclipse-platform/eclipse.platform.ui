@@ -52,7 +52,18 @@ public class PluginsSearchCategory extends SearchCategory {
 			public ISiteAdapter getSearchSite() {
 				return null;
 			}
-			public boolean matches(IFeature feature) {
+			
+			public IFeature [] getMatchingFeatures(IFeature [] candidates) {
+				ArrayList result =new ArrayList();
+				for (int i=0; i<candidates.length; i++) {
+					if (matches(candidates[i]))
+						result.add(candidates[i]);
+				}
+				return (IFeature[])result.toArray(new IFeature[result.size()]);
+			}
+			
+			
+			private boolean matches(IFeature feature) {
 				for (int i = 0; i < imports.size(); i++) {
 					IImport iimport = (IImport) imports.get(i);
 					if (!contains(feature, iimport))

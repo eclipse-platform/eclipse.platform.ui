@@ -51,6 +51,18 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public ISiteAdapter getSearchSite() {
 			return adapter;
 		}
+		public IFeature [] getMatchingFeatures(IFeature [] features) {
+			IFeature winner = null;
+			for (int i=0; i<features.length; i++) {
+				IFeature feature = features[i];
+				if (isNewerVersion(candidate, feature)) {
+					if (winner == null || isNewerVersion(winner, feature))
+						winner = feature;
+				}
+			}
+			if (winner == null) return new IFeature[0];
+			else return new IFeature[] { winner };
+		}
 		public boolean matches(IFeature feature) {
 			return isNewerVersion(candidate, feature);
 		}

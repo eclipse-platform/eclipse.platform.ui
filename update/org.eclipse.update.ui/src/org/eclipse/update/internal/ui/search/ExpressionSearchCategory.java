@@ -1,5 +1,6 @@
 package org.eclipse.update.internal.ui.search;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -73,8 +74,13 @@ public class ExpressionSearchCategory extends SearchCategory {
 			public ISiteAdapter getSearchSite() {
 				return null;
 			}
-			public boolean matches(IFeature feature) {
-				return internalMatches(feature);
+			public IFeature [] getMatchingFeatures(IFeature [] candidates) {
+				ArrayList result = new ArrayList();
+				for (int i=0; i<candidates.length; i++) {
+					if (internalMatches(candidates[i]))
+						result.add(candidates[i]);
+				}
+				return (IFeature[])result.toArray(new IFeature[result.size()]);
 			}
 		};
 		return new ISearchQuery [] { query };

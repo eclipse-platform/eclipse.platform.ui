@@ -15,9 +15,6 @@ public interface ISearchQuery {
  * should be used.
  */
 	public ISiteAdapter getSearchSite();
-/**
- * Tests whether the feature matches the query criteria.
- * @return true if there is a match or false otherwise.
- */
-	public boolean matches(IFeature feature);
+	
+	public IFeature [] getMatchingFeatures(IFeature[] candidates);
 }

@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class SearchCategoryDescriptor {
 	private IConfigurationElement config;
+	private ISearchCategory category;
 	public SearchCategoryDescriptor(IConfigurationElement config) {
 		this.config = config;
 	}
@@ -31,11 +32,13 @@ public class SearchCategoryDescriptor {
 		return "<form></form>";
 	}
 	public ISearchCategory createCategory() {
+		if (category!=null) return category;
 		try {
 			Object obj = config.createExecutableExtension("class");
 			if (obj instanceof ISearchCategory) {
 				ISearchCategory category = (ISearchCategory)obj;
 				category.setId(getId());
+				this.category = category;
 				return category;
 			}
 		} catch (CoreException e) {
