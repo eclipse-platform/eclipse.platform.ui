@@ -306,14 +306,17 @@ public class FormTextModel {
 		}
 	}
 	
-	private String getSingleNodeText(Node node) {
+	private String getNormalizedText(String text) {
 		int [] spaceCounter = new int[1];
 		StringBuffer buf = new StringBuffer();
 		
-		String value = node.getNodeValue();
-		if (value==null) return null;
-		appendText(value, buf, spaceCounter);
+		if (text==null) return null;
+		appendText(text, buf, spaceCounter);
 		return buf.toString();
+	}
+	
+	private String getSingleNodeText(Node node) {
+		return getNormalizedText(node.getNodeValue());
 	}
 
 	private String getNodeText(Node node) {
@@ -375,6 +378,8 @@ public class FormTextModel {
 		reset();
 		
 		if (regularText==null) return;
+		
+		regularText = getNormalizedText(regularText);
 
 		Paragraph p = new Paragraph(true);
 		paragraphs.add(p);
