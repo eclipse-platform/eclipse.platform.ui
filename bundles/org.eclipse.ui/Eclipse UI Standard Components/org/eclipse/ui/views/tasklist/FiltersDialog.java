@@ -172,9 +172,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 	 */
 	private class WorkingSetGroup {
 		private Button button;
-		private Label label;
 		private Button selectButton;
-
 		/**
 		 * Creates the working set filter selection widgets.
 		 * 
@@ -182,22 +180,18 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 		 */
 		WorkingSetGroup(Composite parent) {
 			// radio button has to be part of main radio button group
-			button = createRadioButton(parent, TaskListMessages.getString("TaskList.workingSet")); //$NON-NLS-1$	
-			
-			Composite group = new Composite(parent, SWT.NONE);
+			button = createRadioButton(parent, TaskListMessages.getString("TaskList.noWorkingSet")); //$NON-NLS-1$
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			button.setLayoutData(data);
+
+			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();
-			layout.numColumns = 2;
 			Button radio = new Button(parent, SWT.RADIO);
 			layout.marginWidth = radio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			layout.marginHeight = 0;
-			layout.horizontalSpacing = 10;
 			radio.dispose();
-			group.setLayout(layout);
-			selectButton = createButton(group, SELECT_ID, TaskListMessages.getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
-			label = new Label(group, SWT.NULL);
-			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			gridData.widthHint = 200;
-			label.setLayoutData(gridData);
+			composite.setLayout(layout);
+			selectButton = createButton(composite, SELECT_ID, TaskListMessages.getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
 		}
 		/**
 		 * Returns wether or not a working set filter should be used
@@ -217,7 +211,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 		 * 	is selected.
 		 */
 		IWorkingSet getWorkingSet() {
-			return (IWorkingSet) label.getData();
+			return (IWorkingSet) button.getData();
 		}
 		/**
 		 * Sets the working set filter selection.
@@ -233,7 +227,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 				selectedResourceButton.setSelection(false);
 				selectedResourceAndChildrenButton.setSelection(false);
 			}
-			updateEnabledState();
 		}
 		/**
 		 * Opens the working set selection dialog.
@@ -264,20 +257,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 		 * @param workingSet the working set 
 		 */
 		void setWorkingSet(IWorkingSet workingSet) {
-			label.setData(workingSet);
-			if (workingSet != null) {
-				label.setText(workingSet.getName());
+			button.setData(workingSet);
+			if (workingSet != null) {					
+				button.setText(TaskListMessages.format(
+					"TaskList.workingSet", 					//$NON-NLS-1$
+					new Object[] {workingSet.getName()})); 
 			}
 			else {
-				label.setText(TaskListMessages.getString("TaskList.noWorkingSet")); //$NON-NLS-1$
+				button.setText(TaskListMessages.getString("TaskList.noWorkingSet")); //$NON-NLS-1$
 			}
-		}
-		/**
-		 * Updates the enabled state of the label showing the 
-		 * working set name.
-		 */
-		void updateEnabledState() {
-			label.setEnabled(button.getSelection());
 		}
 	}
 
@@ -693,7 +681,6 @@ void setSelectedTypes(String[] typeIds) {
 void updateEnabledState() {
 	boolean isProblemSelected = selectionIncludesSubtypeOf(IMarker.PROBLEM);
 	boolean isTaskSelected = selectionIncludesSubtypeOf(IMarker.TASK);
-	workingSetGroup.updateEnabledState();
 	severityGroup.setEnabled(isProblemSelected);
 	priorityGroup.setEnabled(isTaskSelected);
 	completionGroup.setEnabled(isTaskSelected);
