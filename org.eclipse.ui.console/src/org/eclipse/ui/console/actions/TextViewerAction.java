@@ -16,6 +16,13 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.texteditor.IUpdate;
 
+/**
+ * Common function for actions that operate on a text viewer.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
+ * @since 3.0
+ */
 public class TextViewerAction extends Action implements IUpdate {
 
 	private int fOperationCode= -1;

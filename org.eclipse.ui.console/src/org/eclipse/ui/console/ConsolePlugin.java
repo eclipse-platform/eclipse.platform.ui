@@ -21,6 +21,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.console.ConsoleManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * The console plug-in class.
+ * 
+ * @since 3.0
+ */
+
 public class ConsolePlugin extends AbstractUIPlugin {
 	
 	/**

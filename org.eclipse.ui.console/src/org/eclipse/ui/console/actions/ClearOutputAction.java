@@ -24,7 +24,12 @@ import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 
 /**
- * Clears the output in the current console viewer
+ * Clears the output in a text console.
+ * <p>
+ * Clients may instantiate this class; this class is not intended to 
+ * be subclassed.
+ * </p>
+ * @since 3.0
  */
 public class ClearOutputAction extends Action {
 

@@ -11,6 +11,11 @@
 
 package org.eclipse.ui.console;
 
+/**
+ * Constants relating to the console plug-in.
+ * 
+ * @since 3.0
+ */
 public interface IConsoleConstants {
 	
 	/**

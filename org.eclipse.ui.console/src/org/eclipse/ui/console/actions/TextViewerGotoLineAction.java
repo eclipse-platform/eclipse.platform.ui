@@ -24,6 +24,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 
+/**
+ * Action to position a text viewer to a specific line.
+ * <p>
+ * Clients may instantiate this class; this class is not intended to 
+ * be subclassed.
+ * </p>
+ * @since 3.0
+ */
 public class TextViewerGotoLineAction extends TextViewerAction {
 
 	/**
