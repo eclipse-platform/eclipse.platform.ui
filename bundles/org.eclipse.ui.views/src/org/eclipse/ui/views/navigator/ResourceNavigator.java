@@ -436,8 +436,11 @@ public class ResourceNavigator
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
 			ISelection newSelection = new StructuredSelection(file);
-			if (!getTreeViewer().getSelection().equals(newSelection)) {
-				getTreeViewer().setSelection(newSelection);
+			if (getTreeViewer().getSelection().equals(newSelection)) {
+				getTreeViewer().getTree().showSelection();
+			}
+			else {
+				getTreeViewer().setSelection(newSelection, true);
 			}
 		}
 	}
