@@ -35,4 +35,6 @@ public class PerformanceMessages extends NLS {
 	public static String PerformanceView_timeHeader;
 	public static String PerformanceView_resetAction;
 	public static String PerformanceView_resetTooltip;
+	public static String PerformanceView_selectAllActionName;
+	public static String PerformanceView_copyActionName;
 }

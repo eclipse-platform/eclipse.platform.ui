@@ -15,16 +15,19 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.PerformanceStats;
+import org.eclipse.core.runtime.PerformanceStats.PerformanceListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -33,6 +36,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
@@ -44,15 +48,15 @@ import org.eclipse.ui.part.ViewPart;
 public class PerformanceView extends ViewPart {
 
 	// Table of Column Indices
-	public final static int COLUMN_EVENT = 0;
+	final static int COLUMN_EVENT = 0;
 
-	public final static int COLUMN_BLAME = 1;
+	final static int COLUMN_BLAME = 1;
 
-	public final static int COLUMN_CONTEXT = 2;
+	final static int COLUMN_CONTEXT = 2;
 
-	public final static int COLUMN_COUNT = 3;
+	final static int COLUMN_COUNT = 3;
 
-	public final static int COLUMN_TIME = 4;
+	final static int COLUMN_TIME = 4;
 
 	private static final String EMPTY_STRING = "";//$NON-NLS-1$ 
 
@@ -72,7 +76,12 @@ public class PerformanceView extends ViewPart {
 	Clipboard clipboard;
 
 	Action resetAction;
+
 	Action copyAction;
+	
+	Action selectAllAction;
+
+	TableViewer viewer;
 
 	/*
 	 * (non-Javadoc)
@@ -83,28 +92,69 @@ public class PerformanceView extends ViewPart {
 
 		clipboard = new Clipboard(parent.getDisplay());
 
-		TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
+		viewer = new TableViewer(parent, SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.setSorter(new EventsSorter(0));
+		viewer.getTable().setHeaderVisible(true);
+		viewer.getTable().setLinesVisible(true);
+		TableLayout tableLayout = new TableLayout();
+		viewer.getTable().setLayout(tableLayout);
+
+		for (int i = 0; i < columnHeaders.length; i++) {
+			tableLayout.addColumnData(columnLayouts[i]);
+			TableColumn column = new TableColumn(viewer.getTable(), SWT.NONE, i);
+			column.setResizable(true);
+			column.setText(columnHeaders[i]);
+		}
+
+		PerformanceStats.addListener(createPerformanceListener());
+		viewer.setInput(""); //$NON-NLS-1$
 
 		createCommonActions(viewer);
-		getViewSite().getActionBars().getToolBarManager().add(resetAction);
 		createContextMenu(viewer);
+	}
+
+	private PerformanceListener createPerformanceListener() {
+		return new PerformanceStats.PerformanceListener() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.PerformanceStats$PerformanceListener#eventFailed(org.eclipse.core.runtime.PerformanceStats, long)
+			 */
+			public void eventFailed(PerformanceStats event, long duration) {
+				// We only log failures
+				viewer.getControl().getDisplay().asyncExec(new Runnable() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						if (!viewer.getControl().isDisposed())
+							viewer.refresh();
+					}
+				});
+
+			}
+
+		};
 	}
 
 	/**
 	 * Create the context menu for the viewer.
+	 * 
 	 * @param viewer
 	 */
-	private void createContextMenu(TreeViewer viewer) {
-		//creates a context menu with actions and adds it to the viewer control
+	private void createContextMenu(StructuredViewer viewer) {
+		// creates a context menu with actions and adds it to the viewer control
 		MenuManager menuMgr = new MenuManager();
 		menuMgr.add(resetAction);
 		menuMgr.add(copyAction);
+		menuMgr.add(selectAllAction);
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		
+
 	}
 
 	/**
@@ -113,8 +163,8 @@ public class PerformanceView extends ViewPart {
 	 * @param viewer
 	 * 
 	 */
-	private void createCommonActions(final TreeViewer viewer) {
-		copyAction = new Action() {
+	private void createCommonActions(final TableViewer viewer) {
+		copyAction = new Action(PerformanceMessages.PerformanceView_copyActionName) {
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection) viewer
 						.getSelection();
@@ -142,9 +192,9 @@ public class PerformanceView extends ViewPart {
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
 				copyAction);
 
-		Action selectAllAction = new Action() {
+		selectAllAction = new Action(PerformanceMessages.PerformanceView_selectAllActionName) {
 			public void run() {
-				viewer.getTree().selectAll();
+				viewer.getTable().selectAll();
 				// force viewer selection change
 				viewer.setSelection(viewer.getSelection());
 			}
@@ -164,8 +214,8 @@ public class PerformanceView extends ViewPart {
 
 	}
 
-	private ITreeContentProvider getContentProvider() {
-		return new ITreeContentProvider() {
+	private IStructuredContentProvider getContentProvider() {
+		return new IStructuredContentProvider() {
 
 			/*
 			 * (non-Javadoc)
@@ -173,15 +223,6 @@ public class PerformanceView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-			 */
-			public Object[] getChildren(Object parentElement) {
-				return new Object[0];
 			}
 
 			/*
@@ -198,24 +239,6 @@ public class PerformanceView extends ViewPart {
 						result.add(stats);
 				}
 				return result.toArray();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-			 */
-			public Object getParent(Object element) {
-				return null;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-			 */
-			public boolean hasChildren(Object element) {
-				return false;
 			}
 
 			/*
