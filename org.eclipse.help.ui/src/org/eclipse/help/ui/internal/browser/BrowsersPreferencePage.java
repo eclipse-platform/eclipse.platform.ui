@@ -198,6 +198,7 @@ public class BrowsersPreferencePage
 		customBrowserPath.setText(
 			HelpPlugin.getDefault().getPluginPreferences().getDefaultString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
+		setEnabledCustomBrowserPath();
 		super.performDefaults();
 	}
 	/**
