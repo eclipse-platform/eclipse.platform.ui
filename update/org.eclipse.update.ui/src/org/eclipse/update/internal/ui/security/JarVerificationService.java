@@ -4,11 +4,16 @@ package org.eclipse.update.internal.ui.security;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.IVerificationListener;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.security.JarVerifier;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.wizards.InstallWizardDialog;
 /**
  *
  */
@@ -59,11 +64,14 @@ public class JarVerificationService implements IVerificationListener {
 	 */
 	private int openWizard(IVerificationResult result) {
 		int code;
-		JarVerificationDialog dialog = new JarVerificationDialog(shell, result);
+		IDialogPage page = new JarVerificationPage(result);
+		Dialog dialog =
+				new JarVerificationDialog(shell,page,result);
+		dialog.create();
+		dialog.getShell().setSize(600, 500);
 		dialog.open();
-
 		if (dialog.getReturnCode() == dialog.OK)
-			code = CHOICE_INSTALL_TRUST_ONCE;
+			code = CHOICE_INSTALL_TRUST_ALWAYS;
 		else
 			code = CHOICE_ABORT;
 

@@ -1,47 +1,47 @@
-package org.eclipse.update.internal.ui.security;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
+/**
+ * Created on Apr 25, 2002
+ *
+ * To change this generated comment edit the template variable "filecomment":
+ * Workbench>Preferences>Java>Templates.
  */
+package org.eclipse.update.internal.ui.security;
 
-import java.io.File;
-
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 
 /**
  * 
  */
-public class JarVerificationDialog extends Dialog {
-	private IVerificationResult _VerificationResult = null;
-	private String _fileName = null;
-	private String _strFeatureName = null;
-	private String _strId = null;
-	private String _strProviderName = null;
-	private boolean okToInstall = false;
+public class JarVerificationDialog extends TitleAreaDialog {
 
-	private String componentVerified;
+	private IVerificationResult _VerificationResult = null;
+	private IDialogPage _DialogPage;
+	private Composite pageContainer;
+	private Image defaultImage = null;
+	private ImageDescriptor defaultImageDescriptor =
+		UpdateUIPluginImages.DESC_INSTALL_WIZ;
+	
 	/**
-	 *
+	 * Constructor for JarVerificationDialog.
+	 * @param parentShell
+	 * @param newWizard
 	 */
-	public JarVerificationDialog(
-		Shell shell,
-		IVerificationResult verificationResult) {
-		super(shell);
-		_fileName = verificationResult.getContentReference().getIdentifier();
+	public JarVerificationDialog(Shell parentShell,IDialogPage dialogPage, IVerificationResult verificationResult) {
+		super(parentShell);
 		_VerificationResult = verificationResult;
-		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
-		_strFeatureName = verificationResult.getFeature().getLabel();
-		_strProviderName = verificationResult.getFeature().getProvider();
-		componentVerified =
-			(verificationResult.isFeatureVerification()) ? "feature" : "feature file";
-		okToInstall = false;
+		_DialogPage = dialogPage;
 	}
 
 	/**
@@ -84,229 +84,43 @@ public class JarVerificationDialog extends Dialog {
 				true);
 		}
 	}
-	/**
-	 * Creates and returns the contents of the upper part 
-	 * of the dialog (above the button bar).
+	
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
 	 */
-	protected Control createDialogArea(Composite compositeParent) {
-		getShell().setText(
-			UpdateUIPlugin.getResourceString("JarVerificationDialog.Verification"));
-		//$NON-NLS-1$
-		// Composite: Client
-		//------------------
-		Composite compositeClient = new Composite(compositeParent, SWT.NULL);
-		GridLayout grid = new GridLayout();
-		compositeClient.setLayout(grid);
-		compositeClient.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Text: Information
-		//------------------
-		Text textInformation =
-			new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformation.setLayoutData(
-			new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
-		StringBuffer strb = new StringBuffer();
-		switch (_VerificationResult.getVerificationCode()) {
-			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.AboutToInstall",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.NotDigitallySigned",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.CannotVerifyProvider",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				if (_VerificationResult.isFeatureVerification()) {
-					strb.append(
-						UpdateUIPlugin.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
-					//$NON-NLS-1$
-				} else {
-					strb.append(
-						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
-					//$NON-NLS-1$ 					
-				}
-				textInformation.setText(strb.toString());
-				break;
-			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.CorruptedContent",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getResourceString(
-						"JarVerificationDialog.ComponentNotInstalled"));
-				//$NON-NLS-1$
-				textInformation.setText(strb.toString());
-				break;
-			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.SignedComponent",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.UnknownCertificate",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.UnableToVerifyProvider",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				if (_VerificationResult.isFeatureVerification()) {
-					strb.append(
-						UpdateUIPlugin.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
-					//$NON-NLS-1$
-				} else {
-					strb.append(
-						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
-					//$NON-NLS-1$ 					
-				}
-				textInformation.setText(strb.toString());
-				break;
-			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.SignedComponent",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.KnownCertificate",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.ProviderKnown",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.Caution",
-						_strProviderName));
-				//$NON-NLS-1$
-				textInformation.setText(strb.toString());
-				break;
-		}
-		if (_VerificationResult.getVerificationCode()
-			== IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED
-			|| _VerificationResult.getVerificationCode()
-				== IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED) {
-			addCertificateView(compositeClient);
-		}
-		// Composite: Information labels
-		//------------------------------
-		Composite compositeInformation = new Composite(compositeClient, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 0;
-		compositeInformation.setLayout(layout);
-		compositeInformation.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Feature name
-		//---------------
-		Label label = null;
-		if (_strFeatureName != null && _strFeatureName.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
-				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureName"));
-			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(_strFeatureName);
-		}
-		// Feature identifier
-		//---------------------
-		if (_strId != null && _strId.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
-				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureIdentifier"));
-			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(_strId);
-		}
-		// Provider name
-		//--------------
-		if (_strProviderName != null && _strProviderName.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
-				UpdateUIPlugin.getResourceString("JarVerificationDialog.Provider"));
-			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(_strProviderName);
-		}
-		// Label: File name
-		//-----------------
-		label = new Label(compositeInformation, SWT.NULL);
-		label.setText(
-			UpdateUIPlugin.getResourceString("JarVerificationDialog.FileName"));
-		//$NON-NLS-1$
-		label = new Label(compositeInformation, SWT.NULL);
-		label.setText(_fileName);
+	protected Control createDialogArea(Composite parent) {
+		Composite compositeParent = (Composite)super.createDialogArea(parent);
+		setTitleImage(this.getImage());
+		setTitle("Feature Verification");
+		
+		_DialogPage.createControl(compositeParent);
+		pageContainer=(Composite)_DialogPage.getControl();
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		pageContainer.setLayoutData(gd);
+		pageContainer.setFont(parent.getFont());		
+		
+		// Build the separator line
+		Label separator= new Label(compositeParent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return compositeParent;
+	}
+	
+		/**
+	 * @see IDialogPage#getImage()
+	 */
+	public Image getImage() {
+		if (defaultImage == null)
+			defaultImage = defaultImageDescriptor.createImage();
 
-		if (_VerificationResult.getVerificationCode()
-			!= IVerificationResult.TYPE_ENTRY_CORRUPTED) {
-			// Group box
-			//----------
-			Group group = new Group(compositeClient, SWT.NONE);
-			group.setLayout(new GridLayout());
-			group.setLayoutData(
-				new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL));
-			// Text: Instruction
-			//------------------
-			Text textInstruction = new Text(group, SWT.MULTI | SWT.READ_ONLY);
-			if (_VerificationResult.isFeatureVerification()) {
-				textInstruction.setText(
-					UpdateUIPlugin.getResourceString("JarVerificationDialog.MayChooseToInstall"));
-				//$NON-NLS-1$
-			} else {
-				textInstruction.setText(
-					UpdateUIPlugin.getResourceString("JarVerificationDialog.MayChooseToContinue"));
-				//$NON-NLS-1$ 					
-			}
-			//$NON-NLS-1$
-		}
-
-		return compositeClient;
+		return defaultImage;
 	}
 
-	private void addCertificateView(Composite compositeClient) {
-
-		// Group box
-		//----------
-		Group group = new Group(compositeClient, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL));
-		// Text: Information
-		//------------------
-		Text textInformation = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformation.setLayoutData(
-			new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
-		StringBuffer strb = new StringBuffer();
-		if (_VerificationResult.getSignerInfo() != null) {
-			strb.append(_VerificationResult.getSignerInfo());
+	public boolean close() {
+		// dispose of image
+		if (defaultImage != null) {
+			defaultImage.dispose();
+			defaultImage = null;
 		}
-		if (_VerificationResult.getVerifierInfo() != null) {
-			strb.append("\r\n\r\n"); //$NON-NLS-1$
-			strb.append(_VerificationResult.getVerifierInfo());
-		}
-		textInformation.setText(strb.toString());
+		return super.close();		
 	}
 }
