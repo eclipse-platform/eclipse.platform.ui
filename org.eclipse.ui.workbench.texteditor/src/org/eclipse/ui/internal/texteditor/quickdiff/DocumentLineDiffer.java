@@ -264,12 +264,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public ILineDiffInfo getLineInfo(int line) {
 		
-		if (fLastDifference != null && fLastDifference.rightStart() <= line && fLastDifference.rightEnd() > line)
-			return new DiffRegion(fLastDifference, line - fLastDifference.rightStart());
+		RangeDifference last= fLastDifference;
+		if (last != null && last.rightStart() <= line && last.rightEnd() > line)
+			return new DiffRegion(last, line - last.rightStart());
 		
 		fLastDifference= getRangeDifferenceForRightLine(line);
-		if (fLastDifference != null)
-			return new DiffRegion(fLastDifference, line - fLastDifference.rightStart());
+		last= fLastDifference;
+		if (last != null)
+			return new DiffRegion(last, line - last.rightStart());
 		else
 			return null;
 	}
