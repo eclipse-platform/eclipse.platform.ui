@@ -6,11 +6,9 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.AbstractGroupMarker;
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.*;
 
 /**
