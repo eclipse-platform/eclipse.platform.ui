@@ -12,9 +12,13 @@ import org.eclipse.ui.plugin.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
 import java.io.*;
 import java.util.*;
 
@@ -316,6 +320,21 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
+	FontRegistry registry = JFaceResources.getFontRegistry();
+	String locale = Locale.getDefault().toString();
+	initializeFont(JFaceResources.DEFAULT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.DIALOG_FONT,locale,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.VIEWER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.WINDOW_FONT,locale,registry,store);
+}
+
+private void initializeFont(String fontKey,String locale,FontRegistry registry,IPreferenceStore store) {
+	FontData[] fontData = registry.getFontData(JFaceResources.DEFAULT_FONT);
+	store.setDefault(
+		fontKey + "_" + locale,
+		StringConverter.asString(fontData));	
 }
 /**
  * Log the given status to the ISV log.

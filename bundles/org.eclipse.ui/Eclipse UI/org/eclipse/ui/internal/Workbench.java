@@ -384,6 +384,7 @@ private boolean init(String[] commandLineArgs) {
 	addAdapters();
 	windowManager = new WindowManager();
 	WorkbenchColors.startup();
+	intializeFonts();
 
 	// deadlock code
 	boolean avoidDeadlock = true;
@@ -411,6 +412,30 @@ private boolean init(String[] commandLineArgs) {
 	
 	isStarting = false;
 	return true;
+}
+/**
+ * Initialize the workbench fonts with the stored values.
+ */
+private void intializeFonts() {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	FontRegistry registry = JFaceResources.getFontRegistry();
+	String locale = Locale.getDefault().toString();
+	initializeFont(JFaceResources.DEFAULT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.DIALOG_FONT,locale,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.VIEWER_FONT,locale,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,locale,registry,store);
+	initializeFont(JFaceResources.WINDOW_FONT,locale,registry,store);
+}
+/**
+ * Initialize the specified font with the stored value.
+ */
+private void initializeFont(String fontKey,String locale,FontRegistry registry,IPreferenceStore store) {
+	String font_Locale = fontKey + "_" + locale;
+	if(store.isDefault(font_Locale))
+		return;
+	FontData[] font = StringConverter.asFontDataArray(store.getString(font_Locale));
+	registry.put(fontKey,font);
 }
 /**
  * Initialize the product image obtained from the product info file

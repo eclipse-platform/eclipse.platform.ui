@@ -273,6 +273,44 @@ public static FontData asFontData(String value, FontData dflt) {
 	}
 }
 /**
+ * Converts the given value into an SWT font data array.
+ * This method fails if the value does not represent font data array.
+ * <p>
+ *
+ * @param value the value to be converted
+ * @return the value as font data array
+ * @exception DataFormatException if the given value does not represent
+ *	font data
+ */
+public static FontData[] asFontDataArray(String value) throws DataFormatException {
+	/*TBD: SWT does not have a answer for creating font with
+	  FontData[] yet. This method has a simplified implementation
+	  that will probably be rewritten once solucion in SWT is found.*/
+	FontData[] result = new FontData[1];
+	result[0] = asFontData(value);
+	return result;
+}
+
+/**
+ * Converts the given value into an SWT font data array.
+ * Returns the given default value if the 
+ * value does not represent a font data object.
+ *
+ * @param value the value to be converted
+ * @param dflt the default value
+ * @return the value as a font data object, or the default value
+ */
+public static FontData[] asFontDataArray(String value, FontData[] dflt) {
+	/*TBD: SWT does not have a answer for creating font with
+	  FontData[] yet. This method has a simplified implementation
+	  that will probably be rewritten once solucion in SWT is found.*/
+	try {
+		return asFontDataArray(value);
+	} catch (DataFormatException e) {
+		return dflt;
+	}
+}
+/**
  * Converts the given value into an int.
  * This method fails if the value does not represent an int.
  *
@@ -576,6 +614,16 @@ public static String asString(Integer value) {
 public static String asString(Long value) {
 	Assert.isNotNull(value);
 	return String.valueOf(value.longValue());
+}
+/**
+ * Converts a font data array to a string.
+ * @param value The font data.
+ * @return The string representation of the font data object.
+ */
+public static String asString(FontData[] value) {
+	Assert.isNotNull(value);
+	Assert.isTrue(value.length > 0);
+	return asString(value[0]);
 }
 /**
  * Converts a font data object to a string. The string representation is
