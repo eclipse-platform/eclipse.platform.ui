@@ -58,7 +58,6 @@ BODY {
 
 .separator {
 	background-color: ThreeDShadow;
-	xpadding-left:2px;
 	height:100%;
 	width: 1px;
 	border-top:2px solid <%=prefs.getToolbarBackground()%>;
@@ -92,7 +91,6 @@ if (data.isMozilla() && "content".equals(request.getParameter("toolbar"))) {
 HTML { 
 	margin:0px;
 	padding:0px;
-	border-<%=isRTL?"left":"right"%>:1px solid ThreeDShadow;
 }
 <%
 }
