@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ProgressBar;
 
 /**
  * Create an instance of the receiver in the window.
@@ -25,9 +26,8 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ProgressAnimationItem extends AnimationItem {
 
-	ProgressIndicator bar;
+	ProgressBar bar;
 	MouseListener mouseListener;
-	boolean addedListener = false;
 
 	/**
 	 * Create an instance of the receiver in the supplied region.
@@ -52,8 +52,8 @@ public class ProgressAnimationItem extends AnimationItem {
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#createAnimationItem(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createAnimationItem(Composite parent) {
-		bar = new ProgressIndicator(parent);
-		
+		bar = new ProgressBar(parent,SWT.HORIZONTAL | SWT.INDETERMINATE);
+		bar.addMouseListener(mouseListener);
 		return bar;
 	}
 
@@ -76,7 +76,7 @@ public class ProgressAnimationItem extends AnimationItem {
 		if(bar.isDisposed())
 			return;
 		
-		bar.done();
+		bar.setVisible(false);
 	}
 
 	/*
@@ -88,11 +88,7 @@ public class ProgressAnimationItem extends AnimationItem {
 		super.animationStart();
 		if(bar.isDisposed())
 			return;
-		bar.beginAnimatedTask();
-		if(!addedListener){
-			bar.getControl().addMouseListener(mouseListener);
-			addedListener = true;
-		}
+		bar.setVisible(true);
 	}
 
 
