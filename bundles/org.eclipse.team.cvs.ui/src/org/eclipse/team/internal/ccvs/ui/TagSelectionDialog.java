@@ -42,6 +42,10 @@ public class TagSelectionDialog extends Dialog {
 	private TreeViewer tagTree;
 	private Button okButton;
 	
+	// dialog title, should indicate the action in which the tag selection
+	// dialog is being shown
+	private String title;
+	
 	// constants
 	private static final int SIZING_DIALOG_WIDTH = 400;
 	private static final int SIZING_DIALOG_HEIGHT = 250;
@@ -50,9 +54,10 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, IProject[] projects) {
+	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title) {
 		super(parentShell);
 		this.projects = projects;
+		this.title = title;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
@@ -61,9 +66,7 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("TagSelectionDialog.Select_a_Tag_1")); //$NON-NLS-1$
-		// set F1 help
-		//WorkbenchHelp.setHelp(newShell, new Object[] {IVCMHelpContextIds.VERSION_SELECTION_DIALOG});
+		newShell.setText(title);
 	}
 	
 	/**
@@ -118,6 +121,9 @@ public class TagSelectionDialog extends Dialog {
 		inner.setLayoutData(data);
 		GridLayout layout = new GridLayout();
 		inner.setLayout(layout);
+		
+		Label l = new Label (inner, SWT.NONE);
+		l.setText(Policy.bind("TagSelectionDialog.Select_a_Tag_1")); //$NON-NLS-1$
 		
 		tagTree = createTree(inner);
 		tagTree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(projects[0]), true /*show HEAD tag*/));

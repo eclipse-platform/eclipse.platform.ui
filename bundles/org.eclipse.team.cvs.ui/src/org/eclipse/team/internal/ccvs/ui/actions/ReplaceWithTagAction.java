@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -73,7 +74,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				for (int i = 0; i < resources.length; i++) {
 					projects[i] = resources[i].getProject();
 				}
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects);
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("ReplaceWithTagAction.message")); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
@@ -150,7 +151,11 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				}
 				type = resource.getType();
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				if ( ! cvsResource.isManaged()) return false;
+				if(cvsResource.isFolder()) {
+					if( ! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
+				} else {
+					if( ! cvsResource.isManaged()) return false;
+				}
 			}
 			return true;
 		}

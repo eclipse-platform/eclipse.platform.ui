@@ -89,7 +89,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			createLocationPage.setDialogSettings(getDialogSettings());
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			addPage(modulePage);
-			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$
+			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			addPage(finishPage);
 		}
 	}

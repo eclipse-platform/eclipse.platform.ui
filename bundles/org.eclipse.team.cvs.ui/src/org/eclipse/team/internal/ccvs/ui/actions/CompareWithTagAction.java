@@ -50,7 +50,7 @@ public class CompareWithTagAction extends TeamAction {
 				for (int i = 0; i < resources.length; i++) {
 					projects[i] = resources[i].getProject();
 				}
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects);
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("CompareWithTagAction.message")); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				int result = dialog.open();
 				if (result == Dialog.CANCEL || dialog.getResult() == null) {
