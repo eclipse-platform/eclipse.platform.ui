@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -48,30 +47,11 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		 */
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
-			try {
-				if (delta != null)
-					delta.accept(fResourceDeltaVisitor);
-			} catch (CoreException x) {
-				handleCoreException(x, EditorMessages.getString("ResourceMarkerAnnotationModel.resourceChanged")); //$NON-NLS-1$
+			if (delta != null && fResource != null) {
+				IResourceDelta child= delta.findMember(fResource.getFullPath());
+				if (child != null)
+					update(child.getMarkerDeltas());
 			}
-		}
-	}
-	
-	/**
-	 * Internal resource delta visitor.
-	 * 
-	 * @see IResourceDeltaVisitor
-	 */
-	class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-		/*
-		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-		 */
-		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta != null && fResource.equals(delta.getResource())) {
-				update(delta.getMarkerDeltas());
-				return false;
-			}
-			return true;
 		}
 	}
 	
@@ -81,8 +61,6 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	private IResource fResource;
 	/** The resource change listener. */
 	private IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
-	/** The resource delta visitor. */
-	private IResourceDeltaVisitor fResourceDeltaVisitor= new ResourceDeltaVisitor();
 
 	
 	/**
