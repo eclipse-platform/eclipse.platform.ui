@@ -1255,7 +1255,7 @@ public class OperationValidator implements IOperationValidator {
 	 * @param status
 	 */
 	private static void checkConfigurationLock(ArrayList status) {
-		IPlatformConfiguration config =
+/*		IPlatformConfiguration config =
 			BootLoader.getCurrentPlatformConfiguration();
 		URL configURL = config.getConfigurationLocation();
 		if (!"file".equals(configURL.getProtocol())) {
@@ -1300,7 +1300,7 @@ public class OperationValidator implements IOperationValidator {
 				status.add(createStatus(null, "Failed to create lock:"+lockFiles[i]));
 				return;
 			} 
-		}
+		}*/
 	}
 
 	private static boolean isParent(
