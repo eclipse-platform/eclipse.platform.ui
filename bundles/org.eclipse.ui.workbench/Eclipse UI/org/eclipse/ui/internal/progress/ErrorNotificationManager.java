@@ -30,6 +30,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The ErrorNotificationManager is the class that manages the display of
@@ -70,7 +71,7 @@ public class ErrorNotificationManager {
 			if (dialog != null)
 				refreshDialog();
 		} else
-			openErrorDialog();
+			openErrorDialog(jobName,status);
 	}
 
 	/**
@@ -101,7 +102,19 @@ public class ErrorNotificationManager {
 		return errors;
 	}
 
-	private void openErrorDialog() {
+	/**
+	 * The job caleed jobName has just failed with status status.
+	 * Open the error dialog if possible - otherwise log the error.
+	 * @param jobName String. The name of the Job
+	 * @param status IStatus The status of the failure.
+	 */
+	private void openErrorDialog(String jobName, IStatus status) {
+		
+		if(!PlatformUI.isWorkbenchRunning()){
+			//We are shutdown so just log
+			WorkbenchPlugin.log(jobName,status);
+			return;
+		}
 
 		dialogActive = true;
 			WorkbenchJob job = new WorkbenchJob(ProgressMessages.getString("ErrorNotificationManager.OpenErrorDialogJob") ) { //$NON-NLS-1$
