@@ -59,6 +59,9 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 						if (!project.isAccessible()) {
 							return false;
 						}
+						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
+							return false;
+						} 
 						if (RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) == null) {
 							return false;
 						}
@@ -168,9 +171,8 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	private void resourceAdded(IResource resource) throws CoreException {
 		try {
 			EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (cvsResource.handleModification(true /* addition */)) {
+			cvsResource.handleModification(true /* addition */);
 				modifiedResources.add(resource);
-			}
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}

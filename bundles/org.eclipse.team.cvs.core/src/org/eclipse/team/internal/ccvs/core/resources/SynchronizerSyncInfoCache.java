@@ -449,4 +449,11 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#isDirtyCacheFlushed(org.eclipse.core.resources.IContainer)
+	 */
+	boolean isDirtyCacheFlushed(IContainer resource) throws CVSException {
+		return false;
+	}
 }

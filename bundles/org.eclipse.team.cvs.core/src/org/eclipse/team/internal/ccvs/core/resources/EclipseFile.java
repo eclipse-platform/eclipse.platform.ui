@@ -499,7 +499,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			EclipseSynchronizer.getInstance().flushDirtyCache(getIResource(), IResource.DEPTH_ZERO);
 			return;
 		}
-		setModified(isModified(getSyncInfo()));
+		//setModified(isModified(getSyncInfo()));
+		flushWithAncestors();
 	}
 	
 	/**
@@ -514,7 +515,18 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	}
 	
 	public boolean handleModification(boolean forAddition) throws CVSException {
-		if (isIgnored()) return false;
+		if (isIgnored()) {			
+			// Special case handling for when a resource passes from the un-managed state
+			// to the ignored state (e.g. ignoring the ignore file). Parent dirty state must be
+			// recalculated but since the resource's end state is ignored there is a lot of code
+			// in the plugin that simply disregards the change to the resource.
+			// There may be a better was of handling resources that transition from un-managed to
+			// ignored but for now this seems like the safest change. 
+			if(! resource.isDerived()) {
+				flushWithAncestors();
+			}
+			return false;
+		} 
 		if (EclipseSynchronizer.getInstance().contentsChangedByUpdate(getIFile()))
 			return false;
 		if (forAddition) {
@@ -528,10 +540,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	}
 	
 	/**
-	 * Method setModified sets the modified status of the reciever. This method
+	 * Sets the modified status of the receiver. This method
 	 * returns true if there was a change in the modified status of the file.
-	 * @param iFile
-	 * @param b
 	 */
 	private boolean setModified(boolean modified) throws CVSException {
 		try {

@@ -15,10 +15,17 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ISynchronizer;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -27,16 +34,30 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
 /**
  * This cache uses session properties to hold the bytes representing the sync
- * info
+ * info. In addition when the workbench closes or a project is closed, the dirty 
+ * state for all cvs managed folders are persisted using the resource's plugin
+ * synchronizer.
  */
-/*package*/ class SessionPropertySyncInfoCache extends SyncInfoCache {
+/*package*/ class SessionPropertySyncInfoCache extends SyncInfoCache implements ISaveParticipant {
 	
 	// key used on a folder to indicate that the resource sync has been cahced for it's children
 	private static final QualifiedName RESOURCE_SYNC_CACHED_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync-cached"); //$NON-NLS-1$
+	private static final QualifiedName FOLDER_SYNC_RESTORED_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-sync-restored"); //$NON-NLS-1$
+	
 	private static final Object RESOURCE_SYNC_CACHED = new Object();
+	private static final Object FOLDER_SYNC_RESTORED = new Object();
 	
 	/*package*/ static final String[] NULL_IGNORES = new String[0];
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	/*package*/ SessionPropertySyncInfoCache() {
+		try {
+			// this save participant is removed when the plugin is shutdown.			
+			ResourcesPlugin.getWorkspace().addSaveParticipant(CVSProviderPlugin.getPlugin(), this);
+		} catch (CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		}
+	}
 	
 	/**
 	 * If not already cached, loads and caches the folder ignores sync for the container.
@@ -206,14 +227,28 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	}
 	private void internalSetDirtyIndicator(IContainer container, String indicator) throws CVSException {
 		try {
-			container.setPersistentProperty(IS_DIRTY, indicator);
+			container.setSessionProperty(IS_DIRTY, indicator);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
 	}
 	private String internalGetDirtyIndicator(IContainer container) throws CVSException {
 		try {
-			return container.getPersistentProperty(IS_DIRTY);
+			String di = (String)container.getSessionProperty(IS_DIRTY);
+			
+			// if the session property is not available then restore from persisted sync info. At this
+			// time the sync info is not flushed because we don't want the workspace to generate
+			// a delta. Since the sync info is not flushed another session property is used to remember
+			// that the sync info was already converted to a session property and has become stale.			
+			if(di == null && container.getSessionProperty(FOLDER_SYNC_RESTORED_KEY) == null) {
+				byte [] diBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, container);
+				if(diBytes != null) {
+					di = new String(diBytes);
+					setDirtyIndicator(container, di);
+				}
+				container.setSessionProperty(FOLDER_SYNC_RESTORED_KEY, FOLDER_SYNC_RESTORED);
+			}
+			return di;
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -260,7 +295,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				} else {
 					resource.setSessionProperty(DIRTY_COUNT, null);
 					resource.setSessionProperty(DELETED_CHILDREN, null);
-					resource.setPersistentProperty(IS_DIRTY, null);
+					resource.setSessionProperty(IS_DIRTY, null);
 				}
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
@@ -328,6 +363,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/*package*/ void markFileAsUpdated(IFile file) throws CVSException {
 		try {
 			file.setSessionProperty(CLEAN_UPDATE, UPDATED_INDICATOR);
+			
+			// update dirty state so that decorators don't have to recompute after
+			// an update is completed.
+			contentsChangedByUpdate(file);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -392,6 +431,93 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			resource.setSessionProperty(RESOURCE_SYNC_KEY, syncBytes);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#isDirtyCacheFlushed(org.eclipse.core.resources.IContainer)
+	 */
+	boolean isDirtyCacheFlushed(IContainer resource) throws CVSException {
+		if (resource.exists()) {
+			try {
+					return resource.getSessionProperty(IS_DIRTY) == null;					
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void doneSaving(ISaveContext context) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void prepareToSave(ISaveContext context) throws CoreException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void rollback(ISaveContext context) {			
+	}
+
+	/* Called when the workbench is shutdown or projects are closed. The dirty state
+	 * of folders is persisted, using sync info, so that at startup or project open
+	 * the folder state can be quickly calculated. This is mainly for improving decorator
+	 * performance.
+	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void saving(ISaveContext context) throws CoreException {
+		boolean fullSave = (context.getKind() == ISaveContext.FULL_SAVE);
+		boolean projectSave = (context.getKind() == ISaveContext.PROJECT_SAVE);
+		
+		if(projectSave || fullSave) {
+			// persist all session properties for folders into sync info.
+			final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
+			synchronizer.add(RESOURCE_SYNC_KEY);
+		
+			// traverse the workspace looking for CVS managed projects or just the 
+			// specific projects being closed
+			IProject[] projects;
+			if(projectSave) {
+				projects = new IProject[1];
+				projects[0] = context.getProject();
+			} else {
+				projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			}
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = projects[i];
+				RepositoryProvider provider = RepositoryProvider.getProvider(
+														project,
+														CVSProviderPlugin.getTypeId());
+														
+				// found a project managed by CVS, convert each session property on a
+				// folder to a sync object.
+				if (provider != null) {
+					project.accept(new IResourceVisitor() {
+						public boolean visit(IResource resource) throws CoreException {
+							if(resource.getType() != IResource.FILE) {
+								String di = null;
+								try {
+									di = getDirtyIndicator(resource);
+								} catch (CVSException e) {
+									// continue traversal
+									CVSProviderPlugin.log(e);
+								}
+								if(di != null) {
+									synchronizer.setSyncInfo(RESOURCE_SYNC_KEY, resource, di.getBytes());
+								}								
+							}
+							return true;
+						}
+					});
+				}
+			}
 		}
 	}
 }

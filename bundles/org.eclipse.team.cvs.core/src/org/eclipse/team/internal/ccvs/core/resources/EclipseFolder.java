@@ -354,7 +354,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @param b
 	 */
 	protected void adjustModifiedCount(boolean modified) throws CVSException {
-		flushWithAncestors();
+		if (isModified() != modified) {
+			flushWithAncestors();
+		}
 //		if (EclipseSynchronizer.getInstance().adjustModifiedCount((IContainer)getIResource(), modified)) {
 //			((EclipseFolder)getParent()).adjustModifiedCount(modified);
 //		}
@@ -440,6 +442,12 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	private String determineDirtyCount(String indicator, boolean shared) throws CVSException {
 		IContainer container = (IContainer)getIResource();
 		ICVSResource[] children = members(ALL_UNIGNORED_MEMBERS);
+
+		if (Policy.DEBUG_DIRTY_CACHING) {
+			System.out.println("checking isModified() recursively for " //$NON-NLS-1$
+			+getPath());
+		}
+
 		int count = 0;
 		Set deletedChildren = new HashSet();
 		for (int i = 0; i < children.length; i++) {

@@ -431,9 +431,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						// for now, just unmanage
 						folder.unmanage(null);
 					}
-					folder.acceptChildren(this);
 				}
-			});
+			}, true /* recurse */);
 		} catch (CVSException e) {
 			// log the exception and return null
 			CVSUIPlugin.log(e);

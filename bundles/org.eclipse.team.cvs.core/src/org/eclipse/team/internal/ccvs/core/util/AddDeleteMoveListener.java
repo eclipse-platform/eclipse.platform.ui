@@ -201,6 +201,13 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			for (int i = 0; i < projectDeltas.length; i++) {							
 				final IResourceDelta delta = projectDeltas[i];
 				IResource resource = delta.getResource();
+				
+				if (resource.getType() == IResource.PROJECT) {
+					// If the project is not accessible, don't process it
+					if (!resource.isAccessible()) continue;
+					if ((delta.getFlags() & IResourceDelta.OPEN) != 0) continue;
+				}
+				
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
 				// Make sure that the project is a CVS folder.

@@ -316,6 +316,10 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.removeResourceChangeListener(fileModificationManager);
 		workspace.removeResourceChangeListener(addDeleteMoveListener);
 		
+		// remove all of this plugin's save participants. This is easier than having
+		// each class that added itself as a participant to have to listen to shutdown.
+		workspace.removeSaveParticipant(this);
+		
 		deleteCacheDirectory();
 	}
 		
