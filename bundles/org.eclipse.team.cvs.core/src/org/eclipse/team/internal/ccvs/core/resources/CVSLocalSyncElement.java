@@ -15,7 +15,7 @@ import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.LocalSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 
 public class CVSLocalSyncElement extends LocalSyncElement {
 
@@ -58,13 +58,13 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 			if(base == null && cvsResource.isManaged()) {
 				if(cvsResource.isFolder()) {
 					FolderSyncInfo syncInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
-					base = new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());		
+					base = new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());		
 				} else {
 					ResourceSyncInfo info = cvsResource.getSyncInfo();
 					if(!info.isDeleted() || !info.isAdded()) {
 						ICVSFolder parentFolder = cvsResource.getParent();
 						FolderSyncInfo syncInfo = parentFolder.getFolderSyncInfo();
-						RemoteFolder parent =  new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
+						RemoteFolder parent =  new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 						base = RemoteFile.getBase(parent, (ICVSFile)cvsResource);
 					}
 				}

@@ -99,7 +99,13 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 							CVSProviderPlugin.getProvider().importAndCheckout(project, properties, monitor);
 						} else {
 							// Create the repository location
-							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().createRepository(properties, false);
+							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(properties);
+							boolean created = false;
+							if (location == null) {
+								location = CVSProviderPlugin.getProvider().createRepository(properties);
+								created = true;
+							}
+							
 							// Associate project with provider
 							ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
 							FolderSyncInfo info = folder.getFolderSyncInfo();
@@ -124,6 +130,8 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 								if (changed) {
 									// Tell the user that they differ. Refuse to set the sharing.
 									MessageDialog.openError(getShell(), Policy.bind("ConfigurationWizard.cannotConfigure"), Policy.bind("ConfigurationWizard.cannotConfigureLong"));
+									if (created)
+										CVSProviderPlugin.getProvider().disposeRepository(location);
 									return;
 								}
 							} else {
@@ -136,7 +144,13 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 							boolean validate = postPage.getValidate();					
 							if (validate) {
 								// Do the validation right now
-								location.validateConnection();
+								try {
+									location.validateConnection();
+								} catch (TeamException e) {
+									if (created)
+										CVSProviderPlugin.getProvider().disposeRepository(location);
+									throw e;
+								}
 							}
 							
 							// Set the sharing
@@ -209,7 +223,7 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 			ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
 			FolderSyncInfo info = folder.getFolderSyncInfo();
 			if (info == null) return;
-			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(info.getRoot());
+			ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
 			Properties properties = new Properties();
 			properties.setProperty("connection", location.getMethod().getName());
 			properties.setProperty("host", location.getHost());

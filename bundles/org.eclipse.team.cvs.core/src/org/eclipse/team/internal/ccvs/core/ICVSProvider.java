@@ -81,6 +81,24 @@ public interface ICVSProvider {
 	public void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;
 
 	/**
+	 * Import a project into a CVS repository and then check out a local copy.
+	 * 
+	 * Consideration: What if the project already exists?
+	 * 
+	 * The supported properties are:
+	 * 	 connection The connection method to be used
+	 *   user The username for the connection
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 *   message The message to be attached (optional)
+	 *   vendor The vendor tag (optional)
+	 *   tag The version tag (optional)
+	 */
+	public void importAndCheckout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
+
+	/**
 	 * Create a repository instance from the given properties.
 	 * The supported properties are:
 	 * 
@@ -94,11 +112,8 @@ public interface ICVSProvider {
 	 * The created instance will be cached with the provider as a result of the
 	 * invokation of this method. When the client is done with the instance, disposeRepository
 	 * should be called.
-	 * 
-	 * If validate is true then a connection will be made to the repository to ensure connection is possible.
-	 * If validation fails, an exception is thrown and the location is not cached.
 	 */
-	public ICVSRepositoryLocation createRepository(Properties configuration, boolean validate) throws CVSException;
+	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException;
 	
 	/**
 	 * Dispose of the repository location
@@ -107,14 +122,25 @@ public interface ICVSProvider {
 	 */
 	public void disposeRepository(ICVSRepositoryLocation repository) throws CVSException;
 	
-	/** Return a list of the know repository locations
+	/** 
+	 * Return a list of the know repository locations
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositories();
-		
+	
 	/**
-	 * Get the stream to which command message and error output is sent
+	 * Get the repository location that matches the given properties.
+	 * The supported properties are:
+	 * 
+	 *   connection The connection method to be used
+	 *   user The username for the connection
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 * 
+	 * If no known repositories mathc the given properties, null is returned.
 	 */
-	public PrintStream getPrintStream();
+	public ICVSRepositoryLocation getRepository(Properties configuration) throws CVSException;
 	
 	/**
 	 * Get the repository instance which matches the given String. The format of the String is
@@ -132,9 +158,9 @@ public interface ICVSProvider {
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 * 
-	 * If the repository location does not exist, it will be created.
-	 * The created instance will be cached with the provider as a result of the
-	 * invokation of this method.
+	 * It is expected that the instance requested by using this method exists.
+	 * If the repository location does not exist, it will be automatically created
+	 * and cached with the provider.
 	 * 
 	 * WARNING: Providing the password as part of the String will result in the password being part
 	 * of the location permanently. This means that it cannot be modified by the authenticator. 
@@ -152,24 +178,11 @@ public interface ICVSProvider {
 	 * Get the names of the registered connection methods.
 	 */
 	public String[] getSupportedConnectionMethods();
-	
+		
 	/**
-	 * Import a project into a CVS repository and then check out a local copy.
-	 * 
-	 * Consideration: What if the project already exists?
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 *   message The message to be attached (optional)
-	 *   vendor The vendor tag (optional)
-	 *   tag The version tag (optional)
+	 * Get the stream to which command message and error output is sent
 	 */
-	public void importAndCheckout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
+	public PrintStream getPrintStream();
 	
 	/**
 	 * Set the print stream to which command message and error output is sent

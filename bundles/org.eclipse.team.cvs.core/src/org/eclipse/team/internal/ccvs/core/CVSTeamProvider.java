@@ -509,7 +509,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public String getConnectionMethod(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		return CVSRepositoryLocation.fromString(managedProject.getFolderSyncInfo().getRoot()).getMethod().getName();
+		return CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot()).getMethod().getName();
 	}
 	
 	private String[] getDefaultGlobalOptions() {
@@ -537,7 +537,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			ICVSFolder folder = (ICVSFolder)managed;
 			if (folder.isCVSFolder()) {
 				FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
-				return new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
+				return new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 			}
 		} else {
 			if (managed.isManaged())
@@ -557,7 +557,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			ICVSFolder parent = managed.getParent();
 			if (!parent.isCVSFolder())
 				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
-			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(parent.getFolderSyncInfo().getRoot());
+			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 			// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 			RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
 			if (remoteParent != null) {
@@ -595,7 +595,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			ICVSFolder parent = managed.getParent();
 			if (!parent.isCVSFolder())
 				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
-			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(parent.getFolderSyncInfo().getRoot());
+			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 			// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 			RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
 			if (remoteParent != null) {
@@ -628,7 +628,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */ 
 	public IUserInfo getUserInfo(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(managedProject.getFolderSyncInfo().getRoot());
+		CVSRepositoryLocation location = (CVSRepositoryLocation)CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot());
 		location.setUserMuteable(true);
 		return location;
 	}

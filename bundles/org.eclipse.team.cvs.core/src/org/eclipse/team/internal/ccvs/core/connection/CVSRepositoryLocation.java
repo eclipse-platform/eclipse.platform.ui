@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -88,13 +89,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// The password can only be fixed if the username is and a password is provided
 		if (userFixed && passwordFixed && (password != null))
 			this.passwordFixed = true;
-//		else {
-//			// If the password is not fixed, there's no need to fix the username
-//			this.userFixed = false;
-//			this.passwordFixed = false;
-//		}
+
 		// Retrieve a password if one was previosuly cached or set it to blank
-		if (!passwordFixed) {
+		if (!passwordFixed && password == null) {
 			IUserAuthenticator authenticator = getAuthenticator();
 			if (authenticator != null) {
 				try {
@@ -355,6 +352,47 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				return true;
 		}
 		return false;
+	}
+	
+	/*
+	 * Create a repository location instance from the given properties.
+	 * The supported properties are:
+	 * 
+	 *   connection The connection method to be used
+	 *   user The username for the connection (optional)
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 */
+	public static CVSRepositoryLocation fromProperties(Properties configuration) throws CVSException {
+		// We build a string to allow validation of the components that are provided to us
+		String connection = configuration.getProperty("connection");
+		if (connection == null)
+			connection = "pserver";
+		IConnectionMethod method = getPluggedInConnectionMethod(connection);
+		if (method == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()}), null));
+		String user = configuration.getProperty("user");
+		if (user.length() == 0)
+			user = null;
+		String password = configuration.getProperty("password");
+		if (user == null)
+			password = null;
+		String host = configuration.getProperty("host");
+		if (host == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.hostRequired"), null));
+		String portString = configuration.getProperty("port");
+		int port;
+		if (portString == null)
+			port = ICVSRepositoryLocation.USE_DEFAULT_PORT;
+		else
+			port = Integer.parseInt(portString);
+		String root = configuration.getProperty("root");
+		if (root == null)
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));
+
+		return new CVSRepositoryLocation(method, user, password, host, port, root, user != null, false);
 	}
 	
 	/*

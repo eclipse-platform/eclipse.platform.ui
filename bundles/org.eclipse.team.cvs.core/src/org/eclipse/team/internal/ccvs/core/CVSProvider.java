@@ -78,46 +78,21 @@ public class CVSProvider implements ICVSProvider {
 	 *   host The host where the repository resides
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
+	 * 
+	 * Note: If there is a cahced entry for the location, it is returned.
 	 */
 	private CVSRepositoryLocation buildRepository(Properties configuration, boolean cachePassword) throws CVSException {
-		// We build a string to allow validation of the components that are provided to us
-		// XXX This is a bit strange. We should call the constrructor directly
-		StringBuffer repository = new StringBuffer(":");
-		String connection = configuration.getProperty("connection");
-		if (connection == null)
-			repository.append("pserver");
-		else 
-			repository.append(connection);
-		repository.append(":");
-		String user = configuration.getProperty("user");
-		if (user == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noUser"), null));
-		else 
-			repository.append(user);
-		repository.append("@");
-		String host = configuration.getProperty("host");
-		if (host == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noHost"), null));
-		else 
-			repository.append(host);
-		String port = configuration.getProperty("port");
-		if (port != null) {
-			repository.append("#");
-			repository.append(port);
-		}
-		repository.append(":");
-		String root = configuration.getProperty("root");
-		if (root == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noRoot"), null));
-		else 
-			repository.append(root);
 		
-		// Check the cache before creating a new repository
-		CVSRepositoryLocation location  = (CVSRepositoryLocation)repositories.get(repository.toString());
-		if (location == null) {
-			location = CVSRepositoryLocation.fromString(repository.toString());
+		// Create a new repository location
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(configuration);
+		
+		// Check the cache for an equivalent instance and if there is one, use it instead of the new one
+		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(location.getLocation());
+		if (existingLocation != null) {
+			location = existingLocation;
 		}
-			
+		
+		// Set or cahce the password
 		String password = configuration.getProperty("password");
 		if (password != null) {
 			if (cachePassword)
@@ -300,22 +275,12 @@ public class CVSProvider implements ICVSProvider {
 	/**
 	 * @see ICVSProvider#createRepository(Properties)
 	 */
-	public ICVSRepositoryLocation createRepository(Properties configuration, boolean validate) throws CVSException {
+	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException {
 		ICVSRepositoryLocation repository = buildRepository(configuration, true);
-		boolean alreadyExists = isCached(repository);
-		addToCache(repository);
-		if (validate) {
-			try {
-				repository.validateConnection();
-			} catch (CVSException e) {
-				if (! alreadyExists)
-					disposeRepository(repository);
-				throw e;
-			}
-		}
-		// Notify listeners if the location wasn't cached before
-		if (! alreadyExists)
+		if (! isCached(repository)) {
+			addToCache(repository);
 			repositoryAdded(repository);
+		}
 		return repository;
 	}
 
@@ -386,6 +351,20 @@ public class CVSProvider implements ICVSProvider {
 			return System.out;
 		else
 			return printStream;
+	}
+
+	private String getRepositoryLocationString(Properties configuration) throws CVSException {
+		// Create a new repository location so we can get the location string for the properties
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(configuration);
+		return location.getLocation();
+	}
+	
+	/**
+	 * @see ICVSProvider#getRepository(Properties)
+	 */
+	public ICVSRepositoryLocation getRepository(Properties configuration) throws CVSException {
+		// Return the cached repository for the properties, or null if there isn't one.
+		return (CVSRepositoryLocation)repositories.get(getRepositoryLocationString(configuration));
 	}
 	
 	/**
@@ -545,6 +524,12 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	public void setSharing(IProject project, ICVSRepositoryLocation location, String remotePath, CVSTag tag, IProgressMonitor monitor) throws TeamException {
+		
+		// Ensure that the provided location is managed
+		if (! isCached(location)) {
+			addToCache(location);
+			repositoryAdded(location);
+		}
 		
 		// Set folder sync info
 		ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);

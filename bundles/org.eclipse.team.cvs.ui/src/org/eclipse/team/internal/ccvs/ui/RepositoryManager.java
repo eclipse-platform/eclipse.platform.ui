@@ -86,10 +86,11 @@ public class RepositoryManager {
 	public ICVSRepositoryLocation getRoot(Properties properties) {
 		ICVSRepositoryLocation result;
 		try {
-			// The create will generate an event that will add the repo location to the RepositoryManager
-			// XXX Is create a good name for this?
-			result = getCVSProvider().createRepository(properties, true);
+			// We use createRepository instead of getRepository since create will return 
+			// an existing location or create it if it doesn't exist
+			result = getCVSProvider().createRepository(properties);
 		} catch (TeamException e) {
+			// XXX This may result in silent failure in the UI
 			CVSUIPlugin.log(e.getStatus());
 			return null;
 		}
