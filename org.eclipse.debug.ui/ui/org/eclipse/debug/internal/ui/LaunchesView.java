@@ -6,24 +6,9 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2001
  */
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStackFrame;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.dialogs.PropertyDialogAction;
 
-public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener {
+public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
 
 	protected final static String PREFIX= "launches_view.";
 
@@ -90,6 +75,7 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 		LaunchesViewer lv = new LaunchesViewer(parent, showDebugTargets, this);
 		fViewer= lv;
 		fViewer.addSelectionChangedListener(this);
+		fViewer.addDoubleClickListener(this);
 		fViewer.setContentProvider(getContentProvider());
 		fViewer.setLabelProvider(new DelegatingModelPresentation());
 		fViewer.setUseHashlookup(true);
@@ -163,6 +149,8 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	public void dispose() {
 		if (fViewer != null) {
 			DebugUIPlugin.getDefault().removeSelectionProvider(fViewer, this);
+			fViewer.removeDoubleClickListener(this);
+			fViewer.removeSelectionChangedListener(this);
 		}
 		super.dispose();
 	}
@@ -213,6 +201,24 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 			&& fTerminateAndRemoveAction.isEnabled()) {
 				fTerminateAndRemoveAction.run();
 		}
+	}
+	
+	/**
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		ISelection selection= event.getSelection();
+		if (!(selection instanceof IStructuredSelection)) {
+			return;
+		}
+		IStructuredSelection ss= (IStructuredSelection)selection;
+		Object o= ss.getFirstElement();
+		if (o instanceof IStackFrame) {
+			return;
+		} 
+		TreeViewer tViewer= (TreeViewer)fViewer;
+		boolean expanded= tViewer.getExpandedState(o);
+		tViewer.setExpandedState(o, !expanded);
 	}
 }
 
