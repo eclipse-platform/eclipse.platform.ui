@@ -203,8 +203,6 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/*
 		javadoc: 3. If all else fails the file will be opened in a default text editor.		
 	*/
-		// PR 1GkD5O0 - Fails on linux
-		String platform = SWT.getPlatform();
 		if (!PlatformUtil.onLinux()) {
 			file = FileUtil.createFile("a.null and void", proj);
 			editor = fActivePage.openEditor(file);
