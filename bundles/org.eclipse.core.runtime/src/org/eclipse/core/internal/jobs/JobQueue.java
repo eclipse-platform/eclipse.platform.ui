@@ -105,7 +105,7 @@ public class JobQueue {
 	/** 
 	 * Return greatest element without removing it, or null if empty 
 	 */
-	public Object peek() {
-		return dummy.next() == dummy ? null : dummy.next();
+	public InternalJob peek() {
+		return dummy.previous() == dummy ? null : dummy.previous();
 	}
 }
