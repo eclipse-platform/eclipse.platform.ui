@@ -82,579 +82,724 @@
       <activeKeyConfiguration
             value="org.eclipse.ui.defaultAcceleratorConfiguration">
       </activeKeyConfiguration>
+      <category
+            name="%category.file.name"
+            description="%category.file.description"
+            id="org.eclipse.ui.category.file">
+      </category>
+      <category
+            name="%category.edit.name"
+            description="%category.edit.description"
+            id="org.eclipse.ui.category.edit">
+      </category>
+      <category
+            name="%category.navigate.name"
+            description="%category.navigate.description"
+            id="org.eclipse.ui.category.navigate">
+      </category>
+      <category
+            name="%category.project.name"
+            description="%category.project.description"
+            id="org.eclipse.ui.category.project">
+      </category>      
+      <category
+            name="%category.window.name"
+            description="%category.window.description"
+            id="org.eclipse.ui.category.window">
+      </category>   
+      <category
+            name="%category.help.name"
+            description="%category.help.description"
+            id="org.eclipse.ui.category.help">
+      </category>
+      <category
+            name="%category.textEditor.name"
+            description="%category.textEditor.description"
+            id="org.eclipse.ui.category.textEditor">
+      </category>     
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.newWizard.name"
             description="%command.newWizard.description"
             id="org.eclipse.ui.newWizard">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.close.name"
             description="%command.close.description"
             id="org.eclipse.ui.file.close">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.closeAll.name"
             description="%command.closeAll.description"
             id="org.eclipse.ui.file.closeAll">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.save.name"
             icon="icons/full/ctool16/save_edit.gif"
             description="%command.save.description"
             id="org.eclipse.ui.file.save">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.saveAll.name"
             icon="icons/full/ctool16/saveall_edit.gif"
             description="%command.saveAll.description"
             id="org.eclipse.ui.file.saveAll">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.print.name"
             icon="icons/full/ctool16/print_edit.gif"
             description="%command.print.description"
             id="org.eclipse.ui.file.print">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.revert.name"
             description="%command.revert.description"
             id="org.eclipse.ui.file.revert">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.refresh.name"
             icon="icons/full/clcl16/refresh_nav.gif"
             description="%command.refresh.description"
             id="org.eclipse.ui.file.refresh">
       </command>
       <command
+			category="org.eclipse.ui.category.file"
             name="%command.properties.name"
             description="%command.properties.description"
             id="org.eclipse.ui.file.properties">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.undo.name"
             icon="icons/full/ctool16/undo_edit.gif"
             description="%command.undo.description"
             id="org.eclipse.ui.edit.undo">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.redo.name"
             icon="icons/full/ctool16/redo_edit.gif"
             description="%command.redo.description"
             id="org.eclipse.ui.edit.redo">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.cut.name"
             icon="icons/full/ctool16/cut_edit.gif"
             description="%command.cut.description"
             id="org.eclipse.ui.edit.cut">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.copy.name"
             icon="icons/full/ctool16/copy_edit.gif"
             description="%command.copy.description"
             id="org.eclipse.ui.edit.copy">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.paste.name"
             icon="icons/full/ctool16/paste_edit.gif"
             description="%command.paste.description"
             id="org.eclipse.ui.edit.paste">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.delete.name"
             icon="icons/full/ctool16/delete_edit.gif"
             description="%command.delete.description"
             id="org.eclipse.ui.edit.delete">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deleteLine.name"
             description="%command.deleteLine.description"
             id="org.eclipse.ui.edit.text.delete.line">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.cutLine.name"
             description="%command.cutLine.description"
             id="org.eclipse.ui.edit.text.cut.line">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deleteLineBeginning.name"
             description="%command.deleteLineBeginning.description"
             id="org.eclipse.ui.edit.text.delete.line.to.beginning">
       </command>
        <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.cutLineBeginning.name"
             description="%command.cutLineBeginning.description"
             id="org.eclipse.ui.edit.text.cut.line.to.beginning">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deleteLineEnd.name"
             description="%command.deleteLineEnd.description"
             id="org.eclipse.ui.edit.text.delete.line.to.end">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.cutLineEnd.name"
             description="%command.cutLineEnd.description"
             id="org.eclipse.ui.edit.text.cut.line.to.end">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.move.name"
             icon="icons/full/ctool16/move_edit.gif"
             description="%command.move.description"
             id="org.eclipse.ui.edit.move">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.rename.name"
             icon="icons/full/ctool16/rename_edit.gif"
             description="%command.rename.description"
             id="org.eclipse.ui.edit.rename">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.selectAll.name"
             description="%command.selectAll.description"
             id="org.eclipse.ui.edit.selectAll">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.setMark.name"
             description="%command.setMark.description"
             id="org.eclipse.ui.edit.text.set.mark">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.clearMark.name"
             description="%command.clearMark.description"
             id="org.eclipse.ui.edit.text.clear.mark">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.swapMark.name"
             description="%command.swapMark.description"
             id="org.eclipse.ui.edit.text.swap.mark">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.findReplace.name"
             description="%command.findReplace.description"
             id="org.eclipse.ui.edit.findReplace">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.addBookmark.name"
             icon="icons/full/obj16/bkmrk_tsk.gif"
             description="%command.addBookmark.description"
             id="org.eclipse.ui.edit.addBookmark">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.goInto.name"
             description="%command.goInto.description"
             id="org.eclipse.ui.navigate.goInto">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.back.name"
             icon="icons/full/clcl16/backward_nav.gif"
             description="%command.back.description"
             id="org.eclipse.ui.navigate.back">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.forward.name"
             icon="icons/full/clcl16/forward_nav.gif"
             description="%command.forward.description"
             id="org.eclipse.ui.navigate.forward">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.up.name"
             icon="icons/full/clcl16/up_nav.gif"
             description="%command.up.description"
             id="org.eclipse.ui.navigate.up">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.goToResource.name"
             description="%command.goToResource.description"
             id="org.eclipse.ui.navigate.goToResource">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.openResource.name"
             description="%command.openResource.description"
             id="org.eclipse.ui.navigate.openResource">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.next.name"
             icon="icons/full/ctool16/next_nav.gif"
             description="%command.next.description"
             id="org.eclipse.ui.navigate.next">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.backwardHistory.name"
             icon="icons/full/clcl16/backward_nav.gif"
             description="%command.backwardHistory.description"
             id="org.eclipse.ui.navigate.backwardHistory">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.forwardHistory.name"
             icon="icons/full/clcl16/forward_nav.gif"
             description="%command.forwardHistory.description"
             id="org.eclipse.ui.navigate.forwardHistory">
       </command>
       <command
+			category="org.eclipse.ui.category.navigate"
             name="%command.previous.name"
             icon="icons/full/ctool16/prev_nav.gif"
             description="%command.previous.description"
             id="org.eclipse.ui.navigate.previous">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.openProject.name"
             icon="icons/full/obj16/prj_obj.gif"
             description="%command.openProject.description"
             id="org.eclipse.ui.project.openProject">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.closeProject.name"
             icon="icons/full/obj16/cprj_obj.gif"
             description="%command.closeProject.description"
             id="org.eclipse.ui.project.closeProject">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.buildProject.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%command.buildProject.description"
             id="org.eclipse.ui.project.buildProject">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.rebuildProject.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%command.rebuildProject.description"
             id="org.eclipse.ui.project.rebuildProject">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.buildAll.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%command.buildAll.description"
             id="org.eclipse.ui.project.buildAll">
       </command>
       <command
+			category="org.eclipse.ui.category.project"
             name="%command.rebuildAll.name"
             icon="icons/full/ctool16/build_exec.gif"
             description="%command.rebuildAll.description"
             id="org.eclipse.ui.project.rebuildAll">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"
             id="org.eclipse.ui.window.switchToEditor">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.showSystemMenu.name"
             description="%command.showSystemMenu.description"
             id="org.eclipse.ui.window.showSystemMenu">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.showViewMenu.name"
             description="%command.showViewMenu.description"
             id="org.eclipse.ui.window.showViewMenu">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.activateEditor.name"
             description="%command.activateEditor.description"
             id="org.eclipse.ui.window.activateEditor">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.nextEditor.name"
             description="%command.nextEditor.description"
             id="org.eclipse.ui.window.nextEditor">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.previousEditor.name"
             description="%command.previousEditor.description"
             id="org.eclipse.ui.window.previousEditor">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.nextView.name"
             description="%command.nextView.description"
             id="org.eclipse.ui.window.nextView">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.previousView.name"
             description="%command.previousView.description"
             id="org.eclipse.ui.window.previousView">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.nextPerspective.name"
             description="%command.nextPerspective.description"
             id="org.eclipse.ui.window.nextPerspective">
       </command>
       <command
+			category="org.eclipse.ui.category.window"
             name="%command.previousPerspective.name"
             description="%command.previousPerspective.description"
             id="org.eclipse.ui.window.previousPerspective">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.findNext.name"
             description="%command.findNext.description"
             id="org.eclipse.ui.edit.findNext">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.findPrevious.name"
             description="%command.findPrevious.description"
             id="org.eclipse.ui.edit.findPrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.findIncremental.name"
             description="%command.findIncremental.description"
             id="org.eclipse.ui.edit.findIncremental">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.findIncrementalReverse.name"
             description="%command.findIncrementalReverse.description"
             id="org.eclipse.ui.edit.findIncrementalReverse">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.revertToSaved.name"
             description="%command.revertToSaved.description"
             id="org.eclipse.ui.edit.revertToSaved">
       </command>
       <command
+			category="org.eclipse.ui.category.edit"
             name="%command.addTask.name"
             icon="icons/full/clcl16/addtsk_tsk.gif"
             description="%command.addTask.description"
             id="org.eclipse.ui.edit.addTask">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.lineUp.name"
             description="%command.lineUp.description"
             id="org.eclipse.ui.edit.text.goto.lineUp">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.lineDown.name"
             description="%command.lineDown.description"
             id="org.eclipse.ui.edit.text.goto.lineDown">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.lineStart.name"
             description="%command.lineStart.description"
             id="org.eclipse.ui.edit.text.goto.lineStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.lineEnd.name"
             description="%command.lineEnd.description"
             id="org.eclipse.ui.edit.text.goto.lineEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.goToLine.name"
             description="%command.goToLine.description"
             id="org.eclipse.ui.edit.text.goto.line">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.previousColumn.name"
             description="%command.previousColumn.description"
             id="org.eclipse.ui.edit.text.goto.columnPrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.nextColumn.name"
             description="%command.nextColumn.description"
             id="org.eclipse.ui.edit.text.goto.columnNext">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.pageUp.name"
             description="%command.pageUp.description"
             id="org.eclipse.ui.edit.text.goto.pageUp">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.pageDown.name"
             description="%command.pageDown.description"
             id="org.eclipse.ui.edit.text.goto.pageDown">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.previousWord.name"
             description="%command.previousWord.description"
             id="org.eclipse.ui.edit.text.goto.wordPrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.nextWord.name"
             description="%command.nextWord.description"
             id="org.eclipse.ui.edit.text.goto.wordNext">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.textStart.name"
             description="%command.textStart.description"
             id="org.eclipse.ui.edit.text.goto.textStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.textEnd.name"
             description="%command.textEnd.description"
             id="org.eclipse.ui.edit.text.goto.textEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.windowStart.name"
             description="%command.windowStart.description"
             id="org.eclipse.ui.edit.text.goto.windowStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.windowEnd.name"
             description="%command.windowEnd.description"
             id="org.eclipse.ui.edit.text.goto.windowEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.scrollLineUp.name"
             description="%command.scrollLineUp.description"
             id="org.eclipse.ui.edit.text.scroll.lineUp">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.scrollLineDown.name"
             description="%command.scrollLineDown.description"
             id="org.eclipse.ui.edit.text.scroll.lineDown">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectLineUp.name"
             description="%command.selectLineUp.description"
             id="org.eclipse.ui.edit.text.select.lineUp">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectLineDown.name"
             description="%command.selectLineDown.description"
             id="org.eclipse.ui.edit.text.select.lineDown">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectLineStart.name"
             description="%command.selectLineStart.description"
             id="org.eclipse.ui.edit.text.select.lineStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectLineEnd.name"
             description="%command.selectLineEnd.description"
             id="org.eclipse.ui.edit.text.select.lineEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectPreviousColumn.name"
             description="%command.selectPreviousColumn.description"
             id="org.eclipse.ui.edit.text.select.columnPrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectNextColumn.name"
             description="%command.selectNextColumn.description"
             id="org.eclipse.ui.edit.text.select.columnNext">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectPageUp.name"
             description="%command.selectPageUp.description"
             id="org.eclipse.ui.edit.text.select.pageUp">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectPageDown.name"
             description="%command.selectPageDown.description"
             id="org.eclipse.ui.edit.text.select.pageDown">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectWordPrevious.name"
             description="%command.selectWordPrevious.description"
             id="org.eclipse.ui.edit.text.select.wordPrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectWordNext.name"
             description="%command.selectWordNext.description"
             id="org.eclipse.ui.edit.text.select.wordNext">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectTextStart.name"
             description="%command.selectTextStart.description"
             id="org.eclipse.ui.edit.text.select.textStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectTextEnd.name"
             description="%command.selectTextEnd.description"
             id="org.eclipse.ui.edit.text.select.textEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectWindowStart.name"
             description="%command.selectWindowStart.description"
             id="org.eclipse.ui.edit.text.select.windowStart">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.selectWindowEnd.name"
             description="%command.selectWindowEnd.description"
             id="org.eclipse.ui.edit.text.select.windowEnd">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deletePrevious.name"
             description="%command.deletePrevious.description"
             id="org.eclipse.ui.edit.text.deletePrevious">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deleteNext.name"
             description="%command.deleteNext.description"
             id="org.eclipse.ui.edit.text.deleteNext">
       </command>
       <command 
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deletePreviousWord.name"
             description="%command.deletePreviousWord.description"
             id="org.eclipse.ui.edit.text.deletePreviousWord">
       </command> 
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.deleteNextWord.name"
             description="%command.deleteNextWord.description"
             id="org.eclipse.ui.edit.text.deleteNextWord">
       </command> 
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.shiftRight.name"
             description="%command.shiftRight.description"
             id="org.eclipse.ui.edit.text.shiftRight">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.shiftLeft.name"
             description="%command.shiftLeft.description"
             id="org.eclipse.ui.edit.text.shiftLeft">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.toggleOverwrite.name"
             description="%command.toggleOverwrite.description"
             id="org.eclipse.ui.edit.text.toggleOverwrite">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.showRulerContextMenu.name"
             description="%command.showRulerContextMenu.description"
             id="org.eclipse.ui.edit.text.showRulerContextMenu">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.us_ascii.name"
             description="%command.us_ascii.description"
             id="org.eclipse.ui.edit.text.encoding.us-ascii">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.iso_8859_1.name"
             description="%command.iso_8859_1.description"
             id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.utf_8.name"
             description="%command.utf_8.description"
             id="org.eclipse.ui.edit.text.encoding.utf-8">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.utf_16be.name"
             description="%command.utf_16be.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16be">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.utf_16le.name"
             description="%command.utf_16le.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16le">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.utf_16.name"
             description="%command.utf_16.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.system.name"
             description="%command.system.description"
             id="org.eclipse.ui.edit.text.encoding.system">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.custom.name"
             description="%command.custom.description"
             id="org.eclipse.ui.edit.text.encoding.custom">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.contentAssistProposals.name"
             description="%command.contentAssistProposals.description"
             id="org.eclipse.ui.edit.text.contentAssist.proposals">
       </command>
       <command
+			category="org.eclipse.ui.category.textEditor"
             name="%command.contentAssistContextInformation.name"
             description="%command.contentAssistContextInformation.description"
             id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
@@ -733,13 +878,13 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+E"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.delete.line"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+E"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.delete.line.to.end"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -877,43 +1022,43 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+L"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.line"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+ARROW_UP"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineUp"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+ARROW_DOWN"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineDown"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="INSERT"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.toggleOverwrite"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+W"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.showRulerContextMenu"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -934,14 +1079,14 @@
       <keyBinding
             locale="zh"
             string="Alt+/"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             locale="zh"
             string="Alt+?"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1207,7 +1352,7 @@
       <keyBinding
             platform="carbon"
             string="INSERT"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.toggleOverwrite"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1291,14 +1436,14 @@
       <keyBinding
             platform="carbon"
             string="Command+E"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.delete.line"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+Shift+E"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.delete.line.to.end"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1424,42 +1569,42 @@
       <keyBinding
             platform="carbon"
             string="Command+L"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.line"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+ARROW_UP"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineUp"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+ARROW_DOWN"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineDown"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+W"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.showRulerContextMenu"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+Shift+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1609,19 +1754,19 @@
       </keyBinding>
       <keyBinding
             string="Alt+0 Ctrl+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.cut.line.to.beginning"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc 0 Ctrl+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.cut.line.to.beginning"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.cut.line.to.end"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
@@ -1633,25 +1778,25 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.set.mark"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+2"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.set.mark"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+G"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.clear.mark"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+X Ctrl+X"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.swap.mark"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
@@ -1705,199 +1850,199 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+P"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.lineUp"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+N"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.lineDown"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+A"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.lineStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+E"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.lineEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+X G"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.line"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+B"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.columnPrevious"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+F"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.columnNext"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+V"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.pageUp"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc V"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.pageUp"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+V"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.pageDown"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+B"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.wordPrevious"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc B"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.wordPrevious"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>      
       <keyBinding
             string="Alt+F"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.wordNext"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc F"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.wordNext"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>           
       <keyBinding
             string="Alt+&lt;"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+,"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc ,"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc &lt;"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+X ["
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textStart"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+&gt;"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+."
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc ."
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc &gt;"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+X ]"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.goto.textEnd"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>      
       <keyBinding
             string="Alt+Z"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineUp"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc Z"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineUp"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Z"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineDown"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+D"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.deleteNext"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+BACKSPACE"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.deletePreviousWord"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+D"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.deletePreviousWord"
-            configuration="org.eclipse.ui.edit.text.deleteNextWord">
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
-       <keyBinding
+      <keyBinding
             string="INSERT"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.toggleOverwrite"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+/"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Alt+?"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
