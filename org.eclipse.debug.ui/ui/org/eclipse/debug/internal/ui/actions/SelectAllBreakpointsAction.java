@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
@@ -25,10 +25,10 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) {
-		if (!(getView() instanceof AbstractDebugView)) {
+		if (!(getView() instanceof IDebugView)) {
 			return;
 		}
-		Viewer viewer = ((AbstractDebugView) getView()).getViewer();
+		Viewer viewer = ((IDebugView) getView()).getViewer();
 		if (!(viewer instanceof TableViewer)) {
 			return;
 		}
@@ -75,6 +75,6 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.SELECT_ALL_ACTION;
+		return IDebugView.SELECT_ALL_ACTION;
 	}
 }

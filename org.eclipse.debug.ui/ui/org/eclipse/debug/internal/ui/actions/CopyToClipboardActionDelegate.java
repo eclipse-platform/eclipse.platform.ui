@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
@@ -50,7 +49,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	}
 
 	protected String getActionId() {
-		return AbstractDebugView.COPY_ACTION;
+		return IDebugView.COPY_ACTION;
 	}
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

@@ -9,6 +9,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * Common function for debug views. Provides access to underlying viewer and
@@ -26,6 +27,76 @@ import org.eclipse.ui.IViewPart;
  */
 
 public interface IDebugView extends IViewPart {
+	
+	/**
+	 * Action id for a view's copy action. Any view
+	 * with a copy action that should be invoked when
+	 * ctrl+c is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String COPY_ACTION = ITextEditorActionConstants.COPY;
+
+	/**
+	 * Action id for a view's cut action. Any view
+	 * with a cut action that should be invoked when
+	 * ctrl+x is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String CUT_ACTION = ITextEditorActionConstants.CUT;
+
+	/**
+	 * Action id for a view's double-click action. Any view
+	 * with an action that should be invoked when
+	 * the mouse is double-clicked should store their
+	 * action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
+
+	/**
+	 * Action id for a view's find action. Any view
+	 * with a paste action that should be invoked when
+	 * ctrl+f is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String FIND_ACTION = ITextEditorActionConstants.FIND;
+
+	/**
+	 * Action id for a view's paste action. Any view
+	 * with a paste action that should be invoked when
+	 * ctrl+v is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String PASTE_ACTION = ITextEditorActionConstants.PASTE;
+
+	/**
+	 * Action id for a view's remove action. Any view
+	 * with a remove action that should be invoked when
+	 * the delete key is pressed should store their
+	 * remove action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
+
+	/**
+	 * Action id for a view's select all action. Any view
+	 * with a select all action that should be invoked when
+	 * ctrl+a is pressed should store their
+	 * select all action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String SELECT_ALL_ACTION = ITextEditorActionConstants.SELECT_ALL;
 	
 	/**
 	 * Returns the viewer contained in this debug view.
@@ -47,6 +118,10 @@ public interface IDebugView extends IViewPart {
 	
 	/**
 	 * Installs the given action under the given action id.
+	 *
+	 * If the action has an id that maps to one of the global
+	 * action ids defined by this interface, the action is registered 
+	 * as a global action handler.
 	 *
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it

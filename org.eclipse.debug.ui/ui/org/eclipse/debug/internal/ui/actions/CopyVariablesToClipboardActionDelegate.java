@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
  
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.TreeViewer;
 
 /**
@@ -30,6 +30,6 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.COPY_ACTION + ".Variables"; //$NON-NLS-1$
+		return IDebugView.COPY_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 }

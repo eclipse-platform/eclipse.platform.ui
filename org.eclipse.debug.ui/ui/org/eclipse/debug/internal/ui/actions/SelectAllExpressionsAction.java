@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugView;
 
 public class SelectAllExpressionsAction extends SelectAllAction {
 
@@ -16,6 +16,6 @@ public class SelectAllExpressionsAction extends SelectAllAction {
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
+		return IDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 }

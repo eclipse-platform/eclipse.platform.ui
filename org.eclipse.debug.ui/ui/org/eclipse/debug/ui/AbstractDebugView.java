@@ -44,7 +44,6 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -105,76 +104,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * May be <code>null</code>.
 	 */
 	private IMemento fMemento;
-	
-	/**
-	 * Action id for a view's remove action. Any view
-	 * with a remove action that should be invoked when
-	 * the delete key is pressed should store their
-	 * remove action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
-	
-	/**
-	 * Action id for a view's select all action. Any view
-	 * with a select all action that should be invoked when
-	 * ctrl+a is pressed should store their
-	 * select all action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String SELECT_ALL_ACTION = ITextEditorActionConstants.SELECT_ALL;
-	
-	/**
-	 * Action id for a view's copy action. Any view
-	 * with a copy action that should be invoked when
-	 * ctrl+c is pressed should store their
-	 * copy action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String COPY_ACTION = ITextEditorActionConstants.COPY;
-	
-	/**
-	 * Action id for a view's cut action. Any view
-	 * with a cut action that should be invoked when
-	 * ctrl+x is pressed should store their
-	 * copy action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String CUT_ACTION = ITextEditorActionConstants.CUT;
-	
-	/**
-	 * Action id for a view's paste action. Any view
-	 * with a paste action that should be invoked when
-	 * ctrl+v is pressed should store their
-	 * copy action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String PASTE_ACTION = ITextEditorActionConstants.PASTE;
-	
-	/**
-	 * Action id for a view's find action. Any view
-	 * with a paste action that should be invoked when
-	 * ctrl+f is pressed should store their
-	 * copy action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String FIND_ACTION = ITextEditorActionConstants.FIND;
-	
-	/**
-	 * Action id for a view's double-click action. Any view
-	 * with an action that should be invoked when
-	 * the mouse is double-clicked should store their
-	 * action with this key.
-	 * 
-	 * @see #setAction(String, IAction)
-	 */
-	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new debug view.
@@ -286,7 +215,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		page.createControl(book);
 		initPage(page);
 		return page;
-	}	
+	}	
+
 	/**
 	 * Creates and returns this view's underlying viewer.
 	 * The viewer's control will automatically be hooked
@@ -420,7 +350,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @param menu the context menu
 	 */
-	protected abstract void fillContextMenu(IMenuManager menu);	
+	protected abstract void fillContextMenu(IMenuManager menu);	
+
 	/**
 	 * Configures this view's toolbar. Subclasses implement
 	 * <code>#configureToolBar(IToolBarManager)</code> to
@@ -790,4 +721,5 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		return !(getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed());
 	}	
 }	
-
+
+

@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,7 +29,7 @@ public abstract class AbstractRemoveActionDelegate extends AbstractListenerActio
 		if (!isInitialized()) {
 			IDebugView debugView= (IDebugView)getView().getAdapter(IDebugView.class);
 			if (debugView != null) {
-				debugView.setAction(AbstractDebugView.REMOVE_ACTION, action);
+				debugView.setAction(IDebugView.REMOVE_ACTION, action);
 			}
 			return super.initialize(action, selection);
 		}
