@@ -759,9 +759,10 @@ public final class Workbench implements IWorkbench {
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
-		
-        workbenchCommandSupport = new WorkbenchCommandSupport(this);
+
         workbenchContextSupport = new WorkbenchContextSupport(this);
+        workbenchCommandSupport = new WorkbenchCommandSupport(this);
+        workbenchContextSupport.initialize(); // deferred key binding support
 
         workbenchCommandSupport.getCommandManager().addCommandManagerListener(
                 commandManagerListener);

@@ -226,7 +226,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * The key binding support for the contexts. In the workbench, key bindings
      * are intimately tied to the context mechanism.
      */
-    private final WorkbenchKeyboard keyboard;
+    private WorkbenchKeyboard keyboard;
 
     /**
      * Whether the key binding service is currently active. That is, whether it
@@ -327,12 +327,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         mutableContextManager = ContextManagerFactory
                 .getMutableContextManager();
         proxyContextManager = new ProxyContextManager(mutableContextManager);
-
-        // Hook up the key binding support.
-        keyboard = new WorkbenchKeyboard(workbench, workbench
-                .getActivitySupport().getActivityManager(), workbench
-                .getCommandSupport().getCommandManager());
-        setKeyFilterEnabled(true);
 
         // And hook up a shell activation filter.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
@@ -475,6 +469,17 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     public final WorkbenchKeyboard getKeyboard() {
         return keyboard;
+    }
+    
+    /**
+     * Initializes the key binding support.
+     */
+    public final void initialize() {
+        // Hook up the key binding support.
+        keyboard = new WorkbenchKeyboard(workbench, workbench
+                .getActivitySupport().getActivityManager(), workbench
+                .getCommandSupport().getCommandManager());
+        setKeyFilterEnabled(true);
     }
 
     /*

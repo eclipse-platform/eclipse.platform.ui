@@ -34,10 +34,12 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.CommandManagerFactory;
 import org.eclipse.ui.internal.commands.IMutableCommandManager;
 import org.eclipse.ui.internal.commands.MutableCommandManager;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeyFormatterFactory;
@@ -99,22 +101,23 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * Generates an integer value representing the quality of the match between
      * <code>shellToMatch</code> and the active shell and workbench window's
      * shell. It is assumed that <code>shellToMatch</code> is either
-     * <code>null</code>,<code>wbWinShell</code> or the active shell.
+     * <code>null</code>,<code>activeShell</code> or the active workbench
+     * window's shell.
      * 
      * @param shellToMatch
      *            The shell to match; may be <code>null</code>.
-     * @param wbWinShell
-     *            The workbench window's shell; may be <code>null</code>.
+     * @param activeShell
+     *            The active shell shell; may be <code>null</code>.
      * @return One of <code>MATCH_ANY</code>,<code>MATCH_PARTIAL</code>,
      *         or <code>MATCH_EXACT</code>.
      */
     private static final int compareWindows(final Shell shellToMatch,
-            final Shell wbWinShell) {
+            final Shell activeShell) {
         if (shellToMatch == null) {
             return MATCH_ANY;
-        } else if (shellToMatch == wbWinShell) { return MATCH_PARTIAL; }
+        } else if (shellToMatch == activeShell) { return MATCH_EXACT; }
 
-        return MATCH_EXACT;
+        return MATCH_PARTIAL;
     }
 
     /**
@@ -413,6 +416,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         if (force || update || (activeWorkbenchSite != newWorkbenchSite)) {
             activeWorkbenchSite = newWorkbenchSite;
             Map handlersByCommandId = new HashMap();
+            final WorkbenchContextSupport contextSupport = (WorkbenchContextSupport) workbench
+                    .getContextSupport();
+            final Map contextTree = contextSupport
+                        .createFilteredContextTreeFor(contextSupport
+                                .getContextManager().getEnabledContextIds());
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
                     .iterator(); iterator.hasNext();) {
@@ -452,13 +460,71 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                 activeWorkbenchSite2, bestHandlerSubmission
                                         .getActiveWorkbenchPartSite());
                         final int currentMatch = compareWindows(activeShell2,
-                                wbWinShell);
+                                activeShell);
                         final Shell bestMatchingShell = bestHandlerSubmission
                                 .getActiveShell();
                         final int bestMatch = compareWindows(bestMatchingShell,
-                                wbWinShell);
+                                activeShell);
 
-                        if ((currentMatch > bestMatch) || (compareTo == 0)) {
+                        if ((bestHandlerSubmission.getHandler() instanceof HandlerProxy)
+                                && (currentMatch <= MATCH_PARTIAL)
+                                && (contextTree
+                                        .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG))) {
+                            /*
+                             * TODO This is a workaround for the fact that there
+                             * is no API to specify the shell for handlers
+                             * contributed via XML. This would mean that these
+                             * handlers would always lose to the workbench
+                             * window fallback mechanism.
+                             * 
+                             * This workaround assumes that the handler
+                             * submitted via XML is intended to match more
+                             * closely than the fallback mechanism.
+                             * 
+                             * In the future, this XML-contributed handlers
+                             * should be allowed to specify the level at which
+                             * they are given priority: ANY, PARTIAL or EXACT.
+                             */
+                            compareTo = -1;
+                            
+                            if ((DEBUG_VERBOSE)
+                                    && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
+                                            .equals(commandId)))) {
+                                System.out
+                                        .println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
+                                                + bestHandlerSubmission.getHandler());
+                            }
+                            
+                        } else if ((handlerSubmission.getHandler() instanceof HandlerProxy)
+                                && (bestMatch <= MATCH_PARTIAL)
+                                && (contextTree
+                                        .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG))) {
+                            /*
+                             * TODO This is a workaround for the fact that there
+                             * is no API to specify the shell for handlers
+                             * contributed via XML. This would mean that these
+                             * handlers would always lose to the workbench
+                             * window fallback mechanism.
+                             * 
+                             * This workaround assumes that the handler
+                             * submitted via XML is intended to match more
+                             * closely than the fallback mechanism.
+                             * 
+                             * In the future, this XML-contributed handlers
+                             * should be allowed to specify the level at which
+                             * they are given priority: ANY, PARTIAL or EXACT.
+                             */
+                            compareTo = 1;
+                            if ((DEBUG_VERBOSE)
+                                    && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
+                                            .equals(commandId)))) {
+                                System.out
+                                        .println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
+                                                + handlerSubmission.getHandler());
+                            }
+                            
+                        } else if ((currentMatch > bestMatch)
+                                || (compareTo == 0)) {
 
                             /*
                              * Compare the two, to see if one is a better match.
