@@ -198,7 +198,9 @@ public class DebugPlugin extends Plugin {
 	
 	/**
 	 * The launch configuration attribute that designates whether or not it's associated
-	 * launch should capture output or not.
+	 * launch should capture output.
+	 * 
+	 * @since 3.1
 	 */
 	public static final String ATTR_CAPTURE_OUTPUT = PI_DEBUG_CORE + ".capture_output"; //$NON-NLS-1$
 	
