@@ -583,12 +583,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
-			for (Iterator iter= fHighlightedDecorationsMap.values().iterator(); iter.hasNext();) {
-					
-				Decoration pp = (Decoration)iter.next();
-					maxLayer= Math.max(maxLayer, pp.fLayer + 1); // dynamically update layer maximum
-					if (pp.fLayer != layer)	// wrong layer: skip annotation
-						continue;
+			for (Iterator iter= fHighlightedDecorationsMap.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry entry= (Map.Entry)iter.next();
+				
+				Annotation a= (Annotation)entry.getKey();
+				if (a.isMarkedDeleted())
+					continue;
+				
+				Decoration pp = (Decoration)entry.getValue();
+				
+				maxLayer= Math.max(maxLayer, pp.fLayer + 1); // dynamically update layer maximum
+				if (pp.fLayer != layer)	// wrong layer: skip annotation
+					continue;
 				
 				Position p= pp.fPosition;
 				if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length))
@@ -609,7 +615,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		modelChanged(new AnnotationModelEvent(model));
 	}
-	    
+	
 	/*
 	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 	 */
@@ -826,12 +832,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		int vOffset= getInclusiveTopIndexStartOffset();
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
 		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1;		
-		
+
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
-			for (Iterator e = fDecorationsMap.values().iterator(); e.hasNext();) {
+			for (Iterator e = fDecorationsMap.entrySet().iterator(); e.hasNext();) {
+				Map.Entry entry= (Map.Entry)e.next();
 				
-				Decoration pp = (Decoration) e.next();
+				Annotation a= (Annotation)entry.getKey();
+				if (a.isMarkedDeleted())
+					continue;
+				
+				Decoration pp = (Decoration)entry.getValue();
 	
 				maxLayer= Math.max(maxLayer, pp.fLayer + 1);	// dynamically update layer maximum
 				if (pp.fLayer != layer)	// wrong layer: skip annotation
