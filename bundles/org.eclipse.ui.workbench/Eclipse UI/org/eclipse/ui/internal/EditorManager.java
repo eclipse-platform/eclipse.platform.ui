@@ -800,8 +800,8 @@ public class EditorManager implements IExtensionChangeHandler {
                         }
                     }
                     EditorPane pane = (EditorPane)((WorkbenchPartReference)ref).getPane();
-                    editorPresentation.addToLayout(pane);
                     editorPresentation.addToEditorList(pane);
+                    editorPresentation.addToLayout(pane);
                 } catch (PartInitException e) {
                     ex[0] = e;
                 } 
