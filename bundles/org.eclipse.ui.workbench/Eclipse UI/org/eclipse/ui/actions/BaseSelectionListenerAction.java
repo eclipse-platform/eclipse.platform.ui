@@ -60,7 +60,19 @@ public abstract class BaseSelectionListenerAction extends Action implements ISel
 	protected BaseSelectionListenerAction(String text) {
 		super(text);
 	}
-		
+	
+	/**
+	 * Clears any cached state associated with the selection.
+	 * Called when the selection changes.
+	 * <p>
+	 * The <code>BaseSelectionListenerAction</code> implementation of this method
+	 * does nothing. Subclasses may override.
+     * </p>
+	 */
+	protected void clearCache() {
+		// do nothing
+	}
+	
 	/**
 	 * Returns the current structured selection in the workbench, or an empty
 	 * selection if nothing is selected or if selection does not include
@@ -86,6 +98,7 @@ public abstract class BaseSelectionListenerAction extends Action implements ISel
 	 */
 	public final void selectionChanged(IStructuredSelection selection) {
 		this.selection = selection;
+		clearCache();
 		setEnabled(updateSelection(selection));
 	}
 	

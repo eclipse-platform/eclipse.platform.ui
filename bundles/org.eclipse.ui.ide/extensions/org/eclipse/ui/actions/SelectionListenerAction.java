@@ -11,10 +11,13 @@
 
 package org.eclipse.ui.actions;
 
-import org.eclipse.core.runtime.IAdaptable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * The abstract superclass for resource-based actions that listen to selection
@@ -42,12 +45,13 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public abstract class SelectionListenerAction extends BaseSelectionListenerAction {
+public abstract class SelectionListenerAction
+	extends BaseSelectionListenerAction {
 	/**
 	 * Empty list that is immutable.
 	 */
 	private static final List EMPTY_LIST = Arrays.asList(new Object[0]);
-	
+
 	/**
 	 * Indicates whether the selection has changes since <code>resources</code>
 	 * and <code>nonResources</code> were computed.
@@ -67,7 +71,7 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 	 * <code>selectionDirty == false</code>.
 	 */
 	private List nonResources;
-	
+
 	/**
 	 * Creates a new action with the given text.
 	 *
@@ -77,7 +81,19 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 	protected SelectionListenerAction(String text) {
 		super(text);
 	}
-	
+
+	/**
+	 * The <code>SelectionListenerAction</code> implementation of this 
+	 * <code>BaseSelectionListenerAction</code> method clears the cached
+	 * resources and non-resources. 
+	 */
+	protected void clearCache() {
+		selectionDirty = true;
+		// clear out the lists in case computeResources does not get called immediately
+		resources = null;
+		nonResources = null;
+	}
+
 	/**
 	 * Extracts <code>IResource</code>s from the current selection and adds them to
 	 * the resources list, and the rest into the non-resources list.
@@ -85,7 +101,7 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 	private final void computeResources() {
 		resources = null;
 		nonResources = null;
-		
+
 		for (Iterator e = getStructuredSelection().iterator(); e.hasNext();) {
 			Object next = e.next();
 			if (next instanceof IResource) {
@@ -97,17 +113,19 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 				continue;
 			}
 			if (next instanceof IAdaptable) {
-				Object resource = ((IAdaptable) next).getAdapter(IResource.class);
+				Object resource =
+					((IAdaptable) next).getAdapter(IResource.class);
 				if (resource != null) {
 					if (resources == null) {
 						// assume selection contains mostly resources most times
-						resources = new ArrayList(getStructuredSelection().size());
+						resources =
+							new ArrayList(getStructuredSelection().size());
 					}
 					resources.add(resource);
 					continue;
 				}
 			}
-			
+
 			if (nonResources == null) {
 				// assume selection contains mostly resources most times
 				nonResources = new ArrayList(1);
@@ -115,7 +133,7 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 			nonResources.add(next);
 		}
 	}
-	
+
 	/**
 	 * Returns the elements in the current selection that are not 
 	 * <code>IResource</code>s.
@@ -128,13 +146,13 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 			computeResources();
 			selectionDirty = false;
 		}
-		
+
 		if (nonResources == null)
 			return EMPTY_LIST;
 		else
 			return nonResources;
 	}
-	
+
 	/**
 	 * Returns the elements in the current selection that are 
 	 * <code>IResource</code>s.
@@ -147,13 +165,13 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 			computeResources();
 			selectionDirty = false;
 		}
-		
+
 		if (resources == null)
 			return EMPTY_LIST;
 		else
 			return resources;
 	}
-	
+
 	/**
 	 * Returns whether the type of the given resource is among those in the given
 	 * resource type mask.
@@ -169,7 +187,7 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 	protected boolean resourceIsType(IResource resource, int resourceMask) {
 		return (resource.getType() & resourceMask) != 0;
 	}
-	
+
 	/**
 	 * Returns whether the current selection consists entirely of resources whose
 	 * types are among those in the given resource type mask.
@@ -193,27 +211,5 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 		}
 		return true;
 	}
-	
-	/**
-	 * Updates this action in response to the given selection.
-	 * <p>
-	 * The <code>SelectionListenerAction</code> implementation of this
-	 * <code>BaseSelectionListenerAction</code> method clears its internal caches
-	 * and returns <code>true</code>.
-	 * Subclasses may extend to react to selection changes; however, if the
-	 * super method returns <code>false</code>, the overriding method must also
-	 * return <code>false</code>.
-	 * </p>
-	 *
-	 * @param selection the new selection
-	 * @return <code>true</code> if the action should be enabled for this selection,
-	 *   and <code>false</code> otherwise
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		selectionDirty = true;
-		// clear out the lists in case computeResources does not get called immediately
-		resources = null;
-		nonResources = null;
-		return true;
-	}
+
 }
