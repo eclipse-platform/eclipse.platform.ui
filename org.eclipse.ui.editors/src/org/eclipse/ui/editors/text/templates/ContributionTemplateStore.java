@@ -36,6 +36,8 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 /**
  * Manages templates. Handles reading default templates contributed via XML and
  * user-defined (or overridden) templates stored in the preferences. Clients may
@@ -138,8 +140,17 @@ public class ContributionTemplateStore extends TemplateStore {
 				TemplatePersistenceData[] datas= reader.read(input, bundle);
 				for (int i= 0; i < datas.length; i++) {
 					TemplatePersistenceData data= datas[i];
-					if (!data.isCustom() && validateTemplate(data.getTemplate()))
+					if (data.isCustom()) {
+						if (data.getId() == null)
+							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_no_id")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						else
+							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_deleted")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					} else if (!validateTemplate(data.getTemplate())) {
+						if (contextExists(data.getTemplate().getContextTypeId()))
+							EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_validation_failed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					} else {
 						templates.add(data);
+					}
 				}
 			}
 		}
@@ -188,6 +199,8 @@ public class ContributionTemplateStore extends TemplateStore {
 
 	private void createTemplate(Collection map, IConfigurationElement element) {
 		String contextTypeId= element.getAttributeAsIs(CONTEXT_TYPE_ID);
+		// no need to log failures since id and name are guaranteed by the exsd 
+		// specification
 		if (contextExists(contextTypeId)) {
 			String id= element.getAttributeAsIs(ID);
 			if (isValidTemplateId(id)) {
