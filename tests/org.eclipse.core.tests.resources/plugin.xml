@@ -69,6 +69,9 @@
     <test id="resources.MarkerTest">
       <run class="org.eclipse.core.tests.resources.MarkerTest"/>
     </test>
+    <test id="resources.LinkedResourceTest">
+      <run class="org.eclipse.core.tests.resources.LinkedResourceTest"/>
+    </test>
     <test id="resources.NatureTest">
       <run class="org.eclipse.core.tests.resources.NatureTest"/>
     </test>
@@ -391,6 +394,11 @@
       <run class="org.eclipse.core.tests.internal.builders.SortBuilder"/> 
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="brokenbuilder" name="Broken Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.BrokenBuilder"/> 
+    </builder>
+  </extension>
   <extension point="org.eclipse.core.resources.builders" id="refreshbuilder" name="Refresh local builder">
     <builder>
       <run class="org.eclipse.core.tests.internal.builders.RefreshLocalJavaFileBuilder"/>
@@ -419,6 +427,7 @@
 	<runtime>
 		<run class="org.eclipse.core.tests.internal.resources.SimpleNature"/>
    </runtime>
+   <options allowLinking="false"/>
 </extension>
 <extension
       id="snowNature"
@@ -439,14 +448,14 @@
       id="waterNature"
       name="Water"
       point="org.eclipse.core.resources.natures">
+   <one-of-nature
+         id="org.eclipse.core.tests.resources.stateSet">
+   </one-of-nature>
 	<runtime>
 		<run class="org.eclipse.core.tests.internal.resources.WaterNature">
 			<parameter name="installBuilder" value="true"/>
 		</run>
    </runtime>
-   <one-of-nature
-         id="org.eclipse.core.tests.resources.stateSet">
-   </one-of-nature>
 </extension>
 <extension
       id="earthNature"

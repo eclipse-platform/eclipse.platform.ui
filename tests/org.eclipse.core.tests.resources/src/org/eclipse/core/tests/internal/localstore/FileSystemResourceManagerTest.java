@@ -38,15 +38,12 @@ public static Test suite() {
 	return new TestSuite(FileSystemResourceManagerTest.class);
 }
 /**
- * Scenario:
- *		1 solution
- * 		3 projects
  */
 public void testContainerFor() throws Throwable {
 
 	/* test null parameter */
 	try {
-		getLocalManager().containerFor(null);
+		getLocalManager().containerForLocation(null);
 		fail("1.1");
 	} catch (RuntimeException e) {
 	}
@@ -57,25 +54,25 @@ public void testContainerFor() throws Throwable {
 	Path path = new Path("target");
 	IFolder folder = projects[0].getFolder(path);
 	IPath location = projects[0].getLocation().append(path);
-	IFolder testFolder = (IFolder) getLocalManager().containerFor(location);
+	IFolder testFolder = (IFolder) getLocalManager().containerForLocation(location);
 	assertTrue("2.1", folder.equals(testFolder));
 
 	// project/folder/target
 	path = new Path("folder/target");
 	folder = projects[0].getFolder(path);
 	location = projects[0].getLocation().append(path);
-	testFolder = (IFolder) getLocalManager().containerFor(location);
+	testFolder = (IFolder) getLocalManager().containerForLocation(location);
 	assertTrue("2.2", folder.equals(testFolder));
 
 	// project/folder/folder/target
 	path = new Path("folder/folder/target");
 	folder = projects[0].getFolder(path);
 	location = projects[0].getLocation().append(path);
-	testFolder = (IFolder) getLocalManager().containerFor(location);
+	testFolder = (IFolder) getLocalManager().containerForLocation(location);
 	assertTrue("2.3", folder.equals(testFolder));
 
-	/* inexisting location */
-	testFolder = (IFolder) getLocalManager().containerFor(new Path("../this/path/must/not/exist"));
+	/* non-existent location */
+	testFolder = (IFolder) getLocalManager().containerForLocation(new Path("../this/path/must/not/exist"));
 	assertTrue("3.1", testFolder == null);
 }
 /**
@@ -104,15 +101,12 @@ public void testCreateFile() throws Throwable {
 	}
 }
 /**
- * Scenario:
- *		1 solution
- * 		3 projects
  */
 public void testFileFor() throws Throwable {
 
 	/* test null parameter */
 	try {
-		getLocalManager().fileFor(null);
+		getLocalManager().fileForLocation(null);
 		fail("1.1");
 	} catch (RuntimeException e) {
 	}
@@ -123,25 +117,25 @@ public void testFileFor() throws Throwable {
 	Path path = new Path("file");
 	IFile file = projects[0].getFile(path);
 	IPath location = projects[0].getLocation().append(path);
-	IFile testFile = getLocalManager().fileFor(location);
+	IFile testFile = getLocalManager().fileForLocation(location);
 	assertTrue("2.1", file.equals(testFile));
 
 	// project/folder/file
 	path = new Path("folder/file");
 	file = projects[0].getFile(path);
 	location = projects[0].getLocation().append(path);
-	testFile = getLocalManager().fileFor(location);
+	testFile = getLocalManager().fileForLocation(location);
 	assertTrue("2.2", file.equals(testFile));
 
 	// project/folder/folder/file
 	path = new Path("folder/folder/file");
 	file = projects[0].getFile(path);
 	location = projects[0].getLocation().append(path);
-	testFile = getLocalManager().fileFor(location);
+	testFile = getLocalManager().fileForLocation(location);
 	assertTrue("2.3", file.equals(testFile));
 
-	/* inexisting location */
-	testFile = getLocalManager().fileFor(new Path("../this/path/must/not/exist"));
+	/* non-existent location */
+	testFile = getLocalManager().fileForLocation(new Path("../this/path/must/not/exist"));
 	assertTrue("7.1", testFile == null);
 }
 public void testIsLocal() throws Throwable {
@@ -187,72 +181,6 @@ public void testLocationFor() throws Throwable {
 	IPath location = projects[0].getLocation();
 	assertTrue("2.1", location.equals(getLocalManager().locationFor((Project) projects[0])));
 	assertTrue("2.2", location.equals(Platform.getLocation().append(projects[0].getName())));
-}
-/**
- * Scenario:
- *		1 solution
- * 		3 projects
- */
-public void testResourceFor() throws Throwable {
-
-	/* test null parameter */
-	try {
-		getLocalManager().resourceFor(null);
-		fail("1.1");
-	} catch (RuntimeException e) {
-	} catch (CoreException e) {
-		fail("1.2", e);
-	}
-
-	/* test normal conditions under default mapping */
-
-	// project/target (file)
-	IPath path = new Path("target");
-	IFile file = projects[0].getFile(path);
-	ensureExistsInFileSystem(file);
-	IPath location = projects[0].getLocation().append(path);
-	IResource testResource = getLocalManager().resourceFor(location);
-	assertTrue("2.0", file.equals(testResource));
-	ensureDoesNotExistInFileSystem(file);
-
-	// project/target (folder)
-	path = new Path("target");
-	IFolder folder = projects[0].getFolder(path);
-	ensureExistsInFileSystem(folder);
-	location = projects[0].getLocation().append(path);
-	testResource = getLocalManager().resourceFor(location);
-	assertTrue("2.1", folder.equals(testResource));
-
-	// project/folder/target
-	path = new Path("folder/target");
-	folder = projects[0].getFolder(path);
-	ensureExistsInWorkspace(folder.getParent(), true);
-	ensureExistsInWorkspace(folder, true);
-	location = projects[0].getLocation().append(path);
-	testResource = getLocalManager().resourceFor(location);
-	assertTrue("2.2", folder.equals(testResource));
-
-	// project/folder/folder/target
-	path = new Path("folder/folder/target");
-	folder = projects[0].getFolder(path);
-	ensureExistsInFileSystem(folder);
-	location = projects[0].getLocation().append(path);
-	testResource = getLocalManager().resourceFor(location);
-	assertTrue("2.3", folder.equals(testResource));
-
-	/* give a location of a project */
-	location = projects[0].getLocation();
-	testResource = getLocalManager().resourceFor(location);
-	assertTrue("5.1", projects[0].equals(testResource));
-
-	/* test resource that does not exist neither in the workspace or file system */
-	location = new Path("../this/path/must/not/exist/");
-	assertTrue("6.1", getLocalManager().resourceFor(location) == null);
-
-	/* test inexisting resource with a valid path */
-	location = projects[0].getLocation().append("resource/must/not/exist");
-	testResource = getLocalManager().resourceFor(location);
-	assertTrue("7.1", testResource == null);
 }
 /**
  * Scenario:

@@ -31,12 +31,28 @@ protected void tearDown() throws Exception {
 	getWorkspace().delete(projects, true, null);
 }
 /**
+ * Tests the API method findContainersForLocation.
+ */
+public void testFindContainersForLocation() {
+}
+/**
+ * Tests the API method findFilesForLocation.
+ */
+public void testFindFilesForLocation() {
+}
+/**
  * Tests the API method getContainerForLocation.
  */
 public void testGetContainerForLocation() {
 	IWorkspaceRoot root = getWorkspace().getRoot();
 	assertEquals("1.0", root, root.getContainerForLocation(root.getLocation()));
 	
+}
+/**
+ * Tests the API method getFileForLocation */
+public void testGetFileForLocation() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	assertTrue("1.0", root.getFileForLocation(root.getLocation()) == null);
 }
 public void testPersistentProperty() {
 	IWorkspaceRoot root = getWorkspace().getRoot();

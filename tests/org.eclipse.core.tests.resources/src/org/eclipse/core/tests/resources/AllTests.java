@@ -45,6 +45,7 @@ public AllTests(String name) {
 		suite.addTest(ResourceURLTest.suite());
 		suite.addTest(TeamPrivateMemberTest.suite());
 		suite.addTest(WorkspaceTest.suite());
+		suite.addTest(LinkedResourceTest.suite());
 		return suite;
 	}
 }
