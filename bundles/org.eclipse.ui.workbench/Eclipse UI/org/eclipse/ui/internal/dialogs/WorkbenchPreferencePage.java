@@ -169,9 +169,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalIndent = 20;
 		openAfterDelayButton.setLayoutData(data);
 		
-		Label note = new Label(buttonComposite, SWT.NONE);
-		note.setText(WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
-		note.setFont(font);
+		createNoteComposite(
+			font,
+			buttonComposite,
+			WorkbenchMessages.getString("Preference.note"),//$NON-NLS-1$
+			WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
 	}
 	
 	private void selectClickMode(boolean singleClick) {
