@@ -203,7 +203,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			});
 		
 		createVerticalSpacer(comp, 1);
-		createRunInBackgroundComponent(comp);
+		createLaunchInBackgroundComponent(comp);
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 *
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createRunInBackgroundComponent(Composite parent) {
+	protected void createLaunchInBackgroundComponent(Composite parent) {
 		fLaunchInBackgroundButton = new Button(parent, SWT.CHECK);
 		fLaunchInBackgroundButton.setText(LaunchConfigurationsMessages.getString("CommonTab.10")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -325,18 +325,18 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateLocalSharedFromConfig(configuration);
 		updateSharedLocationFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
-		updateRunInBackground(configuration);
+		updateLaunchInBackground(configuration);
 	}
 	
-	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
+	protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
 	
 	/**
-	 * Returns whether the given configuration should be run in the background.
+	 * Returns whether the given configuration should be launched in the background.
 	 * 
 	 * @param configuration the configuration
-	 * @return whether the configuration is configured to run in the background
+	 * @return whether the configuration is configured to launch in the background
 	 */
 	public static boolean isLaunchInBackground(ILaunchConfiguration configuration) {
 		boolean launchInBackground= true;
