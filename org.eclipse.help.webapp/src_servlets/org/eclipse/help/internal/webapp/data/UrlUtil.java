@@ -113,7 +113,9 @@ public class UrlUtil {
 
 	public static boolean isGecko(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
-		return agent.indexOf("gecko") >= 0;
+		// sample substring Gecko/20020508
+		// search for "gecko/" not to react to "like Gecko"
+		return agent.indexOf("gecko/") >= 0;
 	}
 
 	public static boolean isIE(HttpServletRequest request) {
