@@ -104,11 +104,9 @@ public class KeyedHashSet {
 				return true;
 			}
 			if (elements[i].compare(element)) {
-				if (replace) {
+				if (replace)
 					elements[i] = element;
-					return true;
-				} else
-					return false;
+				return replace;
 			}
 		}
 
@@ -123,11 +121,9 @@ public class KeyedHashSet {
 				return true;
 			}
 			if (elements[i].compare(element)) {
-				if (replace) {
+				if (replace)
 					elements[i] = element;
-					return true;
-				} else
-					return false;
+				return replace;
 			}
 		}
 
@@ -136,9 +132,9 @@ public class KeyedHashSet {
 		return add(element);
 	}
 
-	public void addAll(KeyedElement[] elements) {
-		for (int i = 0; i < elements.length; i++)
-			add(elements[i]);
+	public void addAll(KeyedElement[] toAdd) {
+		for (int i = 0; i < toAdd.length; i++)
+			add(toAdd[i]);
 	}
 
 	public void clear() {
@@ -353,9 +349,9 @@ public class KeyedHashSet {
 		return false;
 	}
 
-	public void removeAll(KeyedElement[] elements) {
-		for (int i = 0; i < elements.length; i++)
-			remove(elements[i]);
+	public void removeAll(KeyedElement[] toRemove) {
+		for (int i = 0; i < toRemove.length; i++)
+			remove(toRemove[i]);
 	}
 
 	public boolean removeByKey(Object key) {

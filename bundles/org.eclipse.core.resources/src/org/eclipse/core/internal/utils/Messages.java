@@ -283,7 +283,6 @@ public class Messages extends NLS {
 	public static String utils_failed;
 	public static String utils_noElements;
 	public static String utils_null;
-	public static String utils_print;
 	public static String utils_stringJobName;
 	public static String utils_wrongLength;
 

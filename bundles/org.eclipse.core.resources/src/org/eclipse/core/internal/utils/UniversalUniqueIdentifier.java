@@ -193,7 +193,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	 */
 	private static byte[] computeNodeAddress() {
 
-		byte[] nodeAddress = new byte[NODE_ADDRESS_BYTE_SIZE];
+		byte[] address = new byte[NODE_ADDRESS_BYTE_SIZE];
 
 		// Seed the secure randomizer with some oft-varying inputs
 		int thread = Thread.currentThread().hashCode();
@@ -216,12 +216,12 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		byte[] rand = byteOut.toByteArray();
 
 		SecureRandom randomizer = new SecureRandom(rand);
-		randomizer.nextBytes(nodeAddress);
+		randomizer.nextBytes(address);
 
 		// set the MSB of the first octet to 1 to distinguish from IEEE node addresses
-		nodeAddress[0] = (byte) (nodeAddress[0] | (byte) 0x80);
+		address[0] = (byte) (address[0] | (byte) 0x80);
 
-		return nodeAddress;
+		return address;
 	}
 
 	public boolean equals(Object obj) {
@@ -363,19 +363,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		}
 
 		return timestamp;
-	}
-
-	/** 
-	 Implements the corresponding method in the interface <code>IPrintable</code>.
-
-	 @see IPrintable#print(java.io.DataOutputStream)
-	 */
-	public void print(DataOutputStream outStream) {
-		try {
-			outStream.writeBytes(toString());
-		} catch (IOException e) {
-			Assert.isTrue(false, Messages.utils_print);
-		}
 	}
 
 	private void setClockSequence(int clockSeq) {
