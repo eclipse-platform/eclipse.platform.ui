@@ -303,7 +303,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				// post a changed event but forget any cached information about this resource
 				noProviderResources.add(resource);
 			}
-			resources.addAll(computeParents(resource));  //todo: should only add parents if deep preference on: bug #11400
+			resources.addAll(computeParents(resource));
 		}
 		
 		addResourcesToBeDecorated((IResource[]) resources.toArray(new IResource[resources.size()]));
@@ -340,9 +340,13 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private List computeParents(IResource resource) {
 		IResource current = resource;
 		List resources = new ArrayList();
-		while (current.getType() != IResource.ROOT) {
-			resources.add(current);
-			current = current.getParent();
+		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY)) {
+			while (current.getType() != IResource.ROOT) {
+				resources.add(current);
+				current = current.getParent();
+			}
+		} else {
+			resources.add(current);			
 		}
 		return resources;
 	}
@@ -351,9 +355,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		if (resources.length > 0) {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				//System.out.println("\t to update: " + resource.getFullPath());
 				if(!decoratorNeedsUpdating.contains(resource)) {
-					//System.out.println("\t adding: " + resource.getFullPath());
 					decoratorNeedsUpdating.add(resource);
 				}
 			}
