@@ -69,7 +69,7 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 		IResource[] resources = getChildrenWithSyncBytes(local);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if (!children.containsKey(resource.getName())) {
+			if (!children.containsKey(resource)) {
 				// These sync bytes are stale. Purge them
 				removeSyncBytes(resource, IResource.DEPTH_INFINITE, true /* silent*/);
 			}
