@@ -330,7 +330,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Returns the appropriate text for the launch button - run or debug.
 	 */
-	private String getLaunchButtonText() {
+	protected String getLaunchButtonText() {
 		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
 		} else {
@@ -1379,8 +1379,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private Map saveUIState() {
 		Map savedState= new HashMap(10);
-		saveEnableStateAndSet(getButtonActionNew().getButton(), savedState, "new", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getButtonActionDelete().getButton(), savedState, "delete", false);//$NON-NLS-1$
+		if (getButtonActionNew() != null) {
+			saveEnableStateAndSet(getButtonActionNew().getButton(), savedState, "new", false);//$NON-NLS-1$
+		}
+		if (getButtonActionDelete() != null) {
+			saveEnableStateAndSet(getButtonActionDelete().getButton(), savedState, "delete", false);//$NON-NLS-1$
+		}
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
 		savedState.put("editarea", ControlEnableState.disable(getEditArea()));//$NON-NLS-1$
@@ -1415,8 +1419,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see #saveUIState
 	 */
 	private void restoreUIState(Map state) {
-		restoreEnableState(getButtonActionNew().getButton(), state, "new");//$NON-NLS-1$
-		restoreEnableState(getButtonActionDelete().getButton(), state, "delete");//$NON-NLS-1$
+		if (getButtonActionNew() != null) {
+			restoreEnableState(getButtonActionNew().getButton(), state, "new");//$NON-NLS-1$
+		}
+		if (getButtonActionDelete() != null) {
+			restoreEnableState(getButtonActionDelete().getButton(), state, "delete");//$NON-NLS-1$
+		}
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
 		ControlEnableState tabState = (ControlEnableState) state.get("editarea");//$NON-NLS-1$

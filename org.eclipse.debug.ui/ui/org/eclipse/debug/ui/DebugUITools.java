@@ -34,6 +34,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -327,11 +328,11 @@ public class DebugUITools {
 	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
 	 * and the existing dialog keeps its original mode.
 	 * </p>
+	 * <p>
 	 * If a status is specified, a status handler is consulted to handle the
 	 * status. The status handler is passed the instance of the launch
 	 * configuration dialog that is opened. This gives the status handler an
 	 * opportunity to perform error handling/initialization as required.
-	 * <p>
 	 * </p>
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
@@ -394,7 +395,37 @@ public class DebugUITools {
 		}
 	}
 	
-		
+	/**
+	 * Open the launch configuration dialog on the specified launch
+	 * configuration. The dialog displays the tabs for a single configuration
+	 * only (a tree of launch configuration is not displayed), and provides a
+	 * launch (run or debug) button.
+	 * <p>
+	 * If a status is specified, a status handler is consulted to handle the
+	 * status. The status handler is passed the instance of the launch
+	 * configuration dialog that is opened. This gives the status handler an
+	 * opportunity to perform error handling/initialization as required.
+	 * </p>
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param configuration the configuration to display
+	 * @param group identifier of the launch group the launch configuration
+	 * belongs to
+	 * @param status the status to display, or <code>null</code> if none 
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 * @since 2.1
+	 */
+	public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
+		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+		if (group != null) {
+			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
+			dialog.setInitialStatus(status);
+			return dialog.open();
+		} else {
+			return Window.CANCEL;
+		}
+	}
+			
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.

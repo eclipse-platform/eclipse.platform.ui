@@ -9,7 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.text.MessageFormat;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -31,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A dialog used to edit a single launch configuration.
  */
-public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDialog {
+public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDialog implements ILaunchConfigurationListener {
 	
 	/**
 	 * The lanuch configuration to display
@@ -50,6 +53,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	public LaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group) {
 		super(shell, group);
 		setLaunchConfiguration(launchConfiguration);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
 	
 	/**
@@ -82,6 +86,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		persistShellGeometry();
 		getBannerImage().dispose();
 		getTabViewer().dispose();
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		return super.close();
 	}
 		
@@ -101,7 +106,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		topComp.setFont(dialogComp.getFont());
 	
 		// Set the things that TitleAreaDialog takes care of 
-		setTitle("Edit launch configuration properties");
+		setTitle(getTitleAreaTitle());
 		setMessage(""); //$NON-NLS-1$
 		setModeLabelState();
 	
@@ -121,6 +126,10 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		dialogComp.layout(true);
 		applyDialogFont(dialogComp);
 	}
+	
+	protected String getTitleAreaTitle() {
+		return LaunchConfigurationsMessages.getString("LaunchConfigurationPropertiesDialog.Edit_launch_configuration_properties_1"); //$NON-NLS-1$
+	}
 			
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
@@ -129,7 +138,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	}
 					
 	protected String getShellTitle() {
-		return MessageFormat.format("Properties for {0}", new String[]{getLaunchConfiguration().getName()});
+		return MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPropertiesDialog.Properties_for_{0}_2"), new String[]{getLaunchConfiguration().getName()}); //$NON-NLS-1$
 	}
 	
 	protected String getHelpContextId() {
@@ -251,4 +260,29 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_PROPERTIES_DIALOG_SECTION"; //$NON-NLS-1$
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		if (getLaunchConfiguration().equals(manager.getMovedFrom(configuration))) {
+			// this config was re-named, update the dialog with the new config
+			setLaunchConfiguration(configuration);
+			getTabViewer().setInput(getLaunchConfiguration());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+	}
+
 }

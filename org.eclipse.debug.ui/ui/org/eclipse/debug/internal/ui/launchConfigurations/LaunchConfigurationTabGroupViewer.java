@@ -473,7 +473,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
 		if (tabGroup == null) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format("No tabs defined for launch configuration type {0}", new String[]{type.getName()}), null);
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationTabGroupViewer.No_tabs_defined_for_launch_configuration_type_{0}_1"), new String[]{type.getName()}), null); //$NON-NLS-1$
 			CoreException e = new CoreException(status);
 			errorDialog(e);
 			setInitializingTabs(false);
