@@ -27,6 +27,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 	private Thread fThread;
 	/** The stopper of the computation thread */
 	private ITextListener fStopper;
+	/** Internal monitor */
+	private Object fMutex= new Object();
 	
 	
 	/**
@@ -41,8 +43,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 		fTextViewer= textViewer;
 		fStopper= new ITextListener() {
 			public void textChanged(TextEvent event) {
-				if (fThread != null) {
-					synchronized (fThread) {
+				synchronized (fMutex) {
+					if (fThread != null) {
 						fThread.interrupt();
 						fThread= null;
 					}
@@ -82,9 +84,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 							String information= hover.getHoverInfo(fTextViewer, region);
 							setInformation(information, area);
 						} finally {
-							if (fTextViewer != null)
-								fTextViewer.removeTextListener(fStopper);
-							fThread= null;
+							synchronized (fMutex) {
+								if (fTextViewer != null)
+									fTextViewer.removeTextListener(fStopper);
+								fThread= null;
+							}
 						}
 					}
 				}
@@ -92,7 +96,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 			
 			fThread.setDaemon(true);
 			fThread.setPriority(Thread.MIN_PRIORITY);
-			synchronized (fThread) {
+			synchronized (fMutex) {
 				fTextViewer.addTextListener(fStopper);
 				fThread.start();
 			}

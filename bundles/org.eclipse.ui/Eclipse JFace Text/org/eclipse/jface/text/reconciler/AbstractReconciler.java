@@ -235,16 +235,8 @@ abstract public class AbstractReconciler implements IReconciler {
 			reconcilerDocumentChanged(fDocument);
 				
 			fDocument.addDocumentListener(this);
-				
-			if (fIsIncrementalReconciler) {
-				DocumentEvent e= new DocumentEvent(fDocument, 0, 0, fDocument.get());
-				createDirtyRegion(e);
-			}
 			
-			if (oldInput == null && !fThread.isAlive())
-				fThread.start();
-			else
-				fThread.reset();
+			forceReconciling();
 		}
 	};
 	
@@ -429,5 +421,22 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * once during the life time of the reconciler. Clients may reimplement this method.
 	 */
 	protected void initialProcess() {
+	}
+	
+	/**
+	 * Forces the reconciler to reconcile the structure of the whole document.
+	 * Clients my extend this method.
+	 */
+	protected void forceReconciling() {
+		
+		if (fIsIncrementalReconciler) {
+			DocumentEvent e= new DocumentEvent(fDocument, 0, 0, fDocument.get());
+			createDirtyRegion(e);
+		}
+		
+		if (!fThread.isAlive())
+			fThread.start();
+		else
+			fThread.reset();
 	}
 }
