@@ -13,8 +13,10 @@ package org.eclipse.ui.internal.activities.ws;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IContributionManager;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -23,9 +25,9 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 	private IMutableActivityManager mutableActivityManager;
@@ -50,19 +52,31 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 					for (int i = 0; i < windows.length; i++) {
 						if (windows[i] instanceof WorkbenchWindow) {
-							WorkbenchWindow window = (WorkbenchWindow) windows[i];
-							IContributionManager manager = window.getMenuBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getCoolBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getToolBarManager();
-							if (manager != null)
-								manager.update(true);
-							manager = window.getStatusLineManager();
-							if (manager != null)
-								manager.update(true);
+						    final WorkbenchWindow window = (WorkbenchWindow) windows[i];
+						    WorkbenchJob job = new WorkbenchJob(window.getShell().getDisplay(), ActivityMessages.getString("ManagerJob")) { //$NON-NLS-1$
+
+                                /* (non-Javadoc)
+                                 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+                                 */
+                                public IStatus runInUIThread(IProgressMonitor monitor) {
+									IContributionManager manager = window.getMenuBarManager();
+									if (manager != null)
+										manager.update(true);
+									manager = window.getCoolBarManager();
+									if (manager != null)
+										manager.update(true);
+									manager = window.getToolBarManager();
+									if (manager != null)
+										manager.update(true);
+									manager = window.getStatusLineManager();
+									if (manager != null)
+										manager.update(true);
+
+                                    return Status.OK_STATUS;
+                                }
+                            };
+                            job.setSystem(true);
+                            job.schedule();						    
 						}
 					}
 				}
