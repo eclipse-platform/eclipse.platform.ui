@@ -748,18 +748,10 @@ public class AntModel {
             	}
             }
             newNode= new AntTaskNode(newTask, label);
-        	
-        } else if(taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
-        	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_FILE)); //$NON-NLS-1$
         } else {   
         	newNode = newNotWellKnownTaskNode(newTask, attributes);
         }
-		String taskFileName= newTask.getLocation().getFileName();
-		boolean external= isTaskExternal(taskFileName);
-		newNode.setExternal(external);
-		if (external) {
-			newNode.setFilePath(taskFileName);
-		}
+		setExternalInformation(newTask, newNode);
 		return newNode;
 	}
             
@@ -790,7 +782,18 @@ public class AntModel {
 		if (id != null) {
 			newNode.setId(id);
 		}
+		
+		setExternalInformation(newTask, newNode);
 		return newNode;
+	}
+
+	private void setExternalInformation(Task newTask, AntTaskNode newNode) {
+		String taskFileName= newTask.getLocation().getFileName();
+		boolean external= isTaskExternal(taskFileName);
+		newNode.setExternal(external);
+		if (external) {
+			newNode.setFilePath(taskFileName);
+		}
 	}
 
 	private String generateLabel(String taskName, Attributes attributes, String attributeName) {
