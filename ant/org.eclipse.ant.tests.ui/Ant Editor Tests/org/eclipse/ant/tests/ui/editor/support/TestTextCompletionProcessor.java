@@ -21,7 +21,6 @@ import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.w3c.dom.Element;
