@@ -38,12 +38,12 @@ import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/** Time of the start of the build */
-    private long startTime = System.currentTimeMillis();
+    private long fStartTime = System.currentTimeMillis();
 
 	/**
 	 * The client socket.
 	 */
-	private Socket fClientSocket;
+	private Socket fEventSocket;
 	/**
 	 * Print writer for sending messages
 	 */
@@ -51,17 +51,18 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	/**
 	 * Host to connect to, default is the localhost
 	 */
-	private String fHost= ""; //$NON-NLS-1$
+	protected String fHost= ""; //$NON-NLS-1$
 	/**
 	 * Port to connect to.
 	 */
-	private int fPort= -1;
+	private int fEventPort= -1;
+	
 	/**
 	 * Is the debug mode enabled?
 	 */
-	private boolean fDebugMode= false;	
+	protected boolean fDebugMode= false;	
 	
-	private boolean fSentProcessId= false;
+	protected boolean fSentProcessId= false;
 	
 	private List fEventQueue;
 	
@@ -76,15 +77,15 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	/**
 	 * Connect to the remote Ant build listener.
 	 */
-	private void connect() {
+	protected void connect() {
 		if (fDebugMode) {
-			System.out.println("RemoteAntBuildLogger: trying to connect" + fHost + ":" + fPort); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("RemoteAntBuildLogger: trying to connect" + fHost + ":" + fEventPort); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		for (int i= 1; i < 5; i++) {
 			try{
-				fClientSocket= new Socket(fHost, fPort);
-				fWriter= new PrintWriter(fClientSocket.getOutputStream(), true);
+				fEventSocket= new Socket(fHost, fEventPort);
+				fWriter= new PrintWriter(fEventSocket.getOutputStream(), true);
 				return;
 			} catch(IOException e){
 			}
@@ -99,7 +100,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	/**
 	 * Shutdown the connection to the remote build listener.
 	 */
-	private void shutDown() {
+	protected void shutDown() {
 		if (fEventQueue != null) {
 			fEventQueue.clear();
 		}
@@ -109,9 +110,9 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 		
 		try {
-			if (fClientSocket != null) {
-				fClientSocket.close();
-				fClientSocket= null;
+			if (fEventSocket != null) {
+				fEventSocket.close();
+				fEventSocket= null;
 			}
 		} catch(IOException e) {
 		}
@@ -133,14 +134,13 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			establishConnection(event);
 		}
 		handleException(event);
-        printMessage( getTimeString(System.currentTimeMillis() - startTime), out, Project.MSG_INFO); 
+        printMessage( getTimeString(System.currentTimeMillis() - fStartTime), out, Project.MSG_INFO); 
 		shutDown();
 	}
 	
 	protected void handleException(BuildEvent event) {
 		Throwable exception = event.getException();
-		if (exception == null
-		|| exception instanceof AntSecurityException) {
+		if (exception == null || exception instanceof AntSecurityException) {
 			return;
 		}
 		printMessage(MessageFormat.format(RemoteAntMessages.getString("RemoteAntBuildLogger.BUILD_FAILED__{0}_1"), new String[] { exception.toString()}), //$NON-NLS-1$
@@ -195,11 +195,15 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         }
 	}
 
-	private void establishConnection(BuildEvent event) {
+	protected void establishConnection(BuildEvent event) {
 		String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
+		
 		if (portProperty != null) {
-			fPort= Integer.parseInt(portProperty);
+			fEventPort= Integer.parseInt(portProperty);
 			connect();
+		} else {
+			shutDown();
+			return;
 		}
 		
 		fSentProcessId= true;
@@ -260,15 +264,17 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		marshalMessage(event.getPriority(), eventMessage);
 	}
 
-	private void marshalMessage(int priority, String message) {
+	protected void marshalMessage(int priority, String message) {
 		try {
 			BufferedReader r = new BufferedReader(new StringReader(message));
 			String line = r.readLine();
 			StringBuffer messageLine;
 			while (line != null) {
 				messageLine= new StringBuffer();
-				messageLine.append(priority);
-				messageLine.append(',');
+				if (priority != -1) {
+					messageLine.append(priority);
+					messageLine.append(',');
+				}
 				messageLine.append(line);
 				sendMessage(messageLine.toString());
 				line = r.readLine();

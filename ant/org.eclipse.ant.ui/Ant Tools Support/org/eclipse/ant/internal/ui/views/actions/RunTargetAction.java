@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.views.actions;
 
 import java.util.Iterator;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -24,6 +23,7 @@ import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -82,7 +82,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	public void launch(AntElementNode node) {
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
 		shortcut.setShowDialog(false);
-		shortcut.launch(node);
+		shortcut.launch(node, ILaunchManager.RUN_MODE);
 	}
 
 	/**

@@ -21,7 +21,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -39,7 +38,7 @@ import org.eclipse.ui.console.IHyperlink;
  * The client side of the RemoteAntBuildLogger. Handles the
  * marshalling of the different messages.
  */
-public class RemoteAntBuildListener implements ILaunchesListener{
+public class RemoteAntBuildListener implements ILaunchesListener {
 	public abstract class ListenerSafeRunnable implements ISafeRunnable {
 		public void handleException(Throwable exception) {
 			AntUIPlugin.log(exception);
@@ -58,7 +57,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 	private String fProcessId;
 	private File fBuildFileParent= null;
 	private List fMessageQueue;
-	private ILaunch fLaunch;
+	protected ILaunch fLaunch;
 	
 	/**
 	 * Reads the message stream from the RemoteAntBuildLogger
@@ -68,6 +67,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 		
 		public ServerConnection(int port) {
 			super("Ant Build Server Connection"); //$NON-NLS-1$
+			setDaemon(true);
 			fServerPort= port;
 		}
 		
@@ -106,13 +106,13 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 	 * 
 	 * @param port The port number to create the server connection on
 	 */
-	public synchronized void startListening(int port) {
-		fPort = port;
-		ServerConnection connection = new ServerConnection(port);
+	public synchronized void startListening(int eventPort) {
+		fPort = eventPort;
+		ServerConnection connection = new ServerConnection(eventPort);
 		connection.start();
 	}
 
-	private synchronized void shutDown() {
+	protected synchronized void shutDown() {
 		if (fDebug) {
 			System.out.println("shutdown " + fPort); //$NON-NLS-1$
 		}
@@ -141,7 +141,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 		}
 	}
 		
-	private void receiveMessage(String message) {
+	protected void receiveMessage(String message) {
 		if (fDebug) {
 			System.out.println(message);
 		}
@@ -185,7 +185,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 	/**
 	 * Returns the associated process, finding it if necessary.
 	 */
-	private IProcess getProcess() {
+	protected IProcess getProcess() {
 		if (fProcess == null && fProcessId != null) {
 			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 			for (int i = 0; i < all.length; i++) {
@@ -249,7 +249,7 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 		fullMessage.append(line);
 	}
 	
-	private void writeMessage(String message, int priority) {
+	protected void writeMessage(String message, int priority) {
 		AntStreamMonitor monitor= getMonitor(priority);
 		if (monitor == null) {
 			if (fMessageQueue == null) {
