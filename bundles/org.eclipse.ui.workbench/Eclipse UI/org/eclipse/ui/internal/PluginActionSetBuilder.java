@@ -115,9 +115,13 @@ public static IContributionItem findInsertionPoint(String startId,
 		
 	// Find the insertion point for the new item.
 	// We do this by iterating through all of the previous
-	// action set contributions.
+	// action set contributions define within the current group.
 	for (int nX = insertIndex + 1; nX < items.length; nX ++) {
 		IContributionItem item = items[nX];
+		if (item.isSeparator() || item.isGroupMarker()) {
+			// Fix for bug report 18357
+			break;
+		}
 		if (item instanceof IActionSetContributionItem) {
 			if (sortId != null) {
 				String testId = ((IActionSetContributionItem)item).getActionSetId();
