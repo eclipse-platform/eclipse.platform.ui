@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 /**
  * Concrete implementation of the IResourceDelta interface.  Each ResourceDelta
  * object represents changes that have occurred between two states of the
@@ -31,15 +29,15 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	protected int status;
 	protected ResourceInfo oldInfo;
 	protected ResourceInfo newInfo;
-	protected IResourceDelta[] children;
+	protected ResourceDelta[] children;
 	// don't agressively set this, but cache it if called once
 	protected IResource cachedResource;
 
 	//
 	protected static int KIND_MASK = 0xFF;
 	private static IMarkerDelta[] EMPTY_MARKER_DELTAS = new IMarkerDelta[0];
+
 protected ResourceDelta(IPath path, ResourceDeltaInfo deltaInfo) {
-	super();
 	this.path = path;
 	this.deltaInfo = deltaInfo;
 }
@@ -48,7 +46,6 @@ protected ResourceDelta(IPath path, ResourceDeltaInfo deltaInfo) {
  * @see IResourceDelta#accept(IResourceDeltaVisitor)
  */
 public void accept(IResourceDeltaVisitor visitor) throws CoreException {
-	// forward to central method
 	accept(visitor, 0);
 }
 
@@ -56,30 +53,29 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException {
  * @see IResourceDelta#accept(IResourceDeltaVisitor, boolean)
  */
 public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException {
-	// forward to central method
 	accept(visitor, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 }
-
 /*
  * @see IResourceDelta#accept(IResourceDeltaVisitor, int)
  */
 public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
+	final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
 	int mask = includePhantoms ? ALL_WITH_PHANTOMS : REMOVED | ADDED | CHANGED;
-	if ((getKind() | mask) == 0)
+	if ((getKind() & mask) == 0)
 		return;
 	if (!visitor.visit(this))
 		return;
-	//recurse over children
 	for (int i = 0; i < children.length; i++) {
-		IResourceDelta childDelta = children[i];
-		// quietly exclude team-private members unless explicitly included
-		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0
-		     || !((ResourceDelta)childDelta).isTeamPrivate())
-			childDelta.accept(visitor, memberFlags);
+		ResourceDelta childDelta = children[i];
+		// quietly exclude team-private and phantom members unless explicitly included
+		if (!includeTeamPrivate && childDelta.isTeamPrivate())
+			continue;
+		if (!includePhantoms && childDelta.isPhantom())
+			continue;
+		childDelta.accept(visitor, memberFlags);
 	}
 }
-
 /**
  * Check for marker deltas, and set the appropriate change flag if there are any.
  */
@@ -95,9 +91,8 @@ protected void checkForMarkerDeltas() {
 			status |= MARKERS;
 			// If there have been marker changes, then ensure kind is CHANGED (if not ADDED or REMOVED).
 			// See 1FV9K20: ITPUI:WINNT - severe - task list - add or delete not working
-			if (kind == 0) {
+			if (kind == 0)
 				status |= CHANGED;
-			}
 		}
 	}
 }
@@ -172,9 +167,8 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 	checkForMarkerDeltas();
 
 	//recurse on children
-	for (int i = 0; i < children.length; i++) {
-		((ResourceDelta) children[i]).fixMovesAndMarkers(oldTree);
-	}
+	for (int i = 0; i < children.length; i++)
+		children[i].fixMovesAndMarkers(oldTree);
 }
 /**
  * @see IResourceDelta#getAffectedChildren
@@ -188,62 +182,51 @@ public IResourceDelta[] getAffectedChildren() {
 public IResourceDelta[] getAffectedChildren(int kindMask) {
 	return getAffectedChildren(kindMask, IResource.NONE);
 }
-
 /*
  * @see IResourceDelta#getAffectedChildren(int, int)
  */
 public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 	int numChildren = children.length;
 	//if there are no children, they all match
-	if (numChildren == 0) {
+	if (numChildren == 0)
 		return children;
-	}
-	if ((memberFlags & IContainer.INCLUDE_PHANTOMS) != 0) {
-		// reduce INCLUDE_PHANTOMS member flag to kind mask
+	boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
+	boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
+	// reduce INCLUDE_PHANTOMS member flag to kind mask
+	if (includePhantoms) 
 		kindMask |= ADDED_PHANTOM | REMOVED_PHANTOM;
-	}
 
 	//first count the number of matches so we can allocate the exact array size
 	int matching = 0;
 	for (int i = 0; i < numChildren; i++) {
-		if ((children[i].getKind() & kindMask) == 0) {
-			// child has wrong kind
+		if ((children[i].getKind() & kindMask) == 0) 
+			continue;// child has wrong kind
+		if (!includePhantoms && children[i].isPhantom())
 			continue;
-		}
-		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
-		    && ((ResourceDelta)children[i]).isTeamPrivate()) {
-			// child has is a team-private member which are not included
-			continue;
-		}
+		if (!includeTeamPrivate && children[i].isTeamPrivate())
+			continue; // child has is a team-private member which are not included
 		matching++;
 	}
-			
 	//use arraycopy if all match
 	if (matching == numChildren) {
 		IResourceDelta[] result = new IResourceDelta[children.length];
 		System.arraycopy(children, 0, result, 0, children.length);
 		return result;
 	}
-		
 	//create the appropriate sized array and fill it
 	IResourceDelta[] result = new IResourceDelta[matching];
 	int nextPosition = 0;
 	for (int i = 0; i < numChildren; i++) {
-		if ((children[i].getKind() & kindMask) == 0) {
-			// child has wrong kind
+		if ((children[i].getKind() & kindMask) == 0)
+			continue; // child has wrong kind
+		if (!includePhantoms && children[i].isPhantom())
 			continue;
-		}
-		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
-		    && ((ResourceDelta)children[i]).isTeamPrivate()) {
-			// child has is a team-private member which are not included
-			continue;
-		}
+		if (!includeTeamPrivate && children[i].isTeamPrivate()) 
+			continue; // child has is a team-private member which are not included
 		result[nextPosition++] = children[i];
 	}
 	return result;
 }
-
-
 protected ResourceDeltaInfo getDeltaInfo() {
 	return deltaInfo;
 }
@@ -343,6 +326,16 @@ public boolean hasAffectedChildren() {
 	return children.length > 0;
 }
 /**
+ * Returns true if this delta represents a phantom member, and false
+ * otherwise.
+ */
+protected boolean isPhantom() {
+	//use old info for removals, and new info for added or changed
+	if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
+		return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_PHANTOM);
+	else
+		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_PHANTOM);
+}/**
  * Returns true if this delta represents a team private member, and false
  * otherwise.
  */
@@ -354,7 +347,7 @@ protected boolean isTeamPrivate() {
 		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 }
 	
-protected void setChildren(IResourceDelta[] children) {
+protected void setChildren(ResourceDelta[] children) {
 	this.children = children;
 }
 protected void setNewInfo(ResourceInfo newInfo) {
@@ -382,10 +375,8 @@ public String toDebugString() {
 public String toDeepDebugString() {
 	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
 	writeDebugString(buffer);
-	for (int i = 0; i < children.length; ++i) {
-		ResourceDelta delta = (ResourceDelta) children[i];
-		buffer.append(delta.toDeepDebugString());
-	}
+	for (int i = 0; i < children.length; ++i)
+		buffer.append(children[i].toDeepDebugString());
 	return buffer.toString();
 }
 /**
@@ -408,7 +399,7 @@ public void updateMarkers(Map markers) {
  */
 public void writeDebugString(StringBuffer buffer) {
 	buffer.append(getFullPath());
-	buffer.append("["); //$NON-NLS-1$
+	buffer.append('[');
 	switch (getKind()) {
 		case ADDED :
 			buffer.append('+');
@@ -495,7 +486,7 @@ public void writeDebugString(StringBuffer buffer) {
 		buffer.append(" (team private)"); //$NON-NLS-1$
 }
 public void writeMarkerDebugString(StringBuffer buffer) {
-	buffer.append("["); //$NON-NLS-1$
+	buffer.append('[');
 	for (Iterator e = deltaInfo.getMarkerDeltas().keySet().iterator(); e.hasNext();) {
 		IPath key = (IPath) e.next();
 		if (getResource().getFullPath().equals(key)) {
@@ -504,16 +495,16 @@ public void writeMarkerDebugString(StringBuffer buffer) {
 			for (int i = 0; i < deltas.length; i++) {
 				IMarkerDelta delta = (IMarkerDelta) deltas[i];
 				if (addComma)
-					buffer.append(","); //$NON-NLS-1$
+					buffer.append(',');
 				switch (delta.getKind()) {
 					case IResourceDelta.ADDED :
-						buffer.append("+"); //$NON-NLS-1$
+						buffer.append('+');
 						break;
 					case IResourceDelta.REMOVED :
-						buffer.append("-"); //$NON-NLS-1$
+						buffer.append('-'); 
 						break;
 					case IResourceDelta.CHANGED :
-						buffer.append("*"); //$NON-NLS-1$
+						buffer.append('*'); 
 						break;
 				}
 				buffer.append(delta.getId());
@@ -521,7 +512,6 @@ public void writeMarkerDebugString(StringBuffer buffer) {
 			}
 		}
 	}
-	buffer.append("]"); //$NON-NLS-1$
+	buffer.append(']');
 }
-
 }

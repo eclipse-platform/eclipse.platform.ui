@@ -30,7 +30,7 @@ public class ResourceDeltaFactory {
 	/**
 	 * Singleton indicating no delta children
 	 */
-	protected static final IResourceDelta[] NO_CHILDREN = new IResourceDelta[0];
+	protected static final ResourceDelta[] NO_CHILDREN = new ResourceDelta[0];
 /**
  * Returns the resource delta representing the changes made between the given old and new trees,
  * starting from the given root element.
@@ -145,7 +145,7 @@ protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree de
 	if (numChildren == 0) {
 		result.setChildren(NO_CHILDREN);
 	} else {
-		IResourceDelta[] children = new IResourceDelta[numChildren];
+		ResourceDelta[] children = new ResourceDelta[numChildren];
 		for (int i = 0; i < numChildren; i++) {
 			//reuse the delta path if tree-relative and delta-relative are the same
 			IPath newTreePath = pathInTree == pathInDelta ? childKeys[i] : pathInTree.append(childKeys[i].lastSegment());

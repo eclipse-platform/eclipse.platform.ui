@@ -234,8 +234,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 				try {
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
-							// modify the tree.
-							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+								// modify the tree.
+	IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 								public boolean visit(IResourceDelta delta) throws CoreException {
 									IResource resource = delta.getResource();
 									try {
@@ -260,8 +260,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_AUTO_BUILD);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				// cause a delta by touching all resources
-				final IResourceVisitor visitor = new IResourceVisitor() {
+					// cause a delta by touching all resources
+	final IResourceVisitor visitor = new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
 						resource.touch(getMonitor());
 						return true;
@@ -291,8 +291,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 				try {
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
-							// modify the tree.
-							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+								// modify the tree.
+	IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 								public boolean visit(IResourceDelta delta) throws CoreException {
 									IResource resource = delta.getResource();
 									try {
@@ -313,15 +313,15 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 					failed = true;
 				}
 				assertTrue("1.0", failed);
-				
+
 			}
 		};
 		// register the listener with the workspace.
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				// cause a delta by touching all resources
-				final IResourceVisitor visitor = new IResourceVisitor() {
+					// cause a delta by touching all resources
+	final IResourceVisitor visitor = new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
 						resource.touch(getMonitor());
 						return true;
@@ -642,6 +642,64 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		}
 	}
 	/**
+	 * Tests that phantom members don't show up in resource deltas when
+	 * standard traversal and visitor are used.
+	 */
+	public void testHiddenPhantomChanges() {
+		final IWorkspace workspace = getWorkspace();
+		final IFolder phantomFolder = project1.getFolder("PhantomFolder");
+		final IFile phantomFile = folder1.getFile("PhantomFile");
+		final IResource[] phantomResources = new IResource[] { phantomFolder, phantomFile };
+		final QualifiedName partner = new QualifiedName("Test", "Infected");
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				//make sure the delta doesn't include the phantom members
+				assertNotDeltaIncludes("1.0", event.getDelta(), phantomResources);
+				//make sure a visitor does not find phantom members
+				assertNotDeltaVisits("1.1", event.getDelta(), phantomResources);
+			}
+		};
+		workspace.addResourceChangeListener(listener);
+		workspace.getSynchronizer().add(partner);
+		ensureDoesNotExistInWorkspace(phantomResources);
+		try {
+			//create a phantom folder
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					workspace.getSynchronizer().setSyncInfo(partner, phantomFolder, new byte[] {1});
+				}
+			}, getMonitor());
+			//create children in phantom folder
+			IFile fileInFolder = phantomFolder.getFile("FileInPrivateFolder");
+			workspace.getSynchronizer().setSyncInfo(partner, fileInFolder, new byte[] {1});
+			//modify children in phantom folder
+			workspace.getSynchronizer().setSyncInfo(partner, fileInFolder, new byte[] {2});
+			//delete children in phantom folder
+			workspace.getSynchronizer().flushSyncInfo(partner, fileInFolder, IResource.DEPTH_INFINITE);
+			//delete phantom folder and change some other file
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					phantomFolder.delete(IResource.NONE, getMonitor());
+					file1.setContents(getRandomContents(), IResource.NONE, getMonitor());
+				}
+			}, getMonitor());
+			//create phantom file
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					workspace.getSynchronizer().setSyncInfo(partner, phantomFile, new byte[] {2});
+				}
+			}, getMonitor());
+			//modify phantom file
+			workspace.getSynchronizer().setSyncInfo(partner, phantomFile, new byte[] {3});
+			//delete phantom file
+			workspace.getSynchronizer().flushSyncInfo(partner, phantomFile, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			handleCoreException(e);
+		} finally {
+			workspace.removeResourceChangeListener(listener);
+		}
+	}
+	/**
 	 * Tests that team private members don't show up in resource deltas when
 	 * standard traversal and visitor are used.
 	 */
@@ -652,8 +710,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		final IResource[] privateResources = new IResource[] { teamPrivateFolder, teamPrivateFile };
 		IResourceChangeListener listener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
-					//make sure the delta doesn't include the team private members
-	assertNotDeltaIncludes("1.0", event.getDelta(), privateResources);
+				//make sure the delta doesn't include the team private members
+				assertNotDeltaIncludes("1.0", event.getDelta(), privateResources);
 				//make sure a visitor does not find team private members
 				assertNotDeltaVisits("1.1", event.getDelta(), privateResources);
 			}
