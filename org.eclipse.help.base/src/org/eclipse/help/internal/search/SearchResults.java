@@ -24,7 +24,7 @@ import org.eclipse.help.internal.workingset.*;
  * Performs filtering and collects hits into an array of SearchHit
  */
 public class SearchResults implements ISearchHitCollector {
-	// Collection of WorkingSet
+	// Collection of AdaptableHelpResource[]
 	private ArrayList scopes;
 	private int maxHits;
 	private String locale;
