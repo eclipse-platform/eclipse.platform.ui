@@ -1636,11 +1636,13 @@ public void testMoveProject() {
 		assertTrue("2.1", compareContent(getContents(contents[1]), states[0].getContents()));
 		assertTrue("2.2", compareContent(getContents(contents[0]), states[1].getContents()));
 		states = file2.getHistory(getMonitor());
-		assertEquals("2.3", 2, states.length);
+		assertEquals("2.3", 4, states.length);
 		assertTrue("2.4", compareContent(getContents(contents[3]), states[0].getContents()));
 		assertTrue("2.5", compareContent(getContents(contents[2]), states[1].getContents()));
+		assertTrue("2.6", compareContent(getContents(contents[1]), states[2].getContents()));
+		assertTrue("2.7", compareContent(getContents(contents[0]), states[3].getContents()));
 	} catch (CoreException e) {
-		fail("2.8", e);
+		fail("2.9", e);
 	}
 
 	try {
