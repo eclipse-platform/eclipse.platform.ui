@@ -81,7 +81,7 @@ private static void displayHelp(String helpContext, Point point) {
 	if (helpSupport == null)
 		return;
 
-	helpSupport.displayHelp(helpContext, point.x, point.y);
+	helpSupport.displayContext(helpContext, point.x, point.y);
 }
 /**
  * Calls the help support system to display the given help context
@@ -94,7 +94,7 @@ private static void displayHelp(IContext helpContext, Point point) {
 	if (helpSupport == null)
 		return;
 
-	helpSupport.displayHelp(helpContext, point.x, point.y);
+	helpSupport.displayContext(helpContext, point.x, point.y);
 }
 /**
  * Calls the help support system to display the given help context id.
@@ -259,9 +259,9 @@ private static void displayHelp(Object[] helpContexts, Point point) {
 	// API for an array of help contexts.
 	// Therefore we only use the first context in the array.
 	if (helpContexts[0] instanceof IContext) 
-		getHelpSupport().displayHelp((IContext)helpContexts[0], point.x, point.y);
+		getHelpSupport().displayContext((IContext)helpContexts[0], point.x, point.y);
 	else
-		getHelpSupport().displayHelp((String)helpContexts[0], point.x, point.y);
+		getHelpSupport().displayContext((String)helpContexts[0], point.x, point.y);
 }
 /**
  * Initializes the help support system by getting an instance via the extension
