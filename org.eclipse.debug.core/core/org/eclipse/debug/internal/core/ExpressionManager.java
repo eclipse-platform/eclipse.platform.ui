@@ -339,6 +339,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 		if (!removed.isEmpty()) {
 			fireUpdate((IExpression[])removed.toArray(new IExpression[removed.size()]), REMOVED);
+			storeWatchExpressions();
 		}
 	}	
 	
