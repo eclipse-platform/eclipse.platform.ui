@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -41,7 +38,6 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 	 */
 	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws CVSException {
 		SyncInfo[] syncResources = syncSet.getSyncInfos();
-		List needsMerge = new ArrayList();
 		monitor.beginTask(null, 100 * syncResources.length);
 		try {
 			for (int i = 0; i < syncResources.length; i++) {
@@ -58,12 +54,6 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		} finally {
 			monitor.done();
 		}
-	}
-
-	protected boolean canRunAsJob() {
-		// There's no sense doing this operation in the background since
-		// it does not contact the server
-		return false;
 	}
 
 }
