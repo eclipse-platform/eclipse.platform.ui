@@ -240,7 +240,7 @@ public IFolder createNewFolder() {
 	final IFolder newFolderHandle = createFolderHandle(newFolderPath);
 
 	createLinkTarget();
-	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+	WorkspaceModifyOperation op = new WorkspaceModifyOperation(null) {
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
 				monitor.beginTask(IDEWorkbenchMessages.getString("WizardNewFolderCreationPage.progress"), 2000); //$NON-NLS-1$
