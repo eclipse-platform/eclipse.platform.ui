@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
+import java.nio.channels.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -109,19 +110,28 @@ public class SearchManager implements ITocsChangedListener {
 
 		ProgressDistributor progressDistrib = index.getProgressDistributor();
 		progressDistrib.addMonitor(pm);
-		boolean useLock = BaseHelpSystem.MODE_INFOCENTER != BaseHelpSystem
-				.getMode();
 		boolean configurationLocked = false;
-		;
-		if (useLock) {
-			configurationLocked = index.tryLock();
-		}
 		try {
-			if (useLock && !configurationLocked) {
-				pm.beginTask("", 1); //$NON-NLS-1$
-				pm.worked(1);
-				pm.done();
-				return;
+			// Prevent two workbench or stand-alone help instances from updating
+			// index concurently. Lock is created for every search request, so
+			// do not use it in infocenter, for performance (administrator will
+			// need to ensure index is updated before launching another
+			// infocenter instance on the same configuration).
+			if (BaseHelpSystem.MODE_INFOCENTER != BaseHelpSystem.getMode()) {
+				try {
+					configurationLocked = index.tryLock();
+					if (!configurationLocked) {
+						// Index is being updated by another proces
+						// do not update or wait, just continue with search
+						pm.beginTask("", 1); //$NON-NLS-1$
+						pm.worked(1);
+						pm.done();
+						return;
+					}
+				} catch (OverlappingFileLockException ofle) {
+					// Another thread in this process is indexing and using the
+					// lock
+				}
 			}
 			// Only one index update occurs in VM at a time,
 			// but progress SearchProgressMonitor for other locales
@@ -129,6 +139,7 @@ public class SearchManager implements ITocsChangedListener {
 			// to prevent showing progress on first search after launch
 			// if no indexing is needed
 			if (index.isClosed() || !index.needsUpdating()) {
+				// very good, can search
 				pm.beginTask("", 1); //$NON-NLS-1$
 				pm.worked(1);
 				pm.done();

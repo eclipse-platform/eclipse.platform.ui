@@ -70,13 +70,18 @@ public class SearchIndex {
 				+ ".inconsistent"); //$NON-NLS-1$
 		parser = new HTMLDocParser();
 		if (!exists()) {
-			if (tryLock()) {
-				// don't block or unzip when another instance is indexing
-				try {
-					unzipProductIndex();
-				} finally {
-					releaseLock();
+			try {
+				if (tryLock()) {
+					// don't block or unzip when another instance is indexing
+					try {
+						unzipProductIndex();
+					} finally {
+						releaseLock();
+					}
 				}
+			} catch (OverlappingFileLockException ofle) {
+				// another thread in this process is unzipping
+				// should never be here - one index instance per locale exists in vm
 			}
 		}
 	}
@@ -515,7 +520,15 @@ public class SearchIndex {
 	public boolean isClosed() {
 		return closed;
 	}
-	public boolean tryLock() {
+	/**
+	 * @return true if lock obtained for this Eclipse instance
+	 * @throws OverlappingFileLockException
+	 *             if lock already obtained
+	 */
+	public synchronized boolean tryLock() throws OverlappingFileLockException {
+		if (lock != null) {
+			throw new OverlappingFileLockException();
+		}
 		File lockFile = new File(indexDir.getParentFile(), locale + ".lock"); //$NON-NLS-1$
 		lockFile.getParentFile().mkdirs();
 		try {
@@ -530,7 +543,7 @@ public class SearchIndex {
 		}
 		return false;
 	}
-	public void releaseLock() {
+	public synchronized void releaseLock() {
 		if (lock != null) {
 			try {
 				lock.channel().close();
