@@ -36,7 +36,7 @@ public class TextAttribute {
 	 * Creates a text attribute with the given colors and style.
 	 *
 	 * @param foreground the foreground color
-	 * @param background the background color
+	 * @param background the background color, <code>null</code> if none
 	 * @param style the style
 	 */
 	public TextAttribute(Color foreground, Color background, int style) {
