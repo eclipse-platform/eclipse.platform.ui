@@ -264,7 +264,7 @@ public class ConsoleManager implements IConsoleManager {
     public IPatternMatchListener[] getPatternMatchListeners(IConsole console) {
     		if (fPatternMatchListeners == null) {
     		    fPatternMatchListeners = new ArrayList();
-    			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER);
+    			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
     			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
     			for (int i = 0; i < elements.length; i++) {
     				IConfigurationElement config = elements[i];
@@ -292,7 +292,7 @@ public class ConsoleManager implements IConsoleManager {
     public IConsolePageParticipant[] getPageParticipants(IConsole console) {
         if(fPageParticipants == null) {
             fPageParticipants = new ArrayList();
-            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT);
+            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for(int i = 0; i < elements.length; i++) {
                 IConfigurationElement config = elements[i];
@@ -320,7 +320,7 @@ public class ConsoleManager implements IConsoleManager {
     public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {
         if (fConsoleFactoryExtensions == null) {
             fConsoleFactoryExtensions = new ArrayList();
-            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORY);
+            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORIES);
             IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < configurationElements.length; i++) {
                 fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));

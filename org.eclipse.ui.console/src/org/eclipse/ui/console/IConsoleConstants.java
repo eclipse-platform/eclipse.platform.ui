@@ -71,7 +71,7 @@ public interface IConsoleConstants {
 	 * 
 	 * @since 3.1 
 	 */
-    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER = "consolePatternMatchListeners"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS = "consolePatternMatchListeners"; //$NON-NLS-1$
 
     /**
      * Console Page Participant extension point identifier
@@ -79,7 +79,7 @@ public interface IConsoleConstants {
      * 
      * @since 3.1
      */
-    public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT = "consolePageParticipants"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS = "consolePageParticipants"; //$NON-NLS-1$
 
     /**
      * Console factories extension point identifier
@@ -87,5 +87,5 @@ public interface IConsoleConstants {
      * 
      * @since 3.1
      */
-    public static final String EXTENSION_POINT_CONSOLE_FACTORY = "consoleFactories"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_FACTORIES = "consoleFactories"; //$NON-NLS-1$
 }
