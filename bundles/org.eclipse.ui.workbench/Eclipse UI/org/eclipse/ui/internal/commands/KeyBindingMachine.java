@@ -37,6 +37,7 @@ public final class KeyBindingMachine {
 	}
 
 	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+	//private final static String PLATFORM_SEPARATOR = "_"; //$NON-NLS-1$
 	private final static Locale SYSTEM_LOCALE = Locale.getDefault();
 	private final static String SYSTEM_PLATFORM = SWT.getPlatform();
 
