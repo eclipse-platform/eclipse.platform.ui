@@ -49,10 +49,13 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Creates a new descriptor for <code>element</code>.
+	 * <p>
+	 * This method is for internal use only.
+	 * </p>
 	 * 
 	 * @param element the extension point element to be described.
 	 */
-	ReferenceProviderDescriptor(IConfigurationElement element) {
+	public ReferenceProviderDescriptor(IConfigurationElement element) {
 		Assert.isLegal(element != null);
 		fConfiguration= element;
 	}

@@ -14,12 +14,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 
 import org.eclipse.jface.text.Assert;
 
+import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffExtensionsRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -35,9 +41,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * @since 2.1
  */
-public final class TextEditorPlugin extends AbstractUIPlugin {
+public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistryChangeListener {
 
-	/** The plugin instance */
+	/** The plug-in instance */
 	private static TextEditorPlugin fgPlugin;
 	
 	/** The last edit position */
@@ -45,6 +51,11 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 	/** The action which goes to the last edit position */
 	private Set fLastEditPositionDependentActions;
 
+	/**
+	 * The the quick diff extension registry.
+	 * @since 3.0
+	 */
+	private QuickDiffExtensionsRegistry fQuickDiffExtensionRegistry;
 
 	/**
 	 * Creates a plug-in instance.
@@ -81,6 +92,13 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.ui.workbench.texteditor"; //$NON-NLS-1$
 	
+	/**
+	 * Extension Id of quick diff reference provider extension point.
+	 * (value <code>"quickDiffReferenceProvider"</code>).
+	 * @since 3.0
+	 */
+	public static final String REFERENCE_PROVIDER_EXTENSION_POINT= "quickDiffReferenceProvider"; //$NON-NLS-1$
+
 	/**
 	 * Returns the last edit position.
 	 *
@@ -130,5 +148,45 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 			return;
 		if (fLastEditPositionDependentActions != null)
 			fLastEditPositionDependentActions.remove(action);
+	}
+
+	
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @since 3.0
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		fQuickDiffExtensionRegistry= new QuickDiffExtensionsRegistry();
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * @since 3.0
+	 */
+	public void stop(BundleContext context) throws Exception {
+		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
+		fQuickDiffExtensionRegistry= null;
+		super.stop(context);
+	}
+
+	/*
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 * @since 3.0
+	 */
+	public void registryChanged(IRegistryChangeEvent event) {
+		if (fQuickDiffExtensionRegistry != null && event.getExtensionDeltas(PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT).length > 0)
+			fQuickDiffExtensionRegistry.reloadExtensions();
+	}
+	
+	/**
+	 * Returns this plug-ins quick diff extension registry.
+	 *  
+	 * @return the quick diff extension registry or <code>null</code> if this plug-in has been shutdown
+	 * @since 3.0
+	 */
+	public QuickDiffExtensionsRegistry getQuickDiffExtensionRegistry() {
+		return fQuickDiffExtensionRegistry;
 	}
 }
