@@ -182,21 +182,23 @@ public class ProjectionSupport {
 	}
 	
 	protected void doEnableProjection() {
+		
 		if (fPainter == null) {
 			fPainter= new ProjectionAnnotationsPainter(fViewer, fAnnotationAccess);
 			fPainter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
 			fPainter.addAnnotationType(ProjectionAnnotation.TYPE, PROJECTION);
 			fPainter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, fSharedTextColors.getColor(getColor()));
+			fViewer.addPainter(fPainter);
 		}
-		fViewer.addPainter(fPainter);
 		
 		if (fColumn == null) {
 			fColumn= new ProjectionRulerColumn(9, fAnnotationAccess);
 			fColumn.addAnnotationType(ProjectionAnnotation.TYPE);
 			fColumn.setHover(createProjectionAnnotationHover());
-			fColumn.setModel(fViewer.getVisualAnnotationModel());
+			fViewer.addVerticalRulerColumn(fColumn);
 		}
-		fViewer.addVerticalRulerColumn(fColumn);
+		
+		fColumn.setModel(fViewer.getVisualAnnotationModel());
 	}
 	
 	protected void doDisableProjection() {

@@ -239,23 +239,30 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @param model the mode from which the projection annotation model is removed
 	 */
-	private void removeProjectionAnnotationModel(IAnnotationModel model) {
+	private IAnnotationModel removeProjectionAnnotationModel(IAnnotationModel model) {
 		if (model instanceof IAnnotationModelExtension) {
 			model.removeAnnotationModelListener(fAnnotationModelListener);
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			extension.removeAnnotationModel(ProjectionSupport.PROJECTION);
+			return extension.removeAnnotationModel(ProjectionSupport.PROJECTION);
 		}
+		return null;
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#setDocument(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.source.IAnnotationModel, int, int)
 	 */
 	public void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength) {
+		boolean wasProjectionEnabled= false;
+		
 		if (fProjectionAnnotationModel != null) {
-			removeProjectionAnnotationModel(getAnnotationModel());
+			wasProjectionEnabled= removeProjectionAnnotationModel(getVisualAnnotationModel()) != null;
 			fProjectionAnnotationModel= null;
 		}
+		
 		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
+		
+		if (wasProjectionEnabled)
+			enableProjection();
 	}
 	
 	/*
