@@ -149,7 +149,8 @@ protected Hashtable readHashtable(Node target) {
 			if (node.getChildNodes().getLength() > 1) {
 				String name = getString(node, KEY);
 				String value = getString(node, VALUE);
-				result.put(name, value);
+				if (name != null)
+					result.put(name, value == null ? "" : value);
 			}
 	}
 	return result;
