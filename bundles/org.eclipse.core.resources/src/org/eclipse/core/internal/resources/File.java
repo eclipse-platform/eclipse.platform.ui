@@ -139,8 +139,9 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 				try {
 					internalSetContents(content, location, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
 				} catch (CoreException e) {
-					// a problem happened creating the file on disk, so delete from the workspace
+					// a problem happened creating the file on disk, so delete from the workspace and disk
 					workspace.deleteResource(this);
+					location.toFile().delete();
 					throw e; // rethrow
 				}
 			}
