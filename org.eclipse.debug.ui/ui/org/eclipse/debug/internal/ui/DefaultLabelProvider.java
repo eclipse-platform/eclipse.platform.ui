@@ -80,7 +80,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				return IDebugUIConstants.IMG_OBJS_REGISTER;
 			} else if (element instanceof IRegisterGroup) {
 				return IDebugUIConstants.IMG_OBJS_REGISTER_GROUP;
-			} else if (element instanceof IVariable) {
+			} else if (element instanceof IVariable || element instanceof IValue) {
 				if (element instanceof IndexedVariablePartition) {
 					return IInternalDebugUIConstants.IMG_OBJS_ARRAY_PARTITION;
 				} else {
@@ -181,7 +181,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 					label.append(getExpressionText((IExpression)element));
 				} else if (element instanceof IRegisterGroup) {
 					label.append(getRegisterGroupText((IRegisterGroup)element));
-				} 
+				} else if (element instanceof IValue) {
+					label.append(((IValue)element).getValueString()); 
+				}
 			} else {
 				if (element instanceof IMarker) {
 					label.append(getMarkerText((IMarker) element));
