@@ -25,6 +25,15 @@ import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
 
 public class NewExtensionLocationAction extends Action {
+	
+	class ExtensionSiteContentProvider extends MyComputerContentProvider {
+		public Object[] getChildren(Object parent) {
+			if (parent instanceof MyComputerDirectory) {
+				return ((MyComputerDirectory) parent).getChildren(parent, true, false);
+			}
+			return super.getChildren(parent);
+		}
+	}
 
 	public NewExtensionLocationAction(String text, ImageDescriptor desc) {
 		super(text, desc);
@@ -35,7 +44,7 @@ public class NewExtensionLocationAction extends Action {
 			new ElementTreeSelectionDialog(
 				UpdateUI.getActiveWorkbenchShell(),
 				new MyComputerLabelProvider(),
-				new MyComputerContentProvider());
+				new ExtensionSiteContentProvider());
 
 		dialog.setInput(new MyComputer());
 		dialog.setAllowMultiple(false);

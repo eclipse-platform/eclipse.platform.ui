@@ -102,7 +102,15 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			checkItems();
 		}
 	}
-
+	
+	class LocalSiteContentProvider extends MyComputerContentProvider {
+		public Object[] getChildren(Object parent) {
+			if (parent instanceof MyComputerDirectory) {
+				return ((MyComputerDirectory) parent).getChildren(parent, false, true);
+			}
+			return super.getChildren(parent);
+		}
+	}
 	private static DiscoveryFolder discoveryFolder = new DiscoveryFolder();
 	private CheckboxTreeViewer treeViewer;
 	private Button addSiteButton;
@@ -287,12 +295,13 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		dialog.open();
 	}
 
-	private void handleAddLocal() {		
+	private void handleAddLocal() {
+			
 		ElementTreeSelectionDialog dialog =
 			new ElementTreeSelectionDialog(
 				getShell(),
 				new MyComputerLabelProvider(),
-				new MyComputerContentProvider());
+				new LocalSiteContentProvider());
 		dialog.setInput(new MyComputer());
 		dialog.setAllowMultiple(false);
 		dialog.addFilter(new ViewerFilter() {

@@ -82,23 +82,20 @@ public class MyComputerDirectory
 		return false;
 	}
 
-	/**
-	 * @see IWorkbenchAdapter#getChildren(Object)
-	 */
-
-	public Object[] getChildren(Object parent) {
+	public Object[] getChildren(
+		Object parent,
+		final boolean showExtensionRoots,
+		final boolean showSites) {
 		BusyIndicator
-			.showWhile(
-				UpdateUI.getActiveWorkbenchShell().getDisplay(),
-				new Runnable() {
+			.showWhile(UpdateUI.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 			public void run() {
 				File[] files = file.listFiles();
-				if (files==null) {
+				if (files == null) {
 					children = new Object[0];
 					return;
 				}
-				
-				if (volume!=null) {
+
+				if (volume != null && showSites) {
 					// This is volume.
 					// Test if the volume itself is a site
 					SiteBookmark rootSite = createSite(getFile(), true);
@@ -112,28 +109,29 @@ public class MyComputerDirectory
 				children = new Object[files.length];
 				for (int i = 0; i < files.length; i++) {
 					File file = files[i];
-
-					if (file.isDirectory()) {
-						SiteBookmark site = createSite(file, false);
-						if (site != null)
-							children[i] = site;
-						else if (ExtensionRoot.isExtensionRoot(file)) {
-							children[i] = new ExtensionRoot(MyComputerDirectory.this, file);
-						}
-						else
-							children[i] =
-								new MyComputerDirectory(
-									MyComputerDirectory.this,
-									file);
-						
+					if (!file.isDirectory()) {
+						children[i] = new MyComputerFile(MyComputerDirectory.this, file);
 					} else {
 						children[i] =
-							new MyComputerFile(MyComputerDirectory.this, file);
+							new MyComputerDirectory(MyComputerDirectory.this, file);
+						if (showSites) {
+							SiteBookmark site = createSite(file, false);
+							if (site != null)
+								children[i] = site;
+						}
+						if (showExtensionRoots && ExtensionRoot.isExtensionRoot(file)) {
+							children[i] =
+								new ExtensionRoot(MyComputerDirectory.this, file);
+						}
 					}
 				}
 			}
 		});
 		return children;
+	}
+	
+	public Object[] getChildren(Object parent) {
+		return getChildren(parent, true, true);
 	}
 
 	static SiteBookmark createSite(File file, boolean root) {
