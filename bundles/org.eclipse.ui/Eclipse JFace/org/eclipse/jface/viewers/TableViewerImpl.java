@@ -64,18 +64,26 @@ private void activateCellEditor(MouseEvent event) {
 		//item no longer exists
 		return;
 	}
+	int columnToEdit;
 	int columns = getColumnCount();
-	int columnToEdit = -1;
-	Rectangle bounds = null;
-	for (int i = 0; i < columns; i++) {
-		bounds = getBounds(tableItem,i);
-		if (bounds.contains(event.x, event.y)) {
-			columnToEdit = i;
-			break;
+	if (columns == 0) {
+		// If no TableColumn, Table acts as if it has a single column
+		// which takes the whole width.
+		columnToEdit = 0;
+	}
+	else {
+		columnToEdit = -1;
+		for (int i = 0; i < columns; i++) {
+			Rectangle bounds = getBounds(tableItem, i);
+			if (bounds.contains(event.x, event.y)) {
+				columnToEdit = i;
+				break;
+			}
+		}
+		if (columnToEdit == -1) {
+			return;
 		}
 	}
-	if (columnToEdit == -1 || bounds == null)
-		return;
 	
 	columnNumber = columnToEdit;
 	activateCellEditor();
