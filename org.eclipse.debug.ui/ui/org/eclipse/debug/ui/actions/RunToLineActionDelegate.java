@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikhail Khodjaiants (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=83464
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
@@ -175,6 +176,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(part, IRunToLineTarget.class.getName());
 				}
 			}
+			ISelection selection = part.getSite().getWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			fSelectionListener.selectionChanged(part, selection);
 		}
 		update();			
 	}
