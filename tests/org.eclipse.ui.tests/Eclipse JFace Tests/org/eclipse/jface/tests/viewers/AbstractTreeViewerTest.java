@@ -12,6 +12,7 @@ package org.eclipse.jface.tests.viewers;
 
 
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -213,4 +214,19 @@ public void testExpandElement() {
 		fTreeViewer.setExpandedElements(new Object[] { first });
 
 	}
+    
+    /**
+     * Test for Bug 41710 - assertion that an object may not be added to a given
+     * TreeItem more than once.     
+     */
+    public void testSetDuplicateChild() {
+        //Widget root = fViewer.testFindItem(fRootElement);
+        //assertNotNull(root);
+        TestElement parent = fRootElement.addChild(TestModelChange.INSERT);
+        TestElement child = parent.addChild(TestModelChange.INSERT);          
+        int initialCount = getItemCount(parent);
+        fRootElement.addChild(child, new TestModelChange(TestModelChange.INSERT, fRootElement, child));
+        int postCount = getItemCount(parent);        
+        assertEquals("Same element added to a parent twice.", initialCount, postCount);
+    }
 }
