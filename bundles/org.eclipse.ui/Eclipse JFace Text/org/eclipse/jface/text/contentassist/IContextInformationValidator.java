@@ -12,9 +12,13 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * A context information validator is used to determine if
  * a displayed context information is still valid or should
- * be dismissed. The interface can be implemented by clients. 
- * Clients may use <code>ContextInformationValidator</code> 
- * as their implementer of this interface. 
+ * be dismissed. The interface can be implemented by clients. <p>
+ * 
+ * Because of http://dev.eclipse.org/bugs/show_bug.cgi?id=13926
+ * implementers of this interface are also implementing
+ * <code>IContextInformationPresenter</code>.
+ * 
+ * @see IContextInformationPresenter
  */
 public interface IContextInformationValidator {
 

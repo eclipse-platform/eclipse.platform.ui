@@ -71,8 +71,12 @@ public interface IContentAssistProcessor {
 	/**
 	 * Returns a validator used to determine when displayed context information
 	 * should be dismissed. May only return <code>null</code> if the processor is
-	 * incapable of computing context information.
-	 *
+	 * incapable of computing context information. <p>
+	 * 
+	 * Because of http://dev.eclipse.org/bugs/show_bug.cgi?id=13926 the object returned
+	 * by this method should also implement <code>IContextInformationPresenter</code>.
+	 * @see IContextInformationPresenter
+	 * 
 	 * @return a context information validator, or <code>null</code> if the processor
 	 * 			is incapable of computing context information
 	 */

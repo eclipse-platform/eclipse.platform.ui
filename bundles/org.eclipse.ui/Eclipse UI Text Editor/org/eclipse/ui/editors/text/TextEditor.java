@@ -63,8 +63,7 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
  * </p>
  * <p>
  * The workbench will automatically instantiate this class when the default 
- * editor is needed for a workbench window. This class was not intended to be
- * instantiated or subclassed by clients.
+ * editor is needed for a workbench window.
  * </p>
  */
 public class TextEditor extends StatusTextEditor {
