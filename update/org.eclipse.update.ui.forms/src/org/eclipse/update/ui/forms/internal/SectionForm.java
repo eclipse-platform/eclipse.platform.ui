@@ -49,12 +49,14 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clientArea = composite.getClientArea();
 			Control client = composite.getChildren()[0];
-			int theight = headingVisible ? getTitleHeight() : 0;
-			client.setBounds(
-				clientArea.x,
-				clientArea.y + theight,
-				clientArea.width,
-				clientArea.height - theight);
+			if (client != null && !client.isDisposed()) {
+				int theight = headingVisible ? getTitleHeight() : 0;
+				client.setBounds(
+					clientArea.x,
+					clientArea.y + theight,
+					clientArea.width,
+					clientArea.height - theight);
+			}
 		}
 	}
 	private int widthHint = SWT.DEFAULT;

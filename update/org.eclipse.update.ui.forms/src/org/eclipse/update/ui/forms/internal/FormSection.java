@@ -98,7 +98,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 
 			cwidth = width;
 
-			if (client != null) {
+			if (client != null && !client.isDisposed()) {
 				//Point csize = client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
 				Point csize = client.computeSize(wHint, SWT.DEFAULT);
 				if (width == 0) {
