@@ -168,9 +168,9 @@ public class DeferredTreeContentManager {
 					return;
 				//Clear the placeholder if it is still there
 					UIJob clearJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.ClearJob")) {//$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						clearPlaceholder(placeholder);
 						return Status.OK_STATUS;
@@ -204,11 +204,14 @@ public class DeferredTreeContentManager {
 			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 
 					//Cancel the job if the tree viewer got closed
-	if (treeViewer.getControl().isDisposed())
+				if (treeViewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
 
+				//Prevent extra redraws on deletion and addition
+				treeViewer.getControl().setRedraw(false);
 				clearPlaceholder(placeholder);
 				treeViewer.add(parent, children);
+				treeViewer.getControl().setRedraw(true);
 
 				return Status.OK_STATUS;
 			}
