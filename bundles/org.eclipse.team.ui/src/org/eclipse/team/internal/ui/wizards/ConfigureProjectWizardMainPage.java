@@ -164,7 +164,14 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 			});
 		}
 		
-		viewer.setInput(wizards);
+		if(wizards.size() == 0 && showAllToggle != null) {
+			showAllToggle.setSelection(true);
+			ArrayList all = new ArrayList(Arrays.asList(wizards.getChildren()));
+			all.addAll(Arrays.asList(disabledWizards.getChildren()));
+			viewer.setInput(new AdaptableList(all));
+		} else {
+			viewer.setInput(wizards);
+		}
         Dialog.applyDialogFont(parent);
 	}
 	/**
