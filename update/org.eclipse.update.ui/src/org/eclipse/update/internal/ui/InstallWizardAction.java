@@ -33,6 +33,7 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 	public InstallWizardAction() {
 	}
 	public void run() {
+		init(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 		run(null);
 	}
 
