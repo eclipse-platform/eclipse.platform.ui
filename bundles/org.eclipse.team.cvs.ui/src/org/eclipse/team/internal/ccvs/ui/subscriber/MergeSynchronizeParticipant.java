@@ -64,14 +64,15 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#init(org.eclipse.team.ui.sync.ISynchronizeView, org.eclipse.team.core.ISaveContext)
 	 */
-	public void restoreState(IMemento context) throws PartInitException {
-		String qualifier = context.getString(CTX_QUALIFIER);
-		String localname = context.getString(CTX_LOCALNAME);
+	public void restoreState(IMemento memento) throws PartInitException {
+		super.restoreState(memento);
+		String qualifier = memento.getString(CTX_QUALIFIER);
+		String localname = memento.getString(CTX_LOCALNAME);
 		if(qualifier == null || localname == null) {
 			throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.8")); //$NON-NLS-1$
 		}
 		try {
-			setSubscriber(read(new QualifiedName(qualifier, localname), context));
+			setSubscriber(read(new QualifiedName(qualifier, localname), memento));
 		} catch (CVSException e) {
 			throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.9"), e); //$NON-NLS-1$
 		}
@@ -80,13 +81,14 @@ public class MergeSynchronizeParticipant extends TeamSubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#saveState(org.eclipse.team.core.ISaveContext)
 	 */
-	public void saveState(IMemento context) {
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
 		SubscriberInput input = getInput();
 		CVSMergeSubscriber s = (CVSMergeSubscriber)input.getSubscriber();
 		QualifiedName sId = s.getId();
-		context.putString(CTX_QUALIFIER, sId.getQualifier());
-		context.putString(CTX_LOCALNAME, sId.getLocalName());
-		write(s, context);
+		memento.putString(CTX_QUALIFIER, sId.getQualifier());
+		memento.putString(CTX_LOCALNAME, sId.getLocalName());
+		write(s, memento);
 	}
 		
 	/* (non-Javadoc)

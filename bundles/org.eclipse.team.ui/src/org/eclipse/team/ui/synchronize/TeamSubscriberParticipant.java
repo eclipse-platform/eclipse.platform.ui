@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.synchronize.actions.RefreshAction;
 import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -31,6 +32,12 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	private SubscriberInput input;
 	private int currentMode;
 	private int currentLayout;
+	private IWorkingSet workingSet;
+	
+	/**
+	 * Key for settings in memento
+	 */
+	private static final String CTX_SUBSCRIBER_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBERSETTINGS";
 	
 	/**
 	 * Property constant indicating the mode of a page has changed. 
@@ -102,13 +109,24 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	
 	public void setWorkingSet(IWorkingSet set) {
 		SubscriberInput input = getInput();
-		IWorkingSet oldSet = input.getWorkingSet();
-		input.setWorkingSet(set);
+		IWorkingSet oldSet = null;
+		if(input != null) {
+			oldSet = input.getWorkingSet();
+			input.setWorkingSet(set);
+			workingSet = null;
+		} else {
+			workingSet = set;
+		}
 		firePropertyChange(this, P_SYNCVIEWPAGE_WORKINGSET, oldSet, set);
 	}
 	
 	public IWorkingSet getWorkingSet() {
-		return getInput().getWorkingSet();
+		SubscriberInput input = getInput();
+		if(input != null) {
+			return getInput().getWorkingSet();
+		} else {
+			return workingSet;
+		}
 	}
 	
 	public void refreshWithRemote(IResource[] resources) {
@@ -147,6 +165,47 @@ public abstract class TeamSubscriberParticipant extends AbstractSynchronizeParti
 	
 	protected void setSubscriber(TeamSubscriber subscriber) {
 		this.input = new SubscriberInput(this, subscriber);
-		this.currentMode = BOTH_MODE;
+		if(workingSet != null) {
+			setWorkingSet(workingSet);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#restoreState(org.eclipse.ui.IMemento)
+	 */
+	public void restoreState(IMemento memento) throws PartInitException {
+		if(memento != null) {
+			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
+			if(settings != null) {
+				String set = settings.getString(P_SYNCVIEWPAGE_WORKINGSET);
+				String mode = settings.getString(P_SYNCVIEWPAGE_MODE);
+				String layout = settings.getString(P_SYNCVIEWPAGE_LAYOUT);
+				
+				if(set != null) {
+					IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(set);
+					if(workingSet != null) {
+						setWorkingSet(workingSet);
+					}
+				}
+				setMode(Integer.parseInt(mode));
+				setLayout(Integer.parseInt(layout));
+			}
+		} else {
+			setMode(BOTH_MODE);
+			setLayout(TREE_LAYOUT);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		IMemento settings = memento.createChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
+		IWorkingSet set = getWorkingSet();
+		if(set != null) {
+			settings.putString(P_SYNCVIEWPAGE_WORKINGSET, getWorkingSet().getName());
+		}
+		settings.putString(P_SYNCVIEWPAGE_LAYOUT, Integer.toString(getLayout()));
+		settings.putString(P_SYNCVIEWPAGE_MODE, Integer.toString(getMode()));
 	}
 }

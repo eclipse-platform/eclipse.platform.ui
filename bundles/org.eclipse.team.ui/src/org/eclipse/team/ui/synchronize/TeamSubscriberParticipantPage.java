@@ -135,7 +135,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		showPreferences = new SyncViewerShowPreferencesAction(view.getSite().getShell());
 		
 		refreshAction = new RefreshAction(getSite().getPage(), getParticipant(), false /* refresh all */);
-		statusLine = new StatusLineContributionGroup(this.input);
+		statusLine = new StatusLineContributionGroup(getParticipant());
 		
 		collapseAll = new Action() {
 			public void run() {

@@ -26,15 +26,9 @@ public class WorkspaceSynchronizeParticipant extends TeamSubscriberParticipant {
 	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#init(org.eclipse.team.ui.sync.ISynchronizeView, org.eclipse.team.core.ISaveContext)
 	 */
 	public void restoreState(IMemento memento) throws PartInitException {
+		super.restoreState(memento);
 		TeamSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
 		setSubscriber(subscriber);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#saveState(org.eclipse.team.core.ISaveContext)
-	 */
-	public void saveState(IMemento memento) {
-		// no state to save
 	}
 	
 	/* (non-Javadoc)

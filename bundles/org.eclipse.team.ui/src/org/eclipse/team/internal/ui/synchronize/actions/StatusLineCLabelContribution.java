@@ -18,6 +18,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
 
 public class StatusLineCLabelContribution extends ContributionItem {
 	
@@ -28,13 +29,16 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	private Image image;
 	private String text = ""; //$NON-NLS-1$
 	private int widthHint = -1;
+
+	private Listener listener;
 	
 	public StatusLineCLabelContribution(String id) {
-		this(id, DEFAULT_CHAR_WIDTH);
+		this(id, DEFAULT_CHAR_WIDTH, null);
 	}
 	
-	public StatusLineCLabelContribution(String id, int charWidth) {
+	public StatusLineCLabelContribution(String id, int charWidth, Listener listener) {
 		super(id);
+		this.listener = listener;
 		this.charWidth = charWidth;
 		setVisible(false); // no text to start with
 	}
@@ -54,6 +58,9 @@ public class StatusLineCLabelContribution extends ContributionItem {
 		label.setLayoutData(statusLineLayoutData);
 		label.setText(text);
 		label.setImage(image);
+		if(listener != null) {
+			label.addListener(SWT.MouseDown, listener);
+		}
 	}
 	
 	public String getText() {

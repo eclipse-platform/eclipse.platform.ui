@@ -12,14 +12,14 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.sets.ISyncSetChangedListener;
-import org.eclipse.team.internal.ui.synchronize.sets.SubscriberInput;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncInfoStatistics;
-import org.eclipse.team.internal.ui.synchronize.sets.SyncSetChangedEvent;
+import org.eclipse.team.internal.ui.synchronize.sets.*;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -33,22 +33,28 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 	private StatusLineCLabelContribution outgoing;
 	private StatusLineCLabelContribution conflicting;
 	private SubscriberInput input;
+	private TeamSubscriberParticipant participant;
 	
-	public StatusLineContributionGroup(SubscriberInput input) {
+	public StatusLineContributionGroup(TeamSubscriberParticipant participant) {
 		super();
-		this.incoming = createStatusLineContribution(INCOMING_ID, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING).createImage()); //$NON-NLS-1$
-		this.outgoing = createStatusLineContribution(OUTGOING_ID, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage()); //$NON-NLS-1$
-		this.conflicting = createStatusLineContribution(CONFLICTING_ID, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage()); //$NON-NLS-1$
-		this.input = input;
+		this.participant = participant;
+		this.input = participant.getInput();
+		this.incoming = createStatusLineContribution(INCOMING_ID, TeamSubscriberParticipant.INCOMING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING).createImage()); //$NON-NLS-1$
+		this.outgoing = createStatusLineContribution(OUTGOING_ID, TeamSubscriberParticipant.OUTGOING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage()); //$NON-NLS-1$
+		this.conflicting = createStatusLineContribution(CONFLICTING_ID, TeamSubscriberParticipant.CONFLICTING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage()); //$NON-NLS-1$
 		input.registerListeners(this);
 	}
 	
-	private StatusLineCLabelContribution createStatusLineContribution(String id, String label, Image image) {
-		StatusLineCLabelContribution item = new StatusLineCLabelContribution(id, 15);
+	private StatusLineCLabelContribution createStatusLineContribution(String id, final int mode, String label, Image image) {
+		StatusLineCLabelContribution item = new StatusLineCLabelContribution(id, 15, new Listener() {
+			public void handleEvent(Event event) {
+				participant.setMode(mode);
+			}
+		});
 		item.setText(Policy.bind("StatisticsPanel.outgoing")); //$NON-NLS-1$
 		if(image != null) {
 			item.setImage(image);
-			TeamUIPlugin.disposeOnShutdown(image);
+			TeamUIPlugin.disposeOnShutdown(image);			
 		}
 		return item;
 	}

@@ -25,6 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -139,8 +142,29 @@ public class SynchronizeManager implements ISynchronizeManager {
 		}
 	}	
 	
-	public SynchronizeManager() {
+	class SaveParticipant implements ISaveParticipant {
+
+		public void doneSaving(ISaveContext context) {
+		}
+
+		public void prepareToSave(ISaveContext context) throws CoreException {
+		}
+
+		public void rollback(ISaveContext context) {
+		}
+
+		public void saving(ISaveContext context) throws CoreException {
+			saveState();
+		}		
+	}
+	
+	public SynchronizeManager() {		
 		super();
+		try {
+			ResourcesPlugin.getWorkspace().addSaveParticipant(TeamUIPlugin.getPlugin(), new SaveParticipant());
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		}
 	}
 	
 	/* (non-Javadoc)

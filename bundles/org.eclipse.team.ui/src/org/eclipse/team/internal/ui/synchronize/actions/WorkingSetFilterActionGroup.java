@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -32,12 +32,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	private SelectWorkingSetAction selectWorkingSetAction;
 	private EditWorkingSetAction editWorkingSetAction;
 	private IPropertyChangeListener workingSetUpdater;
-	private int mruMenuCount;
 	private IActionBars bars;
 	private IContributionItem item;
 	private String id;
-
-	private ISynchronizeParticipant participant; 
 
 	/**
 	 * Creates a new instance of the receiver
@@ -46,11 +43,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @param workingSetUpdater property change listener notified when a 
 	 * 	working set is set
 	 */
-	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, ISynchronizeParticipant participant) {
-		this.participant = participant;
+	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, TeamSubscriberParticipant participant) {
 		Assert.isNotNull(shell);
 		this.id = participant.toString();
 		this.workingSetUpdater = workingSetUpdater;
+		this.workingSet = participant.getWorkingSet();
 		clearWorkingSetAction = new ClearWorkingSetAction(this);
 		selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
 		editWorkingSetAction = new EditWorkingSetAction(this, shell);
