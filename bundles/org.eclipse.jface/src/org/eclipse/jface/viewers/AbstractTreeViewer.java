@@ -22,13 +22,13 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
 /**
- * Abstract base implementation for tree-structure-oriented viewers
- * (trees and table trees).
+ * Abstract base implementation for tree-structure-oriented viewers (trees and
+ * table trees).
  * <p>
  * Nodes in the tree can be in either an expanded or a collapsed state,
  * depending on whether the children on a node are visible. This class
- * introduces public methods for controlling the expanding and collapsing
- * of nodes.
+ * introduces public methods for controlling the expanding and collapsing of
+ * nodes.
  * </p>
  * <p>
  * Content providers for abstract tree viewers must implement the <code>ITreeContentProvider</code>
@@ -40,31 +40,30 @@ import org.eclipse.swt.widgets.*;
  */
 public abstract class AbstractTreeViewer extends StructuredViewer {
 
-	/** 
-	 * Constant indicating that all levels of the tree should be expanded or collapsed.
-	 *
+	/**
+	 * Constant indicating that all levels of the tree should be expanded or
+	 * collapsed.
+	 * 
 	 * @see #expandToLevel
 	 * @see #collapseToLevel
 	 */
 	public static final int ALL_LEVELS = -1;
 
 	/**
-	 * List of registered tree listeners (element type: <code>TreeListener</code>).
-	 */
+	 * List of registered tree listeners (element type: <code>TreeListener</code>). */
 	private ListenerList treeListeners = new ListenerList(1);
 
 	/**
-	 * The level to which the tree is automatically expanded each time
-	 * the viewer's input is changed (that is, by <code>setInput</code>).
-	 * A value of 0 means that auto-expand is off.
-	 *
+	 * The level to which the tree is automatically expanded each time the
+	 * viewer's input is changed (that is, by <code>setInput</code>). A
+	 * value of 0 means that auto-expand is off.
+	 * 
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
 
 	/**
-	 * The safe runnable used to call the label provider.
-	 */
+	 * The safe runnable used to call the label provider. */
 	private UpdateItemSafeRunnable safeUpdateItem =
 		new UpdateItemSafeRunnable();
 
@@ -86,24 +85,27 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Creates an abstract tree viewer. The viewer has no input, no content provider, a
-	 * default label provider, no sorter, no filters, and has auto-expand turned off.
+	 * Creates an abstract tree viewer. The viewer has no input, no content
+	 * provider, a default label provider, no sorter, no filters, and has
+	 * auto-expand turned off.
 	 */
 	protected AbstractTreeViewer() {
 	}
 	/**
-	 * Adds the given child elements to this viewer as children of the given parent element.
-	 * If this viewer does not have a sorter, the elements are added at the end of the 
-	 * parent's list of children in the order given; otherwise, the elements are inserted
-	 * at the appropriate positions.
+	 * Adds the given child elements to this viewer as children of the given
+	 * parent element. If this viewer does not have a sorter, the elements are
+	 * added at the end of the parent's list of children in the order given;
+	 * otherwise, the elements are inserted at the appropriate positions.
 	 * <p>
-	 * This method should be called (by the content provider) when elements 
+	 * This method should be called (by the content provider) when elements
 	 * have been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 *
-	 * @param parentElement the parent element
-	 * @param childElements the child elements to add
+	 * 
+	 * @param parentElement
+	 *           the parent element
+	 * @param childElements
+	 *           the child elements to add
 	 */
 	public void add(Object parentElement, Object[] childElements) {
 		Assert.isNotNull(parentElement);
@@ -153,16 +155,21 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			Object[] filtered = filter(childElements);
 			for (int i = 0; i < filtered.length; i++) {
 				Object element = filtered[i];
-				int index = indexForElement(widget, element);
-				createTreeItem(widget, filtered[i], index);
+				if (doFindItem(element) == null) {
+					int index = indexForElement(widget, element);
+					createTreeItem(widget, filtered[i], index);
+				}
 			}
 		}
 	}
 
 	/**
 	 * Returns the index where the item should be inserted.
-	 * @param parent The parent widget the element will be inserted into.
-	 * @param element The element to insert.
+	 * 
+	 * @param parent
+	 *           The parent widget the element will be inserted into.
+	 * @param element
+	 *           The element to insert.
 	 */
 	protected int indexForElement(Widget parent, Object element) {
 		ViewerSorter sorter = getSorter();
@@ -197,29 +204,33 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return min;
 	}
 	/**
-	 * Adds the given child element to this viewer as a child of the given parent element.
-	 * If this viewer does not have a sorter, the element is added at the end of the 
-	 * parent's list of children; otherwise, the element is inserted at the appropriate position.
+	 * Adds the given child element to this viewer as a child of the given
+	 * parent element. If this viewer does not have a sorter, the element is
+	 * added at the end of the parent's list of children; otherwise, the
+	 * element is inserted at the appropriate position.
 	 * <p>
-	 * This method should be called (by the content provider) when a single element 
-	 * has been added to the model, in order to cause the viewer to accurately
-	 * reflect the model. This method only affects the viewer, not the model.
-	 * Note that there is another method for efficiently processing the simultaneous
-	 * addition of multiple elements.
+	 * This method should be called (by the content provider) when a single
+	 * element has been added to the model, in order to cause the viewer to
+	 * accurately reflect the model. This method only affects the viewer, not
+	 * the model. Note that there is another method for efficiently processing
+	 * the simultaneous addition of multiple elements.
 	 * </p>
-	 *
-	 * @param parentElement the parent element
-	 * @param childElement the child element
+	 * 
+	 * @param parentElement
+	 *           the parent element
+	 * @param childElement
+	 *           the child element
 	 */
 	public void add(Object parentElement, Object childElement) {
 		add(parentElement, new Object[] { childElement });
 	}
 	/**
 	 * Adds the given SWT selection listener to the given SWT control.
-	 *
-	 * @param control the SWT control
-	 * @param listener the SWT selection listener
 	 * 
+	 * @param control
+	 *           the SWT control
+	 * @param listener
+	 *           the SWT selection listener
 	 * @deprecated
 	 */
 	protected void addSelectionListener(
@@ -227,27 +238,28 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		SelectionListener listener) {
 	}
 	/**
-	 * Adds a listener for expand and collapse events in this viewer.
-	 * Has no effect if an identical listener is already registered.
-	 *
-	 * @param listener a tree viewer listener
+	 * Adds a listener for expand and collapse events in this viewer. Has no
+	 * effect if an identical listener is already registered.
+	 * 
+	 * @param listener
+	 *           a tree viewer listener
 	 */
 	public void addTreeListener(ITreeViewerListener listener) {
 		treeListeners.add(listener);
 	}
 	/**
 	 * Adds the given SWT tree listener to the given SWT control.
-	 *
-	 * @param control the SWT control
-	 * @param listener the SWT tree listener
+	 * 
+	 * @param control
+	 *           the SWT control
+	 * @param listener
+	 *           the SWT tree listener
 	 */
 	protected abstract void addTreeListener(
 		Control control,
 		TreeListener listener);
 
-	/* (non-Javadoc)
-	 * @see StructuredViewer#associate(Object, Item)
-	 */
+	/* (non-Javadoc) @see StructuredViewer#associate(Object, Item) */
 	protected void associate(Object element, Item item) {
 		Object data = item.getData();
 		if (data != null && data != element && equals(data, element)) {
@@ -264,8 +276,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Collapses all nodes of the viewer's tree, starting with the root.
-	 * This method is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
+	 * Collapses all nodes of the viewer's tree, starting with the root. This
+	 * method is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
 	 */
 	public void collapseAll() {
 		Object root = getRoot();
@@ -275,10 +287,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Collapses the subtree rooted at the given element to the given level.
-	 *
-	 * @param element the element
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *  all levels of the tree
+	 * 
+	 * @param element
+	 *           the element
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to collapse
+	 *           all levels of the tree
 	 */
 	public void collapseToLevel(Object element, int level) {
 		Widget w = findItem(element);
@@ -288,13 +302,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	/**
 	 * Creates all children for the given widget.
 	 * <p>
-	 * The default implementation of this framework method assumes 
-	 * that <code>widget.getData()</code> returns the element corresponding
-	 * to the node. Note: the node is not visually expanded! You may have to 
-	 * call <code>parent.setExpanded(true)</code>.
+	 * The default implementation of this framework method assumes that <code>widget.getData()</code>
+	 * returns the element corresponding to the node. Note: the node is not
+	 * visually expanded! You may have to call <code>parent.setExpanded(true)</code>.
 	 * </p>
-	 *
-	 * @param widget the widget
+	 * 
+	 * @param widget
+	 *           the widget
 	 */
 	protected void createChildren(final Widget widget) {
 		final Item[] tis = getChildren(widget);
@@ -325,13 +339,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		});
 	}
 	/**
-	 * Creates a single item for the given parent and synchronizes it with
-	 * the given element.
-	 *
-	 * @param parent the parent widget
-	 * @param element the element
-	 * @param index if non-negative, indicates the position to insert the item 
-	 *    into its parent
+	 * Creates a single item for the given parent and synchronizes it with the
+	 * given element.
+	 * 
+	 * @param parent
+	 *           the parent widget
+	 * @param element
+	 *           the element
+	 * @param index
+	 *           if non-negative, indicates the position to insert the item
+	 *           into its parent
 	 */
 	protected void createTreeItem(Widget parent, Object element, int index) {
 		Item item = newItem(parent, SWT.NULL, index);
@@ -339,8 +356,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		updatePlus(item, element);
 	}
 	/**
-	 * The <code>AbstractTreeViewer</code> implementation of this method
-	 * also recurses over children of the corresponding element.
+	 * The <code>AbstractTreeViewer</code> implementation of this method also
+	 * recurses over children of the corresponding element.
 	 */
 	protected void disassociate(Item item) {
 		super.disassociate(item);
@@ -353,8 +370,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	/**
 	 * Disassociates the children of the given SWT item from their
 	 * corresponding elements.
-	 *
-	 * @param item the widget
+	 * 
+	 * @param item
+	 *           the widget
 	 */
 	private void disassociateChildren(Item item) {
 		Item[] items = getChildren(item);
@@ -363,9 +381,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				disassociate(items[i]);
 		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected Widget doFindInputItem(Object element) {
 		// compare with root
 		Object root = getRoot();
@@ -376,9 +392,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			return getControl();
 		return null;
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected Widget doFindItem(Object element) {
 		// compare with root
 		Object root = getRoot();
@@ -397,14 +411,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Copies the attributes of the given element into the given SWT item.
-	 *
-	 * @param item the SWT item
-	 * @param element the element
+	 * 
+	 * @param item
+	 *           the SWT item
+	 * @param element
+	 *           the element
 	 */
 	protected abstract void doUpdateItem(Item item, Object element);
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void doUpdateItem(
 		Widget widget,
 		Object element,
@@ -432,17 +446,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Expands all nodes of the viewer's tree, starting with the root.
-	 * This method is equivalent to <code>expandToLevel(ALL_LEVELS)</code>.
+	 * Expands all nodes of the viewer's tree, starting with the root. This
+	 * method is equivalent to <code>expandToLevel(ALL_LEVELS)</code>.
 	 */
 	public void expandAll() {
 		expandToLevel(ALL_LEVELS);
 	}
 	/**
 	 * Expands the root of the viewer's tree to the given level.
-	 *
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to expand
-	 *  all levels of the tree
+	 * 
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *           levels of the tree
 	 */
 	public void expandToLevel(int level) {
 		expandToLevel(getRoot(), level);
@@ -451,10 +466,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * Expands all ancestors of the given element so that the given element
 	 * becomes visible in this viewer's tree control, and then expands the
 	 * subtree rooted at the given element to the given level.
-	 *
-	 * @param element the element
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to expand
-	 *  all levels of the tree
+	 * 
+	 * @param element
+	 *           the element
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *           levels of the tree
 	 */
 	public void expandToLevel(Object element, int level) {
 		Widget w = internalExpand(element, true);
@@ -462,11 +479,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			internalExpandToLevel(w, level);
 	}
 	/**
-	 * Fires a tree collapsed event.
-	 * Only listeners registered at the time this method is called are notified.
-	 *
-	 * @param event the tree expansion event
-	 *
+	 * Fires a tree collapsed event. Only listeners registered at the time this
+	 * method is called are notified.
+	 * 
+	 * @param event
+	 *           the tree expansion event
 	 * @see ITreeViewerListener#treeCollapsed
 	 */
 	protected void fireTreeCollapsed(final TreeExpansionEvent event) {
@@ -487,11 +504,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Fires a tree expanded event.
-	 * Only listeners registered at the time this method is called are notified.
-	 *
-	 * @param event the tree expansion event
-	 *
+	 * Fires a tree expanded event. Only listeners registered at the time this
+	 * method is called are notified.
+	 * 
+	 * @param event
+	 *           the tree expansion event
 	 * @see ITreeViewerListener#treeExpanded
 	 */
 	protected void fireTreeExpanded(final TreeExpansionEvent event) {
@@ -514,9 +531,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Returns the auto-expand level.
-	 *
-	 * @return non-negative level, or <code>ALL_LEVELS</code> if
-	 *  all levels of the tree are expanded automatically
+	 * 
+	 * @return non-negative level, or <code>ALL_LEVELS</code> if all levels
+	 *         of the tree are expanded automatically
 	 * @see #setAutoExpandLevel
 	 */
 	public int getAutoExpandLevel() {
@@ -524,17 +541,19 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Returns the SWT child items for the given SWT widget.
-	 *
-	 * @param widget the widget
+	 * 
+	 * @param widget
+	 *           the widget
 	 * @return the child items
 	 */
 	protected abstract Item[] getChildren(Widget widget);
 	/**
 	 * Returns whether the given SWT item is expanded or collapsed.
-	 *
-	 * @param item the item
-	 * @return <code>true</code> if the item is considered expanded
-	 * and <code>false</code> if collapsed
+	 * 
+	 * @param item
+	 *           the item
+	 * @return <code>true</code> if the item is considered expanded and
+	 *         <code>false</code> if collapsed
 	 */
 	protected abstract boolean getExpanded(Item item);
 	/**
@@ -542,12 +561,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * viewer's tree, including currently hidden ones that are marked as
 	 * expanded but are under a collapsed ancestor.
 	 * <p>
-	 * This method is typically used when preserving the interesting
-	 * state of a viewer; <code>setExpandedElements</code> is used during the restore.
+	 * This method is typically used when preserving the interesting state of a
+	 * viewer; <code>setExpandedElements</code> is used during the restore.
 	 * </p>
-	 *
+	 * 
 	 * @return the array of expanded elements
-	 *
 	 * @see #setExpandedElements
 	 */
 	public Object[] getExpandedElements() {
@@ -556,10 +574,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return v.toArray();
 	}
 	/**
-	 * Returns whether the node corresponding to the given element is expanded or collapsed.
-	 *
-	 * @param element the element
-	 * @return <code>true</code> if the node is expanded, and <code>false</code> if collapsed
+	 * Returns whether the node corresponding to the given element is expanded
+	 * or collapsed.
+	 * 
+	 * @param element
+	 *           the element
+	 * @return <code>true</code> if the node is expanded, and <code>false</code>
+	 *         if collapsed
 	 */
 	public boolean getExpandedState(Object element) {
 		Widget item = findItem(element);
@@ -569,33 +590,38 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Returns the number of child items of the given SWT control.
-	 *
-	 * @param control the control
+	 * 
+	 * @param control
+	 *           the control
 	 * @return the number of children
 	 */
 	protected abstract int getItemCount(Control control);
 	/**
 	 * Returns the number of child items of the given SWT item.
-	 *
-	 * @param item the item
+	 * 
+	 * @param item
+	 *           the item
 	 * @return the number of children
 	 */
 	protected abstract int getItemCount(Item item);
 	/**
 	 * Returns the child items of the given SWT item.
-	 *
-	 * @param item the item
+	 * 
+	 * @param item
+	 *           the item
 	 * @return the child items
 	 */
 	protected abstract Item[] getItems(Item item);
 	/**
-	 * Returns the item after the given item in the tree, or
-	 * <code>null</code> if there is no next item.
-	 *
-	 * @param item the item
-	 * @param includeChildren <code>true</code> if the children are 
-	 *  considered in determining which item is next, and <code>false</code>
-	 *  if subtrees are ignored
+	 * Returns the item after the given item in the tree, or <code>null</code>
+	 * if there is no next item.
+	 * 
+	 * @param item
+	 *           the item
+	 * @param includeChildren
+	 *           <code>true</code> if the children are considered in
+	 *           determining which item is next, and <code>false</code> if
+	 *           subtrees are ignored
 	 * @return the next item, or <code>null</code> if none
 	 */
 	protected Item getNextItem(Item item, boolean includeChildren) {
@@ -627,22 +653,24 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return getNextItem(parent, false);
 	}
 	/**
-	 * Returns the parent item of the given item in the tree, or
-	 * <code>null</code> if there is parent item.
-	 *
-	 * @param item the item
+	 * Returns the parent item of the given item in the tree, or <code>null</code>
+	 * if there is parent item.
+	 * 
+	 * @param item
+	 *           the item
 	 * @return the parent item, or <code>null</code> if none
 	 */
 	protected abstract Item getParentItem(Item item);
 	/**
-	 * Returns the item before the given item in the tree, or
-	 * <code>null</code> if there is no previous item.
-	 *
-	 * @param item the item
+	 * Returns the item before the given item in the tree, or <code>null</code>
+	 * if there is no previous item.
+	 * 
+	 * @param item
+	 *           the item
 	 * @return the previous item, or <code>null</code> if none
 	 */
 	protected Item getPreviousItem(Item item) {
-		//previous item is either right-most visible descendent of previous 
+		//previous item is either right-most visible descendent of previous
 		//sibling or parent
 		Item parent = getParentItem(item);
 		if (parent == null) {
@@ -661,9 +689,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected Object[] getRawChildren(Object parent) {
 		if (parent != null) {
 			if (equals(parent, getRoot()))
@@ -680,14 +706,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Returns all selected items for the given SWT control.
-	 *
-	 * @param control the control
+	 * 
+	 * @param control
+	 *           the control
 	 * @return the list of selected items
 	 */
 	protected abstract Item[] getSelection(Control control);
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected List getSelectionFromWidget() {
 		Widget[] items = getSelection(getControl());
 		ArrayList list = new ArrayList(items.length);
@@ -701,8 +726,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Handles a tree collapse event from the SWT widget.
-	 *
-	 * @param event the SWT tree event
+	 * 
+	 * @param event
+	 *           the SWT tree event
 	 */
 	protected void handleTreeCollapse(TreeEvent event) {
 		if (event.item.getData() != null) {
@@ -712,8 +738,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Handles a tree expand event from the SWT widget.
-	 *
-	 * @param event the SWT tree event
+	 * 
+	 * @param event
+	 *           the SWT tree event
 	 */
 	protected void handleTreeExpand(TreeEvent event) {
 		createChildren(event.item);
@@ -722,9 +749,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				new TreeExpansionEvent(this, event.item.getData()));
 		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on Viewer.
-	 */
+	/* (non-Javadoc) Method declared on Viewer. */
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		addTreeListener(control, new TreeListener() {
@@ -736,16 +761,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 		});
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 * Builds the initial tree and handles the automatic expand feature.
+	/*
+	 * (non-Javadoc) Method declared on StructuredViewer. Builds the initial
+	 * tree and handles the automatic expand feature.
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(new Runnable() {
 			public void run() {
 				Control tree = getControl();
 				boolean useRedraw = true;
-				// (size > REDRAW_THRESHOLD) || (table.getItemCount() > REDRAW_THRESHOLD);
+				// (size > REDRAW_THRESHOLD) || (table.getItemCount() >
+				// REDRAW_THRESHOLD);
 				if (useRedraw)
 					tree.setRedraw(false);
 				removeAll(tree);
@@ -762,12 +788,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * given level.
 	 * <p>
 	 * </p>
-	 * Note that the default implementation of this method does not call
-	 * <code>setRedraw</code>.
-	 *
-	 * @param widget the widget
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *  all levels of the tree
+	 * Note that the default implementation of this method does not call <code>setRedraw</code>.
+	 * 
+	 * @param widget
+	 *           the widget
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to collapse
+	 *           all levels of the tree
 	 */
 	protected void internalCollapseToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
@@ -788,10 +815,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Recursively collects all expanded elements from the given widget.
-	 *
-	 * @param result a list (element type: <code>Object</code>) into which
-	 *    to collect the elements
-	 * @param widget the widget
+	 * 
+	 * @param result
+	 *           a list (element type: <code>Object</code>) into which to
+	 *           collect the elements
+	 * @param widget
+	 *           the widget
 	 */
 	private void internalCollectExpanded(List result, Widget widget) {
 		Item[] items = getChildren(widget);
@@ -806,14 +835,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Tries to create a path of tree items for the given element.
-	 * This method recursively walks up towards the root of the tree
-	 * and assumes that <code>getParent</code> returns the correct
-	 * parent of an element.
-	 *
-	 * @param element the element
-	 * @param expand <code>true</code> if all nodes on the path should be expanded, 
-	 *    and <code>false</code> otherwise
+	 * Tries to create a path of tree items for the given element. This method
+	 * recursively walks up towards the root of the tree and assumes that
+	 * <code>getParent</code> returns the correct parent of an element.
+	 * 
+	 * @param element
+	 *           the element
+	 * @param expand
+	 *           <code>true</code> if all nodes on the path should be
+	 *           expanded, and <code>false</code> otherwise
 	 */
 	protected Widget internalExpand(Object element, boolean expand) {
 
@@ -850,16 +880,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return w;
 	}
 	/**
-	 * Recursively expands the subtree rooted at the given widget to the
-	 * given level.
+	 * Recursively expands the subtree rooted at the given widget to the given
+	 * level.
 	 * <p>
 	 * </p>
-	 * Note that the default implementation of this method does not call
-	 * <code>setRedraw</code>.
-	 *
-	 * @param widget the widget
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *  all levels of the tree
+	 * Note that the default implementation of this method does not call <code>setRedraw</code>.
+	 * 
+	 * @param widget
+	 *           the widget
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to collapse
+	 *           all levels of the tree
 	 */
 	protected void internalExpandToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
@@ -878,10 +909,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Non-recursively tries to find the given element as a child of the given parent item.
-	 *
-	 * @param parent the parent item
-	 * @param element the element
+	 * Non-recursively tries to find the given element as a child of the given
+	 * parent item.
+	 * 
+	 * @param parent
+	 *           the parent item
+	 * @param element
+	 *           the element
 	 */
 	private Widget internalFindChild(Item parent, Object element) {
 		Item[] items = getChildren(parent);
@@ -895,9 +929,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Recursively tries to find the given element.
-	 *
-	 * @param parent the parent item
-	 * @param element the element
+	 * 
+	 * @param parent
+	 *           the parent item
+	 * @param element
+	 *           the element
 	 */
 	private Widget internalFindItem(Item parent, Object element) {
 
@@ -917,15 +953,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void internalRefresh(Object element) {
 		internalRefresh(element, true);
 	}
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		// If element is null, do a full refresh.
 		if (element == null) {
@@ -940,14 +972,19 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Refreshes the tree starting at the given widget.
-	 *
-	 * @param widget the widget
-	 * @param element the element
-	 * @param doStruct <code>true</code> if structural changes are to be picked up,
-	 *   and <code>false</code> if only label provider changes are of interest
-	 * @param updateLabels <code>true</code> to update labels for existing elements,
-	 *   <code>false</code> to only update labels as needed, assuming that labels
-	 *   for existing elements are unchanged.
+	 * 
+	 * @param widget
+	 *           the widget
+	 * @param element
+	 *           the element
+	 * @param doStruct
+	 *           <code>true</code> if structural changes are to be picked up,
+	 *           and <code>false</code> if only label provider changes are of
+	 *           interest
+	 * @param updateLabels
+	 *           <code>true</code> to update labels for existing elements,
+	 *           <code>false</code> to only update labels as needed, assuming
+	 *           that labels for existing elements are unchanged.
 	 */
 	private void internalRefresh(
 		Widget widget,
@@ -982,8 +1019,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Update the structure and recurse.
-	 * Items are updated in updateChildren, as needed.
+	 * Update the structure and recurse. Items are updated in updateChildren,
+	 * as needed.
 	 */
 	private void internalRefreshStruct(
 		Widget widget,
@@ -1003,8 +1040,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
 	/**
 	 * Removes the given elements from this viewer.
-	 *
-	 * @param elements the elements to remove
+	 * 
+	 * @param elements
+	 *           the elements to remove
 	 */
 	private void internalRemove(Object[] elements) {
 		Object input = getInput();
@@ -1039,10 +1077,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Sets the expanded state of all items to correspond to the given set of expanded elements.
-	 *
-	 * @param expandedElements the set (element type: <code>Object</code>) of elements which are expanded
-	 * @param widget the widget
+	 * Sets the expanded state of all items to correspond to the given set of
+	 * expanded elements.
+	 * 
+	 * @param expandedElements
+	 *           the set (element type: <code>Object</code>) of elements
+	 *           which are expanded
+	 * @param widget
+	 *           the widget
 	 */
 	private void internalSetExpanded(HashSet expandedElements, Widget widget) {
 		Item[] items = getChildren(widget);
@@ -1064,25 +1106,23 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Return whether the tree node representing the given element
-	 * can be expanded.
+	 * Return whether the tree node representing the given element can be
+	 * expanded.
 	 * <p>
-	 * The default implementation of this framework method calls 
-	 * <code>hasChildren</code> on this viewer's content provider.
-	 * It may be overridden if necessary.
+	 * The default implementation of this framework method calls <code>hasChildren</code>
+	 * on this viewer's content provider. It may be overridden if necessary.
 	 * </p>
-	 *
-	 * @param element the element
-	 * @return <code>true</code> if the tree node representing
-	 * the given element can be expanded, or <code>false</code> if not
+	 * 
+	 * @param element
+	 *           the element
+	 * @return <code>true</code> if the tree node representing the given
+	 *         element can be expanded, or <code>false</code> if not
 	 */
 	public boolean isExpandable(Object element) {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
 		return cp != null && cp.hasChildren(element);
 	}
-	/* (non-Javadoc)
-	 * Method declared on Viewer.
-	 */
+	/* (non-Javadoc) Method declared on Viewer. */
 	protected void labelProviderChanged() {
 		// we have to walk the (visible) tree and update every item
 		Control tree = getControl();
@@ -1093,24 +1133,29 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Creates a new item.
-	 *
-	 * @param parent the parent widget
-	 * @param style SWT style bits
-	 * @param index if non-negative, indicates the position to insert the item 
-	 *    into its parent
-	 * @return the newly-created item 
+	 * 
+	 * @param parent
+	 *           the parent widget
+	 * @param style
+	 *           SWT style bits
+	 * @param index
+	 *           if non-negative, indicates the position to insert the item
+	 *           into its parent
+	 * @return the newly-created item
 	 */
 	protected abstract Item newItem(Widget parent, int style, int index);
 	/**
-	 * Removes the given elements from this viewer.
-	 * The selection is updated if required.
+	 * Removes the given elements from this viewer. The selection is updated if
+	 * required.
 	 * <p>
-	 * This method should be called (by the content provider) when elements 
-	 * have been removed from the model, in order to cause the viewer to accurately
-	 * reflect the model. This method only affects the viewer, not the model.
+	 * This method should be called (by the content provider) when elements
+	 * have been removed from the model, in order to cause the viewer to
+	 * accurately reflect the model. This method only affects the viewer, not
+	 * the model.
 	 * </p>
-	 *
-	 * @param elements the elements to remove
+	 * 
+	 * @param elements
+	 *           the elements to remove
 	 */
 	public void remove(final Object[] elements) {
 		preservingSelection(new Runnable() {
@@ -1120,52 +1165,53 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		});
 	}
 	/**
-	 * Removes the given element from the viewer.
-	 * The selection is updated if necessary.
+	 * Removes the given element from the viewer. The selection is updated if
+	 * necessary.
 	 * <p>
-	 * This method should be called (by the content provider) when a single element 
-	 * has been removed from the model, in order to cause the viewer to accurately
-	 * reflect the model. This method only affects the viewer, not the model.
-	 * Note that there is another method for efficiently processing the simultaneous
-	 * removal of multiple elements.
+	 * This method should be called (by the content provider) when a single
+	 * element has been removed from the model, in order to cause the viewer to
+	 * accurately reflect the model. This method only affects the viewer, not
+	 * the model. Note that there is another method for efficiently processing
+	 * the simultaneous removal of multiple elements.
 	 * </p>
-	 *
-	 * @param element the element
+	 * 
+	 * @param element
+	 *           the element
 	 */
 	public void remove(Object element) {
 		remove(new Object[] { element });
 	}
 	/**
 	 * Removes all items from the given control.
-	 *
-	 * @param control the control
+	 * 
+	 * @param control
+	 *           the control
 	 */
 	protected abstract void removeAll(Control control);
 	/**
-	 * Removes a listener for expand and collapse events in this viewer.
-	 * Has no affect if an identical listener is not registered.
-	 *
-	 * @param listener a tree viewer listener
+	 * Removes a listener for expand and collapse events in this viewer. Has no
+	 * affect if an identical listener is not registered.
+	 * 
+	 * @param listener
+	 *           a tree viewer listener
 	 */
 	public void removeTreeListener(ITreeViewerListener listener) {
 		treeListeners.remove(listener);
 	}
-	/*
-	 * Non-Javadoc.
-	 * Method defined on StructuredViewer.
-	 */
+	/* Non-Javadoc. Method defined on StructuredViewer. */
 	public void reveal(Object element) {
 		Widget w = internalExpand(element, true);
 		if (w instanceof Item)
 			showItem((Item) w);
 	}
 	/**
-	 * Returns the rightmost visible descendent of the given item.
-	 * Returns the item itself if it has no children.
-	 *
-	 * @param item the item to compute the descendent of
-	 * @return the rightmost visible descendent or the item iself
-	 *  if it has no children
+	 * Returns the rightmost visible descendent of the given item. Returns the
+	 * item itself if it has no children.
+	 * 
+	 * @param item
+	 *           the item to compute the descendent of
+	 * @return the rightmost visible descendent or the item iself if it has no
+	 *         children
 	 */
 	private Item rightMostVisibleDescendent(Item item) {
 		Item[] children = getItems(item);
@@ -1175,9 +1221,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			return item;
 		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on Viewer.
-	 */
+	/* (non-Javadoc) Method declared on Viewer. */
 	public Item scrollDown(int x, int y) {
 		Item current = getItem(x, y);
 		if (current != null) {
@@ -1187,9 +1231,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * Method declared on Viewer.
-	 */
+	/* (non-Javadoc) Method declared on Viewer. */
 	public Item scrollUp(int x, int y) {
 		Item current = getItem(x, y);
 		if (current != null) {
@@ -1200,18 +1242,18 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		return null;
 	}
 	/**
-	 * Sets the auto-expand level.
-	 * The value 0 means that there is no auto-expand; 
-	 * 1 means that top-level elements are expanded, but not their children;
-	 * 2 means that top-level elements are expanded, and their children, 
-	 * but not grandchildren; and so on.
+	 * Sets the auto-expand level. The value 0 means that there is no
+	 * auto-expand; 1 means that top-level elements are expanded, but not their
+	 * children; 2 means that top-level elements are expanded, and their
+	 * children, but not grandchildren; and so on.
 	 * <p>
 	 * The value <code>ALL_LEVELS</code> means that all subtrees should be
 	 * expanded.
 	 * </p>
-	 *
-	 * @param level non-negative level, or <code>ALL_LEVELS</code> to expand
-	 *  all levels of the tree
+	 * 
+	 * @param level
+	 *           non-negative level, or <code>ALL_LEVELS</code> to expand all
+	 *           levels of the tree
 	 */
 	public void setAutoExpandLevel(int level) {
 		expandToLevel = level;
@@ -1226,21 +1268,24 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Sets the expand state of the given item.
-	 *
-	 * @param item the item
-	 * @param expand the expand state of the item
+	 * 
+	 * @param item
+	 *           the item
+	 * @param expand
+	 *           the expand state of the item
 	 */
 	protected abstract void setExpanded(Item item, boolean expand);
 	/**
-	 * Sets which nodes are expanded in this viewer's tree.
-	 * The given list contains the elements that are to be expanded;
-	 * all other nodes are to be collapsed.
+	 * Sets which nodes are expanded in this viewer's tree. The given list
+	 * contains the elements that are to be expanded; all other nodes are to be
+	 * collapsed.
 	 * <p>
-	 * This method is typically used when restoring the interesting
-	 * state of a viewer captured by an earlier call to <code>getExpandedElements</code>.
+	 * This method is typically used when restoring the interesting state of a
+	 * viewer captured by an earlier call to <code>getExpandedElements</code>.
 	 * </p>
-	 *
-	 * @param elements the array of expanded elements
+	 * 
+	 * @param elements
+	 *           the array of expanded elements
 	 * @see #getExpandedElements
 	 */
 	public void setExpandedElements(Object[] elements) {
@@ -1253,10 +1298,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		internalSetExpanded(expandedElements, getControl());
 	}
 	/**
-	 * Sets whether the node corresponding to the given element is expanded or collapsed.
-	 *
-	 * @param element the element
-	 * @param expanded <code>true</code> if the node is expanded, and <code>false</code> if collapsed
+	 * Sets whether the node corresponding to the given element is expanded or
+	 * collapsed.
+	 * 
+	 * @param element
+	 *           the element
+	 * @param expanded
+	 *           <code>true</code> if the node is expanded, and <code>false</code>
+	 *           if collapsed
 	 */
 	public void setExpandedState(Object element, boolean expanded) {
 		Widget item = internalExpand(element, false);
@@ -1269,13 +1318,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Sets the selection to the given list of items.
-	 *
-	 * @param items list of items (element type: <code>org.eclipse.swt.widgets.Item</code>)
+	 * 
+	 * @param items
+	 *           list of items (element type: <code>org.eclipse.swt.widgets.Item</code>)
 	 */
 	protected abstract void setSelection(List items);
-	/* (non-Javadoc)
-	 * Method declared on StructuredViewer.
-	 */
+	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void setSelectionToWidget(List v, boolean reveal) {
 		if (v == null) {
 			setSelection(new ArrayList(0));
@@ -1284,7 +1332,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		int size = v.size();
 		List newSelection = new ArrayList(size);
 		for (int i = 0; i < size; ++i) {
-			// Use internalExpand since item may not yet be created.  See 1G6B1AR.
+			// Use internalExpand since item may not yet be created. See
+			// 1G6B1AR.
 			Widget w = internalExpand(v.get(i), true);
 			if (w instanceof Item) {
 				newSelection.add(w);
@@ -1297,19 +1346,23 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/**
 	 * Shows the given item.
-	 *
-	 * @param item the item
+	 * 
+	 * @param item
+	 *           the item
 	 */
 	protected abstract void showItem(Item item);
 
 	/**
-	 * Updates the tree items to correspond to the child elements of the given parent element.
-	 * If null is passed for the children, this method obtains them (only if needed).
-	 *
-	 * @param widget the widget
-	 * @param parent the parent element
-	 * @param elementChildren the child elements, or null
+	 * Updates the tree items to correspond to the child elements of the given
+	 * parent element. If null is passed for the children, this method obtains
+	 * them (only if needed).
 	 * 
+	 * @param widget
+	 *           the widget
+	 * @param parent
+	 *           the parent element
+	 * @param elementChildren
+	 *           the child elements, or null
 	 * @deprecated this is no longer called by the framework
 	 */
 	protected void updateChildren(
@@ -1320,16 +1373,20 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Updates the tree items to correspond to the child elements of the given parent element.
-	 * If null is passed for the children, this method obtains them (only if needed).
-	 *
-	 * @param widget the widget
-	 * @param parent the parent element
-	 * @param elementChildren the child elements, or null
-	 * @param updateLabels <code>true</code> to update labels for existing elements,
-	 *   <code>false</code> to only update labels as needed, assuming that labels
-	 *   for existing elements are unchanged.
+	 * Updates the tree items to correspond to the child elements of the given
+	 * parent element. If null is passed for the children, this method obtains
+	 * them (only if needed).
 	 * 
+	 * @param widget
+	 *           the widget
+	 * @param parent
+	 *           the parent element
+	 * @param elementChildren
+	 *           the child elements, or null
+	 * @param updateLabels
+	 *           <code>true</code> to update labels for existing elements,
+	 *           <code>false</code> to only update labels as needed, assuming
+	 *           that labels for existing elements are unchanged.
 	 * @since 2.1
 	 */
 	private void updateChildren(
@@ -1367,7 +1424,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 		}
 
-		// If the children weren't passed in, get them now since they're needed below.
+		// If the children weren't passed in, get them now since they're needed
+		// below.
 		if (elementChildren == null) {
 			elementChildren = getSortedChildren(parent);
 		}
@@ -1394,8 +1452,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
 		int min = Math.min(elementChildren.length, items.length);
 
-		// Note: In the code below, doing disassociate calls before associate calls is important,
-		// since a later disassociate can undo an earlier associate, 
+		// Note: In the code below, doing disassociate calls before associate
+		// calls is important,
+		// since a later disassociate can undo an earlier associate,
 		// if items are changing position.
 
 		// dispose of all items beyond the end of the current elements
@@ -1410,7 +1469,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		// need to do it in two passes:
 		// 1: disassociate old items
 		// 2: associate new items
-		// because otherwise a later disassociate can remove a mapping made for a previous associate,
+		// because otherwise a later disassociate can remove a mapping made for
+		// a previous associate,
 		// making the map inconsistent
 		for (int i = 0; i < min; ++i) {
 			Item item = items[i];
@@ -1419,8 +1479,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				Object newElement = elementChildren[i];
 				if (newElement != oldElement) {
 					if (equals(newElement, oldElement)) {
-						// update the data to be the new element, since although the elements 
-						// may be equal, they may still have different labels or children
+						// update the data to be the new element, since
+						// although the elements
+						// may be equal, they may still have different labels
+						// or children
 						item.setData(newElement);
 						mapElement(newElement, item);
 					} else {
@@ -1440,7 +1502,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				// Restore expanded state for items that changed position.
 				// Make sure setExpanded is called after updatePlus, since
 				// setExpanded(false) fails if item has no children.
-				// Need to call setExpanded for both expanded and unexpanded cases
+				// Need to call setExpanded for both expanded and unexpanded
+				// cases
 				// since the expanded state can change either way.
 				setExpanded(item, expanded.contains(newElement));
 			} else {
@@ -1458,7 +1521,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				createTreeItem(widget, elementChildren[i], i);
 			}
 
-			// Need to restore expanded state in a separate pass 
+			// Need to restore expanded state in a separate pass
 			// because createTreeItem does not return the new item.
 			// Avoid doing this unless needed.
 			if (!expanded.isEmpty()) {
@@ -1466,7 +1529,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				items = getChildren(widget);
 				for (int i = min; i < elementChildren.length; ++i) {
 					// Restore expanded state for items that changed position.
-					// Make sure setExpanded is called after updatePlus (called in createTreeItem), since
+					// Make sure setExpanded is called after updatePlus (called
+					// in createTreeItem), since
 					// setExpanded(false) fails if item has no children.
 					// Only need to call setExpanded if element was expanded
 					// since new items are initially unexpanded.
@@ -1485,12 +1549,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Updates the "+"/"-" icon of the tree node from the given element.
-	 * It calls <code>isExpandable</code> to determine whether 
-	 * an element is expandable.
-	 *
-	 * @param item the item
-	 * @param element the element
+	 * Updates the "+"/"-" icon of the tree node from the given element. It
+	 * calls <code>isExpandable</code> to determine whether an element is
+	 * expandable.
+	 * 
+	 * @param item
+	 *           the item
+	 * @param element
+	 *           the element
 	 */
 	protected void updatePlus(Item item, Object element) {
 		boolean hasPlus = getItemCount(item) > 0;
@@ -1528,9 +1594,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Gets the expanded elements that are visible
-	 * to the user. An expanded element is only
-	 * visible if the parent is expanded.
+	 * Gets the expanded elements that are visible to the user. An expanded
+	 * element is only visible if the parent is expanded.
 	 * 
 	 * @return the visible expanded elements
 	 * @since 2.0
