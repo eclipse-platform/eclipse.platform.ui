@@ -736,6 +736,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		removeProjectFromContentProviders(project);
 		projectViewer.refresh();
 		targetViewer.refresh();
+		if (getProjects().length == 0) {		
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		}
 	}
 
 	/**
