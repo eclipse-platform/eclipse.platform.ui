@@ -12,6 +12,7 @@ package org.eclipse.ui.application;
 
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -215,6 +216,24 @@ public interface IWorkbenchWindowConfigurer {
 	 * @param newShellStyle the new shell style bits
 	 */
 	public void setShellStyle(int shellStyle);
+
+	/**
+	 * Returns the size to use for the window's shell when it is created.
+	 * The default is 800x600.
+	 *
+	 * @return the initial size to use for the shell
+	 */
+	public Point getInitialSize();
+
+	/**
+	 * Sets the size to use for the window's shell when it is created.
+	 * This method has no effect after the shell is created.
+	 * That is, it must be called within the <code>preWindowOpen</code>
+	 * callback on <code>WorkbenchAdvisor</code>.
+	 *
+	 * @param initialSize the initial size to use for the shell
+	 */
+	public void setInitialSize(Point initialSize);
 
 	/**
 	 * Returns the data associated with this workbench window at the given key.

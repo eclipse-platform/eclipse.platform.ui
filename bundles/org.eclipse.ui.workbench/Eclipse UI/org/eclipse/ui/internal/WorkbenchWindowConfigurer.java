@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
@@ -119,6 +120,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * Lazily initialized to an instance unique to this window.
 	 */
 	private WindowActionBarConfigurer actionBarConfigurer = null;
+
+	/**
+	 * The initial size to use for the shell.
+	 */
+	private Point initialSize = new Point(800, 600);
 
 	/**
 	 * Action bar configurer that changes this workbench window.
@@ -473,4 +479,18 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
     public void setShellStyle(int shellStyle) {
         this.shellStyle = shellStyle;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public Point getInitialSize() {
+		return initialSize;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+	 */
+	public void setInitialSize(Point size) {
+		initialSize = size;
+	}
 }

@@ -141,6 +141,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private int submenus = 0x00;
 
 	/**
+	 * @since 3.0
+	 */
+	private IWorkbenchWindowCommandSupport workbenchWindowCommandSupport;
+
+	/**
+	 * @since 3.0
+	 */
+	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
+	
+	/**
 	 * Object for configuring this workbench window. Lazily initialized to
 	 * an instance unique to this window.
 	 *  
@@ -2032,17 +2042,34 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		getAdvisor().fillActionBars(this, configurer, flags);
 	}
 
-	private IWorkbenchWindowCommandSupport workbenchWindowCommandSupport;
-	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
-	
+
+	/**
+	 * The <code>WorkbenchWindow</code> implementation of this method has the same
+	 * logic as <code>Window</code>'s implementation, but without the resize check.
+	 * We don't want to skip setting the bounds if the shell has been resized since a
+	 * free resize event occurs on Windows when the menubar is set in configureShell. 
+	 */
 	protected void initializeBounds() {
-		super.initializeBounds();
+		Point size = getInitialSize();
+		Point location = getInitialLocation(size);
+		getShell().setBounds(getConstrainedShellBounds(new Rectangle(location.x, location.y, size.x, size.y)));
+		
+		// TODO: Move this elsewhere
 		setLayoutDataForContents();
 	}
 	
 	/**
-	 * Set the layout data for the contents of the window.
+	 * The <code>WorkbenchWindow</code> implementation of this method
+	 * delegates to the window configurer.
 	 *  
+	 * @since 3.0
+	 */
+	protected Point getInitialSize() {
+		return getWindowConfigurer().getInitialSize();
+	}
+	
+	/**
+	 * Set the layout data for the contents of the window.
 	 */
 	private void setLayoutDataForContents() {
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
