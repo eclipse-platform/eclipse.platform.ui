@@ -227,7 +227,7 @@ public boolean close() {
 	return true;		
 }
 /**
- * Configures the given shell in prepartaion for opening this window
+ * Configures the given shell in preparation for opening this window
  * in it.
  * <p>
  * The default implementation of this framework method
