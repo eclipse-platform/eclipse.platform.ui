@@ -291,6 +291,18 @@
             id="org.eclipse.ui.project.rebuildProject">
       </actionDefinition>
       <actionDefinition
+            name="%ActionDefinition.buildAll.name"
+            icon="icons/full/ctool16/build_exec.gif"
+            description="%ActionDefinition.buildAll.description"
+            id="org.eclipse.ui.project.buildAll">
+      </actionDefinition>
+      <actionDefinition
+            name="%ActionDefinition.rebuildAll.name"
+            icon="icons/full/ctool16/build_exec.gif"
+            description="%ActionDefinition.rebuildAll.description"
+            id="org.eclipse.ui.project.rebuildAll">
+      </actionDefinition>
+      <actionDefinition
             name="%ActionDefinition.switchToEditor.name"
             description="%ActionDefinition.switchToEditor.description"
             id="org.eclipse.ui.window.switchToEditor">
@@ -712,7 +724,7 @@
          </accelerator>
          <accelerator
                key="Ctrl+B"
-               id="org.eclipse.ui.project.buildProject">
+               id="org.eclipse.ui.project.buildAll">
          </accelerator>
          <accelerator
                key="Ctrl+Shift+W"
@@ -878,7 +890,7 @@
          <accelerator
                platform="carbon"
                key="Command+B"
-               id="org.eclipse.ui.project.buildProject">
+               id="org.eclipse.ui.project.buildAll">
          </accelerator>
          <accelerator
                platform="carbon"
