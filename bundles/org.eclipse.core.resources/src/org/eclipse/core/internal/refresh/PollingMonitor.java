@@ -15,6 +15,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.framework.Bundle;
 
 /**
  * The <code>PollingMonitor</code> is an <code>IRefreshMonitor</code> that
@@ -132,7 +133,9 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		long delay = Math.max(MIN_FREQUENCY, time * 20);
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
-		schedule(delay);
+		//don't reschedule the job if the resources plugin has been shut down
+		if (Platform.getBundle(ResourcesPlugin.PI_RESOURCES).getState() == Bundle.ACTIVE)
+			schedule(delay);
 		return Status.OK_STATUS;
 	}
 
