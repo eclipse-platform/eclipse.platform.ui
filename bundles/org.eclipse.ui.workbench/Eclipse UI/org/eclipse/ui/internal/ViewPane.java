@@ -23,7 +23,6 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
@@ -651,14 +650,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		Control c = getControl();
 		if (getContainer() instanceof PartTabFolder) {
 			PartTabFolder tf = (PartTabFolder) getContainer();
-			CTabFolder f = (CTabFolder) tf.getControl();
-			if (f.getItemCount() > 1) {
-				if ((f.getStyle() & SWT.TOP) != 0) {
-					return new Control[] { f, c };
-				} else {
-					return new Control[] { c, f };
-				}
-			}
+			Control f = tf.getControl();
+			return new Control[] { f, c };
 		}
 		return new Control[] { c };
 	}
