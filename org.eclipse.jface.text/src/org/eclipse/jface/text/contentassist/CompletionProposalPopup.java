@@ -13,6 +13,8 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlEvent;
@@ -574,9 +576,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
+			final int newLen= proposals.length;
 			if (isFilteredSubset && fFilteredProposals != null && fProposalTable.getItemCount() == fFilteredProposals.length) {
 				final int oldLen= fFilteredProposals.length;
-				final int newLen= proposals.length;
 				final int removedLen= oldLen - newLen;
 				Assert.isTrue(removedLen >= 0 && newLen > 0);
 				
@@ -597,15 +599,22 @@ class CompletionProposalPopup implements IContentAssistListener {
 						}
 					}
 					
-					fFilteredProposals= proposals;
 					fProposalTable.remove(removed);
 				}
 			} else {
-				fFilteredProposals= proposals;
-				fProposalTable.setItemCount(fFilteredProposals.length);
+				fProposalTable.setItemCount(newLen);
 				fProposalTable.clearAll();
+				if (Platform.WS_GTK.equals(Platform.getWS()) && newLen == 1) {
+					// TODO workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=90258
+					TableItem first= fProposalTable.getItem(0);
+					ICompletionProposal current= proposals[0];
+					first.setText(current.getDisplayString());
+					first.setImage(current.getImage());
+					first.setData(current);
+				}
 			}
 
+			fFilteredProposals= proposals;
 			Point currentLocation= fProposalShell.getLocation();
 			Point newLocation= getLocation();
 			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) 
