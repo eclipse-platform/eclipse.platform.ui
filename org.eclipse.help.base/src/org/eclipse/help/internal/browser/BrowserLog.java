@@ -14,7 +14,7 @@ import java.io.*;
 import java.text.*;
 import java.util.Date;
 
-import org.eclipse.help.internal.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Log for messages output by external browser processes.

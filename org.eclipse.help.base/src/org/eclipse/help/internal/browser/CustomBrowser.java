@@ -14,8 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * 
@@ -56,10 +55,10 @@ public class CustomBrowser implements IBrowser {
 			errConsumer.start();
 		} catch (Exception e) {
 			HelpBasePlugin.logError(
-				Resources.getString("CustomBrowser.errorLaunching", url, path),
+				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path),
 				e);
 			throw new Exception(
-				Resources.getString("CustomBrowser.errorLaunching", url, path));
+				HelpBaseResources.getString("CustomBrowser.errorLaunching", url, path));
 		}
 	}
 

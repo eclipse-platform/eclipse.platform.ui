@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal;
+package org.eclipse.help.internal.base;
 import java.net.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.util.*;
 
 /**
  * This class is the default implementation of the pluggable help support.
@@ -39,7 +39,7 @@ public class DefaultHelpSupport implements IHelp {
 		if (getTocs().length == 0) {
 			// There is no documentation
 			HelpSystem.getDefaultErrorUtil().displayError(
-				Resources.getString("WW001"));
+				HelpBaseResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
 		}
@@ -125,7 +125,7 @@ public class DefaultHelpSupport implements IHelp {
 		if (getTocs().length == 0) {
 			// There is no documentation
 			HelpSystem.getDefaultErrorUtil().displayError(
-				Resources.getString("WW001"));
+				HelpBaseResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
 		}
@@ -196,7 +196,7 @@ public class DefaultHelpSupport implements IHelp {
 	void displayHelpURL(String helpURL) {
 		if (!HelpSystem.ensureWebappRunning()) {
 			HelpSystem.getDefaultErrorUtil().displayError(
-				Resources.getString("E043"));
+				HelpBaseResources.getString("E043"));
 			return;
 		}
 

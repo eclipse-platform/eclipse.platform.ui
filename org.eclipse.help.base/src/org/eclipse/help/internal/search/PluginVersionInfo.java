@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.util;
+package org.eclipse.help.internal.search;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 /**
  * Table of plugins. Records all plugins, their version, corresponding fragments versions
  * The values are String in format:

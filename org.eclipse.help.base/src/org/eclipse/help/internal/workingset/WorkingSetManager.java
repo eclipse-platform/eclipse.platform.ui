@@ -19,7 +19,7 @@ import org.apache.xml.serialize.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -261,14 +261,14 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 				return true;
 
 			} catch (SAXException se) {
-				String msg = Resources.getString("E018", stateFile.toString());
+				String msg = HelpBaseResources.getString("E018", stateFile.toString());
 				HelpBasePlugin.logError(msg, se);
-				HelpBasePlugin.logError(Resources.getString("E041"), se);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), se);
 				return false;
 			} catch (IOException ioe) {
-				String msg = Resources.getString("E018", stateFile.toString());
+				String msg = HelpBaseResources.getString("E018", stateFile.toString());
 				HelpBasePlugin.logError(msg, ioe);
-				HelpBasePlugin.logError(Resources.getString("E041"), ioe);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E041"), ioe);
 				return false;
 			}
 		}
@@ -382,7 +382,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			return true;
 		} catch (IOException e) {
 			stateFile.delete();
-			String message = Resources.getString("E40");
+			String message = HelpBaseResources.getString("E40");
 			HelpBasePlugin.logError(message, null);
 			return false;
 		}

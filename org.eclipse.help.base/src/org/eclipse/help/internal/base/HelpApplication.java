@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal;
+package org.eclipse.help.internal.base;
 import java.io.*;
 import java.util.*;
 

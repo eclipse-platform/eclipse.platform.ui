@@ -13,8 +13,7 @@ import java.io.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Browser adapter for browsers supporting
@@ -162,7 +161,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
 				String msg =
-					Resources.getString(
+					HelpBaseResources.getString(
 						"MozillaBrowserAdapter.executeFailed",
 						executableName);
 				HelpBasePlugin.logError(msg, e);

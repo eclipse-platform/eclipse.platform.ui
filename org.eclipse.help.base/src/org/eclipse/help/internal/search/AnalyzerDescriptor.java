@@ -12,8 +12,7 @@ package org.eclipse.help.internal.search;
 
 import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer
@@ -129,7 +128,7 @@ public class AnalyzerDescriptor {
 				}
 			} catch (CoreException ce) {
 				HelpBasePlugin.logError(
-					Resources.getString(
+					HelpBaseResources.getString(
 						"ES23",
 						configElements[i].getAttribute("class"),
 						locale),

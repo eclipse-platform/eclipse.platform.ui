@@ -19,6 +19,8 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -103,7 +105,7 @@ public class SearchIndex {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
 					HelpBasePlugin.logError(
-						Resources.getString("ES25", name),
+						HelpBaseResources.getString("ES25", name),
 						null);
 					return false;
 				}
@@ -127,7 +129,7 @@ public class SearchIndex {
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError(
-				Resources.getString("ES16", name, indexDir.getAbsolutePath()),
+				HelpBaseResources.getString("ES16", name, indexDir.getAbsolutePath()),
 				e);
 			return false;
 		}
@@ -162,7 +164,7 @@ public class SearchIndex {
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(Resources.getString("ES17"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES17"), e);
 			return false;
 		}
 	}
@@ -182,7 +184,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(Resources.getString("ES18"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES18"), e);
 			return false;
 		}
 	}
@@ -201,7 +203,7 @@ public class SearchIndex {
 			indexedDocs.remove(name);
 		} catch (IOException e) {
 			HelpBasePlugin.logError(
-				Resources.getString("ES22", name, indexDir.getAbsolutePath()),
+				HelpBaseResources.getString("ES22", name, indexDir.getAbsolutePath()),
 				e);
 			return false;
 		}
@@ -227,7 +229,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(Resources.getString("ES19"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES19"), e);
 			return false;
 		}
 	}
@@ -250,7 +252,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(Resources.getString("ES20"), e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES20"), e);
 			return false;
 		}
 	}
@@ -295,7 +297,7 @@ public class SearchIndex {
 			}
 		} catch (Exception e) {
 			HelpBasePlugin.logError(
-				Resources.getString("ES21", searchQuery.getSearchWord()),
+				HelpBaseResources.getString("ES21", searchQuery.getSearchWord()),
 				e);
 		}
 	}

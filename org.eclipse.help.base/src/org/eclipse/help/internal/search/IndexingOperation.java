@@ -16,8 +16,9 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.toc.*;
-import org.eclipse.help.internal.util.*;
 
 /**
  * Indexing Operation represents a long operation,
@@ -101,7 +102,7 @@ class IndexingOperation {
 		try {
 			checkCancelled(pm);
 			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-			pm.subTask(Resources.getString("UpdatingIndex"));
+			pm.subTask(HelpBaseResources.getString("UpdatingIndex"));
 			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 				URL doc = (URL) it.next();
 				index.addDocument(getName(doc), doc);
@@ -110,13 +111,13 @@ class IndexingOperation {
 			}
 		} catch (OperationCanceledException oce) {
 			// Need to perform rollback on the index
-			pm.subTask(Resources.getString("Undoing_document_adds"));
+			pm.subTask(HelpBaseResources.getString("Undoing_document_adds"));
 			pm.worked(workTotal);
 			//			if (!index.abortUpdate())
 			//				throw new Exception();
 			throw oce;
 		}
-		pm.subTask(Resources.getString("Writing_index"));
+		pm.subTask(HelpBaseResources.getString("Writing_index"));
 		if (!index.endAddBatch())
 			throw new IndexingException();
 	}
@@ -124,7 +125,7 @@ class IndexingOperation {
 	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
 		throws IndexingException {
 
-		pm.subTask(Resources.getString("Preparing_for_indexing"));
+		pm.subTask(HelpBaseResources.getString("Preparing_for_indexing"));
 		checkCancelled(pm);
 
 		if (numRemoved > 0) {
@@ -133,7 +134,7 @@ class IndexingOperation {
 			try {
 				checkCancelled(pm);
 				pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-				pm.subTask(Resources.getString("UpdatingIndex"));
+				pm.subTask(HelpBaseResources.getString("UpdatingIndex"));
 				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
 					URL doc = (URL) it.next();
 					index.removeDocument(getName(doc));
@@ -142,7 +143,7 @@ class IndexingOperation {
 				}
 			} catch (OperationCanceledException oce) {
 				// Need to perform rollback on the index
-				pm.subTask(Resources.getString("Undoing_document_deletions"));
+				pm.subTask(HelpBaseResources.getString("Undoing_document_deletions"));
 				pm.worked(workTotal);
 				//			if (!index.abortUpdate())
 				//				throw new Exception();

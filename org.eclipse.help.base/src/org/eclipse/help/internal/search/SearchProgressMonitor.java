@@ -15,8 +15,7 @@ import java.util.*;
 import org.apache.lucene.search.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Progress monitor for search
@@ -153,7 +152,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 					progressMonitors.remove(locale);
 					if (BootLoader.isRunning()) {
 						HelpBasePlugin.logError(
-							Resources.getString("search_index_update_error"),
+							HelpBaseResources.getString("search_index_update_error"),
 							e);
 					}else{
 						// Platform has shut down

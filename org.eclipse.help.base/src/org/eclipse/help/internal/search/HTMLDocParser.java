@@ -16,7 +16,7 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.lucene.demo.html.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Parser HTML documents.

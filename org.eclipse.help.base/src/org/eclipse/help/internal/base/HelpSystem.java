@@ -8,17 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal;
+package org.eclipse.help.internal.base;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
+import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -118,7 +119,7 @@ public final class HelpSystem {
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		if (HelpPlugin.DEBUG) {
+		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Help System is shutting down.");
 		}
 		if (getInstance().searchManager != null) {
@@ -132,7 +133,7 @@ public final class HelpSystem {
 		// close any browsers created
 		BrowserManager.getInstance().closeAll();
 
-		if (HelpPlugin.DEBUG) {
+		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Help System is shut down.");
 		}
 	}
@@ -151,20 +152,20 @@ public final class HelpSystem {
 				}
 
 			});
-			HelpPlugin.getDefault().getPluginPreferences();
+			HelpBasePlugin.getDefault().getPluginPreferences();
 		} catch (Exception e) {
-			HelpPlugin.getDefault().getLog().log(
+			HelpBasePlugin.getDefault().getLog().log(
 				new Status(
 					Status.ERROR,
-					HelpPlugin
+					HelpBasePlugin
 						.getDefault()
 						.getDescriptor()
 						.getUniqueIdentifier(),
 					0,
-					Resources.getString("E005"),
+					HelpBaseResources.getString("E005"),
 					e));
 		}
-		if (HelpPlugin.DEBUG) {
+		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Help System started.");
 		}
 	}
@@ -182,7 +183,7 @@ public final class HelpSystem {
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
-					HelpPlugin.logError(Resources.getString("E043"), e);
+					HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e);
 					return false;
 				}
 			}
@@ -190,7 +191,7 @@ public final class HelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				HelpPlugin.logError(Resources.getString("E042"), e);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E042"), e);
 				return false;
 			}
 			getInstance().webappRunning = true;
@@ -291,7 +292,7 @@ public final class HelpSystem {
 									HELP_SUPPORT_CLASS_ATTRIBUTE);
 						} catch (CoreException e) {
 							// may need to change this
-							HelpPlugin.getDefault().getLog().log(e.getStatus());
+							HelpBasePlugin.getDefault().getLog().log(e.getStatus());
 						}
 					}
 				}

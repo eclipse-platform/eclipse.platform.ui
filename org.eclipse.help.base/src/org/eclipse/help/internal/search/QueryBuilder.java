@@ -15,7 +15,7 @@ import java.util.*;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 /**
  * Build query acceptable by the search engine.
  */

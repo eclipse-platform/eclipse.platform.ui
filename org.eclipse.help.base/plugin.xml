@@ -4,7 +4,7 @@
    name="%help_base_plugin_name"
    version="3.0.0"
    provider-name="%providerName"
-   class="org.eclipse.help.internal.HelpBasePlugin">
+   class="org.eclipse.help.internal.base.HelpBasePlugin">
 
    <runtime>
       <library name="helpbase.jar">
@@ -15,7 +15,7 @@
    <requires>
       <import plugin="org.apache.lucene"/>
       <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help" export="true"/>
       <import plugin="org.eclipse.help.appserver"/>
    </requires>
 
@@ -31,7 +31,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.help.internal.HelpApplication">
+               class="org.eclipse.help.internal.base.HelpApplication">
             <parameter
                   name="mode"
                   value="infocenter">
@@ -45,7 +45,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.help.internal.HelpApplication">
+               class="org.eclipse.help.internal.base.HelpApplication">
             <parameter
                   name="mode"
                   value="standalone">
@@ -59,7 +59,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.help.internal.IndexToolApplication">
+               class="org.eclipse.help.internal.base.IndexToolApplication">
          </run>
       </application>
    </extension>

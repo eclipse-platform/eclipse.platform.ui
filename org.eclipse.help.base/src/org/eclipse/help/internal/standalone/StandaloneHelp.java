@@ -12,7 +12,7 @@ package org.eclipse.help.internal.standalone;
 
 import java.util.List;
 
-import org.eclipse.help.internal.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * This is a standalone help system. It takes care of 

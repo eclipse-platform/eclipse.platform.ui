@@ -15,8 +15,7 @@ import java.util.*;
 
 import org.apache.lucene.analysis.*;
 import org.eclipse.core.boot.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 /**
  * Lucene Analyzer.
  * LowerCaseTokenizer->WordTokenStream (uses word breaking in java.text)
@@ -65,7 +64,7 @@ public class DefaultAnalyzer extends Analyzer {
 		if (locale == null) {
 			// Locale is not supported, will use en_US
 			HelpBasePlugin.logError(
-				Resources.getString("ES24", localeString),
+				HelpBaseResources.getString("ES24", localeString),
 				null);
 			locale = new Locale("en", "US");
 		}

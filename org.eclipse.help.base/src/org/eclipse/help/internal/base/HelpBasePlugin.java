@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal;
+package org.eclipse.help.internal.base;
 import org.eclipse.core.runtime.*;
 /**
  * Simple plugin for help system.

@@ -11,8 +11,7 @@
 package org.eclipse.help.internal.browser;
 import java.io.*;
 
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Used to receive output from processes
@@ -34,7 +33,7 @@ public class StreamConsumer extends Thread {
 			}
 			bReader.close();
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError(Resources.getString("WE001"), ioe);
+			HelpBasePlugin.logError(HelpBaseResources.getString("WE001"), ioe);
 		}
 	}
 	/**

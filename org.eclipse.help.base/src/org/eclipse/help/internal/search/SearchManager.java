@@ -13,8 +13,7 @@ package org.eclipse.help.internal.search;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Manages indexing and search for all infosets
@@ -148,7 +147,7 @@ public class SearchManager {
 				} catch (OperationCanceledException oce) {
 					progressDistrib.operationCanceled();
 					HelpBasePlugin.logWarning(
-						Resources.getString("Search_cancelled"));
+						HelpBaseResources.getString("Search_cancelled"));
 					throw oce;
 				}
 			}

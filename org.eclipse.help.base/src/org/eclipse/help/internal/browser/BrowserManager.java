@@ -13,8 +13,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Creates browser by delegating
@@ -104,7 +103,7 @@ public class BrowserManager {
 						}
 						public void displayURL(String url) {
 							String msg =
-								Resources.getString("no_browsers", url);
+								HelpBaseResources.getString("no_browsers", url);
 							HelpBasePlugin.logError(msg, null);
 							HelpSystem.getDefaultErrorUtil().displayError(msg);
 						}

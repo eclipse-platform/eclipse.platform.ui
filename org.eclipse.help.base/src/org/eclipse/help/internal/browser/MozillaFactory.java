@@ -14,8 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
 public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	private String executable;
 	private String executableName;
@@ -116,7 +115,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 					IStatus.ERROR,
 					HelpBasePlugin.PLUGIN_ID,
 					IStatus.OK,
-					Resources.getString("MozillaFactory.dataMissing"),
+					HelpBaseResources.getString("MozillaFactory.dataMissing"),
 					e));
 		}
 	}
