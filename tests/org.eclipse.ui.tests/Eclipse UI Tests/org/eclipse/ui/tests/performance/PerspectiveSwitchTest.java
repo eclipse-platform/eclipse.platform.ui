@@ -27,6 +27,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
     private String id1;
     private String id2;
+    private String activeEditor;
 
     /**
      * Constructor.
@@ -34,9 +35,10 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
      * @param id
      */
     public PerspectiveSwitchTest(String [] ids) {
-        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1]);
+        super("testPerspectiveSwitch:" + ids[0] + "," + ids[1] + ",editor " + ids[2]);
         this.id1 = ids[0];
         this.id2 = ids[1];
+        this.activeEditor = ids[2];
     }
 	
     /**
@@ -51,9 +53,23 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         final IPerspectiveDescriptor perspective2 = registry
                 .findPerspectiveWithId(id2);
 
+        // Don't fail if we reference an unknown perspective ID. This can be
+        // a normal occurrance since the test suites reference JDT perspectives, which
+        // might not exist. Just skip the test.
+        if (perspective1 == null) {
+            System.out.println("Unknown perspective ID: " + id1);
+            return;
+        }
+
+        if (perspective2 == null) {
+            System.out.println("Unknown perspective ID: " + id2);
+            return;
+        }
+        
         // Open a file.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
+        //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
+        IFile aFile = getProject().getFile(activeEditor);
         assertTrue(aFile.exists());
 
         IDE.openEditor(activePage, aFile, true);

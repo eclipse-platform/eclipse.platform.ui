@@ -14,13 +14,36 @@ package org.eclipse.ui.tests.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
+import org.eclipse.ui.tests.performance.layout.LayoutTest;
+import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
+import org.eclipse.ui.tests.performance.layout.ResizeTest;
+import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
+import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
+
 /**
  * @since 3.1
  */
 class WorkbenchPerformanceSuite extends TestSuite {
 
-    public static final String [] PERSPECTIVE_IDS = {UIPerformanceTestSetup.PERSPECTIVE, "org.eclipse.ui.resourcePerspective"};
-    public static final String [][] PERSPECTIVE_SWITCH_PAIRS = {{"org.eclipse.ui.tests.dnd.dragdrop", "org.eclipse.ui.tests.fastview_perspective"}};
+    // Note: to test perspective switching properly, we need perspectives with lots of
+    // associated actions. 
+    public static final String [] PERSPECTIVE_IDS = {
+        UIPerformanceTestSetup.PERSPECTIVE, 
+        "org.eclipse.ui.resourcePerspective",
+        "org.eclipse.jdt.ui.JavaPerspective", 
+        "org.eclipse.debug.ui.DebugPerspective"};
+    
+    public static final String [][] PERSPECTIVE_SWITCH_PAIRS = {
+        {"org.eclipse.ui.tests.dnd.dragdrop", "org.eclipse.ui.tests.fastview_perspective", "1.perf_basic"},
+        {"org.eclipse.ui.resourcePerspective", "org.eclipse.jdt.ui.JavaPerspective", "1.java"},
+        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"}};
+    
+    public static final String[] VIEW_IDS = {
+        "org.eclipse.ui.views.ProblemView",
+        "org.eclipse.ui.views.ResourceNavigator"
+    };
     public static final int ITERATIONS = 100;
     
     /**
@@ -34,8 +57,9 @@ class WorkbenchPerformanceSuite extends TestSuite {
      * 
      */
     public WorkbenchPerformanceSuite() {
-        addPerspectiveOpenCloseScenarios();
+        addResizeScenarios();
         addPerspectiveSwitchScenarios();
+        addPerspectiveOpenCloseScenarios();
         addWindowOpeningScenarios();
     }
 
@@ -63,5 +87,49 @@ class WorkbenchPerformanceSuite extends TestSuite {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
             addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i]));            
         }   
+    }
+    
+    /**
+     * Add performance tests for the layout of the given widget 
+     * 
+     * @param factory
+     * @since 3.1
+     */
+    private void addLayoutScenarios(TestWidgetFactory factory) {
+        // Test preferred size
+        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, SWT.DEFAULT, false));
+        
+        // Wrapping tests
+        addTest(new ComputeSizeTest(factory, 256, SWT.DEFAULT, false));
+        
+        // Vertical wrapping
+        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, 256, false));
+        
+        // Test both dimensions known
+        addTest(new ComputeSizeTest(factory, 256, 256, false));
+        
+        // Determine the effect of flushing the cache
+        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, SWT.DEFAULT, true));
+        
+        // Test layout(false)
+        addTest(new LayoutTest(factory, false));
+        
+        // Test layout(true)
+        addTest(new LayoutTest(factory, true));
+        
+        // Test resizing
+        addTest(new ResizeTest(factory));
+    }
+    
+    /**
+     * 
+     */
+    private void addResizeScenarios() {
+        for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {            
+            addTest(new ResizeTest(new PerspectiveWidgetFactory(PERSPECTIVE_IDS[i])));
+        }
+        for (int i = 0; i < VIEW_IDS.length; i++) {
+            addTest(new ResizeTest(new ViewWidgetFactory(VIEW_IDS[i])));
+        }
     }
 }

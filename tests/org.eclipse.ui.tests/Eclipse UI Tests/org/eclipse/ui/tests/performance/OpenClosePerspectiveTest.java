@@ -43,6 +43,14 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         final IPerspectiveDescriptor perspective1 = registry
                 .findPerspectiveWithId(id);
 
+        // Don't fail if we reference an unknown perspective ID. This can be
+        // a normal occurrance since the test suites reference JDT perspectives, which
+        // might not exist.
+        if (perspective1 == null) {
+            System.out.println("Unknown perspective id: " + id);
+            return;
+        }
+        
         // create a nice clean window.
         IWorkbenchWindow window = openTestWindow(EmptyPerspective.PERSP_ID);          
         IWorkbenchPage activePage = window.getActivePage();

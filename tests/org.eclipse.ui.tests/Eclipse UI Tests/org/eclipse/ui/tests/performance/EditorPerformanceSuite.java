@@ -19,8 +19,10 @@ import junit.framework.TestSuite;
  */
 public class EditorPerformanceSuite extends TestSuite {
     
-    public static final String [] EDITOR_FILE_EXTENSIONS = {"perf_basic", "perf_outline"};
-    public static final String [][] EDITOR_SWITCH_PAIRS = {{"perf_basic", "perf_outline"}};
+    public static final String [] EDITOR_FILE_EXTENSIONS = {"perf_basic", "perf_outline", "java"};
+    public static final String [][] EDITOR_SWITCH_PAIRS = {
+        {"perf_outline", "java"},
+        {"perf_basic", "perf_outline"}};
     public static final int ITERATIONS = 100;
     
     /**
@@ -36,6 +38,17 @@ public class EditorPerformanceSuite extends TestSuite {
         addOpenMultipleScenarios(true);
         addOpenMultipleScenarios(false);
     }
+
+    // Commented out: these tests don't seem to be working 
+//    /**
+//     * 
+//     * @since 3.1
+//     */
+//    private void addResizeScenarios() {
+//        for (int i = 0; i < EDITOR_FILE_EXTENSIONS.length; i++) {
+//            addTest(new ResizeTest(new EditorWidgetFactory("1." + EDITOR_FILE_EXTENSIONS[i])));            
+//        }               
+//    }
 
     /**
      * 
