@@ -12,7 +12,6 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality
