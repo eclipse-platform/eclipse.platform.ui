@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.dialogs;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -170,6 +171,8 @@ public class CheatSheetSelectionDialog extends SelectionDialog {
 				okPressed();
 			}
 		});
+		
+		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 

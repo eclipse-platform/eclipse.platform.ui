@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
@@ -143,6 +144,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 			// we only set focus if a selection was restored
 			categoryTreeViewer.getTree().setFocus();
 
+		Dialog.applyDialogFont(outerContainer);
 		return outerContainer;
 	}
 
