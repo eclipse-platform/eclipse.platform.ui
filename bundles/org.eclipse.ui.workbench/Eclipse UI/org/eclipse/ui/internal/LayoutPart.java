@@ -237,6 +237,15 @@ abstract public class LayoutPart {
 		    if (makeVisible == ctrl.getVisible())
 		        return;
 
+		    if (!makeVisible) {
+		        // Workaround for Bug 60970 [EditorMgmt] setActive() called on an editor when it does not have focus.
+		        // Force focus on the shell so that when ctrl is hidden,
+		        // SWT does not try to send focus elsewhere, which may cause
+		        // some other part to be activated, which affects the part
+		        // activation order and can cause flicker.
+		        ctrl.getShell().forceFocus();
+		    }
+		    
 			ctrl.setVisible(makeVisible);
 			final Object[] listeners = propertyListeners.getListeners();
 			if (listeners.length > 0) {
