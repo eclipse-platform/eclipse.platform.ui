@@ -42,7 +42,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 	private CVSWizardPage dummyPage;
 	
 	public CheckoutWizard() {
-		setWindowTitle("Checkout from CVS"); //$NON-NLS-1$
+		setWindowTitle(Policy.bind("CheckoutWizard.0")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
