@@ -263,7 +263,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(workbenchPartSiteCommandSupport.getMutableCommandHandlerService(), workbenchPartSiteContextSupport.getMutableContextActivationService());
+			keyBindingService = new KeyBindingService(getId(), workbenchPartSiteCommandSupport.getMutableCommandHandlerService(), workbenchPartSiteContextSupport.getMutableContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();

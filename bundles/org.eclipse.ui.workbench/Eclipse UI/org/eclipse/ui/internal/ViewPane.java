@@ -961,7 +961,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				int j = text.lastIndexOf(')');
 				
 				if (i > 0 && j > 0 && j > i)
-					text = text.substring(i + 1, j - 1).trim();
+					text = text.substring(i + 1, j).trim();
 				else 
 					text = null;
 			}

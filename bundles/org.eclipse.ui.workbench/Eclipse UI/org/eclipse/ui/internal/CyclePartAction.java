@@ -399,7 +399,7 @@ public class CyclePartAction extends PageEventAction {
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
-			workbench.getCommandSupport().disableKeyFilter();
+			workbench.getCommandSupport().setKeyFilterEnabled(false);
 			addKeyListener(table, dialog);
 			addTraverseListener(table);
 
@@ -409,7 +409,7 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if (!dialog.isDisposed())
 				cancel(dialog);
-			workbench.getCommandSupport().enableKeyFilter();
+			workbench.getCommandSupport().setKeyFilterEnabled(true);
 		}
 	}
 

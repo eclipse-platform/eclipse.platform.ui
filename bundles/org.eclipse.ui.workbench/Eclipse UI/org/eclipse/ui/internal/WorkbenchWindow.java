@@ -80,6 +80,8 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
@@ -322,10 +324,25 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		setHandlersByCommandId();
 	}
 
+	List handlerSubmissions = new ArrayList();
+	
 	void setHandlersByCommandId() {
 		Map handlersByCommandId = new HashMap();
 		handlersByCommandId.putAll(actionSetHandlersByCommandId);
-		handlersByCommandId.putAll(globalActionHandlersByCommandId);
+		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
+		List handlerSubmissions = new ArrayList();
+		
+		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String commandId = (String) entry.getKey();
+            IHandler handler = (IHandler) entry.getValue();
+            handlerSubmissions.add(new HandlerSubmission(null, null, commandId, handler, 5));
+        }
+		
+		Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(this.handlerSubmissions);
+		this.handlerSubmissions = handlerSubmissions;
+		Workbench.getInstance().getCommandSupport().addHandlerSubmissions(this.handlerSubmissions);		
+		
 		actionSetAndGlobalActionCommandHandlerService.setHandlersByCommandId(handlersByCommandId);
 	}	
 	
@@ -1485,7 +1502,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				shortcutBarControl.setEnabled(false);
 
 			if (keyFilterEnabled)
-				commandSupport.disableKeyFilter();
+				commandSupport.setKeyFilterEnabled(false);
 
 			super.run(fork, cancelable, runnable);
 		} finally {
@@ -1493,7 +1510,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
 
 			if (keyFilterEnabled)
-				commandSupport.enableKeyFilter();
+				commandSupport.setKeyFilterEnabled(true);
 		}
 	}
 	/**
