@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -76,6 +77,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String RUNNING_JOB = "runstate.gif"; //$NON-NLS-1$
 	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
+	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
 
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
@@ -87,6 +89,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
 	private static final String RUNNING_JOB_KEY = "RUNNING_JOB"; //$NON-NLS-1$
 	private static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
+	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
 	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
@@ -95,12 +98,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Get the progress manager currently in use.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @return JobProgressManager
 	 */
 	public static ProgressManager getInstance() {
@@ -113,7 +110,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
 	 */
-	private class JobMonitor implements IProgressMonitor {
+	private class JobMonitor implements IProgressMonitorWithBlocking {
 		Job job;
 		boolean cancelled = false;
 		IProgressMonitor workbenchMonitor;
@@ -219,6 +216,25 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		public void worked(int work) {
 			internalWorked(work);
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+		 */
+		public void clearBlocked() {
+			JobInfo info = getJobInfo(job);
+			info.setBlockedStatus(null);
+			refresh(info);
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+			JobInfo info = getJobInfo(job);
+			info.setBlockedStatus(null);
+			refresh(info);
+		}
 	}
 
 	/**
@@ -241,6 +257,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, ERROR_JOB, ERROR_JOB_KEY);
+			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 
 		} catch (MalformedURLException e) {
 			ProgressUtil.logException(e);
@@ -691,6 +708,8 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 				int index = Math.min(4, (done / 20));
 				return JFaceResources.getImage(keys[index]);
 			} else {
+				if (info.isBlocked())
+					return JFaceResources.getImage(BLOCKED_JOB_KEY);
 				if (info.getErrorStatus() != null)
 					return JFaceResources.getImage(ERROR_JOB_KEY);
 				int state = info.getJob().getState();
