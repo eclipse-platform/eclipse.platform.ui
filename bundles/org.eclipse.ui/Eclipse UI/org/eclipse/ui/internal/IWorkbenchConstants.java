@@ -133,4 +133,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PERSISTABLE = "persistable";	//$NON-NLS-1$
 	public static final String TAG_MRU_LIST = "mruList";	//$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_HISTORY = "perspHistory";	//$NON-NLS-1$	
+	public static final String TAG_WORKING_SETS = "workingSets";	//$NON-NLS-1$	
+	public static final String TAG_WORKING_SET = "workingSet";	//$NON-NLS-1$		
+	public static final String TAG_ITEM = "item";	//$NON-NLS-1$			
 }

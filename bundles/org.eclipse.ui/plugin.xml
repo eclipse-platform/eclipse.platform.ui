@@ -332,6 +332,10 @@
             class="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"
             id="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory">
       </factory>
+      <factory
+            class="org.eclipse.ui.internal.WorkingSetFactory"
+            id="org.eclipse.ui.internal.WorkingSetFactory">
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.markerUpdaters">

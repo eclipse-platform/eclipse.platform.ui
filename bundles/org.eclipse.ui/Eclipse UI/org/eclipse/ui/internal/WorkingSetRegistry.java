@@ -44,7 +44,6 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 	public void add(IWorkingSet workingSet) {
 		Assert.isTrue(!workingSets.contains(workingSet), "working set already registered"); //$NON-NLS-1$
 		workingSets.add(workingSet);
-		saveWorkingSets();
 		firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
 	}
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
@@ -127,7 +126,6 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 	 */
 	public void remove(IWorkingSet workingSet) {
 		workingSets.remove(workingSet);
-		saveWorkingSets();
 		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
 	}
 
@@ -160,58 +158,61 @@ public class WorkingSetRegistry implements IWorkingSetRegistry, IResourceChangeL
 		
 	}
 	
-	//--- Persistency -----------------------------------------------
+	//--- Persistence -----------------------------------------------
 
-	private void restore() {
-/*		WorkingSetReader reader = null;
-		IWorkingSet[] workingSets = null;
-		try {
-			File file = SearchPlugin.getDefault().getStateLocation().append(STORE_NAME).toFile();
-			if (!file.exists())
-				return;
-			reader = new WorkingSetReader(new BufferedInputStream(new FileInputStream(file)));
-			workingSets = reader.readXML();
-		} catch (IOException ex) {
-			String message = WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
-			ExceptionHandler.log(ex, message);
-		} catch (SAXException ex) {
-			String message = WorkingSetMessages.getFormattedString("WorkingSet.error.badXmlFormat", ex.getMessage()); //$NON-NLS-1$
-			ExceptionHandler.log(ex, message);
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-			} catch (IOException ex) {
-				String message = WorkingSetMessages.getFormattedString("WorkingSet.error.close", ex.getMessage()); //$NON-NLS-1$
-				ExceptionHandler.log(ex, message);
+	public void restoreState(IMemento memento) {
+		IMemento [] workingSets = memento.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+		
+		for (int i = 0; i < workingSets.length; i ++) {
+			IMemento workingSetMemento = workingSets[i];
+			String factoryID = workingSetMemento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+			
+			if (factoryID == null) {
+				WorkbenchPlugin.log("Unable to restore working set - no factory ID.");//$NON-NLS-1$
+				continue;
 			}
+			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+			if (factory == null) {
+				WorkbenchPlugin.log("Unable to restore working set - cannot instantiate factory: " + factoryID);//$NON-NLS-1$
+				continue;
+			}
+			IAdaptable input = factory.createElement(workingSetMemento);
+			if (input == null) {
+				WorkbenchPlugin.log("Unable to restore working set - cannot instantiate working set: " + factoryID);//$NON-NLS-1$
+				continue;
+			}
+			if ((input instanceof IWorkingSet) == false) {
+				WorkbenchPlugin.log("Unable to restore working set - element is not an IWorkingSet: " + factoryID);//$NON-NLS-1$
+				continue;
+			}
+			add((IWorkingSet) input);
 		}
-		if (workingSets != null)
-			for (int i = 0; i < workingSets.length; i++)
-				WorkingSet.add(workingSets[i]);*/
 	}
 
 	/* 
 	 * For use by WorkingSet#setName/#setItems
 	 */
-	public void saveWorkingSets() {
-/*		WorkingSetWriter writer = null;
-		try {
-			File file = SearchPlugin.getDefault().getStateLocation().append(STORE_NAME).toFile();
-			writer = new WorkingSetWriter(new BufferedOutputStream(new FileOutputStream(file)));
-			writer.writeXML(SearchUI.getWorkingSets());
-		} catch (IOException ex) {
-			String message = WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
-			ExceptionHandler.log(ex, message);
-		} finally {
-			if (writer != null)
-				try {
-					writer.close();
-				} catch (IOException ex) {
-					String message = WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
-					ExceptionHandler.log(ex, message);
-				}
-		}*/
+	public void saveState(IMemento memento) {
+		Iterator iterator = workingSets.iterator();
+
+		while (iterator.hasNext()) {
+			IWorkingSet workingSet = (IWorkingSet) iterator.next();
+			IPersistableElement persistable = null;
+
+			if (workingSet instanceof IPersistableElement) {
+				persistable = (IPersistableElement) workingSet;
+			}
+			else 
+			if (workingSet instanceof IAdaptable) {
+				persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
+			}
+			if (persistable != null) {
+				IMemento workingSetMemento = memento.createChild(IWorkbenchConstants.TAG_WORKING_SET);
+
+				workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+				persistable.saveState(workingSetMemento);
+			}
+		}
 	}
 	/**
 	 * @see IResourceDeltaVisitor#visit(IResourceDelta)

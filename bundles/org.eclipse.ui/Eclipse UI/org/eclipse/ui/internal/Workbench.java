@@ -647,6 +647,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @see IPersistable
 	 */
 	public void restoreState(IMemento memento) {
+		IMemento workingSetsMemento = memento.getChild(IWorkbenchConstants.TAG_WORKING_SETS); //$NON-NLS-1$
+		if (workingSetsMemento != null) {
+			IWorkingSetRegistry workingSetRegistry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+			if (workingSetRegistry instanceof WorkingSetRegistry) {
+				((WorkingSetRegistry) workingSetRegistry).restoreState(workingSetsMemento);
+			}
+		}
+
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
@@ -732,6 +740,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)); //$NON-NLS-1$
 		// Save perspective history.
 		getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY)); //$NON-NLS-1$
+
+		IWorkingSetRegistry workingSetRegistry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		if (workingSetRegistry instanceof WorkingSetRegistry) {
+			((WorkingSetRegistry) workingSetRegistry).saveState(memento.createChild(IWorkbenchConstants.TAG_WORKING_SETS)); //$NON-NLS-1$
+		}
 	}
 	/**
 	 * Save the workbench UI in a persistence file.
