@@ -42,41 +42,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class MoveLinesAction extends ResourceAction implements IUpdate {
 	
 	/**
-	 * Describes a text change with sufficient precision so the <code>ExitStrategy</code> can 
-	 * determine whether a received <code>DocumentEvent</code> is a result of this action or
-	 * originates from another edition
-	 */
-	private static class EditDescription {
-		private int fOffset;
-		private int fLength;
-		private int fReplacementLength;
-		
-		/** Creates a description that will not correspond to any <code>DocumentEvent</code>. */
-		public EditDescription() {
-			this(-1, -1, -1);
-		}
-		
-		/** Creates a description. */
-		public EditDescription(int offset, int length, int replacementLength) {
-			fOffset= offset;
-			fLength= length;
-			fReplacementLength= replacementLength;
-		}
-		
-		/**
-		 * Returns <code>true</code> if <code>event</code> was triggered by the edition described
-		 * by this instance.
-		 * 
-		 * @param event a <code>DocumentEvent</code>
-		 * @return <code>true</code> if <code>event</code> corresponds to this edition description
-		 */
-		public boolean correspondsTo(DocumentEvent event) {
-			int replacementLength= event.fText == null ? 0 : event.fText.length();
-			return fOffset == event.fOffset && fLength == event.fLength && fReplacementLength == replacementLength;
-		}
-	}
-
-	/**
 	 * Detects the end of a compound edit command. The user is assumed to have ended the command
 	 * when
 	 * <ul>

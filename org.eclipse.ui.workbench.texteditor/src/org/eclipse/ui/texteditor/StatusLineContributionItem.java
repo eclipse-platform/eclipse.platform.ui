@@ -44,7 +44,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			if (fActionHandler != null && fActionHandler.isEnabled())
 				fActionHandler.run();
 		}
-	};
+	}
 	
 	/**
 	 * Left and right margin used in CLabel.

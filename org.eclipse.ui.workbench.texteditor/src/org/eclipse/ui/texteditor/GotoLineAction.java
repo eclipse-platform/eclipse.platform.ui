@@ -73,7 +73,7 @@ public class GotoLineAction extends TextEditorAction {
 			
 			return null;
 		}
-	};
+	}
 	
 	/**
 	 * Standard input dialog which additionally sets the focus to the
@@ -99,7 +99,7 @@ public class GotoLineAction extends TextEditorAction {
 			applyDialogFont(result);
 			return result;
 		}
-	};
+	}
 	
 	/** The biggest valid line number of the presented document */
 	private int fLastLine;

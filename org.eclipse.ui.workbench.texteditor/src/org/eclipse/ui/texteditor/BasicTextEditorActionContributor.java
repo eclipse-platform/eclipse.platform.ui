@@ -189,7 +189,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			statusField.setActionHandler(getAction(editor, STATUSFIELDS[i][1]));
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
 				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-				extension.setStatusField((IStatusField) statusField, STATUSFIELDS[i][0]);
+				extension.setStatusField(statusField, STATUSFIELDS[i][0]);
 			}
 		}
 	}

@@ -40,7 +40,7 @@ class EditorStatusLine implements IEditorStatusLine {
 			Assert.isTrue(this == fStatusLineClearer);
 			uninstallStatusLineClearer();
 		}
-	};
+	}
 
 	/** The status line manager. */
 	private final IStatusLineManager fStatusLineManager;

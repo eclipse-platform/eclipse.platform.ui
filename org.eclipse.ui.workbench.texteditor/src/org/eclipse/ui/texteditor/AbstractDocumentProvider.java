@@ -29,7 +29,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -123,7 +122,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			 */
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
-		};
+		}
 		
 	
 	/** 
@@ -452,7 +451,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info != null) {
 			
 			if (info.fDocument != document) {
-				Status status= new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, IResourceStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
+				Status status= new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, IStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
 				throw new CoreException(status);				
 			}
 			

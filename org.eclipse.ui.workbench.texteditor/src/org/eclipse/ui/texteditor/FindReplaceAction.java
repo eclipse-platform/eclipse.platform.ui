@@ -154,7 +154,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 		 */
 		public void partBroughtToTop(IWorkbenchPart part) {}		
-	};
+	}
 	
 	
 	/** Lister for disabling the dialog on editor close */

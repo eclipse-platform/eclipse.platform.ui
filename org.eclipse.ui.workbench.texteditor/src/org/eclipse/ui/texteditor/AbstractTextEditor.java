@@ -215,7 +215,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (! validateEditorInputState())
 							e.doit= false;
 					}
-			};
+			}
 		
 		/**
 		 * The listener's validator.
@@ -351,7 +351,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (element != null && element.equals(getEditorInput()))
 				enableSanityChecking(true);
 		}
-	};
+	}
 	
 	/**
 	 * Internal text listener for updating all content dependent
@@ -416,7 +416,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fTextEventQueue.add(event);
 			fDisplay.asyncExec(fRunnable);
 		}
-	};
+	}
 	
 	/**
 	 * Compare configuration elements according to the prerequisite relation
@@ -496,7 +496,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void propertyChange(PropertyChangeEvent event) {
 			handlePreferenceStoreChanged(event);
 		}
-	};
+	}
 
 	/**
 	 * Internal property change listener for handling workbench font changes.
@@ -515,7 +515,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (getFontPropertyPreferenceKey().equals(property))
 				initializeViewerFont(fSourceViewer);
 		}
-	};
+	}
 
 	/**
 	 * Internal key verify listener for triggering action activation codes.
@@ -633,7 +633,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (keyBindingScopes != null && keyBindingScopes.length > 0)
 				fKeyBindingService.setScopes(keyBindingScopes);
 		}
-	};
+	}
 	
 	/**
 	 * Representation of action activation codes.
@@ -666,7 +666,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						(fKeyCode == -1 || event.keyCode == fKeyCode) &&
 						(fStateMask == SWT.DEFAULT || event.stateMask == fStateMask));
 		}		
-	};
+	}
 	
 	/**
 	 * Internal part and shell activation listener for triggering state validation.
@@ -744,7 +744,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -752,7 +752,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	interface ICursorListener extends MouseListener, KeyListener {
-	};
+	}
 	
 	/**
 	 * Maps an action definition id to an StyledText action.
@@ -790,7 +790,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public int getAction() {
 			return fAction;
 		}
-	};
+	}
 	
 	/**
 	 * Internal action to scroll the editor's viewer by a specified number of lines.
@@ -819,7 +819,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
 			viewer.setTopIndex(newTopIndex);
 		}
-	};
+	}
 	
 	/**
 	 * Action to toggle the insert mode.
@@ -837,7 +837,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void run() {	
 			switchToNextInsertMode();
 		}
-	};
+	}
 
 	/**
 	 * This action implements smart end.
@@ -946,7 +946,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			event.y= st.getSelection().y;
 			st.notifyListeners(SWT.Selection, event);
 		}
-	};
+	}
 
 	/**
 	 * This action implements smart home.
@@ -1049,7 +1049,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			st.notifyListeners(SWT.Selection, event);
 		}
 
-	};
+	}
 	
 	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
@@ -1077,7 +1077,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fRulerContextMenu.setLocation(location.x, location.y);
 			fRulerContextMenu.setVisible(true);
 		}		
-	};
+	}
 	
 	
 	/** 
@@ -1139,7 +1139,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Key used to look up font preference.
@@ -1260,7 +1260,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public String toString() {
 			return String.valueOf(fValue);
 		}
-	};
+	}
 	/** The pattern used to show the position label in the status line. */
 	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
 	/** The position label value of the current line. */
@@ -3560,7 +3560,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		StyledText textWidget= getSourceViewer().getTextWidget();
 		for (int i= 0; i < ACTION_MAP.length; i++) {
-			IdMapEntry entry= (IdMapEntry) ACTION_MAP[i];
+			IdMapEntry entry= ACTION_MAP[i];
 			action= new TextNavigationAction(textWidget, entry.getAction());
 			action.setActionDefinitionId(entry.getActionId());
 			setAction(entry.getActionId(), action);

@@ -188,4 +188,4 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	public boolean validateTargetState() {
 		return fEditor.validateEditorInputState();
 	}
-};
+}

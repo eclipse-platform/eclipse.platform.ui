@@ -55,7 +55,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 				handleCoreException(x, EditorMessages.getString("ResourceMarkerAnnotationModel.resourceChanged")); //$NON-NLS-1$
 			}
 		}
-	};
+	}
 	
 	/**
 	 * Internal resource delta visitor.
@@ -73,7 +73,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 			return true;
 		}
-	};
+	}
 	
 	/** The workspace. */
 	private IWorkspace fWorkspace;

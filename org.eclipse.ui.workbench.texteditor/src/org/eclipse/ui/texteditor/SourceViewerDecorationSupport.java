@@ -56,7 +56,7 @@ public class SourceViewerDecorationSupport {
 			if (fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
 				fMarginPainter.initialize();
 		}
-	};
+	}
 
 	
 	/** The viewer */
