@@ -31,7 +31,7 @@ public interface IUpdateSearchQuery {
  * @return the query-specific site adapter or <samp>null</samp> if
  * not specified.
  */
-	public IUpdateSiteAdapter getQuerySearchSite();
+	public IQueryUpdateSiteAdapter getQuerySearchSite();
 
 /**
  * Executes the query. The implementors should scan the provided

@@ -26,6 +26,7 @@ import org.eclipse.update.internal.search.UpdateSiteAdapter;
 
 public class UpdateSearchScope {
 	private Vector sites;
+	private URL updateMapURL;
 
 	private static class UpdateSearchSite
 		extends UpdateSiteAdapter
@@ -49,6 +50,31 @@ public class UpdateSearchScope {
 	 */
 	public UpdateSearchScope() {
 		sites = new Vector();
+	}
+
+	/**
+	 * Sets the optional URL of the update map file. This file
+	 * is used to redirect search for new updates to other
+	 * servers and is typically used when a local
+	 * update site proxy (possibly behind the firewall) is
+	 * set up.
+	 * @param url the url of the Java properties file that
+	 * contains the redirection information.
+	 */
+	
+	public void setUpdateMapURL(URL url) {
+		this.updateMapURL = url;
+	}
+	
+	/**
+	 * Returns the optional URL of the update map file. By 
+	 * default, no map file is set.
+	 * @return the URL of the map file or <samp>null</samp>
+	 * if not set.
+	 */
+	
+	public URL getUpdateMapURL() {
+		return updateMapURL;
 	}
 
 	/**

@@ -134,7 +134,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		}
 	}
 
-	class Hit {
+	private static class Hit {
 		IFeature candidate;
 		IFeatureReference ref;
 		boolean patch;
@@ -161,7 +161,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		}
 	}
 
-	class HitSorter extends Sorter {
+	private class HitSorter extends Sorter {
 		public boolean compare(Object left, Object right) {
 			Hit hit1 = (Hit) left;
 			Hit hit2 = (Hit) right;
@@ -177,7 +177,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 
 	class UpdateQuery implements IUpdateSearchQuery {
 		IFeature candidate;
-		IUpdateSiteAdapter adapter;
+		IQueryUpdateSiteAdapter adapter;
 		int match = IImport.RULE_PERFECT;
 
 		public UpdateQuery(
@@ -188,9 +188,10 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			this.match = match;
 			if (updateEntry != null && updateEntry.getURL() != null)
 				adapter =
-					new UpdateSiteAdapter(
+					new QueryUpdateSiteAdapter(
 						getLabelForEntry(updateEntry),
-						updateEntry.getURL());
+						updateEntry.getURL(),
+						candidate.getVersionedIdentifier().getIdentifier());
 		}
 		private String getLabelForEntry(IURLEntry entry) {
 			String label = entry.getAnnotation();
@@ -199,7 +200,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			return label;
 		}
 
-		public IUpdateSiteAdapter getQuerySearchSite() {
+		public IQueryUpdateSiteAdapter getQuerySearchSite() {
 			return adapter;
 		}
 		private boolean isBroken() {

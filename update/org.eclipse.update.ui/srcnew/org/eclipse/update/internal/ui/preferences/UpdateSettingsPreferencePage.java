@@ -96,6 +96,7 @@ public class UpdateSettingsPreferencePage
 			pref.setValue(UpdateManager.P_MAPPINGS_FILE, text);
 		else
 			pref.setToDefault(UpdateManager.P_MAPPINGS_FILE);
+		UpdateCore.getPlugin().savePluginPreferences();
 		return true;
 	}
 

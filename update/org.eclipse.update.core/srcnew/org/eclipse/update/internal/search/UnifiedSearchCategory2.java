@@ -79,7 +79,7 @@ public class UnifiedSearchCategory2 extends UpdateSearchCategory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.update.internal.ui.search.ISearchQuery#getSearchSite()
 		 */
-		public IUpdateSiteAdapter getQuerySearchSite() {
+		public IQueryUpdateSiteAdapter getQuerySearchSite() {
 			return null;
 		}
 	}

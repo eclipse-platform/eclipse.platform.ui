@@ -6,13 +6,18 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import java.net.*;
+
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
 
@@ -54,11 +59,25 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 	private void initializeSearch() {
 		if (searchRequest!=null) return;
 		UpdateSearchScope scope = new UpdateSearchScope();
+		scope.setUpdateMapURL(getUpdateMapURL());
 		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
 		searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());
 	}
-
+	
+	private URL getUpdateMapURL() {
+		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
+		String mapFile = pref.getString(UpdateManager.P_MAPPINGS_FILE);
+		if (mapFile!=null && mapFile.length()>0) {
+			try {
+				String decodedFile = URLDecoder.decode(mapFile);
+				return new URL(decodedFile);
+			}
+			catch (MalformedURLException e) {
+			}
+		}
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.internal.ui.wizards.BannerPage#createContents(org.eclipse.swt.widgets.Composite)

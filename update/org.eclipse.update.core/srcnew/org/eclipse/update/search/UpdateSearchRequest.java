@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.search.UpdateMap;
 
 /**
  * This class is central to update search. The search pattern
@@ -133,6 +134,7 @@ public class UpdateSearchRequest {
 		searchInProgress = true;
 		IUpdateSearchQuery[] queries = category.getQueries();
 		IUpdateSearchSite[] candidates = scope.getSearchSites();
+		URL updateMapURL = scope.getUpdateMapURL();
 
 		if (!monitor.isCanceled()) {
 			int nsearchsites = 0;
@@ -141,19 +143,29 @@ public class UpdateSearchRequest {
 					nsearchsites++;
 			}
 			int ntasks = nsearchsites + queries.length * candidates.length;
+			if (updateMapURL!=null) ntasks++;
 
 			monitor.beginTask("Searching...", ntasks);
 
 			try {
+				UpdateMap updateMap=null;
+				if (updateMapURL!=null) {
+					updateMap = new UpdateMap();
+					IStatus status =loadUpdateMap(updateMap, updateMapURL, new SubProgressMonitor(monitor, 1));
+					if (status != null)
+						statusList.add(status);
+				}
 				for (int i = 0; i < queries.length; i++) {
 					IUpdateSearchQuery query = queries[i];
-					IUpdateSiteAdapter site = query.getQuerySearchSite();
-					if (site != null) {
+					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
+					if (qsite != null) {
+						// check for mapping
+						IUpdateSiteAdapter mappedSite = getMappedSite(updateMap, qsite);
 						SubProgressMonitor subMonitor =
 							new SubProgressMonitor(monitor, 1);
 						IStatus status =
 							searchOneSite(
-								site,
+								mappedSite,
 								null,
 								query,
 								collector,
@@ -206,6 +218,41 @@ public class UpdateSearchRequest {
 		}
 	}
 
+/*
+ * Load the update map using the map URL found in the scope.
+ */	
+	private IStatus loadUpdateMap(UpdateMap map, URL url, IProgressMonitor monitor) throws CoreException {
+		monitor.subTask("Loading update map from "+url.toString());
+		try {
+			map.load(url, monitor);
+			monitor.worked(1);
+		}
+		catch (CoreException e) {
+			IStatus status = e.getStatus();
+			if (status == null
+				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
+				throw e;
+			monitor.worked(1);
+			return status;
+		}
+		return null;
+	}
+/*
+ * See if this query site adapter is mapped in the map file
+ * to a different URL.
+ */
+	private IUpdateSiteAdapter getMappedSite(UpdateMap map, IQueryUpdateSiteAdapter qsite) {
+		if (map!=null && map.isLoaded()) {
+			IUpdateSiteAdapter mappedSite = map.getMappedUpdateURL(qsite.getMappingId());
+			if (mappedSite!=null) return mappedSite;
+		}
+		// no match - use original site
+		return qsite; 
+	}
+
+/*
+ * Search one site using the provided query.
+ */
 	private IStatus searchOneSite(
 		IUpdateSiteAdapter siteAdapter,
 		String[] categoriesToSkip,
