@@ -17,10 +17,10 @@
     </library>
   </runtime>
 
-  <extension-point name="%buildersName" id="builders"/>
-  <extension-point name="%markersName" id="markers"/>
-  <extension-point name="%naturesName" id="natures"/>
-  <extension-point name="%validatorName" id="fileModificationValidator"/>
+  <extension-point name="%buildersName" id="builders" schema="schema/builders.mxsd"/>
+  <extension-point name="%markersName" id="markers" schema="schema/markers.mxsd"/>
+  <extension-point name="%naturesName" id="natures" schema="schema/natures.mxsd"/>
+  <extension-point name="%validatorName" id="fileModificationValidator" schema="schema/fileModificationValidator.mxsd"/>
   <extension-point name="%hookName" id="moveDeleteHook"/>
   <extension-point name="%teamHookName" id="teamHook"/>
 

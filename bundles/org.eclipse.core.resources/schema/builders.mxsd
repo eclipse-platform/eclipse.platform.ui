@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.resources">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.resources" id="builders" name="Incremental Project Builders"/>
+   </appInfo>
+   <documentation>
+      The workspace supports the notion of an incremental 
+project builder (or "builder" for short").  The job 
+of a builder is to process a set of resource changes 
+(supplied as a resource delta).  For example, a Java 
+builder would recompile changed Java files and produce 
+new class files. 
+&lt;p&gt;
+Builders are confgured on a per-project basis and run 
+automatically when resources within their project are 
+changed.  As such, builders should be fast and scale 
+with respect to the amount of change rather than the 
+number of resources in the project.  This typically 
+implies that builders are able to incrementally update 
+their "built state". 
+&lt;p&gt;
+The markers extension-point allows builder writers 
+to register their builder implementation under a 
+symbolic name that is then used from within the 
+workspace to find and run builders. The symbolic 
+name it the id of the builder extension.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="builder">
+      <complexType>
+         <sequence>
+            <element ref="run" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="hasNature" type="boolean">
+            <annotation>
+               <documentation>
+                  "true" or "false" indicating whether the builder is owned by
+a project nature.  If "true" and no corresponding nature is
+found, this builder will not run but will remain in the project's
+build spec.  If the attribute is not specified, it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a subclass of 
+&lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IncrementalProjectBuilder"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of this parameter made available to 
+instances of the specified builder class
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an arbitrary value associated with the given 
+name and made available to instances of the 
+specified builder class
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of a builder configuration: 
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension id="coolbuilder" name="Cool Builder" point="org.eclipse.core.resources.builders"&gt; 
+      &lt;builder hasNature="false"&gt; 
+         &lt;run class="com.xyz.builders.Cool"&gt; 
+            &lt;parameter name="optimize" value="true"/&gt; 
+            &lt;parameter name="comment" value="Produced by the Cool Builder"/&gt; 
+         &lt;/run&gt; 
+      &lt;/builder&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must represent a 
+subclass of 
+&lt;samp&gt;org.eclipse.core.resources.IncrementalProjectBuilder&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The platform itself does not have any predefined 
+builders. Particular product installs may include 
+builders as required.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.resources">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.resources" id="fileModificationValidator" name="File Modification Validator"/>
+   </appInfo>
+   <documentation>
+      For providing an implementation of an IFileModificationValidator to be used in the validate-edit
+and validate-save mechanism.  This extension point tolerates at most one extension.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="fileModificationValidator" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fileModificationValidator">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.core.resources.IFileModificationValidator&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IFileModificationValidator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of using the fileModificationValidator extension point:
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.core.resources.fileModificationValidator"&gt;
+		&lt;fileModificationValidator class="org.eclipse.vcm.internal.VCMFileModificationValidator"/&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent an implementation of 
+&lt;samp&gt;org.eclipse.core.resources.IFileModificationValidator&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The VCM component will generally provide the implementation of the file modification validator.  
+The extension point should be used by any other clients.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

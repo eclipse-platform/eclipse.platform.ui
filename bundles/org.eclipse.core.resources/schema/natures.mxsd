@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.resources">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.resources" id="natures" name="Project Natures"/>
+   </appInfo>
+   <documentation>
+      The workspace supports the notion of project natures 
+(or "natures" for short").  A nature associates lifecycle 
+behaviour with a project.  Natures are installed on 
+a per-project basis using the setDescription method defined on 
+&lt;samp&gt;org.eclipes.core.resources.IProject&lt;/samp&gt;.  They are 
+configured automatically when a project is opened and deconfigured 
+when a project is closed.  For example, the Java nature 
+might install a Java builder and do other project 
+configuration when added to a project
+&lt;p&gt;
+The natures extension-point allows nature writers 
+to register their nature implementation under a 
+symbolic name that is then used from within the 
+workspace to find and configure natures. 
+The symbolic name is id of the nature extension.  When 
+defining a nature extension, users are encouraged to include a
+human-readable value fo rth e"name" attribute which identifies
+their meaning and potentially may be presented to users.
+&lt;p&gt;
+Natures can specify relationship constraints with other natures.
+The "one-of-nature" constraint specifies that at most one nature
+belong to a given set can exist on a project at any given time.
+This enforces mutual exclusion between natures that are not compatible
+with each other.  The "requires-nature" constraint specifies a
+dependency on another nature.  When a nature is added to a project,
+all required natures must also be added.  The natures are guaranteed
+to be configured and deconfigured in such a way that their required
+natures will always be configured before them and deconfigured after
+them.  For this reason, cyclic dependencies between natures are not
+permitted.
+&lt;p&gt;
+Natures cannot be added to or removed from a project if that change would
+violate any constraints that were previously satisfied.  If a nature is
+configured on a project, but later finds that its constraints are not 
+satisfied, that nature and all natures that require it are marked as
+&lt;i&gt;disabled&lt;i&gt;, but remain on the project.  This can happen, for example,
+when a required nature goes missing from the install.  Natures that are 
+missing from the install, and natures involved in dependency cycles are 
+also marked as disabled.
+&lt;p&gt;
+Natures can also specify which incremental project builders, if any, are 
+configured by them.  With this information, the workspace will ensure that 
+builders will only run when their corresponding nature is present and 
+enabled on the project being built.  If a nature is removed from a project,
+but the nature's deconfigure method fails to remove its corresponding builders,
+the workspace will remove those builders from the spec automatically.  It 
+is not permitted for two natures to specify the same incremental project builder
+in their markup.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="runtime" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="one-of-nature" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="requires-nature" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.core.resources.IProjectNature&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IProjectNature"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of this parameter made available to instances of the specified nature class
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an arbitrary value associated with the given name and made available to instances of the specificed nature class
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="runtime">
+      <complexType>
+         <sequence>
+            <element ref="run" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="one-of-nature">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an exclusive project nature category.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="requires-nature">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified id of another nature extension that this nature extension requires.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="builder">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified id of an incremental project builder extension that this nature controls.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of three nature configurations.  The
+waterNature and fireNature belong
+to the same exclusive set, so they cannot co-exist on the same
+project.  The snowNature requires
+waterNature, so snowNature will be disabled on a project that
+is missing waterNature.  It 
+naturally follows that snowNature cannot be enabled on a project
+with fireNature.
+
+&lt;p&gt;
+&lt;pre&gt; 
+   &lt;extension id="fireNature" name="Fire Nature" point="org.eclipse.core.resources.natures"&gt; 
+       &lt;runtime&gt;
+           &lt;run class="com.xyz.natures.Fire"/&gt; 
+       &lt;/runtime&gt; 
+       &lt;one-of-nature id="com.xyz.stateSet"/&gt;
+   &lt;/extension&gt;
+   
+   &lt;extension id="waterNature" name="Water Nature" point="org.eclipse.core.resources.natures"&gt;
+       &lt;runtime&gt;
+           &lt;run class="com.xyz.natures.Water"/&gt;
+       &lt;/runtime&gt;
+       &lt;one-of-nature id="com.xyz.stateSet"/&gt;
+   &lt;/extension&gt;
+   
+   &lt;extension id="snowNature" name="Snow Nature" point="org.eclipse.core.resources.natures"&gt;
+       &lt;runtime&gt;
+           &lt;run class="com.xyz.natures.Snow"&gt;
+               &lt;parameter name="installBuilder" value="true"/&gt;
+           &lt;/run&gt;
+       &lt;/runtime&gt;
+       &lt;requires-nature id="com.xyz.coolplugin.waterNature"/&gt;
+       &lt;builder id="com.xyz.snowMaker"/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+If these extensions were defined in a plug-in with id "com.xyz.coolplugin", the fully qualified name 
+of these natures would be "com.xyz.coolplugin.fireNature", "com.xyz.coolplugin.waterNature" and 
+"com.xyz.coolplugin.snowNature".
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must represent an 
+implementor of 
+&lt;samp&gt;org.eclipse.core.resources.IProjectNature&lt;/samp&gt;.
+Nature definitions can be examined using the
+&lt;samp&gt;org.eclipse.core.resources.IProjectNatureDescriptor&lt;/samp&gt; interface.
+The descriptor objects can be obtained using the methods 
+&lt;samp&gt;getNatureDescriptor(String)&lt;/samp&gt; and &lt;samp&gt;getNatureDescriptors()&lt;/samp&gt;
+on &lt;samp&gt;org.eclipse.core.resources.IWorkspace&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The platform itself does not have any predefined natures. 
+Particular product installs may include natures as required.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.resources">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.resources" id="markers" name="Resource Markers"/>
+   </appInfo>
+   <documentation>
+      The workspace supports the notion of markers on arbitrary
+resources.  A marker is a kind of metadata 
+(similar to properties) which can be used to 
+tag resources with user information.  Markers are 
+optionally persisted by the workspace whenever a 
+workspace save or snapshot is done. 
+&lt;p&gt;
+Users can define and query for markers of a given type.  
+Marker types are defined in a hierarchy which support 
+multiple-inheritance.  Marker type definitions also 
+specify a number attributes which must or may be 
+present on a marker of that type as well as whether 
+or not markers of that type should be persisted. 
+&lt;p&gt;
+The markers extension-point allows marker writers to 
+register their marker types under a symbolic name that 
+is then used from within the workspace to create and 
+query markers. The symbolic name is the id of the 
+marker extension. When defining a marker extension, 
+users are encouraged to include a human-readable value 
+for the "name" attribute which indentifies their marker 
+and potentially may be presented to users.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="persistent" minOccurs="0" maxOccurs="1"/>
+            <element ref="super" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="super">
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified id of a marker super type (i.e., a marker type defined by another marker extension)
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="persistent">
+      <complexType>
+         <attribute name="value" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  "true" or "false" indicating whether or not markers of this type
+should be persisted by the workspace.  If the transient characteristic
+is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attribute">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an attribute which may be present on markers of this type
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of a builder configuration: 
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension id="com.xyz.coolMarker" point="org.eclipse.core.resources.markers" name="Cool Marker"&gt; 
+      &lt;persistent value="true"/&gt; 
+      &lt;super type="org.eclipse.core.resources.problemmarker"/&gt; 
+      &lt;super type="org.eclipse.core.resources.textmarker"/&gt; 
+      &lt;attribute name="owner"/&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         All markers, regardless of their type, are instances of 
+&lt;samp&gt;org.eclipse.core.resources.IMarker&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The platform itself has a number of pre-defined 
+marker types. Particular product installs may 
+include additional markers as required.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
