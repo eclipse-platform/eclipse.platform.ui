@@ -1,0 +1,103 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.sourcelookup.browsers;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
+
+/**
+ * Adds an internal jar to the runtime class path.
+ */
+public class ArchiveSourceContainerBrowser implements ISourceContainerBrowser {
+
+	private ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+		public IStatus validate(Object[] selection) {
+			if (selection.length == 0) {
+				return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+			}
+			for (int i= 0; i < selection.length; i++) {
+				if (!(selection[i] instanceof IFile)) {
+					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				}					
+			}
+			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+		}			
+	};
+
+	/**
+	 * Returns internal jars (source containers) currently used by the
+	 * given source lookup director.
+	 * 
+	 * @param director source lookup director jars are being added to
+	 */
+	protected List getSelectedJars(ISourceLookupDirector director) {
+		ISourceContainer[] containers = director.getSourceContainers();
+		List jars = new ArrayList();
+		for (int i = 0; i < containers.length; i++) {
+			ISourceContainer container = containers[i];
+			if (container.getType().getId().equals(ArchiveSourceContainerType.TYPE_ID)) {
+				jars.add(container);
+			}
+		}
+		return jars;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 */
+	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+		ViewerFilter filter= new ArchiveFilter(getSelectedJars(director));
+		
+		ILabelProvider lp= new WorkbenchLabelProvider();
+		ITreeContentProvider cp= new WorkbenchContentProvider();
+
+		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, lp, cp);
+		dialog.setValidator(validator);
+		dialog.setTitle(SourceLookupUIMessages.getString("ArchiveSourceContainerBrowser.3")); //$NON-NLS-1$
+		dialog.setMessage(SourceLookupUIMessages.getString("ArchiveSourceContainerBrowser.4")); //$NON-NLS-1$
+		dialog.addFilter(filter);
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+
+		if (dialog.open() == Window.OK) {
+			Object[] result = dialog.getResult();
+			ISourceContainer[] containers = new ISourceContainer[result.length];
+			for (int i = 0; i < containers.length; i++) {
+				containers[i] = new ArchiveSourceContainer((IFile)result[i], true);
+			}
+			return containers;
+		}	
+		return new ISourceContainer[0];
+	}
+}

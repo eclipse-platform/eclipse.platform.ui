@@ -55,18 +55,20 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 		if (name != null) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i = 0; i < containers.length; i++) {
-				ISourceContainer container = containers[i];
-				Object[] objects = container.findSourceElements(name);
-				if (objects.length > 0) {
-					if (isFindDuplicates()) {
-						for (int j = 0; j < objects.length; j++) {
-							results.add(objects[j]);
-						}
-					} else {
-						if (objects.length == 1) {
-							return objects;
+				ISourceContainer container = getDelegateContainer(containers[i]);
+				if (container != null) {
+					Object[] objects = container.findSourceElements(name);
+					if (objects.length > 0) {
+						if (isFindDuplicates()) {
+							for (int j = 0; j < objects.length; j++) {
+								results.add(objects[j]);
+							}
 						} else {
-							return new Object[]{objects[0]};
+							if (objects.length == 1) {
+								return objects;
+							} else {
+								return new Object[]{objects[0]};
+							}
 						}
 					}
 				}
@@ -77,6 +79,20 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 		}
 		return results.toArray();
 	}	
+	
+	/**
+	 * Returns the source container to search in place of the given source
+	 * container, or <code>null</code> if the given source container is not
+	 * to be searched. The default implementation does not translate source
+	 * containers. Subclasses should override if required.
+	 *  
+	 * @param container the source container about to be searched (proxy)
+	 * @return the source container to be searched (delegate), or <code>null</code>
+	 * 	if the source container should not be searched
+	 */
+	protected ISourceContainer getDelegateContainer(ISourceContainer container) {
+		return container;
+	}
 	
 	/**
 	 * Returns the source lookup director this participant is registered with
@@ -109,5 +125,11 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	 */
 	protected ISourceContainer[] getSourceContainers() {
 		return getDirector().getSourceContainers();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 */
+	public void sourceContainersChanged(ISourceLookupDirector director) {
 	}
 }

@@ -254,7 +254,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @param participant the participant to remove
 	 */
 	private void removeSourceLookupParticipant(ISourceLookupParticipant participant) {
-		fParticipants.remove(participant);		
+		if (fParticipants.remove(participant)) {
+			participant.dispose();
+		}
 	}	
 
 	

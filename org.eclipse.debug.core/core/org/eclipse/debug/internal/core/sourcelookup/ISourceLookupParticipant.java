@@ -76,4 +76,13 @@ public interface ISourceLookupParticipant {
 	 * disposed.
 	 */
 	public void dispose();
+	
+	/**
+	 * Notification that the source lookup containers in the given source
+	 * lookup director have changed.
+	 * 
+	 * @param director source lookup director that is directing this
+	 * participant
+	 */
+	public void sourceContainersChanged(ISourceLookupDirector director);
 }

@@ -103,4 +103,19 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param frame stack frame to clear source lookup results for
 	 */
 	public void clearSourceElements(IStackFrame frame);
+	
+	/**
+	 * Adds the given source lookup participants to this director.
+	 * 
+	 * @param participants participants to add
+	 */
+	public void addParticipants(ISourceLookupParticipant[] participants);
+	
+	/**
+	 * Removes the given source lookup participants from this director.
+	 * 
+	 * @param participants participants to remove
+	 */
+	public void removeParticipants(ISourceLookupParticipant[] participants);
+	
 }
