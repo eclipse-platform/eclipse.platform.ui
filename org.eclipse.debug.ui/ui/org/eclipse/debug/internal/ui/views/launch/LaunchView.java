@@ -488,6 +488,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement == null) {
+			sourceNotFound();
 			return;
 		}
 		
@@ -508,6 +509,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		setEditorInput(editorInput);
 		setEditorId(editorId);
+	}
+	
+	/**
+	 * Sets editor id and input for the "source not found" editor.	 */
+	private void sourceNotFound() {
+		setEditorInput(new SourceNotFoundEditorInput(getStackFrame()));
+		setEditorId(IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR);
 	}
 
 	/**

@@ -33,4 +33,9 @@ public interface IInternalDebugUIConstants {
 	/** Transparent overlay image identifier. */
 	public static final String IMG_OVR_TRANSPARENT = "IMG_OVR_TRANSPARENT";  //$NON-NLS-1$
 	
+	/**
+	 * Editor Id for the "Source Not Found" editor
+	 */
+	public static final String ID_SOURCE_NOT_FOUND_EDITOR = "org.eclipse.debug.ui.NoSourceFoundEditor"; //$NON-NLS-1$
+	
 }

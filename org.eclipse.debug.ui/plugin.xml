@@ -721,4 +721,14 @@
 	</factory>
 </extension>
 
+<extension point="org.eclipse.ui.editors">
+	<editor 
+		id = "org.eclipse.debug.ui.NoSourceFoundEditor"
+		name = "No Source Found"
+		icon = "./icons/full/obj16/stckframe_obj.gif"
+		class = "org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
+		contributorClass = "org.eclipse.ui.part.EditorActionBarContributor">
+	</editor>
+</extension>
+
 </plugin>
