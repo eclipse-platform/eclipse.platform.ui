@@ -83,6 +83,7 @@ public abstract class PartPane extends LayoutPart
 			addMaximizeMenuItem(menu);		
 			addPinEditorItem(menu);						
 			addCloseMenuItem(menu);	
+			addCloseOthersItem(menu);			
 		}
 	}
 	
@@ -144,6 +145,7 @@ protected void createChildControl() {
 	page.firePartOpened(part[0]);	
 }
 
+
 protected void addRestoreMenuItem (Menu menu) {
 	// add restore item
 	MenuItem item = new MenuItem(menu, SWT.NONE);
@@ -201,6 +203,10 @@ protected void addCloseMenuItem (Menu menu) {
 	});		
 }
 
+protected void addCloseOthersItem (Menu menu) {
+	// do nothing
+}
+
 /**
  * 
  */
@@ -249,6 +255,7 @@ public void dispose() {
  * Take appropriate action depending on type.
  */
 abstract public void doHide();
+
 /**
  * Zooms in on the part contained in this pane.
  */
@@ -576,7 +583,6 @@ public IJobChangeListener getJobChangeListener(){
 	};
 	
 }
-	
 	/**
 	 * Set the image to image. item is used for future work where 
 	 * the tab item may be updated.

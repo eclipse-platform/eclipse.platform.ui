@@ -539,6 +539,40 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		getPage().hideView(getViewReference());
 		//hideToolBarShell();
 	}
+
+	/**
+	 * Draws the applicable gradient on the view's title area
+	 */
+	/* package */
+	void drawGradient(boolean active) {
+		if (active) {
+			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
+		} else {
+			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
+		}
+		
+		if (titleLabel == null || viewToolBar == null || isvToolBar == null)
+			return;
+
+		if (showFocus) {
+			if (getShellActivated()) {
+                titleLabel.setBackground(getActiveGradient(),
+                        getActiveGradientPercents(), isGradientVertical());
+				titleLabel.setForeground(getActiveForeground());
+			} else {
+                titleLabel.setBackground(getDeactivatedGradient(),
+                        getDeactivatedGradientPercents(), isGradientVertical());
+				titleLabel.setForeground(getDeactivatedForeground());
+			}
+		} else {
+            titleLabel.setBackground(getNormalGradient(),
+                    getNormalGradientPercents(), isGradientVertical());
+			titleLabel.setForeground(getNormalForeground());
+		}
+
+		titleLabel.update();
+	}
+	
 	/**
 	 * Make this view pane a fast view
 	 */
@@ -659,9 +693,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			((PartTabFolder) getContainer()).setActive(active);
 		}
 		if (active) {
-			setToolBarColors(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
 		} else {
-			setToolBarColors(JFaceColors.getTabFolderSelectionBackground(isvToolBar.getDisplay()));
+			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
 		}
 		showFloatingWindow(active, false);
 	}
@@ -675,6 +709,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		isvToolBar.setBackground(color);
 		isvToolBar.getParent().setBackground(color);
 	}
+	
 	/**
 	 * Ensure the visible/invisible state of the floating window matches the 
 	 * current locked/unlocked setting.
@@ -729,8 +764,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// If this is a fast view, it may have been minimized. Do nothing in this case.
 		if (isFastView() && (page.getActiveFastView() != getViewReference()))
 			return;
-		Rectangle bounds = titleLabel.getBounds();
-		showPaneMenu(titleLabel, titleLabel.toDisplay(new Point(0, bounds.height)));
+		// TODO should position menu relative to tab, as is done
+		// with editors.  Also need to take into account view titlebar if present
+		Control ref = control.getContent() != null ? control.getContent() : control;
+		Point pos = ref.toDisplay(ref.getLocation());
+		showPaneMenu(ref, pos);
 	}
 	/**
 	 * Return true if this view is a fast view.

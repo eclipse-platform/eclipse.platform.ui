@@ -39,6 +39,7 @@ public class JFaceColors {
 	public static String SCHEME_FOREGROUND = "SCHEME_FOREGROUND";	 //$NON-NLS-1$
 	public static String SCHEME_TAB_BACKGROUND = "SCHEME_TAB_BACKGROUND"; //$NON-NLS-1$
 	public static String SCHEME_TAB_FOREGROUND = "SCHEME_TAB_FOREGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND = "SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND"; //$NON-NLS-1$
 	public static String SCHEME_TAB_SELECTION_FOREGROUND = "SCHEME_TAB_SELECTION_FOREGROUND"; //$NON-NLS-1$
 	public static String SCHEME_TAB_SELECTION_BACKGROUND = "SCHEME_TAB_SELECTION_BACKGROUND"; //$NON-NLS-1$
 	
@@ -49,14 +50,29 @@ public class JFaceColors {
 	// Define the default Color Scheme mapping
 	// The Color Scheme by default is a mapping of specific OS colors to their use in the IDE
 	private static void initColors(Display d) {
-		int origSize = 6;
+		int origSize = 7;
 		JFaceDefaultColorMap = new Hashtable(origSize);
 		JFaceDefaultColorMap.put(SCHEME_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+
+		Color inactive_bg;
+		if (SWT.getPlatform() == "win32")
+			inactive_bg = d.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		else 
+			inactive_bg = d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
+		JFaceDefaultColorMap.put(SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND, inactive_bg);
+		
+		
+		Color bg = d.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, bg);
+		
+		Color fg = d.getSystemColor(SWT.COLOR_BLACK);
+		// currently just using Black as a foreground, so ensure that the background is not also black
+		if (bg.getRed() == 0 && bg.getGreen() == 0 && bg.getBlue() == 0)
+			fg = d.getSystemColor(SWT.COLOR_WHITE);
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, fg);
 		
 		UserColorMap = new Hashtable();
 		// If the user is not using the system settings, fill in a color map for all assignable
@@ -212,6 +228,17 @@ public class JFaceColors {
 	
 	/**
 	 * 
+	 * Get the Color used for Color Scheme Selected Inactive Tab Folder Background.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
+	 */
+	public static Color getTabFolderInactiveSelectionBackground(Display display) {
+		return getColor(display, SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND);
+	}
+
+	/**
+	 * 
 	 * Get the Color used for Color Scheme Selected Tab Folder Background.   
 	 * 
 	 * @param display
@@ -345,6 +372,5 @@ public class JFaceColors {
 		if(background != null)
 			control.setBackground(background);
 	}
-
 	
 }

@@ -40,6 +40,7 @@ import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -359,7 +360,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
 		//tabFolder.setBorderVisible(true);
+		// set basic colors
 		ColorSchemeService.setTabColors(tabFolder);
+		// draw a gradient for the selected tab
+		drawGradient(false);
 		
 		if (tabThemeDescriptor != null) {
 			useThemeInfo();
@@ -1244,21 +1248,39 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * Set the active appearence on the tab folder.
 	 * @param active
 	 */
-	public void setActive(boolean active) {
-		//tabFolder.setBorderVisible(active);
-		if (active) {
-			tabFolder.setSelectionBackground(
-				WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			tabFolder.setSelectionForeground(
-				WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		} else {
-			tabFolder.setSelectionBackground(
-				JFaceColors.getTabFolderSelectionBackground(tabFolder.getDisplay()));
-			tabFolder.setSelectionForeground(
-				JFaceColors.getTabFolderSelectionForeground(tabFolder.getDisplay()));
-
-		}
+	public void setActive(boolean activeState) {
+		drawGradient(activeState);
 	}
+	
+	void drawGradient(boolean activeState) {
+		Color fgColor;
+		Color[] bgColors;
+		int[] bgPercents;
+
+		if (activeState){
+			fgColor = WorkbenchColors.getActiveViewForeground();
+			bgColors = WorkbenchColors.getActiveViewGradient();
+			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
+		} else {
+			fgColor = WorkbenchColors.getActiveViewForeground();
+			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
+			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
+		}		
+		
+		drawGradient(fgColor, bgColors, bgPercents, activeState);	
+	}
+	
+	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {
+		tabFolder.setSelectionForeground(fgColor);
+		//tabFolder.setBorderVisible(active);
+		if (bgPercents == null)
+			tabFolder.setSelectionBackground(bgColors[0]);
+		else
+			tabFolder.setSelectionBackground(bgColors, bgPercents, true);
+		tabFolder.update();		
+	}
+	
+	
 	
 	private void useThemeInfo() {
 

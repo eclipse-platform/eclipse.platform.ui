@@ -205,13 +205,19 @@ public abstract class EditorWorkbook
 
 		switch (activeState) {
 			case ACTIVE_FOCUS :
-				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-				bgColors[0] = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+				fgColor = WorkbenchColors.getActiveEditorForeground();
+				bgColors = WorkbenchColors.getActiveEditorGradient();
+				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
 				break;
 			case ACTIVE_NOFOCUS :
+				fgColor = WorkbenchColors.getActiveEditorForeground();
+				bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
+				bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
+				break;
 			case INACTIVE :
 				fgColor = JFaceColors.getTabFolderSelectionForeground(getControl().getDisplay());
 				bgColors[0] = JFaceColors.getTabFolderSelectionBackground(getControl().getDisplay());
+				bgPercents = null;
 				break;
 			default :
 				fgColor = null;

@@ -687,10 +687,8 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		if (bgPercents == null)
 			tabFolder.setSelectionBackground(bgColors[0]);
 		else
-			tabFolder.setSelectionBackground(bgColors, bgPercents);
-		tabFolder.update();
-		
-		
+			tabFolder.setSelectionBackground(bgColors, bgPercents, true);
+		tabFolder.update();		
 	}
 
 	// getMinimumHeight() added by cagatayk@acm.org 

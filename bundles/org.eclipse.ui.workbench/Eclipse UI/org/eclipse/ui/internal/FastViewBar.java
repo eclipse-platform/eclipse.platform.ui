@@ -299,6 +299,8 @@ class FastViewBar implements IWindowTrim {
 				}
 			});
 			
+			new MenuItem(menu, SWT.SEPARATOR);
+			
 			showOn = new MenuItem(menu, SWT.CASCADE);
 			{
 				showOn.setText(WorkbenchMessages.getString("FastViewBar.dock_on")); //$NON-NLS-1$

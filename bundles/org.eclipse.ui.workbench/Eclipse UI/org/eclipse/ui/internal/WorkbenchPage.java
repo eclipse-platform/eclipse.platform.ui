@@ -763,77 +763,86 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * See IWorkbenchPage
 	 */
 	public boolean closeAllSavedEditors() {
-		// If part is added / removed always unzoom.
-		if (isZoomed())
-			zoomOut();
-
-		boolean deactivated = false;
-
-		// Close all editors.
+		// get the Saved editors
 		IEditorReference editors[] = getEditorReferences();
+		IEditorReference savedEditors[] = new IEditorReference[editors.length]; 
+		int j = 0;
 		for (int i = 0; i < editors.length; i++) {
 			IEditorReference editor = editors[i];
-			IWorkbenchPart part = editor.getPart(false);
 			if (!editor.isDirty()) {
-				if (part == activePart) {
-					deactivated = true;
-					setActivePart(null);
-				} else if (lastActiveEditor == part) {
-					lastActiveEditor = null;
-					actionSwitcher.updateTopEditor(null);
-				}
-				getEditorManager().closeEditor(editor);
-				activationList.remove(editor);
-				firePartClosed(editor);
-				disposePart(editor);
+				savedEditors[j++] = editor;
 			}
 		}
-		if (deactivated)
-			activate(activationList.getActive());
-
-		// Notify interested listeners
-		window.firePerspectiveChanged(
-			this,
-			getPerspective(),
-			CHANGE_EDITOR_CLOSE);
-
-		//if it was the last part, close the perspective
-		lastPartClosePerspective();
-
-		// Return true on success.
-		return true;
+		//there are no unsaved editors
+		if (j == 0)
+			return true;
+		IEditorReference[] newSaved = new IEditorReference[j];
+		System.arraycopy(savedEditors, 0, newSaved, 0, j);
+		return closeEditors(newSaved, false);
 	}
+	
 	/**
 	 * See IWorkbenchPage
 	 */
 	public boolean closeAllEditors(boolean save) {
-		// If part is added / removed always unzoom.
+		return closeEditors(getEditorReferences(), save);
+	}
+	
+	boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
+		if (save) {
+			// Intersect the dirty editors with the editors that are closing
+			IEditorPart[] dirty = getDirtyEditors();
+			List intersect = new ArrayList();
+			for (int i = 0; i < editorRefs.length; i++) {
+				IEditorReference reference = editorRefs[i];
+				IEditorPart refPart = reference.getEditor(false);
+				if (refPart != null) {
+					for (int j = 0; j < dirty.length; j++) {
+						if (refPart.equals(dirty[j])) {
+							intersect.add(refPart);
+							break;
+						}
+					}
+				}
+			}
+			// Save parts, exit the method if cancel is pressed.
+			if (intersect.size() > 0) {
+				if (!EditorManager.saveAll(intersect, true, getWorkbenchWindow()))
+					return false;
+			}
+		}
+		
+		// If the user has not cancelled a possible save request 
+		// and if part is added or removed always unzoom.
 		if (isZoomed())
 			zoomOut();
 
-		// Save part.
-		if (save && !getEditorManager().saveAll(true, true))
-			return false;
 
-		// Deactivate part.
-		boolean deactivate = activePart instanceof IEditorPart;
-		if (deactivate)
-			setActivePart(null);
-		lastActiveEditor = null;
-		actionSwitcher.updateTopEditor(null);
-
+		// Deactivate part if the active part is being closed.
+		boolean deactivated = false;
+		for (int i=0 ; i < editorRefs.length ; i++) {
+			IWorkbenchPart part = editorRefs[i].getPart(false);
+			if (part == activePart) {
+				deactivated = true;
+				setActivePart(null);
+			} else if (lastActiveEditor == part) {
+				lastActiveEditor = null;
+				actionSwitcher.updateTopEditor(null);
+			}
+		}
+		
 		// Close all editors.
-		IEditorReference[] editors = getEditorManager().getEditors();
-		getEditorManager().closeAll();
-		for (int i = 0; i < editors.length; i++) {
-			IEditorReference editor = editors[i];
-			activationList.remove(editor);
-			firePartClosed(editor);
-			disposePart(editor);
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorReference ref = editorRefs[i];
+			getEditorManager().closeEditor(ref);
+			activationList.remove(ref);
+			firePartClosed(ref);
+			disposePart(ref);
 		}
 
-		if (!window.isClosing() && deactivate)
+		if (!window.isClosing() && deactivated) {
 			activate(activationList.getActive());
+		}
 
 		// Notify interested listeners
 		window.firePerspectiveChanged(
@@ -847,6 +856,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Return true on success.
 		return true;
 	}
+	
 	/**
 	 * See IWorkbenchPage#closeEditor
 	 */

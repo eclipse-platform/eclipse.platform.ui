@@ -28,6 +28,9 @@ public final class JFacePreferences {
 	//Do we use the System theme?
 	public static final String USE_DEFAULT_THEME = "USE_DEFAULT_THEME"; //$NON-NLS-1$
 	
+	//Identifier for the Color Scheme Inactive Selected Tab Background Colour
+	public static final String SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND = JFaceColors.SCHEME_TAB_INACTIVE_SELECTION_BACKGROUND;
+
 	//Identifier for the Color Scheme Selected Tab Foreground Colour
 	public static final String SCHEME_TAB_SELECTION_FOREGROUND = JFaceColors.SCHEME_TAB_SELECTION_FOREGROUND;
 	//Identifier for the Color Scheme Selected Tab Background Colour
