@@ -38,13 +38,11 @@ import org.eclipse.ui.part.EditorPart;
  */
 public class WelcomeEditor extends EditorPart {
 	
-	private final String TAG_TITLE = "title";//$NON-NLS-1$
-	private final String TAG_INTRO = "intro";//$NON-NLS-1$
-	private final String TAG_ITEM = "item";//$NON-NLS-1$
-	private final String TAG_CONTENTS = "contents";//$NON-NLS-1$
-	
 	private final static int HORZ_SCROLL_INCREMENT = 20;
 	private final static int VERT_SCROLL_INCREMENT = 20;
+	// width at which wrapping will stop and a horizontal scroll bar will be 
+	// introduced
+	private final static int WRAP_MIN_WIDTH = 150;  
 	
 	private Composite editorComposite;
 
@@ -91,7 +89,7 @@ public class WelcomeEditor extends EditorPart {
 				return;
 			}
 			if(event.character == ' ' || event.character == SWT.CR){
-				if(text != null){
+				if(text != null) {
 					WelcomeItem item = (WelcomeItem)text.getData();
 	
 					//Be sure we are in the selection
@@ -106,11 +104,17 @@ public class WelcomeEditor extends EditorPart {
 				return;
 			}	
 			
+			// When page down is pressed, move the cursor to the next item in the 
+			// welcome page.   Note that this operation wraps (pages to the top item
+			// when the last item is reached).
 			if(event.keyCode == SWT.PAGE_DOWN){
 				focusOn(nextText(text));
 				return;
 			}
 			
+			// When page up is pressed, move the cursor to the previous item in the 
+			// welcome page.  Note that this operation wraps (pages to the bottom item
+			// when the first item is reached).
 			if(event.keyCode == SWT.PAGE_UP){
 				focusOn(previousText(text));
 				return;
@@ -238,7 +242,12 @@ private void addListeners(StyledText styledText) {
 			}
 			StyledText text = (StyledText)e.widget;
 			WelcomeItem item = (WelcomeItem)e.widget.getData();
-			int offset = getOffsetAtLocation(text, e.x, e.y);
+			int offset = -1;
+			try {
+				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
+			} catch (IllegalArgumentException ex) {
+				// location is not over a character
+			}
 			if (offset == -1)
 				text.setCursor(null);
 			else if (item.isLinkAt(offset)) 
@@ -263,7 +272,7 @@ private Composite createInfoArea(Composite parent) {
 	// a title, message, and image.
 	this.scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 	this.scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	Composite infoArea = new Composite(this.scrolledComposite, SWT.NONE);
+	final Composite infoArea = new Composite(this.scrolledComposite, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 10;
 	layout.verticalSpacing = 5;
@@ -271,6 +280,18 @@ private Composite createInfoArea(Composite parent) {
 	infoArea.setLayout(layout);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	infoArea.setLayoutData(data);
+	boolean wrapped = parser.isFormatWrapped();
+
+	if (wrapped) {
+		scrolledComposite.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				// in the wrapped case the height of the StyledText widgets will change as
+				// the width of the info area changes, so recompute the height
+				Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				scrolledComposite.setMinHeight(p.y);
+			}
+		});
+	}
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
@@ -278,11 +299,15 @@ private Composite createInfoArea(Composite parent) {
 	Color foreground = JFaceColors.getBannerForeground(display);
 	infoArea.setBackground(background);
 
+	int textStyle = SWT.MULTI | SWT.READ_ONLY;
+	if (wrapped) {
+		textStyle = textStyle | SWT.WRAP;
+	}
 	StyledText sampleStyledText = null;
 	// Create the intro item
 	WelcomeItem item = getIntroItem();
 	if (item != null) {
-		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		StyledText styledText = new StyledText(infoArea, textStyle);
 		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
@@ -316,7 +341,7 @@ private Composite createInfoArea(Composite parent) {
 		gd.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		image.setLayoutData(gd);
 
-		StyledText styledText = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		StyledText styledText = new StyledText(infoArea, textStyle);
 		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
@@ -341,7 +366,12 @@ private Composite createInfoArea(Composite parent) {
 	this.scrolledComposite.setContent(infoArea);
 	Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	this.scrolledComposite.setMinHeight(p.y);
-	this.scrolledComposite.setMinWidth(p.x);
+	if (wrapped) {
+		// introduce a horizontal scroll bar after a minimum width is reached
+		this.scrolledComposite.setMinWidth(WRAP_MIN_WIDTH);
+	} else {
+		this.scrolledComposite.setMinWidth(p.x);
+	}
 	this.scrolledComposite.setExpandHorizontal(true);
 	this.scrolledComposite.setExpandVertical(true);
 
@@ -356,18 +386,6 @@ private Composite createInfoArea(Composite parent) {
 		this.scrolledComposite.getHorizontalBar().setIncrement(width);
 		this.scrolledComposite.getVerticalBar().setIncrement(sampleStyledText.getLineHeight());
 	}
-	this.scrolledComposite.addControlListener(new ControlAdapter() {
-		public void controlResized(ControlEvent e) {
-			ScrolledComposite localSC = (ScrolledComposite)e.widget;
-			ScrollBar horizontal = localSC.getHorizontalBar();
-			ScrollBar vertical = localSC.getVerticalBar();
-			Rectangle clientArea = localSC.getClientArea(); 
-
-			horizontal.setPageIncrement(clientArea.width - horizontal.getIncrement());
-			vertical.setPageIncrement(clientArea.height - vertical.getIncrement());
-		}
-	});
-
 	return infoArea;
 }
 
@@ -556,64 +574,6 @@ private WelcomeItem getIntroItem() {
  */
 private WelcomeItem[] getItems() {
 	return parser.getItems();
-}
-/**
- * Returns the text offset at the given pixwl location
- * Returns -1 if there is no offset at the location
- */
-private int getOffsetAtLocation(StyledText styledText, int x, int y) {
-		int charCount = styledText.getCharCount();
-	if (charCount == 0 || x < 0 || y < 0)
-		return -1;
-	
-	// get the line at the y coordinate
-	int line = (y + styledText.getTopPixel()) / styledText.getLineHeight();
-
-	// find an offset in the line
-	int low = -1;
-	int high = charCount;
-	int offset = 0;
-	int currentLine;
-	
-	while (high - low > 1) {
-		offset = (high + low) / 2;
-		currentLine = styledText.getLineAtOffset(offset);
-		if (currentLine == line)
-			break;
-		if (currentLine > line)
-			high = offset;			
-		else 
-			low = offset;
-	}
-	currentLine = styledText.getLineAtOffset(offset);
-
-	// find the offset at x
-	int delta;
-	Point loc = styledText.getLocationAtOffset(offset);
-	if (loc.x == x)
-		return offset;
-	else if (loc.x < x)
-		delta = 1;
-	else
-		delta = -1;
-	int newOffset = offset + delta;
-	Point newLoc = styledText.getLocationAtOffset(newOffset);	
-	while (currentLine == styledText.getLineAtOffset(newOffset)) {
-		if (delta == 1) {
-			if (newLoc.x > x)
-				return offset;
-		} else { 
-			if (newLoc.x < x)
-				return offset;
-		}
-		offset = newOffset;
-		loc = newLoc;
-		newOffset = offset + delta;
-		if (newOffset < 0 || newOffset > charCount)
-			return -1;
-		newLoc = styledText.getLocationAtOffset(newOffset);
-	}
-	return -1;
 }
 /* (non-Javadoc)
  * Sets the cursor and selection state for this editor to the passage defined

@@ -20,19 +20,26 @@ public class WelcomeParser extends DefaultHandler {
 	private static final String TAG_ITEM = "item"; //$NON-NLS-1$	
 	private static final String TAG_BOLD = "b"; //$NON-NLS-1$	
 	private static final String TAG_ACTION = "action"; //$NON-NLS-1$	
+	private static final String TAG_PARAGRAPH = "p"; //$NON-NLS-1$	
 	private static final String TAG_TOPIC = "topic"; //$NON-NLS-1$	
 	private static final String ATT_TITLE = "title"; //$NON-NLS-1$	
+	private static final String ATT_FORMAT = "format"; //$NON-NLS-1$	
 	private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$	
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_HREF = "href"; //$NON-NLS-1$
+	
+	private static final String FORMAT_WRAP = "wrap";
+	private static final String FORMAT_NOWRAP = "nowrap";
+	private static final char DELIMITER = '\n'; // sax parser replaces crlf with lf
 	
 	private SAXParser parser;
 
 	private String title;
 	private WelcomeItem introItem;
 	private ArrayList items = new ArrayList();
-
+	private String format;
+	
 	private class WelcomeContentHandler implements ContentHandler {
 		protected ContentHandler parent;
 		public void setParent(ContentHandler p) {
@@ -81,6 +88,7 @@ public class WelcomeParser extends DefaultHandler {
 
 	private class ItemHandler extends WelcomeContentHandler {
 		private ArrayList boldRanges = new ArrayList();
+		protected ArrayList wrapRanges = new ArrayList();
 		private ArrayList actionRanges = new ArrayList();
 		private ArrayList pluginIds  = new ArrayList();
 		private ArrayList classes  = new ArrayList();
@@ -88,8 +96,9 @@ public class WelcomeParser extends DefaultHandler {
 		private ArrayList helpIds  = new ArrayList();
 		private ArrayList helpHrefs  = new ArrayList();
 		private StringBuffer text = new StringBuffer();
-		private int offset = 0;
-		private int textStart;
+		protected int offset = 0;
+		protected int textStart;
+		protected int wrapStart;
 
 		private class BoldHandler extends WelcomeContentHandler {
 			public void characters(char[] ch, int start, int length) throws SAXException {
@@ -134,6 +143,20 @@ public class WelcomeParser extends DefaultHandler {
 		}	
 		
 		protected WelcomeItem constructWelcomeItem() {
+			if (isFormatWrapped()) {
+				// replace all line delimiters with a space
+				for (int i=0; i<wrapRanges.size(); i++) {
+					int[] range = (int[])wrapRanges.get(i);
+					int start = range[0];
+					int length = range[1];
+					for (int j=start; j<start+length; j++) {
+						char ch = text.charAt(j);
+						if (ch == DELIMITER) {
+							text.replace(j,j+1," ");
+						} 
+					}
+				}
+			}
 			return new WelcomeItem(
 				text.toString(), 
 				(int[][])boldRanges.toArray(new int[boldRanges.size()][2]),
@@ -161,6 +184,8 @@ public class WelcomeParser extends DefaultHandler {
 				ActionHandler h = new ActionHandler(atts.getValue(ATT_PLUGIN_ID), atts.getValue(ATT_CLASS));
 				h.setParent(ItemHandler.this);
 				parser.setContentHandler(h);
+			} else if(localName.equals(TAG_PARAGRAPH)) {
+				wrapStart = textStart;
 			} else if(localName.equals(TAG_TOPIC)) {
 				TopicHandler h = new TopicHandler(atts.getValue(ATT_ID), atts.getValue(ATT_HREF));
 				h.setParent(ItemHandler.this);
@@ -171,7 +196,9 @@ public class WelcomeParser extends DefaultHandler {
 			if (localName.equals(TAG_ITEM)) {
 				items.add(constructWelcomeItem());
 				parser.setContentHandler(parent);
-			}
+			} else if (localName.equals(TAG_PARAGRAPH)) {
+				wrapRanges.add(new int[] {wrapStart, offset - wrapStart});
+			}				
 		}
 	}	
 	private class IntroItemHandler extends ItemHandler {
@@ -179,7 +206,9 @@ public class WelcomeParser extends DefaultHandler {
 			if (localName.equals(TAG_INTRO)) {
 				introItem = constructWelcomeItem();
 				parser.setContentHandler(parent);
-			}
+			} else if (localName.equals(TAG_PARAGRAPH)) {
+				wrapRanges.add(new int[] {wrapStart, offset - wrapStart});
+			}					
 		}
 	}
 /**
@@ -212,6 +241,12 @@ public String getTitle() {
 	return title;
 }
 /**
+ * Returns whether or not the welcome editor input should be wrapped.
+ */
+public boolean isFormatWrapped() {
+	return format.equals(FORMAT_WRAP);
+}
+/**
  * Parse the contents of the input stream
  */
 public void parse(InputStream is) {
@@ -231,6 +266,7 @@ public void parse(InputStream is) {
 public void startElement (String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 	if (localName.equals(TAG_WELCOME_PAGE)) {
 		WelcomeContentHandler h = new WelcomePageHandler(atts.getValue(ATT_TITLE));
+		format = atts.getValue(ATT_FORMAT);
 		h.setParent(this);
 		parser.setContentHandler(h);
 	}
