@@ -140,7 +140,9 @@
             helpContextId="step_return_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
             menubarPath="org.eclipse.ui.run/stepReturnGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+            enablesFor="1">
+            <selection class="org.eclipse.debug.core.model.IStep"/>            
       </action>
       <action
             label="%StepOverAction.label"
@@ -150,7 +152,9 @@
             helpContextId="step_over_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             menubarPath="org.eclipse.ui.run/stepOverGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            enablesFor="1">
+            <selection class="org.eclipse.debug.core.model.IStep"/>
       </action>
       <action
             label="%StepIntoAction.label"
@@ -160,7 +164,9 @@
             helpContextId="step_into_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
             menubarPath="org.eclipse.ui.run/stepIntoGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            enablesFor="1">
+            <selection class="org.eclipse.debug.core.model.IStep"/>            
       </action>
       <action
             label="%StepWithFiltersAction.label"
@@ -170,7 +176,9 @@
             helpContextId="step_with_filters_action_context"
             class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
             menubarPath="org.eclipse.ui.run/stepIntoGroup"
-            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            enablesFor="1">
+            <selection class="org.eclipse.debug.core.model.IStep"/>            
       </action>      
       <action
             label="%TerminateAction.label"
@@ -181,6 +189,7 @@
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
+            <selection class="org.eclipse.debug.core.model.ITerminate"/>            
       </action>
       <action
             label="%SuspendAction.label"
@@ -190,7 +199,9 @@
             helpContextId="suspend_action_context"
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+            enablesFor="1">
+			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>               
       </action>
       <action
             label="%ResumeAction.label"
@@ -200,7 +211,9 @@
             helpContextId="resume_action_context"
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
+            id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+			enablesFor= "1">
+            <selection class="org.eclipse.debug.core.model.ISuspendResume"/> 
       </action>
    </actionSet>
 </extension>
@@ -337,6 +350,7 @@
 			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
 			tooltip="%DisconnectAction.tooltip"
 			label="%DisconnectAction.label">
+			<selection class="org.eclipse.debug.core.model.IDisconnect"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
@@ -348,6 +362,7 @@
 			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
 			tooltip="%TerminateAction.tooltip"
 			label="%TerminateAction.label">
+			<selection class="org.eclipse.debug.core.model.ITerminate"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
@@ -358,7 +373,9 @@
 			helpContextId = "suspend_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
 			tooltip="%SuspendAction.tooltip"
-			label="%SuspendAction.label">
+			label="%SuspendAction.label"
+			enablesFor="1">
+			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
@@ -369,7 +386,9 @@
 			helpContextId = "resume_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
 			tooltip="%ResumeAction.tooltip"
-			label="%ResumeAction.label">
+			label="%ResumeAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>
 		</action>
 <!-- Step Group -->
 		<action
@@ -381,7 +400,9 @@
 			helpContextId = "step_return_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
 			tooltip="%StepReturnAction.tooltip"
-			label="%StepReturnAction.label">
+			label="%StepReturnAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>		
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepOver"
@@ -392,7 +413,9 @@
 			helpContextId = "step_over_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
 			tooltip="%StepOverAction.tooltip"
-			label="%StepOverAction.label">
+			label="%StepOverAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>			
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepInto"
@@ -403,7 +426,9 @@
 			helpContextId = "step_into_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 			tooltip="%StepIntoAction.tooltip"
-			label="%StepIntoAction.label">
+			label="%StepIntoAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepWithFilters"
@@ -414,7 +439,9 @@
 			helpContextId = "step_with_filters_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
 			tooltip="%StepWithFiltersAction.tooltip"
-			label="%StepWithFiltersAction.label">
+			label="%StepWithFiltersAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>						
 	</viewContribution>
 <!-- Contributions to Console View Toolbar -->
@@ -431,6 +458,7 @@
 			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
 			tooltip="%TerminateAction.tooltip"
 			label="%TerminateAction.label">
+			<selection class="org.eclipse.debug.core.model.ITerminate"/>
 		</action>
 	</viewContribution>
 <!-- Contributions to Breakpoints View Toolbar -->
@@ -458,6 +486,7 @@
 			class = "org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
 			tooltip="%RemoveBreakpointAction.tooltip"
 			label="%RemoveAction.label">
+			<selection class="org.eclipse.debug.core.model.IBreakpoint"/>
 		</action>
 	</viewContribution>
 <!-- Contributions to Expression View Toolbar -->
@@ -473,7 +502,6 @@
 			class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction">
 		</action>
 	</viewContribution>
-<!-- Contributions to Expression View Toolbar -->
 	<viewContribution
 		id = "org.eclipse.debug.ui.expressionsView.toolbar"
 		targetID = "org.eclipse.debug.ui.ExpressionView">
@@ -498,8 +526,10 @@
 			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
 			tooltip="%RemoveExpressionAction.tooltip"
 			label="%RemoveAction.label">
+			<selection class="org.eclipse.debug.core.model.IExpression"/>
+			<selection class="org.eclipse.debug.core.model.IVariable"/>
 		</action>
-		<action id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
+		<action id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap"
 			label="%DetailPaneWrodWrapAction.label"
 			menubarPath="viewActions"
 			tooltip="%DetailPaneWrodWrapAction.tooltip"
@@ -522,6 +552,7 @@
 			helpContextId = "copy_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
 			label="%CopyToClipboardAction.label">
+			<selection class="org.eclipse.debug.core.model.IDebugElement"/>
 		</action>
 <!-- Launch Group -->
 		<action
@@ -547,6 +578,7 @@
 			icon = "icons/full/clcl16/terminate_rem_co.gif"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate"
 			label="%TerminateAndRemoveAction.label">
+			<selection class="org.eclipse.debug.core.model.ITerminate"/>
 		</action>
 <!-- Thread Group -->
 		<action
@@ -564,6 +596,7 @@
 			helpContextId = "disconnect_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
 			label="%DisconnectAction.label">
+			<selection class="org.eclipse.debug.core.model.IDisconnect"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.terminate"
@@ -572,6 +605,7 @@
 			helpContextId = "terminate_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
 			label="%TerminateAction.label">
+			<selection class="org.eclipse.debug.core.model.ITerminate"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.suspend"
@@ -579,7 +613,9 @@
 			icon = "icons/full/clcl16/suspend_co.gif"
 			helpContextId = "suspend_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-			label="%SuspendAction.label">
+			label="%SuspendAction.label"
+			enablesFor= "1">
+			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.resume"
@@ -587,7 +623,9 @@
 			icon = "icons/full/clcl16/resume_co.gif"
 			helpContextId = "resume_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			label="%ResumeAction.label">
+			label="%ResumeAction.label"
+			enablesFor= "1">
+			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>			
 		</action>		
 <!-- Step Group -->		
 		<action
@@ -596,7 +634,9 @@
 			icon = "icons/full/clcl16/stepreturn_co.gif"
 			helpContextId = "step_return_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-			label="%StepReturnAction.label">
+			label="%StepReturnAction.label"
+			enablesFor= "1">
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>		
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.stepOver"
@@ -604,7 +644,9 @@
 			icon = "icons/full/clcl16/stepover_co.gif"
 			helpContextId = "step_over_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-			label="%StepOverAction.label">
+			label="%StepOverAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>			
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.stepInto"
@@ -612,7 +654,9 @@
 			icon = "icons/full/clcl16/stepinto_co.gif"
 			helpContextId = "step_into_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-			label="%StepIntoAction.label">
+			label="%StepIntoAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>		
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
@@ -620,7 +664,9 @@
 			icon = "icons/full/clcl16/stepbystep_co.gif"
 			helpContextId = "step_with_filters_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-			label="%StepWithFiltersAction.label">
+			label="%StepWithFiltersAction.label"
+			enablesFor= "1">			
+			<selection class="org.eclipse.debug.core.model.IStep"/>
 		</action>				
 	</viewerContribution>
 	<!-- Contributions to Breakpoints View Popup Menu -->
@@ -642,6 +688,7 @@
 			menubarPath="breakpointGroup"
 			helpContextId = "remove_breakpoint_action_context"
 			class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction">
+			<selection class="org.eclipse.debug.core.model.IBreakpoint"/>
 		</action>
 		<action
 			id="org.eclipse.debug.ui.actions.DisableBreakpoint"
@@ -651,6 +698,7 @@
 			helpContextId = "disable_breakpoint_action_context"
 			class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
 			enablesFor="2+">
+			<selection class="org.eclipse.debug.core.model.IBreakpoint"/>
 		</action>
 		<action
 			id="org.eclipse.debug.ui.actions.EnableBreakpoint"
@@ -660,6 +708,7 @@
 			helpContextId = "enable_breakpoint_action_context"
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
+			<selection class="org.eclipse.debug.core.model.IBreakpoint"/>
 		</action>
 		<action
 			id="org.eclipse.debug.ui.actions.SelectAllBreakpointsAction"
@@ -681,6 +730,7 @@
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
+			<selection class="org.eclipse.debug.core.model.IDebugElement"/>
 		</action>
 		<action
 			id="org.eclipse.debug.ui.actions.SelectAllVariablesAction"
@@ -710,6 +760,8 @@
 			icon = "icons/full/clcl16/rem_co.gif"
 			helpContextId = "remove_expression_action_context"
 			label="%RemoveAction.label">
+			<selection class="org.eclipse.debug.core.model.IExpression"/>
+			<selection class="org.eclipse.debug.core.model.IVariable"/>
 		</action>
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
@@ -718,6 +770,7 @@
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
+			<selection class="org.eclipse.debug.core.model.IDebugElement"/>
 		</action>
 		<action
 			id="org.eclipse.debug.ui.actions.SelectAllExpressionsAction"
@@ -738,6 +791,7 @@
 			helpContextId = "console_terminate_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
 			label="%TerminateAction.label">
+			<selection class="org.eclipse.debug.core.model.ITerminate"/>
 		</action>
 	</viewerContribution>
 </extension>
