@@ -15,6 +15,7 @@ package org.eclipse.ui.texteditor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -297,7 +298,11 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 */
 	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTarget instanceof IFindReplaceTargetExtension3)
-			return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			try {
+				return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			} catch (PatternSyntaxException ex) {
+				return -1;
+			}
 		else
 			return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}

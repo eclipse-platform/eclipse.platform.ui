@@ -740,7 +740,11 @@ public class TextViewer extends Viewer implements
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
-			return findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, false);
+			try {
+				return findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, false);
+			} catch (PatternSyntaxException ex) {
+				return -1;
+			}
 		}
 		
 		/*
