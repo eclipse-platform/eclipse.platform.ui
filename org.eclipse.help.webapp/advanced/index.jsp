@@ -63,7 +63,7 @@ if (data.isMozilla()){
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>
-	<frame name="BannerFrame" src='<%=data.getBannerURL()%>'  tabIndex="3" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name="BannerFrame" title="<%=ServletResources.getString("Banner", request)%>" src='<%=data.getBannerURL()%>'  tabIndex="3" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 <%
 	}
 %>
