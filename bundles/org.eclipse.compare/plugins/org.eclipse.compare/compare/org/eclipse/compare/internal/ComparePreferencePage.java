@@ -59,9 +59,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
-	public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
-	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
-	public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
+	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
+	//public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
+	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
 	
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
@@ -85,9 +85,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
 		
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
+		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
+		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
+		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
 	};
 	
 	
@@ -98,9 +98,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
-		store.setDefault(USE_SPLINES, false);
-		store.setDefault(USE_SINGLE_LINE, false);
-		store.setDefault(USE_RESOLVE_UI, false);
+		//store.setDefault(USE_SPLINES, false);
+		//store.setDefault(USE_SINGLE_LINE, false);
+		//store.setDefault(USE_RESOLVE_UI, false);
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 
@@ -222,17 +222,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayout(layout);
 				
 		addCheckBox(composite, "ComparePreferencePage.structureCompare.label", OPEN_STRUCTURE_COMPARE, 0);	//$NON-NLS-1$
-		
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
-		
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
 		
-		addCheckBox(composite, "ComparePreferencePage.useSplines.label", USE_SPLINES, 0);	//$NON-NLS-1$
-
-		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
-
-		addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
-
 		return composite;
 	}
 	
@@ -244,23 +236,31 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayout(layout);
 				
 		addCheckBox(composite, "ComparePreferencePage.synchronizeScrolling.label", SYNCHRONIZE_SCROLLING, 0);	//$NON-NLS-1$
-		
 		addCheckBox(composite, "ComparePreferencePage.initiallyShowAncestorPane.label", INITIALLY_SHOW_ANCESTOR_PANE, 0);	//$NON-NLS-1$
-		
 		addCheckBox(composite, "ComparePreferencePage.showPseudoConflicts.label", SHOW_PSEUDO_CONFLICTS, 0);	//$NON-NLS-1$
 		
+		//addCheckBox(composite, "ComparePreferencePage.useSplines.label", USE_SPLINES, 0);	//$NON-NLS-1$
+		//addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
+		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
+		
+		// a filler
+		new Label(composite, SWT.NONE);
+
 		fFontEditor= addTextFontEditor(composite, "ComparePreferencePage.textFont.label", TEXT_FONT);	//$NON-NLS-1$
 		fFontEditor.setPreferenceStore(getPreferenceStore());
 		fFontEditor.setPreferencePage(this);
 		fFontEditor.load();
+		
+		// a filler
+		new Label(composite, SWT.NONE);
 		
 		Label previewLabel= new Label(composite, SWT.NULL);
 		previewLabel.setText(Utilities.getString("ComparePreferencePage.preview.label"));	//$NON-NLS-1$
 		
 		Control previewer= createPreviewer(composite);
 		GridData gd= new GridData(GridData.FILL_BOTH);
-		gd.widthHint= convertWidthInCharsToPixels(80);
-		gd.heightHint= convertHeightInCharsToPixels(15);
+		gd.widthHint= convertWidthInCharsToPixels(60);
+		gd.heightHint= convertHeightInCharsToPixels(9);
 		previewer.setLayoutData(gd);
 		
 		return composite;

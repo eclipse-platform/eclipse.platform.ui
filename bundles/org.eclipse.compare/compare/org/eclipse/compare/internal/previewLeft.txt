@@ -1,10 +1,6 @@
-a
-x
-c
-z
-e
-f
-g
-h
-i
-j
+1
+2
+outgoing addition
+3
+outgoing change
+4

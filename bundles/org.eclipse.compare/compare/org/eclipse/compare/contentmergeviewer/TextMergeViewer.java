@@ -225,9 +225,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fShowPseudoConflicts= false;
 	
-	private boolean fUseSplines= false;
-	private boolean fUseSingleLine= false;
-	private boolean fUseResolveUI= false;
+	private boolean fUseSplines= true;
+	private boolean fUseSingleLine= true;
+	private boolean fUseResolveUI= true;
 
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
@@ -607,9 +607,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
-			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
-			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
-			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
+			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
+			//fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -2838,19 +2838,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			selectFirstDiff();
 			
-		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
-			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
-			invalidateLines();
+//		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
+//			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
+//			invalidateLines();
 
-		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
-			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
-			fBasicCenterCurve= null;
-			invalidateLines();
+//		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
+//			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+//			fBasicCenterCurve= null;
+//			invalidateLines();
 	
-		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
-			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
-			updateResolveStatus();
-			invalidateLines();
+//		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
+//			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
+//			updateResolveStatus();
+//			invalidateLines();
 		
 		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
 			if (fPreferenceStore != null) {

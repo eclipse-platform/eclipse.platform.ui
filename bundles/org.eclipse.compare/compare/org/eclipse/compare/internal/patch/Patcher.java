@@ -1006,13 +1006,6 @@ public class Patcher {
 
 	int calculateFuzz(Hunk hunk, List lines, int shift, IProgressMonitor pm, int[] fuzz) {
 		
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		hunk.fMatches= false;
 		if (tryPatch(hunk, lines, shift)) {
 			shift+= doPatch(hunk, lines, shift);
