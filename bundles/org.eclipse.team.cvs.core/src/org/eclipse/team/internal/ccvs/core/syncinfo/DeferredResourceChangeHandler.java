@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.BackgroundEventHandler;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
  * This class handles resources changes that are reported in deltas
@@ -32,8 +28,6 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	private static final int IGNORE_FILE_CHANGED = 1;
 	
 	private Set changedIgnoreFiles = new HashSet();
-
-	private int NOTIFICATION_BATCHING_NUMBER = 10;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#getName()
@@ -57,13 +51,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		switch (type) {
 			case IGNORE_FILE_CHANGED :
 				changedIgnoreFiles.add(event.getResource());
-		}
-		
-		if (!hasUnprocessedEvents()
-			|| changedIgnoreFiles.size() > NOTIFICATION_BATCHING_NUMBER) {
-			EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
-			changedIgnoreFiles.clear();
-		}
+		}				
 	}
 	
 	private IContainer[] getParents(Set files) {
@@ -79,4 +67,11 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		queueEvent(new Event(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
+	 */
+	protected void dispatchEvents() throws TeamException {
+		EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
+		changedIgnoreFiles.clear();
+	}
 }

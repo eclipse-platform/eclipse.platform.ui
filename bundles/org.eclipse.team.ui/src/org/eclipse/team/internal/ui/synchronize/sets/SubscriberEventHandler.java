@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.sets;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,9 +32,6 @@ import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
  * one.
  */
 public class SubscriberEventHandler extends BackgroundEventHandler {
-	// The number of events to process before feeding into the set.
-	private static final int NOTIFICATION_BATCHING_NUMBER = 10;
-
 	// The set that receives notification when the resource synchronization state
 	// has been calculated by the job.
 	private SyncSetInputFromSubscriber set;
@@ -300,13 +295,13 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 				resultCache.addAll(Arrays.asList(events));
 				break;
 		}
-
-		if (!hasUnprocessedEvents()
-			|| resultCache.size() > NOTIFICATION_BATCHING_NUMBER) {
-			dispatchEvents(
-				(SubscriberEvent[]) resultCache.toArray(
-					new SubscriberEvent[resultCache.size()]));
-			resultCache.clear();
-		}
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
+	 */
+	protected void dispatchEvents() {
+		dispatchEvents((SubscriberEvent[]) resultCache.toArray(new SubscriberEvent[resultCache.size()]));
+		resultCache.clear();
 	}
 }
