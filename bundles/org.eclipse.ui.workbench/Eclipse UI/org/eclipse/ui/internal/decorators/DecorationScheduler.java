@@ -27,6 +27,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchMessages;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -234,6 +236,10 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus run(IProgressMonitor monitor) {
+				
+				if(shutdown)//Cancelled on shutdown
+					return Status.CANCEL_STATUS;
+				
 				monitor.beginTask(WorkbenchMessages
 						.getString("DecorationScheduler.CalculatingTask"), 100); //$NON-NLS-1$
 				//will block if there are no resources to be decorated
@@ -343,6 +349,13 @@ public class DecorationScheduler {
 			public boolean belongsTo(Object family) {
 				return DecoratorManager.FAMILY_DECORATE == family;
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+			 */
+			public boolean shouldRun() {
+				return PlatformUI.isWorkbenchRunning();
+			}
 		};
 
 		decorationJob.setSystem(true);
@@ -370,6 +383,10 @@ public class DecorationScheduler {
 		WorkbenchJob job = new WorkbenchJob(WorkbenchMessages
 				.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				if(shutdown)//Cancelled on shutdown
+					return Status.CANCEL_STATUS;
+				
 				//Check again in case someone has already cleared it out.
 				synchronized (resultLock) {
 					if (pendingUpdate.isEmpty())
