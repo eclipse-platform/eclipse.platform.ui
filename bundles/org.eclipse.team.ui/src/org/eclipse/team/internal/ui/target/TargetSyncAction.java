@@ -1,14 +1,15 @@
 package org.eclipse.team.internal.ui.target;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -22,14 +23,15 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public abstract class TargetSyncAction extends Action {
 	private TargetSyncCompareInput diffModel;
@@ -39,7 +41,7 @@ public abstract class TargetSyncAction extends Action {
 	private Shell shell;
 	
 	/**
-	 * Creates a MergeAction which works on selection and doesn't commit changes.
+	 * Creates a TargetSyncAction which works on selection and doesn't commit changes.
 	 */
 	public TargetSyncAction(TargetSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(label);
@@ -192,5 +194,26 @@ public abstract class TargetSyncAction extends Action {
 	 */
 	protected boolean saveIfNecessary() {
 		return getDiffModel().saveIfNecessary();
-	}		
+	}	
+		
+	/**
+	 * Convenience method that maps the given resources to their target providers.
+	 * The returned Hashtable has keys which are TargetProviders, and values
+	 * which are Lists of IResources that are shared with that provider.
+	 * 
+	 * @return a hashtable mapping providers to their resources
+	 */
+	protected Hashtable getTargetProviderMapping(IResource[] resources) throws TeamException {
+		Hashtable result = new Hashtable();
+		for (int i = 0; i < resources.length; i++) {
+			TargetProvider provider = TargetManager.getProvider(resources[i].getProject());
+			List list = (List)result.get(provider);
+			if (list == null) {
+				list = new ArrayList();
+				result.put(provider, list);
+			}
+			list.add(resources[i]);
+		}
+		return result;
+	}
 }
