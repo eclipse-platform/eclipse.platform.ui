@@ -49,8 +49,8 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
@@ -77,10 +77,6 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class WorkbenchKeyboard {
 
-	static {
-		initializeOutOfOrderKeys();
-	}
-
 	/**
 	 * The maximum height of the multi-stroke key binding assistant shell.
 	 */
@@ -101,6 +97,10 @@ public class WorkbenchKeyboard {
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(WorkbenchKeyboard.class.getName());
+
+	static {
+		initializeOutOfOrderKeys();
+	}
 
 	/**
 	 * Generates any key strokes that are near matches to the given event. The
@@ -668,8 +668,10 @@ public class WorkbenchKeyboard {
 		// If the shell loses focus, it should be closed.
 		multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
-				multiKeyAssistShell.close();
-				multiKeyAssistShell = null;
+				if (multiKeyAssistShell != null) {
+					multiKeyAssistShell.close();
+					multiKeyAssistShell = null;
+				}
 			}
 		});
 
