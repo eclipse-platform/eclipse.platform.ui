@@ -13,7 +13,7 @@ package org.eclipse.debug.core.model;
  
 /**
  * An expression is a snippet of code that can be evaluated
- * to produce a value. When and how an experssion is evaluated
+ * to produce a value. When and how an expression is evaluated
  * is implementation specific. The context/binding required to
  * evaluate an expression varies by debug model, and by
  * user intent. Furthermore, an expression may need to be evaluated
