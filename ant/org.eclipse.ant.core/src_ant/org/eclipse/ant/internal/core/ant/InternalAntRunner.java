@@ -305,7 +305,10 @@ public class InternalAntRunner {
 		}
 		antProject.init();
 		setTypes(antProject);
-		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
+		processProperties(getArrayList(extraArguments));
+		
+		setProperties(antProject);
+		
 		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();
 		Enumeration targets = antProject.getTargets().elements();
@@ -1074,7 +1077,7 @@ public class InternalAntRunner {
 			propertyFiles.addAll(Arrays.asList(globalPropertyFiles));
 		}
 		
-		if (propertyFiles != null) {
+		if (propertyFiles != null && !propertyFiles.isEmpty()) {
 			loadPropertyFiles();
 		}
 		
@@ -1310,7 +1313,11 @@ public class InternalAntRunner {
             Enumeration propertyNames = props.propertyNames();
             while (propertyNames.hasMoreElements()) {
                 String name = (String) propertyNames.nextElement();
-            	userProperties.put(name, props.getProperty(name));
+                //most specific to global
+                //do not overwrite specific with a global property
+                if (userProperties.get(name) == null) {
+            		userProperties.put(name, props.getProperty(name));
+                }
             }
         }
 	}
