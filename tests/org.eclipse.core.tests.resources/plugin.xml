@@ -213,7 +213,10 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestBug12575">
 		<run class="org.eclipse.core.tests.resources.session.TestBug12575"/>
 	</test>
-  
+	<test id = "org.eclipse.core.tests.resources.session.WorkspaceDescriptionTest">
+		<run class="org.eclipse.core.tests.resources.session.WorkspaceDescriptionTest"/>
+	</test>
+
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
     </test>
