@@ -53,10 +53,14 @@ class FinishedJobs {
     private HashSet keptjobinfos = new HashSet();
 
     private HashMap finishedTime = new HashMap();
+	
+	private static JobTreeElement[] EMPTY_INFOS;
 
     static synchronized FinishedJobs getInstance() {
-        if (theInstance == null)
+        if (theInstance == null){
             theInstance = new FinishedJobs();
+			EMPTY_INFOS = new JobTreeElement[0];
+        }
         return theInstance;
     }
 
@@ -334,6 +338,9 @@ class FinishedJobs {
      */
     JobTreeElement[] getJobInfos() {
         JobTreeElement[] all;
+		if(keptjobinfos.isEmpty())
+			return EMPTY_INFOS;
+		
         synchronized (keptjobinfos) {
             all = (JobTreeElement[]) keptjobinfos
                     .toArray(new JobTreeElement[keptjobinfos.size()]);
