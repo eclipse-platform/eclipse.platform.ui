@@ -37,7 +37,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </p>
  * @since 2.1
  */
-public class FileLink implements IHyperlink {
+public class FileLink implements IConsoleHyperlink {
 
 	private IFile fFile;
 	private int fFileOffset;
