@@ -87,7 +87,7 @@ public abstract class TargetAction extends TeamAction {
 			resource.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
 					if (resource.getType() == IResource.FILE) {
-						if (provider.isDirty(resource)) {
+						if (provider.isDirty(resource) || ! provider.hasBase(resource)) {
 							dirtyResources.add(resource);
 						}
 					} else {
