@@ -20,7 +20,7 @@ public class RemoveAllAction extends Action implements IUpdate {
 	
 	public RemoveAllAction(AntView view) {
 		super(AntViewActionMessages.getString("RemoveAllAction.Remove_All"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE_ALL)); //$NON-NLS-1$
-		setDescription(AntViewActionMessages.getString("RemoveAllAction.Remove_all")); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		this.view= view;
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REMOVE_ALL_ACTION);

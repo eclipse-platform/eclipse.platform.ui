@@ -29,7 +29,7 @@ public class AddBuildFileAction extends Action {
 	public AddBuildFileAction(AntView view) {
 		super(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
-		setToolTipText(AntViewActionMessages.getString("AddBuildFileAction.Add_build_file_2")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
