@@ -5,6 +5,7 @@
 package org.eclipse.compare;
 
 import java.io.InputStream;
+import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -72,7 +73,7 @@ public class HistoryItem implements IStreamContentAccessor, ITypedElement, IModi
 	 * see IStreamContentAccessor.getContents
 	 */
 	public InputStream getContents() throws CoreException {
-		return fFileState.getContents();
+		return new BufferedInputStream(fFileState.getContents());
 	}
 }
 
