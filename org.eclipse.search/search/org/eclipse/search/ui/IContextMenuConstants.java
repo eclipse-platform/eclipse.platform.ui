@@ -103,5 +103,5 @@ public interface IContextMenuConstants {
 	/**
 	 * Pop-up menu: name of group for remove match actions (value <code>"group.removeMatches"</code>).
 	 */	
-	public static final String GROUP_REMOVE_MATCHES= "group.removeMatches";
+	public static final String GROUP_REMOVE_MATCHES= "group.removeMatches"; //$NON-NLS-1$
 }
