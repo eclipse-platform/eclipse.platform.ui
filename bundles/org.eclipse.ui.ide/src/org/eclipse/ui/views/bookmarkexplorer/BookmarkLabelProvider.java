@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
@@ -41,7 +42,7 @@ class BookmarkLabelProvider extends LabelProvider implements
     final static int COLUMN_LOCATION = 4;
 
     public BookmarkLabelProvider(BookmarkNavigator view) {
-        desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif"); //$NON-NLS-1$
+        desc = WorkbenchImages.getWorkbenchImageDescriptor("obj16/bkmrk_tsk.gif"); //$NON-NLS-1$
         image = JFaceResources.getResources().createImageWithDefault(desc);
     }
 

@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -55,7 +52,7 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
     private IStructuredSelection selection;
 
     private WizardPreferencesImportPage1 mainPage;
-
+	
     /**
      * Creates a wizard for importing resources into the workspace from
      * the file system.
@@ -80,23 +77,6 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
         addPage((IWizardPage)mainPage);
     }
 
-    /**
-     * Returns the image descriptor with the given relative path.
-     */
-    private ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/";//$NON-NLS-1$
-        try {
-            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                    .getPlugin(PlatformUI.PLUGIN_ID);
-            URL installURL = plugin.getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            // Should not happen
-            return null;
-        }
-    }
-
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
@@ -105,7 +85,8 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
         this.selection = currentSelection;
 
         setWindowTitle("Title"); //$NON-NLS-1$
-        setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(
+				WorkbenchImages.getWorkbenchImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

@@ -11,16 +11,11 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.net.URL;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * An abstract class with some utility methods and common values to share
@@ -44,21 +39,6 @@ abstract class AbstractPreferenceImportExportPage extends WizardPage {
      * The default extension for preferences files.
      */
     protected static final String PREFERENCE_EXT = ".epf"; //$NON-NLS-1$
-
-    /**
-     * Retrieves the image descriptor from the given relative path.  The path is
-     * relative from the "icons/full" directory.
-     * @param relativePath The relative path; should not be <code>null</code>.
-     * @return The image descriptor if it can be found; otherwise, the "missing
-     * image" descriptor.
-     */
-    protected static ImageDescriptor getImageDescriptor(String relativePath) {
-        String path = "icons/full/" + relativePath; //$NON-NLS-1$
-        URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
-
-        return url != null ? ImageDescriptor.createFromURL(url)
-                : ImageDescriptor.getMissingImageDescriptor();
-    }
 
     /**
      * Whether this page was opened in export or import mode.  Since there is a

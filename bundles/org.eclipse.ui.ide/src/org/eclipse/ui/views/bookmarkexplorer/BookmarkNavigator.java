@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
@@ -29,8 +27,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -73,6 +69,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -158,7 +155,7 @@ public class BookmarkNavigator extends ViewPart {
     private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
 
     private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
-
+	
     class SortByAction extends Action {
 
         private int column;
@@ -224,7 +221,7 @@ public class BookmarkNavigator extends ViewPart {
         // Create the actions.
         openAction = new OpenBookmarkAction(this);
         openAction
-                .setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
+                .setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 
         copyAction = new CopyBookmarkAction(this);
         copyAction.setImageDescriptor(sharedImages
@@ -379,21 +376,6 @@ public class BookmarkNavigator extends ViewPart {
             };
         }
         return super.getAdapter(adapter);
-    }
-
-    /**
-     * Returns the image descriptor with the given relative path.
-     */
-    ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/";//$NON-NLS-1$
-        try {
-            URL installURL = getPlugin().getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            Assert.isTrue(false);
-            return null;
-        }
     }
 
     /**

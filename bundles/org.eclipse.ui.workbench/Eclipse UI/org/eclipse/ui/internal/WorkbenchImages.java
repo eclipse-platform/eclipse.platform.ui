@@ -71,7 +71,7 @@ public/*final*/class WorkbenchImages {
 
     /* Declare Common paths */
 
-    public final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
+    public final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
     private final static String PATH_ETOOL = ICONS_PATH + "etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
 
@@ -89,6 +89,7 @@ public/*final*/class WorkbenchImages {
     private final static String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
 
     private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
+	
 
     //private final static String PATH_STAT = ICONS_PATH+"stat/";
     //private final static String PATH_MISC = ICONS_PATH+"misc/";
@@ -127,8 +128,8 @@ public/*final*/class WorkbenchImages {
      * internal ones.
      */
     private final static void declareImages() {
-
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
+		
+	   declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
                 PATH_ETOOL + "pin_editor.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED,
                 PATH_DTOOL + "pin_editor.gif", false); //$NON-NLS-1$
@@ -342,7 +343,7 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_SOURCE,
                 PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK,
-                PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$		
+                PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
     }
 
     /**
@@ -514,4 +515,14 @@ public/*final*/class WorkbenchImages {
             imageCache = null;
         }
     }
+	
+	/**
+	 * Get the workbench image with the given path relative to
+	 * ICON_PATH.
+	 * @param relativePath
+	 * @return ImageDescriptor
+	 */
+	public static ImageDescriptor getWorkbenchImageDescriptor(String relativePath){
+		return ImageDescriptor.createFromURL(BundleUtility.find(PlatformUI.PLUGIN_ID, ICONS_PATH + relativePath));
+	}
 }

@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,14 +21,15 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.preferences.ViewPreferencesAction;
-
-import org.eclipse.ui.internal.util.ImageSupport;
 
 /**
  * The ProgressView is the class that shows the details of the current
@@ -191,12 +188,10 @@ public class JobView extends ViewPart implements IViewPart {
             }
         };
         clearAllAction.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip); 
-        ImageDescriptor id = ImageSupport
-                .getImageDescriptor("icons/full/elcl16/progress_remall.gif"); //$NON-NLS-1$
+        ImageDescriptor id = WorkbenchImages.getWorkbenchImageDescriptor("/elcl16/progress_remall.gif"); //$NON-NLS-1$
         if (id != null)
             clearAllAction.setImageDescriptor(id);
-        id = ImageSupport
-                .getImageDescriptor("icons/full/dlcl16/progress_remall.gif"); //$NON-NLS-1$
+        id = WorkbenchImages.getWorkbenchImageDescriptor("/dlcl16/progress_remall.gif"); //$NON-NLS-1$
         if (id != null)
             clearAllAction.setDisabledImageDescriptor(id);
     }

@@ -46,6 +46,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
@@ -430,7 +431,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
      */
     private void declareWorkbenchImages() {
 
-        final String ICONS_PATH = "icons/full/";//$NON-NLS-1$
+        final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
         final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled toolbar icons.//$NON-NLS-1$
         final String PATH_ETOOL = ICONS_PATH + "etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
         final String PATH_DTOOL = ICONS_PATH + "dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
@@ -549,7 +550,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
      */
     private void declareWorkbenchImage(Bundle ideBundle, String symbolicName,
             String path, boolean shared) {
-        URL url = ideBundle.getEntry(path);
+		URL url = BundleUtility.find(ideBundle, path);
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
     }

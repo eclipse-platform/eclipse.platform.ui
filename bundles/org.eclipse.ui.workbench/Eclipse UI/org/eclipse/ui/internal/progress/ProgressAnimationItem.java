@@ -19,13 +19,25 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.util.ImageSupport;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -222,13 +234,9 @@ public class ProgressAnimationItem extends AnimationItem implements
 
         if (okImage == null) {
             Display display = parent.getDisplay();
-            noneImage = ImageSupport
-                    .getImageDescriptor("icons/full/progress/progress_none.gif").createImage(display); //$NON-NLS-1$
-            okImage = ImageSupport.getImageDescriptor(
-                    "icons/full/progress/progress_ok.gif").createImage(display); //$NON-NLS-1$
-            errorImage = ImageSupport
-                    .getImageDescriptor(
-                            "icons/full/progress/progress_error.gif").createImage(display); //$NON-NLS-1$
+            noneImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_none.gif").createImage(display); //$NON-NLS-1$
+            okImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_ok.gif").createImage(display); //$NON-NLS-1$
+            errorImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_error.gif").createImage(display); //$NON-NLS-1$
         }
 
         top = new Composite(parent, SWT.NULL);

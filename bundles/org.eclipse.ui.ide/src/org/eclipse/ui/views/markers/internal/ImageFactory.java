@@ -11,16 +11,13 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Manages images and image descriptors.
@@ -29,16 +26,6 @@ public class ImageFactory {
 
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 	private static Map map = new HashMap();
-	
-	private static ImageDescriptor create(String path) {
-		try {
-			URL url = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-			url = new URL(url, "icons/full/" + path); //$NON-NLS-1$
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException eMalformedURL) {
-			return null;
-		}
-	}
 
 	/**
 	 * Returns an image for the given path or <code>null</code> if an image could 
@@ -79,7 +66,7 @@ public class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(path);
 
 		if (imageDescriptor == null) {
-			imageDescriptor = create(path);
+			imageDescriptor = WorkbenchImages.getWorkbenchImageDescriptor(path);
 			map.put(path, imageDescriptor);
 		}
 

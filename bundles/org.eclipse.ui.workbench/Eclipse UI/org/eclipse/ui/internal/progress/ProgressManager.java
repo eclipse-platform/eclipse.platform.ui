@@ -98,7 +98,7 @@ public class ProgressManager extends ProgressProvider implements
 
     static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
-    static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
+    static final String PROGRESS_FOLDER = "$nl$/icons/full/progress/"; //$NON-NLS-1$
 
     private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 

@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.views.tasklist;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -24,17 +22,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
  * Utility class for accessing marker attributes.
  */
 class MarkerUtil implements IMarkerConstants {
-
-    private static Map imageDescriptors;
+	
+   private static Map imageDescriptors;
 
     private static ImageRegistry imageRegistry = new ImageRegistry();
 
@@ -58,16 +56,8 @@ class MarkerUtil implements IMarkerConstants {
      * given relative path (relative to the icons directory for the plug-in).
      */
     static ImageDescriptor createImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/";//$NON-NLS-1$
-        try {
-            URL URL_BASIC = TaskList.getPlugin().getDescriptor()
-                    .getInstallURL();
-            URL url = new URL(URL_BASIC, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            Assert.isTrue(false);
-            return null;
-        }
+       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
+       
     }
 
     /**

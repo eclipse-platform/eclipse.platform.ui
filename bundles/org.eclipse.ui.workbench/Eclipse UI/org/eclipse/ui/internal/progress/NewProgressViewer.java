@@ -12,7 +12,10 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -21,18 +24,50 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
@@ -1169,16 +1204,11 @@ public class NewProgressViewer extends TreeViewer implements
         handCursor = new Cursor(display, SWT.CURSOR_HAND);
         normalCursor = new Cursor(display, SWT.CURSOR_ARROW);
 
-        defaultJobIcon = ImageSupport.getImageDescriptor(
-                "icons/full/progress/progress_task.gif").createImage(display); //$NON-NLS-1$
-        cancelJobIcon = ImageSupport.getImageDescriptor(
-                "icons/full/elcl16/progress_stop.gif").createImage(display); //$NON-NLS-1$
-        cancelJobDIcon = ImageSupport.getImageDescriptor(
-                "icons/full/dlcl16/progress_stop.gif").createImage(display); //$NON-NLS-1$
-        clearJobIcon = ImageSupport.getImageDescriptor(
-                "icons/full/elcl16/progress_rem.gif").createImage(display); //$NON-NLS-1$
-        clearJobDIcon = ImageSupport.getImageDescriptor(
-                "icons/full/dlcl16/progress_rem.gif").createImage(display); //$NON-NLS-1$
+        defaultJobIcon = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_task.gif").createImage(display); //$NON-NLS-1$
+        cancelJobIcon = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_stop.gif").createImage(display); //$NON-NLS-1$
+        cancelJobDIcon =WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_stop.gif").createImage(display); //$NON-NLS-1$
+        clearJobIcon = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_rem.gif").createImage(display); //$NON-NLS-1$
+        clearJobDIcon = WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_rem.gif").createImage(display); //$NON-NLS-1$
 
         boldFont = getDefaultFont();
         FontData fds[] = getDefaultFontData();

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -94,7 +92,6 @@ import org.eclipse.ui.internal.part.services.NullEditorInput;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -127,12 +124,9 @@ public class EditorManager implements IExtensionRemovalHandler {
 
     private Map actionCache = new HashMap();
 
-    // the following fields are for handling the pin icon of editors
-    private static final String PIN_EDITOR_FOLDER = "icons/full/ovr16/"; //$NON-NLS-1$
+   private static final String PIN_EDITOR_KEY = "PIN_EDITOR"; //$NON-NLS-1$
 
-    private static final String PIN_EDITOR_KEY = "PIN_EDITOR"; //$NON-NLS-1$
-
-    private static final String PIN_EDITOR = "pinned_ovr.gif"; //$NON-NLS-1$
+    private static final String PIN_EDITOR = "ovr16/pinned_ovr.gif"; //$NON-NLS-1$
 
     // When the user removes or adds the close editors automatically preference
     // the icon should be removed or added accordingly
@@ -340,18 +334,9 @@ public class EditorManager implements IExtensionRemovalHandler {
         ImageDescriptor pinDesc = registry.getDescriptor(PIN_EDITOR_KEY);
         // Avoid registering twice
         if (pinDesc == null) {
-            try {
-                URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
-                        PIN_EDITOR_FOLDER);
-                pinDesc = ImageDescriptor.createFromURL(new URL(iconsRoot,
-                        PIN_EDITOR));
-                registry.put(PIN_EDITOR_KEY, pinDesc);
-            } catch (MalformedURLException e) {
-                String errorMessage = e.getMessage();
-                WorkbenchPlugin.log(errorMessage, StatusUtil.newStatus(
-                        IStatus.ERROR, errorMessage, e));
-                return null;
-            }
+            pinDesc = WorkbenchImages.getWorkbenchImageDescriptor(PIN_EDITOR);
+            registry.put(PIN_EDITOR_KEY, pinDesc);
+            
         }
         return pinDesc;
     }

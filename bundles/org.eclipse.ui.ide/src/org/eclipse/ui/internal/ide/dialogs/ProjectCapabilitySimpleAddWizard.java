@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 public class ProjectCapabilitySimpleAddWizard extends Wizard {
@@ -66,17 +62,8 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
      * Sets the image banner for the wizard
      */
     protected void initializeDefaultPageImageDescriptor() {
-        String iconPath = "icons/full/";//$NON-NLS-1$		
-        try {
-            // @issue when icons move to IDE, need to update the following
-            URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID)
-                    .getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
-            ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-            setDefaultPageImageDescriptor(desc);
-        } catch (MalformedURLException e) {
-            // Should not happen. Ignore.
-        }
+		ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+        setDefaultPageImageDescriptor(desc);
     }
 
     /* (non-Javadoc)

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
@@ -159,11 +160,11 @@ class PreferenceImportExportFileSelectionPage extends
         if (export) {
             setTitle(EXPORT_TITLE);
             setMessage(EXPORT_MESSAGE);
-            setImageDescriptor(getImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
+            setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
         } else {
             setTitle(IMPORT_TITLE);
             setMessage(IMPORT_MESSAGE);
-            setImageDescriptor(getImageDescriptor("wizban/import_wiz.gif")); //$NON-NLS-1$
+            setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("wizban/import_wiz.gif")); //$NON-NLS-1$
         }
 
         GridData layoutData;

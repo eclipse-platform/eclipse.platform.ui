@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Abstract superclass for actions dealing with frames or a frame list.
@@ -28,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public abstract class FrameAction extends Action {
     private FrameList frameList;
-
+	
     private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             FrameAction.this.handlePropertyChange(event);
@@ -65,17 +60,7 @@ public abstract class FrameAction extends Action {
      * Returns the image descriptor with the given relative path.
      */
     static ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/"; //$NON-NLS-1$
-        try {
-            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                    .getPlugin(PlatformUI.PLUGIN_ID);
-            URL installURL = plugin.getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            // should not happen
-            return ImageDescriptor.getMissingImageDescriptor();
-        }
+		return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
     }
 
     /**

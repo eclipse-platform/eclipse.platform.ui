@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -94,11 +95,11 @@ class PreferenceImportExportSettingsSelectionPage extends
         if (export) {
             setTitle(EXPORT_TITLE);
             setMessage(EXPORT_MESSAGE);
-            setImageDescriptor(getImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
+            setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("wizban/export_wiz.gif")); //$NON-NLS-1$
         } else {
             setTitle(IMPORT_TITLE);
             setMessage(IMPORT_MESSAGE);
-            setImageDescriptor(getImageDescriptor("wizban/import_wiz.gif")); //$NON-NLS-1$
+            setImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("wizban/import_wiz.gif")); //$NON-NLS-1$
         }
 
         GridData layoutData;

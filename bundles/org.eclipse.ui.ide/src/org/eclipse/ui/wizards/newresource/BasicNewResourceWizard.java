@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.newresource;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
@@ -100,16 +97,8 @@ public abstract class BasicNewResourceWizard extends Wizard implements
      * </p>
      */
     protected void initializeDefaultPageImageDescriptor() {
-        String iconPath = "icons/full/";//$NON-NLS-1$
-        try {
-            URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID)
-                    .getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + "wizban/new_wiz.gif");//$NON-NLS-1$
-            ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-            setDefaultPageImageDescriptor(desc);
-        } catch (MalformedURLException e) {
-            // Should not happen.  Ignore.
-        }
+		ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/new_wiz.gif");//$NON-NLS-1$
+        setDefaultPageImageDescriptor(desc);
     }
 
     /**

@@ -190,7 +190,7 @@ public class PathVariablesGroup {
             ImageDescriptor descriptor = AbstractUIPlugin
                     .imageDescriptorFromPlugin(
                             IDEWorkbenchPlugin.IDE_WORKBENCH,
-                            "icons/full/obj16/warning.gif"); //$NON-NLS-1$
+                            "$nl$/icons/full/obj16/warning.gif"); //$NON-NLS-1$
             imageUnkown = descriptor.createImage();
         }
         initializeDialogUnits(parent);

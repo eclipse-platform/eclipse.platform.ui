@@ -64,12 +64,12 @@ public class FilteredTree extends Composite {
     static {
         ImageDescriptor descriptor = AbstractUIPlugin
                 .imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
-                        "icons/full/etool16/clear_co.gif"); //$NON-NLS-1$
+                        "$nl$/icons/full/etool16/clear_co.gif"); //$NON-NLS-1$
         if (descriptor != null) {
             JFaceResources.getImageRegistry().put(CLEAR_ICON, descriptor);
         }
         descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                PlatformUI.PLUGIN_ID, "icons/full/dtool16/clear_co.gif"); //$NON-NLS-1$
+                PlatformUI.PLUGIN_ID, "$nl$/icons/full/dtool16/clear_co.gif"); //$NON-NLS-1$
         if (descriptor != null) {
             JFaceResources.getImageRegistry().put(DCLEAR_ICON, descriptor);
         }

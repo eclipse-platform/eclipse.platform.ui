@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.WizardStep;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -41,6 +38,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * wizard steps to be done.
  */
 public class WizardStepGroup {
+	
+	private static final String ICON_PATH = "$nl$/icons/full/elcl16/"; //$NON-NLS-1$
     private Image doneImage;
 
     private Image currentImage;
@@ -113,17 +112,9 @@ public class WizardStepGroup {
      * Creates an image descriptor.
      */
     private Image createImage(String iconFileName) {
-        String iconPath = "icons/full/elcl16/"; //$NON-NLS-1$
-        ImageDescriptor desc = null;
-        try {
-            URL url_basic = Platform.getPlugin(PlatformUI.PLUGIN_ID)
-                    .getDescriptor().getInstallURL();
-            URL url = new URL(url_basic, iconPath + iconFileName);
-            desc = ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-
+        ImageDescriptor desc = 
+			ImageDescriptor.createFromURL(BundleUtility.find(PlatformUI.PLUGIN_ID, ICON_PATH + iconFileName));
+       
         return desc.createImage();
     }
 

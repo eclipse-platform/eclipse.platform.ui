@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -24,10 +22,10 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard workbench wizard for importing resources from the local file system
@@ -85,17 +83,7 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
      * Returns the image descriptor with the given relative path.
      */
     private ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/";//$NON-NLS-1$
-        try {
-            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                    .getPlugin(PlatformUI.PLUGIN_ID);
-            URL installURL = plugin.getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            // Should not happen
-            return null;
-        }
+        return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
     }
 
     /* (non-Javadoc)

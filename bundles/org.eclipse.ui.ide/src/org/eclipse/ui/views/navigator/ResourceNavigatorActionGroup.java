@@ -11,16 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * This is the action group for all the resource navigator actions.
@@ -40,7 +35,7 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
      * The resource navigator.
      */
     protected IResourceNavigator navigator;
-
+	
     /**
      * Constructs a new navigator action group and creates its actions.
      * 
@@ -55,17 +50,8 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
      * Returns the image descriptor with the given relative path.
      */
     protected ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/"; //$NON-NLS-1$
-        try {
-            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                    .getPlugin(PlatformUI.PLUGIN_ID);
-            URL installURL = plugin.getDescriptor().getInstallURL();
-            URL url = new URL(installURL, iconPath + relativePath);
-            return ImageDescriptor.createFromURL(url);
-        } catch (MalformedURLException e) {
-            // should not happen
-            return ImageDescriptor.getMissingImageDescriptor();
-        }
+       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
+     
     }
 
     /**

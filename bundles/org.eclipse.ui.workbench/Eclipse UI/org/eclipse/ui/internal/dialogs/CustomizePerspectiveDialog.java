@@ -1512,15 +1512,15 @@ public class CustomizePerspectiveDialog extends Dialog {
                 continue;
             actionSets.add(actionSetDesc);
         }
-        String iconPath = "icons/full/obj16/menu.gif";//$NON-NLS-1$
+        String iconPath = "$nl$/icons/full/obj16/menu.gif";//$NON-NLS-1$
         URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
         menuImageDescriptor = ImageDescriptor.createFromURL(url);
 
-        iconPath = "icons/full/obj16/submenu.gif";//$NON-NLS-1$
+        iconPath = "$nl$/icons/full/obj16/submenu.gif";//$NON-NLS-1$
         url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
         submenuImageDescriptor = ImageDescriptor.createFromURL(url);
 
-        iconPath = "icons/full/obj16/toolbar.gif";//$NON-NLS-1$
+        iconPath = "$nl$/icons/full/obj16/toolbar.gif";//$NON-NLS-1$
         url = BundleUtility.find(PlatformUI.PLUGIN_ID, iconPath);
         toolbarImageDescriptor = ImageDescriptor.createFromURL(url);
     }

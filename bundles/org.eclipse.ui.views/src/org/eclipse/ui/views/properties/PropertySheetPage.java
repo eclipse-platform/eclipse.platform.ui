@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.views.properties;
 
-import java.net.URL;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -46,10 +43,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.Page;
-import org.osgi.framework.Bundle;
 
 /**
  * The standard implementation of property sheet page which presents
@@ -249,12 +246,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
      * @return ImageDescriptor the descriptor for the receiver
      */
     private ImageDescriptor getImageDescriptor(String relativePath) {
-        String iconPath = "icons/full/"; //$NON-NLS-1$
-
-        Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-        URL url = bundle.getEntry(iconPath + relativePath);
-        return ImageDescriptor.createFromURL(url);
-
+       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
     }
 
     /**
