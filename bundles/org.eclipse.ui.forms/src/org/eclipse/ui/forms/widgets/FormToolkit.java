@@ -803,6 +803,8 @@ public class FormToolkit {
 					borderStyle = SWT.BORDER;
 			}
 		}
+		else if (osname.startsWith("Mac"))
+			borderStyle = SWT.BORDER;
 	}
 
 	/**

@@ -144,7 +144,7 @@ public class FormColors {
 		if (testTwoPrimaryColors(rgb, 120, 151))
 			rgb = blend(rgb, black, 80);
 		else if (testTwoPrimaryColors(rgb, 150, 256))
-			rgb = blend(rgb, black, 60);
+			rgb = blend(rgb, black, 50);
 		createColor(TITLE, rgb);
 	}
 
