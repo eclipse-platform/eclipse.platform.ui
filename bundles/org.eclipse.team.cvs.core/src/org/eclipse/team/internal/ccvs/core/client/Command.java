@@ -468,7 +468,7 @@ public abstract class Command {
 			if (response.equals("ok")) {  //$NON-NLS-1$
 				break;
 			} else if (response.equals("error")) {  //$NON-NLS-1$
-				if (argument.length() == 0)
+				if (argument.trim().length() == 0)
 					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getCommandId()));  //$NON-NLS-1$  //$NON-NLS-2$
 				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
