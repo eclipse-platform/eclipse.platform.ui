@@ -259,8 +259,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			Runnable r = new Runnable() {
 				public void run() {
 					String targetId = id;
+					IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 					if (targetId == null) {
-						IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 						if (window != null) {
 							IWorkbenchPage page = window.getActivePage();
 							if (page != null) {
@@ -272,6 +272,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 						}
 					}
 					if (targetId != null) {
+						// re-open the window if minimized 
+						if (window.getShell().getMinimized()) {
+							window.getShell().setMinimized(false);
+						}						
 						switchToPerspective(targetId);
 					}
 				}
