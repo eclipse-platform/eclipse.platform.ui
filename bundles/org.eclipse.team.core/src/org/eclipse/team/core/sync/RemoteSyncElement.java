@@ -180,7 +180,8 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						description = CONFLICTING | ADDITION;
 						try {
 							progress.beginTask(null, 60);
-							if (compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
+							if (granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
+							    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
 								description |= PSEUDO_CONFLICT;
 							}
 						} finally {
@@ -217,7 +218,9 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						} else {
 							description = CONFLICTING | CHANGE;
 						}
-						if (description != IN_SYNC && compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
+						if (description != IN_SYNC && 
+							granularity == RemoteSyncElement.GRANULARITY_CONTENTS && 
+						    compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
 							description |= PSEUDO_CONFLICT;
 						}
 						progress.done();

@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -32,14 +33,20 @@ import org.eclipse.team.ui.sync.TeamFile;
 public class CVSSyncCompareInput extends SyncCompareInput {
 	private IResource[] resources;
 	private TeamFile previousTeamFile = null;	
-
+	
 	/**
 	 * Creates a new catchup or release operation.
 	 */
 	public CVSSyncCompareInput(IResource[] resources) {
-		super();
+		super(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS) ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
 		this.resources = resources;
 	}
+	
+	protected CVSSyncCompareInput(IResource[] resources, int granularity) {
+		super(granularity);
+		this.resources = resources;
+	}
+	
 	/**
 	 * Overridden to create a custom DiffTreeViewer in the top left pane of the CompareProvider.
 	 * 
@@ -150,15 +157,6 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		if(shell != null) {
 			promptForConfirmMerge(getShell());
 		}
-	}
-	
-	/*
-	 * @see SyncCompareInput#getSyncGranularity()
-	 */
-	protected int getSyncGranularity() {
-		// assuming that sync is always performed relative to the current branch. In
-		// these cases the server will perform the content comparison for us.
-		return IRemoteSyncElement.GRANULARITY_TIMESTAMP;
 	}
 	
 	/*

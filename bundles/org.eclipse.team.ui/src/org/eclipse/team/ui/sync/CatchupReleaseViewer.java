@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.UIConstants;
@@ -164,6 +165,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private Action removeFromTree;
 	private ShowInNavigatorAction showInNavigator;
 	private Action ignoreWhiteSpace;
+	private Action toggleGranularity;
 	
 	// Property constant for diff mode kind
 	static final String PROP_KIND = "team.ui.PropKind"; //$NON-NLS-1$
@@ -194,6 +196,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			menu.add(showIncoming);
 			menu.add(showOutgoing);
 		}
+		menu.add(toggleGranularity);
 		menu.add(ignoreWhiteSpace);
 		menu.add(refresh);
 	}
@@ -272,6 +275,14 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			}
 		};
 		
+		// Toggle granularity
+		toggleGranularity = new Action(Policy.bind("CatchupReleaseViewer.Compare_File_Contents_1")) { //$NON-NLS-1$
+			public void run() {
+				diffModel.setSyncGranularity(isChecked() ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
+			}
+		};
+		toggleGranularity.setChecked(false);
+		
 		removeFromTree = new Action(Policy.bind("CatchupReleaseViewer.removeFromView"), null) { //$NON-NLS-1$
 			public void run() {
 				ISelection s = getSelection();
@@ -304,7 +315,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 											ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 												public void run(IProgressMonitor monitor) throws CoreException {
 													try {
-														monitor.beginTask("Copying right contents into workspace", 100);
+														monitor.beginTask(Policy.bind("CatchupReleaseViewer.Copying_right_contents_into_workspace_2"), 100); //$NON-NLS-1$
 														copyAllRightToLeft((DiffElement)element, Policy.subMonitorFor(monitor, 100));
 													} finally {
 														monitor.done();

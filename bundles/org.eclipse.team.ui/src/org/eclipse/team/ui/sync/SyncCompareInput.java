@@ -57,6 +57,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	private DiffNode diffRoot;
 	private Shell shell;
 	private IViewSite viewSite;
+	private int granularity;
 	
 	private ICompareInputChangeListener listener = new ICompareInputChangeListener() {
 		public void compareInputChanged(ICompareInput source) {
@@ -75,10 +76,18 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	/**
 	 * Creates a new catchup or release operation.
 	 */
-	public SyncCompareInput() {
+	public SyncCompareInput(int granularity) {
 		super(new CompareConfiguration());
+		this.granularity = granularity;
 	}
 	
+	/**
+	 * Creates a new catchup or release operation.
+	 */
+	public SyncCompareInput() {
+		this(ILocalSyncElement.GRANULARITY_TIMESTAMP);
+	}
+
 	protected abstract IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException;
 	
 	/*
@@ -276,7 +285,15 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	protected abstract int getSyncGranularity();		
+	public int getSyncGranularity() {
+		return granularity;
+	}
+	
+	public void setSyncGranularity(int granularity) {
+		this.granularity = granularity;
+		refresh();
+	}
+
 	
 	/**
 	 * Builds a DiffFolder tree under the given root for the given resource.

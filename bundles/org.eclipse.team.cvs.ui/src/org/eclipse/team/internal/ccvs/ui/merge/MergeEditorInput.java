@@ -35,7 +35,10 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	CVSTag end;
 	
 	public MergeEditorInput(IResource[] resources, CVSTag start, CVSTag end) {
-		super(resources);
+		// we have to perform content comparison since files in different branches
+		// may have different revisions but the same contents. Consider these files
+		// for merge purposes as equal.
+		super(resources, IRemoteSyncElement.GRANULARITY_CONTENTS);
 		this.start = start;
 		this.end = end;
 	}
@@ -75,16 +78,6 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	}
 	protected void contentsChanged(ICompareInput source) {
 	}
-	/*
-	 * @see SyncCompareInput#getSyncGranularity()
-	 */
-	protected int getSyncGranularity() {
-		// we have to perform content comparison since files in different branches
-		// may have different revisions but the same contents. Consider these files
-		// for merge purposes as equal.
-		return IRemoteSyncElement.GRANULARITY_CONTENTS;
-	}
-	
 	/**
 	 * Wrap the input preparation in a CVS session run so open sessions will be reused
 	 */

@@ -24,13 +24,19 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	CVSTag[] tags;
 	
 	public CVSLocalCompareEditorInput(IResource[] resources, CVSTag[] tags) {
-		super(resources);
+		// we have to perform content comparison since files in different branches
+		// may have different revisions but the same contents. Consider these files
+		// for merge purposes as equal.
+		super(resources, IRemoteSyncElement.GRANULARITY_CONTENTS);
 		Assert.isTrue(resources.length == tags.length);
 		this.tags = tags;
 	}
 	
 	public CVSLocalCompareEditorInput(IResource[] resources, CVSTag tag) {
-		super(resources);
+		// we have to perform content comparison since files in different branches
+		// may have different revisions but the same contents. Consider these files
+		// for merge purposes as equal.
+		super(resources, IRemoteSyncElement.GRANULARITY_CONTENTS);
 		Assert.isTrue(tag != null);
 		this.tags = new CVSTag[] {tag};
 	}
@@ -66,7 +72,7 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	}
 	
 	public String getTitle() {
-		return "CVS Compare [" + tags[0].getName() +"]";
+		return Policy.bind("CVSLocalCompareEditorInput.title", tags[0].getName()); //$NON-NLS-1$
 	}
 	
 	public boolean isSaveNeeded() {
@@ -74,15 +80,5 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	}
 	
 	protected void contentsChanged(ICompareInput source) {
-	}
-	
-	/*
-	 * @see SyncCompareInput#getSyncGranularity()
-	 */
-	protected int getSyncGranularity() {
-		// we have to perform content comparison since files in different branches
-		// may have different revisions but the same contents. Consider these files
-		// for merge purposes as equal.
-		return IRemoteSyncElement.GRANULARITY_CONTENTS;
 	}
 }

@@ -33,8 +33,8 @@ public class CompareWithRemoteAction extends CompareWithTagAction {
 			}
 			CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tags));
 		} catch(CVSException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("CompareWithRemoteAction.compare"), 
-								  Policy.bind("CompareWithRemoteAction.noRemoteLong"), e.getStatus());
+			ErrorDialog.openError(getShell(), Policy.bind("CompareWithRemoteAction.compare"),  //$NON-NLS-1$
+								  Policy.bind("CompareWithRemoteAction.noRemoteLong"), e.getStatus()); //$NON-NLS-1$
 		}			
 	}
 	
