@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
@@ -114,7 +115,12 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	protected void cache(Object parent, Object[] children) {		
 		for (int i = 0; i < children.length; i++) {
-			fParentCache.put(children[i], parent);
+			Object child = children[i];
+			// avoid cycles in the cache, which can happen for
+			// recursive data structures
+			if (!fParentCache.containsKey(child)) {
+				fParentCache.put(child, parent);
+			}
 		}		
 	}
 	

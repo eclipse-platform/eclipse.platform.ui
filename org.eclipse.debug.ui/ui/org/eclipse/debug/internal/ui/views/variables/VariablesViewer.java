@@ -11,22 +11,10 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
  
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -123,134 +111,4 @@ public class VariablesViewer extends TreeViewer {
 		}
 	}
 
-	/**
-	 * Returns a memento for the current state of expanded and
-	 * selected elements in this viewer.
-	 * 
-	 * @return a memento for the current state of expanded and
-	 *  selected elements in this viewer
-	 */
-	public ViewerState saveState() {
-		Object[] expansion = getExpandedElements();
-		IPath[] expandedElements = new IPath[expansion.length];
-		for (int i = 0; i < expansion.length; i++) {
-			IVariable variable = (IVariable)expansion[i];
-			try {
-				expandedElements[i] = encodeVariable(variable);
-			} catch (DebugException e1) {
-			}
-		}
-		
-		IStructuredSelection selection = (IStructuredSelection)getSelection();
-		IPath[] sel = new IPath[selection.size()];
-		Iterator elements = selection.iterator();
-		int i = 0;
-		try {
-			while (elements.hasNext()) {
-				sel[i] = encodeVariable((IVariable)elements.next());
-				i++;
-			}
-		} catch (DebugException e) {
-			selection = null;
-		}
-		return new ViewerState(expandedElements, sel);
-	}
-	
-	/**
-	 * Restores the state of expanded and selected elements as described
-	 * by the given memento.
-	 * 
-	 * @param state viewer state
-	 */
-	public void restoreState(ViewerState state) {
-		IPath[] expandedElements = state.getExpandedElements();
-		if (expandedElements != null) {
-			List expansion = new ArrayList(expandedElements.length);
-			for (int i = 0; i < expandedElements.length; i++) {
-				IPath path = expandedElements[i];
-				if (path != null) {
-					IVariable var;
-					try {
-						var = decodePath(path);
-						if (var != null) {
-							expansion.add(var);
-						}
-					} catch (DebugException e) {
-					}
-				}
-			}
-			setExpandedElements(expansion.toArray());
-		}
-		IPath[] selection = state.getSelection();
-		if (selection != null) {
-			List sel = new ArrayList(selection.length);
-			for (int i = 0; i < selection.length; i++) {
-				IPath path = selection[i];
-				IVariable var;
-				try {
-					var = decodePath(path);
-					if (var != null) {
-						sel.add(var);
-					}
-				} catch (DebugException e) {
-				}
-			}			
-			
-			setSelection(new StructuredSelection(sel));
-		}
-	}
-	
-	/**
-	 * Constructs a path representing the given variable. The segments in the
-	 * path denote parent variable names, and the last segment is the name of
-	 * the given variable.
-	 *   
-	 * @param variable variable to encode
-	 * @return path encoding the given variable
-	 * @throws DebugException if unable to generate a path
-	 */
-	protected IPath encodeVariable(IVariable variable) throws DebugException {
-		IPath path = new Path(variable.getName());
-		TreeItem treeItem= (TreeItem) findItem(variable);
-		TreeItem parent = treeItem.getParentItem();
-		while (parent != null) {
-			IVariable var = (IVariable)parent.getData(); 
-			path = new Path(var.getName()).append(path);
-			parent = parent.getParentItem();
-		}
-		return path;
-	}
-	
-	/**
-	 * Returns a variable in the given viewer that corresponds to the given
-	 * path, or <code>null</code> if none.
-	 * 
-	 * @param path encoded variable path
-	 * @return variable represented by the path, or <code>null</code> if none
-	 * @throws DebugException if unable to locate a variable
-	 */
-	protected IVariable decodePath(IPath path) throws DebugException {
-		ITreeContentProvider contentProvider = (ITreeContentProvider)getContentProvider();
-		String[] names = path.segments();
-		Object parent = getInput();
-		IVariable variable = null;
-		for (int i = 0; i < names.length; i++) {
-			variable = null;
-			Object[] children = contentProvider.getChildren(parent);
-			String name = names[i];
-			for (int j = 0; j < children.length; j++) {
-				IVariable var = (IVariable)children[j];
-				if (var.getName().equals(name)) {
-					variable = var;
-					break;
-				}
-			}
-			if (variable == null) {
-				return null;
-			} else {
-				parent = variable;
-			}
-		}
-		return variable;
-	}		
 }
