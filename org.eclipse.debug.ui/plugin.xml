@@ -650,6 +650,19 @@
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.dropToFrame"
+               toolbarPath="emptyStepGroup"
+               class="org.eclipse.debug.internal.ui.actions.DropToFrameActionDelegate"
+               enablesFor="1"
+               icon="icons/full/elcl16/drop_to_frame.gif"
+               label="%DropToFrameAction.label"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="%DropToFrameAction.tooltip">
+            <selection
+                  class="org.eclipse.debug.core.model.IDropToFrame">
+            </selection>
+        </action>
       <!-- Render Group -->
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
@@ -1146,6 +1159,18 @@
                id="org.eclipse.debug.ui.debugview.popupMenu.stepInto">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
+            </selection>
+         </action>
+         <action
+               label="%DropToFrameAction.label"
+               icon="icons/full/elcl16/drop_to_frame.gif"
+               helpContextId="drop_to_frame_action_context"
+               class="org.eclipse.debug.internal.ui.actions.DropToFrameActionDelegate"
+               menubarPath="emptyStepGroup"
+               enablesFor="1"
+               id="org.eclipse.debug.ui.debugview.popupMenu.dropToFrame">
+            <selection
+                  class="org.eclipse.debug.core.model.IDropToFrame">
             </selection>
          </action>
       <!-- Render Group -->  
