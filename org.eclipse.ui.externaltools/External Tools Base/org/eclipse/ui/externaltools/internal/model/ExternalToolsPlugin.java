@@ -45,7 +45,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	private RefreshScopeVariableRegistry refreshVarRegistry;
 	private ExternalToolVariableRegistry toolVariableRegistry;
 	
-	public static final String EMPTY_STRING= ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 
 	/**
 	 * Create an instance of the External Tools plug-in.
@@ -94,8 +94,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 * Returns the registry of refresh scope variables.
 	 */
 	public RefreshScopeVariableRegistry getRefreshVariableRegistry() {
-		if (refreshVarRegistry == null)
+		if (refreshVarRegistry == null) {
 			refreshVarRegistry = new RefreshScopeVariableRegistry();
+		}
 		return refreshVarRegistry;
 	}
 
@@ -110,7 +111,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	}
 	
 	public void log(Throwable exception) {
-		getLog().log(newErrorStatus(null, exception));
+		//this message is intentionally not internationalized, as an exception may
+		// be due to the resource bundle itself
+		getLog().log(newErrorStatus("Error logged from External Tools UI: ", exception)); //$NON-NLS-1$
 	}
 
 	/**
