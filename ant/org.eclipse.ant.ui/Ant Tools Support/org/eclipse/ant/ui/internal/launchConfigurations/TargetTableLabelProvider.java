@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -21,7 +22,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
  * Ant target label provider
@@ -55,11 +55,11 @@ public class TargetTableLabelProvider extends LabelProvider implements ITableLab
 		int flags = 0;
 		if (target.isDefault()) {
 			flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+			base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
 		} else if (target.getDescription() == null) {
-			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
+			base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
 		} else {
-			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
+			base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 		}
 		return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 	}

@@ -175,12 +175,12 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, vmTypeID != null);
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, commandLine);
+			runInSeparateVM(configuration, launch, monitor, idStamp, commandLine);
 			return;
 		}
 				
 		final AntProcess process = new AntProcess(location.toOSString(), launch, new HashMap());
-		setProcessAttributes(process, launch, idStamp, commandLine);
+		setProcessAttributes(process, idStamp, commandLine);
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			final AntRunner finalRunner= runner;
@@ -223,7 +223,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		monitor.done();	
 	}
 
-	private void setProcessAttributes(IProcess process, ILaunch launch, String idStamp, StringBuffer commandLine) {
+	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine) {
 		// link the process to its build logger via a timestamp
 		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntUIConstants.ID_ANT_PROCESS_TYPE);
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
@@ -287,11 +287,15 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		return commandLine;
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, StringBuffer commandLine) throws CoreException {
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, StringBuffer commandLine) throws CoreException {
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
 		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
-		IProcess[] processes= launch.getProcesses(); 
+		IProcess[] processes= launch.getProcesses();
+		for (int i = 0; i < processes.length; i++) {
+			IProcess process = processes[i];
+			setProcessAttributes(process, idStamp, commandLine);
+		}
 	}
 }
