@@ -11,34 +11,13 @@
 
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.core.IAntClasspathEntry;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.preferences.ClasspathModel;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILibrary;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
@@ -54,12 +33,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntJRETab extends JavaJRETab {
 
-	private static final String XERCES_IMPL= "xercesImpl.jar"; //$NON-NLS-1$
-	private static final String XERCES_API= "xml-apis.jar"; //$NON-NLS-1$
-	private static final String XERCES_PARSER_API= "xmlParserAPIs.jar"; //$NON-NLS-1$
 	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"; //$NON-NLS-1$
 	
-	private IVMInstall previousJRE;
 	protected VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
 	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
 
@@ -71,8 +46,6 @@ public class AntJRETab extends JavaJRETab {
 		Font font= parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
 		Composite comp= (Composite)fJREBlock.getControl();
-		
-		createVerticalSpacer(comp, 3);
 		
 		Composite lowerComp = new Composite(comp, SWT.NONE);
 				
@@ -143,178 +116,6 @@ public class AntJRETab extends JavaJRETab {
 		configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 	}
 
-	/**
-	 * Updates the classpath for this Ant build based on the selected JRE.
-	 * If running in the same VM as Eclipse, the appropriate tools.jar is added if not already present.
-	 * If running in the separate VM from Eclipse, the appropriate tools.jar is added and 
-	 * the Xerces JARs are added.
-	 */
-	private void updateClasspath(ILaunchConfigurationWorkingCopy configuration) {
-		
-		IVMInstall vm= fJREBlock.getJRE();
-		if(fJREBlock.isDefaultJRE()) {
-			vm= null;
-		}
-		
-		Path oldJavaPath=null;
-		if (previousJRE == null) {
-			oldJavaPath = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		} else {  
-			oldJavaPath= new Path(previousJRE.getInstallLocation().getAbsolutePath());
-		}
-		
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		IAntClasspathEntry oldToolsEntry= prefs.getToolsJarEntry(oldJavaPath);
-			
-		Path newJavaPath= null;
-		if (vm == null) {
-			newJavaPath = new Path(System.getProperty("java.home")); //$NON-NLS-1$
-		} else {
-			newJavaPath= new Path(vm.getInstallLocation().getAbsolutePath());
-		}
-		
-		IAntClasspathEntry newToolsEntry= prefs.getToolsJarEntry(newJavaPath);
-		
-		List antEntries= new ArrayList();
-		List userEntries= new ArrayList();	
-		getEntries(prefs, configuration, antEntries, userEntries);
-	
-		StringBuffer classpath= new StringBuffer();
-		boolean found= false;
-		boolean xercesImplFound= false;
-		boolean xercesAPIFound= false;
-		boolean[] xercesFlags= new boolean[]{xercesImplFound, xercesAPIFound};
-		
-		found= lookForToolsAndXerces(antEntries, oldToolsEntry, newToolsEntry, xercesFlags);
-					
-		//look for the tools.jar and xerces in the additional classpath entries
-		boolean foundInAdditional= lookForToolsAndXerces(userEntries, oldToolsEntry, newToolsEntry, xercesFlags);
-		if (newToolsEntry != null && !found && !foundInAdditional) {
-			classpath.append(newToolsEntry.getLabel());
-			classpath.append(AntUtil.ATTRIBUTE_SEPARATOR);
-		}
-		
-		//add the xerces JARs if required and not previously found
-		if (!fJREBlock.isDefaultJRE() && (!xercesFlags[0] || !xercesFlags[1])) {
-			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
-			addLibraries(descriptor, classpath, !xercesFlags[1], !xercesFlags[0]);
-		}
-		
-		ClasspathModel model= getClasspathModel();
-		classpath.append(model.serializeClasspath(true));
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, classpath.toString());
-		previousJRE= vm;
-		updateOtherTabs();
-		updateLaunchConfigurationDialog();
-	}
-	
-	private void updateOtherTabs() {
-		//the classpath has changed...set the targets and classpath tabs to 
-		//need to be recomputed
-		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
-			if (tab instanceof AntTargetsTab) {
-				((AntTargetsTab)tab).setDirty(true);
-				continue;
-			} else if (tab instanceof AntClasspathTab) {
-				((AntClasspathTab)tab).setDirty(true);
-				continue;
-			}
-		}
-	}
-	
-	private ClasspathModel getClasspathModel() {
-		//the classpath has changed...set the targets tab to 
-		//need to be recomputed
-		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
-			if (tab instanceof AntClasspathTab) {
-				return ((AntClasspathTab)tab).getClasspathModel();
-			}
-		}
-		return null;
-	}
-	
-	private void getEntries(AntCorePreferences prefs, ILaunchConfigurationWorkingCopy configuration, List antHomeEntries, List additionalEntries) {
-		String entryStrings= null;
-		try {
-			entryStrings = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
-		} catch (CoreException e) {
-			AntUIPlugin.log(e);
-		}
-		if (entryStrings == null) {
-			//the global settings
-			antHomeEntries.addAll(Arrays.asList(prefs.getAntHomeClasspathEntries()));
-			additionalEntries.addAll(Arrays.asList(prefs.getAdditionalClasspathEntries()));
-		} else {
-			AntUtil.getCustomClasspaths(configuration, antHomeEntries, additionalEntries);
-		}
-	}
-
-	/**
-	 * Returns <code>true</code> a tools.jar was found and was replaced or was found to be compatible
-	 * with the specified JRE.
-	 * The xerces flags are set based on the Xerces JARs that are found.
-	 */
-	private boolean lookForToolsAndXerces(List entries, IAntClasspathEntry oldToolsEntry, IAntClasspathEntry newToolsEntry, boolean[] xercesFlags){
-		boolean found= false;
-		for (Iterator iter = entries.iterator(); iter.hasNext();) {
-			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
-			if (sameURL(oldToolsEntry, entry)) {
-				entry= newToolsEntry;
-				found= newToolsEntry != null;
-			} else if (sameURL(newToolsEntry, entry)) {
-				found= true;
-			} else if (entry.getLabel().endsWith(XERCES_API)) {
-				xercesFlags[1]= true;
-			} else if (entry.getLabel().endsWith(XERCES_IMPL)) {
-				xercesFlags[0]= true;
-			} else if (entry.getLabel().endsWith(XERCES_PARSER_API)) {
-				xercesFlags[1]= true;
-			}
-		}
-		return found;
-	}
-	
-	private void addLibraries(IPluginDescriptor xercesPlugin, StringBuffer urlString, boolean addAPI, boolean addImpl) {
-		URL root = xercesPlugin.getInstallURL();
-		ILibrary[] libraries = xercesPlugin.getRuntimeLibraries();
-		
-		for (int i = 0; i < libraries.length; i++) {
-			try {
-				IPath path= libraries[i].getPath(); 
-				if (path.lastSegment().equals(XERCES_API) && !addAPI) {
-					continue;
-				} else if (path.lastSegment().equals(XERCES_PARSER_API) && !addAPI) {
-					continue;
-				} else if (path.lastSegment().equals(XERCES_IMPL) && !addImpl) {
-					continue;
-				} 
-				URL url = new URL(root, path.toString());
-				urlString.append(Platform.asLocalURL(url).getFile());
-				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
-			} catch (MalformedURLException e1) {
-				continue;
-			} catch (IOException e2) {
-				continue;
-			}
-		}
-	}
-	
-	private boolean sameURL(IAntClasspathEntry first, IAntClasspathEntry second) {
-		if (first == null || second == null) {
-			return false;
-		}
-		File newFile= new File(first.getEntryURL().getFile());
-		File existingFile= new File(second.getEntryURL().getFile());
-		if (existingFile.equals(newFile)) {
-			return true;
-		}
-		return false;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
