@@ -52,7 +52,6 @@ import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
-import org.eclipse.debug.internal.ui.views.variables.ObjectBrowserManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -121,11 +120,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
 	
 	/**
-	 * Singleton object browser manager
-	 */
-	private ObjectBrowserManager fObjectBrowserManager;
-	
-	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 
@@ -158,13 +152,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	
-	public ObjectBrowserManager getObjectBrowserManager() {
-		if (fObjectBrowserManager == null) {
-			fObjectBrowserManager = new ObjectBrowserManager();
-		}
-		return fObjectBrowserManager;
 	}
 	
 	/**

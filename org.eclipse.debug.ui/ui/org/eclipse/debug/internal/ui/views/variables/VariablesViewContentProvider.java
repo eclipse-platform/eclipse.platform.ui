@@ -16,12 +16,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.core.ILogicalStructureType;
+import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.IDebugView;
@@ -119,8 +122,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * @throws DebugException
 	 */
 	protected IVariable[] getValueChildren(IDebugElement parent, IValue value) throws DebugException {
-		if (value instanceof IIndexedValue) {
-			IIndexedValue indexedValue = (IIndexedValue)value;
+		IValue logicalValue = getLogicalValue(value);
+		if (logicalValue instanceof IIndexedValue) {
+			IIndexedValue indexedValue = (IIndexedValue)logicalValue;
 			int valueLength = indexedValue.getSize();
 			int partitionLength = getArrayPartitionSize();
 			if (valueLength > partitionLength) {
@@ -144,8 +148,28 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				return partitions;
 			}
 		}
-		IObjectBrowser objectBrowser = getObjectBrowser(getDebugModelId(parent));
-		return objectBrowser.getChildren(value);
+		return logicalValue.getVariables();
+	}
+
+	/**
+	 * Returns any logical value for the raw value.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private IValue getLogicalValue(IValue value) {
+		if (isShowLogicalStructure()) {
+			ILogicalStructureType[] types = LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
+			if (types.length > 0) {
+				try {
+					return types[0].getLogicalStructure(value);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -227,8 +251,8 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	}
 	
 	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
-		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
-		return contentProvider.hasChildren(parent.getValue());
+		IValue logicalValue = getLogicalValue(parent.getValue());
+		return logicalValue.hasVariables();
 	}
 	
 	/**
@@ -282,15 +306,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	protected  String getDebugModelId(IDebugElement debugElement) {
 		return debugElement.getModelIdentifier();
 	}
-		
-	protected IObjectBrowser getObjectBrowser(String debugModelId) {
-		ObjectBrowserManager mgr = DebugUIPlugin.getDefault().getObjectBrowserManager();
-		if (getUseObjectBrowsers()) {
-			return mgr.getObjectBrowser(debugModelId);		
-		} else {
-			return mgr.getDefaultObjectBrowser();
-		}
-	}
 
 	/**
 	 * Sets an exception handler for this content provider.
@@ -311,13 +326,13 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	}	
 	
 	/** 
-	 * Use model supplied content providers. 
+	 * Show logical structure of values 
 	 */
-	public void setUseContentProviders(boolean flag) {
+	public void setShowLogicalStructure(boolean flag) {
 		fUseObjectBrowsers = flag;
 	}
 	
-	public boolean getUseObjectBrowsers() {
+	public boolean isShowLogicalStructure() {
 		return fUseObjectBrowsers;
 	}
 	

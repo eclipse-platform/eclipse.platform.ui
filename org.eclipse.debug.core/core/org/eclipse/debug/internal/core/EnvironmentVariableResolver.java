@@ -20,7 +20,7 @@ public class EnvironmentVariableResolver implements IDynamicVariableResolver {
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "No environment variable specified", null));
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugCoreMessages.getString("EnvironmentVariableResolver.0"), null)); //$NON-NLS-1$
 		}
 		HashMap map= LaunchManager.getNativeEnvironment();
 		return (String) map.get(argument);

@@ -750,7 +750,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		IAction action = new ShowTypesAction(this);
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
-		action = new ToggleObjectBrowsersAction(this);
+		action = new ToggleLogicalStructureAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 		
 		action = new CollapseAllAction(getVariablesViewer());
@@ -1293,7 +1293,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Use model supplied content providers. 
 	 */
 	public void setUseContentProviders(boolean flag) {
-		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setUseContentProviders(flag);
+		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setShowLogicalStructure(flag);
 	}	
 
 	/**

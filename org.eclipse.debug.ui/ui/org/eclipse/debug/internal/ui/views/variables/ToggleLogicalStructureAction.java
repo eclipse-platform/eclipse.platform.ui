@@ -26,11 +26,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * are used.  When off, the default content provider (that shows all children)
  * is used for all debug models.
  */
-public class ToggleObjectBrowsersAction extends Action {
+public class ToggleLogicalStructureAction extends Action {
 	
 	private VariablesView fView;
 
-	public ToggleObjectBrowsersAction(VariablesView view) {
+	public ToggleLogicalStructureAction(VariablesView view) {
 		super(null, IAction.AS_CHECK_BOX);
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("ToggleObjectBrowsersAction.1"));  //$NON-NLS-1$
