@@ -37,10 +37,10 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -109,7 +109,7 @@ public class ProgressManager extends ProgressProvider
 	//A table that maps families to keys in the Jface image
 	//table
 	private Hashtable imageKeyTable = new Hashtable();
-	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1
+	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 	/**
 	 * Get the progress manager currently in use.
 	 * 
@@ -296,7 +296,7 @@ public class ProgressManager extends ProgressProvider
 	 */
 	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
-		WizardDialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
+		Dialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
 		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
