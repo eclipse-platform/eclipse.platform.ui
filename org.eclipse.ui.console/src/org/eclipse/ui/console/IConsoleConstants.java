@@ -82,7 +82,10 @@ public interface IConsoleConstants {
     public static final String EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT = "consolePageParticipants"; //$NON-NLS-1$
 
     /**
+     * Console factories extension point identifier
+     * (value <code>"consoleFactories"</code>).
+     * 
      * @since 3.1
      */
-    public static final String EXTENSION_POINT_CONSOLE_FACTORY = "consoleFactory"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_FACTORY = "consoleFactories"; //$NON-NLS-1$
 }

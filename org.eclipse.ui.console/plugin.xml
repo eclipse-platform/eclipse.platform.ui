@@ -21,7 +21,7 @@
    </requires>
    <extension-point id="consolePatternMatchListeners" name="%ConsolePatternMatchListenerName" schema="schema/consolePatternMatchListeners.exsd"/>
    <extension-point id="consolePageParticipants" name="%ConsolePageParticipantName" schema="schema/consolePageParticipants.exsd"/>
-   <extension-point id="consoleFactory" name="%ConsoleFactoryName" schema="schema/consoleFactory.exsd"/>
+   <extension-point id="consoleFactories" name="%ConsoleFactoryName" schema="schema/consoleFactories.exsd"/>
 
 
    <extension
