@@ -789,9 +789,14 @@ public void parseLibraryAttributes(Attributes attributes) {
 		if (attrName.equals(LIBRARY_NAME))
 			current.setName(attrValue);
 		else
-			if (attrName.equals(LIBRARY_TYPE))
-				current.setType(attrValue.toLowerCase());
-			else
+			if (attrName.equals(LIBRARY_TYPE)) {
+				attrValue = attrValue.toLowerCase();
+				if (attrValue.equals(LibraryModel.CODE) || 
+				     attrValue.equals(LibraryModel.RESOURCE))
+					current.setType(attrValue.toLowerCase());
+				else
+					internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName()));
+			} else
 				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName));
 	}
 }

@@ -1,5 +1,7 @@
 package org.eclipse.core.runtime.model;
 
+import org.eclipse.core.internal.runtime.Assert;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -109,6 +111,8 @@ public void setExports(String[] value) {
  */
 public void setType(String value) {
 	assertIsWriteable();
-	type = value.toLowerCase();
+	String lcValue = value.toLowerCase();
+	Assert.isTrue (lcValue.equals(CODE) || lcValue.equals(RESOURCE));
+	type = lcValue;
 }
 }
