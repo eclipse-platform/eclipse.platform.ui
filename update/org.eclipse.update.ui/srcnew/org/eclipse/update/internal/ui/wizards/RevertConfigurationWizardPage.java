@@ -6,11 +6,16 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -22,6 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -30,16 +36,20 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.forms.UIProblemHandler;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 
 public class RevertConfigurationWizardPage extends WizardPage {
@@ -160,7 +170,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				return provider.get(UpdateUIImages.DESC_CONFIG_OBJ, 0);
 			}
 			public String getText(Object element) {
-				return ((IInstallConfiguration)element).getLabel();
+				return Utilities.format(((IInstallConfiguration)element).getCreationDate());
 			}
 
 		});
@@ -195,6 +205,20 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				activitiesViewer.setInput(((IInstallConfiguration)ssel.getFirstElement()));
 			}
 		});
+		
+		configViewer.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				IInstallConfiguration config1 = (IInstallConfiguration)e1;
+				IInstallConfiguration config2 = (IInstallConfiguration)e2;
+				if (config1.getCreationDate().before(config2.getCreationDate())) {
+					return 1;
+				}
+				if (config1.getCreationDate().after(config2.getCreationDate())) {
+					return -1;
+				}
+				return 0;
+			}
+		});
 
 		try {
 			configViewer.setInput(SiteManager.getLocalSite());
@@ -204,9 +228,10 @@ public class RevertConfigurationWizardPage extends WizardPage {
 	
 	private void createActivitiesSection(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout gridlayout = new GridLayout();
-		gridlayout.marginHeight = gridlayout.marginWidth = 0;
-		composite.setLayout(gridlayout);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginHeight = gridLayout.marginWidth = 0;
+		composite.setLayout(gridLayout);
+		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
 		
@@ -248,17 +273,59 @@ public class RevertConfigurationWizardPage extends WizardPage {
 	}
 	
 	public boolean performFinish() {
-		/*IStructuredSelection ssel = (IStructuredSelection) configViewer.getSelection();
-		if (ssel.size() == 1) {
-			IInstallConfiguration config = (IInstallConfiguration)ssel.getFirstElement();
-		}*/
-		MessageDialog.openInformation(
-			getContainer().getShell(),
-			"Configuration Manager",
-			"It's 2:00 a.m.  I'm going to bed now.");
-		return true;
+		Shell shell = getContainer().getShell();
+		boolean result =
+			MessageDialog.openQuestion(
+				shell,
+				shell.getText(),
+				"This operation requires restarting the workbench.  Would you like to proceed?");
+		if (!result)
+			return false;
+		
+		boolean finish = performRevert();
+		if (finish) {
+			PlatformUI.getWorkbench().restart();	
+		}
+		return finish;
 	}
 	
-	
+	public boolean performRevert() {
+
+		IStructuredSelection ssel = (IStructuredSelection) configViewer.getSelection();
+		final IInstallConfiguration target =
+			(IInstallConfiguration) ssel.getFirstElement();
+
+		IStatus status = UpdateManager.getValidator().validatePendingRevert(target);
+		if (status != null) {
+			ErrorDialog.openError(UpdateUI.getActiveWorkbenchShell(), null, null, status);
+			return false;
+		}
+
+		final boolean[] result = new boolean[] {false};		
+		IRunnableWithProgress operation = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				boolean success = false;
+				try {
+					ILocalSite localSite = SiteManager.getLocalSite();
+					localSite.revertTo(target, monitor, new UIProblemHandler());
+					localSite.save();
+					success = true;
+				} catch (CoreException e) {
+					UpdateUI.logException(e);
+				} finally {
+					monitor.done();
+					result[0] = success;
+				}
+			}
+		};
+		try {
+			getContainer().run(false, true, operation);
+		} catch (InvocationTargetException e) {
+			UpdateUI.logException(e);
+		} catch (InterruptedException e) {
+		}
+		return result[0];
+	}
+
 	
 }
