@@ -837,6 +837,19 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 	applicationR10 = applicationName; // for R1.0 compatibility
 	String[] applicationArgs = startup(pluginPathLocation, location, args, handler);
 	
+	try {
+		// check the version to ensure that the workspaces are compatible.
+		if (!checkVersion()) {
+			if (debugRequested)
+				Policy.debug(true, "Version check returned false indicating an incompatible workspace version. Shutting down the platform..."); //$NON-NLS-1$
+			shutdown();
+			return result;
+		}
+	} catch (Throwable e) {
+		e.printStackTrace();
+		throw new InvocationTargetException(e);
+	}
+	
 	String application = getCurrentPlatformConfiguration().getApplicationIdentifier();
 	IPlatformRunnable runnable = getRunnable(application);
 	if (runnable == null)
@@ -851,6 +864,22 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 	}
 	return result;
 }
+
+private static boolean checkVersion() throws Exception {
+	assertRunning();
+	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
+	Method method = platform.getDeclaredMethod("loaderCheckVersion", new Class[0]); //$NON-NLS-1$
+	try {
+		Object result = method.invoke(platform, new Object[0]);
+		return Boolean.TRUE.equals(result);
+	} catch (InvocationTargetException e) {
+		if (e.getTargetException() instanceof Error)
+			throw (Error) e.getTargetException();
+		else
+			throw e;
+	}
+}
+
 /**
  * Setup the debug flags for the given debug options.  This method will likely
  * be called twice.  Once when loading the options file from the command

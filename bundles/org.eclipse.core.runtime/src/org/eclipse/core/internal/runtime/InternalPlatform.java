@@ -59,6 +59,16 @@ public final class InternalPlatform {
 	private static RandomAccessFile lockRAF = null;
 	
 	/**
+	 * Whether to perform the workspace metadata version check.
+	 */
+	private static boolean doVersionCheck = true;
+
+	/**
+	 * Whether to write the version.ini file on shutdown.
+	 */
+	private static boolean writeVersion = true;
+	
+	/**
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
 	 * located in the root of the primary feature plug-in and it's 
 	 * companion nl-specific file with externalized strings (value
@@ -91,6 +101,7 @@ public final class InternalPlatform {
 	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$	
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
+	private static final String NO_VERSION_CHECK = "-noversioncheck"; //$NON-NLS-1$
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -104,8 +115,8 @@ public final class InternalPlatform {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	
-	private static final String METADATA_VERSION = "org.eclipse.core.runtime=1"; //$NON-NLS-1$
-
+	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	private static final int METADATA_VERSION_VALUE = 1;
 
 /**
  * Private constructor to block instance creation.
@@ -449,6 +460,101 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 	}
 	code.handleException(e);
 }
+
+
+/**
+ * Check whether the workspace metadata version matches the expected version. 
+ * If not, prompt the user for whether to proceed, or exit with no changes.
+ * Side effects: 
+ * <ul>
+ * <li>remember whether to write the metadata version on exit</li>
+ * <li>bring down the splash screen if exiting</li>
+ * </ul> 
+ * 
+ * @return <code>true</code> to proceed, <code>false</code> to exit with no changes
+ */
+public static boolean loaderCheckVersion() {
+	// if not doing the version check, then proceed with no check or prompt
+	boolean proceed = !doVersionCheck || checkVersionPrompt();
+	// remember whether to write the version on exit;
+	// don't write it if the user cancelled
+	writeVersion = proceed;
+	// bring down the splash screen if the user cancelled,
+	// since the application won't
+	if (!proceed)
+		endSplash();
+	return proceed;
+}
+
+/**
+ * Check whether the workspace metadata version matches the expected version. 
+ * If not, prompt the user for whether to proceed, or exit with no changes.
+ * Side effects: none
+ * 
+ * @return <code>true</code> to proceed, <code>false</code> to exit with no changes
+ */
+private static boolean checkVersionPrompt() {
+	if (checkVersionNoPrompt())
+		return true;
+	
+	// run the version check ui class to prompt the user
+	String appId = "org.eclipse.ui.versioncheck.prompt"; //$NON-NLS-1$
+	IPlatformRunnable runnable = loaderGetRunnable(appId);
+	// If there is no UI to confirm the metadata version difference, then just proceed.		
+	if (runnable == null)
+		return true;
+	try {
+		Object result = runnable.run(null);
+		return Boolean.TRUE.equals(result);
+	} catch (Exception e) {
+		// Fail silently since we don't have a UI, but don't proceed if we can't prompt the user.
+		log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.versionCheckRun", appId), null)); //$NON-NLS-1$
+		return false;
+	}
+}
+
+/**
+ * Return whether the workspace metadata version matches the expected version. 
+ * 
+ * @return <code>true</code> if they match, <code>false</code> if not
+ */
+private static boolean checkVersionNoPrompt() {
+	File pluginsDir = metaArea.getLocation().append(PlatformMetaArea.F_PLUGIN_DATA).toFile();
+	if (!pluginsDir.exists())
+		return true;
+	
+	int version = -1;
+	File versionFile = metaArea.getVersionPath().toFile();
+	if (versionFile.exists()) {
+		try {
+			// Although the version file is not spec'ed to be a Java properties file,
+			// it happens to follow the same format currently, so using Properties
+			// to read it is convenient.
+			Properties props = new Properties();
+			FileInputStream is = new FileInputStream(versionFile);
+			try {
+				props.load(is);
+			} finally {
+				try {
+					is.close();
+				} finally {
+					// ignore
+				}
+			}
+			String prop = props.getProperty(METADATA_VERSION_KEY);
+			// let any NumberFormatException be caught below
+			if (prop != null)
+				version = Integer.parseInt(prop);
+		}
+		catch (Exception e) {
+			// Fail silently. Not a catastrophe if we can't read the version file. We don't
+			// want to fail execution.
+			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.checkVersion", versionFile.toString()), e)); //$NON-NLS-1$
+		}
+	}
+	return version == METADATA_VERSION_VALUE;
+}
+	
 /**
  * Internal method for finding and returning a runnable instance of the 
  * given class as defined in the specified plug-in.
@@ -488,6 +594,8 @@ public static IPlatformRunnable loaderGetRunnable(String applicationName) {
 public static IPlatformRunnable loaderGetRunnable(String pluginId, String className, Object args) {
 	assertInitialized();
 	PluginDescriptor descriptor = (PluginDescriptor) registry.getPluginDescriptor(pluginId);
+	if (descriptor == null)
+		return null;
 	try {
 		return (IPlatformRunnable) descriptor.createExecutableExtension(className, args, null, null);
 	} catch (CoreException e) {
@@ -512,11 +620,13 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
  * This method is used by the platform boot loader; is must
  * not be called directly by client code.
  * </p>
+ * 
  * @see BootLoader
  */
 public static void loaderShutdown() {
 	assertInitialized();
-	writeVersion();
+	if (writeVersion)
+		writeVersion();
 	registry.shutdown(null);
 	clearLockFile();
 	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP != null) {
@@ -599,7 +709,8 @@ private static void writeVersion() {
 	try {
 		OutputStream output = new BufferedOutputStream(new FileOutputStream(versionFile));
 		try {
-			output.write(METADATA_VERSION.getBytes("UTF-8")); //$NON-NLS-1$
+			String versionLine = METADATA_VERSION_KEY + "=" + METADATA_VERSION_VALUE; //$NON-NLS-1$
+			output.write(versionLine.getBytes("UTF-8")); //$NON-NLS-1$
 		} finally {
 			output.close();
 		}
@@ -811,6 +922,12 @@ private static String[] processCommandLine(String[] args) {
 		// look for the flag to turn off using package prefixes
 		if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
 			PluginClassLoader.usePackagePrefixes = false;
+			found = true;
+		}
+
+		// look for the flag to turn off the workspace metadata version check
+		if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
+			doVersionCheck = false;
 			found = true;
 		}
 
