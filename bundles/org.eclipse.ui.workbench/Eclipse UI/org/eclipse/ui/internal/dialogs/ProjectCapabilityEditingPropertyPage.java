@@ -66,7 +66,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 	 */
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
 		reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 		

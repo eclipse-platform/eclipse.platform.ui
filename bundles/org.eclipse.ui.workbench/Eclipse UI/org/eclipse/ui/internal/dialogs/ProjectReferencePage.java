@@ -54,7 +54,7 @@ public class ProjectReferencePage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 
 		WorkbenchHelp.setHelp(
-			parent,
+			getControl(),
 			IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
 		Font font = parent.getFont();
 

@@ -56,7 +56,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 	 * Method declared on PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
 		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 		

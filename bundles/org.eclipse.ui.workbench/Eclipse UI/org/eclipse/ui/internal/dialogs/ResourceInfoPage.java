@@ -168,7 +168,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 }
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
+	WorkbenchHelp.setHelp(getControl(), IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 	// layout the page
 	IResource resource = (IResource) getElement();
