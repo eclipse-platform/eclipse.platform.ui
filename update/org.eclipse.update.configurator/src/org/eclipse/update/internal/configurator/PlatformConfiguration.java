@@ -564,6 +564,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					os = null;
 				} catch (IOException e1) {
 					Utils.log("Could not close output stream for " + cfigTmp);
+					Utils.log(e1.getMessage());
 				}
 				// set file time stamp to match that of the config element
 				cfigTmp.setLastModified(config.getDate().getTime());
