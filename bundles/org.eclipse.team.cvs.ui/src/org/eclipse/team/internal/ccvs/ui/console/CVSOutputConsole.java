@@ -62,7 +62,18 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private IConsoleManager consoleManager;
 	
 	// format for timings printed to console
-	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
+	private static final DateFormat TIME_FORMAT;
+    
+    static {
+        DateFormat format;
+        try {
+            format = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
+        } catch (RuntimeException e) {
+            // This can happen if the bundle contains an invalid  format
+            format = new SimpleDateFormat("'(took 'm:ss.SSS')')"); //$NON-NLS-1$
+        }
+        TIME_FORMAT = format;
+    }
 
 	// Indicates whether the console is visible in the Console view
 	private boolean visible = false;
