@@ -1033,7 +1033,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.0
 	 */
 	protected void setDocumentProvider(IEditorInput input) {
-		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);		
+		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
 	}
 
 	/*
