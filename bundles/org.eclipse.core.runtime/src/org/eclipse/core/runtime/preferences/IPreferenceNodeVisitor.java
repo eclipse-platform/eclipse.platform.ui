@@ -31,7 +31,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * Clients may implement this interface.
  * </p>
  *
- * @see IEclipsePreferences#accept
+ * @see IEclipsePreferences#accept(IPreferenceNodeVisitor)
  * @since 3.0
  */
 public interface IPreferenceNodeVisitor {
