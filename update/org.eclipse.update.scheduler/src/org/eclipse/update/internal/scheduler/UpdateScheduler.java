@@ -26,11 +26,11 @@ import org.osgi.framework.*;
  */
 public class UpdateScheduler extends AbstractUIPlugin{
 	// Preferences
-	public static final String P_ENABLED = "enabled";
-	public static final String P_SCHEDULE = "schedule";
-	public static final String VALUE_ON_STARTUP = "on-startup";
-	public static final String VALUE_ON_SCHEDULE = "on-schedule";
-	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false
+	public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
+	public static final String P_SCHEDULE = "schedule"; //$NON-NLS-1$
+	public static final String VALUE_ON_STARTUP = "on-startup"; //$NON-NLS-1$
+	public static final String VALUE_ON_SCHEDULE = "on-schedule"; //$NON-NLS-1$
+	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false //$NON-NLS-1$
 
 	//The shared instance.
 	private static UpdateScheduler plugin;

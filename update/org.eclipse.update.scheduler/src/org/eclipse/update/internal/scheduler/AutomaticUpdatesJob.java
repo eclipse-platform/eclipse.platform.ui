@@ -49,13 +49,13 @@ public class AutomaticUpdatesJob extends Job {
 			IStatus.OK,
 			UpdateScheduler.getPluginId(),
 			IStatus.OK,
-			"",
+			"", //$NON-NLS-1$
 			null);
 	private UpdateSearchRequest searchRequest;
 	private ArrayList updates;
 
 	public AutomaticUpdatesJob() {
-		super("Automatic Update Search");
+		super(UpdateScheduler.getString("AutomaticUpdatesJob.AutomaticUpdateSearch")); //$NON-NLS-1$
 		updates = new ArrayList();
 		setPriority(Job.DECORATE);
 	}
@@ -80,7 +80,7 @@ public class AutomaticUpdatesJob extends Job {
 	
 	public IStatus run(IProgressMonitor monitor) {
 		if (UpdateCore.DEBUG) {
-			UpdateCore.debug("Automatic update search started.");
+			UpdateCore.debug("Automatic update search started."); //$NON-NLS-1$
 		}
 		searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 		try {
@@ -88,9 +88,9 @@ public class AutomaticUpdatesJob extends Job {
 				resultCollector = new AutomaticSearchResultCollector();
 			searchRequest.performSearch(resultCollector, monitor);
 			if (UpdateCore.DEBUG) {
-				UpdateCore.debug("Automatic update search finished - "
+				UpdateCore.debug("Automatic update search finished - " //$NON-NLS-1$
 				+ updates.size()
-				+ " results.");
+				+ " results."); //$NON-NLS-1$
 			}
 			if (updates.size() > 0) {
 				boolean download = UpdateCore.getPlugin().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD);
@@ -98,7 +98,7 @@ public class AutomaticUpdatesJob extends Job {
 				if (download)
 				{
 					if (UpdateCore.DEBUG) {
-						UpdateCore.debug("Automatic download of updates started.");
+						UpdateCore.debug("Automatic download of updates started."); //$NON-NLS-1$
 					}
 					for (int i=0; i<updates.size(); i++) {
 						IInstallFeatureOperation op = (IInstallFeatureOperation)updates.get(i);
@@ -106,7 +106,7 @@ public class AutomaticUpdatesJob extends Job {
 						UpdateUtils.downloadFeatureContent(feature, monitor);
 					}
 					if (UpdateCore.DEBUG) {
-						UpdateCore.debug("Automatic download of updates finished.");
+						UpdateCore.debug("Automatic download of updates finished."); //$NON-NLS-1$
 					}
 				}
 				// prompt the user
@@ -139,8 +139,8 @@ public class AutomaticUpdatesJob extends Job {
 		if (MessageDialog
 			.openQuestion(
 				UpdateScheduler.getActiveWorkbenchShell(),
-				"Eclipse Updates",
-				"New updates are available. Do you want to review and install them now?")) {
+				UpdateScheduler.getString("AutomaticUpdatesJob.EclipseUpdates1"), //$NON-NLS-1$
+				UpdateScheduler.getString("AutomaticUpdatesJob.UpdatesAvailable"))) { //$NON-NLS-1$
 			BusyIndicator.showWhile(getStandardDisplay(), new Runnable() {
 				public void run() {
 					openInstallWizard();
@@ -157,8 +157,8 @@ public class AutomaticUpdatesJob extends Job {
 		if (MessageDialog
 			.openQuestion(
 				UpdateScheduler.getActiveWorkbenchShell(),
-				"Eclipse Updates",
-				"New updates are available and downloaded. Do you want to review and install them now?")) {
+				UpdateScheduler.getString("AutomaticUpdatesJob.EclipseUpdates2"), //$NON-NLS-1$
+				UpdateScheduler.getString("AutomaticUpdatesJob.UpdatesDownloaded"))) { //$NON-NLS-1$
 			BusyIndicator.showWhile(getStandardDisplay(), new Runnable() {
 				public void run() {
 					openInstallWizard();
@@ -185,7 +185,7 @@ public class AutomaticUpdatesJob extends Job {
 				UpdateScheduler.getActiveWorkbenchShell(),
 				wizard);
 		dialog.create();
-		dialog.getShell().setText("Updates");
+		dialog.getShell().setText(UpdateScheduler.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
 		SWTUtil.setDialogSize(dialog, 600, 500);
 		if (dialog.open() == IDialogConstants.OK_ID)
 			UpdateUI.requestRestart(wizard.isRestartNeeded());

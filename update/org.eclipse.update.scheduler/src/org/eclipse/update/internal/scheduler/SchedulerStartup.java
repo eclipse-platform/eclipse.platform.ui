@@ -23,17 +23,17 @@ import org.eclipse.ui.*;
  */
 public class SchedulerStartup implements IStartup {
 	// Preferences
-	public static final String P_ENABLED = "enabled";
+	public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 
-	public static final String P_SCHEDULE = "schedule";
-	public static final String VALUE_ON_STARTUP = "on-startup";
-	public static final String VALUE_ON_SCHEDULE = "on-schedule";
+	public static final String P_SCHEDULE = "schedule"; //$NON-NLS-1$
+	public static final String VALUE_ON_STARTUP = "on-startup"; //$NON-NLS-1$
+	public static final String VALUE_ON_SCHEDULE = "on-schedule"; //$NON-NLS-1$
 	
-	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false
+	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false //$NON-NLS-1$
 
 	// values are to be picked up from the arryas DAYS and HOURS 
-	public static final String P_DAY = "day";
-	public static final String P_HOUR = "hour";
+	public static final String P_DAY = "day"; //$NON-NLS-1$
+	public static final String P_HOUR = "hour"; //$NON-NLS-1$
 
 	// Keeps track of running job
 	private Job job;
@@ -42,41 +42,41 @@ public class SchedulerStartup implements IStartup {
 
 	public static final String[] DAYS =
 		{
-			"Every day",
-			"Every Monday",
-			"Every Tuesday",
-			"Every Wednesday",
-			"Every Thursday",
-			"Every Friday",
-			"Every Saturday",
-			"Every Sunday" };
+			UpdateScheduler.getString("SchedulerStartup.day"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Monday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Tuesday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Wednesday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Thursday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Friday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Saturday"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.Sunday") }; //$NON-NLS-1$
 
 	public static final String[] HOURS =
 		{
-			"1:00 AM",
-			"2:00 AM",
-			"3:00 AM",
-			"4:00 AM",
-			"5:00 AM",
-			"6:00 AM",
-			"7:00 AM",
-			"8:00 AM",
-			"9:00 AM",
-			"10:00 AM",
-			"11:00 AM",
-			"12:00 PM",
-			"1:00 PM",
-			"2:00 PM",
-			"3:00 PM",
-			"4:00 PM",
-			"5:00 PM",
-			"6:00 PM",
-			"7:00 PM",
-			"8:00 PM",
-			"9:00 PM",
-			"10:00 PM",
-			"11:00 PM",
-			"12:00 AM",
+			UpdateScheduler.getString("SchedulerStartup.1AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.2AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.3AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.4AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.5AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.6AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.7AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.8AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.9AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.10AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.11AM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.12PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.1PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.2PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.3PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.4PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.5PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.6PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.7PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.8PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.9PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.10PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.11PM"), //$NON-NLS-1$
+			UpdateScheduler.getString("SchedulerStartup.12AM"), //$NON-NLS-1$
 			};
 
 	private class UpdateJobChangeAdapter extends JobChangeAdapter {

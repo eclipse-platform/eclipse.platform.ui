@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.update.internal.scheduler.*;
 import org.eclipse.update.internal.scheduler.UpdateScheduler;
 
 public class AutomaticUpdatesPreferencePage
@@ -31,46 +32,6 @@ public class AutomaticUpdatesPreferencePage
 	private Combo hourCombo;
 	private Button searchOnlyRadio;
 	private Button searchAndDownloadRadio;
-	public static final String[] DAYS =
-	{
-		"Every day",
-		"Every Monday",
-		"Every Tuesday",
-		"Every Wednesday",
-		"Every Thursday",
-		"Every Friday",
-		"Every Saturday",
-		"Every Sunday" };
-	public static final String[] HOURS =
-	{
-		"1:00 AM",
-		"2:00 AM",
-		"3:00 AM",
-		"4:00 AM",
-		"5:00 AM",
-		"6:00 AM",
-		"7:00 AM",
-		"8:00 AM",
-		"9:00 AM",
-		"10:00 AM",
-		"11:00 AM",
-		"12:00 PM",
-		"1:00 PM",
-		"2:00 PM",
-		"3:00 PM",
-		"4:00 PM",
-		"5:00 PM",
-		"6:00 PM",
-		"7:00 PM",
-		"8:00 PM",
-		"9:00 PM",
-		"10:00 PM",
-		"11:00 PM",
-		"12:00 AM",
-		};
-	// values are to be picked up from the arryas DAYS and HOURS 
-	public static final String P_DAY = "day";
-	public static final String P_HOUR = "hour";
 
 	public void init(IWorkbench workbench) {
 	}
@@ -118,7 +79,7 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		dayCombo = new Combo(group, SWT.READ_ONLY);
-		dayCombo.setItems(AutomaticUpdatesPreferencePage.DAYS);
+		dayCombo.setItems(SchedulerStartup.DAYS);
 		gd = new GridData();
 		gd.widthHint = 200;
 		gd.horizontalIndent = 30;
@@ -128,7 +89,7 @@ public class AutomaticUpdatesPreferencePage
 		label.setText("at");
 		
 		hourCombo = new Combo(group, SWT.READ_ONLY);
-		hourCombo.setItems(AutomaticUpdatesPreferencePage.HOURS);
+		hourCombo.setItems(SchedulerStartup.HOURS);
 		gd = new GridData();
 		gd.widthHint = 100;
 		hourCombo.setLayoutData(gd);
@@ -190,8 +151,8 @@ public class AutomaticUpdatesPreferencePage
 		enabledCheck.setSelection(pref.getBoolean(UpdateScheduler.P_ENABLED));
 		setSchedule(pref.getString(UpdateScheduler.P_SCHEDULE));
 
-		dayCombo.setText(AutomaticUpdatesPreferencePage.DAYS[getDay(pref)]);
-		hourCombo.setText(AutomaticUpdatesPreferencePage.HOURS[getHour(pref)]);
+		dayCombo.setText(SchedulerStartup.DAYS[getDay(pref)]);
+		hourCombo.setText(SchedulerStartup.HOURS[getHour(pref)]);
 		
 		searchOnlyRadio.setSelection(!pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
 		searchAndDownloadRadio.setSelection(pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
@@ -235,8 +196,8 @@ public class AutomaticUpdatesPreferencePage
 		else 
 			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_SCHEDULE);
 			
-		pref.setValue(AutomaticUpdatesPreferencePage.P_DAY, dayCombo.getText());
-		pref.setValue(AutomaticUpdatesPreferencePage.P_HOUR, hourCombo.getText());
+		pref.setValue(SchedulerStartup.P_DAY, dayCombo.getText());
+		pref.setValue(SchedulerStartup.P_HOUR, hourCombo.getText());
 		
 		pref.setValue(UpdateScheduler.P_DOWNLOAD, searchAndDownloadRadio.getSelection());
 		
@@ -247,17 +208,17 @@ public class AutomaticUpdatesPreferencePage
 	}
 	
 	private int getDay(Preferences pref) {
-		String day = pref.getString(AutomaticUpdatesPreferencePage.P_DAY);
-		for (int i=0; i<AutomaticUpdatesPreferencePage.DAYS.length; i++)
-			if (AutomaticUpdatesPreferencePage.DAYS[i].equals(day))
+		String day = pref.getString(SchedulerStartup.P_DAY);
+		for (int i=0; i<SchedulerStartup.DAYS.length; i++)
+			if (SchedulerStartup.DAYS[i].equals(day))
 				return i;
 		return 0;
 	}
 	
 	private int getHour(Preferences pref) {
-		String hour = pref.getString(AutomaticUpdatesPreferencePage.P_HOUR);
-		for (int i=0; i<AutomaticUpdatesPreferencePage.HOURS.length; i++)
-			if (AutomaticUpdatesPreferencePage.HOURS[i].equals(hour))
+		String hour = pref.getString(SchedulerStartup.P_HOUR);
+		for (int i=0; i<SchedulerStartup.HOURS.length; i++)
+			if (SchedulerStartup.HOURS[i].equals(hour))
 				return i;
 		return 0;
 	}
