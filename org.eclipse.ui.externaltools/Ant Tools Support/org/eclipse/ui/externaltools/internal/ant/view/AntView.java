@@ -451,12 +451,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	private void createProjectViewer() {
 		projectForm = new ViewForm(sashForm, SWT.NONE);
-	//	CLabel title = new CLabel(projectForm, SWT.NONE);
-	//	title.setText(AntViewMessages.getString("AntView.Build_Files_6")); //$NON-NLS-1$
-		//projectForm.setTopLeft(title);
-		//projectToolBar = new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
-		//projectForm.setTopRight(projectToolBar);
-
+		
 		projectViewer = new TreeViewer(projectForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		projectForm.setContent(projectViewer.getTree());
 		projectContentProvider = new AntProjectContentProvider();
@@ -650,6 +645,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		}
 		targetViewer.refresh();
+		updateActions();
 	}
 	
 	/**
@@ -723,6 +719,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			targetContentProvider.removeTarget(indices[i]);
 		}
 		targetViewer.refresh();
+		//note that actions are updated on selection changed
 		targetViewer.getTable().select(startIndex - 1);
 	}
 
