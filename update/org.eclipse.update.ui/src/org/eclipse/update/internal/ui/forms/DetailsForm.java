@@ -678,6 +678,8 @@ public class DetailsForm extends PropertyWebForm {
 				(IConfiguredSiteContext) currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
+			if (context.getConfigurationSite().isEnabled()==false)
+				return false;
 		}
 
 		if (relatedJob != null) {
@@ -756,7 +758,7 @@ public class DetailsForm extends PropertyWebForm {
 				IIncludedFeatureReference ref = refs[i];
 
 				try {
-					IFeature child = ref.getFeature();
+					IFeature child = ref.getFeature(null);
 
 					// not missing - try children
 					if (hasMissingOptionalFeatures(child))

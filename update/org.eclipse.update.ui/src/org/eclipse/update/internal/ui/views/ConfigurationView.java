@@ -57,6 +57,7 @@ public class ConfigurationView
 	private Action removePreservedAction;
 	private Action propertiesAction;
 	private Action showStatusAction;
+	private SiteStateAction siteStateAction;
 	private IUpdateModelChangedListener modelListener;
 	private static final String KEY_RESTORE = "ConfigurationView.Popup.restore";
 	private static final String KEY_PRESERVE =
@@ -232,6 +233,11 @@ public class ConfigurationView
 				return ((ConfiguredFeatureAdapter) parent).hasIncludedFeatures(
 					null);
 			}
+			if (parent instanceof ConfigurationSiteAdapter) {
+				IConfiguredSite site = ((ConfigurationSiteAdapter)parent).getConfigurationSite();
+				boolean showUnconf = showUnconfFeaturesAction.isChecked();
+				if (!showUnconf && site.isEnabled()==false) return false;
+			}
 			return true;
 		}
 		public Object[] getElements(Object input) {
@@ -291,6 +297,8 @@ public class ConfigurationView
 					((IConfiguredSiteAdapter) obj).getConfigurationSite();
 				int flags =
 					csite.isUpdatable() ? 0 : UpdateLabelProvider.F_LINKED;
+				if (csite.isEnabled()==false)
+					flags |= UpdateLabelProvider.F_UNCONFIGURED;
 				return provider.get(UpdateUIImages.DESC_LSITE_OBJ, flags);
 			}
 			if (obj instanceof SavedFolder) {
@@ -782,6 +790,9 @@ public class ConfigurationView
 			unlinkAction,
 			"org.eclipse.update.ui.CofigurationView_unlinkAction");
 		unlinkAction.setText(UpdateUI.getResourceString(KEY_UNLINK));
+		
+		siteStateAction = new SiteStateAction();
+		
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
@@ -890,6 +901,8 @@ public class ConfigurationView
 					UpdateUI.logException(e);
 				}
 			}
+			siteStateAction.setSite(site);
+			manager.add(siteStateAction);
 		}
 		manager.add(new Separator());
 		addDrillDownAdapter(manager);
@@ -1150,7 +1163,7 @@ public class ConfigurationView
 						new ConfiguredFeatureAdapter(
 							siteAdapter,
 							feature,
-							configuredOnly,
+							csite.isConfigured(feature),
 							false,
 							false));
 				}

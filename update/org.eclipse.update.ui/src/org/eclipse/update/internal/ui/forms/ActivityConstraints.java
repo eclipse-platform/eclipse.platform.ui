@@ -176,6 +176,20 @@ public class ActivityConstraints {
 		}
 		return null;
 	}
+	
+	/*
+	 * Check the current state.
+	 */
+	public static IStatus validateCurrentState() {
+		// check the state
+		ArrayList status = new ArrayList();
+		validateInitialState(status);
+
+		// report status
+		if (status.size() > 0)
+			return createMultiStatus(KEY_ROOT_MESSAGE, status);
+		return null;
+	}
 
 	/*
 	 * Check to see if we are not broken even before we start
@@ -479,7 +493,7 @@ public class ActivityConstraints {
 				crefs = csite.getSite().getFeatureReferences();
 			for (int j = 0; j < crefs.length; j++) {
 				IFeatureReference cref = crefs[j];
-				IFeature cfeature = cref.getFeature();
+				IFeature cfeature = cref.getFeature(null);
 				features.add(cfeature);
 			}
 		}
@@ -518,7 +532,7 @@ public class ActivityConstraints {
 			feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child = children[i].getFeature();
+				IFeature child = children[i].getFeature(null);
 				features =
 					computeFeatureSubtree(
 						top,
@@ -728,7 +742,7 @@ public class ActivityConstraints {
 		IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < irefs.length; i++) {
 			IFeatureReference iref = irefs[i];
-			IFeature ifeature = iref.getFeature();
+			IFeature ifeature = iref.getFeature(null);
 			VersionedIdentifier vid = ifeature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
 			PluginVersionIdentifier version = vid.getVersion();
@@ -1072,7 +1086,7 @@ public class ActivityConstraints {
 				IFeatureReference cref = crefs[j];
 				IFeature cfeature = null;
 				try {
-					cfeature = cref.getFeature();
+					cfeature = cref.getFeature(null);
 				} catch (CoreException e) {
 					//FIXME: cannot ask 'isOptional' here
 					// Ignore missing optional feature.
