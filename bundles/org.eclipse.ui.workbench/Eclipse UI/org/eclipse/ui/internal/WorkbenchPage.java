@@ -635,6 +635,9 @@ public boolean closeAllSavedEditors() {
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
+	//if it was the last part, close the perspective
+	lastPartClosePerspective();
+
 	// Return true on success.
 	return true;
 }
@@ -673,6 +676,9 @@ public boolean closeAllEditors(boolean save) {
 		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+
+	//if it was the last part, close the perspective
+	lastPartClosePerspective();
 
 	// Return true on success.
 	return true;
@@ -747,6 +753,9 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 		else
 			actionSwitcher.updateTopEditor(top);
 	}
+	
+	//if it was the last part, close the perspective
+	lastPartClosePerspective();
 	
 	// Return true on success.
 	return true;
@@ -1001,7 +1010,9 @@ private void disposePerspective(Perspective persp) {
 	}
 }
 /**
- * * @return NavigationHistory */
+ *
+ * @return NavigationHistory
+ */
 public INavigationHistory getNavigationHistory() {
 	return navigationHistory;
 }
@@ -1404,7 +1415,23 @@ public void hideView(IViewPart view) {
 	
 	// Just in case view was fast.
 	window.getShortcutBar().update(true);
+	
+	//if it was the last part, close the perspective
+	lastPartClosePerspective();
+	
 }
+
+/*
+ * Closes the perspective when there are no fast views 
+ * or active parts. Bug 7743.
+ */
+private void lastPartClosePerspective() {
+	Perspective persp = getActivePerspective();
+	if (persp != null && getActivePart() == null)
+		if(persp.getViewReferences().length == 0 || getEditorReferences().length == 0)
+			closePerspective(persp, false);
+}
+
 /**
  * Initialize the page.
  *
@@ -1958,7 +1985,7 @@ public IStatus restoreState(IMemento memento) {
 	if(childMem != null)
 		navigationHistory.restoreState(childMem);
 	else if(getActiveEditor() != null)
-		getNavigationHistory().markLocation();
+		navigationHistory.markEditor(getActiveEditor());
 	return result;
 }
 /**
@@ -2085,10 +2112,6 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	//No need to change the history if the active editor is becoming the active part
 	boolean markLocation = newPart != lastActiveEditor;
-	if(markLocation && lastActiveEditor != null && activePart != null && activePart instanceof IEditorPart) {
-		//Can't use markLocation because the getActiveEditor will return the new part.
-		navigationHistory.addEntry(lastActiveEditor);
-	}
 		
 	// Notify perspective.  It may deactivate fast view.
 	Perspective persp = getActivePerspective();
@@ -2115,7 +2138,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 	activatePart(activePart);
 	
 	if(markLocation && activePart != null && activePart instanceof IEditorPart)
-		getNavigationHistory().markLocation();
+		navigationHistory.markEditor(getActiveEditor());
 
 	// Fire notifications
 	if (oldPart != null)
@@ -2127,8 +2150,6 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	if (newPart != null)
 		firePartActivated(newPart);
-
-	
 }
 /**
  * See IWorkbenchPage.

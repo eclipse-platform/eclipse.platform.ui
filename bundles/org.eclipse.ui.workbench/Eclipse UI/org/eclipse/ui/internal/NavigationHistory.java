@@ -83,11 +83,17 @@ public NavigationHistory(WorkbenchPage page) {
 	});
 }
 /*
+ * Adds an editor to the editor history without getting its location.
+ */	
+public void markEditor(IEditorPart part) {
+	addEntry(part,false);
+}
+/*
  * (non-Javadoc)
  * Method declared on INavigationHistory.
  */	
-public void markLocation() {
-	addEntry(page.getActiveEditor());
+public void markLocation(IEditorPart part) {
+	addEntry(part,true);
 }
 /*
  * (non-Javadoc)
@@ -144,22 +150,26 @@ private HistoryEntry getEntry(int index) {
 /*
  * Adds the specified entry to the history. */
 private void add(HistoryEntry entry) {
+	removeForwardEntries();
+	if(history.size() == CAPACITY) {
+		HistoryEntry e= (HistoryEntry) history.remove(0);
+		e.dispose();		
+	}
+	history.add(entry);
+	activeEntry = history.size() - 1;
+}
+/*
+ * Remove all entries after the active entry. */
+private void removeForwardEntries() {
 	int length= history.size();
 	for (int i= activeEntry + 1; i < length; i++) {
 		HistoryEntry e= (HistoryEntry) history.remove(activeEntry + 1);
 		e.dispose();
 	}
-	history.add(entry);
-	int delta= history.size() - CAPACITY;
-	for (int i= 0; i < delta; i++) {
-		HistoryEntry e= (HistoryEntry) history.remove(0);
-		e.dispose();
-	}
-	activeEntry= history.size() - 1;
 }
-/**
+/*
  * Adds a location to the history. */
-public void addEntry(IEditorPart part) {
+private void addEntry(IEditorPart part, boolean markLocation) {
 	if(!WorkInProgressPreferencePage.useNavigationHistory())
 		return;
 
@@ -167,14 +177,16 @@ public void addEntry(IEditorPart part) {
 		return;
 	
 	INavigationLocation location = null;	
-	if(part instanceof INavigationLocationProvider)
-		location = ((INavigationLocationProvider)part).createCurrentLocation();
-	
+	if(markLocation && part instanceof INavigationLocationProvider)
+		location = ((INavigationLocationProvider)part).createNavigationLocation();
+		
 	HistoryEntry e= new HistoryEntry(page,part);
 	e.location= location;
 	HistoryEntry current= getEntry(activeEntry);
 	if (current == null || !e.mergeInto(current)) {
 		add(e);
+	} else {
+		removeForwardEntries();
 	}
 		
 	updateActions();
@@ -287,7 +299,7 @@ public void restoreState(IMemento memento) {
 	IMemento items[] = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
 	if(items.length == 0)
 		if(page.getActiveEditor() != null)
-			markLocation();
+			markLocation(page.getActiveEditor());
 			
 	for (int i = 0; i < items.length; i++) {
 		IMemento item = items[i];
@@ -359,7 +371,7 @@ private static class HistoryEntry {
 				IEditorPart editor = page.openEditor(editorInput, editorID, true);
 				if (location == null) {
 					if(editor instanceof INavigationLocationProvider)
-						location = ((INavigationLocationProvider)editor).createLocation();
+						location = ((INavigationLocationProvider)editor).createEmptyNavigationLocation();
 				}
 					
 				if (location != null) {

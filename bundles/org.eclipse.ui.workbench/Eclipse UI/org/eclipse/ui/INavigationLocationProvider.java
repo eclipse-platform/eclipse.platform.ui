@@ -22,10 +22,6 @@ package org.eclipse.ui;
  * Should be implemented by editors that wish to contribute to the
  * navigation history. The message <code>createNavigationLocation</code>
  * will be sent when a new location is marked in the history.
- * 
- * The provider must guaranty that the current location is
- * always in the history. Independent if that is done by adding
- * a new location or by updating the current location.
  */
 public interface INavigationLocationProvider {
 	/**
@@ -34,9 +30,9 @@ public interface INavigationLocationProvider {
 	 * 
 	 * @return INavigationLocation
 	 */
-	public INavigationLocation createLocation();	
+	public INavigationLocation createEmptyNavigationLocation();	
 	/**
 	 * Creates a navigation location describing the current state.
 	 * 	 * @return INavigationLocation	 */
-	public INavigationLocation createCurrentLocation();
+	public INavigationLocation createNavigationLocation();
 }

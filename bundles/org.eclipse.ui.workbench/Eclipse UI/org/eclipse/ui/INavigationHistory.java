@@ -34,17 +34,20 @@ package org.eclipse.ui;
  * the oposit direction, the editor and location should be exactly the same as if
  * nothing as done.
  * 
+ * Clients must guaranty that the current location is
+ * always in the history. Independent if that is done by marking
+ * a new location or by updating the current location.
+ * 
  * Not intended to be implemented by clients.
  */
 public interface INavigationHistory {
 	/**
-	 * Mark the current location into the history. This message is sent
-	 * by the workbench whenever an editors is activated or deactivated. 
-	 * and should be sent by clients (editors) whenever significant changes
+	 * Mark the current location into the history. This message 
+	 * should be sent by clients whenever significant changes
 	 * in location are detected.
 	 * 
 	 * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>	 */
-	public void markLocation();
+	public void markLocation(IEditorPart part);
 	/**
 	 * Return the current location;
 	 * 	 * @return INavigationLocation the current location	 */
