@@ -821,14 +821,17 @@ public IWorkbench getWorkbench() {
  * Unconditionally close this window.
  */
 private boolean hardClose() {
-	closing = true;
-	updateDisabled = true;
-	closeAllPages();
-	builder.dispose();
-	if(keyBindingService != null)
-		keyBindingService.dispose();
-	workbench.fireWindowClosed(this);
-	return super.close();
+	try {
+		closing = true;
+		updateDisabled = true;
+		closeAllPages();
+		builder.dispose();
+		if(keyBindingService != null)
+			keyBindingService.dispose();
+		workbench.fireWindowClosed(this);
+	} finally {
+		return super.close();
+	}
 }
 /**
  * @see IWorkbenchWindow
