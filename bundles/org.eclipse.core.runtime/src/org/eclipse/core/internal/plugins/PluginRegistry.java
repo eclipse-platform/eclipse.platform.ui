@@ -197,6 +197,11 @@ void logError(IStatus status) {
 }
 public void saveRegistry() throws IOException {
 	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
+	if (path.toFile().exists()) {
+		// The registry cache file exists.  Assume it is fine and
+		// we don't need to re-write it.
+		return;
+	}
 	DataOutputStream output = null;
 	try {
 		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path.toFile())));

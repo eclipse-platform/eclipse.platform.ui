@@ -636,12 +636,13 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	InternalFactory factory = new InternalFactory(problems);
 
 	IPath path = getMetaArea().getRegistryPath();
+	File cacheFile = path.toFile();
 	DataInputStream input = null;
 	registry = null;
 	// augment the plugin path with any additional platform entries
 	// (eg. user scripts)
 	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);
-	if (path.toFile().exists() && cacheRegistry) {
+	if (cacheFile.exists() && cacheRegistry) {
 		try {
 			input = new DataInputStream(new BufferedInputStream(new FileInputStream(path.toFile())));
 			try {
@@ -660,6 +661,15 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	}
 	if (registry == null) {
 		clearRegIndex();
+		if (cacheFile.exists()) {
+			// Delete the cache file so we know to re-write the
+			// cache when we shutdown.  If the cache file exists
+			// on shutdown, we won't bother re-writing it.
+			if (!cacheFile.delete()) {
+				IStatus status = new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.FAILED_DELETE_METADATA, Policy.bind("meta.unableToDeleteCache", cacheFile.getAbsolutePath()), null); //$NON-NLS-1$
+				problems.merge(status);
+			}	
+		}
 		long start = System.currentTimeMillis();
 		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
