@@ -39,12 +39,6 @@ public class WindowManager {
 	 */
 	private ArrayList windows= new ArrayList();
 
-
-	/**
-	 * Parent window manager, or <code>null</code> if none.
-	 */
-	private WindowManager parentManager;
-
 	/**
 	 * List of window managers who have this window manager
 	 * as their parent (element type: <code>WindowManager</code>).
@@ -90,7 +84,6 @@ private void addWindowManager(WindowManager wm) {
 		subManagers = new ArrayList();
 	if (!subManagers.contains(wm)) {
 		subManagers.add(wm);
-		wm.parentManager = this;
 	}
 }
 /**

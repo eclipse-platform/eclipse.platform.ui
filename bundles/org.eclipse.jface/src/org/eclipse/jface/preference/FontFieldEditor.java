@@ -233,7 +233,7 @@ public class FontFieldEditor extends FieldEditor {
 					FontDialog fontDialog =
 						new FontDialog(changeFontButton.getShell());
 					if (chosenFont != null)
-						fontDialog.setFontData(chosenFont[0]);
+						fontDialog.setFontList(chosenFont);
 					FontData font = fontDialog.open();
 					if (font != null) {
 						FontData[] oldFont = chosenFont;

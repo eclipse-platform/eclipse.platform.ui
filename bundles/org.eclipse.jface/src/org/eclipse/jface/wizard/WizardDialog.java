@@ -67,7 +67,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 	// The number of long running operation executed from the dialog.	
 	private long activeRunningOperations = 0;
-	private boolean operationCancelableState;
 
 	// The current page message and description
 	private String pageMessage;
@@ -204,7 +203,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		 * @param w the control
 		 */
 		public void layoutPage(Control w) {
-			w.setBounds(getClientArea((Composite) w.getParent()));
+			w.setBounds(getClientArea(w.getParent()));
 		}
 		/**
 		 * Sets the location of the page so that its origin is in the
@@ -247,7 +246,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 */
 	private Object aboutToStart(boolean enableCancelButton) {
 		Map savedState = null;
-		operationCancelableState = enableCancelButton;
 		if (getShell() != null) {
 			// Save focus control
 			Control focusControl = getShell().getDisplay().getFocusControl();
@@ -526,7 +524,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		// Ensure that all of the created pages are initially not visible
 		IWizardPage[] pages = wizard.getPages();
 		for (int i = 0; i < pages.length; i++) {
-			IWizardPage page = (IWizardPage) pages[i];
+			IWizardPage page = pages[i];
 			if (page.getControl() != null)
 				page.getControl().setVisible(false);
 		}

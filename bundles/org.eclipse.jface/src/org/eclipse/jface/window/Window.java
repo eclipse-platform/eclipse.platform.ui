@@ -168,11 +168,6 @@ public abstract class Window {
 	 * @see #setReturnCode
 	 */
 	private int returnCode = OK;
-	
-	/**
-	 * Last recorded window return code; initially <code>OK</code>.
-	 */
-	private static int globalReturnCode = OK;
 
 	/**
 	 * <code>true</code> if the <code>open</code> method should
@@ -681,7 +676,6 @@ public static void setDefaultImage(Image image) {
  */
 protected void setReturnCode(int code) {
 	returnCode = code;
-	globalReturnCode = code;
 }
 
 /**
