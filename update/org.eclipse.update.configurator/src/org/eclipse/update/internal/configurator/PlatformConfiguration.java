@@ -734,7 +734,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private synchronized void initialize(URL url) throws Exception {
 		if (url != null) {
 			config = loadConfig(url);	
-			Utils.debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
+			Utils.debug("Using configuration " + url.toString()); //$NON-NLS-1$
 		}
 		if (config == null) {
 			config = new Configuration();		
