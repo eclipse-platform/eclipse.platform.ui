@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 
@@ -390,8 +389,7 @@ public class TextPresentation {
 			target.foreground= template.foreground;
 		if (template.background != null)
 			target.background= template.background;
-		if (template.fontStyle != SWT.NORMAL)
-			target.fontStyle= template.fontStyle;
+		target.fontStyle |= template.fontStyle;
 	}
 
 	/**
