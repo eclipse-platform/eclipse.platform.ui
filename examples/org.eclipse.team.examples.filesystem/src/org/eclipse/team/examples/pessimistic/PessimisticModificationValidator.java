@@ -7,7 +7,6 @@
 package org.eclipse.team.examples.pessimistic;
  
 import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -71,10 +70,13 @@ public class PessimisticModificationValidator
 	    if (!checkOut.isEmpty()) {
 	     	if (context != null) {
 	     		boolean shouldFail= shouldFailValidateEdit();
-	            checkout(checkOut, IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED, shouldFail, context);
+	            int statusCode = checkout(checkOut, IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED, shouldFail, context);
 	            if (shouldFail) {
 					return new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "Fail Validate Edit Preference true", null);
-				}	                      
+				}	 
+	            if(statusCode == IStatus.CANCEL) {
+	            	return new Status( IStatus.CANCEL, getUid(), IStatus.ERROR, "Checkout cancelled by user", null);
+	            }
             } else {
             	if (isAutomaticCheckout()) {
 		            if (shouldFailValidateEdit()) {
@@ -193,9 +195,9 @@ public class PessimisticModificationValidator
 	 * Optionally prompts the user to select which resources should be 
 	 * checked out, and then checks the selected resources.
 	 */
-	private void promptAndCheckout(Set resources, boolean beQuiet, boolean shouldFail, Object context) {
+	private int promptAndCheckout(Set resources, boolean beQuiet, boolean shouldFail, Object context) {
 		if (resources.isEmpty()) {
-			return;
+			return IStatus.OK;
 		}
 
 		Set temp= new HashSet(resources.size());
@@ -205,7 +207,7 @@ public class PessimisticModificationValidator
 				temp.add(resource);
 		}
 		resources= temp;
-				
+		final int[] statusCode = new int[] {IStatus.OK};	
 		if (!beQuiet && !resources.isEmpty()) {
 			final Shell shell= getShell(context);
 			if (shell != null && !shell.isDisposed()) {
@@ -233,7 +235,9 @@ public class PessimisticModificationValidator
 							for (int i= 0; i < results.length; i++) {
 								result[0].add(results[i]);
 							}
-						}				
+						} else if(status == Window.CANCEL) {
+							statusCode[0] = IStatus.CANCEL;
+						}
 					}
 				});
 				resources= result[0];			
@@ -246,6 +250,7 @@ public class PessimisticModificationValidator
 		if (resources != null && !resources.isEmpty() && !shouldFail) {
 			checkout(resources);
 		}
+		return statusCode[0];
 	}
 
 	/*
@@ -267,23 +272,23 @@ public class PessimisticModificationValidator
 	}
 
 	/*
-	 * Checks out the files if necessary and if the preferences allow.
+	 * Checks out the files if necessary and if the preferences allow. 
 	 */
-	private void checkout(Set resources, String itemId, boolean shouldFail, Object context) {
+	private int checkout(Set resources, String itemId, boolean shouldFail, Object context) {
 		if (resources.isEmpty()) {
-			return;
+			return IStatus.OK;
 		}
 
 		int preference= getPreferences().getInt(itemId);
 		
 		if (preference == IPessimisticFilesystemConstants.OPTION_DO_NOTHING)
-			return;
+			return IStatus.OK;
 			
 		boolean beQuiet= false;	
 		if (preference == IPessimisticFilesystemConstants.OPTION_AUTOMATIC) {
 			beQuiet= true;
 		}		
-		promptAndCheckout(resources, beQuiet, shouldFail, context);
+		return promptAndCheckout(resources, beQuiet, shouldFail, context);
 	}
 	
 	/*
