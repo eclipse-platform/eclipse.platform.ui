@@ -29,6 +29,7 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -71,6 +72,12 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		private boolean fIsActive= false;
 		/** The information control. */
 		private IInformationControl fInformationControlToClose;
+		/**
+		 * The cached display.
+		 * @since 3.1
+		 */
+		private Display fDisplay;
+
 		
 		/**
 		 * Creates a new information control closer.
@@ -111,6 +118,12 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
 			}
+			
+			fDisplay= fSubjectControl.getDisplay();
+			if (!fDisplay.isDisposed()) {
+				fDisplay.addFilter(SWT.Show, this);
+				fDisplay.addFilter(SWT.Activate, this);
+			}
 		}
 		
 		/*
@@ -128,7 +141,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		protected void stop(boolean delayRestart) {
 			
-			if (!fIsActive) return;
+			if (!fIsActive)
+				return;
 			fIsActive= false;
 			
 			hideInformationControl();
@@ -140,7 +154,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);				
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
-			}			
+			}
+			
+			if (fDisplay != null && !fDisplay.isDisposed()) {
+				fDisplay.removeFilter(SWT.Show, this);
+				fDisplay.removeFilter(SWT.Activate, this);
+			}
+			fDisplay= null;
+
 		}
 		
 		/*
@@ -211,7 +232,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Deactivate)
+			if (event.type == SWT.Deactivate || event.type == SWT.Activate || event.type == SWT.Show)
 				stop();
 		}
 

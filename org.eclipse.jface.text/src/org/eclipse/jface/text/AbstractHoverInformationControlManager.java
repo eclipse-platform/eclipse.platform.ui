@@ -65,6 +65,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		private Rectangle fSubjectArea;
 		/** Indicates whether this closer is active */
 		private boolean fIsActive= false;
+		/**
+		 * The cached display.
+		 * @since 3.1
+		 */
+		private Display fDisplay;
+		
 		
 		/**
 		 * Creates a new information control closer.
@@ -102,6 +108,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
 				fSubjectControl.getShell().addListener(SWT.Deactivate, this);
+			
+				fDisplay= fSubjectControl.getDisplay();
+				if (!fDisplay.isDisposed()) {
+					fDisplay.addFilter(SWT.Show, this);
+					fDisplay.addFilter(SWT.Activate, this);
+				}
 			}
 		}
 		
@@ -120,7 +132,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		protected void stop(boolean delayRestart) {
 			
-			if (!fIsActive) return;
+			if (!fIsActive)
+				return;
+			
 			fIsActive= false;
 			
 			hideInformationControl();
@@ -132,7 +146,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
 				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);
-			}			
+			}
+			
+			if (fDisplay != null && !fDisplay.isDisposed()) {
+				fDisplay.removeFilter(SWT.Show, this);
+				fDisplay.removeFilter(SWT.Activate, this);
+			}
+			fDisplay= null;
 		}
 		
 		/*
@@ -202,7 +222,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Deactivate)
+			if (event.type == SWT.Deactivate || event.type == SWT.Activate || event.type == SWT.Show)
 				stop();
 		}
 	}
