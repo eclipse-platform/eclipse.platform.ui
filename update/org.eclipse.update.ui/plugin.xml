@@ -42,7 +42,7 @@
          </menu>
          <action
                label="%actionSets.configManager.label"
-               icon="icons/full/eview16/configs.gif"
+               icon="icons/eview16/configs.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.ConfigurationManagerAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
@@ -50,7 +50,7 @@
          </action>
          <action
                label="%actionSets.updates.label"
-               icon="icons/full/obj16/usearch_obj.gif"
+               icon="icons/obj16/usearch_obj.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.InstallWizardAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
