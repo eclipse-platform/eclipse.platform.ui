@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 
 /**
@@ -24,13 +25,19 @@ public final class AnnotationType {
 	
 	public AnnotationType(String type, String[] superTypes) {
 		fType= type;
-		fSuperTypes= superTypes;
+		fSuperTypes= TextUtilities.copy(superTypes);
 	}
 	
 	public String getType() {
 		return fType;
 	}
 	
+	/**
+	 * Returns the list of super types of this annotation type. This list is owned by
+	 * this annotation type and may not be manipulated by clients.
+	 * 
+	 * @return the list of super types
+	 */
 	public String[] getSuperTypes() {
 		return fSuperTypes;
 	}

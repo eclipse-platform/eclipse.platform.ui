@@ -63,8 +63,20 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		fFileBufferOperation= fileBufferOperation;
 	}
 	
-	public void initialize(IResource[] resources,IPath location) {
-		fResources= resources;
+	/**
+	 * Initializes this file buffer operation handler with the given resources and the given location. The array of resources
+	 * is adopted by this handler and may not be modified by clients after that method has been called.
+	 * 
+	 * @param resources the resources to be adopted
+	 * @param location the location
+	 */
+	public void initialize(IResource[] resources, IPath location) {
+		if (resources != null) {
+			fResources= new IResource[resources.length];
+			System.arraycopy(resources, 0, fResources, 0, resources.length);
+		} else {
+			fResources= null;
+		}
 		fLocation= location;
 	}
 
