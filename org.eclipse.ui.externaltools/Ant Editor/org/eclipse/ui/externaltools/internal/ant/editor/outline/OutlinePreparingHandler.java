@@ -91,7 +91,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * The parsed document
      */
     private IDocument document;
-
+    
+    /**
+     * Whether the current element is the root of the external entity tree
+     */
+    private boolean isRootExternal;
 
     /**
      * Creates an instance.
@@ -116,18 +120,18 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
         // Create a Dom Element
         XmlElement tempElement = createXmlElement(aLocalName, aQualifiedName, anAttributes);
 
-        // set starting the location
-        computeStartLocation(tempElement);
-        
         // Is it our root
         if(rootElement == null) {
             rootElement = tempElement;
         } else {  // Add it as child to parent
             XmlElement tempLastOpenedElement = (XmlElement)stillOpenElements.peek();
             tempLastOpenedElement.addChildNode(tempElement);
-            tempElement.setExternal(tempLastOpenedElement.isExternal());
+            tempElement.setExternal(isExternal());
         }
     
+		// set starting the location
+		computeStartLocation(tempElement);
+        
         stillOpenElements.push(tempElement);
         
         super.startElement(aUri, aLocalName, aQualifiedName, anAttributes);
@@ -407,6 +411,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     public void warning(SAXParseException anException) throws SAXException {
 		if (errorHandler != null) {
 			XmlElement element= new XmlElement(""); //$NON-NLS-1$
+			element.setExternal(isExternal());
 			computeErrorLocation(element, anException);
 			errorHandler.warning(anException, element);
 		}
@@ -452,6 +457,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		}
 
 		XmlElement errorNode= new XmlElement(message.toString());
+		errorNode.setExternal(isExternal());
 		errorNode.setIsErrorNode(true);
 		computeErrorLocation(errorNode, exception);		
 		rootElement.addChildNode(errorNode);
@@ -537,27 +543,36 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
 	 */
 	public void startEntity(String name) throws SAXException {
+		isRootExternal= true;
 		startElement(null, name, "", null); //$NON-NLS-1$
 		XmlElement external= (XmlElement)stillOpenElements.peek();
 		external.setExternal(true);
 		external.setRootExternal(true);
 		external.getAttributes().removeAll(external.getAttributes());
 		external.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, IAntEditorConstants.TYPE_EXTERNAL));
+		isRootExternal= false;
 	}
 
 	private void computeStartLocation(XmlElement element) {
+		if (element.isExternal()) {
+			return;
+		}
+		
 		try {
 			int offset;
 			
 			int locatorLine= locator.getLineNumber();
 			int locatorColumn= locator.getColumnNumber();
-			
+			String prefix= "<"; //$NON-NLS-1$
+			if (isRootExternal) {
+				prefix= "&";  //$NON-NLS-1$
+			}	
 			if (locatorColumn <= 0) {
 				offset= getOffset(locatorLine, getLastCharColumn(locatorLine));
-				offset= document.search(offset, "<" + element.getName(), false, false, false); //$NON-NLS-1$
+				offset= document.search(offset, prefix + element.getName(), false, false, false);
 			} else {
 				offset= getOffset(locatorLine, locatorColumn);
-				offset= document.search(offset, "<", false, true, false); //$NON-NLS-1$
+				offset= document.search(offset, prefix, false, true, false); 
 			}
 			
 			int line= getLine(offset);
@@ -572,6 +587,10 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	}
 
 	private void computeEndLocation(XmlElement element) {
+		if (element.isExternal() && !element.isRootExternal()) {
+			return;
+		}
+		
 		try {
 			int offset;
 			int line= locator.getLineNumber();
@@ -580,15 +599,21 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			if (column <= 0) {
 				int lineOffset= getOffset(line, 1);
 				offset= document.search(lineOffset, element.getName(), true, false, false);
-				if (offset < 0 || getLine(offset) != line)
+				if (offset < 0 || getLine(offset) != line) {
 					offset= lineOffset;
-				offset= document.search(lineOffset, ">", true, true, false); //$NON-NLS-1$
+				}
+				String endDelimiter= ">"; //$NON-NLS-1$
+				if (element.isRootExternal()) {
+					endDelimiter= ";"; //$NON-NLS-1$
+				}
+				offset= document.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
 				if (offset < 0 || getLine(offset) != line) {
 					offset= lineOffset;
 					column= 1;
-				} else
+				} else {
 					offset++;
 					column= getColumn(offset, line);
+				}
 			} else {
 				offset= getOffset(line, column);
 			}
@@ -602,6 +627,10 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	}
 
 	private void computeErrorLocation(XmlElement element, SAXParseException exception) {
+		if (element.isExternal()) {
+			return;
+		}
+		
 		try {
 			int line= exception.getLineNumber();
 			int startColumn= exception.getColumnNumber();
@@ -615,8 +644,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			if (startColumn <= 0) {
 				startColumn= 1;
 				endColumn= getLastCharColumn(line) + 1;
-			} else
+			} else {
 				endColumn= startColumn + 1;
+			}
 			
 			int offset= getOffset(line, startColumn);
 
@@ -637,8 +667,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	}
 	
 	public void fixEndLocations(SAXParseException e) {
-		if (stillOpenElements.empty())
+		if (stillOpenElements.empty()) {
 			return;
+		}
 		
 		try {
 			int offset, line, column;
@@ -668,6 +699,13 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		} catch (BadLocationException ble) {
 			ExternalToolsPlugin.getDefault().log(ble);
 		}
+	}
+
+	private boolean isExternal() {
+		if (!stillOpenElements.empty()) {
+			return ((XmlElement) stillOpenElements.peek()).isExternal();
+		}
+		return false;
 	}
 
 	private int getLastCharColumn(int line) throws BadLocationException {
