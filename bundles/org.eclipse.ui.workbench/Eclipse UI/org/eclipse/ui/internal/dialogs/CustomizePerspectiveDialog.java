@@ -79,8 +79,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.AbstractActionBarConfigurer;
 import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
@@ -371,7 +371,10 @@ public class CustomizePerspectiveDialog extends Dialog {
     }
 
     /**
-     * 
+     * The proxy IActionBarConfigurer that gets passed to the application's
+     * ActionBarAdvisor.  This is used to construct a representation of the
+     * window's hardwired menus and toolbars in order to display their
+     * structure properly in the preview panes.
      */
     public class CustomizeActionBars extends AbstractActionBarConfigurer
             implements IActionBars2 {
@@ -847,9 +850,7 @@ public class CustomizePerspectiveDialog extends Dialog {
     public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
         super(configurer.getWindow().getShell());
         perspective = persp;
-        // @issue should pass in the parent window, not use getActiveWorkbenchWindow()
-        window = (WorkbenchWindow) PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
+        window = (WorkbenchWindow) configurer.getWindow();
 
         // build a structure for the menuitems and toolitems that the workbench contributes
         customizeWorkbenchActionBars = new CustomizeActionBars(configurer, 
@@ -857,8 +858,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // Fill current actionBars in the "fake" workbench actionbars
         window.fillActionBars(customizeWorkbenchActionBars,
-                WorkbenchAdvisor.FILL_PROXY | WorkbenchAdvisor.FILL_MENU_BAR
-                        | WorkbenchAdvisor.FILL_COOL_BAR);
+                ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR
+                        | ActionBarAdvisor.FILL_COOL_BAR);
 
         initializeActionSetInput();
         initializeShortcutMenuInput();
@@ -1005,7 +1006,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages
                 .getString("ActionSetSelection.customize")); //$NON-NLS-1$
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+        window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
     }
 
