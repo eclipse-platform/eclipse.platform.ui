@@ -289,15 +289,23 @@ public class Session {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
 			hasBeenConnected = true;
 			
-			// If we're connected to a CVSNT server, accept MT. Otherwise don't
-			if (isCVSNT()) {
-				Request.registerResponseHandler(new MTHandler());
-			} else {
-				Request.removeResponseHandler("MT"); //$NON-NLS-1$
+			ResponseHandler mtHandler = Request.getResponseHandler("MT"); //$NON-NLS-1$
+			try {
+				// If we're connected to a CVSNT server, accept MT. Otherwise don't.
+				// We only want to disable MT messages for this particular session
+				// since there may be multiple sessions open.
+				if ( ! isCVSNT()) {
+					Request.removeResponseHandler("MT"); //$NON-NLS-1$
+				}
+				
+				// tell the server the names of the responses we can handle
+				connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
+			} finally {
+				// Re-register the MT handler since there may be more than one session open
+				if ( ! isCVSNT()) {
+					Request.registerResponseHandler(mtHandler);
+				}
 			}
-			
-			// tell the server the names of the responses we can handle
-			connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
 	
 			// ask for the set of valid requests
 			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 50));

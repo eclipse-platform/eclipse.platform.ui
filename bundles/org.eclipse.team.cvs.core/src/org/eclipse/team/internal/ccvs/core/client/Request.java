@@ -51,7 +51,8 @@ public abstract class Request {
 		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_CREATED));
 		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_MERGED));
 		registerResponseHandler(new ValidRequestsHandler());
-		registerResponseHandler(new ModuleExpansionHandler());		
+		registerResponseHandler(new ModuleExpansionHandler());
+		registerResponseHandler(new MTHandler());
 	}
 	protected static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);
@@ -59,7 +60,7 @@ public abstract class Request {
 	protected static void removeResponseHandler(String responseID) {
 		responseHandlers.remove(responseID);
 	}
-	private static ResponseHandler getResponseHandler(String responseID) {
+	protected static ResponseHandler getResponseHandler(String responseID) {
 		return (ResponseHandler)responseHandlers.get(responseID);
 	}
 
