@@ -615,7 +615,9 @@
             adaptable="true"
             label="%DecoratorStandard.name"
             state="false"
-            class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
+            lightweight= "true"
+            quadrant = "BOTTOM_RIGHT"
+            class="org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator"
             id="org.eclipse.team.cvs.ui.decorator">
          <description>
             %DecoratorStandard.desc

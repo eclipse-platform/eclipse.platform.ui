@@ -158,11 +158,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 			EclipseSynchronizer.getInstance().flush(getProject(), true, true /*flush deep*/, null);
 		} catch(CVSException e) {
 			throw new CoreException(e.getStatus());
-		} finally {
-			CVSProviderPlugin.broadcastProjectDeconfigured(getProject());
 		}
 	}
 	
+	public void deconfigured() {
+		CVSProviderPlugin.broadcastProjectDeconfigured(getProject());
+	}
 	/**
 	 * @see IProjectNature#getProject()
 	 */

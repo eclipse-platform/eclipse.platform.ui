@@ -42,7 +42,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
+import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -425,7 +425,7 @@ abstract public class CVSAction extends TeamAction {
 	public static IPromptCondition getOverwriteLocalChangesPrompt() {
 		return new IPromptCondition() {
 			public boolean needsPrompt(IResource resource) {
-				return CVSDecorator.isDirty(resource);
+				return CVSLightweightDecorator.isDirty(resource);
 			}
 			public String promptMessage(IResource resource) {
 				return Policy.bind("ReplaceWithAction.localChanges", resource.getName());//$NON-NLS-1$

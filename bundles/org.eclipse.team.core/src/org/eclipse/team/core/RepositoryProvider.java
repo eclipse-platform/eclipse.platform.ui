@@ -192,6 +192,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			project.setPersistentProperty(PROVIDER_PROP_KEY, null);
 			
 			//removing the nature would've caused project description delta, so trigger one
+			provider.deconfigured();
 			project.touch(null);	
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
@@ -244,6 +245,14 @@ public abstract class RepositoryProvider implements IProjectNature {
 		}
 	}
 
+	/**
+	 * Method deconfigured is invoked after a provider has been unmaped. The
+	 * project will no longer have the provider associated with it when this
+	 * method is invoked. It is a last chance for the provider to clean up.
+	 */
+	protected void deconfigured() {
+	}
+	
 	/**
 	 * Answer the id of this provider instance. The id should be the repository provider's 
 	 * id as defined in the provider plugin's plugin.xml.

@@ -84,7 +84,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	IPropertyChangeListener listener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
-				CVSDecorator.refresh();
+				CVSLightweightDecorator.refresh();
 			}
 		}
 	};

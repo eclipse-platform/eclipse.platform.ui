@@ -7,6 +7,8 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Map;
 
+import org.eclipse.jface.viewers.IDecoration;
+
 public class CVSDecoratorConfiguration {
 
 	// bindings for 
@@ -38,8 +40,11 @@ public class CVSDecoratorConfiguration {
 	private static final char KEYWORD_SEPCOLON = ':';
 	private static final char KEYWORD_SEPAT = '@';
 		
-	public static String bind(String format, Map bindings) {
-		StringBuffer output = new StringBuffer(80);
+	public static void decorate(IDecoration decoration, String format, Map bindings) {
+		StringBuffer prefix = new StringBuffer(80);
+		StringBuffer suffix = new StringBuffer(80);
+		StringBuffer output = prefix;
+		
 		int length = format.length();
 		int start = -1;
 		int end = length;
@@ -47,7 +52,17 @@ public class CVSDecoratorConfiguration {
 			if ((end = format.indexOf('{', start)) > -1) {
 				output.append(format.substring(start + 1, end));
 				if ((start = format.indexOf('}', end)) > -1) {
-					String s = (String)bindings.get(format.substring(end + 1, start));
+					String key = format.substring(end + 1, start);
+					String s;
+
+					//We use the RESOURCE_NAME key to determine if we are doing the prefix or suffix.  The name isn't actually part of either.					
+					if(key.equals(RESOURCE_NAME)) {
+						output = suffix;
+						s = null;
+					} else {
+						s = (String) bindings.get(key);
+					}
+
 					if(s!=null) {
 						output.append(s);
 					} else {
@@ -69,6 +84,44 @@ public class CVSDecoratorConfiguration {
 				break;
 			}
 		}
-		return output.toString();
+		
+		decoration.addPrefix(prefix.toString());
+		decoration.addSuffix(suffix.toString());
 	}
+
+//todo: leaving the old bind method in until senders can be fixed
+	
+	public static String bind(String format, Map bindings) {
+		StringBuffer output = new StringBuffer(80);
+		int length = format.length();
+		int start = -1;
+		int end = length;
+		while (true) {
+			if ((end = format.indexOf('{', start)) > -1) {
+				output.append(format.substring(start + 1, end));
+				if ((start = format.indexOf('}', end)) > -1) {
+					String s = (String)bindings.get(format.substring(end + 1, start));
+					if(s!=null) {
+						output.append(s);
+					} else {
+						// support for removing prefix character if binding is null
+						int curLength = output.length();
+						if(curLength>0) {
+							char c = output.charAt(curLength - 1);
+							if(c == KEYWORD_SEPCOLON || c == KEYWORD_SEPAT) {
+								output.deleteCharAt(curLength - 1);
+							}
+						}
+					}
+				} else {
+					output.append(format.substring(end, length));
+					break;
+				}
+			} else {
+				output.append(format.substring(start + 1, length));
+				break;
+			}
+		}
+		return output.toString();
+	}	
 }

@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
+import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagAsVersionDialog;
@@ -148,7 +148,7 @@ public class TagAction extends WorkspaceAction {
 	protected IPromptCondition getPromptCondition() {
 		return new IPromptCondition() {
 			public boolean needsPrompt(IResource resource) {
-				return CVSDecorator.isDirty(resource);
+				return CVSLightweightDecorator.isDirty(resource);
 			}
 			public String promptMessage(IResource resource) {
 				return Policy.bind("TagAction.uncommittedChanges", resource.getName());//$NON-NLS-1$

@@ -351,7 +351,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		store.setValue(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, showSyncInfoInLabel.getSelection());		
 		
-		CVSDecorator.refresh();
+		CVSLightweightDecorator.refresh();
 		
 		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return true;

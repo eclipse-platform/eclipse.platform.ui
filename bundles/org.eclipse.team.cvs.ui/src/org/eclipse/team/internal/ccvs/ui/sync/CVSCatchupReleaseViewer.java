@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
@@ -24,6 +23,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,9 +51,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorationRunnable;
-import org.eclipse.team.internal.ccvs.ui.CVSDecoratorConfiguration;
+import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -70,8 +68,6 @@ import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
@@ -93,6 +89,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private AddSyncAction addAction;
 	
 	private Action selectAdditions;
+	private Image conflictImage;
 	
 	private static class DiffOverlayIcon extends OverlayIcon {
 		private static final int HEIGHT = 16;
@@ -191,92 +188,127 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		WorkbenchHelp.setHelp(this.getControl(), IHelpContextIds.CATCHUP_RELEASE_VIEWER);
 	}
 	
-	private void initializeLabelProvider() {
+	private static class Decoration implements IDecoration {
+		public String prefix, suffix;
+		public ImageDescriptor overlay;
+
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addPrefix(java.lang.String)
+		 */
+		public void addPrefix(String prefix) {
+			this.prefix = prefix;
+		}
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addSuffix(java.lang.String)
+		 */
+		public void addSuffix(String suffix) {
+			this.suffix = suffix;
+		}
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addOverlay(org.eclipse.jface.resource.ImageDescriptor)
+		 */
+		public void addOverlay(ImageDescriptor overlay) {
+			this.overlay = overlay;
+		}
+	}
+	
+	private Image getConflictImage() {
+		if(conflictImage != null)
+			return conflictImage;
 		final ImageDescriptor conflictDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT);
-		final ImageDescriptor hasRemoteDescriptor = TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR);
-		final ImageDescriptor addedDescriptor = TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR);
+		conflictImage = conflictDescriptor.createImage();
+		return conflictImage;
+	}
+		
+
+	private void initializeLabelProvider() {
 		final LabelProvider oldProvider = (LabelProvider)getLabelProvider();
+		
+		
 		setLabelProvider(new LabelProvider() {
 			private OverlayIconCache iconCache = new OverlayIconCache();
 			
 			public void dispose() {
 				iconCache.disposeAll();
 				oldProvider.dispose();
+				if(conflictImage != null)	
+					conflictImage.dispose();
 			}
+			
 			public Image getImage(Object element) {
 				Image image = oldProvider.getImage(element);
-				if (element instanceof ITeamNode) {
-					ITeamNode node = (ITeamNode)element;
-					int kind = node.getKind();
-					IResource resource = node.getResource();
+
+				if (! (element instanceof ITeamNode))
+					return image;
+				
+				ITeamNode node = (ITeamNode)element;
+				IResource resource = node.getResource();
+
+				if (! resource.exists())
+					return image;
 					
-					// use the default cvs image decorations
-					if (resource.exists()) {
-						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-						List overlays = new ArrayList();
-						List locations = new ArrayList();
-						
-						CVSDecoration decoration = new CVSDecoration();
-						
-						CVSDecorationRunnable.computeLabelOverlaysFor(node.getResource(), decoration, false, provider);
-						List stdOverlays = decoration.getOverlays();
-						if (stdOverlays != null) {
-							overlays.addAll(stdOverlays);
-							int[] stdLocations = decoration.getLocations();
-							for (int i = 0; i < stdLocations.length; i++) {
-								locations.add(new Integer(stdLocations[i]));
-							}
-						}						
-						if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-							overlays.add(conflictDescriptor);
-							locations.add(new Integer(OverlayIcon.TOP_LEFT));
-						}
-						if (!overlays.isEmpty()) {
-							Integer[] integers = (Integer[])locations.toArray(new Integer[locations.size()]);
-							int[] locs = new int[integers.length];
-							for (int i = 0; i < integers.length; i++) {
-								locs[i] = integers[i].intValue();
-							}
-							return iconCache.getImageFor(new DiffOverlayIcon(image, 
-								(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]),
-								locs));
-						} else {
-							return image;
-						}
-					}
+				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+				List overlays = new ArrayList();
+				List locations = new ArrayList();
+				
+				// use the default cvs image decorations
+				ImageDescriptor resourceOverlay = CVSLightweightDecorator.getOverlay(node.getResource(),false, provider);
+				
+				int kind = node.getKind();
+				boolean conflict = (kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0;
+
+				if(resourceOverlay != null) {
+					overlays.add(resourceOverlay);
+					locations.add(new Integer(OverlayIcon.BOTTOM_RIGHT));
 				}
-				return image;
+				
+				if(conflict) {
+					overlays.add(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT));
+					locations.add(new Integer(OverlayIcon.TOP_LEFT));
+				}
+
+				if (overlays.isEmpty()) {
+					return image;
+				}
+
+				//combine the descriptors and return the resulting image
+				Integer[] integers = (Integer[])locations.toArray(new Integer[locations.size()]);
+				int[] locs = new int[integers.length];
+				for (int i = 0; i < integers.length; i++) {
+					locs[i] = integers[i].intValue();
+				}
+				
+				return iconCache.getImageFor(new DiffOverlayIcon(image,
+					(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]),
+					locs));
 			}
+
 			public String getText(Object element) {
 				String label = oldProvider.getText(element);
-				if (element instanceof ITeamNode) {					
-					ITeamNode node = (ITeamNode)element;					
-					IResource resource = node.getResource();
-					if (resource.exists()) {
+				if (! (element instanceof ITeamNode))
+					return label;
+					
+				ITeamNode node = (ITeamNode)element;					
+				IResource resource = node.getResource();
+				
+				if (! resource.exists())
+					return label;
 						
-						// use the default text decoration preferences
-						CVSDecoration decoration = CVSDecorationRunnable.computeTextLabelFor(resource, false /*don't show dirty*/);
-						String format = decoration.getFormat();
-						Map bindings = decoration.getBindings();
-						if (bindings != null) {
-							// don't show the revision number, it will instead be shown in 
-							// the label for the remote/base/local files editors
-							bindings.remove(CVSDecoratorConfiguration.FILE_REVISION);
-							
-							bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, label);
-							label = CVSDecoratorConfiguration.bind(format, bindings);
-						}
+				// use the default text decoration preferences
+				Decoration decoration = new Decoration();
+
+				CVSLightweightDecorator.decorateTextLabel(resource, decoration, false /*don't show dirty*/, false /*don't show revisions*/);
+				label = decoration.prefix + label + decoration.suffix;
+				
+				if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT)) {
+					int syncKind = node.getKind();
+					if (syncKind != ILocalSyncElement.IN_SYNC) {
+						String syncKindString = RemoteSyncElement.kindToString(syncKind);
+						label = Policy.bind("CVSCatchupReleaseViewer.labelWithSyncKind", label, syncKindString); //$NON-NLS-1$
 					}
-					if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT)) {
-						int syncKind = node.getKind();
-						if (syncKind != ILocalSyncElement.IN_SYNC) {
-							String syncKindString = RemoteSyncElement.kindToString(syncKind);
-							label = Policy.bind("CVSCatchupReleaseViewer.labelWithSyncKind", label, syncKindString); //$NON-NLS-1$
-						}
-					}
-				}								
+				}
 				return label;
-			}
+			}								
 		});
 	}
 	
