@@ -297,6 +297,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
 			children = getMembers(null, progress);
+			// the returned children must be given the original tag
+			for (int i = 0; i < children.length; i++) {
+				ICVSRemoteResource remoteResource = children[i];
+				if(remoteResource.isContainer()) {
+					((RemoteFolder)remoteResource).setTag(tag);
+				}
+			}
 		} catch (CVSException e) {
 			if (!errors.isEmpty()) {
 				PrintStream out = getPrintStream();
