@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -98,7 +99,10 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						holder[0] = ((IResourceVariant)resource).getStorage(monitor).getContents();
+						IStorage storage = ((IResourceVariant)resource).getStorage(monitor);
+						if (storage != null) {
+							holder[0] = storage.getContents();
+						}
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} catch (CoreException e) {
