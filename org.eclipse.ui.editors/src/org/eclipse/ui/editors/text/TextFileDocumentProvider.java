@@ -547,7 +547,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			info.fCachedReadOnlyState= isSystemFileReadOnly(info);
 			
 			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-			if (file != null && file.exists())
+			if (file != null)
 				info.fModel= createAnnotationModel(file);
 			return info;
 		}
