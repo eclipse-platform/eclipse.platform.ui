@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Bug 75183
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
@@ -77,6 +78,13 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 			case DebugEvent.SUSPEND :
 				// Update on suspend events (even for evaluations), in case the user changed
 				// the selection during an implicit evaluation.
+				update(getAction(), getSelection());
+				break;
+			case DebugEvent.CHANGE :
+				// Implementations can use this event for debugger state
+				// changes other than just suspend/resume.  This may or 
+				// may not affect the enable state of run/suspend/step
+				// actions.
 				update(getAction(), getSelection());
 				break;
 		}
