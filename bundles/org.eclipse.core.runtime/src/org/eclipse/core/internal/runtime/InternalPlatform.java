@@ -556,11 +556,29 @@ static void loadOptions(Properties bootOptions) {
 private static MultiStatus loadRegistry(URL[] pluginPath) {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null);
 	InternalFactory factory = new InternalFactory(problems);
-	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
-	registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
-	IStatus resolveStatus = registry.resolve(true, true);
-	problems.merge(resolveStatus);
-	registry.markReadOnly();
+
+	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
+	DataInputStream input = null;
+	registry = null;
+	try {
+		input = new DataInputStream(new FileInputStream(path.toOSString()));
+		try {
+			RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
+			registry = (PluginRegistry)cacheReader.readPluginRegistry(input);
+		} finally {
+			input.close();
+		}
+	} catch (IOException ioe) {
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe);
+		problems.merge(status);
+	}
+	if (registry == null) {
+		URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
+		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
+		IStatus resolveStatus = registry.resolve(true, true);
+		problems.merge(resolveStatus);
+		registry.markReadOnly();
+	}
 	registry.startup(null);
 	return problems;
 }

@@ -5,6 +5,8 @@ package org.eclipse.core.internal.plugins;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.LaunchInfo;
 import org.eclipse.core.runtime.model.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -249,11 +251,14 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 public void writeHeaderInformation(DataOutputStream out) {
 	try {
 		out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
-		// output some stamps too
-		// windows system stamp
-		// OS stamp
 		// install stamp
+		out.writeUTF(LaunchInfo.getCurrent().getIdentifier());
+		// OS stamp
+		out.writeUTF(BootLoader.getOS());
+		// windows system stamp
+		out.writeUTF(BootLoader.getWS());
 		// locale stamp
+		out.writeUTF(BootLoader.getNL());
 	} catch (IOException ioe) {
 	}
 }

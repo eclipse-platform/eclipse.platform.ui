@@ -460,6 +460,18 @@ private void addLibrary(LibraryModel library, PluginDescriptorModel plugin) {
 	result[result.length - 1] = library;
 	plugin.setRuntime(result);
 }
+private void addPrerequisites(PluginPrerequisiteModel prerequisite, PluginDescriptorModel plugin) {
+	PluginPrerequisiteModel[] list = plugin.getRequires();
+	PluginPrerequisiteModel[] result = null;
+	if (list == null)
+		result = new PluginPrerequisiteModel[1];
+	else {
+		result = new PluginPrerequisiteModel[list.length + 1];
+		System.arraycopy(list, 0, result, 0, list.length);
+	}
+	result[result.length - 1] = prerequisite;
+	plugin.setRequires(result);
+}
 private void debug(String s) {
 	System.out.println("Registry Resolve: "+s);
 }
@@ -495,6 +507,44 @@ private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel pre
 	String version = prereq.getVersion();
 	return version == null ? null : new PluginVersionIdentifier(version);
 }
+private void linkFragments() {
+	ArrayList retained = new ArrayList(5);
+	PluginFragmentModel[] fragments = reg.getFragments();
+	HashSet seen = new HashSet(5);
+	for (int i = 0; i < fragments.length; i++) {
+		PluginFragmentModel fragment = fragments[i];
+		if (!requiredFragment(fragment)) {
+			String id, name;
+			if ((id = fragment.getId()) != null)
+				error (Policy.bind("parse.fragmentMissingAttr", id));
+			else if ((name = fragment.getName()) != null)
+				error (Policy.bind("parse.fragmentMissingAttr", name));
+			else
+				error (Policy.bind("parse.fragmentMissingIdName"));
+			continue;
+		}
+		if (seen.contains(fragment.getId()))
+			continue;
+		seen.add(fragment.getId());
+		PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
+		if (plugin == null)
+			// XXX log something here?
+			continue;
+		// PluginFragmentModel[] list = reg.getFragments(fragment.getId());
+		// resolvePluginFragments(list, plugin);
+		PluginFragmentModel[] list = plugin.getFragments();
+		PluginFragmentModel[] newList;
+		if (list == null) {
+			newList = new PluginFragmentModel[1];
+			newList[0] = fragment;
+		} else {
+			newList = new PluginFragmentModel[list.length + 1];
+			System.arraycopy(list, 0, newList, 0, list.length);
+			newList[list.length] = fragment;
+		}
+		plugin.setFragments(newList);
+	}
+}
 private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 
 	String id = prereq.getPlugin();
@@ -507,6 +557,19 @@ private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 	ix.removeConstraintFor(prereq);
 }
 private void resolve() {
+
+	linkFragments();
+	PluginDescriptorModel[] pluginList = reg.getPlugins();
+	for (int i = 0; i < pluginList.length; i++) {
+		if (pluginList[i].getFragments() != null) {
+			resolvePluginFragments(pluginList[i]);
+		}
+	}
+	
+	// Walk through the registry and ensure that all structures
+	// have all their 'required' fields.  Do this now as
+	// the resolve assumes required field exist.  
+	resolveRequiredComponents();
 
 	// resolve root descriptors
 	List rd = resolveRootDescriptors();
@@ -544,7 +607,7 @@ private void resolve() {
 
 	// walk down the registry structure and resolve links
 	resolvePluginRegistry();
-
+	
 	// unhook registry and index
 	idmap = null;
 	reg = null;
@@ -604,6 +667,8 @@ private void resolveFragments() {
 	HashSet seen = new HashSet(5);
 	for (int i = 0; i < fragments.length; i++) {
 		PluginFragmentModel fragment = fragments[i];
+		if (!requiredFragment(fragment))
+			continue;
 		if (seen.contains(fragment.getId()))
 			continue;
 		seen.add(fragment.getId());
@@ -612,7 +677,7 @@ private void resolveFragments() {
 			// XXX log something here?
 			continue;
 		PluginFragmentModel[] list = reg.getFragments(fragment.getId());
-		resolvePluginFragments(list, plugin);
+		resolvePluginFragments(plugin);
 	}
 }
 private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, List orphans) {
@@ -629,7 +694,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	IndexEntry ix = (IndexEntry) idmap.get(child);
 	if (ix == null) {
 		if (parent != null)
-			error(Policy.bind("parse.prereqDisabled", parent.getId(), child));
+			error(Policy.bind("pluginPrereqDisabled", new String[] { parent.getId(), child }));
 		if (DEBUG_RESOLVE)
 			debug("<POP  " + child + " not found");
 		cookie.isOk(false);
@@ -711,7 +776,8 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 }
 private void resolvePluginDescriptor(PluginDescriptorModel pd) {
 	ExtensionModel[] list = pd.getDeclaredExtensions();
-	if (list == null || list.length == 0)
+	if (list == null || list.length == 0 || !pd.getEnabled())
+		// Can be disabled if all required attributes not present
 		return;
 	for (int i = 0; i < list.length; i++)
 		resolveExtension((ExtensionModel) list[i]);
@@ -727,37 +793,59 @@ private void resolvePluginFragment(PluginFragmentModel fragment, PluginDescripto
 		for (int i = 0; i < points.length; i++)
 			addExtensionPoint(points[i], plugin);
 
-	LibraryModel[] libraries= fragment.getRuntime();
-	if (libraries!= null)
+	LibraryModel[] libraries = fragment.getRuntime();
+	if (libraries != null)
 		for (int i = 0; i < libraries.length; i++)
 			addLibrary(libraries[i], plugin);
+			
+	PluginPrerequisiteModel[] prerequisites = fragment.getRequires();
+	if (prerequisites != null)
+		for (int i = 0; i < prerequisites.length; i++)
+			addPrerequisites(prerequisites[i], plugin);
 }
-private void resolvePluginFragments(PluginFragmentModel[] fragments, PluginDescriptorModel plugin) {
-	PluginFragmentModel latestFragment = null;
-	PluginVersionIdentifier latestVersion = null;
-	PluginVersionIdentifier targetVersion = new PluginVersionIdentifier(plugin.getVersion());
-	for (int i = 0; i < fragments.length; i++) {
-		PluginFragmentModel fragment = fragments[i];
-		PluginVersionIdentifier fragmentVersion = new PluginVersionIdentifier(fragment.getVersion());
-		PluginVersionIdentifier pluginVersion = new PluginVersionIdentifier(fragment.getPluginVersion());
-		if (pluginVersion.getMajorComponent() == targetVersion.getMajorComponent() && pluginVersion.getMinorComponent() == targetVersion.getMinorComponent())
-			if (latestFragment == null || fragmentVersion.isGreaterThan(latestVersion)) {
-				latestFragment = fragment;
-				latestVersion = fragmentVersion;
+private void resolvePluginFragments(PluginDescriptorModel plugin) {
+	PluginFragmentModel[] fragmentList = plugin.getFragments();
+	while (fragmentList != null) {
+		ArrayList fragmentsWithId = new ArrayList();
+		ArrayList fragmentsToProcessLater = new ArrayList();
+		String currentFragmentId = fragmentList[0].getId();
+		for (int i = 0; i < fragmentList.length; i++) {
+			if (currentFragmentId.equals(fragmentList[i].getId())) {
+				fragmentsWithId.add(fragmentList[i]);
+			} else {
+				fragmentsToProcessLater.add(fragmentList[i]);
 			}
-	}
-	if (latestFragment != null) {
-		resolvePluginFragment(latestFragment, plugin);
-		PluginFragmentModel[] oldList = plugin.getFragments();
-		PluginFragmentModel[] newList = null;
-		if (oldList == null)
-			newList = new PluginFragmentModel[1];
-		else {
-			newList = new PluginFragmentModel[oldList.length + 1];
-			System.arraycopy(oldList, 0, newList, 0, oldList.length);
 		}
-		newList[newList.length - 1] = latestFragment;
-		plugin.setFragments(newList);
+		
+		PluginFragmentModel[] fragments;
+		if (fragmentsWithId.isEmpty())
+			fragments = null;
+		else
+			fragments = (PluginFragmentModel[]) fragmentsWithId.toArray(new PluginFragmentModel[fragmentsWithId.size()]);
+		
+		if (fragmentsToProcessLater.isEmpty())
+			fragmentList = null;
+		else
+			fragmentList = (PluginFragmentModel[]) fragmentsToProcessLater.toArray(new PluginFragmentModel[fragmentsToProcessLater.size()]);
+			
+		if (fragments != null) {
+			PluginFragmentModel latestFragment = null;
+			PluginVersionIdentifier latestVersion = null;
+			PluginVersionIdentifier targetVersion = new PluginVersionIdentifier(plugin.getVersion());
+			for (int i = 0; i < fragments.length; i++) {
+				PluginFragmentModel fragment = fragments[i];
+				PluginVersionIdentifier fragmentVersion = new PluginVersionIdentifier(fragment.getVersion());
+				PluginVersionIdentifier pluginVersion = new PluginVersionIdentifier(fragment.getPluginVersion());
+				if (pluginVersion.getMajorComponent() == targetVersion.getMajorComponent() && pluginVersion.getMinorComponent() == targetVersion.getMinorComponent())
+					if (latestFragment == null || fragmentVersion.isGreaterThan(latestVersion)) {
+						latestFragment = fragment;
+						latestVersion = fragmentVersion;
+					}
+			}
+			if (latestFragment != null) {
+				resolvePluginFragment(latestFragment, plugin);
+			}
+		}
 	}
 }
 private void resolvePluginRegistry() {
@@ -776,6 +864,89 @@ private void resolvePluginRegistry() {
 		for (int i = 0; i < plugins.length; i++)
 			resolvePluginDescriptor(plugins[i]);
 	}
+}
+private void resolveRequiredComponents() {
+	PluginDescriptorModel[] pluginList = reg.getPlugins();
+	// Only worry about the enabled plugins as we are going
+	// to disable any plugins that don't have all the 
+	// required bits.
+	for (int i = 0; i < pluginList.length; i++) {
+		if (pluginList[i].getEnabled()) {
+			if (!requiredPluginDescriptor(pluginList[i])) {
+				pluginList[i].setEnabled(false);
+				String id, name;
+				if ((id = pluginList[i].getId()) != null)
+					error (Policy.bind("parse.pluginMissingAttr", id));
+				else if ((name = pluginList[i].getName()) != null)
+					error (Policy.bind("parse.pluginMissingAttr", name));
+				else
+					error (Policy.bind("parse.pluginMissingIdName"));
+			}
+		}
+	}
+	// Don't worry about the fragments.  They were done already.
+}
+private boolean requiredPluginDescriptor(PluginDescriptorModel plugin) {
+	boolean retValue = true;
+	retValue = plugin.getName() != null &&
+		plugin.getId() != null &&
+		plugin.getVersion() != null;
+	if (!retValue) 
+		return retValue;
+		
+	PluginPrerequisiteModel[] requiresList = plugin.getRequires();
+	ExtensionModel[] extensions = plugin.getDeclaredExtensions();
+	ExtensionPointModel[] extensionPoints = plugin.getDeclaredExtensionPoints();
+	LibraryModel[] libraryList = plugin.getRuntime();
+	PluginFragmentModel[] fragments = plugin.getFragments();
+	
+	if (requiresList != null) {
+		for (int i = 0; i < requiresList.length && retValue; i++) {
+			retValue = retValue && requiredPrerequisite(requiresList[i]);
+		}
+	}
+	if (extensions != null) {
+		for (int i = 0; i < extensions.length && retValue; i++) {
+			retValue = retValue && requiredExtension(extensions[i]);
+		}
+	}
+	if (extensionPoints != null) {
+		for (int i = 0; i < extensionPoints.length && retValue; i++) {
+			retValue = retValue && requiredExtensionPoint(extensionPoints[i]);
+		}
+	}
+	if (libraryList != null) {
+		for (int i = 0; i < libraryList.length && retValue; i++) {
+			retValue = retValue && requiredLibrary(libraryList[i]);
+		}
+	}
+	if (fragments != null) {
+		for (int i = 0; i < fragments.length && retValue; i++) {
+			retValue = retValue && requiredFragment(fragments[i]);
+		}
+	}
+	
+	return retValue;
+}
+private boolean requiredPrerequisite (PluginPrerequisiteModel prerequisite) {
+	return ((prerequisite.getPlugin() != null));
+}
+private boolean requiredExtension (ExtensionModel extension) {
+	return (extension.getExtensionPoint() != null);
+}
+private boolean requiredExtensionPoint (ExtensionPointModel extensionPoint) {
+	return ((extensionPoint.getName() != null) &&
+		(extensionPoint.getId() != null));
+}
+private boolean requiredLibrary (LibraryModel library) {
+	return (library.getName() != null);
+}
+private boolean requiredFragment (PluginFragmentModel fragment) {
+	return ((fragment.getName() != null) &&
+		(fragment.getId() != null) &&
+		(fragment.getPlugin() != null) &&
+		(fragment.getPluginVersion() != null) &&
+		(fragment.getVersion() != null));
 }
 private List resolveRootDescriptors() {
 

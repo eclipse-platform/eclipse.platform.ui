@@ -177,15 +177,9 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, PrintWriter w, i
 		}
 	}
 	
-	PluginFragmentModel[] fragments = plugin.getFragments();
-	int fragmentSize = (fragments == null) ? 0 : fragments.length;
-	if (fragmentSize != 0) {
-		for (int i = 0; i < fragmentSize; i++) {
-			w.println("");
-			writePluginFragment(fragments[i], w, indent + IModel.INDENT);
-		}
-	}
-
+	// Don't write fragments here.  If we do, XML won't be
+	// able to parse what we write out.  Fragments must be
+	// entities separate from plugins.
 	w.println(gap1 + "</" + IModel.PLUGIN + ">");
 }
 public void writePluginFragment(PluginFragmentModel fragment, PrintWriter w, int indent) {
@@ -258,7 +252,8 @@ public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, 
 		gap1 += " ";
 
 	w.print(gap1 + "<" + IModel.PLUGIN_REQUIRES_IMPORT);
-	w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN + "=\"" + PluginParser.xmlSafe(req.getPlugin()) + "\"");
+	if (req.getPlugin() != null)
+		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN + "=\"" + PluginParser.xmlSafe(req.getPlugin()) + "\"");
 	if (req.getVersion() != null)
 		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(req.getVersion()) + "\"");
 	if (req.getExport())
@@ -279,10 +274,12 @@ public void writePluginRegistry(PluginRegistryModel registry, PrintWriter w, int
 	PluginDescriptorModel[] pluginList = registry.getPlugins();
 	for (int i = 0; i < pluginList.length; i++)
 		writePluginDescriptor(pluginList[i], w, indent + IModel.INDENT);
-	w.println(gap1 + "</" + IModel.REGISTRY + ">");
 	
-	// XXX: We don't print out the fragments.  They are printed out
-	// as part of the plugin descriptor.  But what if this is a
-	// fragment that doesn't have an associated plugin?
+	PluginFragmentModel[] fragmentList = registry.getFragments();
+	for (int i = 0; i < fragmentList.length; i++)
+		writePluginFragment(fragmentList[i], w, indent + IModel.INDENT);
+
+	w.println(gap1 + "</" + IModel.REGISTRY + ">");
+
 }
 }

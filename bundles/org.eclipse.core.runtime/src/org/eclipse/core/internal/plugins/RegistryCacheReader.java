@@ -7,6 +7,8 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.LaunchInfo;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.EOFException;
@@ -242,18 +244,25 @@ public int decipherLabel(String labelString) {
 	return NONLABEL;
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
-	int version = 0;
 	try {
-		version = in.readInt();
-		// output some stamps too
-		// windows system stamp
-		// OS stamp
+		int version = in.readInt();
 		// install stamp
+		String installStamp = in.readUTF();
+		// OS stamp
+		String osStamp = in.readUTF();
+		// windows system stamp
+		String windowsStamp = in.readUTF();
 		// locale stamp
+		String localeStamp = in.readUTF();
+
+		if ((version != REGISTRY_CACHE_VERSION) ||
+			(!installStamp.equals(LaunchInfo.getCurrent().getIdentifier())) ||
+			(!osStamp.equals(BootLoader.getOS())) ||
+			(!windowsStamp.equals(BootLoader.getWS())) ||
+			(!localeStamp.equals(BootLoader.getNL())) ) {
+			return false;
+		}
 	} catch (IOException ioe) {
-		return false;
-	}
-	if (version != REGISTRY_CACHE_VERSION) {
 		return false;
 	}
 	return true;

@@ -190,13 +190,19 @@ void logError(IStatus status) {
 }
 private void saveRegistry() throws IOException {
 	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
-	IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
-	SafeFileOutputStream fs = new SafeFileOutputStream(path.toOSString(), tempPath.toOSString());
-	PrintWriter w = new PrintWriter(fs);
-	RegistryWriter regWriter = new RegistryWriter();
-	regWriter.writePluginRegistry(this, w, 0);
-	w.flush();
-	w.close();
+	// IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
+
+	DataOutputStream output = null;
+	try {
+		output = new DataOutputStream(new FileOutputStream(path.toOSString()));
+	} catch (IOException ioe) {
+		String message = Policy.bind("meta.unableToCreateCache");
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
+		logError(status);
+	}
+
+	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
+	cacheWriter.writePluginRegistry(this, output);
 }
 public void shutdown(IProgressMonitor progress) {
 	shutdownPlugins();

@@ -20,7 +20,6 @@ public abstract class PluginModel extends PluginModelObject {
 	private String id = null;
 	private String providerName = null;
 	private String version = null;
-	private String plugin = null;
 	private LibraryModel[] runtime = null;
 	private ExtensionPointModel[] extensionPoints = null;
 	private ExtensionModel[] extensions = null;
