@@ -117,6 +117,15 @@ public class ProgressView extends ViewPart implements IViewPart {
 			}
 
 		});
+		
+		menuMgr.add(new Action("&Toggle Floating Window"){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			public void run() {
+				AnimationManager.getInstance().toggleFloatingWindow();
+			}
+		});
 
 	}
 

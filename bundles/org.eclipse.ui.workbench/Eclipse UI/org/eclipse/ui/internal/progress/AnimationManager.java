@@ -9,14 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -25,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
@@ -38,75 +35,57 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * The AnimationManager is the class that keeps track of the animation items
  * to update.
  */
-class AnimationManager {
-
+public class AnimationManager {
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-
 	private static AnimationManager singleton;
-
 	private ImageData[] animatedData;
 	private ImageData[] disabledData;
-
 	private static String DISABLED_IMAGE_NAME = "ANIMATION_DISABLED_IMAGE"; //$NON-NLS-1$
 	private static String ANIMATED_IMAGE_NAME = "ANIMATION_ANIMATED_IMAGE"; //$NON-NLS-1$
-
 	Color background;
-
 	private ImageLoader runLoader = new ImageLoader();
 	boolean animated = false;
 	Job animateJob;
 	Job clearJob;
 	private IJobProgressManagerListener listener;
-
 	List items = Collections.synchronizedList(new ArrayList());
-
 	public static AnimationManager getInstance() {
 		if (singleton == null)
 			singleton = new AnimationManager();
 		return singleton;
 	}
-
 	AnimationManager() {
-		URL iconsRoot =
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
+		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
 				new Path(ProgressManager.PROGRESS_FOLDER));
 		ProgressManager manager = ProgressManager.getInstance();
-
 		try {
 			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
 			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
-
 			animatedData = manager.getImageData(runningRoot, runLoader);
 			if (animatedData != null)
-				JFaceResources.getImageRegistry().put(
-					ANIMATED_IMAGE_NAME,
-					manager.getImage(animatedData[0]));
-
+				JFaceResources.getImageRegistry().put(ANIMATED_IMAGE_NAME,
+						manager.getImage(animatedData[0]));
 			disabledData = manager.getImageData(backRoot, runLoader);
 			if (disabledData != null)
-				JFaceResources.getImageRegistry().put(
-					DISABLED_IMAGE_NAME,
-					manager.getImage(disabledData[0]));
-
+				JFaceResources.getImageRegistry().put(DISABLED_IMAGE_NAME,
+						manager.getImage(disabledData[0]));
 			listener = getProgressListener();
 			ProgressManager.getInstance().addListener(listener);
 		} catch (MalformedURLException exception) {
 			ProgressManagerUtil.logException(exception);
 		}
 	}
-
 	/**
 	 * Add an items to the list
 	 * @param item
@@ -124,7 +103,6 @@ class AnimationManager {
 			}
 		});
 	}
-
 	/**
 	 * Get the current ImageData for the receiver.
 	 * @return ImageData[]
@@ -135,19 +113,16 @@ class AnimationManager {
 		} else
 			return disabledData;
 	}
-
 	/**
 	 * Get the current Image for the receiver.
 	 * @return Image
 	 */
 	Image getImage() {
-
 		if (animated) {
 			return JFaceResources.getImageRegistry().get(ANIMATED_IMAGE_NAME);
 		} else
 			return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME);
 	}
-
 	/**
 	 * Return whether or not the current state is animated.
 	 * @return boolean
@@ -155,13 +130,11 @@ class AnimationManager {
 	boolean isAnimated() {
 		return animated;
 	}
-
 	/**
 	 * Set whether or not the receiver is animated.
 	 * @param boolean
 	 */
 	void setAnimated(final boolean bool) {
-
 		animated = bool;
 		if (bool) {
 			ImageData[] imageDataArray = getImageData();
@@ -170,7 +143,6 @@ class AnimationManager {
 			}
 		}
 	}
-
 	/**
 	 * Dispose the images in the receiver.
 	 */
@@ -178,7 +150,6 @@ class AnimationManager {
 		setAnimated(false);
 		ProgressManager.getInstance().removeListener(listener);
 	}
-
 	/**
 	 * Loop through all of the images in a multi-image file
 	 * and display them one after another.
@@ -187,64 +158,39 @@ class AnimationManager {
 	void animateLoop(IProgressMonitor monitor) {
 		// Create an off-screen image to draw on, and a GC to draw with.
 		// Both are disposed after the animation.
-
 		if (items.size() == 0)
 			return;
-
 		if (!PlatformUI.isWorkbenchRunning())
 			return;
-
 		AnimationItem[] animationItems = getAnimationItems();
-
 		Display display = PlatformUI.getWorkbench().getDisplay();
-
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
 		Image image = ProgressManager.getInstance().getImage(imageData);
 		int imageDataIndex = 0;
-
 		ImageLoader loader = getLoader();
-
 		if (display.isDisposed()) {
 			monitor.setCanceled(true);
 			setAnimated(false);
 			return;
 		}
-
-		Image offScreenImage =
-			new Image(display, loader.logicalScreenWidth, loader.logicalScreenHeight);
+		Image offScreenImage = new Image(display, loader.logicalScreenWidth,
+				loader.logicalScreenHeight);
 		GC offScreenImageGC = new GC(offScreenImage);
-
 		try {
-
 			// Fill the off-screen image with the background color of the canvas.
 			offScreenImageGC.setBackground(background);
-			offScreenImageGC.fillRectangle(
-				0,
-				0,
-				loader.logicalScreenWidth,
-				loader.logicalScreenHeight);
-
+			offScreenImageGC.fillRectangle(0, 0, loader.logicalScreenWidth,
+					loader.logicalScreenHeight);
 			// Draw the current image onto the off-screen image.
-			offScreenImageGC.drawImage(
-				image,
-				0,
-				0,
-				imageData.width,
-				imageData.height,
-				imageData.x,
-				imageData.y,
-				imageData.width,
-				imageData.height);
-
+			offScreenImageGC.drawImage(image, 0, 0, imageData.width, imageData.height, imageData.x,
+					imageData.y, imageData.width, imageData.height);
 			if (loader.repeatCount > 0) {
 				while (isAnimated() && !monitor.isCanceled()) {
-
 					if (display.isDisposed()) {
 						monitor.setCanceled(true);
 						continue;
 					}
-
 					if (imageData.disposalMethod == SWT.DM_FILL_BACKGROUND) {
 						// Fill with the background color before drawing.
 						Color bgColor = null;
@@ -256,46 +202,25 @@ class AnimationManager {
 						}
 						try {
 							offScreenImageGC.setBackground(bgColor != null ? bgColor : background);
-							offScreenImageGC.fillRectangle(
-								imageData.x,
-								imageData.y,
-								imageData.width,
-								imageData.height);
+							offScreenImageGC.fillRectangle(imageData.x, imageData.y,
+									imageData.width, imageData.height);
 						} finally {
 							if (bgColor != null)
 								bgColor.dispose();
 						}
 					} else if (imageData.disposalMethod == SWT.DM_FILL_PREVIOUS) {
 						// Restore the previous image before drawing.
-						offScreenImageGC.drawImage(
-							image,
-							0,
-							0,
-							imageData.width,
-							imageData.height,
-							imageData.x,
-							imageData.y,
-							imageData.width,
-							imageData.height);
+						offScreenImageGC.drawImage(image, 0, 0, imageData.width, imageData.height,
+								imageData.x, imageData.y, imageData.width, imageData.height);
 					}
-
 					// Get the next image data.
 					imageDataIndex = (imageDataIndex + 1) % imageDataArray.length;
 					imageData = imageDataArray[imageDataIndex];
 					image.dispose();
 					image = new Image(display, imageData);
-
 					// Draw the new image data.
-					offScreenImageGC.drawImage(
-						image,
-						0,
-						0,
-						imageData.width,
-						imageData.height,
-						imageData.x,
-						imageData.y,
-						imageData.width,
-						imageData.height);
+					offScreenImageGC.drawImage(image, 0, 0, imageData.width, imageData.height,
+							imageData.x, imageData.y, imageData.width, imageData.height);
 					boolean refreshItems = false;
 					for (int i = 0; i < animationItems.length; i++) {
 						AnimationItem item = animationItems[i];
@@ -307,7 +232,6 @@ class AnimationManager {
 							item.imageCanvasGC.drawImage(offScreenImage, 0, 0);
 						}
 					}
-
 					if (refreshItems)
 						animationItems = getAnimationItems();
 					// Sleep for the specified delay time before drawing again.
@@ -316,7 +240,6 @@ class AnimationManager {
 					} catch (InterruptedException e) {
 						//If it is interrupted end quietly
 					}
-
 				}
 			}
 		} finally {
@@ -326,7 +249,6 @@ class AnimationManager {
 			animationDone();
 		}
 	}
-
 	/**
 	 * Get the animation items currently registered for the receiver.
 	 * @return
@@ -336,7 +258,6 @@ class AnimationManager {
 		items.toArray(animationItems);
 		return animationItems;
 	}
-
 	/**
 	 * Return the specified number of milliseconds.
 	 * If the specified number of milliseconds is too small
@@ -351,7 +272,6 @@ class AnimationManager {
 			return ms + 10;
 		return ms;
 	}
-
 	/**
 	 * Get the bounds of the image being displayed here.
 	 * @return Rectangle
@@ -359,20 +279,15 @@ class AnimationManager {
 	public Rectangle getImageBounds() {
 		return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME).getBounds();
 	}
-
 	private IJobProgressManagerListener getProgressListener() {
 		return new IJobProgressManagerListener() {
-
 			HashSet jobs = new HashSet();
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#addJob(org.eclipse.ui.internal.progress.JobInfo)
 			 */
 			public void addJob(JobInfo info) {
 				incrementJobCount(info);
-
 			}
-			
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshJobInfo(org.eclipse.ui.internal.progress.JobInfo)
 			 */
@@ -383,7 +298,6 @@ class AnimationManager {
 				else
 					removeJob(info);
 			}
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 			 */
@@ -395,9 +309,7 @@ class AnimationManager {
 				for (int i = 0; i < currentInfos.length; i++) {
 					addJob(currentInfos[i]);
 				}
-
 			}
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 			 */
@@ -405,58 +317,46 @@ class AnimationManager {
 				if (jobs.contains(info.getJob())) {
 					decrementJobCount(info.getJob());
 				}
-
 			}
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 			 */
 			public boolean showsDebug() {
 				return false;
 			}
-
 			private void incrementJobCount(JobInfo info) {
 				//Don't count the animate job itself
 				if (isNotTracked(info))
 					return;
-
 				if (jobs.isEmpty())
 					setAnimated(true);
 				jobs.add(info.getJob());
 			}
-
 			private void decrementJobCount(Job job) {
-
 				jobs.remove(job);
 				if (jobs.isEmpty())
 					setAnimated(false);
 			}
-
 			/** 
 			 * If this is one of our jobs or not running then don't bother.
 			 */
 			private boolean isNotTracked(JobInfo info) {
-
 				//We always track errors
 				Job job = info.getJob();
 				return job.getState() != Job.RUNNING || job == clearJob || job == animateJob;
 			}
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#addGroup(org.eclipse.ui.internal.progress.GroupInfo)
 			 */
 			public void addGroup(GroupInfo info) {
 				//Don't care about groups
-
 			}
-
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#removeGroup(org.eclipse.ui.internal.progress.GroupInfo)
 			 */
 			public void removeGroup(GroupInfo group) {
 				//Don't care about groups
 			}
-			
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshGroup(org.eclipse.ui.internal.progress.GroupInfo)
 			 */
@@ -465,13 +365,12 @@ class AnimationManager {
 			}
 		};
 	}
-
 	private Job getAnimateJob() {
 		if (animateJob == null) {
-				animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+			animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				public IStatus run(IProgressMonitor monitor) {
 					try {
 						animationStarted();
@@ -481,7 +380,6 @@ class AnimationManager {
 						return ProgressManagerUtil.exceptionStatus(exception);
 					}
 				}
-
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#shouldSchedule()
 				 */
@@ -496,7 +394,6 @@ class AnimationManager {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-
 					//Only schedule the job if we are showing anything
 					if (isAnimated() && items.size() > 0)
 						animateJob.schedule();
@@ -508,20 +405,18 @@ class AnimationManager {
 					}
 				}
 			});
-
 		}
 		return animateJob;
 	}
-
 	/**
 	 * Create the clear job if we haven't yet.
 	 * @return
 	 */
 	void createClearJob() {
-			clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	* @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	*/
+		clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++)
@@ -533,7 +428,6 @@ class AnimationManager {
 		clearJob.setSystem(true);
 		clearJob.setPriority(Job.DECORATE);
 	}
-
 	/**
 	 * Return the loader currently in use.
 	 * @return ImageLoader
@@ -541,18 +435,16 @@ class AnimationManager {
 	ImageLoader getLoader() {
 		return runLoader;
 	}
-
 	/**
 	 * The animation is done. Get the items to clean up.
 	 */
 	private void animationDone() {
-
-			UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationCleanUp")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages
+				.getString("AnimationManager.AnimationCleanUp")) {//$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++) {
 					AnimationItem item = animationItems[i];
@@ -563,21 +455,18 @@ class AnimationManager {
 		};
 		animationDoneJob.setSystem(true);
 		animationDoneJob.schedule();
-
 	}
-
 	/**
 	 * The animation has started. Get the items to do any s
 	 * other start behaviour.
 	 */
 	private void animationStarted() {
-
-			UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages
+				.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++) {
 					AnimationItem item = animationItems[i];
@@ -588,9 +477,7 @@ class AnimationManager {
 		};
 		animationDoneJob.setSystem(true);
 		animationDoneJob.schedule();
-
 	}
-
 	/**
 	 * Get the preferred width for widgets displaying the 
 	 * animation.
@@ -601,7 +488,28 @@ class AnimationManager {
 			return 0;
 		else
 			return animatedData[0].width;
-
 	}
-
+	/**
+	 * Return whether or not details are being shown.
+	 */
+	boolean showingDetails() {
+		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				IPreferenceConstants.SHOW_FLOATING_PROGRESS);
+	}
+	/**
+	 * Toggle the floating windows for the receiver.
+	 */
+	public void toggleFloatingWindow() {
+		boolean detailsShowing = showingDetails();
+		AnimationItem[] animationItems = getAnimationItems();
+		for (int i = 0; i < animationItems.length; i++) {
+			AnimationItem item = animationItems[i];
+			if (detailsShowing)
+				item.closeFloatingWindow();
+			else
+				item.openFloatingWindow();
+		}
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+				IPreferenceConstants.SHOW_FLOATING_PROGRESS, !detailsShowing);
+	}
 }

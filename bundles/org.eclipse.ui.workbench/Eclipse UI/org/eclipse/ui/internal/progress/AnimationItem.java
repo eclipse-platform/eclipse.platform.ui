@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.progress;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -34,17 +32,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.WorkbenchJob;
-
 public class AnimationItem {
-
 	WorkbenchWindow window;
 	private ProgressFloatingWindow floatingWindow;
-	private boolean showingDetails = true;
 	Canvas imageCanvas;
 	GC imageCanvasGC;
 	//An object used to preven concurrent modification issues
 	private Object windowLock = new Object();
-
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -53,41 +47,31 @@ public class AnimationItem {
 	 * @param manager
 	 *            the AnimationManager that will run this item.
 	 */
-
 	public AnimationItem(WorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
 	}
-
 	/**
 	 * Create the canvas that will display the image.
 	 * 
 	 * @param parent
 	 */
 	public void createControl(Composite parent) {
-
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		imageCanvas.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		imageCanvas.setToolTipText(ProgressMessages.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
-
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
-				paintImage(
-					event,
-					manager.getImage(),
-					manager.getImageData()[0]);
+				paintImage(event, manager.getImage(), manager.getImageData()[0]);
 			}
 		});
-
 		imageCanvasGC = new GC(imageCanvas);
 		imageCanvas.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				imageCanvasGC.dispose();
 			}
 		});
-
 		imageCanvas.addMouseListener(new MouseListener() {
 			/*
 			 * (non-Javadoc)
@@ -95,9 +79,8 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				toggleFloatingWindow();
+				AnimationManager.getInstance().toggleFloatingWindow();
 			}
-			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -113,13 +96,9 @@ public class AnimationItem {
 			 */
 			public void mouseUp(MouseEvent arg0) {
 				//Do nothing
-
 			}
 		});
-
-		imageCanvas
-			.getAccessible()
-			.addAccessibleControlListener(new AccessibleControlAdapter() {
+		imageCanvas.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -129,10 +108,10 @@ public class AnimationItem {
 				if (manager.isAnimated())
 					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
-					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
+					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus");//$NON-NLS-1$
+				//$NON-NLS-1$
 			}
 		});
-
 		imageCanvas.addHelpListener(new HelpListener() {
 			/*
 			 * (non-Javadoc)
@@ -141,14 +120,10 @@ public class AnimationItem {
 			 */
 			public void helpRequested(HelpEvent e) {
 				// XXX Auto-generated method stub
-
 			}
 		});
-
 		manager.addItem(this);
-
 	}
-
 	/**
 	 * Paint the image in the canvas.
 	 * 
@@ -160,23 +135,12 @@ public class AnimationItem {
 	 *            The array of ImageData. Required to show an animation.
 	 */
 	void paintImage(PaintEvent event, Image image, ImageData imageData) {
-
 		Image paintImage = image;
-
 		int w = imageData.width;
 		int h = imageData.height;
-		event.gc.drawImage(
-			paintImage,
-			0,
-			0,
-			imageData.width,
-			imageData.height,
-			imageData.x,
-			imageData.y,
-			w,
-			h);
+		event.gc.drawImage(paintImage, 0, 0, imageData.width, imageData.height, imageData.x,
+				imageData.y, w, h);
 	}
-
 	/**
 	 * Get the SWT control for the receiver.
 	 * 
@@ -185,7 +149,6 @@ public class AnimationItem {
 	public Control getControl() {
 		return imageCanvas;
 	}
-
 	/**
 	 * Get the bounds of the image being displayed here.
 	 * 
@@ -194,7 +157,6 @@ public class AnimationItem {
 	public Rectangle getImageBounds() {
 		return AnimationManager.getInstance().getImageBounds();
 	}
-
 	/**
 	 * Open a floating window for the receiver.
 	 * 
@@ -202,17 +164,14 @@ public class AnimationItem {
 	 */
 	void openFloatingWindow() {
 		//Do we already have one?
-		if(floatingWindow != null)
+		if (floatingWindow != null)
 			return;
-		
 		//Don't bother if there is nothing showing yet
-		if(!window.getShell().isVisible())
+		if (!window.getShell().isVisible())
 			return;
-		
-		floatingWindow =
-			new ProgressFloatingWindow(window, imageCanvas);
-
-		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+		floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
+		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
+				.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -224,52 +183,44 @@ public class AnimationItem {
 						return Status.CANCEL_STATUS;
 					else {
 						//Do not bother if the control is disposed
-						if(getControl().isDisposed()){
+						if (getControl().isDisposed()) {
 							floatingWindow = null;
 							return Status.CANCEL_STATUS;
-						}
-						else{
+						} else {
 							floatingWindow.open();
 							return Status.OK_STATUS;
 						}
 					}
 				}
-
 			}
 		};
 		floatingJob.setSystem(true);
 		floatingJob.schedule(500);
-
 	}
-
 	/**
 	 * The animation has begun.
 	 */
 	void animationStart() {
-		if (showingDetails)
+		if (AnimationManager.getInstance().showingDetails())
 			openFloatingWindow();
 	}
-
 	/**
 	 * The animation has ended.
 	 */
 	void animationDone() {
 		closeFloatingWindow();
 	}
-
 	/**
 	 * Close the floating window.
 	 */
-	private void closeFloatingWindow() {
+	void closeFloatingWindow() {
 		synchronized (windowLock) {
 			if (floatingWindow != null) {
 				floatingWindow.close();
 				floatingWindow = null;
 			}
 		}
-
 	}
-
 	/**
 	 * Get the preferred width of the receiver.
 	 * 
@@ -278,18 +229,4 @@ public class AnimationItem {
 	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
 	}
-	
-	/**
-	 * Toggle the floating window for the receiver.
-	 */
-	public void toggleFloatingWindow() {
-		if (showingDetails)
-			closeFloatingWindow();
-		else
-			openFloatingWindow();
-
-		//Toggle the details flag
-		showingDetails = !showingDetails;
-	}
-
 }

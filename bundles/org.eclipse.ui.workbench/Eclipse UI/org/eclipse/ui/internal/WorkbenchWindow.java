@@ -88,6 +88,7 @@ import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
+import org.eclipse.ui.internal.progress.AnimationManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -2225,6 +2226,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * Toggle the floating window in the receiver.
 	 */
 	public void toggleFloatingWindow(){
-		animationItem.toggleFloatingWindow();
+		AnimationManager.getInstance().toggleFloatingWindow();
 	}
 }
