@@ -81,7 +81,7 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @param markerType the type of marker to add
 	 * @param askForLabel <code>true</code> if the user should be asked for 
 	 *   a label for the new marker
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public AddMarkerAction(ResourceBundle bundle, String prefix, ITextEditor textEditor, String markerType, boolean askForLabel) {
 		super(bundle, prefix, textEditor);

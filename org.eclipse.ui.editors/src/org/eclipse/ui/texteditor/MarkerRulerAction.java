@@ -93,7 +93,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param ruler the ruler
 	 * @param markerType the type of marker
 	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created 
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @since 2.0
 	 */
 	public MarkerRulerAction(ResourceBundle bundle, String prefix,  ITextEditor editor, IVerticalRulerInfo ruler, String markerType, boolean askForLabel) {

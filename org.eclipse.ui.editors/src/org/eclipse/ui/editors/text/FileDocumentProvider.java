@@ -106,7 +106,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * Subclass responsibility.
 		 * 
 		 * @param input the input
-		 * @exception an exception in case of error
+		 * @exception Exception an exception in case of error
 		 */
 		protected void execute(IFileEditorInput input) throws Exception {
 		}
@@ -308,7 +308,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/**
 	 * Overrides <code>StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)</code>.
-	 * 
+	 *
+	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput) 
 	 * @deprecated use file encoding based version
 	 * @since 2.0
 	 */
@@ -352,7 +353,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * cached one. If the resource has been changed, a <code>CoreException</code>
 	 * is thrown.
 	 * 
-	 * @param cachedModificationStamp the chached modification stamp
+	 * @param cachedModificationStamp the cached modification stamp
 	 * @param resource the resource to check
 	 * @exception CoreException if resource has been changed on the file system
 	 */
@@ -725,7 +726,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * Refreshes the given file resource.
 	 * 
 	 * @param file
-	 * @throws  a CoreException if the refresh fails
+	 * @throws CoreException if the refresh fails
 	 * @since 2.1
 	 */
 	protected void refreshFile(IFile file) throws CoreException {
@@ -737,7 +738,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param file the file to be refreshed
 	 * @param monitor the progress monitor
-	 * @throws  a CoreException if the refresh fails
+	 * @throws  CoreException if the refresh fails
 	 * @since 3.0
 	 */
 	protected void refreshFile(IFile file, IProgressMonitor monitor) throws CoreException {
@@ -769,6 +770,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * Returns the persisted encoding for the given element.
 	 * 
 	 * @param element the element for which to get the persisted encoding
+	 * @return the persisted encoding
 	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
@@ -809,6 +811,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param element the element for which to store the persisted encoding
 	 * @param encoding the encoding
+	 * @throws CoreException if persisting the encoding fails
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {

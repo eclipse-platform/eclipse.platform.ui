@@ -49,30 +49,39 @@ class StatusInfo implements IStatus {
 		fSeverity= severity;
 	}		
 	
-	/**
-	 *  Returns if the status' severity is OK.
+	/*
+	 * @see org.eclipse.core.runtime.IStatus#isOK()
 	 */
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
 
 	/**
-	 *  Returns if the status' severity is WARNING.
-	 */	
+	 * Returns whether this status indicates a warning.
+	 * 
+	 * @return <code>true</code> if this status has severity
+	 *    {@link IStatus#WARNING} and <code>false</code> otherwise
+	 */
 	public boolean isWarning() {
 		return fSeverity == IStatus.WARNING;
 	}
 
 	/**
-	 *  Returns if the status' severity is INFO.
-	 */	
+	 * Returns whether this status indicates an info.
+	 * 
+	 * @return <code>true</code> if this status has severity
+	 *    {@link IStatus#INFO} and <code>false</code> otherwise
+	 */
 	public boolean isInfo() {
 		return fSeverity == IStatus.INFO;
 	}	
 
 	/**
-	 *  Returns if the status' severity is ERROR.
-	 */	
+	 * Returns whether this status indicates an error.
+	 * 
+	 * @return <code>true</code> if this status has severity
+	 *    {@link IStatus#ERROR} and <code>false</code> otherwise
+	 */
 	public boolean isError() {
 		return fSeverity == IStatus.ERROR;
 	}
@@ -87,7 +96,7 @@ class StatusInfo implements IStatus {
 	/**
 	 * Sets the status to ERROR.
 	 * 
-	 * @param the error message which can be an empty string, but not <code>null</code>
+	 * @param errorMessage the error message which can be an empty string, but not <code>null</code>
 	 */	
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
@@ -98,7 +107,7 @@ class StatusInfo implements IStatus {
 	/**
 	 * Sets the status to WARNING.
 	 * 
-	 * @param the warning message which can be an empty string, but not <code>null</code>
+	 * @param warningMessage the warning message which can be an empty string, but not <code>null</code>
 	 */		
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
@@ -109,7 +118,7 @@ class StatusInfo implements IStatus {
 	/**
 	 * Sets the status to INFO.
 	 * 
-	 * @param the info message which can be an empty string, but not <code>null</code>
+	 * @param infoMessage the info message which can be an empty string, but not <code>null</code>
 	 */		
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);

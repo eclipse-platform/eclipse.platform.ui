@@ -149,6 +149,8 @@ public class MarkerAnnotation extends Annotation {
 	 * <code>Object</code> method returns <code>true</code> iff the other
 	 * object is also a <code>MarkerAnnotation</code> and the marker handles are
 	 * equal.
+	 * 
+	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o != null && o.getClass() == getClass())

@@ -54,7 +54,9 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		/**
 		 * Creates a named navigation enablement action.
 		 * 
-		 * @param name the name of this action. 
+		 * @param name the name of this action
+		 * @param store the preference store
+		 * @param key the preference key
 		 */ 
 		public NavigationEnablementAction(String name, IPreferenceStore store, String key) {
 			super(name, IAction.AS_CHECK_BOX);
@@ -75,6 +77,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 * Returns the preference key to be used in the
 	 * <code>NavigationEnablementAction</code>.
 	 * 
+	 * @param annotationPreference the annotation preference
 	 * @return the preference key or <code>null</code> if the key is not defined in XML
 	 */
 	public abstract String getPreferenceKey(AnnotationPreference annotationPreference);

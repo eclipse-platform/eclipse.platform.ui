@@ -677,7 +677,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
 		try {
-			monitor.beginTask("Saving", 2000);
+			monitor.beginTask(TextEditorMessages.getString("TextFileDocumentProvider.beginTask.saving"), 2000); //$NON-NLS-1$
 			InputStream stream= new ByteArrayInputStream(document.get().getBytes(getDefaultEncoding()));
 			ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
 			generator.generateContainer(new SubProgressMonitor(monitor, 1000));

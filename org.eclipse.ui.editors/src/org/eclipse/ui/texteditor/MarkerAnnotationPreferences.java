@@ -343,11 +343,12 @@ public class MarkerAnnotationPreferences {
 	}
 	
 	/**
-	 * Returns the image descritor for the icon path specified by the given configuration
+	 * Returns the image descriptor for the icon path specified by the given configuration
 	 * element.
 	 * 
 	 * @param iconPath the icon path
 	 * @param element the configuration element
+	 * @return the image descriptor
 	 * @since 3.0
 	 */
 	private ImageDescriptor getImageDescriptor(String iconPath, IConfigurationElement element) {

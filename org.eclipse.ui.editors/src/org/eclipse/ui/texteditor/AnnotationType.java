@@ -32,6 +32,8 @@ public class AnnotationType {
 	/**
 	 * For internal use only.
 	 * Visibility will be changed to default.
+	 * 
+	 * @return the annotation preference
 	 */
 	public AnnotationPreference getPreference() {
 		return fPreference;
@@ -40,6 +42,8 @@ public class AnnotationType {
 	/**
 	 * For internal use only.
 	 * Visibility will be changed to default.
+	 * 
+	 * @param preference the annotation preference
 	 */
 	public void setAnnotationPreference(AnnotationPreference preference) {
 		fPreference= preference;

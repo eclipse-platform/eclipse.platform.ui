@@ -24,6 +24,7 @@ public interface ILocationProvider {
 	 * an absolute path in the local file system.
 	 * </p>
 	 * 
+	 * @param element the object for which to get the location
 	 * @return the location of the given object or <code>null</code>
 	 */
 	IPath getPath(Object element);

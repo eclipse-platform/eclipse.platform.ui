@@ -473,6 +473,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @param marker the marker to be updated
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
+	 * @return <code>false</code> if the marker is invalid
 	 * @exception CoreException if there is a problem updating the marker  
 	 * @since 2.0
 	 * @deprecated use <code>updateMarker(IDocument, IMarker, Position)</code> instead. This method will be changed to protected.
@@ -514,6 +515,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * @param marker the marker to be updated
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
+	 * @return <code>false</code> if the marker is invalid
 	 * @exception CoreException if there is a problem updating the marker  
 	 * @since 3.0
 	 */

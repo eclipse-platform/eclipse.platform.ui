@@ -27,7 +27,7 @@ public class ImageUtilities {
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *
 	 * @param image the image to be drawn
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas on which to draw
 	 * @param r the clipping rectangle
 	 * @param halign the horizontal alignment of the image to be drawn
@@ -75,7 +75,7 @@ public class ImageUtilities {
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *
 	 * @param image the image to be drawn
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas on which to draw
 	 * @param r the clipping rectangle
 	 * @param align the alignment of the image to be drawn

@@ -24,6 +24,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 public class SelectMarkerRulerInfoAction extends SelectMarkerRulerAction {
 
 	/**
+	 * @see SelectMarkerRulerAction#SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)
 	 * @deprecated use super class instead
 	 */
 	public SelectMarkerRulerInfoAction(ResourceBundle bundle, String prefix, IVerticalRulerInfo ruler, ITextEditor editor) {

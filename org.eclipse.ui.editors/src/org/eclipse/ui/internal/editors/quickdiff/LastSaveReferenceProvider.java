@@ -63,7 +63,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private IDocumentProvider fDocumentProvider;
 	/** The current editor input. */
 	private IEditorInput fEditorInput;
-	/** Private lock noone else will synchronize on. */
+	/** Private lock no one else will synchronize on. */
 	private final Object fLock= new Object();
 	/**
 	 * The progress monitor for a currently running <code>getReference</code>
@@ -102,8 +102,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider#getReference(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IDocument getReference(IProgressMonitor monitor) {
 		if (!fDocumentRead)
@@ -111,8 +111,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		return fReference;
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider#dispose()
 	 */
 	public void dispose() {
 		IProgressMonitor monitor= fProgressMonitor;
@@ -134,15 +134,15 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider#getId()
 	 */
 	public String getId() {
 		return fId;
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#setActiveEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
 	public void setActiveEditor(ITextEditor targetEditor) {
 		IDocumentProvider provider= null;
@@ -165,15 +165,15 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return fEditorInput != null && fDocumentProvider != null;
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#setId(java.lang.String)
 	 */
 	public void setId(String id) {
 		fId= id;
@@ -214,7 +214,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 
 				// this protects others from not being able to delete the file,
 				// and protects ourselves from concurrent access to fReference
-				// (in the case there alread is a valid fReference)
+				// (in the case there already is a valid fReference)
 
 				// one might argue that this rule should already be in the Job
 				// description we're running in, however:
@@ -261,7 +261,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	/**
 	 * Adds this as element state listener in the UI thread as it can otherwise 
 	 * conflict with other listener additions, since DocumentProvider is not
-	 * threadsafe.
+	 * thread-safe.
 	 * 
 	 * @param editor the editor to get the display from
 	 * @param provider the document provider to register as element state listener
@@ -326,7 +326,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	}
 
 	/**
-	 * Intitializes the given document with the given stream using the given
+	 * Initializes the given document with the given stream using the given
 	 * encoding.
 	 * 
 	 * @param document the document to be initialized
@@ -367,8 +367,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 
 	/* IElementStateListener implementation */
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDirtyStateChanged(java.lang.Object, boolean)
 	 */
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		if (!isDirty && element == fEditorInput) {
@@ -377,14 +377,14 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementContentAboutToBeReplaced(java.lang.Object)
 	 */
 	public void elementContentAboutToBeReplaced(Object element) {
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementContentReplaced(java.lang.Object)
 	 */
 	public void elementContentReplaced(Object element) {
 		if (element == fEditorInput) {
@@ -393,14 +393,14 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDeleted(java.lang.Object)
 	 */
 	public void elementDeleted(Object element) {
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementMoved(java.lang.Object, java.lang.Object)
 	 */
 	public void elementMoved(Object originalElement, Object movedElement) {
 	}

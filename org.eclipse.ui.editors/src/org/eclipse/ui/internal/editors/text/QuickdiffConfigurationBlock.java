@@ -164,6 +164,9 @@ class QuickdiffConfigurationBlock {
 	
 	/**
 	 * Creates page for hover preferences.
+	 * 
+	 * @param parent the parent composite
+	 * @return the hover preference page control
 	 */
 	public Control createControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);

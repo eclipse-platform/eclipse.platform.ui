@@ -88,7 +88,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 	
 	/**
-	 * Intitializes the given document with the given stream.
+	 * Initializes the given document with the given stream.
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
@@ -101,7 +101,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 	
 	/**
-	 * Intitializes the given document with the given stream using the given encoding.
+	 * Initializes the given document with the given stream using the given encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
@@ -144,7 +144,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 	
 	/**
-	 * Intitializes the given document from the given editor input using the default character encoding.
+	 * Initializes the given document from the given editor input using the default character encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param editorInput the input from which to derive the content of the document
@@ -158,7 +158,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 	
 	/**
-	 * Intitializes the given document from the given editor input using the given character encoding.
+	 * Initializes the given document from the given editor input using the given character encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param editorInput the input from which to derive the content of the document
@@ -274,6 +274,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * Updates the internal cache for the given input.
 	 * 
 	 * @param input the input whose cache will be updated
+	 * @exception CoreException if the storage cannot be retrieved from the input
 	 * @since 2.0
 	 */
 	protected void updateCache(IStorageEditorInput input) throws CoreException {
@@ -390,9 +391,10 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	}
 
 	/**
-	 * Returns the persited encoding for the given element.
+	 * Returns the persisted encoding for the given element.
 	 * 
 	 * @param element the element for which to get the persisted encoding
+	 * @return the persisted encoding
 	 * @since 2.1
 	 */
 	protected String getPersistedEncoding(Object element) {
@@ -405,6 +407,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * 
 	 * @param element the element for which to store the persisted encoding
 	 * @param encoding the encoding
+	 * @exception CoreException if the operation fails
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {

@@ -46,7 +46,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 		 *   <code>null</code> if none
 		 * @param editor the text editor
 		 * @param ruler the vertical ruler info
-		 * @see ResourceAction#ResourceAction
+		 * @see MarkerRulerAction#MarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo, String, boolean)
 		 */
 		public TaskMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 			super(bundle, prefix, editor, ruler, IMarker.TASK, false);

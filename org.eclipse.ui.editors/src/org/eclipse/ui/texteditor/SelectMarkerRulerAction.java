@@ -83,7 +83,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param editor the editor
 	 * @param ruler the ruler
 	 * 
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 		super(bundle, prefix);
@@ -95,6 +95,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
+	 * @see #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)
 	 * @deprecated use <code>SelectMarkerRulerInfoAction(ResourceBundle, String, IVerticalRulerInfo, ITextEditor)</code>
 	 */
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {

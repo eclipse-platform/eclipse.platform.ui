@@ -54,6 +54,8 @@ public class DocumentProviderRegistry {
 	
 	/**
 	 * Returns the standard document provider registry.
+	 * 
+	 * @return the default document provider registry
 	 */
 	public static DocumentProviderRegistry getDefault() {
 		if (fgRegistry == null)
@@ -71,8 +73,8 @@ public class DocumentProviderRegistry {
 	
 	
 	/**
-	 * Creates a new document provider registry and intializes it with the information
-	 * found in the plugin registry.
+	 * Creates a new document provider registry and initializes it with the information
+	 * found in the plug-in registry.
 	 */
 	private DocumentProviderRegistry() {
 		initialize();
@@ -128,6 +130,9 @@ public class DocumentProviderRegistry {
 	 * Returns the document provider for the given configuration element.
 	 * If there is no instantiated document provider remembered for this
 	 * element, a new document provider is created and put into the cache.
+	 * 
+	 * @param entry the configuration element
+	 * @return the document provider for the given entry
 	 */
 	private IDocumentProvider getDocumentProvider(IConfigurationElement entry) {
 		IDocumentProvider provider= (IDocumentProvider) fInstances.get(entry);
