@@ -679,8 +679,6 @@ public class ActionContributionItem extends ContributionItem {
 					if (action instanceof Action
 						&& (((Action) action).showTextInToolBar())){
 							ti.setText(shortenText(action.getText(),ti));
-							if(ti.getControl() != null)
-								ti.getControl().setFont(JFaceResources.getSmallFont());
 					}
 						
 				}
