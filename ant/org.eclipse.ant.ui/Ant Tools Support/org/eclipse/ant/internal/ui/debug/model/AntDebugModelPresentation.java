@@ -92,13 +92,8 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 				return text.toString();
 			}
 		} else if (element instanceof AntProperty) {
-            StringBuffer buffer= new StringBuffer();
-            AntProperty property= (AntProperty) element;
-            AntValue value = (AntValue) property.getValue();
-            buffer.append(property.getName());
-            buffer.append(" = "); //$NON-NLS-1$
-            buffer.append(value.getValueString());          
-            return buffer.toString();      
+		    AntProperty property= (AntProperty) element;
+		    return property.getText();  
         }
 		
 		return null;
