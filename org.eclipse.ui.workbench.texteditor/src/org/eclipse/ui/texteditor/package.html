@@ -1,0 +1,30 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides a framework for text editors obeying to the
+desktop rules.
+<h2>
+Package Specification</h2>
+<tt>ITextEditor</tt> extends <tt>IEditorPart</tt> with text editor specific
+functionality. Text editors use source viewers (<tt>ISourceViewer</tt>)
+for displaying and editing the given editor input. In order to translate
+the editor input into a document and vice versa (e.g., for saving a change),
+a text editor uses document providers (<tt>IDocumentProvider</tt>). A document
+provider is responsible not just for providing the document for a given
+editor input but for the complete translation between the domain model
+and the editor's internal document-based model. Document provider can be
+shared between editors.
+<br>The package provides a default implementation of <tt>ITextEditor</tt>
+(<tt>AbstractTextEditor</tt>). This default implementation also covers
+the editor's complete action management and activation. The package contains
+a number of configurable and predefined actions. <tt>AbstractMarkerAnnotationModel</tt>
+establishs a link between text annotations (<tt>Annotation</tt>) and desktop
+markers (<tt>IMarker</tt>).
+</body>
+</html>
