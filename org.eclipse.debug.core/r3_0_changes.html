@@ -101,6 +101,19 @@
   the option to display logical structures is turned on. More than one logical 
   structure can be provided for a single value - the user can choose which structure 
   to display.</p>
+<h3>Step Filters</h3>
+<p>To support step filters on all stepping functions (into, over, return), a new 
+  interface has been added to the debug platform - <code>IStepFilters</code> - 
+  which can be implemented by debug targets. This interface replaces <code>IFilteredStep</code>, 
+  which is now deprecated. The debugger provides a global toggle that turns step 
+  filters on/off for all stepping functions. Toggle actions are provided in the 
+  Run menu, Debug View context menu, and Debug View toolbar, which replaces the 
+  'Step with Filters' action in previous releases. As well, an API is provided 
+  on <code>DebugUITools</code> to modify step filter enablement. It is up to debug 
+  targets to implement this new interface and to honor the step filter enablement 
+  setting when stepping. See javadoc for <code>IStepFilters</code> for more details.</p>
+<p>This change maintains binary compatibility with previous releases. However, 
+  targets wishing to leverage the new function must implement the new interface.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
