@@ -5,7 +5,7 @@
 package org.eclipse.help.internal.search;
 
 import java.io.*;
-import java.text.BreakIterator;
+import java.text.*;
 import java.util.*;
 
 import org.apache.lucene.analysis.*;
@@ -14,80 +14,82 @@ import org.apache.lucene.analysis.*;
  * WordTokenStream obtains tokens containing words
  * appropriate for use with Lucene search engine.
  */
-public class WordTokenStream extends TokenStream {
-	String fieldName;
-	Reader reader;
-	/**
-	 * Iterator for obtaining Tokens
-	 */
-	Iterator tokens;
-	Locale locale;
-	IOException readerException;
+public final class WordTokenStream extends TokenStream {
+	private static final int BUF_LEN = 4096;
+	private static final int TOKENS_LEN = 512;
+	private final String fieldName;
+	private final Reader reader;
+	private final BreakIterator boundary;
+	private final ArrayList tokens;
+	private int token;
+	private int noTokens;
+	private final char[] cbuf;
 	/**
 	 * Constructor
-	 * Creates a token stream out of Reader
 	 */
 	public WordTokenStream(String fieldName, Reader reader, Locale locale) {
 		this.fieldName = fieldName;
 		this.reader = reader;
-		this.locale = locale;
-		tokenizeReader();
+		boundary = BreakIterator.getWordInstance(locale);
+		cbuf = new char[BUF_LEN];
+		tokens = new ArrayList(TOKENS_LEN);
+
 	}
 	/**
 	 * @see TokenStream#next()
 	 */
-	public Token next() throws IOException {
-		if (readerException != null) {
-			throw readerException;
-		}
-		if (tokens.hasNext())
-			return (Token) tokens.next();
-		return null;
-	}
-	/**
-	 * Tokenizes stream and crates token iterator
-	 */
-	private void tokenizeReader() {
-		if (reader == null) {
-			tokens = new ArrayList(0).iterator();
-			return;
-		}
-		// conver Reader to String as Required by BreakIterator
-		StringBuffer strbuf = new StringBuffer();
-		char[] cbuf = new char[4096];
-		int l;
-		try {
-			while (-1 < (l = reader.read(cbuf))) {
-				strbuf.append(cbuf, 0, l);
-			}
-			reader.close();
-		} catch (IOException ioe) {
-			readerException = ioe;
-			return;
-		}
-		String str = strbuf.toString();
-		// divide into words
-		BreakIterator boundary = BreakIterator.getWordInstance(locale);
-		boundary.setText(str);
-
-		int start = boundary.first();
-		List tokenList = new ArrayList();
-		wordsbreak : for (
-			int end = boundary.next();
-				end != BreakIterator.DONE;
-				start = end, end = boundary.next()) {
-			// determine if it is a word
-			// any letter or digit between boundaries means it is a word
-			for (int i = start; i < end; i++) {
-				if (Character.isLetterOrDigit(str.charAt(i))) {
-					// it is a word
-					tokenList.add(new Token(str.substring(start, end), start, end));
-					continue wordsbreak;
+	public final Token next() throws IOException {
+		if (token >= noTokens) {
+			// read BUF_LEN of chars
+			int l;
+			while ((l = reader.read(cbuf)) <= 0) {
+				if (l < 0) {
+					// EOF
+					reader.close();
+					return null;
 				}
 			}
+			StringBuffer strbuf = new StringBuffer(l + 80);
+			strbuf.append(cbuf, 0, l);
+			// read more until white space (or EOF)
+			int c;
+			while (0 <= (c = reader.read())) {
+				strbuf.append((char) c);
+				if (c == ' ' || c == '\r' || c == '\n' || c == '\t') {
+					break;
+				}
+			}
+
+			String str = strbuf.toString();
+			boundary.setText(str);
+
+			int start = boundary.first();
+			tokens.clear();
+			wordsbreak : for (
+				int end = boundary.next();
+					end != BreakIterator.DONE;
+					start = end, end = boundary.next()) {
+				// determine if it is a word
+				// any letter or digit between boundaries means it is a word
+				for (int i = start; i < end; i++) {
+					if (Character.isLetterOrDigit(str.charAt(i))) {
+						// it is a word
+						tokens.add(
+							new Token(str.substring(start, end), start, end));
+						continue wordsbreak;
+					}
+				}
+			}
+
+			if (c < 0) {
+				reader.close();
+				tokens.add((Token) null);
+			}
+			noTokens = tokens.size();
+			token = 0;
 		}
-		// create iterator
-		tokens = tokenList.iterator();
+
+		return (Token) tokens.get(token++);
 
 	}
 }
