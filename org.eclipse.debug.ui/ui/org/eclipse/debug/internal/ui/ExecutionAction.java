@@ -142,6 +142,9 @@ public abstract class ExecutionAction extends Action {
 					if (element instanceof IAdaptable) {
 						IAdaptable el= (IAdaptable)element;
 						resource= (IResource)el.getAdapter(IResource.class);
+						if (resource == null) {
+							resource= (IProject)el.getAdapter(IProject.class);
+						}
 					}
 					IProject project= null;
 					if (resource != null) {
