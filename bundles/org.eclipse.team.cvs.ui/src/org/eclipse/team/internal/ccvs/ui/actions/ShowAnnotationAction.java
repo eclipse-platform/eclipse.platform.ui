@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.AnnotateView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -62,6 +63,11 @@ public class ShowAnnotationAction extends CVSAction {
 		// Get the selected revision
 		final String revision;
 		try {
+			ResourceSyncInfo info = cvsResource.getSyncInfo();
+			if(info == null) {
+				handle(new CVSException(Policy.bind("ShowAnnotationAction.noSyncInfo", cvsResource.getName())));
+				return;
+			}
 			revision = cvsResource.getSyncInfo().getRevision();
 		} catch (CVSException e) {
 			throw new InvocationTargetException(e);
@@ -161,15 +167,6 @@ public class ShowAnnotationAction extends CVSAction {
 	 * @return ICVSResource
 	 */
 	protected ICVSResource getSingleSelectedCVSResource() {
-		
-		// Selected from a Resource Navigator
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 1) {
-			IContainer parent = resources[0].getParent();
-			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-			return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
-		}
-		
 		// Selected from a CVS Resource Navigator
 		ICVSResource[] cvsResources = getSelectedCVSResources();
 		if (cvsResources.length == 1) {
@@ -183,6 +180,14 @@ public class ShowAnnotationAction extends CVSAction {
 			ICVSRemoteFile cvsRemoteFile = aLogEntry.getRemoteFile();
 			return cvsRemoteFile;
 		}
+		
+		// Selected from a Resource Navigator
+		 IResource[] resources = getSelectedResources();
+		 if (resources.length == 1) {
+			 IContainer parent = resources[0].getParent();
+			 ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
+			 return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
+		 }
 		return null;
 	}
 }
