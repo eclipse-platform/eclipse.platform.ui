@@ -186,14 +186,21 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	// refresh on the thread, then refresh each of the children, which eliminates
 	// flicker when do quick stepping (e.g., holding down the F6 key) within a method.
 	protected void doHandleSuspendThreadEvent(IThread thread) {
+		// if the thread has already resumed, do nothing
+		if (!thread.isSuspended()) {
+			return;
+		}
+		
 		// Get the current stack frames from the thread
 		IStackFrame[] stackFrames = null;
-		int currentStackFrameCount = 0;
 		try {
 			stackFrames = thread.getStackFrames();
-			currentStackFrameCount = stackFrames.length;
 		} catch (DebugException de) {
+			DebugUIPlugin.logError(de);
+			return;
 		}
+		
+		int currentStackFrameCount = stackFrames.length;
 		
 		// Retrieve the old and current counts of stack frames for this thread
 		int oldStackFrameCount = 0;
