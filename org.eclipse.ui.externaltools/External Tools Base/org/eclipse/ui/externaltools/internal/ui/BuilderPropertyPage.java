@@ -93,6 +93,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private IDebugModelPresentation debugModelPresentation;
 	
 	private boolean userHasMadeChanges= false;
+	
+	/**
+	 * Error configs are objects representing entries pointing to
+	 * invalid launch configurations
+	 */
+	private class ErrorConfig {
+	}
+	
 	/**
 	 * Collection of configurations created while the page is open.
 	 * Stored here so they can be deleted if the page is cancelled.
@@ -186,7 +194,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 						addConfig(config, false);
 					}
 				} else {
-					addCommand(commands[i], -1, false);
+					String builderID = commands[i].getBuilderName();
+					if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(LAUNCH_CONFIG_HANDLE) != null) {
+						// An invalid external tool entry.
+						addErrorConfig(new ErrorConfig(), -1, false);
+					} else {
+						addCommand(commands[i], -1, false);
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -210,8 +224,28 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		newItem.setData(command);
 		updateCommandItem(newItem, command);
-		if (select)
+		if (select) {
 			builderTable.setSelection(position);
+		}
+	}
+	
+	/**
+	 * Adds the given erroneous configuration entry to the table
+	 * and selection it if <code>select</code> is <code>true</code>.
+	 */
+	private void addErrorConfig(ErrorConfig config, int position, boolean select) {
+		TableItem newItem;
+		if (position < 0) {
+			newItem = new TableItem(builderTable, SWT.NONE);
+		} else {
+			newItem = new TableItem(builderTable, SWT.NONE, position);
+		}
+		newItem.setData(config);
+		newItem.setText(ExternalToolsUIMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
+		newItem.setImage(invalidBuildToolImage);
+		if (select) {
+			builderTable.setSelection(position);
+		}
 	}
 
 	/**
@@ -772,6 +806,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleTableSelectionChanged() {
 		newButton.setEnabled(true);
 		TableItem[] items = builderTable.getSelection();
+		editButton.setEnabled(false);
+		removeButton.setEnabled(false);
+		upButton.setEnabled(false);
+		downButton.setEnabled(false);
 		if (items != null && items.length == 1) {
 			TableItem item = items[0];
 			Object data = item.getData();
@@ -782,14 +820,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 				int max = builderTable.getItemCount();
 				upButton.setEnabled(selection != 0);
 				downButton.setEnabled(selection < max - 1);
-				return;
+			} else if (data instanceof ErrorConfig) {
+				removeButton.setEnabled(true);
 			}
 		}
-		//in all other cases we can't do any of these.
-		editButton.setEnabled(false);
-		removeButton.setEnabled(false);
-		upButton.setEnabled(false);
-		downButton.setEnabled(false);
 	}
 
 	/**
