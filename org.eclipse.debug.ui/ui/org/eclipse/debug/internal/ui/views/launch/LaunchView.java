@@ -54,6 +54,7 @@ import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
+import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
@@ -104,6 +105,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInSource;
@@ -182,6 +184,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	private AddToFavoritesAction fAddToFavoritesAction = null;
+	private EditSourceLookupPathAction fEditSourceAction = null;
 	
 	/**
 	 * Whether or not this view automatically opens and closes views
@@ -221,6 +224,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		fEditConfigAction = new EditLaunchConfigurationAction();
 		fAddToFavoritesAction = new AddToFavoritesAction();
+		fEditSourceAction = new EditSourceLookupPathAction();
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -1046,14 +1050,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		IStructuredSelection selection = (IStructuredSelection) getSite().getSelectionProvider().getSelection();
-		fEditConfigAction.selectionChanged(selection);
-		if (fEditConfigAction.isEnabled()) {
-			menu.add(fEditConfigAction);
-		}
-		fAddToFavoritesAction.selectionChanged(selection);
-		if (fAddToFavoritesAction.isEnabled()) {
-			menu.add(fAddToFavoritesAction);
-		}
+		updateAndAdd(menu, fEditConfigAction, selection);
+		updateAndAdd(menu, fAddToFavoritesAction, selection);
+		updateAndAdd(menu, fEditSourceAction, selection);
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
@@ -1062,6 +1061,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(action);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}	
+	
+	/**
+	 * Updates the enablement of the given action based on the selection
+	 * and addes to the menu iff enabled.
+	 * 
+	 * @param menu menu to add the action to
+	 * @param action action to add if enabled
+	 * @param selection selection to update enablement
+	 */
+	private void updateAndAdd(IMenuManager menu, SelectionListenerAction action, IStructuredSelection selection) {
+		action.selectionChanged(selection);
+		if (action.isEnabled()) {
+			menu.add(action);
+		}		
+	}
 	
 	/**
 	 * Auto-expand and select the given element - must be called in UI thread.

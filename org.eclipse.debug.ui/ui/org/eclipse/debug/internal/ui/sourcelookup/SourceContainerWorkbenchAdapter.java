@@ -50,7 +50,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 			FolderSourceContainer container = (FolderSourceContainer) o;
 			return SourceElementWorkbenchAdapter.getQualifiedName(container.getContainer().getFullPath());
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
