@@ -15,7 +15,7 @@ import org.eclipse.jface.action.*;
  * may provide an implementation for pre-existing actions or add new actions to
  * the action bars.
  * </p><p>
- * In a workbench window there a number of actions which are applicable to
+ * In a workbench window there are a number of actions which are applicable to
  * all parts.  Some common examples are <code>CUT</code>, <code>COPY</code> and 
  * <code>PASTE</code>. These actions, known as "global actions", are contributed to 
  * the workbench window by the window itself and shared by all parts.  The
