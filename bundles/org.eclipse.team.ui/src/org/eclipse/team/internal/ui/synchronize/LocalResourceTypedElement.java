@@ -148,4 +148,13 @@ public class LocalResourceTypedElement extends ResourceNode {
 			}		
 			return bos.toByteArray();
 		}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ResourceNode#getContents()
+	 */
+	public InputStream getContents() throws CoreException {
+		if(getResource().exists())
+			return super.getContents();
+		return null;
+	}
 }
