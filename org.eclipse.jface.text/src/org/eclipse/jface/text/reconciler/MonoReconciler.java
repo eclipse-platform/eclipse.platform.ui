@@ -68,8 +68,11 @@ public class MonoReconciler extends AbstractReconciler {
 		
 		if(dirtyRegion != null)
 			fStrategy.reconcile(dirtyRegion, dirtyRegion);
-		else
-			fStrategy.reconcile(new Region(0, getDocument().getLength()));
+		else {
+			IDocument document= getDocument();
+			if (document != null)	
+				fStrategy.reconcile(new Region(0, document.getLength()));
+		}
 	}
 	
 	/*
