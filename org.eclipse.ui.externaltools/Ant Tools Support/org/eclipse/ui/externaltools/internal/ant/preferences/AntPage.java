@@ -92,7 +92,7 @@ public abstract class AntPage {
 		button.setText(AntPreferencesMessages.getString(labelKey));
 		button.setData(new Integer(buttonId));
 		button.addSelectionListener(selectionAdapter);
-		preferencePage.setButtonGridData(button);
+		preferencePage.setButtonGridData(button, GridData.FILL_HORIZONTAL);
 		return button;
 	}
 	
@@ -105,7 +105,7 @@ public abstract class AntPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonGroup.setLayout(layout);
-		buttonGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		addButtonsToButtonGroup(buttonGroup);
 	}
@@ -130,6 +130,7 @@ public abstract class AntPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.horizontalSpan= 1;
 		table.setLayoutData(data);
+		
 		contentProvider = getContentProvider();
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(contentProvider);

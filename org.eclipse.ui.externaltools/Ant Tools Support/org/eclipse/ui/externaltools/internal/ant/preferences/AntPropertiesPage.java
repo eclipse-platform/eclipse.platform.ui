@@ -133,7 +133,7 @@ public class AntPropertiesPage extends AntPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		
 		Label label = new Label(top, SWT.NONE);
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
@@ -142,7 +142,7 @@ public class AntPropertiesPage extends AntPage {
 		super.createContents(top);
 		
 		label = new Label(top, SWT.NONE);
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());

@@ -315,7 +315,7 @@ public class AntClasspathPage extends AntPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		
 		Label label = new Label(top, SWT.NONE);
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());
@@ -367,11 +367,11 @@ public class AntClasspathPage extends AntPage {
 		browseAntHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.&Browse..._10")); //$NON-NLS-1$
 		browseAntHomeButton.setData(new Integer(BROWSE_ANT_HOME));
 		browseAntHomeButton.addSelectionListener(selectionAdapter);
-		getPreferencePage().setButtonGridData(browseAntHomeButton);
+		getPreferencePage().setButtonGridData(browseAntHomeButton, GridData.FILL_VERTICAL);
 		browseAntHomeButton.setEnabled(false);
 		
 		label = new Label(top, SWT.NONE);
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
 		label.setFont(parent.getFont());

@@ -151,8 +151,8 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 	 * @param button the button to set the <code>GridData</code>
 	 * @return the <code>GridData</code> set on the specified button
 	 */
-	/*package*/ GridData setButtonGridData(Button button) {
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+	/*package*/ GridData setButtonGridData(Button button, int style) {
+		GridData data = new GridData(style);
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
