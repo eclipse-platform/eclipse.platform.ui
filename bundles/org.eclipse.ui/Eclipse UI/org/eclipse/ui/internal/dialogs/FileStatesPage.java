@@ -49,6 +49,9 @@ public class FileStatesPage
 	private Text longevityText;
 	private Text maxStatesText;
 	private Text maxStateSizeText;
+	
+	private int workbenchFileStatesMaximum = 0;
+	private long workbenchStateSizeMaximum = 0;
 
 /**
  * This method takes the string for the title of a text field and the value for the
@@ -89,12 +92,12 @@ private void checkState() {
 		return;
 	}
 	
-	if (validateIntegerTextEntry(maxStatesText) == FAILED_VALUE) {
+	if (validateMaxFileStates() == FAILED_VALUE) {
 		setValid(false);
 		return;
 	}
 	
-	if (validateLongTextEntry(maxStateSizeText) == FAILED_VALUE) {
+	if (validateMaxFileStateSize() == FAILED_VALUE) {
 		setValid(false);
 		return;
 	}
@@ -201,8 +204,8 @@ protected void performDefaults() {
 public boolean performOk() {
 
 	long longevityValue = validateLongTextEntry(longevityText);
-	int maxFileStates = validateIntegerTextEntry(this.maxStatesText);
-	long maxStateSize = validateLongTextEntry(this.maxStateSizeText);
+	int maxFileStates = validateMaxFileStates();
+	long maxStateSize = validateMaxFileStateSize();
 	if (longevityValue == FAILED_VALUE
 		|| maxFileStates == FAILED_VALUE
 		|| maxStateSize == FAILED_VALUE)
@@ -277,4 +280,57 @@ private long validateLongTextEntry(Text text) {
 
 	return value;
 }
+
+/**
+ * Validate the maximum file states.
+ * Return the value if successful, otherwise
+ * return FAILED_VALUE.
+ * Set the error message if it fails.
+ * @return int
+ */
+private int validateMaxFileStates(){
+	int maxFileStates = validateIntegerTextEntry(this.maxStatesText);
+	if(maxFileStates == FAILED_VALUE)
+		return maxFileStates;
+		
+	if(workbenchFileStatesMaximum == 0)
+		workbenchFileStatesMaximum = getWorkspaceDescription().getMaxFileStates();
+		
+	if(maxFileStates > workbenchFileStatesMaximum){
+		setErrorMessage(WorkbenchMessages.format(
+			"FileHistory.aboveMaxEntries", 
+			new String[] {String.valueOf(workbenchFileStatesMaximum)}
+			));
+		return FAILED_VALUE;
+	}
+
+	return maxFileStates;
+}
+
+/**
+ * Validate the maximum file state size.
+ * Return the value if successful, otherwise
+ * return FAILED_VALUE.
+ * Set the error message if it fails.
+ * @return long
+ */
+private long validateMaxFileStateSize(){
+	long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
+	if(maxFileStateSize == FAILED_VALUE)
+		return maxFileStateSize;
+		
+	if(workbenchStateSizeMaximum == 0)
+		workbenchStateSizeMaximum = getWorkspaceDescription().getMaxFileStateSize() / MEGABYTES;
+		
+	if(maxFileStateSize > workbenchStateSizeMaximum){
+		setErrorMessage(WorkbenchMessages.format(
+			"FileHistory.aboveMaxFileSize", 
+			new String[] {String.valueOf(workbenchStateSizeMaximum)}
+			));
+		return FAILED_VALUE;
+	}
+
+	return maxFileStateSize;
+}
+
 }
