@@ -14,15 +14,26 @@ package org.eclipse.team.internal.ccvs.ssh2;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -132,6 +143,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
     tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(Policy.bind("CVSSSH2PreferencePage.21")); //$NON-NLS-1$
     tabItem.setControl(createKeyManagementPage(tabFolder));
+    
+    tabItem = new TabItem(tabFolder, SWT.NONE);
+    tabItem.setText(Policy.bind("CVSSSH2PreferencePage.133")); //$NON-NLS-1$
+    tabItem.setControl(createHostKeyManagementPage(tabFolder));
 
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     initDefaults(store);
@@ -746,6 +761,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
 	  kpair.setPassphrase(pass);
 
+	  IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
 	  String home=ssh2HomeText.getText();
 
 	  File _home=new File(home);
@@ -807,6 +823,154 @@ public class CVSSSH2PreferencePage extends PreferencePage
     return group;
   }
 
+	private TableViewer viewer;
+	private Button addHostKeyButton;
+	private Button removeHostKeyButton;
+	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		public String getColumnText(Object element, int columnIndex) {
+			KnownHosts.HostKey entry = (KnownHosts.HostKey)element;
+			switch (columnIndex) {
+				case 0:
+					return entry.getHost();
+				case 1:
+					return entry.getType();
+				case 2:
+					return entry.getFingerPrint();
+				default:
+					return null;
+			}
+		}
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+	};
+	
+  private Control createHostKeyManagementPage(Composite parent) {
+    int columnSpan=3;
+    Composite group=new Composite(parent, SWT.NULL);
+    GridLayout layout=new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	layout.numColumns = 2;
+    group.setLayout(layout);
+    GridData gd = new GridData();
+    gd.horizontalAlignment = GridData.FILL;
+	gd.verticalAlignment = GridData.FILL;
+    group.setLayoutData(gd);
+
+    Label label=new Label(group, SWT.NONE);
+    label.setText(Policy.bind("CVSSSH2PreferencePage.139")); //$NON-NLS-1$
+    gd=new GridData();
+    gd.horizontalSpan=2;
+    label.setLayoutData(gd);
+    
+	viewer = new TableViewer(group, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	Table table = viewer.getTable();
+	new TableEditor(table);
+	table.setHeaderVisible(true);
+	table.setLinesVisible(true);
+	gd = new GridData(GridData.FILL_BOTH);
+	gd.widthHint = convertWidthInCharsToPixels(30);
+	/*
+	 * The hardcoded hint does not look elegant, but in reality
+	 * it does not make anything bound to this 100-pixel value,
+	 * because in any case the tree on the left is taller and
+	 * that's what really determines the height.
+	 */
+	gd.heightHint = 100;
+	table.setLayoutData(gd);
+	table.addListener(SWT.Selection, new Listener() {
+		public void handleEvent(Event e) {
+			handleSelection();
+		}
+	});
+	// Create the table columns
+	new TableColumn(table, SWT.NULL);
+	new TableColumn(table, SWT.NULL);
+	new TableColumn(table, SWT.NULL);
+	TableColumn[] columns = table.getColumns();
+	columns[0].setText(Policy.bind("CVSSSH2PreferencePage.134"));  //$NON-NLS-1$
+	columns[1].setText(Policy.bind("CVSSSH2PreferencePage.135"));  //$NON-NLS-1$
+	columns[2].setText(Policy.bind("CVSSSH2PreferencePage.136"));  //$NON-NLS-1$
+	viewer.setColumnProperties(new String[] {
+				Policy.bind("CVSSSH2PreferencePage.134"),  //$NON-NLS-1$ 
+				Policy.bind("CVSSSH2PreferencePage.135"),  //$NON-NLS-1$ 
+				Policy.bind("CVSSSH2PreferencePage.136")}); //$NON-NLS-1$
+	viewer.setLabelProvider(new TableLabelProvider());
+	viewer.setContentProvider(new IStructuredContentProvider() {
+		public void dispose() {
+		}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+		public Object[] getElements(Object inputElement) {
+			if (inputElement == null) return null;
+			return (Object[])inputElement;
+		}
+	});
+	TableLayout tl = new TableLayout();
+	tl.addColumnData(new ColumnWeightData(20));
+	tl.addColumnData(new ColumnWeightData(10));
+	tl.addColumnData(new ColumnWeightData(70));
+	table.setLayout(tl);
+	
+	Composite buttons = new Composite(group, SWT.NULL);
+	buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+	layout = new GridLayout();
+	layout.marginHeight = 0;
+	layout.marginWidth = 0;
+	buttons.setLayout(layout);
+
+	addHostKeyButton = new Button(buttons, SWT.PUSH);
+	addHostKeyButton.setText(Policy.bind("CVSSSH2PreferencePage.137"));  //$NON-NLS-1$
+	gd = new GridData();
+	gd.horizontalAlignment = GridData.FILL;
+	gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	gd.widthHint = Math.max(widthHint, addHostKeyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	addHostKeyButton.setLayoutData(gd);
+	addHostKeyButton.setEnabled(false);
+	addHostKeyButton.addListener(SWT.Selection, new Listener() {
+		public void handleEvent(Event e) {
+			//addHostKey();
+		}
+	});
+	removeHostKeyButton = new Button(buttons, SWT.PUSH);
+	removeHostKeyButton.setText(Policy.bind("CVSSSH2PreferencePage.138"));  //$NON-NLS-1$
+	gd = new GridData();
+	gd.horizontalAlignment = GridData.FILL;
+	gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	gd.widthHint = Math.max(widthHint, addHostKeyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	removeHostKeyButton.setLayoutData(gd);
+	removeHostKeyButton.setEnabled(false);
+	removeHostKeyButton.addListener(SWT.Selection, new Listener() {
+		public void handleEvent(Event e) {
+			removeHostKey();
+		}
+	});
+	    
+	Dialog.applyDialogFont(parent);
+	
+	JSchSession.loadKnownHosts();
+	viewer.setInput(JSchSession.getJSch().getHostKeys());
+	handleSelection();
+
+    return group;
+  }
+  
+	private void handleSelection() {
+		boolean empty = viewer.getSelection().isEmpty();
+		removeHostKeyButton.setEnabled(!empty);
+	}
+	private void removeHostKey(){
+		JSch jsch=JSchSession.getJSch();
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			KnownHosts.HostKey hostkey = (KnownHosts.HostKey) iterator.next();
+			jsch.removeHostKey(hostkey.getHost(), hostkey.getType());
+			viewer.remove(hostkey);
+         }		
+	}
   private void export_via_sftp(String user, String host, int port, String target, byte[] pkey) throws JSchException{
     try{
 
@@ -838,7 +1002,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       channel.connect();
       ChannelSftp c=(ChannelSftp)channel;
 
-      c.pwd();
+      String pwd=c.pwd();
       SftpATTRS attr=null;
 
       try{ attr=c.stat(".ssh"); } //$NON-NLS-1$

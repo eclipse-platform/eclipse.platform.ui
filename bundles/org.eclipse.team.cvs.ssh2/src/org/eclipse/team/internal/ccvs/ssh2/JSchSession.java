@@ -235,16 +235,16 @@ class JSchSession {
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 		String ssh_home = store.getString(CVSSSH2PreferencePage.KEY_SSH2HOME);
 
-		if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
+		if (current_ssh_home == null || 
+			!current_ssh_home.equals(ssh_home)) {
 			current_ssh_home = ssh_home;
 			if (ssh_home.length() == 0)
 				ssh_home = default_ssh_home;
 
 			try {
+			  loadKnownHosts();
+			  
 			  java.io.File file;
-			  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
-			  jsch.setKnownHosts(file.getPath());
-
 			  String pkeys=store.getString(CVSSSH2PreferencePage.KEY_PRIVATEKEY);
 			  String[] pkey=pkeys.split(","); //$NON-NLS-1$
 			  for(int i=0; i<pkey.length;i++){
@@ -321,6 +321,21 @@ class JSchSession {
 				throw new OperationCanceledException(""); //$NON-NLS-1$
 			}
 			throw e;
+		}
+	}
+
+	static void loadKnownHosts(){
+		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
+		String ssh_home = store.getString(CVSSSH2PreferencePage.KEY_SSH2HOME);
+
+		if (ssh_home.length() == 0)
+			ssh_home = default_ssh_home;
+
+		try {
+		  java.io.File file;
+		  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
+		  jsch.setKnownHosts(file.getPath());
+		} catch (Exception e) {
 		}
 	}
 
