@@ -23,7 +23,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -196,7 +195,6 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    }
 		
 		top = new Composite(parent, SWT.NULL);
-		//top.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		top.addDisposeListener(new DisposeListener() {
 		    public void widgetDisposed(DisposeEvent e) {
         	    FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
@@ -218,15 +216,18 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
 		bar.setVisible(false);
 		bar.addMouseListener(mouseListener);
-		GridData gd= new GridData(/*GridData.VERTICAL_ALIGN_CENTER | */ GridData.FILL_HORIZONTAL);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint= 12;
 		bar.setLayoutData(gd);
 		
 		toolbar= new ToolBar(top, SWT.FLAT);
 		toolbar.setVisible(false);
-		gd= new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint= 22;
-		toolbar.setLayoutData(gd);
+		if ("gtk".equals(SWT.getPlatform())) {	//$NON-NLS-1$
+			// workaround for an SWT problem; see #62883
+			gd= new GridData(GridData.FILL_VERTICAL);
+			gd.widthHint= 22;
+			toolbar.setLayoutData(gd);
+		}
 		
 		toolButton= new ToolItem(toolbar, SWT.NONE);
 		toolButton.addSelectionListener(new SelectionAdapter() {
