@@ -48,7 +48,7 @@ public class EditorPresentation {
 
 		this.page = page;
 		this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, partDropListener, page);
-		dragTarget = new CompatibilityDragTarget(partDropListener, IWorkbenchDragDropPart.EDITOR);
+		dragTarget = new CompatibilityDragTarget(partDropListener, IWorkbenchDragDropPart.EDITOR, page.getWorkbenchWindow());
 		DragUtil.addDragTarget(null, dragTarget);
 	}
 	/**

@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.DragCursors;
 import org.eclipse.ui.internal.IPartDropListener;
 import org.eclipse.ui.internal.IWorkbenchDragSource;
@@ -36,6 +37,7 @@ public class CompatibilityDragTarget implements IDragOverListener {
 	
 	private IPartDropListener listener;
 	private int type;
+	private IWorkbenchWindow window;
 
 	class DropTarget extends AbstractDropTarget {
 		private PartDropEvent dropEvent;
@@ -202,9 +204,10 @@ public class CompatibilityDragTarget implements IDragOverListener {
 		return (source.getType() & dropTarget.getType()) > 0;
 	}
 	
-	public CompatibilityDragTarget(IPartDropListener listener, int type) {
+	public CompatibilityDragTarget(IPartDropListener listener, int type, IWorkbenchWindow window) {
 		this.listener = listener;
 		this.type = type;
+		this.window = window;
 	}
 	
 	/* (non-Javadoc)
@@ -215,6 +218,10 @@ public class CompatibilityDragTarget implements IDragOverListener {
 			IWorkbenchDragSource source = (IWorkbenchDragSource)draggedObject;
 			
 			if ((source.getType() & type) == 0) {
+				return null;
+			}
+			
+			if (source.getWorkbenchWindow() != window) {
 				return null;
 			}
 			

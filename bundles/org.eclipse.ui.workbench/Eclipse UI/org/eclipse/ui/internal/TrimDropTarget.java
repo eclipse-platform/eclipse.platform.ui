@@ -99,6 +99,11 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 		if (draggedObject instanceof ViewPane) {
 			final ViewPane draggedPane = (ViewPane)draggedObject;
 			
+			// We can't drag between workbench windows
+			if (draggedPane.getWorkbenchWindow() != window) {
+				return null;
+			}
+			
 			// Determine which border we're dragging over
 			final Rectangle bounds = Geometry.toDisplay(layout.getCenterControl().getParent(), 
 					layout.getCenterControl().getBounds());
