@@ -8,6 +8,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
+  Dan Rubel <dan_rubel@instantiations.com> 
+    - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
 **********************************************************************/
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
@@ -33,12 +35,16 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String ATT_RELATIVE="relative";//$NON-NLS-1$
 	private static final String ATT_RELATIONSHIP="relationship";//$NON-NLS-1$
 	private static final String ATT_RATIO="ratio";//$NON-NLS-1$
+	// ATT_VISIBLE added by dan_rubel@instantiations.com  
+	private static final String ATT_VISIBLE="visible";//$NON-NLS-1$
 	private static final String VAL_LEFT="left";//$NON-NLS-1$
 	private static final String VAL_RIGHT="right";//$NON-NLS-1$
 	private static final String VAL_TOP="top";//$NON-NLS-1$
 	private static final String VAL_BOTTOM="bottom";//$NON-NLS-1$
 	private static final String VAL_STACK="stack";//$NON-NLS-1$
 	private static final String VAL_FAST="fast";//$NON-NLS-1$
+	// VAL_FALSE added by dan_rubel@instantiations.com  
+	private static final String VAL_FALSE="false";//$NON-NLS-1$	
 /**
  * RegistryViewReader constructor comment.
  */
@@ -103,6 +109,7 @@ private boolean processPerspectiveShortcut(IConfigurationElement element) {
 		pageLayout.addPerspectiveShortcut(id);
 	return true;
 }
+// processView(IConfigurationElement) modified by dan_rubel@instantiations.com
 /**
  * Process a view
  */
@@ -111,8 +118,26 @@ private boolean processView(IConfigurationElement element) {
 	String id = element.getAttribute(ATT_ID);
 	String relative = element.getAttribute(ATT_RELATIVE);
 	String relationship = element.getAttribute(ATT_RELATIONSHIP);
+	String ratioString = element.getAttribute(ATT_RATIO);
+	float ratio;
+	
 	if (id == null || relative == null || relationship == null)
 		return false;
+	
+	// Get the ratio.
+	if (ratioString == null) {
+		// The ratio has not been specified.
+		ratio = IPageLayout.NULL_RATIO;
+	} else {
+		try {
+			ratio = new Float(ratioString).floatValue();
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		// If the ratio is outside the allowable range, mark it as invalid.
+		if (ratio < IPageLayout.RATIO_MIN || ratio > IPageLayout.RATIO_MAX)
+			ratio = IPageLayout.INVALID_RATIO;
+	}
 
 	// Get relationship details.
 	boolean stack = false;
@@ -132,32 +157,37 @@ private boolean processView(IConfigurationElement element) {
 		fast = true;
 	else
 		return false;
+	boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
 
 	// If stack ..
 	if (stack) {
-		pageLayout.stackView(id, relative);
+		if (visible)
+			pageLayout.stackView(id, relative);
+		else
+			pageLayout.stackPlaceholder(id, relative);
 		return true;
 	}
 	
-	// If fast ..
+	// If the view is a fast view...
 	if (fast) {
-		pageLayout.addFastView(id);
+		if (ratio == IPageLayout.NULL_RATIO) {
+			// The ratio has not been specified.
+			pageLayout.addFastView(id);
+		} else {
+			pageLayout.addFastView(id, ratio);
+		}
 		return true;
 	}
-
-	// Otherwise, get ratio.
-	float ratio = 0.5f;
-	String test = element.getAttribute(ATT_RATIO);
-	if (test != null) {
-		try {
-			ratio = Float.parseFloat(test);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
 	
-	// Add view.
-	pageLayout.addView(id, intRelation, ratio, relative);
+	// The view is a regular view.
+	// If the ratio is not specified or is invalid, use the default ratio.
+	if (ratio == IPageLayout.NULL_RATIO || ratio == IPageLayout.INVALID_RATIO)
+		ratio = IPageLayout.DEFAULT_VIEW_RATIO;
+
+	if (visible)
+		pageLayout.addView(id, intRelation, ratio, relative);
+	else
+		pageLayout.addPlaceholder(id, intRelation, ratio, relative);
 	return true;
 }
 /**
