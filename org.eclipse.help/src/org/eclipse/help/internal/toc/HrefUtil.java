@@ -33,7 +33,7 @@ public class HrefUtil {
 			return href;
 		int ddIndex = href.indexOf("../");
 		if (ddIndex == 0) {
-			return href.substring("..".length());
+			return href.substring(2);
 		} else {
 			if (href.length() > 0)
 				return "/" + pluginID + "/" + href;
