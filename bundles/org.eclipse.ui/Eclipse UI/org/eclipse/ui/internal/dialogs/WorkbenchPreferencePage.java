@@ -38,6 +38,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button linkButton;
 	private Button refreshButton;
+	private IntegerFieldEditor saveInterval;
 
 	private Button doubleClickButton;
 	private Button singleClickButton;
@@ -98,6 +99,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton = new Button(composite, SWT.CHECK);
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 
+		createSpace(composite);
+		createSaveIntervalGroup(composite);
+		
 		createSpace(composite);
 		createSingleClickGroup(composite);
 
@@ -176,6 +180,40 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openOnSingleClick = singleClick;
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
+	}	
+	/**
+	 * Create a composite that contains entry fields specifying save interval preference.
+	 */
+	private void createSaveIntervalGroup(Composite composite) {
+		Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = gd.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);	
+		
+		saveInterval = new IntegerFieldEditor(IPreferenceConstants.SAVE_INTERVAL, WorkbenchMessages.getString("WorkbenchPreference.saveInterval"), groupComposite); //$NON-NLS-1$
+
+		saveInterval.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+		saveInterval.setPreferencePage(this);
+		saveInterval.setTextLimit(Integer.toString(IPreferenceConstants.MAX_SAVE_INTERVAL).length());
+		saveInterval.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.saveIntervalError", new Object[] { new Integer(IPreferenceConstants.MAX_SAVE_INTERVAL)})); //$NON-NLS-1$
+		saveInterval.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		saveInterval.setValidRange(1, IPreferenceConstants.MAX_SAVE_INTERVAL);
+
+		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
+		long interval = description.getSnapshotInterval() / 60000;
+		saveInterval.setStringValue(Long.toString(interval));
+
+		saveInterval.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(saveInterval.isValid());
+			}
+		});
+		
 	}	
 	/**
 	 * Utility method that creates a radio button instance
@@ -264,6 +302,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
+		saveInterval.loadDefault();
 		
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
@@ -316,6 +355,18 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the link navigator to editor setting
 		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
+		long oldSaveInterval = description.getSnapshotInterval() / 60000;
+		long newSaveInterval = new Long(saveInterval.getStringValue()).longValue();
+		if(oldSaveInterval != newSaveInterval) {
+			try {
+				description.setSnapshotInterval(newSaveInterval * 60000);
+				ResourcesPlugin.getWorkspace().setDescription(description);
+				store.firePropertyChangeEvent(IPreferenceConstants.SAVE_INTERVAL, new Integer((int)oldSaveInterval), new Integer((int)newSaveInterval));
+			} catch (CoreException e) {
+				WorkbenchPlugin.log("Error changing save interval preference", e.getStatus());
+			}
+		}
+
 		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,openOnSingleClick); //$NON-NLS-1$
 		store.setValue(IPreferenceConstants.SELECT_ON_HOVER,selectOnHover); //$NON-NLS-1$
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY,openAfterDelay); //$NON-NLS-1$
@@ -327,7 +378,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
-		
+
 		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
