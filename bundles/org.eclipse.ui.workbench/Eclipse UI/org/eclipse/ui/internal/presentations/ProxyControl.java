@@ -90,9 +90,17 @@ public class ProxyControl {
 			return;
 		}
 		
-		Rectangle bounds = Geometry.toControl(getTargetControl().getParent(), DragUtil.getDisplayBounds(control));
+		Rectangle parentBounds = DragUtil.getDisplayBounds(control.getParent());
 		
-		getTargetControl().setBounds(bounds);
+		// Compute the clipped bounds for the control (display coordinates)
+		Rectangle bounds = control.getBounds();
+		bounds.x += parentBounds.x;
+		bounds.y += parentBounds.y;
+		bounds = bounds.intersection(parentBounds);
+		
+		Rectangle targetBounds = Geometry.toControl(getTargetControl().getParent(), bounds);
+		
+		getTargetControl().setBounds(targetBounds);
 	}
 	
 	/**
