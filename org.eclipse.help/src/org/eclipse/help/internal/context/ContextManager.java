@@ -164,7 +164,7 @@ public class ContextManager implements IRegistryChangeListener {
 	 * 
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
-	public void registryChanged(IRegistryChangeEvent event) {
+	public synchronized void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas = event.getExtensionDeltas(
 				HelpPlugin.PLUGIN_ID, CONTEXTS_XP_NAME);
 		for (int i = 0; i < deltas.length; i++) {
