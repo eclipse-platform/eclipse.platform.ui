@@ -39,19 +39,12 @@ import java.util.Map;
  * @see ITextStore
  * @see ILineTracker
  */
-public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2 {
+public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3 {
 		
 	/** The document's text store */
 	private ITextStore   fStore;
 	/** The document's line tracker */
 	private ILineTracker fTracker;
-	/** The document's partitioner */
-	private IDocumentPartitioner fDocumentPartitioner;
-	/** 
-	 * The document's partitioner casted to <code>IDocumentPartitionerExtension</code>. 
-	 * @since 2.0
-	 */
-	private IDocumentPartitionerExtension fDocumentPartitionerExtension;
 	/** The registered document listeners */
 	private List fDocumentListeners;
 	/** The registered prenotified document listeners */
@@ -95,15 +88,16 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private DocumentEvent fDeferredDocumentEvent;
 	/**
-	 * Indicates whether listeners must be notified when listener notification will be resumed.
-	 * @since 2.1
+	 * The registered document partitioners.
+	 * @since 3.0
 	 */
-	private boolean fPartitionHasChanged;
+	private Map fDocumentPartitioners;
+	
 	/**
-	 * The region of changed parititions to be sent when listener notification will be resumed.
-	 * @since 2.1
+	 * The partitioning changed event.
+	 * @since 3.0
 	 */
-	private IRegion fChangedPartition;
+	private DocumentPartitioningChangedEvent fDocumentPartitioningChangedEvent;
 	
 	
 	/**
@@ -171,7 +165,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see IDocument#getDocumentPartitioner
 	 */
 	public IDocumentPartitioner getDocumentPartitioner() {
-		return fDocumentPartitioner;
+		return getDocumentPartitioner(DEFAULT_PARTITIONING);
 	}
 	
 	
@@ -202,11 +196,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see org.eclipse.jface.text.IDocument#setDocumentPartitioner(org.eclipse.jface.text.IDocumentPartitioner)
 	 */
 	public void setDocumentPartitioner(IDocumentPartitioner partitioner) {
-		fDocumentPartitioner= partitioner;
-		if (fDocumentPartitioner instanceof IDocumentPartitionerExtension)
-			fDocumentPartitionerExtension= (IDocumentPartitionerExtension) fDocumentPartitioner;
-			
-		fireDocumentPartitioningChanged(new Region(0, getLength()));
+		setDocumentPartitioner(DEFAULT_PARTITIONING, partitioner);
 	}
 			
 	/**
@@ -472,6 +462,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * 
 	 * @see IDocumentPartitioningListenerExtension
 	 * @since 2.0
+	 * @deprecated use <code>fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent)</code> instead
 	 */
 	protected void fireDocumentPartitioningChanged(IRegion region) {
 		
@@ -490,6 +481,36 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
+	 * Fires the document partitioning changed notification to all registered 
+	 * document partitioning listeners. Uses a robust iterator.
+	 * 
+	 * @param event the document partitioning changed event
+	 * 
+	 * @see IDocumentPartitioningListenerExtension2
+	 * @since 3.0
+	 */
+	protected void fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent event) {
+		if (fDocumentPartitioningListeners == null || fDocumentPartitioningListeners.size() == 0)
+			return;
+			
+		List list= new ArrayList(fDocumentPartitioningListeners);
+		Iterator e= list.iterator();
+		while (e.hasNext()) {
+			IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
+			if (l instanceof IDocumentPartitioningListenerExtension2) {
+				IDocumentPartitioningListenerExtension2 extension2= (IDocumentPartitioningListenerExtension2) l;
+				extension2.documentPartitioningChanged(event);
+			} else if (l instanceof IDocumentPartitioningListenerExtension) {
+				IDocumentPartitioningListenerExtension extension= (IDocumentPartitioningListenerExtension) l;
+				extension.documentPartitioningChanged(this, event.getCoverage());
+			} else {
+				l.documentPartitioningChanged(this);
+			}
+		}
+		
+	}
+
+	/**
 	 * Fires the given document event to all registers document listeners informing them
 	 * about the forthcoming document manipulation. Uses a robust iterator.
 	 *
@@ -500,9 +521,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		// IDocumentExtension
 		if (fReentranceCount == 0)
 			flushPostNotificationChanges();
-		
-		if (fDocumentPartitioner != null)
-			fDocumentPartitioner.documentAboutToBeChanged(event);
+					
+		if (fDocumentPartitioners != null) {
+			Iterator e= fDocumentPartitioners.values().iterator();
+			while (e.hasNext()) {
+				IDocumentPartitioner p= (IDocumentPartitioner) e.next();
+				p.documentAboutToBeChanged(event);
+			}
+		}
 			
 		if (fPrenotifiedDocumentListeners.size() > 0) {
 			
@@ -525,6 +551,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		}
 	}
 	
+	
 	/**
 	 * Updates document partitioning and document positions according to the 
 	 * specification given by the document event.
@@ -532,17 +559,25 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param event the document event describing the change to which structures must be adapted
 	 */
 	protected void updateDocumentStructures(DocumentEvent event) {
-		fPartitionHasChanged= false;
-		fChangedPartition= null;
 		
-		if (fDocumentPartitioner != null) {
-			if (fDocumentPartitionerExtension != null) {
-				fChangedPartition= fDocumentPartitionerExtension.documentChanged2(event);
-				fPartitionHasChanged= (fChangedPartition != null);
-			} else
-			fPartitionHasChanged= fDocumentPartitioner.documentChanged(event);
+		if (fDocumentPartitioners != null) {
+			fDocumentPartitioningChangedEvent= new DocumentPartitioningChangedEvent(this);
+			Iterator e= fDocumentPartitioners.keySet().iterator();
+			while (e.hasNext()) {
+				String partitioning= (String) e.next();
+				IDocumentPartitioner partitioner= (IDocumentPartitioner) fDocumentPartitioners.get(partitioning);
+				if (partitioner instanceof IDocumentPartitionerExtension) {
+					IDocumentPartitionerExtension extension= (IDocumentPartitionerExtension) partitioner;
+					IRegion r= extension.documentChanged2(event);
+					if (r != null)
+						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, r.getOffset(), r.getLength());
+				} else {
+					if (partitioner.documentChanged(event))
+						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, 0, event.getDocument().getLength());
+				}
+			}
 		}
-			
+		
 		if (fPositions.size() > 0)
 			updatePositions(event);
 	}
@@ -553,14 +588,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Executes all registered post notification replace operation.
 	 * 
 	 * @param event the event to be sent out.
-	 * @see IDocumentExtension
 	 */
 	protected void doFireDocumentChanged(DocumentEvent event) {
-		boolean hasChanged= fPartitionHasChanged;
-		IRegion changedRegion= fChangedPartition;
-		fPartitionHasChanged= false;
-		fChangedPartition= null;
-		doFireDocumentChanged(event, hasChanged, changedRegion);
+		boolean changed= fDocumentPartitioningChangedEvent != null && !fDocumentPartitioningChangedEvent.isEmpty();
+		IRegion change= changed ? fDocumentPartitioningChangedEvent.getCoverage() : null;
+		doFireDocumentChanged(event, changed, change);
 	}
 	
 	/**
@@ -571,13 +603,28 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param event the event to be sent out
 	 * @param firePartitionChange <code>true</code> if a partition change notification should be sent
 	 * @param partitionChange the region whose partitioning changed
-	 * @see IDocumentExtension
 	 * @since 2.0
+	 * @deprecated use doFireDocumentChanged2(DocumentEvent) instead; this method will be removed
 	 */
 	protected void doFireDocumentChanged(DocumentEvent event, boolean firePartitionChange, IRegion partitionChange) {
+		doFireDocumentChanged2(event);
+	}
+	
+	/**
+	 * Notifies all listeners about the given document change.
+	 * Uses a robust iterator. <p>
+	 * Executes all registered post notification replace operation.
+	 * 
+	 * @param event the event to be sent out
+	 * @since 3.0
+	 * @deprecated this method will be renamed to <code>doFireDocumentChanged</code>
+	 */
+	protected void doFireDocumentChanged2(DocumentEvent event) {
 		
-		if (firePartitionChange)
-			fireDocumentPartitioningChanged(partitionChange);
+		DocumentPartitioningChangedEvent p= fDocumentPartitioningChangedEvent;
+		fDocumentPartitioningChangedEvent= null;
+		if (p != null && !p.isEmpty())
+			fireDocumentPartitioningChanged(p);
 		
 		if (fPrenotifiedDocumentListeners.size() > 0) {
 			
@@ -638,22 +685,28 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see org.eclipse.jface.text.IDocument#getContentType(int)
 	 */
 	public String getContentType(int offset) throws BadLocationException {
-		if ((0 > offset) || (offset > getLength()))
-			throw new BadLocationException();
-			
-		if (fDocumentPartitioner == null)
-			return DEFAULT_CONTENT_TYPE;
-			
-		return fDocumentPartitioner.getContentType(offset);
+		String contentType= null;
+		try {
+			contentType= getContentType(DEFAULT_PARTITIONING, offset);
+			Assert.isNotNull(contentType);
+		} catch (BadPartitioningException e) {
+			Assert.isTrue(false);
+		}
+		return contentType;
 	}
 	
 	/*
 	 * @see IDocument#getLegalContentTypes()
 	 */
 	public String[] getLegalContentTypes() {
-		if (fDocumentPartitioner == null)
-			return new String[] { DEFAULT_CONTENT_TYPE };
-		return fDocumentPartitioner.getLegalContentTypes();
+		String[] contentTypes= null;
+		try {
+			contentTypes= getLegalContentTypes(DEFAULT_PARTITIONING);
+			Assert.isNotNull(contentTypes);
+		} catch (BadPartitioningException e) {
+			Assert.isTrue(false);
+		}
+		return contentTypes;
 	}
 		
 	/*
@@ -737,26 +790,28 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see IDocument#getPartition(int)
 	 */
 	public ITypedRegion getPartition(int offset) throws BadLocationException {
-		if ((0 > offset) || (offset > getLength()))
-			throw new BadLocationException();
-		
-		if (fDocumentPartitioner == null)
-			return new TypedRegion(0, getLength(), DEFAULT_CONTENT_TYPE);
-			
-		return fDocumentPartitioner.getPartition(offset);
+		ITypedRegion partition= null;
+		try {
+			partition= getPartition(DEFAULT_PARTITIONING, offset);
+			Assert.isNotNull(partition);
+		} catch (BadPartitioningException e) {
+			Assert.isTrue(false);
+		}
+		return  partition;
 	}
 	
 	/*
 	 * @see IDocument#computePartitioning(int, int)
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) throws BadLocationException {
-		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
-			throw new BadLocationException();
-		
-		if (fDocumentPartitioner == null)
-			return new TypedRegion[] { new TypedRegion(offset, length, DEFAULT_CONTENT_TYPE) };
-			
-		return fDocumentPartitioner.computePartitioning(offset, length);
+		ITypedRegion[] partitioning= null;
+		try {
+			partitioning= computePartitioning(DEFAULT_PARTITIONING, offset, length);
+			Assert.isNotNull(partitioning);
+		} catch (BadPartitioningException e) {
+			Assert.isTrue(false);
+		}
+		return partitioning;
 	}
 	
 	/*
@@ -1293,5 +1348,104 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			fDeferredDocumentEvent= null;
 			doFireDocumentChanged(event);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#computePartitioning(java.lang.String, int, int)
+	 * @since 3.0
+	 */
+	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length) throws BadLocationException, BadPartitioningException {
+		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
+			throw new BadLocationException();
+		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
+		if (partitioner != null)
+			return partitioner.computePartitioning(offset, length);
+		if (DEFAULT_PARTITIONING.equals(partitioning))
+			return new TypedRegion[] { new TypedRegion(offset, length, DEFAULT_CONTENT_TYPE) };
+		throw new BadPartitioningException();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getContentType(java.lang.String, int)
+	 * @since 3.0
+	 */
+	public String getContentType(String partitioning, int offset) throws BadLocationException, BadPartitioningException {
+		if ((0 > offset) || (offset > getLength()))
+			throw new BadLocationException();
+		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
+		if (partitioner != null)
+			return partitioner.getContentType(offset);
+		if (DEFAULT_PARTITIONING.equals(partitioning))
+			return DEFAULT_CONTENT_TYPE;
+		throw new BadPartitioningException();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getDocumentPartitioner(java.lang.String)
+	 * @since 3.0
+	 */
+	public IDocumentPartitioner getDocumentPartitioner(String partitioning)  {
+		return fDocumentPartitioners != null ? (IDocumentPartitioner) fDocumentPartitioners.get(partitioning) : null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getLegalContentTypes(java.lang.String)
+	 * @since 3.0
+	 */
+	public String[] getLegalContentTypes(String partitioning) throws BadPartitioningException {
+		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
+		if (partitioner != null)
+			return partitioner.getLegalContentTypes();
+		if (DEFAULT_PARTITIONING.equals(partitioning))
+			return new String[] { DEFAULT_CONTENT_TYPE };
+		throw new BadPartitioningException();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getPartition(java.lang.String, int)
+	 * @since 3.0
+	 */
+	public ITypedRegion getPartition(String partitioning, int offset) throws BadLocationException, BadPartitioningException {
+		if ((0 > offset) || (offset > getLength()))
+			throw new BadLocationException();
+		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
+		if (partitioner != null)
+			return partitioner.getPartition(offset);
+		if (DEFAULT_PARTITIONING.equals(partitioning))
+			return new TypedRegion(0, getLength(), DEFAULT_CONTENT_TYPE);
+		throw new BadPartitioningException();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getPartitionings()
+	 * @since 3.0
+	 */
+	public String[] getPartitionings() {
+		if (fDocumentPartitioners == null)
+			return new String[0];
+		String[] partitionings= new String[fDocumentPartitioners.size()];
+		fDocumentPartitioners.keySet().toArray(partitionings);
+		return partitionings;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension3#setDocumentPartitioner(java.lang.String, org.eclipse.jface.text.IDocumentPartitioner)
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioner(String partitioning, IDocumentPartitioner partitioner) {
+		if (partitioner == null) {
+			if (fDocumentPartitioners != null) {
+				fDocumentPartitioners.remove(partitioning);
+				if (fDocumentPartitioners.size() == 0)
+					fDocumentPartitioners= null;
+			}
+		} else {
+			if (fDocumentPartitioners == null)
+				fDocumentPartitioners= new HashMap();
+			fDocumentPartitioners.put(partitioning, partitioner);
+		}
+		DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
+		event.setPartitionChange(partitioning, 0, getLength());
+		fireDocumentPartitioningChanged(event);
 	}
 }

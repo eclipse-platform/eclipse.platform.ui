@@ -173,11 +173,33 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		protected ChildDocument fChildDocument;
 		/** The parent document */
 		protected IDocument fParentDocument;
+		/** 
+		 * The parent document as <code>IDocumentExtensions3</code>.
+		 * @since 3.0
+		 */
+		protected IDocumentExtension3 fParentDocument3;
+		/** 
+		 * The partitioning of this partitioner.
+		 * @since 3.0
+		 */
+		protected String fPartitioning;
+		
+		/** 
+		 * Creates a new child document partitioner for the given document
+		 * partitioning.
+		 * 
+		 * @param partitioning the document partitioning
+		 * @since 3.0
+		 */
+		protected ChildPartitioner(String partitioning) {
+			fPartitioning= partitioning;
+		}
 		
 		/** 
 		 * Creates a new child document partitioner.
 		 */
 		protected ChildPartitioner() {
+			fPartitioning= null;
 		}
 		
 		/*
@@ -186,8 +208,11 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		public ITypedRegion getPartition(int offset) {
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
+				if (fParentDocument3 != null)
+					return fParentDocument3.getPartition(fPartitioning, offset);
 				return fParentDocument.getPartition(offset);
 			} catch (BadLocationException x) {
+			} catch (BadPartitioningException x) {
 			}
 			
 			return null;
@@ -199,8 +224,11 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		public ITypedRegion[] computePartitioning(int offset, int length) {
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
+				if (fParentDocument3 != null)
+					return fParentDocument3.computePartitioning(fPartitioning, offset, length);
 				return fParentDocument.computePartitioning(offset, length);
 			} catch (BadLocationException x) {
+			} catch (BadPartitioningException x) {
 			}
 			
 			return null;
@@ -212,8 +240,11 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		public String getContentType(int offset) {
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
+				if (fParentDocument3 != null)
+					return fParentDocument3.getContentType(fPartitioning, offset);
 				return fParentDocument.getContentType(offset);
 			} catch (BadLocationException x) {
+			} catch (BadPartitioningException x) {
 			}
 			
 			return null;
@@ -223,6 +254,12 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		 * @see IDocumentPartitioner#getLegalContentTypes()
 		 */
 		public String[] getLegalContentTypes() {
+			if (fParentDocument3 != null)
+				try {
+					return fParentDocument3.getLegalContentTypes(fPartitioning);
+				} catch (BadPartitioningException x) {
+					return new String[0];
+				}
 			return fParentDocument.getLegalContentTypes();
 		}
 		
@@ -247,6 +284,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		public void disconnect() {
 			fChildDocument= null;
 			fParentDocument= null;
+			fParentDocument3= null;
 		}
 		
 		/*
@@ -256,6 +294,8 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			Assert.isTrue(childDocument instanceof ChildDocument);
 			fChildDocument= (ChildDocument) childDocument;
 			fParentDocument= fChildDocument.getParentDocument();
+			if (fParentDocument instanceof IDocumentExtension3)
+				fParentDocument3= (IDocumentExtension3) fParentDocument;
 		}	
 	}
 	
@@ -297,10 +337,20 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		}
 
 		ChildDocument child= new ChildDocument(master, pos);
-		IDocumentPartitioner partitioner= new ChildPartitioner();
-		child.setDocumentPartitioner(partitioner);
-		partitioner.connect(child);
-
+		if (master instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) master;
+			String[] partitionings= extension3.getPartitionings();
+			for (int i= 0; i < partitionings.length; i++) {
+				IDocumentPartitioner partitioner= new ChildPartitioner(partitionings[i]);
+				child.setDocumentPartitioner(partitionings[i], partitioner);
+				partitioner.connect(child);
+			}
+		} else {
+			IDocumentPartitioner partitioner= new ChildPartitioner();
+			child.setDocumentPartitioner(partitioner);
+			partitioner.connect(child);
+		}
+		
 		pos.fChildDocument= child;
 		
 		return child;
@@ -316,7 +366,12 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			
 		ChildDocument childDocument= (ChildDocument) slave;
 		
-		childDocument.getDocumentPartitioner().disconnect();
+		String[] partitionings= childDocument.getPartitionings();
+		for (int i= 0; i < partitionings.length; i ++) {
+			IDocumentPartitioner partitioner= childDocument.getDocumentPartitioner(partitionings[i]);
+			if (partitioner != null)
+				partitioner.disconnect();
+		}
 		
 		ChildPosition pos= (ChildPosition) childDocument.getParentDocumentRange();
 		IDocument parent= pos.fParentDocument;

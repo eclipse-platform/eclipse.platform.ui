@@ -11,9 +11,11 @@
 
 package org.eclipse.jface.text;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 
 /**
@@ -277,4 +279,131 @@ public class TextUtilities {
 		return new DocumentEvent(document, offset, length, text);
 	}
 	
+	/**
+	 * Removes all connected document partitioners from the given document and stores them
+	 * under their partitioning name in a map. This map is returned. After this method has been called
+	 * the given document is no longer connected to any document partitioner.
+	 * 
+	 * @param document the document
+	 * @return the map containing the removed partitioners
+	 */
+	public static Map removeDocumentPartitioners(IDocument document) {
+		Map partitioners= new HashMap();
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			String[] partitionings= extension3.getPartitionings();
+			for (int i= 0; i < partitionings.length; i++) {
+				IDocumentPartitioner partitioner= extension3.getDocumentPartitioner(partitionings[i]);
+				if (partitioner != null) {
+					extension3.setDocumentPartitioner(partitionings[i], null);
+					partitioner.disconnect();
+					partitioners.put(partitionings[i], partitioner);
+				}
+			}
+		} else {
+			IDocumentPartitioner partitioner= document.getDocumentPartitioner();
+			if (partitioner != null) {
+				document.setDocumentPartitioner(null);
+				partitioner.disconnect();
+				partitioners.put(IDocumentExtension3.DEFAULT_PARTITIONING, partitioner);
+			}
+		}
+		return partitioners;
+	}
+	
+	/**
+	 * Connects the given document with all document partitioners stored in the given map under
+	 * their partitioning name. This method cleans the given map.
+	 * 
+	 * @param document the document
+	 * @param partitioners the map containing the partitioners to be connected
+	 * @since 3.0
+	 */
+	public static void addDocumentPartitioners(IDocument document, Map partitioners) {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			Iterator e= partitioners.keySet().iterator();
+			while (e.hasNext()) {
+				String partitioning= (String) e.next();
+				IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(partitioning);
+				extension3.setDocumentPartitioner(partitioning, partitioner);
+				partitioner.connect(document);
+			}
+			partitioners.clear();
+		} else {
+			IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(IDocumentExtension3.DEFAULT_PARTITIONING);
+			document.setDocumentPartitioner(partitioner);
+			partitioner.connect(document);
+		}
+	}
+	
+	/**
+	 * Returns the content type at the given offset of the given document.
+	 * 
+	 * @param document the document
+	 * @param partitioning the partitioning to be used
+	 * @param offset the offset
+	 * @return the content type at the given offset of the document
+	 * @throws BadLocationException if offset is invalid in the document
+	 * @since 3.0
+	 */
+	public static String getContentType(IDocument document, String partitioning, int offset) throws BadLocationException {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			try {
+				return extension3.getContentType(partitioning, offset);
+			} catch (BadPartitioningException x) {
+				return null;
+			}
+		} else {
+			return document.getContentType(offset);
+		}		
+	}
+	
+	/**
+	 * Returns the partition of the given offset of the given document.
+	 * 
+	 * @param document the document
+	 * @param partitioning the partitioning to be used
+	 * @param offset the offset
+	 * @return the content type at the given offset of this viewer's input document
+	 * @throws BadLocationException if offset is invalid in the given document
+	 * @since 3.0
+	 */
+	public static ITypedRegion getPartition(IDocument document, String partitioning, int offset) throws BadLocationException {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			try {
+				return extension3.getPartition(partitioning, offset);
+			} catch (BadPartitioningException x) {
+				return null;
+			}
+		} else {
+			return document.getPartition(offset);
+		}	
+	}
+
+	/**
+	 * Computes and returns the partitioning for the given region of the given document for the given partitioning name.
+	 * 
+	 * @param document the document
+	 * @param partitioning the partitioning name
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @return  the partitioning for the given region of the given document for the given partitioning name
+	 * @throws BadLocationException if the given region is invalid for the given document
+	 * @since 3.0
+	 */
+	public static ITypedRegion[] computePartitioning(IDocument document, String partitioning, int offset, int length) throws BadLocationException {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			try {
+				return extension3.computePartitioning(partitioning, offset, length);
+			} catch (BadPartitioningException x) {
+				return null;
+			}
+		} else {
+			return document.computePartitioning(offset, length);
+		}
+	}
 }
