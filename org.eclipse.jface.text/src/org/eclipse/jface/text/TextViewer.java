@@ -3514,7 +3514,7 @@ public class TextViewer extends Viewer implements
 //				ignoreAutoEditStrategies(false);
 				break;
 			case DELETE:
-				deleteText();
+				fTextWidget.invokeAction(ST.DELETE_NEXT);
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
 				break;

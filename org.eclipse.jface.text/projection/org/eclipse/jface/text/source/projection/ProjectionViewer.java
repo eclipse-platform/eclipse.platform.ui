@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -1467,7 +1468,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						selection= getSelectedRange();
 						Point widgetSelection= textWidget.getSelectionRange();
 						if (selection.y == 0 || selection.y == widgetSelection.y)
-							deleteText();
+							getTextWidget().invokeAction(ST.DELETE_NEXT);
 						else
 							deleteTextRange(selection.x, selection.y, textWidget);
 						
