@@ -42,6 +42,17 @@
        	    category="org.eclipse.team.ui.TeamPreferences">
        </page>
    </extension>
+   
+<!-- ************** Property Pages *************** -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            name="%loginDetails"
+            objectClass="org.eclipse.team.internal.ui.target.SiteElement"
+            id="org.eclipse.team.target.ui.propertyPages.AuthenticatedTargetSitePropertiesPage"
+            class="org.eclipse.team.internal.ui.target.AuthenticatedTargetSitePropertiesPage">
+      </page>
+   </extension>
 
 <!-- ****************** POPUP ACTIONS *************** -->
 

@@ -47,10 +47,10 @@ import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -88,7 +88,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	// The view's actions
 	private Action addSiteAction;
 	private Action newFolderAction;
-	private Action deleteAction;
+	private PropertyDialogAction propertiesAction;
 	
 	/**
 	 * Sorter for the folderContents table
@@ -432,6 +432,22 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		tbm.add(addSiteAction);
 		tbm.update(false);
 		
+		// Properties
+		propertiesAction = new PropertyDialogAction(shell, folderTree);
+		getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);		
+		IStructuredSelection selection = (IStructuredSelection)folderTree.getSelection();
+		if (selection.size() == 1 && selection.getFirstElement() instanceof SiteElement) {
+			propertiesAction.setEnabled(true);
+		} else {
+			propertiesAction.setEnabled(false);
+		}
+		folderTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection ss = (IStructuredSelection)event.getSelection();
+				boolean enabled = ss.size() == 1 && ss.getFirstElement() instanceof SiteElement;
+				propertiesAction.setEnabled(enabled);
+			}
+		});
 		
 		MenuManager treeMgr = new MenuManager();
 		MenuManager tableMgr = new MenuManager();
@@ -448,6 +464,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				sub.add(addSiteAction);
 				sub.add(newFolderAction);
+				manager.add(propertiesAction);
 			}
 		};
 		treeMgr.addMenuListener(menuListener);

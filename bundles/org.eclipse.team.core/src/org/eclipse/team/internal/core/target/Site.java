@@ -10,14 +10,23 @@
  ******************************************************************************/
 package org.eclipse.team.internal.core.target;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Provider;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.core.Assert;
 
 /**
  * A <code>Site</code> is a place where resources can be deployed and 
@@ -26,6 +35,9 @@ import org.eclipse.team.core.sync.IRemoteResource;
  * @see ISiteFactory
  */
 public abstract class Site {
+	
+	//The location of the site's resources:
+	private URL rootUrl;
 
 	/**
 	 * Answers a <code>TargetProvider</code> instance for the given path at 
@@ -45,24 +57,16 @@ public abstract class Site {
 	public abstract String getType();
 	
 	/**
-	 * Answers the location of this site as a URL. For example:
-	 * <blockquote><pre>
-	 * http://www.mysite.com:14356/dav
-	 * </pre></blockquote>
-	 * 
-	 * @return URL location of this site
-	 */
-	public abstract URL getURL();
-	
-	/**
 	 * Answers a string that can be displayed to the user that represents
 	 * this site. For example:
 	 * <blockquote><pre>
 	 * http://usename@www.mysite.com/dav (WebDav)
  	 * </pre></blockquote>
 	 */
-	public abstract String getDisplayName();
-	
+	public String getDisplayName() {
+		return getURL().toExternalForm();
+	}
+
 	/**
 	 * Writes the state of this site such that the corresponding concrete
 	 * <code>ISiteFactory</code> class can restore the site.
@@ -95,15 +99,19 @@ public abstract class Site {
 	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object other) {
-		if(this == other) return true;
-		if(! (other instanceof Site)) return false;
+		if (this == other) return true;
+		if (!(other instanceof Site)) return false;
 		Site location = (Site)other;
-		return getType().equals(location.getType()) && 
-				getURL().equals(location.getURL());
+		if (!getType().equals(location.getType())) return false;
+		URL url = getURL();
+		if (url == null) return super.equals(other);
+		return url.equals(location.getURL());
 	}
 	
 	public int hashCode() {
-		return getURL().hashCode();
+		URL url = getURL();
+		if (url == null) return super.hashCode();
+		return url.hashCode();
 	}
 
 	/**
@@ -121,5 +129,25 @@ public abstract class Site {
 	 * @throws TeamException
 	 */
 	public abstract void dispose() throws TeamException;
+
+	/**
+	 * Answers the location of this site as a URL. For example:
+	 * <blockquote><pre>
+	 * http://www.mysite.com:14356/dav
+	 * </pre></blockquote>
+	 * 
+	 * @return URL location of this site
+	 */
+	public URL getURL() {
+		return rootUrl;
+	}
+
+	/**
+	 * Sets the rootUrl.
+	 * @param rootUrl The rootUrl to set
+	 */
+	protected void setURL(URL rootUrl) {
+		this.rootUrl = rootUrl;
+	}
 
 }
