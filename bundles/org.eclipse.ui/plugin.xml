@@ -1131,11 +1131,6 @@
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Alt+Cr"
-            commandId="org.eclipse.ui.file.properties">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
             keySequence="Ctrl+Z">
       </keyBinding>
       <keyBinding
@@ -1184,36 +1179,11 @@
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Alt+Arrow_Left"
-            commandId="org.eclipse.ui.navigate.backwardHistory">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="Alt+Arrow_Right"
-            commandId="org.eclipse.ui.navigate.forwardHistory">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
             keySequence="Ctrl+B">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Alt+-"
-            commandId="org.eclipse.ui.window.showSystemMenu">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
             keySequence="Ctrl+F10">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="F12"
-            commandId="org.eclipse.ui.window.activateEditor">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="Ctrl+M"
-            commandId="org.eclipse.ui.window.maximizePart">
       </keyBinding>
       <keyBinding
             platform="carbon"
@@ -1273,12 +1243,6 @@
             platform="carbon"
             keySequence="Ctrl+Arrow_Down"
             contextId="org.eclipse.ui.textEditorScope"> 
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="Insert"
-            contextId="org.eclipse.ui.textEditorScope"
-            commandId="org.eclipse.ui.edit.text.toggleOverwrite">
       </keyBinding>
       <keyBinding
             platform="carbon"
@@ -1637,26 +1601,6 @@
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            keySequence="Alt+-"            
-            commandId="org.eclipse.ui.window.showSystemMenu"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            keySequence="Ctrl+F10"            
-            commandId="org.eclipse.ui.window.showViewMenu"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            keySequence="F12"            
-            commandId="org.eclipse.ui.window.activateEditor"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            keySequence="Ctrl+M"            
-            commandId="org.eclipse.ui.window.maximizePart"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
             keySequence="Ctrl+S"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncremental"
@@ -1858,12 +1802,6 @@
             keySequence="Esc D"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            keySequence="Insert"
-            contextId="org.eclipse.ui.textEditorScope"
-            commandId="org.eclipse.ui.edit.text.toggleOverwrite"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
