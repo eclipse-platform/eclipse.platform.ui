@@ -15,10 +15,15 @@ import org.eclipse.swt.widgets.*;
  * A concrete viewer based on an SWT <code>List</code> control.
  * <p>
  * This class is not intended to be subclassed. It is designed to be
- * instantiated with a pre-existing SWT list control and configured
+ * instantiated with a pre-existing SWT <code>List</code> control and configured
  * with a domain-specific content provider, label provider, element filter (optional),
  * and element sorter (optional).
+ * <p>
+ * Note that the SWT <code>List</code> control only supports the display of strings, not icons.
+ * If you need to show icons for items, use <code>TableViewer</code> instead.
  * </p>
+ * 
+ * @see TableViewer
  */
 public class ListViewer extends StructuredViewer {
 
