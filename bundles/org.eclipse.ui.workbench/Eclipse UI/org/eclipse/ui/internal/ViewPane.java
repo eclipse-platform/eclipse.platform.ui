@@ -525,7 +525,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				((PartStack)oldContainer).setActive(StackPresentation.AS_INACTIVE);
 			}
 			
-			if (container != null && container instanceof ViewStack) {
+			if (container != null && container instanceof PartStack) {
 				((PartStack)container).setActive(StackPresentation.AS_ACTIVE_FOCUS);
 			}
 		}

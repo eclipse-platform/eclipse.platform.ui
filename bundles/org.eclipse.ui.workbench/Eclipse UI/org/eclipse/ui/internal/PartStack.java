@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
@@ -34,6 +35,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.internal.util.Util;
@@ -153,11 +155,125 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		return current.getPresentablePart();
     }
 
-    
     protected IStackPresentationSite getPresentationSite() {
     	return presentationSite;
     }
+
+    /**
+     * Tests the integrity of this object. Throws an exception if the object's state
+     * is invalid. For use in test suites.
+     */
+    public void testInvariants() {
+    	Control focusControl = Display.getCurrent().getFocusControl();
+    	
+    	boolean currentFound = false;
+    	
+    	LayoutPart[] children = getChildren();
+    	
+    	for (int idx = 0; idx < children.length; idx++) {
+    		LayoutPart child = children[idx];
+    		
+    		// No null children allowed
+    		Assert.isNotNull(child);
+    		
+    		// This object can only contain placeholders or PartPanes
+    		Assert.isTrue(child instanceof PartPlaceholder || child instanceof PartPane);
+    		
+    		// Ensure that all the PartPanes have an associated presentable part 
+    		IPresentablePart part = child.getPresentablePart();
+    		if (child instanceof PartPane) {
+    			Assert.isNotNull(part);
+    		}
+    		
+    		// Ensure that the child's backpointer points to this stack
+    		ILayoutContainer childContainer = child.getContainer();
+    		
+    		if (isDisposed()) {
+    			// Currently, we allow null backpointers if the widgetry is disposed.
+    			// However, it is never valid for the child to have a parent other than
+    			// this object
+    			if (childContainer != null) {
+    				Assert.isTrue(childContainer == this);
+    			}
+    		} else {
+    			// If the widgetry exists, the child's backpointer must point to us
+    			Assert.isTrue(childContainer == this);
+    			
+        		// If this child has focus, then ensure that it is selected and that we have
+        		// the active appearance.
+        		
+        		if (SwtUtil.isChild(child.getControl(), focusControl)) {
+        			Assert.isTrue(child == current);
+        			Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
+        		}
+    		}
+    		
+    		// Ensure that "current" points to a valid child
+    		if (child == current) {
+    			currentFound = true;
+    		}
+    		
+    		// Test the child's internal state
+    		child.testInvariants();
+    	}
+    	
+    	// If we have at least one child, ensure that the "current" pointer points to one of them
+    	if (children.length > 0) {
+    		Assert.isTrue(currentFound);
+    		
+    		if (!isDisposed()) {
+    			StackPresentation presentation = getPresentation();
+    			
+    			// If the presentation controls have focus, ensure that we have the active appearance
+    			if (SwtUtil.isChild(presentation.getControl(), focusControl)) {
+    				Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
+    			}
+    		}
+    	} else {
+    		// Ensure that we have the inactive appearance if we don't have any children
+    		Assert.isTrue(getActive() == StackPresentation.AS_INACTIVE);
+    	}
+    }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#describeLayout(java.lang.StringBuffer)
+	 */
+	public void describeLayout(StringBuffer buf) {
+		
+		testInvariants();
+		
+		super.describeLayout(buf);
+//		
+//		int activeState = getActive();
+//		if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
+//			buf.append("active ");
+//		} else if (activeState == StackPresentation.AS_ACTIVE_NOFOCUS) {
+//			buf.append("active_nofocus ");
+//		}
+//		
+//		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
+//		
+//		int visibleChildren = 0;
+//		
+//		for (int idx = 0; idx < children.length; idx++) {
+//			
+//			LayoutPart next = children[idx];
+//			if (!(next instanceof PartPlaceholder)) {
+//				if (visibleChildren > 0) {
+//					buf.append(", "); //$NON-NLS-1$
+//				}
+//				
+//				if (next == current) {
+//					buf.append("*");
+//				}
+//				
+//				next.describeLayout(buf);
+//				
+//				visibleChildren++;				
+//			}
+//		}
+	}
+	
     /**
      * See IVisualContainer#add
      */
@@ -752,6 +868,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         presentationSite.setActive(activeState);
     }
 
+    public int getActive() {
+    	return presentationSite.getActive();
+    }
+    
     /**
      * Sets the presentation bounds.
      */

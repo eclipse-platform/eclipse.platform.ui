@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -147,6 +148,16 @@ public void setWorkbook(EditorStack editorWorkbook) {
 /* package */ void shellDeactivated() {
 	//this.workbook.drawGradient();
 }
+
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#setFocus()
+ */
+public void setFocus() {
+	super.setFocus();
+	
+	workbook.becomeActiveWorkbook(true);
+}
 /**
  * Indicate focus in part.
  */
@@ -197,6 +208,16 @@ public void updateTitles() {
 }
 
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
+ */
+public void testInvariants() {
+	super.testInvariants();
+	
+	if (getContainer() != null) {
+		Assert.isTrue(getContainer() == workbook);
+	}
+}
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
  */

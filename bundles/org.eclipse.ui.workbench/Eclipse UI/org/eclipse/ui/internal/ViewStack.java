@@ -138,5 +138,5 @@ public class ViewStack extends PartStack {
 	protected boolean allowsDrop(PartPane part) {
 		return part instanceof ViewPane;
 	}
-        
+
 }

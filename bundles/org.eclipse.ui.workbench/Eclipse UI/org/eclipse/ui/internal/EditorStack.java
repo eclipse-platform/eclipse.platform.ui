@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
@@ -22,6 +23,7 @@ import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Represents a tab folder of editors. This layout part container only accepts
@@ -88,8 +90,8 @@ public class EditorStack extends PartStack {
         return new EditorStack(editorArea, page);
     }
     
-    protected void add(LayoutPart newChild, IPresentablePart position) {
-    	super.add(newChild, position);
+    protected void add(LayoutPart newChild, Object cookie) {
+    	super.add(newChild, cookie);
         
         ((EditorPane) newChild).setWorkbook(this);    	
     }
@@ -210,6 +212,23 @@ public class EditorStack extends PartStack {
 		
 		if (page != null) {
 			page.closeEditors(toClose, true);
+		}
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
+	 */
+	public void testInvariants() {
+		super.testInvariants();
+		
+		int active = getActive();
+		
+		if (active == StackPresentation.AS_ACTIVE_FOCUS) {
+			Assert.isTrue(isActiveWorkbook());
+		} else if (active == StackPresentation.AS_ACTIVE_NOFOCUS) {
+			Assert.isTrue(isActiveWorkbook());
+		} else if (active == StackPresentation.AS_INACTIVE) {
+			Assert.isTrue(!isActiveWorkbook());
 		}
 	}
 }

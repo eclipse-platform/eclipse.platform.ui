@@ -366,4 +366,11 @@ public String getPlaceHolderId() {
     return getID();
 }
 
+/**
+ * Tests the integrity of this object. Throws an exception if the object's state
+ * is not internally consistent. For use in test suites.
+ */
+public void testInvariants() {
+}
+
 }

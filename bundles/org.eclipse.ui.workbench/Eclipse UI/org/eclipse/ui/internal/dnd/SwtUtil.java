@@ -29,6 +29,26 @@ public class SwtUtil {
 	}
 	
 	/**
+	 * Determines if one control is a child of another. Returns true iff the second
+	 * argument is a child of the first (or the same object).
+	 * 
+	 * @param potentialParent
+	 * @param childToTest
+	 * @return
+	 */
+	public static boolean isChild(Control potentialParent, Control childToTest) {
+		if (childToTest == null) {
+			return false;
+		}
+		
+		if (childToTest == potentialParent) {
+			return true;
+		}
+		
+		return isChild(potentialParent, childToTest.getParent());
+	}
+	
+	/**
 	 * Finds and returns the most specific SWT control at the given location. 
 	 * (Note: this does a DFS on the SWT widget hierarchy, which is very slow).
 	 * 

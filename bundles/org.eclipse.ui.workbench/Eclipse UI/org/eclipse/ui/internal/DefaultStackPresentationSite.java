@@ -54,6 +54,10 @@ public abstract class DefaultStackPresentationSite implements IStackPresentation
 		}
 	}
 	
+	public int getActive() {
+		return activeState;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IStackPresentationSite#selectPart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
