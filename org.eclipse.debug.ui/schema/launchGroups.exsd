@@ -13,6 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
+	         <element ref="launchGroup" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -92,9 +93,6 @@
                <documentation>
                   specifies whether this launch group is public and should be have a visible launch history tab in the debug preferences. The implied value is true, when not specified.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
          
