@@ -131,7 +131,11 @@
       
       <defaultEnablement
             id="org.eclipse.team">
-      </defaultEnablement>      
+      </defaultEnablement>     
+      
+      <defaultEnablement
+            id="org.eclipse.team.cvs">
+      </defaultEnablement>
    </extension>
    
    <extension
