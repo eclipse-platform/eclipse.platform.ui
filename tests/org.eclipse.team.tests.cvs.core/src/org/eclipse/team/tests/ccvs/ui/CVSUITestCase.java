@@ -35,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Console;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
@@ -55,7 +56,11 @@ import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
@@ -64,6 +69,8 @@ public class CVSUITestCase extends LoggingTestCase {
 	private List testWindows;
 	protected IWorkbenchWindow testWindow;
 	protected CVSRepositoryLocation testRepository;
+	protected boolean USE_CONSOLE = System.getProperty("cvs.tests.use_console") != null;
+	protected boolean SHOW_CONSOLE = System.getProperty("cvs.tests.show_console") != null;
 
 	public CVSUITestCase(String name) {
 		super(name);
@@ -93,10 +100,7 @@ public class CVSUITestCase extends LoggingTestCase {
 		IWorkspaceDescription description = workspace.getDescription();
 		description.setAutoBuilding(false);
 		workspace.setDescription(description);
-		
-		// disable CVS console
-		CVSProviderPlugin.getPlugin().setConsoleListener(null);
-		
+						
 		// disable CVS markers and prompts
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
@@ -106,6 +110,14 @@ public class CVSUITestCase extends LoggingTestCase {
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, 0);
 		CVSProviderPlugin.getPlugin().setCompressionLevel(0);
 
+		// default case is to not show the console but don't disable it, this is
+		// the typical user experience.
+		if(SHOW_CONSOLE) {
+			showConsole();
+		} else if(!USE_CONSOLE) {
+			CVSProviderPlugin.getPlugin().setConsoleListener(null);			
+		}
+	
 		// wait for UI to settle
 		Util.processEventsUntil(100);
 	}
@@ -117,6 +129,22 @@ public class CVSUITestCase extends LoggingTestCase {
 		super.tearDown();
 	}
 
+	protected void showConsole() {
+		try {
+			IWorkbenchPage page = CVSUIPlugin.getActivePage();
+			IViewPart consolePart = page.findView(Console.CONSOLE_ID);
+			if (consolePart == null) {
+				IWorkbenchPart activePart = page.getActivePart();
+				consolePart = page.showView(Console.CONSOLE_ID);
+				//restore focus stolen by the creation of the console
+				if (activePart != null) page.activate(activePart);
+			} else {
+				page.bringToTop(consolePart);
+			}
+		} catch (PartInitException pe) {
+		}
+	}
+	
  	/** 
 	 * Open a test window with the empty perspective.
 	 */
