@@ -15,6 +15,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -51,6 +52,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		initializeDialogUnits(parent);
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -59,6 +61,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		setControl(composite);
 
 		Label label = new Label(composite, SWT.WRAP);
+		label.setFont(font);
 		label.setText(WorkbenchResources.getString("WorkingSetName"));
 		GridData gd =
 			new GridData(
@@ -77,8 +80,10 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 			}
 		});
 		workingSetName.setFocus();
+		workingSetName.setFont(font);
 
 		label = new Label(composite, SWT.WRAP);
+		label.setFont(font);
 		label.setText(WorkbenchResources.getString("WorkingSetContent"));
 		gd =
 			new GridData(
@@ -94,6 +99,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.heightHint = convertHeightInCharsToPixels(15);
 		tree.getControl().setLayoutData(gd);
+		tree.getControl().setFont(font);
 
 		treeContentProvider = new HelpWorkingSetTreeContentProvider();
 		tree.setContentProvider(treeContentProvider);
