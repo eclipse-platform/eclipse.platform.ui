@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -49,6 +50,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Singleton string variable manager. 
@@ -227,12 +229,24 @@ public class StringVariableManager implements IStringVariableManager {
 			return;
 		}
 		Element root= null;
+		Throwable ex = null;
 		try {
-			ByteArrayInputStream stream= new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			root = parser.parse(stream).getDocumentElement();
-		} catch (Throwable throwable) {
-			VariablesPlugin.logMessage("An exception occurred while loading persisted value variables.", throwable); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			ex = e;
+		} catch (ParserConfigurationException e) {
+			ex = e;
+		} catch (FactoryConfigurationError e) {
+			ex = e;
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		if (ex != null) {
+			VariablesPlugin.logMessage("An exception occurred while loading persisted value variables.", ex); //$NON-NLS-1$
 			return;
 		}
 		if (!root.getNodeName().equals(VALUE_VARIABLES_TAG)) {
