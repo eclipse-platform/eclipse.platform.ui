@@ -138,6 +138,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			throw new CoreException(status);
 		}
 
+		if (feature==null) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Internal Error. The Feature to be installed is null ", null);
+			throw new CoreException(status);
+		}
+
 		IFeatureReference installedFeature;
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);

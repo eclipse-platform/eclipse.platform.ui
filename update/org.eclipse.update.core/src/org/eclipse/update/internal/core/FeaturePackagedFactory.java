@@ -9,6 +9,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModelFactory;
+import org.xml.sax.SAXException;
 
 public class FeaturePackagedFactory extends BaseFeatureFactory {
 
@@ -42,13 +43,15 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
-		} catch (Exception e) {
-			// VK: why is this case handled differently ??? What is the significance of
-			//     IOException va Exception (assume SAXException)
+		} catch (Exception e) { 
+			// other errors, we stop execution
+			if (e instanceof CoreException) {
+				throw (CoreException)e;
+			};
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
 			throw new CoreException(status);
-		} finally {
+		}finally {
 			try {
 				if (featureStream!=null)
 					featureStream.close();

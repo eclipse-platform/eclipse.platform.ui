@@ -34,7 +34,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		String path = remoteUrl.getFile();
 		String path2 = remoteSite.getInfoURL().getFile();
-		assertEquals(path + "info/siteInfo.html", path2);
+		assertEquals(path + "index.html", path2);
 
 	}
 
@@ -92,7 +92,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
 		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
-		assertEquals(path + "info/siteInfo.html", path2);
+		assertEquals(path + "index.html", path2);
 
 	}
 
@@ -118,7 +118,34 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
 		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
-		assertEquals(path + "info/siteInfo.html", path2);
+		assertEquals(path + "index.html", path2);
+
+	}
+
+	public void testParseValid4() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "SiteURLTest/data/site.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
+		CategoryModel[] categories = remoteSite.getCategoryModels();
+		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
+
+		assertTrue("Wrong number of features", feature.length == 2);
+		assertTrue("Wrong number of archives", archives.length == 3);
+		
+		URL path1 = new URL(SOURCE_FILE_SITE+"SiteURLTest/data/artifacts/features/helpFeature.jar");
+		assertEquals(path1,feature[0].getURL());
+		URL path2 = new URL(SOURCE_FILE_SITE+"SiteURLTest/data/artifacts/plugins/help.jar");
+		assertEquals(path2,archives[0].getURL());
+		
+
+		String path = new URL(SOURCE_FILE_SITE + "SiteURLTest/data/info/").getFile();
+		String path3 = remoteSite.getDescriptionModel().getURL().getFile();
+		assertEquals(path + "siteInfo.html", path3);
 
 	}
 

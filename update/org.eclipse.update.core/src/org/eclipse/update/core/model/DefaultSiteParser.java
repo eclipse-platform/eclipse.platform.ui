@@ -29,6 +29,8 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private MultiStatus status;
 
+	private boolean DESCRIPTION_SITE_ALREADY_SEEN = false;
+
 	private static final int STATE_IGNORED_ELEMENT = -1;
 	private static final int STATE_INITIAL = 0;
 	private static final int STATE_SITE = 1;
@@ -263,14 +265,17 @@ public class DefaultSiteParser extends DefaultHandler {
 		// create site map
 		SiteModel site = factory.createSiteMapModel();
 
-		// Compatibility support for <site url=""/>. If <description> is specified,
-		// it takes precedence
-		// FIXME: do we still need it ?
-		String infoURL = attributes.getValue("url"); //$NON-NLS-1$
-		if (infoURL == null || infoURL.trim().equals("")) //$NON-NLS-1$
-			infoURL = DEFAULT_INFO_URL;
+		// if URL is specified, it replaces the URL of the site
+		// used to calculate the location of features and archives
+		String siteURL = attributes.getValue("url"); //$NON-NLS-1$
+		if (siteURL !=null && !("".equals(siteURL.trim()))){
+			site.setLocationURLString(siteURL);
+		}
+		
+		// provide default description URL
+		// If <description> is specified, for the site,  it takes precedence		
 		URLEntryModel description = factory.createURLEntryModel();
-		description.setURLString(infoURL);
+		description.setURLString(DEFAULT_INFO_URL);
 		site.setDescriptionModel(description);
 
 		// verify we can parse the site ...if the site has
@@ -284,7 +289,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		objectStack.push(site);
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-			debug("End process Site tag: infoURL:" + infoURL + " type:" + type); //$NON-NLS-1$ //$NON-NLS-2$
+			debug("End process Site tag: siteURL:" + siteURL + " type:" + type); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
@@ -444,9 +449,10 @@ public class DefaultSiteParser extends DefaultHandler {
 				// override description.
 				// do not raise error as previous description may be default one
 				// when parsing site tag
-				if (siteModel.getDescriptionModel() != null)
+				if (DESCRIPTION_SITE_ALREADY_SEEN)
 					debug(Policy.bind("DefaultSiteParser.ElementAlreadySet",getState(state))); //$NON-NLS-1$
 				siteModel.setDescriptionModel(info);
+				DESCRIPTION_SITE_ALREADY_SEEN = true;
 				break;
 
 			case STATE_DESCRIPTION_CATEGORY_DEF :

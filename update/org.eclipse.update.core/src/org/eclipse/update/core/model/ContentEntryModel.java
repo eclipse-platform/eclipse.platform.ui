@@ -24,6 +24,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	private String os;
 	private String ws;
 	private String nl;
+	private String arch;
 	
 	/**
 	 * Creates a uninitialized entry model object.
@@ -189,4 +190,21 @@ public abstract class ContentEntryModel extends ModelObject {
 		assertIsWriteable();
 		this.nl = nl;
 	}
+	/**
+	 * Gets the arch.
+	 * @return Returns a String
+	 */
+	public String getArch() {
+		return arch;
+	}
+
+	/**
+	 * Sets the arch.
+	 * @param arch The arch to set
+	 */
+	public void setArch(String arch) {
+		assertIsWriteable();		
+		this.arch = arch;
+	}
+
 }

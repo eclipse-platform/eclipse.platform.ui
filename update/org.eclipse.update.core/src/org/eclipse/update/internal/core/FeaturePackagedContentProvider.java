@@ -94,9 +94,9 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 				}
 			}
 			if (result == null)
-				throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier(), null);
+				throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier()+":"+getURL().toExternalForm(), null);
 		} catch (IOException e) {
-			throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier(), e);
+			throw newCoreException("Error retrieving manifest file in  feature :" + featureArchiveReference[0].getIdentifier()+":"+getURL().toExternalForm(), e);
 		}
 		return result;
 	}

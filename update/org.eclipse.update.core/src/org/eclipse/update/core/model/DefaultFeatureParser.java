@@ -424,6 +424,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			feature.setNL(nl);
 
+			// arch
+			String arch = attributes.getValue("arch"); //$NON-NLS-1$
+			feature.setArch(arch);
+			
 			// application
 			String application = attributes.getValue("application"); //$NON-NLS-1$
 			feature.setApplication(application);
@@ -549,17 +553,21 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String fragment = attributes.getValue("fragment"); //$NON-NLS-1$
 			pluginEntry.isFragment(fragment != null && fragment.trim().equalsIgnoreCase("true"));			//$NON-NLS-1$
 
-			//feature.setOS
+			//setOS
 			String os = attributes.getValue("os"); //$NON-NLS-1$
 			pluginEntry.setOS(os);
 
-			//feature.setWS
+			//setWS
 			String ws = attributes.getValue("ws"); //$NON-NLS-1$
 			pluginEntry.setWS(ws);
 
-			//feature.setNL
+			//setNL
 			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			pluginEntry.setNL(nl);
+
+			// setArch
+			String arch = attributes.getValue("arch"); //$NON-NLS-1$
+			pluginEntry.setArch(arch);
 
 			// download size
 			long download_size = ContentEntryModel.UNKNOWN_SIZE;
@@ -609,6 +617,22 @@ public class DefaultFeatureParser extends DefaultHandler {
 		} else {
 			NonPluginEntryModel dataEntry = factory.createNonPluginEntryModel();
 			dataEntry.setIdentifier(id);
+
+			//setOS
+			String os = attributes.getValue("os"); //$NON-NLS-1$
+			dataEntry.setOS(os);
+
+			//setWS
+			String ws = attributes.getValue("ws"); //$NON-NLS-1$
+			dataEntry.setWS(ws);
+
+			//setNL
+			String nl = attributes.getValue("nl"); //$NON-NLS-1$
+			dataEntry.setNL(nl);
+
+			// setArch
+			String arch = attributes.getValue("arch"); //$NON-NLS-1$
+			dataEntry.setArch(arch);
 
 			// download size
 			long download_size = ContentEntryModel.UNKNOWN_SIZE;

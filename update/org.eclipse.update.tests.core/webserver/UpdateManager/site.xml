@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site url="info/siteInfo.html">
+<site >
+<description url="info/siteInfo.html"/>
   <feature url="features/helpFeature.jar">
     <category name="eclipse/UML"/>
   </feature>

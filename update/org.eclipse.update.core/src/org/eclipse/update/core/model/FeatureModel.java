@@ -34,6 +34,7 @@ public class FeatureModel extends ModelObject {
 	private String os;
 	private String ws;
 	private String nl;
+	private String arch;
 	private String application;
 	private InstallHandlerEntryModel installHandler;
 	private URLEntryModel description;
@@ -302,6 +303,25 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Gets the arch.
+	 * @return Returns a String
+	 */
+	public String getArch() {
+		return arch;
+	}
+
+
+	/**
+	 * Sets the arch.
+	 * @param arch The arch to set
+	 */
+	public void setArch(String arch) {
+		assertIsWriteable();		
+		this.arch = arch;
+	}
+
+
+	/**
 	 * @since 2.0
 	 */
 	public void setApplication(String application) {
@@ -512,4 +532,6 @@ public class FeatureModel extends ModelObject {
 	}
 
 
+	
+	
 }

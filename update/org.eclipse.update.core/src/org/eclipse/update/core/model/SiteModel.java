@@ -24,6 +24,8 @@ public class SiteModel extends ModelObject {
 	private List /*of FeatureReferenceModel*/ featureReferences;
 	private List /*of ArchiveReferenceModel*/ archiveReferences;
 	private Set /*of CategoryModel*/ categories;
+	private String locationURLString;
+	private URL locationURL;
 	
 	/**
 	 * Creates an uninitialized model object.
@@ -78,6 +80,25 @@ public class SiteModel extends ModelObject {
 			
 		return (CategoryModel[]) categories.toArray(arrayTypeFor(categories));
 	}
+
+	/**
+	 * Gets the locationURLString.
+	 * @return Returns a String
+	 */
+	public String getLocationURLString() {
+		return locationURLString;
+	}
+
+
+	/**
+	 * Sets the locationURLString.
+	 * @param locationURLString The locationURLString to set
+	 */
+	public void setLocationURLString(String locationURLString) {
+		assertIsWriteable();
+		this.locationURLString = locationURLString;
+	}
+
 	
 	/**
 	 * @since 2.0
@@ -204,14 +225,27 @@ public class SiteModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {		
+	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {	
+		
+		// Archives and feature are relative to location URL is teh Site element had 
+		// a URL tag: see spec	
+		locationURL = resolveURL(base,bundle,getLocationURLString());		
+		if (locationURL==null) locationURL= base;
+		resolveListReference(getFeatureReferenceModels(), locationURL, bundle);
+		resolveListReference(getArchiveReferenceModels(), locationURL, bundle);
+
 		resolveReference(getDescriptionModel(), base, bundle);
-		resolveListReference(getFeatureReferenceModels(), base, bundle);
-		resolveListReference(getArchiveReferenceModels(), base, bundle);
 		resolveListReference(getCategoryModels(), base, bundle);
 	}
-	/*
-	 * @see Object#equals(Object)
+	
+	
+	/**
+	 * Gets the locationURL.
+	 * @return Returns a URL
 	 */
+	public URL getLocationURL() {
+		return locationURL;
+	}
 
+	
 }
