@@ -36,7 +36,7 @@ import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
-import org.eclipse.team.internal.ccvs.ui.wizards.LocationWizard;
+import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -114,7 +114,7 @@ public class RepositoriesView extends ViewPart {
 		// New Repository (popup)
 		final Action newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) {
 			public void run() {
-				LocationWizard wizard = new LocationWizard();
+				NewLocationWizard wizard = new NewLocationWizard();
 				WizardDialog dialog = new WizardDialog(viewer.getTree().getShell(), wizard);
 				int result = dialog.open();
 				if (result == WizardDialog.OK) {

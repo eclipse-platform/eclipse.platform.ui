@@ -7,24 +7,22 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
-/**
- * Abstract wizard which displays a configuration wizard main page
- * in some configuration, and performs some action on finish.
- */
-public abstract class ConnectionWizard extends CVSWizard {
-	// The main page.
+public class NewLocationWizard extends Wizard {
 	private ConfigurationWizardMainPage mainPage;
 
 	private Properties properties;
 	
-	public ConnectionWizard() {
+	public NewLocationWizard() {
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		IDialogSettings section = workbenchSettings.getSection("CVSWizard");//$NON-NLS-1$
+		IDialogSettings section = workbenchSettings.getSection("NewLocationWizard");//$NON-NLS-1$
 		if (section == null) {
-			section = workbenchSettings.addNewSection("CVSWizard");//$NON-NLS-1$
+			section = workbenchSettings.addNewSection("NewLocationWizard");//$NON-NLS-1$
 		}
 		setDialogSettings(section);
 	}
@@ -33,21 +31,21 @@ public abstract class ConnectionWizard extends CVSWizard {
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", getMainPageTitle(), null);
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.title"), null);
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
-		mainPage.setDescription(getMainPageDescription());
-		mainPage.setStyle(getStyle());
+		mainPage.setDescription(Policy.bind("NewLocationWizard.description"));
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
-	protected ConfigurationWizardMainPage getMainPage() {
-		return mainPage;
+	/*
+	 * @see IWizard#performFinish
+	 */
+	public boolean performFinish() {
+		mainPage.finish(new NullProgressMonitor());
+		return true;	
 	}
-	protected abstract String getMainPageDescription();
-	protected abstract String getMainPageTitle();
-	protected abstract int getStyle();
 	public Properties getProperties() {
 		return mainPage.getProperties();
 	}
@@ -55,4 +53,3 @@ public abstract class ConnectionWizard extends CVSWizard {
 		this.properties = properties;
 	}
 }
-

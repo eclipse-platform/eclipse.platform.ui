@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
  * Common superclass for CVS wizard pages. Provides convenience methods
  * for widget creation.
  */
-public abstract class CVSWizardPage extends WizardPage implements Listener {
+public abstract class CVSWizardPage extends WizardPage {
 	/**
 	 * CVSWizardPage constructor comment.
 	 * @param pageName  the name of the page
@@ -50,7 +50,6 @@ public abstract class CVSWizardPage extends WizardPage implements Listener {
 	protected Button createCheckBox(Composite group, String label) {
 		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
 		button.setText(label);
-		button.addListener(SWT.Selection, this);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		button.setLayoutData(data);
@@ -67,7 +66,6 @@ public abstract class CVSWizardPage extends WizardPage implements Listener {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		combo.setLayoutData(data);
-		combo.addListener(SWT.Modify, this);
 		return combo;
 	}
 	/**
@@ -122,19 +120,22 @@ public abstract class CVSWizardPage extends WizardPage implements Listener {
 		data.grabExcessVerticalSpace = false;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		text.setLayoutData(data);
-		text.addListener(SWT.Modify, this);
 		return text;
 	}
 	/**
-	 * @see Listener#handleEvent
+	 * Utility method to create a radio button
+	 * 
+	 * @param parent  the parent of the radio button
+	 * @param label  the label of the radio button
+	 * @param span  the number of columns to span
+	 * @return the created radio button
 	 */
-	public void handleEvent (Event event) {
-		updateWidgetEnablements();
-	}
-	/**
-	 * Updates widget enablements and sets error message if appropriate.
-	 * Subclasses may override. Default behaviour is to do nothing.
-	 */
-	protected void updateWidgetEnablements() {
+	protected Button createRadioButton(Composite parent, String label, int span) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		button.setLayoutData(data);
+		return button;
 	}
 }

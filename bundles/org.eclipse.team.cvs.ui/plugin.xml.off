@@ -30,10 +30,10 @@
 	<!-- ******************* Wizards ****************** -->
 	<extension point="org.eclipse.team.ui.configurationWizards">
 		<wizard
-			name="%ConfigurationWizard.name"
+			name="%SharingWizard.name"
 			icon="icons/full/wizards/newconnect_wiz.gif"
-			class="org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizard"
-			id="org.eclipse.team.ccvs.ui.ConfigurationWizard">
+			class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"
+			id="org.eclipse.team.ccvs.ui.SharingWizard">
 		</wizard>
 	</extension>
 
@@ -181,6 +181,11 @@
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
 			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder">
+			<action 
+				id="org.eclipse.team.ccvs.ui.checkoutAs"
+				label="%CheckoutAsAction.label"
+				tooltip="%CheckoutAsAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.addToWorkspace"
 				label="%AddToWorkspaceAction.label"
