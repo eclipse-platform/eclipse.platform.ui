@@ -11,14 +11,11 @@
 package org.eclipse.core.runtime;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.util.*;
 import org.eclipse.core.internal.preferences.ListenerList;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.osgi.framework.Bundle;
 
 /**
  * A table of preference settings, mapping named properties to values. Property
@@ -136,6 +133,11 @@ public class Preferences {
 	 * Singleton empty string array (optimization)
 	 */
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+	/**
+	 * The character that separates the plug-in id from the property key.
+	 */
+	private static final char PLUGIN_SEPARATOR = '/';
 
 	/**
 	 * An event object describing a change to a named property.
@@ -328,21 +330,6 @@ public class Preferences {
 		}
 	}
 
-	private static Object exporterInvoker(String methodName, IPath file) throws CoreException {
-		Bundle compatibility = InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime.compatibility");
-		if (compatibility != null) {
-			try {
-				Class prefExporter = compatibility.loadClass("org.eclipse.core.internal.plugins.PreferenceExporter");
-				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[] {IPath.class});
-				return exportingMethod.invoke(prefExporter, new Object[] {file});
-			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, "Error while " + methodName, e));
-			}
-		} else {
-			throw new CoreException(new Status(IStatus.INFO, Platform.PI_RUNTIME, IStatus.OK, "Preferences import/export not implemented", null));
-		}
-	}
-
 	/**
 	 * Loads the plugin preferences from the given file, and replaces all 
 	 * non-default-valued preferences for all plugins with the values from this file.
@@ -411,11 +398,91 @@ public class Preferences {
 	 * @see #importPreferences(IPath)
 	 */
 	public static IStatus validatePreferenceVersions(IPath file) {
+		// TODO
+		if (true)
+			return Status.OK_STATUS;
+		String msg = Policy.bind("preferences.validate"); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, 1, msg, null);
+		Preferences globalPreferences = null;
 		try {
-			return (IStatus) exporterInvoker("validatePreferenceVersions", file);
+			globalPreferences = loadPreferences(file, new Preferences());
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		String[] keys = globalPreferences.propertyNames();
+		for (int i = 0; i < keys.length; i++) {
+			String pluginId = keys[i];
+			//if the key does not contain the separator character, it is a plugin version property
+			if (pluginId.indexOf(PLUGIN_SEPARATOR) < 0) {
+				IPluginDescriptor descriptor = registry.getPluginDescriptor(pluginId);
+				if (descriptor != null) {
+					String version = globalPreferences.getString(pluginId);
+					if (PluginVersionIdentifier.validateVersion(version).isOK()) {
+						PluginVersionIdentifier preferenceVersion = new PluginVersionIdentifier(version);
+						PluginVersionIdentifier installedVersion = descriptor.getVersionIdentifier();
+						validatePluginVersions(pluginId, preferenceVersion, installedVersion, result);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Compares two plugin version identifiers to see if their preferences
+	 * are compatible.  If they are not compatible, a warning message is 
+	 * added to the given multistatus, according to the following rules:
+	 * 
+	 * - plugins that differ in service number: no status
+	 * - plugins that differ in minor version: WARNING status
+	 * - plugins that differ in major version:
+	 * 	- where installed plugin is newer: WARNING status
+	 * 	- where installed plugin is older: ERROR status
+	 * @param pref The version identifer of the preferences to be loaded
+	 * @param installed The version identifier of the installed plugin
+	 */
+	private static void validatePluginVersions(String pluginId, PluginVersionIdentifier pref, PluginVersionIdentifier installed, MultiStatus result) {
+		if (installed.getMajorComponent() == pref.getMajorComponent() && installed.getMinorComponent() == pref.getMinorComponent())
+			return;
+		int severity;
+		if (installed.getMajorComponent() < pref.getMajorComponent())
+			severity = IStatus.ERROR;
+		else
+			severity = IStatus.WARNING;
+		String msg = Policy.bind("preferences.incompatible", new String[] {pref.toString(), pluginId, installed.toString()}); //$NON-NLS-1$
+		result.add(new Status(severity, Platform.PI_RUNTIME, 1, msg, null));
+	}
+
+	/**
+	 * Loads preferences from the given file into the provided preferences instance.
+	 * Returns the preferences instance.
+	 */
+	private static Preferences loadPreferences(IPath properties, Preferences preferences) throws CoreException {
+		File propertiesFile = properties.toFile();
+		if (propertiesFile.exists()) {
+			InputStream in = null;
+			try {
+				in = new BufferedInputStream(new FileInputStream(propertiesFile));
+				preferences.load(in);
+			} catch (IOException e) {
+				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
+			} catch (IllegalArgumentException e) {
+				//properties.load throws IllegalArgumentException if the file encoding is wrong
+				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						//ignore failure to close
+					}
+				}
+			}
+		}
+		return preferences;
 	}
 
 	/**
