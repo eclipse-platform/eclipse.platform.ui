@@ -96,6 +96,7 @@ public class AddCustomDialog extends StatusDialog {
 		this.libraryEntries = libraryEntries;
 		this.existingNames= existingNames;
 		this.helpContext= helpContext;
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
 	/* (non-Javadoc)
