@@ -54,9 +54,6 @@ import org.eclipse.swt.widgets.TabFolder;
  *       adaptable</li>
  * </ul>
  * </p>
- * <p>
- * [Issue: Review not complete - class still in flux.]
- * </p>
  * 
  * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */
