@@ -137,6 +137,9 @@ public class ProcessConsoleManager implements ILaunchListener {
 				for (int i= 0; i < processes.length; i++) {
 					if (getConsoleDocument(processes[i]) == null) {
 						IProcess process = processes[i];
+						if (process.getStreamsProxy() == null) {
+							continue;
+						}
 						//create a new console.
 						IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
 						ProcessConsole pc = new ProcessConsole(process, colorProvider);
