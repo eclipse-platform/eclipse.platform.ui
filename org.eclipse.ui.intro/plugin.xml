@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="org.eclipse.ui.intro"  
+   id="org.eclipse.ui.intro"
    name="%plugin_name"
    version="3.0.0"
    provider-name="%provider_name"
@@ -11,7 +11,7 @@
       <library name="intro.jar">
          <export name="*"/>
       </library>
-   </runtime>  
+   </runtime>
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
@@ -22,23 +22,26 @@
 
 
 <!-- ========== Extension Points ================= -->
-
 <!-- =============================================================================== -->
 <!-- Extension point: org.eclipse.ui.intro.config                                    -->
 <!-- Extension-point for contributing a configuration to a Customizable Intro Part.  -->
 <!--                                                                                 -->
 <!-- =============================================================================== -->
-   <extension-point id="config" name="%config" 
-   			schema="schema/org.eclipse.ui.intro.config.exsd"/>
-
-
+   <extension-point id="config" name="%config" schema="schema/org.eclipse.ui.intro.config.exsd"/>
 <!-- ================================================================================= -->
 <!-- Extension point: org.eclipse.ui.intro.configExtension                             -->
 <!-- Extension-point for contributing an extension to an existing intro configuration  -->
 <!--                                                                                   -->
 <!-- ================================================================================= -->
-   <extension-point id="configExtension" name="%configExtension" 
-   			schema="schema/org.eclipse.ui.intro.configExtension.exsd"/>
+   <extension-point id="configExtension" name="%configExtension" schema="schema/org.eclipse.ui.intro.configExtension.exsd"/>
 
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <standbyPart
+            pluginId="org.eclipse.ui.intro"
+            class="org.eclipse.ui.intro.internal.parts.ContextHelpPart"
+            id="org.eclipse.ui.intro.contextHelp">
+      </standbyPart>
+   </extension>
 
 </plugin>
