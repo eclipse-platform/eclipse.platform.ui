@@ -80,7 +80,7 @@ public class WorkbenchKeyboard {
 	static {
 		initializeOutOfOrderKeys();
 	}
-	
+
 	/**
 	 * The maximum height of the multi-stroke key binding assistant shell.
 	 */
@@ -596,7 +596,7 @@ public class WorkbenchKeyboard {
 			completionsTable.setBackground(multiKeyAssistShell.getBackground());
 			GridData gridData = new GridData(GridData.FILL_BOTH);
 			completionsTable.setLayoutData(gridData);
-			
+
 			// Initialize the columns and rows.
 			final List commands = new ArrayList(); // remember commands
 			TableColumn columnKeySequence = new TableColumn(completionsTable, SWT.LEFT, 0);
@@ -707,6 +707,16 @@ public class WorkbenchKeyboard {
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
 				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
 				return (executeCommand(commandId, event) || sequenceBeforeKeyStroke.isEmpty());
+
+			} else if (
+				(multiKeyAssistShell != null)
+					&& ((event.keyCode == SWT.ARROW_DOWN)
+						|| (event.keyCode == SWT.ARROW_UP)
+						|| (event.keyCode == SWT.ARROW_LEFT)
+						|| (event.keyCode == SWT.ARROW_RIGHT)
+						|| (event.keyCode == SWT.CR))) {
+				// We don't want to swallow keyboard navigation keys.
+				return false;
 			}
 		}
 
