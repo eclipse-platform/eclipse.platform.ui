@@ -830,4 +830,21 @@ public class SyncElementTest extends EclipseTest {
 						 new int[] { IRemoteSyncElement.IN_SYNC,
 						 			  IRemoteSyncElement.IN_SYNC});
 	}
+	/**
+	  * There is special handling required when building a sync tree for a tag when there are undiscovered folders
+	  * that only contain other folders.
+	  */
+	 public void testTagRetrievalForFolderWithNoFile() throws TeamException, CoreException {
+	 	IProject project = createProject("testTagRetrievalForFolderWithNoFile", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt"});
+		// Checkout, branch and modify a copy
+		IProject copy = checkoutCopy(project, "-copy");
+		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		getProvider(copy).makeBranch(new IResource[] {copy}, version, branch, true, true, DEFAULT_MONITOR);
+		addResources(copy, new String[] {"folder2/folder3/a.txt"}, true);
+		
+		// Fetch the tree corresponding to the branch using the original as the base.
+		// XXX This will fail for CVSNT with directory pruning on
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, branch, DEFAULT_MONITOR);
+	 }
 }

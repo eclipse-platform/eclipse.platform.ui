@@ -182,7 +182,7 @@ public class RemoteResourceTest extends EclipseTest {
 	public void testVersionTag() throws TeamException, CoreException, IOException {
 		// Create a test project and version it
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);
-		IProject project = createProject("testVersionTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		IProject project = createProject("testVersionTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/folder3/c.txt"});
 		tagProject(project, v1Tag);
 
 		// Make some changes, additions (including folders) and deletions and commit
@@ -265,11 +265,10 @@ public class RemoteResourceTest extends EclipseTest {
 				assertEquals("the contents of revision 1.3 are not equal", contents, "bye there");
 			}
 		}
-		
 	 }
 	 
 	 public void testTag() throws TeamException, CoreException, IOException {
-	 	IProject project = createProject("testTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+	 	IProject project = createProject("testTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
 		remote.tag(tag, Command.NO_LOCAL_OPTIONS, DEFAULT_MONITOR);
@@ -294,7 +293,6 @@ public class RemoteResourceTest extends EclipseTest {
 	 		CVSTestSetup.executeRemoteCommand(getRepository(), "rm -rf " + ((ICVSFolder)resource2).getFolderSyncInfo().getRemoteLocation());
 	 		assertTrue( ! resource2.exists(DEFAULT_MONITOR));
 	 	}
-	 	
 	 }
 }
 

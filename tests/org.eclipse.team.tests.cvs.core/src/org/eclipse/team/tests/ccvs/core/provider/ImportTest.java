@@ -8,13 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /**
@@ -38,6 +44,12 @@ public class ImportTest extends EclipseTest {
 		super(name);
 	}
 
+	public static Test suite() {
+		TestSuite suite = new TestSuite(ImportTest.class);
+		return new CVSTestSetup(suite);
+		//return new CVSTestSetup(new ImportTest("testReadOnly"));
+	}
+	
 	// Assert that the two containers have equal contents
 	protected void assertEquals(IContainer container1, IContainer container2) throws CoreException {
 		assertEquals(container1.getName(), container2.getName());
@@ -69,12 +81,12 @@ public class ImportTest extends EclipseTest {
 	protected void assertEquals(IProject container1, IProject container2) throws CoreException {
 		List members1 = new ArrayList();
 		members1.addAll(Arrays.asList(container1.members()));
-		members1.remove(container1.findMember(".vcm_meta"));
+		members1.remove(container1.findMember(".project"));
 		members1.remove(container1.findMember("CVS"));
 		
 		List members2 = new ArrayList();
 		members2.addAll(Arrays.asList(container2.members()));
-		members2.remove(container2.findMember(".vcm_meta"));
+		members2.remove(container2.findMember(".project"));
 		members2.remove(container2.findMember("CVS"));
 		
 		assertTrue("Number of children differs for " + container1.getFullPath(), members1.size() == members2.size());
@@ -104,5 +116,40 @@ public class ImportTest extends EclipseTest {
 		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
 		assertValidCheckout(copy);
 		assertEquals(project, copy);
+	}
+	
+	public void testCheckout() throws TeamException, CoreException, IOException {
+		// Create a project and checkout a copy
+		IProject project = createProject("testCheckout", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IProject copy = checkoutCopy(project, "-copy");
+		
+		// 0. checkout the project again
+		project = checkoutProject(project, null, null);
+		assertEquals(project, copy, true, true);
+		
+		// 1. Delete the project but not it's contents and checkout the project again
+		project.delete(false, false, DEFAULT_MONITOR);
+		project = checkoutProject(project, null, null);
+		assertEquals(project, copy, true, true);
+		
+		// 2. Delete the project and its contents and use the module name instead of the project
+		project.delete(true, false, DEFAULT_MONITOR);
+		project = checkoutProject(null, project.getName(), null);
+		assertEquals(project, copy, true, true);
+		
+		// 3. Create a project in a custom location and check out over it
+		project.delete(true, false, DEFAULT_MONITOR);
+		IProjectDescription desc = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
+		//desc.setLocation(new Path("C:\\temp\\project"));
+		project.create(desc, DEFAULT_MONITOR);
+		project = checkoutProject(project, null, null);
+		assertEquals(project, copy, true, true);
+		
+		// 4. Checkout something that doesn't contain a .project
+		project.delete(true, false, DEFAULT_MONITOR);
+		project = checkoutProject(null, project.getName() + "/folder1", null);
+		//assertEquals(project, copy.getFolder("folder1"));
+		
+
 	}
 }

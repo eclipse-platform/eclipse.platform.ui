@@ -240,7 +240,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 
 	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
 	 	if (project == null)
-	 		project = getWorkspace().getRoot().getProject(moduleName);
+	 		project = getWorkspace().getRoot().getProject(new Path(moduleName).lastSegment());
 		CVSProviderPlugin.getProvider().checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
 		return project;
 	 }
