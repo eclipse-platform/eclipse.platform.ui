@@ -44,7 +44,8 @@ public interface IHandler {
      *             if an exception occurred during execution.
      */
     void execute(Object parameter) throws ExecutionException;
-
+    // TODO Object execute(Map parameterValuesByName) throws ExecutionException;
+    
     /**
      * Returns the map of attribute values by name.
      * <p>

@@ -13,8 +13,9 @@ package org.eclipse.ui.commands;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.RetargetAction;
 
@@ -37,6 +38,9 @@ public final class ActionHandler extends AbstractHandler {
      * action, this ActionHandler instance's corresponding HandlerSubmission
      * should be removed. In any case, this attribute especially should never be
      * made public.
+     * 
+     * Also, RetargetAction doesn't not notify that this property has changed.
+     * All handler attributes must notify listeners on change.
      */
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
@@ -45,6 +49,8 @@ public final class ActionHandler extends AbstractHandler {
     private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
 
     private IAction action;
+
+    private Map attributeValuesByName;
 
     /**
      * Creates a new instance of this class given an instance of
@@ -56,16 +62,30 @@ public final class ActionHandler extends AbstractHandler {
     public ActionHandler(IAction action) {
         super();
         if (action == null) throw new NullPointerException();
-
         this.action = action;
+        this.attributeValuesByName = getAttributeValuesByNameFromAction();
+        this.action.addPropertyChangeListener(new IPropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String property = propertyChangeEvent.getProperty();
+                if (IAction.ENABLED.equals(property)
+                        || IAction.CHECKED.equals(property)) {
+                    Map previousAttributeValuesByName = attributeValuesByName;
+                    attributeValuesByName = getAttributeValuesByNameFromAction();
+                    if (!attributeValuesByName
+                            .equals(previousAttributeValuesByName))
+                            fireHandlerChanged(new HandlerEvent(
+                                    ActionHandler.this, true,
+                                    previousAttributeValuesByName));
+                }
+            }
+        });
     }
 
     public void execute(Object parameter) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
-                || (action.getStyle() == IAction.AS_RADIO_BUTTON)) {
-            action.setChecked(!action.isChecked());
-        }
-
+                || (action.getStyle() == IAction.AS_RADIO_BUTTON))
+                action.setChecked(!action.isChecked());
         try {
             if (parameter instanceof Event)
                 action.runWithEvent((Event) parameter);
@@ -77,24 +97,25 @@ public final class ActionHandler extends AbstractHandler {
     }
 
     public Map getAttributeValuesByName() {
+        return attributeValuesByName;
+    }
+
+    private Map getAttributeValuesByNameFromAction() {
         Map attributeValuesByName = new HashMap();
         attributeValuesByName.put(ATTRIBUTE_CHECKED,
                 action.isChecked() ? Boolean.TRUE : Boolean.FALSE);
         attributeValuesByName.put(ATTRIBUTE_ENABLED,
                 action.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
         boolean handled = true;
-
         if (action instanceof RetargetAction) {
             RetargetAction retargetAction = (RetargetAction) action;
             handled = retargetAction.getActionHandler() != null;
         }
-
-        attributeValuesByName.put(ATTRIBUTE_ENABLED, handled ? Boolean.TRUE
+        attributeValuesByName.put(ATTRIBUTE_HANDLED, handled ? Boolean.TRUE
                 : Boolean.FALSE);
         attributeValuesByName.put(ATTRIBUTE_ID, action.getId());
         attributeValuesByName.put(ATTRIBUTE_STYLE, new Integer(action
                 .getStyle()));
-
         return Collections.unmodifiableMap(attributeValuesByName);
     }
 }

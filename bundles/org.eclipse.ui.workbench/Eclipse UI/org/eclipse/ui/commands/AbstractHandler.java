@@ -26,9 +26,7 @@ public abstract class AbstractHandler implements IHandler {
 
     public void addHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
-
         if (handlerListeners == null) handlerListeners = new ArrayList();
-
         if (!handlerListeners.contains(handlerListener))
                 handlerListeners.add(handlerListener);
     }
@@ -43,7 +41,6 @@ public abstract class AbstractHandler implements IHandler {
      */
     protected void fireHandlerChanged(HandlerEvent handlerEvent) {
         if (handlerEvent == null) throw new NullPointerException();
-
         if (handlerListeners != null)
                 for (int i = 0; i < handlerListeners.size(); i++)
                     ((IHandlerListener) handlerListeners.get(i))
@@ -56,7 +53,6 @@ public abstract class AbstractHandler implements IHandler {
 
     public void removeHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
-
         if (handlerListeners != null) handlerListeners.remove(handlerListener);
     }
 }
