@@ -87,14 +87,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	private IProject[] getProjectsWithinScope() {
-		if (projectsWithinScope.isEmpty()) {
+		if (projectsWithinScope == null || projectsWithinScope.isEmpty()) {
 			projectsWithinScope = null;
-		}
-		if (projectsWithinScope == null) {
 			return null;
-		} else {
-			return (IProject[])projectsWithinScope.toArray(new IProject[projectsWithinScope.size()]);
 		}
+		return (IProject[])projectsWithinScope.toArray(new IProject[projectsWithinScope.size()]);
 	}
 
 	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
