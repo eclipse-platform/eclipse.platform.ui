@@ -21,8 +21,7 @@ import org.osgi.framework.*;
 
 public class SharedStyleManager {
 
-    protected Properties pageProperties;
-    protected AbstractIntroPage page;
+    protected Properties properties;
     protected Bundle bundle;
 
     SharedStyleManager() {
@@ -36,11 +35,11 @@ public class SharedStyleManager {
      */
     public SharedStyleManager(IntroModelRoot modelRoot) {
         bundle = modelRoot.getBundle();
-        pageProperties = new Properties();
+        properties = new Properties();
         String sharedStyle = modelRoot.getPresentation()
                 .getImplementationStyle();
         if (sharedStyle != null)
-            load(pageProperties, sharedStyle);
+            load(properties, sharedStyle);
     }
 
     protected void load(Properties properties, String style) {
@@ -64,7 +63,7 @@ public class SharedStyleManager {
      * @return
      */
     public String getProperty(String key) {
-        return pageProperties.getProperty(key);
+        return properties.getProperty(key);
     }
 
 
@@ -104,7 +103,7 @@ public class SharedStyleManager {
      * @return Returns the properties.
      */
     protected Properties getProperties() {
-        return pageProperties;
+        return properties;
     }
 
 
@@ -126,59 +125,6 @@ public class SharedStyleManager {
         return color;
     }
 
-
-    /**
-     * Retrieves an image for a link in a page. If not found, uses the page's
-     * default link image. If still not found, uses the passed default.
-     * 
-     * @param link
-     * @param qualifier
-     * @return
-     */
-    public Image getImage(IntroLink link, String qualifier, String defaultKey) {
-        String key = createImageKey(page, link, qualifier);
-        String pageKey = createImageKey(page, null, qualifier);
-        return getImage(key, pageKey, defaultKey);
-    }
-
-    private String createImageKey(AbstractIntroPage page, IntroLink link,
-            String qualifier) {
-        StringBuffer buff = null;
-        if (link != null) {
-            buff = createPathKey(link);
-            if (buff == null)
-                return ""; //$NON-NLS-1$
-        } else {
-            buff = new StringBuffer();
-            buff.append(page.getId());
-        }
-        buff.append("."); //$NON-NLS-1$
-        buff.append(qualifier);
-        return buff.toString();
-    }
-
-    /**
-     * Creates a key for the given element. Returns null if any id is null along
-     * teh path.
-     * 
-     * @param element
-     * @return
-     */
-    protected StringBuffer createPathKey(AbstractIntroIdElement element) {
-        if (element.getId() == null)
-            return null;
-        StringBuffer buffer = new StringBuffer(element.getId());
-        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
-                .getParent();
-        while (parent != null
-                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
-            if (parent.getId() == null)
-                return null;
-            buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
-            parent = (AbstractBaseIntroElement) parent.getParent();
-        }
-        return buffer;
-    }
 
 
     /**
@@ -210,9 +156,13 @@ public class SharedStyleManager {
             if (image != null)
                 return image;
         }
-        // try default
+        // try default. We know default is already registered,
         if (defaultKey != null)
             return ImageUtil.getImage(defaultKey);
+        return null;
+    }
+
+    private String makeUnique(String key, Bundle bundle) {
         return null;
     }
 

@@ -70,10 +70,11 @@ public class PageWidgetFactory {
         if (isFiltered)
             return;
 
+        Control c = null;
         switch (element.getType()) {
         case AbstractIntroElement.GROUP:
             IntroGroup group = (IntroGroup) element;
-            Control c = createGroup(parent, group);
+            c = createGroup(parent, group);
             updateLayoutData(c, element);
             // c must be a composite.
             Composite newParent = (Composite) c;
@@ -95,37 +96,58 @@ public class PageWidgetFactory {
             updateLayoutData(c, element);
             break;
         case AbstractIntroElement.IMAGE:
-            String imageText = ((IntroImage) element).getAlt();
-            if (imageText == null)
-                break;
-            // create text with default fg.
-            c = createText(parent, imageText, null);
+            IntroImage image = (IntroImage) element;
+            c = createImage(parent, image);
             updateLayoutData(c, element);
             break;
         case AbstractIntroElement.HTML:
-            IntroText htmlText = ((IntroHTML) element).getIntroText();
-            if (htmlText == null)
-                break;
-            c = createText(parent, htmlText);
-            updateLayoutData(c, element);
+            IntroHTML html = (IntroHTML) element;
+            if (html.isInlined()) {
+                IntroText htmlText = html.getIntroText();
+                if (htmlText != null)
+                    c = createText(parent, htmlText);
+                else {
+                    IntroImage htmlImage = html.getIntroImage();
+                    if (htmlImage != null)
+                        c = createImage(parent, htmlImage);
+                }
+            } else {
+                // embedded HTML, so we can show it from a link.
+                String embddedLink = html.getSrc();
+                if (embddedLink == null)
+                    break;
+                String linkText = StringUtil
+                        .concat(
+                                "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=",
+                                embddedLink, "\">",
+                                IntroPlugin.getString("HTML.embeddedLink"),
+                                "</a></p>").toString();
+                linkText = generateFormText(linkText);
+                c = createFormText(parent, linkText, null);
+            }
+            if (c != null)
+                updateLayoutData(c, element);
             break;
         default:
             break;
         }
     }
 
+
     private void updateLayoutData(Control c, AbstractIntroElement element) {
         TableWrapData currentTd = (TableWrapData) c.getLayoutData();
-        if (currentTd != null)
-            return;
-        TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                TableWrapData.FILL);
-        td.grabHorizontal = true;
-        td.colspan = styleManager
+        if (currentTd == null) {
+            currentTd = new TableWrapData(TableWrapData.FILL,
+                    TableWrapData.FILL);
+            currentTd.grabHorizontal = true;
+            c.setLayoutData(currentTd);
+        }
+
+        currentTd.colspan = styleManager
                 .getColSpan((AbstractBaseIntroElement) element);
-        td.rowspan = styleManager
+        currentTd.rowspan = styleManager
                 .getRowSpan((AbstractBaseIntroElement) element);
-        c.setLayoutData(td);
+
     }
 
     private Composite createGroup(Composite parent, IntroGroup group) {
@@ -259,6 +281,25 @@ public class PageWidgetFactory {
             label.setForeground(fg);
         return label;
     }
+
+
+
+    protected Control createImage(Composite parent, IntroImage image) {
+        Label ilabel = null;
+        Image imageFile = styleManager.getImage(image);
+        if (imageFile != null) {
+            ilabel = toolkit.createLabel(parent, null, SWT.LEFT);
+            ilabel.setImage(imageFile);
+            if (image.getAlt() != null)
+                ilabel.setToolTipText(image.getAlt());
+        }
+        // for images, do not use default layout. Grab horizontal is not what we
+        // want.
+        TableWrapData td = new TableWrapData();
+        ilabel.setLayoutData(td);
+        return ilabel;
+    }
+
 
     private void colorControl(Control elementControl,
             AbstractBaseIntroElement element) {

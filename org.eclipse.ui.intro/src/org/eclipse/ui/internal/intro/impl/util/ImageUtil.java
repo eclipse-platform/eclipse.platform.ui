@@ -45,7 +45,7 @@ public final class ImageUtil {
     public static final String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
     /**
-     * Convenience method to create an image descriptor from the intro plugin.
+     * Convenience method to create an image descriptor from the Intro plugin.
      * 
      * Method assumes that images are under the "icons" directory, so don't
      * append that directory name for "imageName".
@@ -57,14 +57,11 @@ public final class ImageUtil {
 
     /**
      * Convenience method to create an image descriptor.
-     * 
-     * Method assumes that images are under the "icons" directory, so don't
-     * append that directory name for "imageName".
+     *  
      */
     public static ImageDescriptor createImageDescriptor(Bundle bundle,
             String imageName) {
         try {
-            // REVISIT: make sure to add code to use Display.iconDepth
             URL imageUrl = Platform.find(bundle, new Path(imageName));
             ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
             return desc;
@@ -76,7 +73,7 @@ public final class ImageUtil {
     }
 
     /**
-     * Convenience method to create an image from the intro plugin.
+     * Convenience method to create an image from the Intro plugin.
      * 
      * Method assumes that images are under the "icons" directory, so don't
      * append that directory name for "imageName".

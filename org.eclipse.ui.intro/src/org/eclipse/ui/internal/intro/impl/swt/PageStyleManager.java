@@ -14,10 +14,12 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 
 public class PageStyleManager extends SharedStyleManager {
 
+    private AbstractIntroPage page;
     private Hashtable altStyleProperties = new Hashtable();
     private IntroModelRoot root;
 
@@ -33,10 +35,10 @@ public class PageStyleManager extends SharedStyleManager {
     public PageStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
         bundle = page.getBundle();
-        pageProperties = new Properties(sharedProperties);
+        properties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)
-            load(pageProperties, altStyle);
+            load(properties, altStyle);
 
         // AltStyles Hashtable has alt-styles as keys, the bundles as
         // values.
@@ -78,7 +80,7 @@ public class PageStyleManager extends SharedStyleManager {
                 return aProperties;
         }
         // search the page and shared properties last.
-        return pageProperties;
+        return properties;
     }
 
     /**
@@ -117,7 +119,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     public int getNumberOfColumns(IntroGroup group) {
-        StringBuffer buff = createPathKey(group);
+        StringBuffer buff = createPathToElementKey(group);
         if (buff == null)
             // must return 0.
             return 0;
@@ -126,7 +128,7 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
     public int getColSpan(AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathKey(element);
+        StringBuffer buff = createPathToElementKey(element);
         if (buff == null)
             return 1;
         String key = buff.append(".layout.colspan").toString(); //$NON-NLS-1$
@@ -138,7 +140,7 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
     public int getRowSpan(AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathKey(element);
+        StringBuffer buff = createPathToElementKey(element);
         if (buff == null)
             return 1;
         String key = buff.append(".layout.rowspan").toString(); //$NON-NLS-1$
@@ -187,7 +189,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     public String getDescription(IntroGroup group) {
-        StringBuffer buff = createPathKey(group);
+        StringBuffer buff = createPathToElementKey(group);
         if (buff == null)
             return null;
         String key = buff.append(".description-id").toString(); //$NON-NLS-1$
@@ -311,26 +313,15 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     public Color getColor(FormToolkit toolkit, AbstractBaseIntroElement element) {
-        StringBuffer buff = createPathKey(element);
+        StringBuffer buff = createPathToElementKey(element);
         if (buff == null)
             return null;
         String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
         return getColor(toolkit, key);
     }
 
-    public boolean isBoldSS(IntroText text) {
-        StringBuffer buff = createPathKey(text);
-        if (buff == null)
-            return false;
-        String key = buff.append(".font.bold").toString();
-        String value = getProperty(key);
-        if (value == null)
-            value = "false"; //$NON-NLS-1$
-        return value.toLowerCase().equals("true"); //$NON-NLS-1$
-    }
-
     public boolean isBold(IntroText text) {
-        StringBuffer buff = createPathKey(text);
+        StringBuffer buff = createPathToElementKey(text);
         if (buff != null) {
             String key = buff.append(".font.bold").toString();
             String value = getProperty(key);
@@ -350,7 +341,69 @@ public class PageStyleManager extends SharedStyleManager {
         return JFaceResources.getBannerFont();
     }
 
+    /**
+     * Retrieves an image for a link in a page. If not found, uses the page's
+     * default link image. If still not found, uses the passed default.
+     * 
+     * @param link
+     * @param qualifier
+     * @return
+     */
+    public Image getImage(IntroLink link, String qualifier, String defaultKey) {
+        String key = createImageKey(page, link, qualifier);
+        String pageKey = createImageKey(page, null, qualifier);
+        return getImage(key, pageKey, defaultKey);
+    }
 
+    private String createImageKey(AbstractIntroPage page, IntroLink link,
+            String qualifier) {
+        StringBuffer buff = null;
+        if (link != null) {
+            buff = createPathToElementKey(link);
+            if (buff == null)
+                return ""; //$NON-NLS-1$
+        } else {
+            buff = new StringBuffer();
+            buff.append(page.getId());
+        }
+        buff.append("."); //$NON-NLS-1$
+        buff.append(qualifier);
+        return buff.toString();
+    }
+
+    public Image getImage(IntroImage introImage) {
+        String imageLocation = introImage.getSrcAsIs();
+        String key = createPathToElementKey(introImage).toString();
+        if (ImageUtil.hasImage(key))
+            return ImageUtil.getImage(key);
+        // key not already registered.
+        ImageUtil.registerImage(key, bundle, imageLocation);
+        Image image = ImageUtil.getImage(key);
+        return image;
+    }
+
+    /**
+     * Creates a key for the given element. Returns null if any id is null along
+     * the path.
+     * 
+     * @param element
+     * @return
+     */
+    private StringBuffer createPathToElementKey(AbstractIntroIdElement element) {
+        if (element.getId() == null)
+            return null;
+        StringBuffer buffer = new StringBuffer(element.getId());
+        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
+                .getParent();
+        while (parent != null
+                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
+            if (parent.getId() == null)
+                return null;
+            buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
+            parent = (AbstractBaseIntroElement) parent.getParent();
+        }
+        return buffer;
+    }
 
 }
 

@@ -294,7 +294,7 @@ public class Util {
 
             public void run() {
                 DialogUtil.displayErrorMessage(display.getActiveShell(),
-                        "Failed to launch external browser", e); //$NON-NLS-1$
+                        IntroPlugin.getString("OpenBroswer.failedToLaunch"), e);
             }
         });
     }
