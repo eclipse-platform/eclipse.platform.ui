@@ -1,8 +1,8 @@
 package org.eclipse.jface.resource;
 
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -36,6 +36,21 @@ public class JFaceColors {
 
 	public static Color getErrorBorder(Display display) {
 		return display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
+	}
+
+	/**
+	 * Get the defualt color to use for displaying errors.
+	 */
+	public static Color getErrorText(Display display) {
+
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null)
+			//Red is the default
+			return display.getSystemColor(SWT.COLOR_RED);
+		else
+			return new Color(
+				display,
+				PreferenceConverter.getColor(store, JFacePreferences.ERROR_COLOUR));
 	}
 
 }

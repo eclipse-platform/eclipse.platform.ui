@@ -4,8 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -32,6 +31,7 @@ public class ViewsPreferencePage
 	private Button viewBottomButton;
 	private Button openEmbedButton;
 	private Button openFastButton;
+	private ColorFieldEditor colorEditor;
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -49,6 +49,7 @@ public class ViewsPreferencePage
 	private static final String OVM_TITLE = WorkbenchMessages.getString("OpenViewMode.title"); //$NON-NLS-1$
 	private static final String OVM_EMBED = WorkbenchMessages.getString("OpenViewMode.embed"); //$NON-NLS-1$
 	private static final String OVM_FAST = WorkbenchMessages.getString("OpenViewMode.fast"); //$NON-NLS-1$
+	private static final String STATUS_LINE = WorkbenchMessages.getString("ErrorText.color"); //$NON-NLS-1$
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
@@ -128,13 +129,30 @@ protected Control createContents(Composite parent) {
 		}
 	});
 	
+	Label messageLabel = new Label(messageComposite,SWT.NONE);
+	messageLabel.setText(APPLY_MESSAGE);
+	
 	createSpacer(composite);
 	createOpenViewButtonGroup(composite);
 
 	JFaceResources.getFontRegistry().addListener(fontListener);
 	
-	Label messageLabel = new Label(messageComposite,SWT.NONE);
-	messageLabel.setText(APPLY_MESSAGE);
+	createSpacer(composite);
+	
+	Composite colorComposite = new Composite(composite,SWT.NULL);
+	colorComposite.setLayout(new GridLayout());
+				
+	GridData data = new GridData();
+	data.horizontalSpan = 2;
+	colorComposite.setLayoutData(data);	
+	
+	colorEditor = new ColorFieldEditor(
+			JFacePreferences.ERROR_COLOUR,
+			STATUS_LINE,
+			colorComposite);
+			
+	colorEditor.setPreferenceStore(doGetPreferenceStore());
+	colorEditor.load();
 	
 	return composite;
 }
@@ -311,6 +329,8 @@ protected void performDefaults() {
 	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
 	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
 	
+	colorEditor.loadDefault();
+	
 	/*
 	 * No longer supported - remove when confirmed!
 	 * if (openFloatButton != null) 
@@ -333,6 +353,8 @@ public boolean performOk() {
 
 	// store the open view mode to setting
 	store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
+	
+	colorEditor.store();
 
 	return true;
 }

@@ -6,12 +6,11 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,8 +43,8 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		public boolean isSaveAsAllowed() {return false;}
 		public void createPartControl(Composite parent) {
 			text = new Text(parent,SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-			text.setForeground(text.getDisplay().getSystemColor(SWT.COLOR_RED));
-			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
+			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 			text.setText(WorkbenchMessages.getString("EditorPane.errorMessage")); //$NON-NLS-1$
 		}
 		public void setFocus() {
