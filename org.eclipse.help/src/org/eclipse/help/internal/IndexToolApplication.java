@@ -11,6 +11,7 @@
 package org.eclipse.help.internal;
 
 import java.io.*;
+import java.util.*;
 import java.util.zip.*;
 
 import org.eclipse.core.boot.*;
@@ -48,9 +49,18 @@ public class IndexToolApplication
 			if (directory == null || directory.length() == 0) {
 				throw new Exception("indexOutput property is not set.");
 			}
-			String locale = System.getProperty("indexLocale");
-			if (locale == null || locale.length() == 0) {
+			String localeStr = System.getProperty("indexLocale");
+			if (localeStr == null || localeStr.length() < 2) {
 				throw new Exception("indexLocale property is not set.");
+			}
+			Locale locale;
+			if (localeStr.length() >= 5) {
+				locale =
+					new Locale(
+						localeStr.substring(0, 2),
+						localeStr.substring(3, 5));
+			} else {
+				locale = new Locale(localeStr.substring(0, 2), "");
 			}
 			preindex(directory, locale);
 		} catch (Exception e) {
@@ -61,10 +71,10 @@ public class IndexToolApplication
 		return EXIT_OK;
 	}
 
-	private void preindex(String outputDir, String locale) throws Exception {
+	private void preindex(String outputDir, Locale locale) throws Exception {
 		String helpStatePath =
 			HelpPlugin.getDefault().getStateLocation().toOSString();
-		String relIndexPath = "nl" + File.separator + locale;
+		String relIndexPath = "nl" + File.separator + locale.toString();
 		File indexPath =
 			new File(helpStatePath + File.separator + relIndexPath);
 		// clean
@@ -74,9 +84,13 @@ public class IndexToolApplication
 		// index
 		HelpSystem.getSearchManager().updateIndex(
 			new NullProgressMonitor(),
-			HelpSystem.getSearchManager().getIndex(locale));
+			HelpSystem.getSearchManager().getIndex(locale.toString()));
 		// zip up
-		File d = new File(outputDir, relIndexPath);
+		File d =
+			new File(outputDir, "nl" + File.separator + locale.getLanguage());
+		if (locale.getCountry().length() > 0) {
+			d = new File(d, locale.getCountry());
+		}
 		if (!d.exists())
 			d.mkdirs();
 		ZipOutputStream zout =
