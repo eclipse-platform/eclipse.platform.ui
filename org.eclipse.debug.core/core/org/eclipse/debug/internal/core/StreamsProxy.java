@@ -11,17 +11,17 @@ import java.io.IOException;
 
 public class StreamsProxy implements IStreamsProxy {
 	/**
-	 * The monitor for the input stream (connected to standard out of the process)
+	 * The monitor for the output stream (connected to standard out of the process)
 	 */
-	private InputStreamMonitor fInputMonitor;
+	private OutputStreamMonitor fOutputMonitor;
 	/**
 	 * The monitor for the error stream (connected to standard error of the process)
 	 */
-	private InputStreamMonitor fErrorMonitor;
+	private OutputStreamMonitor fErrorMonitor;
 	/**
-	 * The monitor for the output stream (connected to standard in of the process)
+	 * The monitor for the input stream (connected to standard in of the process)
 	 */
-	private OutputStreamMonitor fOutputMonitor;
+	private InputStreamMonitor fInputMonitor;
 	/**
 	 * Records the open/closed state of communications with
 	 * the underlying streams.
@@ -35,12 +35,12 @@ public class StreamsProxy implements IStreamsProxy {
 		if (process == null) {
 			return;
 		}
-		fInputMonitor= new InputStreamMonitor(process.getInputStream());
-		fErrorMonitor= new InputStreamMonitor(process.getErrorStream());
-		fOutputMonitor= new OutputStreamMonitor(process.getOutputStream());
-		fInputMonitor.startMonitoring();
-		fErrorMonitor.startMonitoring();
+		fOutputMonitor= new OutputStreamMonitor(process.getInputStream());
+		fErrorMonitor= new OutputStreamMonitor(process.getErrorStream());
+		fInputMonitor= new InputStreamMonitor(process.getOutputStream());
 		fOutputMonitor.startMonitoring();
+		fErrorMonitor.startMonitoring();
+		fInputMonitor.startMonitoring();
 	}
 
 	/**
@@ -50,9 +50,9 @@ public class StreamsProxy implements IStreamsProxy {
 	 */
 	protected void close() {
 		fClosed= true;
-		fInputMonitor.close();
-		fErrorMonitor.close();
 		fOutputMonitor.close();
+		fErrorMonitor.close();
+		fInputMonitor.close();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class StreamsProxy implements IStreamsProxy {
 	 * @see IStreamsProxy#getOutputStreamMonitor()
 	 */
 	public IStreamMonitor getOutputStreamMonitor() {
-		return fInputMonitor;
+		return fOutputMonitor;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class StreamsProxy implements IStreamsProxy {
 	 */
 	public void write(String input) throws IOException {
 		if (!fClosed) {
-			fOutputMonitor.write(input);
+			fInputMonitor.write(input);
 		} else {
 			throw new IOException();
 		}

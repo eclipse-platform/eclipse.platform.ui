@@ -5,112 +5,154 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IStreamMonitor;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Vector;
+import java.io.InputStream;
 
 /**
- * Writes to an output stream (connected to the input stream of
- * a system process), queueing output if the output stream is blocked.
+ * Monitors the output stream of a system process and notifies 
+ * listeners of additions to the stream.
+ * 
+ * The output stream monitor reads system out (or err) via
+ * and input stream.
  */
-public class OutputStreamMonitor {
-	
+public class OutputStreamMonitor implements IStreamMonitor {
 	/**
-	 * The output stream which is being written to.
+	 * The stream being monitored (connected system out or err).
 	 */
-	private OutputStream fStream;
+	private InputStream fStream;
+
 	/**
-	 * The queue of output.
+	 * A collection of listeners
 	 */
-	private Vector fQueue;
+	private ListenerList fListeners= new ListenerList(1);
+
 	/**
-	 * The thread which writes to the output stream.
+	 * The local copy of the stream contents
+	 */
+	private StringBuffer fContents;
+
+	/**
+	 * The thread which reads from the stream
 	 */
 	private Thread fThread;
+
 	/**
-	 * A lock for ensuring that writes to the queue are contiguous
+	 * The size of the read buffer
 	 */
-	private Object fLock;
-	
+	private static final int BUFFER_SIZE= 8192;
+
+	/**
+	 * The number of milliseconds to pause
+	 * between reads.
+	 */
+	private static final long DELAY= 50L;
 	/**
 	 * Creates an output stream monitor on the
-	 * given output stream.
+	 * given stream (connected to system out or err).
 	 */
-	public OutputStreamMonitor(OutputStream stream) {
+	public OutputStreamMonitor(InputStream stream) {
 		fStream= stream;
-		fQueue= new Vector();
-		fLock= new Object();
+		fContents= new StringBuffer();
 	}
-	
+
 	/**
-	 * Appends the given text to the stream, or
-	 * queues the text to be written at a later time
-	 * if the stream is blocked.
+	 * @see IStreamMonitor#addListener(IStreamListener)
 	 */
-	public void write(String text) {
-		synchronized(fLock) {
-			fQueue.add(text);
-			fLock.notifyAll();
+	public void addListener(IStreamListener listener) {
+		fListeners.add(listener);
+	}
+
+	/**
+	 * Causes the monitor to close all
+	 * communications between it and the
+	 * underlying stream by waiting for the thread to terminate.
+	 */
+	protected void close() {
+		if (fThread != null) {
+			Thread thread= fThread;
+			fThread= null;
+			fListeners.removeAll();
+			try {
+				thread.join();
+			} catch (InterruptedException ie) {
+			}
 		}
 	}
 
 	/**
-	 * Starts a thread which writes the stream.
+	 * Notifies the listeners that text has
+	 * been appended to the stream.
 	 */
-	public void startMonitoring() {
+	private void fireStreamAppended(String text) {
+		if (text == null)
+			return;
+		Object[] copiedListeners= fListeners.getListeners();
+		for (int i= 0; i < copiedListeners.length; i++) {
+			 ((IStreamListener) copiedListeners[i]).streamAppended(text, this);
+		}
+	}
+
+	/**
+	 * @see IStreamMonitor#getContents()
+	 */
+	public String getContents() {
+		return fContents.toString();
+	}
+
+	/**
+	 * Continually reads from the stream.
+	 * <p>
+	 * This method, along with the <code>startReading</code>
+	 * method is used to allow <code>OutputStreamMonitor</code>
+	 * to implement <code>Runnable</code> without publicly
+	 * exposing a <code>run</code> method.
+	 */
+	private void read() {
+		byte[] bytes= new byte[BUFFER_SIZE];
+		while (true) {
+			try {
+				if (fStream.available() == 0) {
+					if (fThread == null)
+						break;
+				} else {
+					int read= fStream.read(bytes);
+					if (read > 0) {
+						String text= new String(bytes, 0, read);
+						fContents.append(text);
+						fireStreamAppended(text);
+					}
+				}
+			} catch (IOException ioe) {
+				DebugCoreUtils.logError(ioe);
+				return;
+			}
+			try {
+				Thread.sleep(DELAY);
+			} catch (InterruptedException ie) {
+			}
+		}
+	}
+
+	/**
+	 * @see IStreamMonitor#removeListener(IStreamListener)
+	 */
+	public void removeListener(IStreamListener listener) {
+		fListeners.remove(listener);
+	}
+
+	/**
+	 * Starts a thread which reads from the stream
+	 */
+	protected void startMonitoring() {
 		if (fThread == null) {
 			fThread= new Thread(new Runnable() {
 				public void run() {
-					write();
+					read();
 				}
 			}, DebugCoreMessages.getString("OutputStreamMonitor.label")); //$NON-NLS-1$
 			fThread.start();
 		}
 	}
-	
-	/**
-	 * Close all communications between this
-	 * monitor and the underlying stream.
-	 */
-	public void close() {
-		if (fThread != null) {
-			Thread thread= fThread;
-			fThread= null;
-			thread.interrupt(); 
-		}
-	}
-	
-	/**
-	 * Continuously writes to the stream.
-	 */
-	protected void write() {
-		while (fThread != null) {
-			writeNext();
-		}	
-	}
-	
-	/**
-	 * Write the text in the queue to the stream.
-	 */
-	protected void writeNext() {
-		while (!fQueue.isEmpty()) {
-			String text = (String)fQueue.firstElement();
-			fQueue.removeElementAt(0);
-			try {
-				if (fStream != null) {
-					fStream.write(text.getBytes());
-					fStream.flush();
-				}
-			} catch (IOException e) {
-				DebugCoreUtils.logError(e);
-			}
-		}
-		try {
-			synchronized(fLock) {
-				fLock.wait();
-			}
-		} catch (InterruptedException e) {
-		}
-	}
 }
-
