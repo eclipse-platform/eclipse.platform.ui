@@ -186,20 +186,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		} finally {
 			endOperation();
 		}
-	}
-	
-	/**
-	 * Return whether the given folder is a managed CVS folder.
-	 * A managed CVS folder has folder sync info and is either a 
-	 * project or has resource sync info.
-	 * @param folder a folder
-	 * @return whether the given folder is a managed CVS folder
-	 * @throws CVSException
-	 */
-	public boolean isManagedCVSFolder(IContainer folder) throws CVSException {
-		return (getFolderSync(folder) != null 
-			&& (folder.getType() == IResource.PROJECT || getSyncBytes(folder) != null));
-	}
+	}	
 
 	/**
 	 * Deletes the folder sync for the specified folder and the resource sync
