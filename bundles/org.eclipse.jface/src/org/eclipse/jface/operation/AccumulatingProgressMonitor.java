@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -48,6 +49,8 @@ import org.eclipse.jface.util.Assert;
 	 * The collector, or <code>null</code> if none.
 	 */
 	private Collector collector;
+	
+	private String currentTask = ""; //$NON-NLS-1$
 	
 	private class Collector implements Runnable {
 		private String subTask;
@@ -101,6 +104,7 @@ public void beginTask(final String name, final int totalWork) {
 	}	
 	display.syncExec(new Runnable() {
 		public void run() {
+			currentTask = name;
 			getWrappedProgressMonitor().beginTask(name, totalWork);
 		}
 	});
@@ -154,6 +158,7 @@ public void setTaskName(final String name) {
 	}	
 	display.syncExec(new Runnable() {
 		public void run() {
+			currentTask = name;
 			getWrappedProgressMonitor().setTaskName(name);
 		}
 	});
@@ -193,6 +198,7 @@ public void clearBlocked() {
 		 */
 		public void run() {
 			((IProgressMonitorWithBlocking)pm).clearBlocked();
+			Dialog.getBlockedHandler().clearBlocked();
 		}
 	});
 }
@@ -214,6 +220,7 @@ public void setBlocked(final IStatus reason) {
 		 */
 		public void run() {
 			((IProgressMonitorWithBlocking)pm).setBlocked(reason);
+			Dialog.getBlockedHandler().showBlocked(pm,reason,currentTask);
 		}
 	});
 }

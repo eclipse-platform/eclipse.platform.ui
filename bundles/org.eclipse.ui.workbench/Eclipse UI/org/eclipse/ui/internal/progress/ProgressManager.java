@@ -52,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardBlockedHandler;
+import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -296,7 +296,7 @@ public class ProgressManager extends ProgressProvider
 	 */
 	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
-		WizardDialog.setBlockedHandler(new WorkbenchWizardBlockedHandler());
+		WizardDialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
 		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,

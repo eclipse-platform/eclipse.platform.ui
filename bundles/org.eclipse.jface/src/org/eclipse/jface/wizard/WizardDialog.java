@@ -15,6 +15,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
@@ -33,15 +42,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 /**
  * A dialog to show a wizard to the end user. 
  * <p>
@@ -67,25 +67,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
 	 */
 	public static final String WIZ_IMG_ERROR = "dialog_title_error_image"; //$NON-NLS-1$
-	//A pluggable handler that the wizard will forward
-	//to when blocked.
-	private static IWizardBlockedHandler blockedHandler =
-		new IWizardBlockedHandler(){
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.wizard.IWizardBlockedHandler#clearBlocked()
-		 */
-		public void clearBlocked() {
-			// Do nothing by default
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.wizard.IWizardBlockedHandler#showBlocked(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IStatus, java.lang.String)
-		 */
-		public void showBlocked(Shell parentShell, IProgressMonitor blocking,
-				IStatus blockingStatus, String blockedName) {
-			// Do nothing by default
-		}
-	};
+	
 	// The wizard the dialog is currently showing.
 	private IWizard wizard;
 	// Wizards to dispose
@@ -245,15 +227,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 			}
 		};
 	}
-	
-	/**
-	 * Set the blocked handler used by all WizardDialogs
-	 * in the Workspace.
-	 * @param handler
-	 */
-	public static void setBlockedHandler(IWizardBlockedHandler handler){
-		blockedHandler = handler;
-	}
+
 	
 	/**
 	 * About to start a long running operation tiggered through
@@ -513,14 +487,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 			 */
 			public void setBlocked(IStatus reason) {
 				super.setBlocked(reason);
-				blockedHandler.showBlocked(getShell(), this, reason, currentTask);
+				getBlockedHandler().showBlocked(getShell(), this, reason, currentTask);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#clearBlocked()
 			 */
 			public void clearBlocked() {
 				super.clearBlocked();
-				blockedHandler.clearBlocked();
+				getBlockedHandler().clearBlocked();
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String, int)

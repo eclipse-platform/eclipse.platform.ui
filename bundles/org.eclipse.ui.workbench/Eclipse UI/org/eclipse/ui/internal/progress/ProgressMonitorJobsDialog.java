@@ -8,6 +8,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,9 +22,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -39,6 +40,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	private int viewerHeight = -1;
 	Composite viewerComposite;
 	private Button detailsButton;
+	
+	//Cache initial enablement in case the enablement state is set
+	//before the button is created
+	private boolean enableDetailsButton = true;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -84,7 +89,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
 		} else {
 			viewer = new NewProgressViewer(viewerComposite, SWT.MULTI
-						| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			viewer.setUseHashlookup(true);
 			viewer.setSorter(new ViewerSorter() {
 				/*
@@ -97,7 +102,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return ((Comparable) e1).compareTo(e2);
 				}
 			});
-			IContentProvider provider = new ProgressTreeContentProvider(viewer,true);
+			IContentProvider provider = new ProgressTreeContentProvider(viewer,
+					true);
 			viewer.setContentProvider(provider);
 			viewer.setInput(provider);
 			viewer.setLabelProvider(new ProgressLabelProvider());
@@ -127,23 +133,25 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		createDetailsButton(parent);
 	}
 	/**
-	 * Create a spacer label to get the layout to
-	 * not bunch the widgets.
-     * @param parent The parent of the new button.
-     */
-    protected void createSpacer(Composite parent) {
-        //Make a label to force the spacing
+	 * Create a spacer label to get the layout to not bunch the widgets.
+	 * 
+	 * @param parent
+	 *            The parent of the new button.
+	 */
+	protected void createSpacer(Composite parent) {
+		//Make a label to force the spacing
 		Label spacer = new Label(parent, SWT.NONE);
 		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
-    }
-    /**
+	}
+	/**
 	 * Create the details button for the receiver.
-     * @param parent The parent of the new button.
-     */
-    protected void createDetailsButton(Composite parent) {
-
-        detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+	 * 
+	 * @param parent
+	 *            The parent of the new button.
+	 */
+	protected void createDetailsButton(Composite parent) {
+		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				ProgressMessages
 						.getString("ProgressMonitorJobsDialog.DetailsTitle"), //$NON-NLS-1$
 				false);
@@ -157,10 +165,10 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 				handleDetailsButtonSelect();
 			}
 		});
-	    	
 		detailsButton.setCursor(arrowCursor);
-    }
-    /*
+		detailsButton.setEnabled(enableDetailsButton);
+	}
+	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
@@ -184,12 +192,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
 		// Add the buttons to the button bar.
-		
-		 if(arrowCursor == null)
-	    		arrowCursor = new Cursor(parent.getDisplay(),SWT.CURSOR_ARROW);		
-		 
+		if (arrowCursor == null)
+			arrowCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_ARROW);
 		createButtonsForButtonBar(composite);
-		
 		return composite;
 	}
 	/*
@@ -203,13 +208,32 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		}
 		super.clearCursors();
 	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#updateForSetBlocked(org.eclipse.core.runtime.IStatus)
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
 		super.updateForSetBlocked(reason);
 		if (viewer == null) //Open the viewer if there is a block
 			handleDetailsButtonSelect();
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#run(boolean,
+	 *      boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void run(boolean fork, boolean cancelable,
+			IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		//if it is run in the UI Thread don't do anything.
+		if (!fork) {
+			if (detailsButton == null)
+				enableDetailsButton = false;
+			else
+				detailsButton.setEnabled(false);
+		}
+		super.run(fork, cancelable, runnable);
 	}
 }

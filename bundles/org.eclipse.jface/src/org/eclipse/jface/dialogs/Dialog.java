@@ -12,6 +12,8 @@ package org.eclipse.jface.dialogs;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -275,6 +277,37 @@ public abstract class Dialog extends Window {
 		gc.dispose();
 		return textValue;
 	}
+	
+	/**
+	 * Create a default instance of the blocked handler which
+	 * does not do anything.
+	 */
+	public static IDialogBlockedHandler blockedHandler =
+		new IDialogBlockedHandler(){
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#clearBlocked()
+		 */
+		public void clearBlocked() {
+			// No default behaviour
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#showBlocked(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IStatus, java.lang.String)
+		 */
+		public void showBlocked(IProgressMonitor blocking,
+				IStatus blockingStatus, String blockedName) {
+			//No default behaviour
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#showBlocked(org.eclipse.swt.widgets.Shell, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IStatus, java.lang.String)
+		 */
+		public void showBlocked(Shell parentShell, IProgressMonitor blocking,
+				IStatus blockingStatus, String blockedName) {
+			//No default behaviour
+		}
+		
+	};
 
 	/**
 	 * Creates a dialog instance.
@@ -893,5 +926,21 @@ public abstract class Dialog extends Window {
 	public void create() {
 		super.create();
 		applyDialogFont(buttonBar);
+	}
+	/**
+	 * Get the IDialogBlockedHandler to be used by WizardDialogs
+	 * and ModalContexts.
+	 * @return Returns the blockedHandler.
+	 */
+	public static IDialogBlockedHandler getBlockedHandler() {
+		return blockedHandler;
+	}
+	/**
+	 * Set the IDialogBlockedHandler to be used by WizardDialogs
+	 * and ModalContexts.
+	 * @param blockedHandler The blockedHandler for the dialogs.
+	 */
+	public static void setBlockedHandler(IDialogBlockedHandler blockedHandler) {
+		Dialog.blockedHandler = blockedHandler;
 	}
 }

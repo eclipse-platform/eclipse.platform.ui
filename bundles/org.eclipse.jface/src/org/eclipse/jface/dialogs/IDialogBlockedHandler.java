@@ -8,20 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.wizard;
+package org.eclipse.jface.dialogs;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 /**
- * The IWizardBlockedHandler is the handler used by
- * WizardDialogs to provide extra information when a
+ * The IDialogBlockedHandler is the handler used by
+ * JFace to provide extra information when a
  * blocking has occured. There is one static instance
- * of this class used by WizardDialog.
+ * of this class used by WizardDialog and ModalContext.
  * @see IProgressMonitor.clearBlocked()
  * @see IProgressMonitor.setBlocked();
  * @see WizardDialog
  */
-public interface IWizardBlockedHandler {
+public interface IDialogBlockedHandler {
 	/**
 	 * The blockage has been cleared. Clear the
 	 * extra information and resume.
@@ -38,5 +39,17 @@ public interface IWizardBlockedHandler {
 	 * @param blockedName The name of the locked operation.
 	 */
 	public void showBlocked(Shell parentShell, IProgressMonitor blocking, IStatus blockingStatus,
+			String blockedName);
+	
+	/**
+	 * A blockage has occured. Show the blockage and 
+	 * forward any actions to blockingMonitor. 
+	 * 
+	 * @param blockingMonitor The monitor to forward to. This is most
+	 * important for calls to <code>cancel()</code>.
+	 * @param blockingStatus The status that describes the blockage
+	 * @param blockedName The name of the locked operation.
+	 */
+	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
 			String blockedName);
 }
