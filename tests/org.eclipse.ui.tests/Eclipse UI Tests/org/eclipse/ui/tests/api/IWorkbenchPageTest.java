@@ -277,11 +277,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains( "partActivated"), true);
-		fActivePage.closeEditor(editor, false);
 
 		//we need another editor so that the editor under test can receive events.
 		//otherwise, events will be ignored.
 		IEditorPart extra = fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
+		
+		//close the first editor after the second has opened; necessary for
+		//test to work with fix to PR 7743
+		fActivePage.closeEditor(editor, false);
 
 		//open an editor without activation
 		callTrace.clear();
