@@ -827,7 +827,6 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 	if (!workspace.getFileSystemManager().hasSavedProject(project)) {
 		workspace.getFileSystemManager().writeSilently(project);
 		String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName()); //$NON-NLS-1$
-		//FIXME: Should just return an INFO status here.
 		return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 	}
 	if (Policy.DEBUG_SAVE_METAINFO)
@@ -838,7 +837,7 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
  * Writes the metainfo (e.g. descriptions) of the given workspace and
  * all projects to the local disk.
  */
-protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
+protected void saveMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) throws CoreException {
 	if (Policy.DEBUG_SAVE_METAINFO)
 		System.out.println("Save workspace metainfo: starting..."); //$NON-NLS-1$
 	long start = System.currentTimeMillis();
@@ -847,8 +846,11 @@ protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throw
 	// save projects' meta info
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++)
-		if (roots[i].isAccessible())
-			saveMetaInfo((Project) roots[i], null);
+		if (roots[i].isAccessible()) {
+			IStatus result = saveMetaInfo((Project) roots[i], null);
+			if (!result.isOK())
+				problems.merge(result);
+		}
 	if (Policy.DEBUG_SAVE_METAINFO)
 		System.out.println("Save workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
@@ -1294,7 +1296,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						removeUnusedTreeFiles();
 						workspace.getFileSystemManager().getHistoryStore().clean();
 						// write out all metainfo (e.g., workspace/project descriptions) 
-						saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
+						saveMetaInfo(workspace, warnings, Policy.subMonitorFor(monitor, 1));
 						break;
 					case ISaveContext.SNAPSHOT :
 						snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
@@ -1310,7 +1312,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						collapseTrees();
 						clearSavedDelta();
 						// write out all metainfo (e.g., workspace/project descriptions) 
-						saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
+						saveMetaInfo(workspace, warnings, Policy.subMonitorFor(monitor, 1));
 						break;
 					case ISaveContext.PROJECT_SAVE :
 						writeTree(project, IResource.DEPTH_INFINITE);
