@@ -25,8 +25,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
@@ -137,7 +137,8 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#setActiveEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
 	public void setActiveEditor(ITextEditor targetEditor) {
-		if(! (targetEditor.getEditorInput() instanceof IFileEditorInput)) return;
+		IEditorInput editorInput = targetEditor.getEditorInput();
+        if (editorInput == null || ResourceUtil.getFile(editorInput) == null) return;
 		fEditor = targetEditor;
 		fDocumentProvider= fEditor.getDocumentProvider();
 		
@@ -318,9 +319,8 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	private IFile getFileFromEditor() {
 		if(fEditor != null) {
 			IEditorInput input= fEditor.getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				return ((IFileEditorInput)input).getFile();
-			}
+            IFile file = ResourceUtil.getFile(input);
+            return file;
 		}
 		return null;
 	}

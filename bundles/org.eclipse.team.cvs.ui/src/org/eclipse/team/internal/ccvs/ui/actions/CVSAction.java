@@ -12,6 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
@@ -38,6 +40,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.*;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
 
 /**
  * CVSAction is the common superclass for all CVS actions. It provides
@@ -610,9 +613,10 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 					// If the action is run from within an editor, try and find the 
 					// file for the given editor.
 					if(part != null && part instanceof IEditorPart) {
-						Object input = ((IEditorPart)part).getEditorInput();
-						if(input instanceof IFileEditorInput) {
-							selectionChanged((IAction)null, new StructuredSelection(((IFileEditorInput)input).getFile()));
+						IEditorInput input = ((IEditorPart)part).getEditorInput();
+                        IFile file = ResourceUtil.getFile(input);
+						if(file != null) {
+							selectionChanged((IAction)null, new StructuredSelection(file));
 						}
 					} else {						
 						// Fallback is to prime the action with the selection

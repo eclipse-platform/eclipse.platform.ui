@@ -46,6 +46,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -697,10 +698,11 @@ public class HistoryView extends ViewPart {
 				showHistory(remote, false);
 			}
 		// Handle regular file editors
-		} else if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
-			IFile file = fileInput.getFile();
-			showHistory(file, false /* don't fetch if already cached */);			
+		} else {
+            IFile file = ResourceUtil.getFile(input);
+            if(file != null) {
+                showHistory(file, false /* don't fetch if already cached */);
+            }
 		}
 	}
 	
