@@ -154,12 +154,35 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	
 		    		fonts.put(baseFont, font);
     	        }
+    	        updateColumn(getText(element), font);
     	        return font;
     	    }
+    	    updateColumn(getText(element), presentationList.getControl().getFont());
             return null;
         }
     	
-    	/* (non-Javadoc)
+    	/**
+         * Updates the table font based on the width required to render the 
+	     * given text in the given font.  If this value is greater than 
+         * largestFontWidth then the font on the table is set to the provided 
+         * font and largestFotnWidth is updated.  This is required as a 
+		 * workaround to bug 56593.
+         */
+        private void updateColumn(String text, Font font) {
+        	Display display = presentationList.getControl().getDisplay();
+
+		    GC gc = new GC(display);
+		    gc.setFont(font);
+			
+			int width = gc.stringExtent(text).x;
+			if (width > largestFontWidth) {
+				largestFontWidth = width;
+				presentationList.getControl().setFont(font);
+			}
+			gc.dispose();    	        
+        }
+
+        /* (non-Javadoc)
     	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
     	 */
     	public Image getImage(Object element) {
@@ -338,7 +361,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private PresentationLabelProvider labelProvider;
 
     private CascadingTheme cascadingTheme;
-
+    
+    /**
+	 * The largest width so far encountered required to render a given label in it's font.
+	 */
+    private int largestFontWidth;
 	/**
 	 * Create a new instance of the receiver. 
 	 */
@@ -1385,6 +1412,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			categoryMap.put(key, defintions);
 		}
 	
+		largestFontWidth = 0;
 		presentationList.setInput(defintions);		
 		
 		Composite previewControl = (Composite) previewMap.get(key);
