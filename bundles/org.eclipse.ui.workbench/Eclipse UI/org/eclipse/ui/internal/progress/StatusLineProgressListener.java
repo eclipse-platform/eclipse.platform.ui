@@ -125,9 +125,11 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 	 * Return the String to update on the status line. If there
 	 * is another running job return it's info - otherwise just
 	 * return the empty String.
+	 * Synchronized as iterators are not Thread safe on thier
+	 * own.
 	 * @return
 	 */
-	private String getNextMessage() {
+	private synchronized String getNextMessage() {
 
 		Iterator remainingJobs = jobInfos.iterator();
 		while (remainingJobs.hasNext()) {
