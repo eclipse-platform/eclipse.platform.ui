@@ -211,11 +211,6 @@ public class RegistryResolver {
 				Constraint c = (Constraint) list.next();
 				if (c.getMatchType() == MATCH_LATEST)
 					continue;
-				// DDW - why iterate through all the parent.versions?  Why not iterate
-				// through constrained.  That way, once a plugin has been removed from
-				// constrained, we never bother to see if it satisfies any of the other
-				// constraints in the list?  And once constrained contains 0 elements,
-				// we don't need to do anything more.
 				for (Iterator list2 = parent.versions().iterator(); list2.hasNext();) {
 					PluginDescriptorModel pd = (PluginDescriptorModel) list2.next();
 					if (!pd.getEnabled())
@@ -534,15 +529,6 @@ private void add(PluginDescriptorModel pd) {
 	}
 	verList.add(i, pd);
 }
-private void addAll(Collection c) {
-	// DDW - addAll and add iterate through all pd's and
-	// add entries into idmap.  Why not
-	// - collapse this down to one method
-	// - have that one method accept the registry as a param
-	//   or use 'reg'
-	for (Iterator list = c.iterator(); list.hasNext();)
-		add((PluginDescriptorModel) list.next());
-}
 private void addExtensions(ExtensionModel[] extensions, PluginDescriptorModel plugin) {
 	// Add all the extensions (presumably from a fragment) to plugin
 	int extLength = extensions.length;
@@ -714,41 +700,44 @@ private void resolve() {
 	// Add all the fragments to their associated plugin
 	linkFragments();
 	PluginDescriptorModel[] pluginList = reg.getPlugins();
+	idmap = new HashMap();
 	for (int i = 0; i < pluginList.length; i++) {
 		if (pluginList[i].getFragments() != null) {
 			// Take all the information in each fragment and
 			// embed it in the plugin descriptor
 			resolvePluginFragments(pluginList[i]);
 		}
+		// Now ensure that all structures below this plugin
+		// have all their 'required' fields.  Do this now as
+		// the resolve assumes required field exist.  
+		if (pluginList[i].getEnabled()) {
+			if (!requiredPluginDescriptor(pluginList[i])) {
+				pluginList[i].setEnabled(false);
+				String id, name;
+				if ((id = pluginList[i].getId()) != null)
+					error (Policy.bind("parse.pluginMissingAttr", id));
+				else if ((name = pluginList[i].getName()) != null)
+					error (Policy.bind("parse.pluginMissingAttr", name));
+				else
+					error (Policy.bind("parse.pluginMissingIdName"));
+			}
+		}
+		// Now add this plugin to the id map. Each plugin id will
+		// have an idmap entry.  Multiple versions will have only
+		// one entry but will be sorted in version order (largest
+		// to smallest).
+		add(pluginList[i]);
 	}
 	
-	// Walk through the registry and ensure that all structures
-	// have all their 'required' fields.  Do this now as
-	// the resolve assumes required field exist.  
-	resolveRequiredComponents();
-
-	// DDW - At this point we have walked through the
-	// fragment list once and the plugin list 3!!! times
-	// - add plugins to the idmap
-	// - put all the fragment stuff into the plugins
-	// - make sure each plugin has all the 'required' stuff
-	// Let's try and consolidate!!!
-
 	// resolve root descriptors
-	List rd = resolveRootDescriptors();
-	if (rd.size() == 0) {
+	List roots = resolveRootDescriptors();
+	if (roots.size() == 0) {
 		// no roots ... quit
 		idmap = null;
 		reg = null;
 		error(Policy.bind("plugin.unableToResolve"));
 		return;
 	}
-
-	// sort roots
-	Object[] a = rd.toArray();
-	// DDW - why do we need to sort?
-	Arrays.sort(a);
-	ArrayList roots = new ArrayList(Arrays.asList(a));
 	
 	// roots is a list of those plugin ids that are not a
 	// prerequisite for any other plugin.  Note that roots
@@ -806,16 +795,6 @@ public IStatus resolve(PluginRegistryModel registry) {
 		return status;
 
 	reg = registry;
-	idmap = new HashMap();
-	// Take all the plugins and add them into idmap.  Each
-	// plugin id will have an idmap entry.  Multiple versions
-	// will have only one entry but will be sorted in version
-	// order (largestto smallest).  Don't worry about fragments
-	// as they cannot change the plugin id or the plugin
-	// version and, therefore, will not affect the ordering
-	// in idmap.
-	// DDW - Why bother with the 'Arrays.asList' part?
-	addAll(Arrays.asList(reg.getPlugins()));
 	resolve();
 	registry.markResolved();
 	return status;
@@ -1092,27 +1071,6 @@ private void resolvePluginRegistry() {
 		for (int i = 0; i < plugins.length; i++)
 			resolvePluginDescriptor(plugins[i]);
 	}
-}
-private void resolveRequiredComponents() {
-	PluginDescriptorModel[] pluginList = reg.getPlugins();
-	// Only worry about the enabled plugins as we are going
-	// to disable any plugins that don't have all the 
-	// required bits.
-	for (int i = 0; i < pluginList.length; i++) {
-		if (pluginList[i].getEnabled()) {
-			if (!requiredPluginDescriptor(pluginList[i])) {
-				pluginList[i].setEnabled(false);
-				String id, name;
-				if ((id = pluginList[i].getId()) != null)
-					error (Policy.bind("parse.pluginMissingAttr", id));
-				else if ((name = pluginList[i].getName()) != null)
-					error (Policy.bind("parse.pluginMissingAttr", name));
-				else
-					error (Policy.bind("parse.pluginMissingIdName"));
-			}
-		}
-	}
-	// Don't worry about the fragments.  They were done already.
 }
 private boolean requiredPluginDescriptor(PluginDescriptorModel plugin) {
 	boolean retValue = true;
