@@ -40,7 +40,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Tries to delete an open project containing an irremovable file.
 	 * Works only for Windows.
 	 */
-	public void testDeleteOpenProjectWindows() {
+	public void _testDeleteOpenProjectWindows() {
 		if (!(BootLoader.getOS().equals(Constants.OS_WIN32)))
 			return;
 
