@@ -708,14 +708,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	
 	public void waitForIgnoreHandlerCompletion() {
 		Job job = SyncFileChangeListener.getDeferredHandler().getEventHandlerJob();
-		final boolean[] done = new boolean[] { false };
-		job.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				done[0] = true;
-			}
-		});
 		int count = 0;
-		while (job.getState() != Job.NONE && ! done[0]) {
+		while (job.getState() != Job.NONE) {
 			try {
 				Thread.sleep(100);
 				count++;

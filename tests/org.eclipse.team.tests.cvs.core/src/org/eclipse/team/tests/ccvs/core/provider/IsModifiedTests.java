@@ -171,6 +171,7 @@ public class IsModifiedTests extends EclipseTest {
 				resourceList.add(new Path(string));
 			}
 		}
+		waitForIgnoreHandlerCompletion();
 		rootFolder.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				assertModificationState(file);
