@@ -4,24 +4,24 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.text.MessageFormat;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -29,7 +29,7 @@ import java.text.MessageFormat;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class DeleteResourceAction extends SelectionListenerAction {
+public class DeleteResourceAction extends SelectionListenerAction implements KeyListener{
 
 	/**
 	 * The id of this action.
@@ -301,4 +301,22 @@ IResource[] getResourcesToDelete() {
 protected boolean updateSelection(IStructuredSelection selection) {
 	return super.updateSelection(selection) && canDelete();
 }
+	
+
+/*
+ * @see KeyListener#keyPressed(KeyEvent)
+ */
+public void keyPressed(KeyEvent event) {
+	//Do nothing 
+}
+
+/*
+ * @see KeyListener#keyReleased(KeyEvent)
+ */
+public void keyReleased(KeyEvent event) {
+	if (event.character == SWT.DEL && event.stateMask == 0 && isEnabled()) {
+		run();
+	}
+}
+
 }
