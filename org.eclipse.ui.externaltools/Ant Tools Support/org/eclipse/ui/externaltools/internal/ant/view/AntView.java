@@ -499,7 +499,11 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 						TargetNode target = (TargetNode) selection;
 						StringBuffer message= new StringBuffer(target.getName());
 						message.append(": ");
-						message.append(target.getDescription());
+						String description= target.getDescription();
+						if (description == null) {
+							description= "(no description)";
+						}
+						message.append(description);
 						messageString= message.toString();
 					}
 				} 
