@@ -71,7 +71,7 @@ public class SyncViewerTableSorter extends SyncViewerSorter {
 				}
 			}
 		};
-	}
+	}	
 	
 	/**
 	 * 
