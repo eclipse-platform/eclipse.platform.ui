@@ -31,6 +31,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
+import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -47,6 +48,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 	private Button autoSaveAllButton;
 	private Button refreshButton;
 	private Button showTasks;
+	private Button launchPromptButton;
 	private Button exitPromptButton;
 	private IntegerFieldEditor saveInterval;
 
@@ -61,11 +63,12 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 
 		createAutoBuildPref(composite);
 		createSaveAllBeforeBuildPref(composite);
+		createLaunchPromptPref(composite);
 		createRefreshWorkspaceOnStartupPref(composite);
 		createExitPromptPref(composite);
 		createShowTasksOnAutoBuildPref(composite);
 		createStickyCyclePref(composite);
-		
+
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
 		
@@ -82,12 +85,24 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		showTasks.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 	}
 
+	protected void createLaunchPromptPref(Composite composite) {
+		launchPromptButton = new Button(composite, SWT.CHECK);
+		launchPromptButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.launchPromptButton")); //$NON-NLS-1$
+		launchPromptButton.setFont(composite.getFont());
+
+		// TODO: This should get the value from the configuration preference area, but
+		//       dj said we shouldn't use it yet; some final details are being worked
+		//       out.  Hopefully it will be available soon, at which time the entire
+		//       recentWorkspaces.xml file can be removed.  But until then, this
+		//       preference reads/writes the file each time.
+		launchPromptButton.setSelection(ChooseWorkspaceData.getShowDialogValue());
+	}
+
 	protected void createExitPromptPref(Composite composite) {
 		exitPromptButton = new Button(composite, SWT.CHECK);
 		exitPromptButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
 		exitPromptButton.setFont(composite.getFont());
 		exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
-		
 	}
 
 	protected void createRefreshWorkspaceOnStartupPref(Composite composite) {
@@ -167,6 +182,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		IPreferenceStore store = getIDEPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+		launchPromptButton.setSelection(true);
 		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
@@ -196,6 +212,13 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 
 		// store the refresh workspace on startup setting
 		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
+
+		// TODO: This should get the value from the configuration preference area, but
+		//       dj said we shouldn't use it yet; some final details are being worked
+		//       out.  Hopefully it will be available soon, at which time the entire
+		//       recentWorkspaces.xml file can be removed.  But until then, this
+		//       preference reads/writes the file each time.
+		ChooseWorkspaceData.setShowDialogValue(launchPromptButton.getSelection());
 
 		// store the exit prompt on last window close setting
 		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
