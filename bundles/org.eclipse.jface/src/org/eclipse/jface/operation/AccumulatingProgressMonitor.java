@@ -131,11 +131,13 @@ import org.eclipse.swt.widgets.Display;
      * if it matches the given one.
      * @param collectorToClear
      */
-    private synchronized void clearCollector(Collector collectorToClear) {
+    private void clearCollector(Collector collectorToClear) {
         // Check if the accumulator is still using the given collector.
         // If not, don't clear it.
-        if (this.collector == collectorToClear)
-            this.collector = null;
+    	synchronized(this){
+    		if (this.collector == collectorToClear)
+    			this.collector = null;
+    	}
     }
 
     /**
