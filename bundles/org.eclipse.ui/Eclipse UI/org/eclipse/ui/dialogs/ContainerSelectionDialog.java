@@ -51,6 +51,9 @@ public class ContainerSelectionDialog extends SelectionDialog {
 
 	//for validating the selection
 	private ISelectionValidator validator;
+	
+	// show closed projects by default
+	private boolean showClosedProjects = true;
 
 	// sizing constants
 	private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
@@ -112,7 +115,7 @@ protected Control createDialogArea(Composite parent) {
 	};
 	
 	// container selection group
-	group = new ContainerSelectionGroup(dialogArea, listener, allowNewContainerName, getMessage());
+	group = new ContainerSelectionGroup(dialogArea, listener, allowNewContainerName, getMessage(), showClosedProjects);
 	if (initialSelection != null) {
 		group.setSelectedContainer(initialSelection);
 	}
@@ -134,9 +137,20 @@ protected void okPressed() {
 	super.okPressed();
 }
 /**
- * Sets the validator to use.
+ * Sets the validator to use.  
+ * 
+ * @param validator A selection validator
  */
 public void setValidator(ISelectionValidator validator) {
 	this.validator = validator;
+}
+/**
+ * Set whether or not closed projects should be shown
+ * in the selection dialog.
+ * 
+ * @param show Whether or not to show closed projects.
+ */
+public void showClosedProjects(boolean show) {
+	this.showClosedProjects = show;
 }
 }

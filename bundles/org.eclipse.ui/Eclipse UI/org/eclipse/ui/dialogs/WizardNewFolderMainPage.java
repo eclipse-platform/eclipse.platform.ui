@@ -69,7 +69,7 @@ public void createControl(Composite parent) {
 
 	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE));
 
-	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initializePage();
 	validatePage();

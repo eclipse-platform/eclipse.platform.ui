@@ -179,6 +179,7 @@ protected IPath getPathFromText(Text textField) {
 protected IPath queryForContainer(IContainer initialSelection, String msg) {
 	ContainerSelectionDialog dialog =
 		new ContainerSelectionDialog(getControl().getShell(), initialSelection, allowNewContainerName(), msg);
+	dialog.showClosedProjects(false);
 	dialog.open();
 	Object[] result = dialog.getResult();
 	if (result != null && result.length == 1) {
