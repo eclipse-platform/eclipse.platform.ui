@@ -39,6 +39,7 @@ import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationEvent;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -420,7 +421,7 @@ public final class CommandManager implements ICommandManager {
 			list.add("org.eclipse.ui.textEditorScope");
 
 		String[] activeActivityIds = extend((String[]) list.toArray(new String[list.size()]));		
-		String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId, keyConfigurationDefinitionsById));
+		String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId));
 		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
 		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
 		keySequenceBindingMachine.setActiveActivityIds(activeActivityIds);
@@ -430,20 +431,17 @@ public final class CommandManager implements ICommandManager {
 		keySequenceBindingsByCommandId = keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
 	}		
 	
-	static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+	String[] getKeyConfigurationIds(String keyConfigurationId) {
 		List strings = new ArrayList();
 
-		while (keyConfigurationDefinitionId != null) {	
-			if (strings.contains(keyConfigurationDefinitionId))
+		while (keyConfigurationId != null) {	
+			strings.add(keyConfigurationId);
+
+			try {				
+				keyConfigurationId = getKeyConfiguration(keyConfigurationId).getParentId();
+			} catch (NotDefinedException eNotDefined) {
 				return new String[0];
-				
-			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(keyConfigurationDefinitionId);
-			
-			if (keyConfigurationDefinition == null)
-				return new String[0];
-						
-			strings.add(keyConfigurationDefinitionId);
-			keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
+			}
 		}
 	
 		return (String[]) strings.toArray(new String[strings.size()]);
@@ -788,10 +786,8 @@ public final class CommandManager implements ICommandManager {
 		
 		return keyConfigurationEventsByKeyConfigurationId;			
 	}
-	
-	
-	
 
+	// TODO public only for test cases. remove?
 	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
 	}
@@ -799,34 +795,4 @@ public final class CommandManager implements ICommandManager {
 	IMutableCommandRegistry getMutableCommandRegistry() {
 		return mutableCommandRegistry;
 	}
-	
-
-
-
-	/* TODO			
-		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
-
-		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {
-			ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
-			String categoryId = commandDefinition.getCategoryId();
-			String name = commandDefinition.getName();
-
-			if (name == null || name.length() == 0 || categoryId != null && !categoryDefinitionsById.containsKey(categoryId))
-				iterator.remove();
-			else {
-				String commandId = commandDefinition.getId();
-				Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
-			
-				if (commandIds == null) {
-					commandIds = new HashSet();
-					commandIdsByCategoryId.put(categoryId, commandIds);
-				}
-			
-				commandIds.add(commandId);
-				categoryIdsReferencedByCommandDefinitions.add(categoryId);				
-			}
-		}
-		
-		categoryDefinitionsById.keySet().retainAll(categoryIdsReferencedByCommandDefinitions);			 
-	*/
 }

@@ -496,7 +496,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 				
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());		
-
+			
 			if (isPartialMatch(modeAfterKeyStroke)) {
 				setMode(modeAfterKeyStroke);
 				return true;				
