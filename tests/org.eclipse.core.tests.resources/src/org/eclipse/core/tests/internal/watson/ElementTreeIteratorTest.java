@@ -61,17 +61,17 @@ public void testContentIterator() {
 	int n= 3;
 	setupElementTree(tree, n);
 	final Vector elts = new Vector();
-	IElementContentVisitor elementContentVisitor = new IElementContentVisitor() {
+	IElementPathContentVisitor elementContentVisitor = new IElementPathContentVisitor() {
 		public void visitElement(ElementTree tree, IPath elementID, Object info) {
 			elts.addElement(elementID);
 		}
 	};
-	new ElementTreeIterator().iterate(tree, elementContentVisitor);
+	new ElementTreeIterator().iterateWithPath(tree, elementContentVisitor, Path.ROOT);
 	assertEquals("1", 2+n+n*n+n*n*n, elts.size());
 
 	elts.removeAllElements();
 	IPath innerElement = Path.ROOT.append("sol").append("proj1");
-	new ElementTreeIterator().iterate(tree, elementContentVisitor, innerElement);
+	new ElementTreeIterator().iterateWithPath(tree, elementContentVisitor, innerElement);
 	assertEquals("2", 1+n+n*n, elts.size());
 }
 }
