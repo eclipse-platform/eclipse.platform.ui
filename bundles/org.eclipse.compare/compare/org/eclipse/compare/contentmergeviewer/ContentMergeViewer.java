@@ -569,8 +569,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 		
 	/**
-	 * Controls whether <code>doSave(...)</code> asks for confirmation before saving
-	 * the old input with <code>saveContent(...)</code>.
+	 * Controls whether <code>doSave(Object, Object)</code> asks for confirmation before saving
+	 * the old input with <code>saveContent(Object)</code>.
 	 * @param enable a value of <code>true</code> enables confirmation
 	 * @since 2.0
 	 */

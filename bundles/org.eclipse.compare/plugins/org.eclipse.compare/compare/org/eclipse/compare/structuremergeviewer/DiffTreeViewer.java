@@ -333,8 +333,7 @@ public class DiffTreeViewer extends TreeViewer {
 	}
 
 	/**
-	 * Overridden to avoid expanding <code>DiffNode</code>s that shouldn't expand
-	 * (i.e. where the <code>dontExpand</code> method returns <code>true</code>).
+	 * Overridden to avoid expanding <code>DiffNode</code>s that shouldn't expand.
 	 */
 	protected void internalExpandToLevel(Widget node, int level) {
 				

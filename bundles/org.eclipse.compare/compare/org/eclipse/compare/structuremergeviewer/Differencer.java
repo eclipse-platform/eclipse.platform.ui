@@ -507,7 +507,7 @@ public class Differencer {
 	 * </p>
 	 *
 	 * @param progressMonitor the progress monitor for reporting progress
-	 * @name input a non-<code>null</code> input object
+	 * @param node the currently processed non-<code>null</code> node
 	 */
 	protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
 		if (node instanceof ITypedElement) {

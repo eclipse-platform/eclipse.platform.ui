@@ -41,15 +41,8 @@ public interface IEditableContent {
 	void setContent(byte[] newContent); 
 
 	/**
-	 * This method is called on a parent to
-	 * <UL>
-	 * <LI>
-	 * add a child,
-	 * <LI>
-	 * remove a child,
-	 * <LI>
-	 * copy the contents of a child
-	 * </UL>
+	 * This method is called on a parent to add or remove a child,
+	 * or to copy the contents of a child.
 	 * 
 	 * What to do is encoded in the two arguments as follows:
 	 * <TABLE>

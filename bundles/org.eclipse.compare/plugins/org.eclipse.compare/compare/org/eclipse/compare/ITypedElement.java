@@ -36,7 +36,7 @@ public interface ITypedElement {
 
 	/**
 	 * Type for an element whose actual type could not
-	 * be determined  (value <code>"???"</code>).
+	 * be determined. (value <code>"???"</code>).
 	 */
 	public static final String UNKNOWN_TYPE= "???"; //$NON-NLS-1$
 
