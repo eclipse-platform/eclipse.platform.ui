@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
@@ -157,7 +163,7 @@ public class ResourceSorter extends ViewerSorter {
 	}
 
 	/**
-	 * Returns the sort criteria of this this sorter.
+	 * Returns the sort criteria of this sorter.
 	 *
 	 * @return the sort criterion: one of <code>NAME</code> or <code>TYPE</code>
 	 */
@@ -174,5 +180,15 @@ public class ResourceSorter extends ViewerSorter {
 	private String getExtensionFor(IResource resource) {
 		String ext = resource.getFileExtension();
 		return ext == null ? "" : ext; //$NON-NLS-1$
+	}
+	/**
+	 * Sets the sort criteria of this sorter.
+	 * 
+	 * @param criteria the sort criterion: 
+	 *	one of <code>ResourceSorter.NAME</code> or 
+	 *	<code>ResourceSorter.TYPE</code>
+	 */
+	public void setCriteria(int criteria) {
+		this.criteria = criteria;
 	}
 }

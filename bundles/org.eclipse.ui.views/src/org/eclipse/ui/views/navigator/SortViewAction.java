@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -11,7 +18,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * @since 2.0
  */
 public class SortViewAction extends ResourceNavigatorAction {
-	private boolean sort = true;
+	private int sortCriteria = ResourceSorter.TYPE;
+
 /**
  * Creates the action.
  *
@@ -26,13 +34,21 @@ public SortViewAction(IResourceNavigator navigator, boolean sortByType) {
 		setToolTipText(ResourceNavigatorMessages.getString("SortView.toolTipByName")); //$NON-NLS-1$
 	}
 	setEnabled(true);
-	this.sort = sortByType;
+	sortCriteria = sortByType ? ResourceSorter.TYPE : ResourceSorter.NAME;
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.SORT_VIEW_ACTION);
 }
 public void run() {
-	if (sort)
-		getNavigator().setSorter(new ResourceSorter(ResourceSorter.TYPE));
-	else
-		getNavigator().setSorter(new ResourceSorter(ResourceSorter.NAME));
+	ResourceSorter sorter = getNavigator().getSorter();
+	
+	if (sorter == null)
+		getNavigator().setSorter(new ResourceSorter(sortCriteria));
+	else {
+		Viewer viewer = getNavigator().getViewer();
+		viewer.getControl().setRedraw(false);
+		sorter.setCriteria(sortCriteria);
+		getNavigator().setSorter(sorter);
+		viewer.refresh();
+		viewer.getControl().setRedraw(true);		
+	}		
 }
 }
