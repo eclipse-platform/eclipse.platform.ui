@@ -223,7 +223,7 @@ public class JobsView extends ViewPart {
 		//join the running test jobs
 		Button wake = new Button(group, SWT.PUSH);
 		wake.setText("WakeUp"); //$NON-NLS-1$
-		wake.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
+		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
 		wake.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		wake.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
