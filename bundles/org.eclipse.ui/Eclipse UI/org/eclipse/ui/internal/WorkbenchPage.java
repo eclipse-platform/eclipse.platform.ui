@@ -871,10 +871,26 @@ public void dispose() {
 	perspList = new PerspectiveList();
 
 	// Dispose views.
+	final int errors[] = {0};
 	for (int nX = 0; nX < views.length; nX ++) {
-		IViewPart view = views[nX];
+		final IViewPart view = views[nX];
 		firePartClosed(view);
-		view.dispose();
+		Platform.run(new SafeRunnableAdapter() {
+			public void run() {
+				view.dispose();
+			}
+			public void handleException(Throwable e) {
+				errors[0]++;
+			}
+		});
+	}
+	if (errors[0] > 0) {
+		String message;
+		if (errors[0] == 1)
+			message = WorkbenchMessages.getString("WorkbenchPage.oneErrorClosingPage"); //$NON-NLS-1$
+		else
+			message = WorkbenchMessages.getString("EditorManager.multipleErrorsRestoring"); //$NON-NLS-1$
+		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 	activePart = null;
 	activationList = new ActivationList();;

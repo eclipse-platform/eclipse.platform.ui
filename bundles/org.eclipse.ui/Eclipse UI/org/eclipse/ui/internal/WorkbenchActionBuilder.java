@@ -985,7 +985,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Adds the pin action to the toolbar.
 	 */
 	private void addPinEditorAction() {
-		ToolBarManager toolbar = window.getToolBarManager();
+		IToolBarManager toolbar = window.getToolsManager();
 		try {
 			pinEditorAction.setVisible(true);
 			toolbar.insertAfter(pinEditorGroup,pinEditorAction);
@@ -998,7 +998,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Removes the pin action from the toolbar.
 	 */	
 	private void removePinEditorAction() {
-		ToolBarManager toolbar = window.getToolBarManager();
+		IToolBarManager toolbar = window.getToolsManager();
 		try {
 			pinEditorAction.setVisible(false);
 			toolbar.remove(pinEditorAction.getId());
