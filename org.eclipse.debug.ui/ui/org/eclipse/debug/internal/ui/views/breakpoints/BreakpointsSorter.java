@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -59,13 +60,21 @@ public class BreakpointsSorter extends ViewerSorter {
 			}
 			String type1= ""; //$NON-NLS-1$
 			String type2= ""; //$NON-NLS-1$
+			IMarker marker1= b1.getMarker();
+			if (!marker1.exists()) {
+				return 0;
+			}
 			try {
-				type1= b1.getMarker().getType();
+				type1= marker1.getType();
 			} catch (CoreException ce) {
 				DebugUIPlugin.log(ce);
 			}
 			try {
-				type2= b2.getMarker().getType();	
+				IMarker marker2= b2.getMarker();
+				if (!marker2.exists()) {
+					return 0;
+				}
+				type2= marker2.getType();	
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
@@ -82,7 +91,7 @@ public class BreakpointsSorter extends ViewerSorter {
 	
 			boolean lineBreakpoint= false;
 			try {
-				lineBreakpoint= b1.getMarker().isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
+				lineBreakpoint= marker1.isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
 			} catch (CoreException ce) {
 				DebugUIPlugin.log(ce);
 			}
