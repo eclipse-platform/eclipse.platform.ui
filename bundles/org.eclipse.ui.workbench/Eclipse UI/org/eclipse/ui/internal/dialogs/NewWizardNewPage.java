@@ -182,10 +182,14 @@ class NewWizardNewPage
      */
     private void trimPrimaryWizards() {
         ArrayList newPrimaryWizards = new ArrayList(primaryWizards.length);
-        for (int i = 0; i < primaryWizards.length; i++) {	
-            if (wizardCategories.findWizard(primaryWizards[i].getID(), true) != null)
-                newPrimaryWizards.add(primaryWizards[i]);
-        }
+        
+        if(wizardCategories == null)
+        	return;//No categories so nothing to trim
+        	
+    	for (int i = 0; i < primaryWizards.length; i++) {	
+    		if (wizardCategories.findWizard(primaryWizards[i].getID(), true) != null)
+    			newPrimaryWizards.add(primaryWizards[i]);
+    	}
         
         primaryWizards = (WorkbenchWizardElement []) newPrimaryWizards.toArray(new WorkbenchWizardElement [newPrimaryWizards.size()]);        
     }
@@ -486,12 +490,14 @@ class NewWizardNewPage
 
 		List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
 
-		for (int i = 0; i < expandedCategoryPaths.length; i++) {
-			WizardCollectionElement category =
-				wizardCategories.findChildCollection(
-					new Path(expandedCategoryPaths[i]));
-			if (category != null) // ie.- it still exists
-				categoriesToExpand.add(category);
+		if(wizardCategories != null){
+			for (int i = 0; i < expandedCategoryPaths.length; i++) {
+				WizardCollectionElement category =
+					wizardCategories.findChildCollection(
+						new Path(expandedCategoryPaths[i]));
+				if (category != null) // ie.- it still exists
+					categoriesToExpand.add(category);
+			}
 		}
 
 		if (!categoriesToExpand.isEmpty())
@@ -560,6 +566,9 @@ class NewWizardNewPage
 	protected void selectPreviouslySelected() {
 		String selectedId = settings.get(STORE_SELECTED_ID);
 		if (selectedId == null)
+			return;
+		
+		if(wizardCategories == null)
 			return;
 
 		Object selected =
