@@ -43,7 +43,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	private AntTasksPage tasksPage;
 	private AntTypesPage typesPage;
 	private AntPropertiesPage propertiesPage;
-	private AntJREPage  jrePage;
 	
 	/**
 	 * Creates the preference page
@@ -82,9 +81,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 
 		propertiesPage= new AntPropertiesPage(this);
 		propertiesPage.createTabItem(folder);
-	
-		jrePage= new AntJREPage(this);
-		jrePage.createTabItem(folder);
 		
 		tasksPage.initialize();
 		typesPage.initialize();
@@ -151,13 +147,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		String[] files = propertiesPage.getPropertyFiles();
 		prefs.setCustomPropertyFiles(files);
 		
-		
-		String vmInfo= jrePage.getJRE();
-		if (vmInfo != null) {
-			getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_VM_INFORMATION, vmInfo);
-		} else {
-			getPreferenceStore().setToDefault(IAntUIPreferenceConstants.ANT_VM_INFORMATION);
-		}
 		prefs.updatePluginPreferences();
 	
 		return super.performOk();
