@@ -13,7 +13,7 @@ package org.eclipse.jface.text.formatter;
 
 
 /**
- * An formatting strategy is assumed to be specialized on formatting text 
+ * A formatting strategy is assumed to be specialized on formatting text 
  * of a particular content type. Each formatting process calls the strategy's 
  * methods in the following sequence:
  * <ul>
