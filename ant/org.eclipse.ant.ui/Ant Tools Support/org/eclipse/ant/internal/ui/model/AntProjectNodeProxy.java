@@ -266,14 +266,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-        if (fName != null) {
-            return fName;
-        }
-		if (fProject == null) {
-			if (fBuildFileName != null) {
-				return fBuildFileName;
-			}
-		}
-		return super.toString();
+        return getLabel();
 	}
 }
