@@ -140,7 +140,7 @@ public class FreeFormPage extends FormPage {
 				rtext.copy();
 			}
 		});
-		rtext.setMenu(menu);
+		//rtext.setMenu(menu);
 		item.setEnabled(false);
 		rtext.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

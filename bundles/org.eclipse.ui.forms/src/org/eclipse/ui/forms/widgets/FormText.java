@@ -623,9 +623,14 @@ public final class FormText extends Canvas {
 	public void setMenu(Menu menu) {
 		Menu currentMenu = super.getMenu();
 		if (currentMenu != null && INTERNAL_MENU.equals(currentMenu.getData())) {
-			currentMenu.dispose();
+			// internal menu set
+			if (menu!=null) {
+				currentMenu.dispose();
+				super.setMenu(menu);
+			}
 		}
-		super.setMenu(menu);
+		else
+			super.setMenu(menu);
 	}
 
 	private void createMenu() {
