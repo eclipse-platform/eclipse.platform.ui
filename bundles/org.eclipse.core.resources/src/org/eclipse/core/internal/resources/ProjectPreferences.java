@@ -88,21 +88,8 @@ public class ProjectPreferences extends EclipsePreferences {
 		String path = absolutePath();
 		segmentCount = getSegmentCount(path);
 
-		if (segmentCount == 1) {
-			if (initialized) 
-				return;
-			// the children are all of the projects in the workspace
-			try {
-				synchronized (this) {
-					IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-					for (int i=0; i<allProjects.length; i++)
-						addChild(allProjects[i].getName(), null);
-				}
-			} finally {
-				initialized = true;
-			}
+		if (segmentCount == 1)
 			return;
-		}
 
 		// cache the project name
 		String projectName = getSegment(path, 1);
@@ -128,6 +115,27 @@ public class ProjectPreferences extends EclipsePreferences {
 		} finally {
 			initialized = true;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#nodeExists(java.lang.String)
+	 * 
+	 * If we are at the /project node and we are checking for the existance of a child, we
+	 * want special behaviour. If the child is a single segment name, then we want to
+	 * return true if the node exists OR if a project with that name exists in the workspace.
+	 */
+	public boolean nodeExists(String path) throws BackingStoreException {
+		if (segmentCount != 1)
+			return super.nodeExists(path);
+		if (path.length() == 0)
+			return super.nodeExists(path);
+		if (path.charAt(0) == IPath.SEPARATOR)
+			return super.nodeExists(path);
+		if (path.indexOf(IPath.SEPARATOR) != -1)
+			return super.nodeExists(path);
+		// if we are checking existance of a single segment child of /project, base the answer on
+		// whether or not it exists in the workspace.
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(path).exists() || super.nodeExists(path);
 	}
 
 	/*
