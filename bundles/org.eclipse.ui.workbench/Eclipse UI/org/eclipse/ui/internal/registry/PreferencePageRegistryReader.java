@@ -175,7 +175,6 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		WorkbenchPreferenceNode node = createNode(workbench, element);
 		if (node != null)
 			nodes.add(node);
-		readElementChildren(element);
 		return true;
 	}
 
