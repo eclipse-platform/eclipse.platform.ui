@@ -58,6 +58,8 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 		if (update) {
 			getView().updateObjects();
 			getConsoleView().updateTitle();
+			IProcess process = getConsoleView().getProcess();
+			((ConsoleViewer)getViewer()).setEditable(process != null && !process.isTerminated());
 		}
 	}
 	

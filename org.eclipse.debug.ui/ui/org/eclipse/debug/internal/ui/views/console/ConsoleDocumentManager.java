@@ -7,10 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -32,7 +28,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
+/**
+ * Creates documents for processes as they are registered with a launch. */
 public class ConsoleDocumentManager implements ILaunchListener {
 
 	/**
@@ -47,9 +46,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	private IProcess fCurrentProcess= null;
 	
 	/**
-	 * The mappings of processes to their console documents.
-	 */
-	protected Map fConsoleDocuments= new HashMap(3);
+	 * Default document provider.	 */
+	protected IDocumentProvider fDefaultDocumentProvider = new DefaultConsoleDocumentProvider();
 	
 	public static ConsoleDocumentManager getDefault() {
 		if (fgConsoleDocumentManager == null) {
@@ -78,11 +76,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
 					IProcess iProcess = processes[i];
-					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(iProcess);
-					if (doc != null) {
-						doc.close();
-						setConsoleDocument(processes[i], null);
-					}
+					IDocumentProvider provider = getDocumentProvider(iProcess);
+					provider.disconnect(iProcess);
 					if (iProcess.equals(currentProcess)) {
 						setCurrentProcess(null);
 					}
@@ -120,9 +115,13 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
 					if (getConsoleDocument(processes[i]) == null) {
-						ConsoleDocument doc= new ConsoleDocument(processes[i]);
-						doc.startReading();
-						setConsoleDocument(processes[i], doc);
+						IProcess process = processes[i];
+						IDocumentProvider provider = getDocumentProvider(process);
+						try {
+							provider.connect(process);
+							provider.getDocument(process);
+						} catch (CoreException e) {
+						}
 					}
 				}
 				
@@ -165,22 +164,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * if none.
 	 */
 	public IDocument getConsoleDocument(IProcess process) {
-		return (IDocument) fConsoleDocuments.get(process);
+		IDocumentProvider provider = getDocumentProvider(process);
+		return provider.getDocument(process);
 	}
-	
-	/**
-	 * Sets the console document for the specified process.
-	 * If the document is <code>null</code> the mapping for the
-	 * process is removed.
-	 */
-	protected void setConsoleDocument(IProcess process, IDocument doc) {
-		if (doc == null) {
-			fConsoleDocuments.remove(process);
-		} else {
-			fConsoleDocuments.put(process, doc);
-		}
-	}
-	
+		
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The console document manager starts listening for
@@ -204,12 +191,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * launch listener and kills all existing console documents.
 	 */
 	public void shutdown() throws CoreException {
-		Iterator docs= fConsoleDocuments.values().iterator();
-		while (docs.hasNext()) {
-			ConsoleDocument doc= (ConsoleDocument)docs.next();
-			doc.kill();
-		}
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			launchRemoved(launch);
+		}
 		launchManager.removeLaunchListener(this);
 	}
 	
@@ -294,5 +281,14 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Returns the document provider applicable for the given process.
+	 * 	 * @param process	 * @return document provider
+	 * 
+	 * TODO: allow for custom document providers	 */
+	protected IDocumentProvider getDocumentProvider(IProcess process) {
+		return fDefaultDocumentProvider;
 	}
 }
