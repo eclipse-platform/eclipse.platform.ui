@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import org.w3c.dom.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.contributions.*;
+import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * Help Search Query.
@@ -166,7 +167,7 @@ public class HelpSearchQuery {
 			"infoset="
 				+ infoset
 				+ "&keyword="
-				+ URLEncoder.encode(key)
+				+ URLCoder.encode(key)
 				+ "&maxHits="
 				+ maxHits
 				+ "&within="
