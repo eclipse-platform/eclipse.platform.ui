@@ -5,12 +5,20 @@ package org.eclipse.core.internal.boot;
  * All Rights Reserved.
  */
 
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import org.eclipse.core.boot.BootLoader;
  
 public class PlatformURLHandlerFactory implements URLStreamHandlerFactory {
 
 	private static Hashtable handlers = new Hashtable();
+	
+	private static final String ECLIPSE_HANDLER_FACTORY = "org.eclipse.protocol.handler.factory";
+	
 public PlatformURLHandlerFactory() {
 	super();
 
@@ -48,8 +56,27 @@ public static void startup(String location) {
 
 	PlatformURLHandlerFactoryProxy p = PlatformURLHandlerFactoryProxy.getFactoryProxy();
 	if (p==null) {
-		p = new PlatformURLHandlerFactoryProxy();	
-		URL.setURLStreamHandlerFactory(p);
+		p = new PlatformURLHandlerFactoryProxy();
+		try {	
+			URL.setURLStreamHandlerFactory(p);
+		} catch(Error e) {
+			// Application has already set the factory. This is, for example,
+			// the case when Eclipse is running as part of a servlet on
+			// some web application servers. In this case we come up in
+			// "toleration" mode where Eclipse URL protocols are handled
+			// via explicitly supplied protocol proxy handlers using the base
+			// Java convention. Eclipse "registers" its stream factory
+			// using a system property. The explicit proxy handlers
+			// then delegate to the Eclipse handlers via the factory looked
+			// up as a Java property.
+			Properties props = System.getProperties();
+			props.put(ECLIPSE_HANDLER_FACTORY, p);
+			System.setProperties(props);
+			if (BootLoader.inDebugMode()){
+				System.out.println("WARNING: Unable to set URLStreamHandlerFactory.");				
+				System.out.println("WARNING: Starting in toleration mode.");				
+			}
+		}
 	}
 	p.setFactory(new PlatformURLHandlerFactory());
 	PlatformURLConnection.startup(location);

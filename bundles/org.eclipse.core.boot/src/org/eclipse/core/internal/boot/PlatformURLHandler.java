@@ -27,7 +27,9 @@ public class PlatformURLHandler extends URLStreamHandler {
 protected PlatformURLHandler() {
 	super();
 }
-protected URLConnection openConnection(URL url) throws IOException {
+public URLConnection openConnection(URL url) throws IOException {
+	// Note: openConnection() method is made public (rather than protected)
+	//       to enable request delegation from proxy handlers
 
 	String spec = url.getFile().trim();
 	if (spec.startsWith("/")) spec = spec.substring(1);
