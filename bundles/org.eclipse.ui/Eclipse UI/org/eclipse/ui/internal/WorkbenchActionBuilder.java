@@ -225,8 +225,14 @@ private void createMenuBar() {
 	popup.add(editActionSetAction = new EditActionSetsAction(window));
 	popup.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
 	popup.add(new Separator());
-	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window)); //$NON-NLS-1$
-	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window)); //$NON-NLS-1$
+	NextPageAction previousAction = 
+		new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window);//$NON-NLS-1$
+	popup.add(previousAction); 
+	previousAction.setAccelerator(SWT.ALT | SWT.ARROW_UP);
+	NextPageAction nextAction = 
+		new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window);//$NON-NLS-1$
+			nextAction.setAccelerator(SWT.ALT | SWT.ARROW_DOWN);
+	popup.add(nextAction); 
 	popup.add(new Separator());
 	popup.add(closePageAction = new ClosePageAction(window));
 	popup.add(closeAllPagesAction = new CloseAllPagesAction(window));

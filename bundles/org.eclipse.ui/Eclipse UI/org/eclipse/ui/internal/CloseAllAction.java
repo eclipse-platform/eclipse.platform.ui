@@ -4,11 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  *	Closes all active editors
@@ -27,6 +26,7 @@ public CloseAllAction(IWorkbenchWindow aWorkbench) {
 	updateState();
 	aWorkbench.addPageListener(this);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_ALL_ACTION});
+	setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F4);
 }
 /**
  * Notifies this listener that the given page has been activated.
