@@ -371,10 +371,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 	private URL removeSiteXML(URL url) throws MalformedURLException {
 		URL result = url;
 
-		// No need for decode encode
-		if (url != null && url.getFile().endsWith(Site.SITE_XML)) {
+	if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
+			String ref = url.getRef();
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			String newPath = url.getFile().substring(0, index);
+			String newPath = url.getFile().substring(0, index);	
+			if (ref!=null) newPath += newPath+"#"+ref;
 			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), newPath);
 		}
 		return result;
