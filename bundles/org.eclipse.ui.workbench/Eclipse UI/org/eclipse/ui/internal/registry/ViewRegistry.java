@@ -34,7 +34,7 @@ public ViewRegistry() {
 /**
  * Add a category to the registry.
  */
-public void add(ICategory desc) {
+public void add(Category desc) {
 	/* fix for 1877 */
 	if (findCategory(desc.getId()) == null)
 		categories.add(desc);
@@ -61,7 +61,7 @@ public IViewDescriptor find(String id) {
 /**
  * Find a category with a given name.
  */
-public ICategory findCategory(String id) {
+public Category findCategory(String id) {
 	Iterator enum = categories.iterator();
 	while (enum.hasNext()) {
 		Category cat = (Category) enum.next();
@@ -74,9 +74,9 @@ public ICategory findCategory(String id) {
 /**
  * Get the list of view categories.
  */
-public ICategory [] getCategories() {
+public Category [] getCategories() {
 	int nSize = categories.size();
-	ICategory [] retArray = new ICategory[nSize];
+	Category [] retArray = new Category[nSize];
 	categories.toArray(retArray);
 	return retArray;
 }
@@ -90,7 +90,7 @@ public int getCategoryCount() {
  * Returns the Misc category.
  * This may be null if there are no miscellaneous views.
  */
-public ICategory getMiscCategory() {
+public Category getMiscCategory() {
 	return miscCategory;
 }
 /**

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.internal.registry.ICategory;
+import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
 public class ViewContentProvider implements ITreeContentProvider {
@@ -33,8 +33,8 @@ public Object[] getChildren(Object element) {
 	if (element instanceof IViewRegistry) {
 		IViewRegistry reg = (IViewRegistry)element;
 		return reg.getCategories();
-	} else if (element instanceof ICategory) {
-		ArrayList list = ((ICategory)element).getElements();
+	} else if (element instanceof Category) {
+		ArrayList list = ((Category)element).getElements();
 		if (list != null) {
 			return list.toArray();
 		} else {
@@ -62,7 +62,7 @@ public Object getParent(Object element) {
 public boolean hasChildren(java.lang.Object element) {
 	if (element instanceof IViewRegistry)
 		return true;
-	else if (element instanceof ICategory)
+	else if (element instanceof Category)
 		return true;
 	return false;
 }

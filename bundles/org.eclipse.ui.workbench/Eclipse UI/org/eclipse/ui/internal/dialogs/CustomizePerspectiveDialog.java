@@ -1163,10 +1163,10 @@ private void initializeShortcutMenuInput() {
 
 	ShortcutMenu viewMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_VIEW, WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
 	IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
-	ICategory[] categories = viewReg.getCategories();
+	Category[] categories = viewReg.getCategories();
 	activeIds = perspective.getShowViewActionIds();
 	for (int i=0; i<categories.length; i++) {
-		ICategory category = categories[i];
+		Category category = categories[i];
 		ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
 		ArrayList views = category.getElements();
 		if (views != null) {
