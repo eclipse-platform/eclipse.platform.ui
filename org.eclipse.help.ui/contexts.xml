@@ -58,4 +58,12 @@ Click <b>Choose</b> to see the working set selection dialog, allowing for additi
        <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
    </context>
 
+<!-- Search result view -->
+   <context  id="searchResultView" >
+      <description>This view lists the results of recent searches.  Currently displayed are results or last documentation search.  Double click one of the documents to open it.</description>
+      <topic label="Help search" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm"/>
+      <topic label="Search view" href="reference/ref-26.htm"/>
+      <topic label="File search" href="reference/ref-45.htm"/>
+   </context>
+
 </contexts>

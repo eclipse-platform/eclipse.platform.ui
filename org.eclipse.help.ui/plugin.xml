@@ -49,6 +49,10 @@
       <contexts
             file="contexts.xml">
       </contexts>
+      <contexts
+            file="contexts_search.xml"
+            plugin="org.eclipse.search">
+      </contexts>
    </extension>
 <!-- Action Sets -->
    <extension
@@ -108,7 +112,8 @@
             label="%help_search_page"
             icon="icons/search_menu.gif"
             class="org.eclipse.help.ui.internal.search.HelpSearchPage"
-            id="org.eclipse.help.ui.searchPage">
+            id="org.eclipse.help.ui.searchPage"
+            searchViewHelpContextId="org.eclipse.help.ui.searchResultView">
       </page>
    </extension>
 <!-- Markers -->
