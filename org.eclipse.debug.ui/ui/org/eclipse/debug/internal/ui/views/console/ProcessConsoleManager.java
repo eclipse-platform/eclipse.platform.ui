@@ -140,14 +140,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                     continue;
                 }
                 ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-                if (launchConfiguration != null) {
-                    try {
-                        if ((!launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true)) && (launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null) == null)) {
-                            continue;
-                        }
-                    } catch (CoreException e1) {
-                    }
-                }
+
                 //create a new console.
                 IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
                 String encoding = null;
@@ -159,6 +152,14 @@ public class ProcessConsoleManager implements ILaunchListener {
                 }
                 ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
                 pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
+                if (launchConfiguration != null) {
+                    try {
+                        if ((!launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true)) && (launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null) == null)) {
+                            continue;
+                        }
+                    } catch (CoreException e1) {
+                    }
+                }
                 //add new console to console manager.
                 ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
             }
