@@ -127,7 +127,7 @@ public void load() {
 	// Get default perspective.
 	
 	defPerspID = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	IDialogSettings dialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
 	String str = dialogSettings.get(ID_DEF_PERSP);
 	if (str != null)
@@ -202,7 +202,7 @@ private void verifyDefaultPerspective() {
 
 	// Step 2. Read product info preference.
 	defPerspID = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		WorkbenchPlugin.getDefault().getPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	if (defPerspID != null)
 		desc = findPerspectiveWithId(defPerspID);
 	if (desc != null)

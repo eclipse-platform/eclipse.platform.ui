@@ -89,7 +89,8 @@ protected Control createControl(Composite parent) {
 	// table already provides the look of a border.
 	text = new Text(parent, SWT.SINGLE);
 	text.addKeyListener(new KeyAdapter() {
-		public void keyReleased(KeyEvent e) {
+		// hook key pressed - see PR 14201  
+		public void keyPressed(KeyEvent e) {
 			keyReleaseOccured(e);
 			// as a result of processing the above call, clients may have
 			// disposed this cell editor

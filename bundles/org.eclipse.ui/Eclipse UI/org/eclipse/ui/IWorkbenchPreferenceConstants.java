@@ -117,4 +117,8 @@ public interface IWorkbenchPreferenceConstants {
 	 */
 	public static final String NO_NEW_PERSPECTIVE = "NO_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
+	/**
+	 * A preference value indicating the default workbench perspective
+	 */
+	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
 }

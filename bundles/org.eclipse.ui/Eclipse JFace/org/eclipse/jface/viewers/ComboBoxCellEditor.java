@@ -63,7 +63,8 @@ protected Control createControl(Composite parent) {
 	comboBox.setFont(parent.getFont());
 
 	comboBox.addKeyListener(new KeyAdapter() {
-		public void keyReleased(KeyEvent e) {
+		// hook key pressed - see PR 14201  
+		public void keyPressed(KeyEvent e) {
 			keyReleaseOccured(e);
 		}
 	});

@@ -400,6 +400,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
+		store.setDefault(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, IWorkbenchConstants.DEFAULT_LAYOUT_ID); 
 		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
