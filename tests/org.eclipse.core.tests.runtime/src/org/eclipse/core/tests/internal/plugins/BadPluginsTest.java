@@ -25,7 +25,9 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(new BadPluginsTest("badElements"));
 	suite.addTest(new BadPluginsTest("badAttributes"));
+	suite.addTest(new BadPluginsTest("badPlugins"));
 	suite.addTest(new BadPluginsTest("badFragment"));
+	suite.addTest(new BadPluginsTest("failedFragment"));
 	return suite;
 }
 
@@ -157,9 +159,69 @@ public void badAttributes() {
 	} catch (Exception e) {}
 }
 
+public void badPlugins() {
+	String[] badTests = {
+		"noPluginIdTest", 
+		"blankPluginIdTest",
+		"noPluginNameTest",
+		"blankPluginNameTest", 
+		"noPluginVersionTest", 
+		"blankPluginVersionTest",
+		"badPluginVersionTest", 
+		"badPluginVersion2Test", 
+		"badPluginVersion3Test", 
+		"badPluginVersion4Test", 
+		"badPluginVersion5Test", 
+	};
+	String[] errorMessages = {
+		"Id attribute missing from plugin or fragment at file:",
+		"Id attribute missing from plugin or fragment at file:",
+		"Name attribute missing from plugin or fragment at file:",
+		"Name attribute missing from plugin or fragment at file:",
+		"Version attribute missing from plugin or fragment at file:",
+		"Error while processing file:",
+		"Error while processing file:",
+		"Error while processing file:",
+		"Error while processing file:",
+		"Error while processing file:",
+		"Error while processing file:",
+	};
+	
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	try {
+		for (int i = 0; i < badTests.length; i++) {
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
+			InternalFactory factory = new InternalFactory(problems);
+			String[] pluginPath = new String[1];
+			pluginPath[0] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[i] + ".xml");
+			URL pluginURLs[] = new URL[1];
+			for (int j = 0; j < pluginURLs.length; j++) {
+				URL pURL = null;
+				try {
+					pURL = new URL (pluginPath[j]);
+				} catch (java.net.MalformedURLException e) {
+					assertTrue("Bad URL for " + pluginPath[j], true);
+				}
+				pluginURLs[j] = pURL;
+			}
+			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
+			PluginDescriptorModel[] plugins = ((PluginRegistryModel)registry).getPlugins();
+			assertTrue(i + ".0 No plugins found", plugins.length == 0);
+			if (errorMessages[i].equals("")) {
+				System.out.println("id = " + badTests[i]);
+				System.out.println(problems.toString());
+			} else {
+				assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+			}
+		}
+	} catch (Exception e) {
+		fail("0.2 Unexpected exception - " + e.getMessage());
+	}
+}
+
 public void badFragment() {
 	String[] badAttrs = {
-		"badFragmentsTest", 
+		"badFragmentsTest",
 	};
 	String[] errorMessages = {
 		"Plugin descriptor org.eclipse.not.there not found for fragment badFragmentsTest.  Fragment ignored.",
@@ -207,5 +269,65 @@ public void badFragment() {
 	}
 }
 
+public void failedFragment() {
+	String[] badAttrs = {
+		"noFragmentIdTest", 
+		"blankFragmentIdTest",
+		"noFragmentNameTest",
+		"blankFragmentNameTest", 
+		"noFragmentVersionTest", 
+		"blankFragmentVersionTest",
+		"badFragmentVersionTest", 
+		"noFragmentPluginIdTest",
+		"blankFragmentPluginIdTest",
+		"noFragmentPluginVersionTest",
+		"blankFragmentPluginVersionTest",
+	};
+	String[] errorMessages = {
+		"Id attribute missing from plugin or fragment at file:",
+		"Id attribute missing from plugin or fragment at file:",
+		"Name attribute missing from plugin or fragment at file:",
+		"Name attribute missing from plugin or fragment at file:",
+		"Version attribute missing from plugin or fragment at file:",
+		"Error while processing file:",
+		"Error while processing file:",
+		"Plugin name attribute missing from fragment at file:",
+		"Plugin name attribute missing from fragment at file:",
+		"Plugin version attribute missing from fragment at file:",
+		"Error while processing file:",
+	};
+	
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	try {
+		for (int i = 0; i < badAttrs.length; i++) {
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
+			InternalFactory factory = new InternalFactory(problems);
+			String[] pluginPath = new String[2];
+			pluginPath[0] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/badFragmentsPluginTest.xml");
+			pluginPath[1] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[i] + ".xml");
+			URL pluginURLs[] = new URL[2];
+			for (int j = 0; j < pluginURLs.length; j++) {
+				URL pURL = null;
+				try {
+					pURL = new URL (pluginPath[j]);
+				} catch (java.net.MalformedURLException e) {
+					assertTrue("Bad URL for " + pluginPath[j], true);
+				}
+				pluginURLs[j] = pURL;
+			}
+			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
+			PluginFragmentModel[] fragmentDescriptors = ((PluginRegistryModel)registry).getFragments();
+			assertTrue(i + ".0 No fragments found", fragmentDescriptors.length == 0);
+			if (errorMessages[i].equals("")) {
+				System.out.println("id = " + badAttrs[i]);
+				System.out.println(problems.toString());
+			} else {
+				assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+			}
+		}
+	} catch (Exception e) {
+		fail("0.2 Unexpected exception - " + e.getMessage());
+	}
+}
 }
 

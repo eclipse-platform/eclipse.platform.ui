@@ -129,6 +129,14 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	PluginModel entry = processManifestFile(location);
 	if (entry == null)
 		return false;
+	// Make sure all the required fields are here.
+	// This prevents us from things like NullPointerExceptions
+	// when we are assuming a field exists.
+	if (!requiredPluginModel(entry, location)) {
+		// An error message would be nice!!
+		entry = null;
+		return false;
+	}
 	entry.setVersion(getQualifiedVersion(entry, location)); // check for version qualifier
 	if (entry instanceof PluginDescriptorModel) {
 		if (entry.getId() == null || entry.getVersion() == null) {
@@ -184,5 +192,42 @@ private String getQualifiedVersion(PluginModel entry, URL base) {
 	} finally {		
 		if (is != null) try { is.close(); } catch(IOException e) {}
 	}
+}
+private boolean requiredPluginModel(PluginModel plugin, URL location) {
+	String name = plugin.getName();
+	String id = plugin.getId();
+	String version = plugin.getVersion();
+	int nameLength = name == null ? 0 : name.length();
+	int idLength = id == null ? 0 : id.length();
+	int versionLength = version == null ? 0 : version.length();
+	
+	if (nameLength <= 0) {
+		parseProblem(Policy.bind("parse.missingPluginName", location.toString()));
+		return false;
+	}
+	if (idLength <= 0) {
+		parseProblem(Policy.bind("parse.missingPluginId", location.toString()));
+		return false;
+	}
+	if (versionLength <= 0) {
+		parseProblem(Policy.bind("parse.missingPluginVersion", location.toString()));
+		return false;
+	}
+
+	if (plugin instanceof PluginFragmentModel) {	
+		String pluginName = ((PluginFragmentModel)plugin).getPlugin();
+		String pluginVersion = ((PluginFragmentModel)plugin).getPluginVersion();
+		int pNameLength = pluginName == null ? 0 : pluginName.length();
+		int pNameVersion = pluginVersion == null ? 0 : pluginVersion.length();
+		if (pNameLength <= 0) {
+			parseProblem(Policy.bind("parse.missingFPName", location.toString()));
+			return false;
+		}
+		if (pNameVersion <= 0) {
+			parseProblem(Policy.bind("parse.missingFPVersion", location.toString()));
+			return false;
+		}
+	}
+	return true;
 }
 }
