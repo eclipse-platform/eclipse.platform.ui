@@ -69,7 +69,7 @@ public final class ContentAssistAction extends TextEditorAction {
 		if (fOperationTarget != null) {
 			
 			ITextEditor editor= getTextEditor();
-			if (editor != null) {
+			if (editor != null && validateEdit()) {
 				
 				Display display= null;
 				
@@ -105,11 +105,9 @@ public final class ContentAssistAction extends TextEditorAction {
 			return;
 		}
 		
-		if (editor instanceof ITextEditorExtension && fOperationTarget instanceof ITextOperationTargetExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) editor;
+		if (fOperationTarget instanceof ITextOperationTargetExtension) {
 			ITextOperationTargetExtension targetExtension= (ITextOperationTargetExtension) fOperationTarget;
-			boolean isEnabled= !extension.isEditorInputReadOnly();
-			targetExtension.enableOperation(ISourceViewer.CONTENTASSIST_PROPOSALS, isEnabled);
+			targetExtension.enableOperation(ISourceViewer.CONTENTASSIST_PROPOSALS, canModifyEditor());
 		}
 		
 		setEnabled(fOperationTarget.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS));

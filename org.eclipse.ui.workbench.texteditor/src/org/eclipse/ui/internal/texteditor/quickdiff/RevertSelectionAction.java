@@ -44,6 +44,11 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
+		super.update();
+		
+		if (!isEnabled())
+			return;
+		
 		setEnabled(false);
 
 		ITextSelection selection= getSelection();

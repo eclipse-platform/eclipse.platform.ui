@@ -60,7 +60,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	 */
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null || !validateEdit())
 			return;
 		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
 		if (target != null)
@@ -69,6 +69,15 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		if (target != null) 
 			target.endCompoundChange();
 		
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
+	 */
+	public void update() {
+		super.update();
+		if (isEnabled())
+			setEnabled(canModifyEditor());
 	}
 
 	/**

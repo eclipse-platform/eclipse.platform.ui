@@ -39,7 +39,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * Action for moving selected lines in an editor.
  * @since 3.0
  */
-public class MoveLinesAction extends ResourceAction implements IUpdate {
+public class MoveLinesAction extends TextEditorAction {
 	
 	/**
 	 * Detects the end of a compound edit command. The user is assumed to have ended the command
@@ -189,7 +189,7 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * @see ResourceAction#ResourceAction
 	 */
 	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
-		super(bundle, prefix);
+		super(bundle, prefix, editor);
 		fEditor= editor;
 		fUpwards= upwards;
 		fCopy= copy;
@@ -358,6 +358,9 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 		// get involved objects
 		if (fEditor == null)
 			return;
+		
+		if (!validateEdit())
+			return;
 
 		ISourceViewer viewer= fEditor.getSourceViewer();
 		if (viewer == null)
@@ -488,19 +491,10 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		boolean enabled= true;
-		if (fEditor instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) fEditor;
-			if (extension.isEditorInputReadOnly()) {
-				enabled= false;
-			}
-		} else if (fEditor != null) {
-			if (!fEditor.isEditable()) {
-				enabled= false;
-			}
-		} else {
-			enabled= false;
-		}
-		setEnabled(enabled);
+		super.update();
+		
+		if (isEnabled())
+			setEnabled(canModifyEditor());
+		
 	}
 }

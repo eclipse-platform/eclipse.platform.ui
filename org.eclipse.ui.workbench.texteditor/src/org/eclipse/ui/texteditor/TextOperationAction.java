@@ -107,13 +107,8 @@ public final class TextOperationAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		if (!fRunsOnReadOnly) {
-			if (editor instanceof ITextEditorExtension2) {
-				ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
-				if (!extension.validateEditorInputState())
-					return;
-			}
-		}
+		if (!fRunsOnReadOnly && !validateEdit())
+			return;
 			
 		Display display= null;
 		
@@ -136,16 +131,14 @@ public final class TextOperationAction extends TextEditorAction {
 	 * enabled state accordingly.
 	 */
 	public void update() {
+		super.update();
 		
-		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension2) {
-			ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
-			if (!extension.isEditorInputModifiable() && !fRunsOnReadOnly) {
-				setEnabled(false);
-				return;
-			}
+		if (!fRunsOnReadOnly && !canModifyEditor()) {
+			setEnabled(false);
+			return;
 		}
 		
+		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 			

@@ -55,6 +55,15 @@ public class SmartEnterAction extends TextEditorAction {
 		super(bundle, prefix, textEditor);
 		fAbove= above;
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
+	 */
+	public void update() {
+		super.update();
+		if (isEnabled())
+			setEnabled(canModifyEditor());
+	}
 
 	/*
 	 * @see org.eclipse.jface.action.IAction#run()
@@ -63,12 +72,15 @@ public class SmartEnterAction extends TextEditorAction {
 		ITextEditor ed= getTextEditor();
 		if (!(ed instanceof AbstractTextEditor))
 			return;
-		AbstractTextEditor editor= (AbstractTextEditor) ed;
-		if (!editor.isEditable())
+		
+		if (!validateEdit())
 			return;
+		
+		AbstractTextEditor editor= (AbstractTextEditor) ed;
 		ISourceViewer sv= editor.getSourceViewer();
 		if (sv == null)
 			return;
+		
 		StyledText st= sv.getTextWidget();
 		if (st == null || st.isDisposed())
 			return;

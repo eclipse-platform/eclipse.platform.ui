@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -3112,8 +3113,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fTextInputListener.inputChanged= false;
 			viewer.addTextInputListener(fTextInputListener);
 			try {			
-				IEditorInput input= getEditorInput();
-				validateState(input);
+				final IEditorInput input= getEditorInput();
+				
+				BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+					/*
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						validateState(input);
+					}
+				});
+				
 				sanityCheckState(input);
 				return !isEditorInputReadOnly() && !fTextInputListener.inputChanged;
 	

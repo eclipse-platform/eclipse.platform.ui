@@ -70,9 +70,8 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		if (editor == null)
 			return;
 
-		if (editor instanceof ITextEditorExtension2)
-			if (! ((ITextEditorExtension2) editor).validateEditorInputState())
-				return;
+		if (!validateEdit())
+			return;
 
 		Display display= null;
 		
@@ -96,15 +95,12 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		if (!isEnabled())
 			return;
 		
-		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension2) {
-			ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
-			if (!extension.isEditorInputModifiable()) {
-				setEnabled(false);
-				return;
-			}
+		if (!canModifyEditor()) {
+			setEnabled(false);
+			return;
 		}
 
+		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor != null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 			
@@ -117,15 +113,12 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		super.update();
 		
 		if (isEnabled()) {
-			ITextEditor editor= getTextEditor();
-			if (editor instanceof ITextEditorExtension2) {
-				ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
-				if (!extension.isEditorInputModifiable()) {
-					setEnabled(false);
-					return;
-				}
+			if (!canModifyEditor()) {
+				setEnabled(false);
+				return;
 			}
 		
+			ITextEditor editor= getTextEditor();
 			if (fOperationTarget == null && editor != null && fOperationCode != -1)
 				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 			

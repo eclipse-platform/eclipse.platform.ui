@@ -125,9 +125,12 @@ public class DeleteLineAction extends TextEditorAction {
 
 		if (fTarget == null)
 			return;
-
+		
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
+			return;
+
+		if (!validateEdit())
 			return;
 
 		IDocument document= getDocument(editor);
@@ -154,15 +157,12 @@ public class DeleteLineAction extends TextEditorAction {
 		if (!isEnabled())
 			return;
 
-		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) editor;
-			if (extension.isEditorInputReadOnly()) {
-				setEnabled(false);
-				return;
-			}
+		if (!canModifyEditor()) {
+			setEnabled(false);
+			return;
 		}
 		
+		ITextEditor editor= getTextEditor();
 		if (editor != null)
 			fTarget= (DeleteLineTarget) editor.getAdapter(DeleteLineTarget.class);
 		else

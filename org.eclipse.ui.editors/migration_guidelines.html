@@ -21,6 +21,16 @@ call or change the signature in the extended method. The latter is
 suggested since clients should decide how to handle invalid document
 positions.<br>
 </li>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.TextEditorAction.canModifyEditor()</span>:
+added predicate method that checks whether the action's editor can be modified. The method calls different methods on the underlying editor depending on 
+which interfaces the editor implements. The method will call <code>ITextEditorExtension2.isEditorInputModifiable()</code> if it is available. Modifing actions
+can call the method when updating their enablement state.<br>
+</li>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.TextEditorAction.validateEdit()</span>:
+        added predicate method that checks and updates the modifiable state of the action's editor. The method calls different methods on the underlying editor depending on 
+        which interfaces the editor implements. The method will call <code>ITextEditorExtension2.validateEditorInputState()</code> if it is available. Modifing actions
+        can call the method before running modifing the editor's content.<br>
+</li>
       </ul>
       </td>
     </tr>

@@ -86,5 +86,59 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 */
 	public void update() {
 		setEnabled(getTextEditor() != null);
-	}	
+	}
+	
+	/**
+	 * Checks the editor's modifiable state. Returns <code>true</code> if the editor can be modified,
+	 * taking in account the possible editor extensions.
+	 * 
+	 * <p>If the editor implements <code>ITextEditorExtension2</code>,
+	 * this method returns {@link ITextEditorExtension2#isEditorInputModifiable()};<br> else if the editor
+	 * implements <code>ITextEditorExtension2</code>, it returns {@link ITextEditorExtension#isEditorInputReadOnly()};<br>
+	 * else, {@link ITextEditor#isEditable()} is returned, or <code>false</code> if the editor is <code>null</code>.</p>
+	 * 
+	 * <p>There is only a difference to {@link #validateEdit()} if the editor implements
+	 * <code>ITextEditorExtension2</code>.</p>
+	 * 
+	 * @return <code>true</code> if a modifying action should be enabled, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	protected boolean canModifyEditor() {
+		ITextEditor editor= getTextEditor();
+		if (editor instanceof ITextEditorExtension2)
+			return ((ITextEditorExtension2) editor).isEditorInputModifiable();
+		else if (editor instanceof ITextEditorExtension)
+			return !((ITextEditorExtension) editor).isEditorInputReadOnly();
+		else if (editor != null)
+			return editor.isEditable();
+		else
+			return false;
+	}
+	
+	/**
+	 * Checks and validates the editor's modifiable state. Returns <code>true</code> if an action 
+	 * can proceed modifying the editor's input, <code>false</code> if it should not.
+	 * 
+	 * <p>If the editor implements <code>ITextEditorExtension2</code>,
+	 * this method returns {@link ITextEditorExtension2#validateEditorInputState()};<br> else if the editor
+	 * implements <code>ITextEditorExtension2</code>, it returns {@link ITextEditorExtension#isEditorInputReadOnly()};<br>
+	 * else, {@link ITextEditor#isEditable()} is returned, or <code>false</code> if the editor is <code>null</code>.</p>
+	 * 
+	 * <p>There is only a difference to {@link #canModifyEditor()} if the editor implements
+	 * <code>ITextEditorExtension2</code>.</p>
+	 * 
+	 * @return <code>true</code> if a modifying action can proceed to modify the underlying document, <code>false</code> otherwise
+	 * @since 3.0 
+	 */
+	protected boolean validateEdit() {
+		ITextEditor editor= getTextEditor();
+		if (editor instanceof ITextEditorExtension2)
+			return ((ITextEditorExtension2) editor).validateEditorInputState();
+		else if (editor instanceof ITextEditorExtension)
+			return !((ITextEditorExtension) editor).isEditorInputReadOnly();
+		else if (editor != null)
+			return editor.isEditable();
+		else
+			return false;
+	}
 }
