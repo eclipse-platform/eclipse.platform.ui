@@ -98,7 +98,7 @@ import org.eclipse.update.core.SiteManager;
  */
 public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
-	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
+	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	
 	/**
 	 * The dialog setting key to access the known installed features
@@ -715,8 +715,16 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				String versionedId = (String) it.next();
 				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
 				String featureVersionId = versionedId.substring(versionedId.indexOf(':')+1);
-				AboutInfo info = AboutInfo.readFeatureInfo(featureId, featureVersionId, featureId);
-				if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
+				// find the info for this feature
+				AboutInfo info = null;
+				AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
+				for (int i = 0; i < infos.length; i++) {
+					if (featureId.equals(infos[i].getFeatureId())) {
+						info = infos[i];
+						break;
+					}
+				}
+				if (info != null && info.getWelcomePageURL() != null) {
 					welcomeFeatures.add(info);
 					// activate the feature plug-in so it can run some install code
 					IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
