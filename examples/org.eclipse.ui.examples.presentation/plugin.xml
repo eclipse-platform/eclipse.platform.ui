@@ -47,6 +47,21 @@
             name="Wrapped tabs presentation"
             id="org.eclipse.ui.examples.presentation.wrappedtabs"/>
    </extension>
+      <extension
+         point="org.eclipse.ui.presentationFactories">
+      <factory
+            class="org.eclipse.ui.internal.presentations.defaultpresentation.NativePresentationFactory"
+            name="Native Tabs"
+            id="org.eclipse.ui.internal.presentations.defaultpresentation.NativePresentationFactory"/>
+      <factory
+            class="org.eclipse.ui.examples.presentation.baretittle.BareTitlePresentationFactory"
+            id="org.eclipse.ui.examples.presentation.factory1"
+            name="Simple Title"/>
+      <factory
+            class="org.eclipse.ui.examples.presentation.sidewinder.SideWinderPresentationFactory"
+            id="org.eclipse.ui.examples.presentation.factory2"
+            name="Side Winder"/>
+   </extension>
 
 <!-- =================================================================================== -->
 <!-- Themes						 					                                 -->
