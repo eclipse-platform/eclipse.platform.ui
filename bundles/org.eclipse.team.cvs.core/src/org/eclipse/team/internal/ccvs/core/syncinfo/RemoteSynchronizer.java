@@ -82,7 +82,7 @@ public class RemoteSynchronizer extends ResourceSynchronizer {
 	}
 	
 	public void setSyncBytes(IResource resource, byte[] bytes) throws CVSException {
-		byte[] oldBytes = getSyncBytes(resource);
+		byte[] oldBytes = internalGetSyncBytes(resource);
 		if (oldBytes != null && Util.equals(oldBytes, bytes)) return;
 		try {
 			if (!parentHasSyncBytes(resource) && !Util.equals(bytes, NO_REMOTE)) {
