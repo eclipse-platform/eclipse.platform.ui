@@ -58,7 +58,9 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 			if (annotation != null && annotation.length() > 0) {
 				label.setText(annotation);
 				final URL url = copyright.getURL();
-				if (url.getFile().endsWith(".htm") || url.getFile().endsWith(".html")) {
+				String filename = (url != null) ? url.getFile() : null;
+				if (filename != null
+					&& (filename.endsWith(".htm") || filename.endsWith(".html"))) {
 					Button button = new Button(composite, SWT.PUSH);
 					button.setText("Show in Browser");
 					button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -72,7 +74,6 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 			} else {
 				label.setText("Feature does not contain a copyright statement");
 			}
-
 		} catch (CoreException e) {
 		}
 		return null;
