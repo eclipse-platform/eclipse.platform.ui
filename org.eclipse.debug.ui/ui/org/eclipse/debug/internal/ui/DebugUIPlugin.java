@@ -990,10 +990,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	}
 	
 	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
-		setNewAttributes(entry, element);
-	}
-	
-	protected void setNewAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
 		ILaunchConfiguration config = element.getLaunchConfiguration();
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			config = ((ILaunchConfigurationWorkingCopy)config).getOriginal();
@@ -1002,7 +998,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
 		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());			 
 	}
-			
+				
 	protected IPath getHistoryFilePath() {
 		return getStateLocation().append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
 	}
