@@ -48,10 +48,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
-		// get an app server and start the help web app
-		if (AppServer.isRunning()) {
-			AppServer.add("help", "org.eclipse.help.webapp", "");
-		}
 	}
 
 	public IBrowser getHelpBrowser() {

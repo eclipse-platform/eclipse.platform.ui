@@ -22,6 +22,8 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private ContextHelpDialog f1Dialog = null;
 	private int idCounter = 0;
+	private boolean webappStarted=false;
+	private boolean webappRunning=false;
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -35,6 +37,14 @@ public class DefaultHelp implements IHelp {
 	 */
 	public static DefaultHelp getInstance() {
 		return instance;
+	}
+	private boolean ensureWebappRunning(){
+		if(!webappStarted){
+			webappStarted=true;
+			// get an app server and start the help web app
+			webappRunning=AppServer.add("help", "org.eclipse.help.webapp", "");
+		}
+		return webappRunning;
 	}
 
 	/**
@@ -200,7 +210,7 @@ public class DefaultHelp implements IHelp {
 	 * The url can contain query parameters to identify how help displays the document
 	 */
 	void displayHelpURL(String helpURL) {
-		if (!AppServer.isRunning())
+		if (!ensureWebappRunning())
 			return;
 		// may want to display an error message
 		if (helpURL == null || helpURL.length() == 0) {

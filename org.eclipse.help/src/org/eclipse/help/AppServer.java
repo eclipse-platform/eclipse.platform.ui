@@ -24,8 +24,10 @@ public class AppServer
 
 	// singleton object
 	private static IAppServer appServer;
+	private static boolean initialized=false;
 
-	static {
+	private static void init(){
+		initialized=true;
 		// Initializes the app server by getting an instance via 
 		// app-server the extension point
 
@@ -67,8 +69,11 @@ public class AppServer
 	 * @param path the plugin relative path where the web app WAR or directory is located
 	 * @return true if the webapp was added, false otherwise
 	 */
-	public static boolean add(String webAppName, String plugin, String path)
-	{
+	public static synchronized boolean add(String webAppName, String plugin, String path)
+	{	
+		if(!initialized){
+			init();
+		}
 		if (appServer == null)
 			return false;
 		return appServer.add(webAppName, plugin, path);
