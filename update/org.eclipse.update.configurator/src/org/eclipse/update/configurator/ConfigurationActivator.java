@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.configurator;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.DebugOptions;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.eclipse.osgi.service.environment.*;
 import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.service.startlevel.StartLevel;
-import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.service.packageadmin.*;
+import org.osgi.service.startlevel.*;
+import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator {
 	private final static String DEFAULT_CONVERTER = "org.eclipse.update.configurator.migration.PluginConverter"; //$NON-NLS-1$
@@ -40,12 +38,15 @@ public class ConfigurationActivator implements BundleActivator {
 	private String[] allArgs;
 
 	// location used to put the generated manfests
-	private String cacheLocation = (String) System.getProperties().get("osgi.manifest.cache"); //PASCAL Need to set this value somewhere (probably from boot)
+	private String cacheLocation = (String) System.getProperties().get("osgi.manifest.cache");
 	private IPluginConverter converter;
 	private Set ignore;
 	private BundleListener reconcilerListener;
 	private IPlatform platform;
 	private PlatformConfiguration configuration;
+	
+	//Need to store that because it is not provided by the platformConfiguration
+	private long lastTimeStamp;
 
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
@@ -58,7 +59,8 @@ public class ConfigurationActivator implements BundleActivator {
 		if("org.eclipse.ui.workbench".equals(System.getProperties().get("eclipse.application"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			System.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (!(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null))
+	
+		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null))
 			if (System.getProperty("eclipse.application") == null) {
 				System.setProperty("eclipse.application", application);
 				return;
@@ -77,6 +79,16 @@ public class ConfigurationActivator implements BundleActivator {
 		URL installURL = platform.getInstallURL();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(allArgs, metaPath, installURL);
+		
+		String configArea = (String) System.getProperty("osgi.configuration.area");
+		try {
+			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + "/last.config.stamp"));
+			lastTimeStamp = stream.readLong();
+		} catch (FileNotFoundException e) {
+			lastTimeStamp = configuration.getChangeStamp() - 1;
+		} catch (IOException e) {
+			lastTimeStamp = configuration.getChangeStamp() - 1;
+		}
 	}
 
 	private void computeIgnoredBundles() {
@@ -118,7 +130,21 @@ public class ConfigurationActivator implements BundleActivator {
 		releasePlatform();
 		converter = null;
 		releaseConverter();
+		writePlatformConfigurationTimeStamp();
 		configurationFactorySR.unregister();
+	}
+
+	private void writePlatformConfigurationTimeStamp() {
+		String configArea = (String) System.getProperty("osgi.configuration.area");
+		try {
+			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + "/last.config.stamp"));
+			stream.writeLong(configuration.getChangeStamp());
+		} catch (FileNotFoundException e) {
+			lastTimeStamp = configuration.getChangeStamp() - 1;
+		} catch (IOException e) {
+			lastTimeStamp = configuration.getChangeStamp() - 1;
+		}
+		
 	}
 
 	private void releasePlatform() {
@@ -266,7 +292,7 @@ public class ConfigurationActivator implements BundleActivator {
 		if (generationLocation.exists())
 			return;
 		if (!converter.convertManifest(pluginDir, generationLocation))
-			System.out.println(pluginDir + " manifest generation failed");
+			System.out.println(pluginDir + " manifest generation failed");	//TODO Need to log an error
 	}
 	/*
 	 * Derives a file name corresponding to a path:
