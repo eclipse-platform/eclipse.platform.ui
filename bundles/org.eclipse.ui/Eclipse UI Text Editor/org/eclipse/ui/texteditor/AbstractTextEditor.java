@@ -1783,7 +1783,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 		}
 		
-		if (provider.isDeleted(getEditorInput())) {
+		IEditorInput input= getEditorInput();
+		if (provider.isDeleted(input)) {
 			
 			if (isSaveAsAllowed()) {
 			
@@ -1820,7 +1821,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 			if (MessageDialog.openQuestion(shell, title, msg)) {
 				try {
-					doSetInput(getEditorInput());
+										
+					if (provider instanceof IDocumentProviderExtension) {
+						IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+						extension.synchronize(input);
+					} else {	
+						doSetInput(input);
+					}
+
+
 				} catch (CoreException x) {
 					title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
 					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$

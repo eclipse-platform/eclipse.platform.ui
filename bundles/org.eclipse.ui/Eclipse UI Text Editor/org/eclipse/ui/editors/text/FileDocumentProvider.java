@@ -303,6 +303,29 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
+	 */
+	public void synchronize(Object element)  throws CoreException {
+		if (element instanceof IFileEditorInput) {
+			
+			IFileEditorInput input= (IFileEditorInput) element;
+			
+			FileInfo info= (FileInfo) getElementInfo(element);
+			if (info != null) {
+					
+				info.fFileSynchronizer.uninstall();
+				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
+				info.fFileSynchronizer.install();			
+				
+				handleElementContentChanged((IFileEditorInput) element);
+			}
+			return;
+			
+		}
+		super.synchronize(element);
+	}
+	
+	/*
 	 * @see IDocumentProvider#isDeleted(Object)
 	 */
 	public boolean isDeleted(Object element) {

@@ -696,4 +696,10 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		
 		return STATUS_ERROR;
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
+	 */
+	public void synchronize(Object element) throws CoreException {
+	}
 }

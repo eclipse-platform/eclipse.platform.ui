@@ -82,6 +82,18 @@ public interface IDocumentProviderExtension {
 	
 	/**
 	 * Returns the status of the given element.
+	 * 
+	 * @param element the element
 	 */
 	IStatus getStatus(Object element);
+	
+	/**
+	 * Synchronizes the document provided for the given element with the
+	 * given element. After that call <code>getSynchronizationTimeStamp</code>
+	 * and <code>getModificationTimeStamp</code> return the same value.
+	 * 
+	 * @param element the element
+	 * @exception CoreException  if the synchronization could not be performed
+	 */
+	void synchronize(Object element) throws CoreException;
 }

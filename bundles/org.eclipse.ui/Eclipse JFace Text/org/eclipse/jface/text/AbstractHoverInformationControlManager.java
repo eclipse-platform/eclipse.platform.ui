@@ -190,6 +190,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 		private Rectangle fSubjectArea;
 		private Control fSubjectControl;
+		private boolean fIsActive= false;
 		
 		public MouseTracker() {
 		}
@@ -216,6 +217,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseTrackAdapter#mouseHover
 		 */
 		public void mouseHover(MouseEvent event) {
+			fIsActive= true;
 			setEnabled(false);
 			
 			fHoverEventLocation= new Point(event.x, event.y);
@@ -235,10 +237,14 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseMoveListener#mouseMove(MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			if (!fSubjectArea.contains(event.x, event.y))  {
+			if (!fSubjectArea.contains(event.x, event.y) && !fIsActive)  {
 				fSubjectControl.removeMouseMoveListener(this);
 				setEnabled(true);
 			}
+		}
+		
+		public void deactivate() {
+			fIsActive= false;
 		}
 	};
 		
@@ -265,6 +271,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	protected void presentInformation() {
 		fMouseTracker.setSubjectArea(getSubjectArea());
 		super.presentInformation();
+		fMouseTracker.deactivate();
 	}
 	
 	/*
