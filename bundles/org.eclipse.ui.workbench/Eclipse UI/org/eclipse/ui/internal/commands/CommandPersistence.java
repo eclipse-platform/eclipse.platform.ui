@@ -238,7 +238,7 @@ final class CommandPersistence {
 					.getAttribute(ATTRIBUTE_ID);
 			if ((categoryId == null) || (categoryId.length() == 0)) {
 				// The id should never be null. This is invalid.
-				final String message = "Categories need an id: '" //$NON-NLS-1$
+				final String message = "Categories need an id: plug-in='" //$NON-NLS-1$
 						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -254,8 +254,8 @@ final class CommandPersistence {
 					.getAttribute(ATTRIBUTE_NAME);
 			if ((name == null) || (name.length() == 0)) {
 				// The scheme id should never be null. This is invalid.
-				final String message = "Categories need a name: '" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+				final String message = "Categories need a name: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', categoryId='" //$NON-NLS-1$
 						+ categoryId + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -319,7 +319,7 @@ final class CommandPersistence {
 					.getAttribute(ATTRIBUTE_ID);
 			if ((commandId == null) || (commandId.length() == 0)) {
 				// The id should never be null. This is invalid.
-				final String message = "Commands need an id: '" //$NON-NLS-1$
+				final String message = "Commands need an id: plug-in='" //$NON-NLS-1$
 						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -332,8 +332,8 @@ final class CommandPersistence {
 					.getAttribute(ATTRIBUTE_NAME);
 			if ((name == null) || (name.length() == 0)) {
 				// The scheme id should never be null. This is invalid.
-				final String message = "Commands need a name: '" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+				final String message = "Commands need a name: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', commandId='" //$NON-NLS-1$
 						+ commandId + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -366,9 +366,9 @@ final class CommandPersistence {
 			final Command command = commandManager.getCommand(commandId);
 			final Category category = commandManager.getCategory(categoryId);
 			if (!category.isDefined()) {
-				final String message = "Commands should really have a category, not '" //$NON-NLS-1$
-						+ categoryId + "': '" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+				final String message = "Commands should really have a category, not categoryId='" //$NON-NLS-1$
+						+ categoryId + "': plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', commandId='" //$NON-NLS-1$
 						+ commandId + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.INFO,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -421,7 +421,7 @@ final class CommandPersistence {
 			final String id = parameterElement.getAttribute(ATTRIBUTE_ID);
 			if ((id == null) || (id.length() == 0)) {
 				// The id should never be null. This is invalid.
-				final String message = "Parameters need an id: '" //$NON-NLS-1$
+				final String message = "Parameters need an id: plug-in='" //$NON-NLS-1$
 						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -433,8 +433,8 @@ final class CommandPersistence {
 			final String name = parameterElement.getAttribute(ATTRIBUTE_NAME);
 			if ((name == null) || (name.length() == 0)) {
 				// The name should never be null. This is invalid.
-				final String message = "Parameters need a name: '" //$NON-NLS-1$
-						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+				final String message = "Parameters need a name: plug-in='" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', parameterId='" //$NON-NLS-1$
 						+ id + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
