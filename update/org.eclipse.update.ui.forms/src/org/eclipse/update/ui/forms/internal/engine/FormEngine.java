@@ -1,16 +1,31 @@
 package org.eclipse.update.ui.forms.internal.engine;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.SWT;
+import java.io.InputStream;
 import java.util.Hashtable;
 
-import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
-import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
-import org.eclipse.update.ui.forms.internal.engine.*;
 import org.eclipse.core.runtime.CoreException;
-import java.io.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
 
 public class FormEngine extends Canvas {
 	public static final String URL_HANDLER_ID = "urlHandler";
@@ -53,39 +68,28 @@ public class FormEngine extends Canvas {
 				paint(e);
 			}
 		});
-		addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				System.out.println("Key: "+e.character);
+		addListener(SWT.KeyDown, new Listener() {
+			public void handleEvent(Event e) {
 				if (e.character=='\r') {
 					activateSelectedLink();
 					return;
-				}
-				switch (e.keyCode) {
-					case SWT.ARROW_DOWN:
-						scrollVertical(false);
-						break;
-					case SWT.ARROW_UP:
-						scrollVertical(true);
-						break;
-					case SWT.ARROW_LEFT:
-						scrollHorizontal(true);
-						break;
-					case SWT.ARROW_RIGHT:
-						scrollHorizontal(false);
-						break;
-					case SWT.PAGE_UP:
-						scrollPage(true);
-						break;
-					case SWT.PAGE_DOWN:
-						scrollPage(false);
-						break;
 				}
 			}
 		});
 		addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
-				if (!model.hasFocusSegments())
+				switch (e.detail) {
+					case SWT.TRAVERSE_PAGE_NEXT:
+					case SWT.TRAVERSE_PAGE_PREVIOUS:
+					case SWT.TRAVERSE_ARROW_NEXT:
+					case SWT.TRAVERSE_ARROW_PREVIOUS:
+					e.doit = false;
 					return;
+				}
+				if (!model.hasFocusSegments()) {
+					e.doit = true;
+					return;
+				}
 				if (e.detail == SWT.TRAVERSE_TAB_NEXT)
 					e.doit = advance(true);
 				else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
@@ -122,6 +126,7 @@ public class FormEngine extends Canvas {
 		});
 		addMouseTrackListener(new MouseTrackListener() {
 			public void mouseEnter(MouseEvent e) {
+				handleMouseMove(e);
 			}
 			public void mouseExit(MouseEvent e) {
 				if (entered != null) {
@@ -161,33 +166,30 @@ public class FormEngine extends Canvas {
 	private void handleMouseHover(MouseEvent e) {
 	}
 	private void handleMouseMove(MouseEvent e) {
-		IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-
+		//IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+		ITextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
+		
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered);
 				entered = null;
-				setCursor(null);
 			}
+			setCursor(null);
 		} else {
-			if (entered == null) {
-				entered = segmentUnder;
-				enterLink(segmentUnder);
-				setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
+			if (segmentUnder instanceof IHyperlinkSegment) {
+				IHyperlinkSegment linkUnder = (IHyperlinkSegment)segmentUnder;
+				if (entered == null) {
+					entered = linkUnder;
+					enterLink(linkUnder);
+					setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
+				}
 			}
-
+			else {
+				setCursor(model.getHyperlinkSettings().getTextCursor());
+			}
 		}
 	}
 	
-	private void scrollVertical(boolean up) {
-		System.out.println("Scroll vertical :"+up);
-	}
-	private void scrollHorizontal(boolean left) {
-		System.out.println("Scroll horizontal :"+left);
-	}
-	private void scrollPage(boolean up) {
-		System.out.println("Scroll page :"+up);
-	}
 
 	public HyperlinkSettings getHyperlinkSettings() {
 		return model.getHyperlinkSettings();
@@ -308,8 +310,10 @@ public class FormEngine extends Canvas {
 	}
 
 	public boolean setFocus() {
+		/*
 		if (!model.hasFocusSegments())
 			return false;
+		*/
 		return super.setFocus();
 	}
 	

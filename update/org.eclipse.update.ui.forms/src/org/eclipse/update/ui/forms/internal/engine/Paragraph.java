@@ -122,4 +122,17 @@ public class Paragraph implements IParagraph {
 			loc.y += lineHeight;
 		}
 	}
+	public ITextSegment findSegmentAt(int x, int y) {
+		if (segments!=null) {
+			for (int i=0; i<segments.size(); i++) {
+				IParagraphSegment segment = (IParagraphSegment)segments.get(i);
+				if (segment instanceof ITextSegment) {
+					ITextSegment textSegment = (ITextSegment)segment;
+					if (textSegment.contains(x, y))
+						return textSegment;
+				}
+			}
+		}
+		return null;
+	}
 }

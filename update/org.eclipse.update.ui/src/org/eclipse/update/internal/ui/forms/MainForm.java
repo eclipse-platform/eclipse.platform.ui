@@ -89,6 +89,7 @@ protected void createContents(Composite parent) {
 	topic.setForeground(topicColor);
 	factory.createLabel(parent, null);	
 	text =factory.createFormEngine(parent);
+	setFocusControl(text);
 	text.load(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC), true, false);
 	text.registerTextObject("action1", action);
 	text.registerTextObject("image1", myEclipseImage);

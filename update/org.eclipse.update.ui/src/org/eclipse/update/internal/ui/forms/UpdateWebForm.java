@@ -6,12 +6,14 @@ package org.eclipse.update.internal.ui.forms;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.update.internal.ui.pages.IUpdateFormPage;
 import org.eclipse.update.ui.forms.internal.WebForm;
 
 public class UpdateWebForm extends WebForm implements IUpdateForm {
 	private IUpdateFormPage page;
+	private Control focusControl;
 
 	public UpdateWebForm(IUpdateFormPage page) {
 		this.page = page;
@@ -38,5 +40,11 @@ public class UpdateWebForm extends WebForm implements IUpdateForm {
 	protected void refreshSize() {
 		((Composite) getControl()).layout();
 		updateSize();
+	}
+	protected void setFocusControl(Control control) {
+		focusControl = control;
+	}
+	public void setFocus() {
+		if (focusControl!=null) focusControl.setFocus();
 	}
 }

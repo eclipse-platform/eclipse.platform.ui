@@ -61,6 +61,7 @@ public class SiteForm extends UpdateWebForm {
 		url = factory.createHeadingLabel(parent, null);
 
 		FormEngine desc = factory.createFormEngine(parent);
+		setFocusControl(desc);
 		desc.registerTextObject(KEY_UPDATE_SITES_IMAGE, updateSitesImage);
 		desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
 		TableData td = new TableData();

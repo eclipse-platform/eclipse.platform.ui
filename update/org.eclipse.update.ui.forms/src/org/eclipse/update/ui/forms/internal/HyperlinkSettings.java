@@ -16,23 +16,26 @@ public class HyperlinkSettings {
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
 
-	protected Cursor hyperlinkCursor;
-	protected Cursor busyCursor;
 	protected boolean hyperlinkCursorUsed=true;
 	protected int hyperlinkUnderlineMode=UNDERLINE_ALWAYS;
 	protected Color background;
 	protected Color foreground;
 	protected Color activeBackground;
 	protected Color activeForeground;
-
+	protected Cursor hyperlinkCursor;
+	protected Cursor busyCursor;
+	protected Cursor textCursor;
+	
 public HyperlinkSettings() {
 	hyperlinkCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 	busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
+	textCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_IBEAM);
 }
 
 public void dispose() {
 	hyperlinkCursor.dispose();
 	busyCursor.dispose();
+	textCursor.dispose();
 }
 
 public Color getActiveBackground() {
@@ -46,6 +49,9 @@ public Color getBackground() {
 }
 public Cursor getBusyCursor() {
 	return busyCursor;
+}
+public Cursor getTextCursor() {
+	return textCursor;
 }
 public Color getForeground() {
 	return foreground;

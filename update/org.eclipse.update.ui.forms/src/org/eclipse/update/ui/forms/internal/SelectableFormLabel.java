@@ -27,8 +27,16 @@ public class SelectableFormLabel extends FormLabel {
 		});
 		addListener(SWT.Traverse, new Listener () {
 			public void handleEvent(Event e) {
-				if (e.detail != SWT.TRAVERSE_RETURN)
-					e.doit = true;
+				switch (e.detail) {
+					case SWT.TRAVERSE_PAGE_NEXT:
+					case SWT.TRAVERSE_PAGE_PREVIOUS:
+					case SWT.TRAVERSE_ARROW_NEXT:
+					case SWT.TRAVERSE_ARROW_PREVIOUS:
+					case SWT.TRAVERSE_RETURN:
+					e.doit = false;
+					return;
+				}
+				e.doit = true;
 			}
 		});
 		addFocusListener(new FocusListener() {

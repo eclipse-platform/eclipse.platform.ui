@@ -196,6 +196,7 @@ public class SearchForm extends UpdateWebForm {
 
 		queryGroup.setText(UpdateUIPlugin.getResourceString(KEY_QUERY));
 		queryGroup.createControl(optionContainer, factory);
+		setFocusControl(queryGroup.getControl());
 
 		optionsGroup = new OptionsGroup() {
 			public void fillExpansion(Composite expansion, FormWidgetFactory factory) {

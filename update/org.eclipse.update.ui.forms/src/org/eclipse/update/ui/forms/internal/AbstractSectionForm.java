@@ -155,4 +155,28 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		}
 		scomp.setOrigin(scomp.toControl(new Point(x, y)));
 	}
+	
+	public static void scrollVertical(ScrolledComposite scomp, boolean up) {
+		scroll(scomp, 0, up?-30:30);
+	}
+	public static void scrollHorizontal(ScrolledComposite scomp, boolean left) {
+		scroll(scomp, left?-30:30, 0);
+	}
+	public static void scrollPage(ScrolledComposite scomp, boolean up) {
+		Point origin = scomp.getOrigin();
+		Rectangle clientArea = scomp.getClientArea();
+		int increment = up ?  -clientArea.height : clientArea.height;
+		scroll(scomp, origin.x, origin.y + increment);
+	}
+	private static void scroll(ScrolledComposite scomp, int xoffset, int yoffset) {
+		Point origin = scomp.getOrigin();
+		Point contentSize = scomp.getContent().getSize();
+		int xorigin = origin.x + xoffset;
+		int yorigin = origin.y + yoffset;
+		xorigin = Math.max(xorigin, 0);
+		xorigin = Math.min(xorigin, contentSize.x-1);
+		yorigin = Math.max(yorigin, 0);
+		yorigin = Math.min(yorigin, contentSize.y-1);
+		scomp.setOrigin(xorigin, yorigin);
+	}
 }

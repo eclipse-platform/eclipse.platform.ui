@@ -257,6 +257,7 @@ public class DetailsForm extends PropertyWebForm {
 			UpdateUIPlugin.getResourceString(KEY_PLATFORMS));
 		new Label(properties, SWT.NULL);
 		supportedPlatformsGroup.createControl(properties, factory);
+		setFocusControl(supportedPlatformsGroup.getControl());
 
 		imageLabel = factory.createLabel(container, null);
 		TableData td = new TableData();

@@ -338,6 +338,14 @@ public class TextModel implements ITextModel {
 		}
 		return null;
 	}
+	public ITextSegment findSegmentAt(int x, int y) {
+		for (int i=0; i<paragraphs.size(); i++) {
+			IParagraph p = (IParagraph)paragraphs.get(i);
+			ITextSegment segment = p.findSegmentAt(x, y);
+			if (segment!=null) return segment;
+		}
+		return null;
+	}
 
 	public IHyperlinkSegment getSelectedLink() {
 		if (selectedLinkIndex == -1)
@@ -379,7 +387,7 @@ public class TextModel implements ITextModel {
 	public boolean hasFocusSegments() {
 		IHyperlinkSegment [] links = getHyperlinks();
 		if (links.length>0) return true;
-		return true;
+		return false;
 	}
 
 	public void dispose() {

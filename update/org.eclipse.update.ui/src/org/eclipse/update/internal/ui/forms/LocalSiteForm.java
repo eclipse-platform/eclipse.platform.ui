@@ -77,6 +77,7 @@ protected void createContents(Composite parent) {
 	data.align = TableData.FILL;
 	engine.load(productText(), false, true);
 	engine.setLayoutData(data);
+	setFocusControl(engine);
 	
 	Composite sep = factory.createCompositeSeparator(parent);
 	data = new TableData();

@@ -94,6 +94,8 @@ class ExpandableLayout extends Layout {
 				if (expandable) setExpanded(!isExpanded());
 			}
 		});
+		textLabel.addFocusListener(factory.visibilityHandler);
+		textLabel.addKeyListener(factory.keyboardHandler);		
 		if (text!=null) textLabel.setText(text);
 		expansion = factory.createComposite(container);
 		fillExpansion(expansion, factory);
