@@ -43,6 +43,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -55,13 +56,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -75,7 +76,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener {
+public class ProcessConsolePage implements IConsolePage, ISelectionListener, IAdaptable, IShowInSource, IShowInTargetList, IDebugEventSetListener {
 
 	//page site
 	private IPageSite fSite = null;
@@ -90,8 +91,9 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	private ProcessConsole fConsole;
 	
 	// scroll lock
-	// TODO: init from memento or pref store
 	private boolean fIsLocked = false;
+	
+	private ListenerList fListeners;
 	
 	// text selection listener
 	private ISelectionChangedListener fTextListener =  new ISelectionChangedListener() {
@@ -106,17 +108,33 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	private FollowHyperlinkAction fFollowLinkAction;
 	private ScrollLockAction fScrollLockAction;
 	private ConsoleTerminateAction fTerminate;
+	private ConsoleRemoveAllTerminatedAction fRemoveTerminated;
 	private KeyBindingFollowHyperlinkAction fKeyBindingFollowLinkAction;
 	
 	// menus
 	private Menu fMenu;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#addPropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void addPropertyListener(IPropertyListener listener) {
+		fListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.console.IConsolePage#removePropertyListener(org.eclipse.ui.IPropertyListener)
+	 */
+	public void removePropertyListener(IPropertyListener listener) {
+		fListeners.remove(listener);
+	}
+
 	/**
-	 * 
+	 * Constructs a new process page 
 	 */
 	public ProcessConsolePage(IConsoleView view, ProcessConsole console) {
 		fView = view;
 		fConsole = console;
+		fListeners = new ListenerList();
 	}
 
 	/* (non-Javadoc)
@@ -202,6 +220,10 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		fViewer.getSelectionProvider().removeSelectionChangedListener(fTextListener);
 		
+		if (fRemoveTerminated != null) {
+			fRemoveTerminated.dispose();
+		}
+		
 		if (fMenu != null && !fMenu.isDisposed()) {
 			fMenu.dispose();
 			fMenu= null;
@@ -244,6 +266,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	
 	protected void createActions() {
 		fClearOutputAction= new ClearOutputAction(getConsoleViewer());
+		fRemoveTerminated = new ConsoleRemoveAllTerminatedAction();
 		
 		// In order for the clipboard actions to accessible via their shortcuts
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
@@ -284,8 +307,6 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		fKeyBindingFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor"); //$NON-NLS-1$
 		getConsoleView().getSite().getKeyBindingService().registerAction(fKeyBindingFollowLinkAction);
 		
-		//fProcessDropDownAction = new ProcessDropDownAction(this);
-		// TODO: new 'drop down' action
 		fScrollLockAction = new ScrollLockAction(getConsoleViewer());
 		fScrollLockAction.setChecked(fIsLocked);
 		getConsoleViewer().setAutoScroll(!fIsLocked);
@@ -346,6 +367,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IDebugUIConstants.LAUNCH_GROUP, fTerminate);
+		mgr.appendToGroup(IDebugUIConstants.LAUNCH_GROUP, fRemoveTerminated);
 		//mgr.add(fProcessDropDownAction);
 		mgr.appendToGroup(IDebugUIConstants.OUTPUT_GROUP, fScrollLockAction);
 		mgr.appendToGroup(IDebugUIConstants.OUTPUT_GROUP, fClearOutputAction);
@@ -441,9 +463,27 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getSource().equals(getProcess())) {
-				fTerminate.update();				
+				Runnable r = new Runnable() {
+					public void run() {
+						fTerminate.update();
+						fireTitleChanged();				
+					}
+				};				
+				getControl().getDisplay().asyncExec(r);
 			}
 		}
+	}
+
+	/**
+	 * Notification that the title of this page has changed.
+	 */
+	protected void fireTitleChanged() {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IPropertyListener listener = (IPropertyListener)listeners[i];
+			listener.propertyChanged(getConsole(), IWorkbenchPart.PROP_TITLE);
+		}
+		
 	}
 
 	

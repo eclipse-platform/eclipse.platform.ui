@@ -30,6 +30,10 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.console.IConsole;
+import org.eclipse.debug.internal.ui.console.IConsoleManager;
+import org.eclipse.debug.internal.ui.console.IConsoleView;
+import org.eclipse.debug.internal.ui.console.ProcessConsole;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -39,12 +43,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -79,19 +81,20 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 */
 	public void launchRemoved(ILaunch launch) {
 		removeLaunch(launch);
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
-			public void run() {
-				notifyConsoleViews();
-			}
-		});
 	}
 	
 	protected void removeLaunch(ILaunch launch) {
 		IProcess currentProcess= getCurrentProcess();
 		IProcess[] processes= launch.getProcesses();
-		IDocumentProvider provider = getDocumentProvider();
+		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager(); 
 		for (int i= 0; i < processes.length; i++) {
 			IProcess iProcess = processes[i];
+			IConsole console = getConsole(iProcess);
+			// TODO: we can remove > 1 at once
+			if (console != null) {
+				manager.removeConsoles(new IConsole[]{console});
+			}
+			IDocumentProvider provider = getDocumentProvider();
 			provider.disconnect(iProcess);
 			if (iProcess.equals(currentProcess)) {
 				setCurrentProcess(null);
@@ -102,6 +105,27 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				}
 			}
 		}		
+	}
+	
+	/**
+	 * Returns the console for the given process, or <code>null</code> if none.
+	 * 
+	 * @param process
+	 * @return the console for the given process, or <code>null</code> if none
+	 */
+	private IConsole getConsole(IProcess process) {
+		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager(); 
+		IConsole[] consoles = manager.getConsoles();
+		for (int i = 0; i < consoles.length; i++) {
+			IConsole console = consoles[i];
+			if (console instanceof ProcessConsole) {
+				ProcessConsole pc = (ProcessConsole)console;
+				if (pc.getProcess().equals(process)) {
+					return pc;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -120,18 +144,18 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 				public void run() {
 					IProcess[] processes= launch.getProcesses();
-					IDocumentProvider provider = getDocumentProvider();
 					for (int i= 0; i < processes.length; i++) {
 						if (getConsoleDocument(processes[i]) == null) {
 							IProcess process = processes[i];
+							IDocumentProvider provider = getDocumentProvider();
 							try {
 								provider.connect(process);
 							} catch (CoreException e) {
 							}
+							ProcessConsole pc = new ProcessConsole(process);
+							DebugUIPlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
 						}
 					}
-					
-					notifyConsoleViews();
 				}
 			});
 		}
@@ -157,27 +181,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		return process;
 	}
 
-	/**
-	 * Notify all existing console views of the current process.
-	 * Must be called in the UI thread.
-	 */
-	private void notifyConsoleViews() {		
-		IWorkbench workbench= PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow iWorkbenchWindow = windows[i];
-			IWorkbenchPage[] pages= iWorkbenchWindow.getPages();
-			for (int j = 0; j < pages.length; j++) {
-				IWorkbenchPage iWorkbenchPage = pages[j];
-				IViewPart part= iWorkbenchPage.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-				if (part instanceof ConsoleView) {
-					ConsoleView view= (ConsoleView)part;
-					view.setViewerInputFromConsoleDocumentManager(getCurrentProcess());
-				}
-			}
-		}
-	}
-	
 	protected IProcess getCurrentProcess() {
 		return fCurrentProcess;
 	}
@@ -193,6 +196,18 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	public IDocument getConsoleDocument(IProcess process) {
 		IDocumentProvider provider = getDocumentProvider();
 		return provider.getDocument(process);
+	} 
+	
+	/**
+	 * Returns the document provider.
+	 * 
+	 * @return document provider
+	 */
+	private IDocumentProvider getDocumentProvider() {
+		if (fDefaultDocumentProvider == null) {
+			fDefaultDocumentProvider = new ConsoleDocumentProvider();
+		}
+		return fDefaultDocumentProvider;
 	}
 		
 	/**
@@ -232,9 +247,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * to the console. The manager will open the console if the preference is
 	 * set to show the console on system err.
 	 */
-	protected void aboutToWriteSystemErr(IDocument doc) {
+	protected void aboutToWriteSystemErr(IProcess process) {
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
-			showConsole(doc);
+			showConsole(process);
 		}
 	}
 	
@@ -244,9 +259,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * set to show the console on system out and the console document being written 
 	 * is associated with the current process.
 	 */	
-	protected void aboutToWriteSystemOut(IDocument doc) {
+	protected void aboutToWriteSystemOut(IProcess process) {
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
-			showConsole(doc);
+			showConsole(process);
 		}
 	}
 	
@@ -280,11 +295,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	/**
 	 * Opens the console view. If the view is already open, it is brought to the front.
 	 */
-	protected void showConsole(final IDocument doc) {
-		IProcess debugViewProcess= getDebugViewProcess();
-		if (doc != null && debugViewProcess != null && !doc.equals(getConsoleDocument(debugViewProcess))) {
-			return;
-		}
+	protected void showConsole(final IProcess process) {
+		final IConsole console = getConsole(process);
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -295,11 +307,14 @@ public class ConsoleDocumentManager implements ILaunchListener {
 							IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
 							if(consoleView == null) {
 								IWorkbenchPart activePart= page.getActivePart();
-								page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
+								consoleView = page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
 								//restore focus stolen by the creation of the console
 								page.activate(activePart);
 							} else {
 								page.bringToTop(consoleView);
+							}
+							if (consoleView instanceof IConsoleView) {
+								((IConsoleView)consoleView).display(console);
 							}
 						} catch (PartInitException pie) {
 							DebugUIPlugin.log(pie);
@@ -310,17 +325,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		});
 	}
 	
-	/**
-	 * Returns the document provider.
-	 * 
-	 * @return document provider
-	 */
-	private IDocumentProvider getDocumentProvider() {
-		if (fDefaultDocumentProvider == null) {
-			fDefaultDocumentProvider = new ConsoleDocumentProvider();
-		}
-		return fDefaultDocumentProvider;
-	}
+
 	
 	/**
 	 * Returns a new console document color provider extension for the given

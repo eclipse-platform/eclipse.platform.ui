@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A console for a system process
@@ -33,51 +32,47 @@ public class ProcessConsole implements IConsole {
 	
 	private IProcess fProcess = null;
 	
-	class ProcessConsoleLabelProvider extends LabelProvider implements IDebugEventSetListener {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-		 */
-		public void handleDebugEvents(DebugEvent[] events) {
-			for (int i = 0; i < events.length; i++) {
-				DebugEvent event = events[i];
-				if (event.getSource().equals(getProcess())) {
-					DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-						public void run() {
-							fireLabelProviderChanged(new LabelProviderChangedEvent(ProcessConsoleLabelProvider.this, ProcessConsole.this));
-						}
-					});
-				}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.console.IConsole#createPage(org.eclipse.debug.internal.ui.console.IConsoleView)
+	 */
+	public IConsolePage createPage(IConsoleView view) {
+		return new ProcessConsolePage(view, this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.console.IConsole#getImageDescriptor()
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		ILaunchConfiguration configuration = getProcess().getLaunch().getLaunchConfiguration();
+		if (configuration != null) {
+			ILaunchConfigurationType type;
+			try {
+				type = configuration.getType();
+				return DebugPluginImages.getImageDescriptor(type.getIdentifier());
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
 			}
-
 		}
+		return null;
+	}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-			super.dispose();
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.console.IConsole#getName()
+	 */
+	public String getName() {	
+		ILaunchConfiguration configuration = getProcess().getLaunch().getLaunchConfiguration(); 
+		if (configuration != null) {
+			if (getProcess().isTerminated()) {
+				return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.0"), new String[]{configuration.getName()}); //$NON-NLS-1$
+			} else {
+				return configuration.getName();
+			}
 		}
-
-		public ProcessConsoleLabelProvider() {
-			DebugPlugin.getDefault().addDebugEventListener(this);	
+		if (getProcess().isTerminated()) {
+			return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[]{getProcess().getLabel()}); //$NON-NLS-1$
+		} else {
+			return getProcess().getLabel();
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage(Object element) {
-			return DebugUIPlugin.getDefaultLabelProvider().getImage(getProcess());
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			return DebugUIPlugin.getDefaultLabelProvider().getText(getProcess());
-		}
-
 	}
 
 	/**
@@ -86,21 +81,7 @@ public class ProcessConsole implements IConsole {
 	public ProcessConsole(IProcess process) {
 		fProcess = process;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#createLabelProvider()
-	 */
-	public ILabelProvider createLabelProvider() {
-		return new ProcessConsoleLabelProvider();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#createPage(org.eclipse.debug.internal.ui.console.IConsoleView)
-	 */
-	public IPageBookViewPage createPage(IConsoleView view) {
-		return new ProcessConsolePage(view, this);
-	}
-		
+			
 	/**
 	 * Returns the process associated with this console.
 	 * 
@@ -109,5 +90,5 @@ public class ProcessConsole implements IConsole {
 	public IProcess getProcess() {
 		return fProcess;
 	}
-
+	
 }

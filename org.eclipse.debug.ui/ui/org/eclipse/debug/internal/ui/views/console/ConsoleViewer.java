@@ -66,13 +66,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * The active hyperlink, or <code>null</code>
 	 */
 	private IConsoleHyperlink fHyperLink = null;
-	
-	/**
-	 * Whether this viewer is visible. The console viewer only paints in
-	 * response to document changes when it is visible.
-	 */
-	private boolean fVisible = false;
-	
+		
 	protected InternalDocumentListener fInternalDocumentListener= new InternalDocumentListener();
 	
 	/**
@@ -100,9 +94,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 				return;
 			}
 			getTextWidget().setEditable(!doc.isReadOnly());
-			if (isVisible()) {
-				revealEndOfDocument();
-			}
+			revealEndOfDocument();
 		}
 	}
 	
@@ -434,13 +426,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		}
 	}
 
-	protected void setVisible(boolean visible) {
-		fVisible = visible;
-	}
-	
-	protected boolean isVisible() {
-		return fVisible;
-	}
 	/**
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A logical console. A console is commonly used to display messages. For example,
@@ -25,14 +24,21 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public interface IConsole {
 	
 	/**
-	 * Creates and returns a new label provider for this console. The label
-	 * provider provides a label and image for this console, which may be
-	 * dynamic, via label property change events.
+	 * Returns the name of this console.
 	 * 
-	 * @return a label provider for this console
+	 * @return the name of this console
 	 */
-	public ILabelProvider createLabelProvider();
+	public String getName();
 	
+	/**
+	 * Returns an image descriptor for this console, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return an image descriptor for this console, or <code>null</code>
+	 *  if none
+	 */
+	public ImageDescriptor getImageDescriptor();
+		
 	/**
 	 * Creates and returns a new page for this console. The page is displayed
 	 * for this console in the console given view.
@@ -40,6 +46,6 @@ public interface IConsole {
 	 * @param view the view in which the page is to be created
 	 * @return a page book representation of this console
 	 */
-	public IPageBookViewPage createPage(IConsoleView view);
+	public IConsolePage createPage(IConsoleView view);
 
 }

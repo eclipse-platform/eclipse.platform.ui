@@ -108,6 +108,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL, DLCL + "collapseall.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_PIN, DLCL + "pin.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE, DLCL + "terminate_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
 		
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$

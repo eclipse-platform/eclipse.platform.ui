@@ -510,21 +510,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			setViewerInput(DebugUITools.getCurrentProcess());
 		}
 	}
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
-	 */
-	protected void becomesHidden() {
-		super.becomesHidden();
-		getConsoleViewer().setVisible(false);
-	}
-
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
-	 */
-	protected void becomesVisible() {
-		super.becomesVisible();
-		getConsoleViewer().setVisible(true);
-	}
 
 	/**
 	 * Returns this view's mode.

@@ -81,7 +81,7 @@
             name="%ConsoleView.name"
             icon="icons/full/cview16/console_view.gif"
             category="org.eclipse.debug.ui"
-            class="org.eclipse.debug.internal.ui.views.console.ConsoleView"
+            class="org.eclipse.debug.internal.ui.console.ConsoleView"
             id="org.eclipse.debug.ui.ConsoleView">
       </view>
    </extension>
@@ -536,25 +536,6 @@
                tooltip="%StepWithFiltersAction.tooltip">
             <selection
                   class="org.eclipse.debug.core.model.IStep">
-            </selection>
-         </action>
-      </viewContribution>
-<!-- Contributions to Console View Toolbar -->
-      <viewContribution
-            targetID="org.eclipse.debug.ui.ConsoleView"
-            id="org.eclipse.debug.ui.consoleview.toolbar">
-         <action
-               id="org.eclipse.debug.ui.consoleView.toolbar.terminate"
-               toolbarPath="launchGroup"
-               hoverIcon="icons/full/clcl16/terminate_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
-               disabledIcon="icons/full/dlcl16/terminate_co.gif"
-               icon="icons/full/elcl16/terminate_co.gif"
-               helpContextId="console_terminate_action_context"
-               label="%TerminateAction.label"
-               tooltip="%TerminateAction.tooltip">
-            <selection
-                  class="org.eclipse.debug.core.model.ITerminate">
             </selection>
          </action>
       </viewContribution>

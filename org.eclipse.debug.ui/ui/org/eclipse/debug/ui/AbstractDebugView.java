@@ -732,8 +732,18 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void asyncExec(Runnable r) {
 		if (isAvailable()) {
-			getViewer().getControl().getDisplay().asyncExec(r);
+			getControl().getDisplay().asyncExec(r);
 		}
+	}
+	
+	/**
+	 * Returns the control for this view, or <code>null</code> if none.
+	 * 
+	 * @return the control for this view, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	protected Control getControl() {
+		return getViewer().getControl();
 	}
 	
 	/**
@@ -744,7 +754,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void syncExec(Runnable r) {
 		if (isAvailable()) {
-			getViewer().getControl().getDisplay().syncExec(r);
+			getControl().getDisplay().syncExec(r);
 		}
 	}	
 	

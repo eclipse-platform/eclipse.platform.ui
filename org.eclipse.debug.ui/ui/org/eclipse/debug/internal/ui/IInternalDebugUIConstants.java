@@ -44,6 +44,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_COLLAPSE_ALL = "IMG_DLCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
 	public static final String IMG_DLCL_TERMINATE = "IMG_DLCL_TERMINATE"; //$NON-NLS-1$
+	public static final String IMG_DLCL_REMOVE_ALL = "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
 	
 	// enabled local tool images	
 	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$

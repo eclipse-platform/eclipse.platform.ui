@@ -113,9 +113,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		
 		public void streamAppended(String newText, IStreamMonitor monitor) {
 			if (fIsSystemOut) {
-				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemOut(fDocument);
+				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemOut(getProcess());
 			} else if (fIsSystemErr) {
-				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemErr(fDocument);
+				DebugUIPlugin.getDefault().getConsoleDocumentManager().aboutToWriteSystemErr(getProcess());
 			}
 			ConsoleDocumentPartitioner.this.streamAppended(newText, fStreamIdentifier);
 		}

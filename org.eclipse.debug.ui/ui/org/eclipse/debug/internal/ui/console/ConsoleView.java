@@ -21,14 +21,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPage;
-import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 
@@ -37,7 +35,7 @@ import org.eclipse.ui.part.PageBook;
  * 
  * @since 3.0
  */
-public class ConsoleView extends AbstractDebugView implements IConsoleView, IConsoleListener, ILabelProviderListener {
+public class ConsoleView extends AbstractDebugView implements IConsoleView, IConsoleListener, IPropertyListener {
 	
 	/**
 	 * Whether this console is pinned.
@@ -55,23 +53,38 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	private Map fConsoleToPart;
 	
 	/**
-	 * Map of consoles to labelproviders
-	 */
-	private Map fConsoleToLabelProvider;
-	
-	/**
 	 * Map of parts to consoles
 	 */
 	private Map fPartToConsole;
 	
 	// actions
 	private PinConsoleAction fPinAction = null; 
+	private ConsoleDropDownAction fDisplayConsoleAction = null;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getControl()
 	 */
-	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		updateTitle();
+	protected Control getControl() {
+		return getPageBook();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#isAvailable()
+	 */
+	public boolean isAvailable() {
+		return getPageBook() != null && !getPageBook().isDisposed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 */
+	public void propertyChanged(Object source, int propId) {
+		if (propId == IWorkbenchPart.PROP_TITLE) {
+			if (source.equals(getConsole())) {
+				updateTitle();
+			}
+		}
+
 	}
 
 	/* (non-Javadoc)
@@ -119,10 +132,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 		if (console == null) {
 			setTitle(ConsoleMessages.getString("ConsoleView.0")); //$NON-NLS-1$
 		} else {
-			// update view title to the active console
-			ILabelProvider labelProvider = (ILabelProvider)fConsoleToLabelProvider.get(console);
-			String label = labelProvider.getText(console);
-			setTitle(MessageFormat.format(ConsoleMessages.getString("ConsoleView.1"), new String[]{label})); //$NON-NLS-1$
+			setTitle(MessageFormat.format(ConsoleMessages.getString("ConsoleView.1"), new String[]{console.getName()})); //$NON-NLS-1$
 		}
 	}
 
@@ -130,16 +140,13 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-		IPageBookViewPage page = (IPageBookViewPage) pageRecord.page;
+		IConsolePage page = (IConsolePage) pageRecord.page;
+		page.removePropertyListener(this);
 		page.dispose();
 		pageRecord.dispose();
 		
 		IConsole console = (IConsole)fPartToConsole.get(part);
-		// dispose label provider
-		ILabelProvider provider = (ILabelProvider)fConsoleToLabelProvider.remove(console);
-		provider.removeListener(this);
-		provider.dispose();
-		
+				
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
 		fConsoleToPart.remove(console);
@@ -154,16 +161,11 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)dummyPart;
 		IConsole console = part.getConsole();
-		IPageBookViewPage page = console.createPage(this);
+		IConsolePage page = console.createPage(this);
 		initPage(page);
 		page.createControl(getPageBook());
+		page.addPropertyListener(this);
 		PageRec rec = new PageRec(dummyPart, page);
-		
-		// create label provider for the console
-		ILabelProvider labelProvider = console.createLabelProvider();
-		fConsoleToLabelProvider.put(console, labelProvider);
-		labelProvider.addListener(this);
-		
 		return rec;
 	}
 
@@ -195,26 +197,44 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesAdded(org.eclipse.debug.internal.ui.console.IConsole[])
 	 */
-	public void consolesAdded(IConsole[] consoles) {
-		for (int i = 0; i < consoles.length; i++) {
-			IConsole console = consoles[i];
-			ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
-			fConsoleToPart.put(console, part);
-			fPartToConsole.put(part, console);
-			partActivated(part);
+	public void consolesAdded(final IConsole[] consoles) {
+		if (isAvailable()) {
+			Runnable r = new Runnable() {
+				public void run() {
+					for (int i = 0; i < consoles.length; i++) {
+						if (isAvailable()) {
+							IConsole console = consoles[i];
+							ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
+							fConsoleToPart.put(console, part);
+							fPartToConsole.put(part, console);
+							partActivated(part);
+						}
+					}
+				}
+			};
+			asyncExec(r);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesRemoved(org.eclipse.debug.internal.ui.console.IConsole[])
 	 */
-	public void consolesRemoved(IConsole[] consoles) {
-		for (int i = 0; i < consoles.length; i++) {
-			IConsole console = consoles[i];
-			ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
-			if (part != null) {
-				partClosed(part);
-			}
+	public void consolesRemoved(final IConsole[] consoles) {
+		if (isAvailable()) {
+			Runnable r = new Runnable() {
+				public void run() {
+					for (int i = 0; i < consoles.length; i++) {
+						if (isAvailable()) {
+							IConsole console = consoles[i];
+							ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
+							if (part != null) {
+								partClosed(part);
+							}
+						}
+					}
+				}
+			};
+			asyncExec(r);
 		}
 	}
 
@@ -224,7 +244,6 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	public ConsoleView() {
 		super();
 		fConsoleToPart = new HashMap();
-		fConsoleToLabelProvider = new HashMap();
 		fPartToConsole = new HashMap();
 	}
 
@@ -242,7 +261,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 */
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
-		// TODO: drop-down action
+		fDisplayConsoleAction = new ConsoleDropDownAction(this);
 	}
 
 	/* (non-Javadoc)
@@ -256,8 +275,6 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -267,6 +284,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		mgr.add(new Separator(IDebugUIConstants.OUTPUT_GROUP));
 		mgr.add(fPinAction);
+		mgr.add(fDisplayConsoleAction);
 		
 		// init for existing consoles
 		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager();
