@@ -6,6 +6,9 @@
  */
 package org.eclipse.welcome.internal.portal;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -69,7 +72,13 @@ public class HelpSection implements IPortalSectionForm {
 		return container;
 	}
 	private void doSearch(String phrase) {
-		String query = "tab=search&searchWord=\""+phrase+"\"";
-		WorkbenchHelp.getHelpSupport().displayHelpResource(query);
+		try {
+			String ephrase = URLEncoder.encode(phrase, "UTF-8");
+			String query = "tab=search&searchWord="+ephrase;
+			WorkbenchHelp.getHelpSupport().displayHelpResource(query);
+		}
+		catch (UnsupportedEncodingException e) {
+			System.out.println(e);
+		}
 	} 
 }
