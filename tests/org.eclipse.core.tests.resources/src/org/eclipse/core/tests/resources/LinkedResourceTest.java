@@ -18,8 +18,6 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.*;
 
 /**
@@ -540,6 +538,48 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertEquals("5.6", existingProject.getLocation().append(folder.getProjectRelativePath()), folder.getLocation());
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
+		}
+	}
+	public void testNatureVeto() {
+		//note: simpleNature has the link veto turned on.
+		
+		//test create link on project with nature veto
+		try {
+			IProjectDescription description = existingProject.getDescription();
+			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			existingProject.setDescription(description, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		try {
+			nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
+			fail("1.1");
+		} catch (CoreException e) {
+			//should fail
+		}
+		try {
+			nonExistingFileInExistingProject.createLink(localFile, IResource.NONE, getMonitor());
+			fail("1.2");
+		} catch (CoreException e) {
+			//should fail
+		}
+		
+		//test add nature with veto to project that already has link
+		try {
+			existingProject.delete(IResource.FORCE, getMonitor());
+			existingProject.create(getMonitor());
+			existingProject.open(getMonitor());
+			nonExistingFolderInExistingProject.createLink(existingLocation, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		try {
+			IProjectDescription description = existingProject.getDescription();
+			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			existingProject.setDescription(description, IResource.NONE, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+			//should fail
 		}
 	}
 	/**
