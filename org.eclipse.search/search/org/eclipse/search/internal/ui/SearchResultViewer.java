@@ -89,7 +89,8 @@ public class SearchResultViewer extends TableViewer {
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
 
-		fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+		if (SearchPreferencePage.arePotentialMatchesEmphasized())
+			fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
@@ -482,8 +483,11 @@ public class SearchResultViewer extends TableViewer {
 	 * Updates the background color for potential matches.
 	 */
 	void updatedPotentialMatchBgColor() {
-		fPotentialMatchFgColor.dispose();
-		fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+		if (fPotentialMatchFgColor != null)
+			fPotentialMatchFgColor.dispose();
+		fPotentialMatchFgColor= null;
+		if (SearchPreferencePage.arePotentialMatchesEmphasized())
+			fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		refresh();
 	}
 
@@ -524,7 +528,8 @@ public class SearchResultViewer extends TableViewer {
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
-		fPotentialMatchFgColor.dispose();
+		if (fPotentialMatchFgColor != null)
+			fPotentialMatchFgColor.dispose();
 		if (fActionGroup != null) {
 			fActionGroup.dispose();
 			fActionGroup= null;

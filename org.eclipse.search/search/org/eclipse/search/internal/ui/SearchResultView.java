@@ -85,7 +85,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR) 
+				if (event.getProperty() == SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR || event.getProperty() == SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES)
 					if (fViewer != null)
 						fViewer.updatedPotentialMatchBgColor();
 			}
