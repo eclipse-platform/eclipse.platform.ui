@@ -175,7 +175,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(new CVSStatus(CVSStatus.INFO, "ignoring root resource not found in current workspace"));
+				CVSProviderPlugin.log(CVSStatus.INFO, "ignoring root resource not found in current workspace", null);
 			}
 		}
 		if(resources.isEmpty()) {

@@ -154,13 +154,23 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
-	 * Convenience method for logging CVSExceptiuons to the plugin log
+	 * Convenience method for logging CoreExceptions to the plugin log
 	 */
 	public static void log(CoreException e) {
-		// For now, we'll log the status. However we should do more
-		log(e.getStatus());
+		log(e.getStatus().getSeverity(), e.getMessage(), e);
 	}
 	
+	/**
+	 * Log the given exception alloing with the provided message and severity indicator
+	 */
+	public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, ID, 0, message, e));
+	}
+	
+	/**
+	 * Log the given status. Do not use this method for the IStatus from a CoreException.
+	 * Use<code>log(CoreException)</code> instead so the stack trace is not lost.
+	 */
 	public static void log(IStatus status) {
 		// For now, we'll log the status. However we should do more
 		getPlugin().getLog().log(status);
