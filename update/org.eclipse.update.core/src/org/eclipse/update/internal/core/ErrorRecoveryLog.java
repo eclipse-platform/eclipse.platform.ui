@@ -28,16 +28,16 @@ public class ErrorRecoveryLog {
 	private static final String END_OF_FILE = "eof=eof";
 
 	//
-	public static final String START_INSTALL_LOG = "INSTALL_LOG";
-	public static final String PLUGIN_ENTRY = "PLUGIN";
-	public static final String FEATURE_ENTRY = "FEATURE";
-	public static final String END_INSTALL = "END_INSTALL";
-	public static final String RENAME_ENTRY = "RENAME";
-	public static final String END_INSTALL_LOG = "END_INSTALL_LOG";
-	public static final String START_REMOVE_LOG = "REMOVE_LOG";
-	public static final String END_REMOVE = "END_REMOVE";
-	public static final String DELETE_ENTRY = "DELETE";
-	public static final String END_REMOVE_LOG = "END_REMOVE_LOG";
+	public static final String START_INSTALL_LOG = 	"INSTALL_LOG";
+	public static final String PLUGIN_ENTRY = 		"PLUGIN";
+	public static final String FEATURE_ENTRY = 		"FEATURE";
+	public static final String END_INSTALL = 		"END_INSTALL";
+	public static final String RENAME_ENTRY = 		"RENAME";
+	public static final String END_INSTALL_LOG = 	"END_INSTALL_LOG";
+	public static final String START_REMOVE_LOG = 	"REMOVE_LOG";
+	public static final String END_REMOVE = 			"END_REMOVE";
+	public static final String DELETE_ENTRY = 		"DELETE";
+	public static final String END_REMOVE_LOG = 		"END_REMOVE_LOG";
 
 	private static ErrorRecoveryLog inst;
 	private FileWriter out;

@@ -402,12 +402,12 @@ public class Feature extends FeatureModel implements IFeature {
 						result = consumer.close();
 						// close the log
 						recoveryLog.append(recoveryLog.END_INSTALL_LOG);
-						recoveryLog.close();
-						recoveryLog.delete();						
 					} else {
 						consumer.abort();
 					}
 				}
+				recoveryLog.close();
+				recoveryLog.delete();				
 				handler.installCompleted(success);
 			} catch (Exception e) {
 				newException = e;

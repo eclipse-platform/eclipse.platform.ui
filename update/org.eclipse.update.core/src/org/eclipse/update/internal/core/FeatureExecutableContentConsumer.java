@@ -5,16 +5,14 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
  
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
 
 /**
- * ContentConsumer Implementation of FeatureExecutable
+ * ContentConsumer Implementation for a FeatureExecutable
  */
 
 public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
@@ -130,8 +128,7 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	}
 
 	/*
-	 * returns the list of Content Consumer for the plugins
-	 * and non-plugins entry installed
+	 * Adds a ContentConsumer to the list
 	 */
 	private void addContentConsumers(ContentConsumer cons){
 		if (contentConsumers == null)
@@ -155,17 +152,11 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			}
 		}
 
-		// close plugin and non plugin content consumer
-		if (contentConsumers!=null){
-			Iterator iter = contentConsumers.iterator();
-			while (iter.hasNext()) {
-				ContentConsumer element = (ContentConsumer) iter.next();
-				element.close();
-			}
-		}
-		contentConsumers = null;
+		// do not close plugin and non plugin content consumer
+		// the contentConsumer will abort them
+		// we do not need to abort the NonPluginEntryContentConsumer and PluginEntryContentConsume
 
-		//FIXME implement the cleanup
+		//implement the cleanup
 		if (contentConsumer!=null)
 			contentConsumer.abort();
 		
@@ -196,6 +187,4 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 
 		return (IFeatureContentConsumer[]) children.toArray(arrayTypeFor(children));
 	}
-
-
 }

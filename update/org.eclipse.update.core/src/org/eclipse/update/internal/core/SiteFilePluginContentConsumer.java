@@ -19,11 +19,11 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 	private IPluginEntry pluginEntry;
 	private ISite site;
+	private boolean closed = false;
 	
 	// recovery
 	private String oldPath;
 	private String newPath;
-	
 
 	/*
 	 * Constructor
@@ -40,6 +40,11 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		throws CoreException {
 		InputStream inStream = null;
 		String pluginPath = null;
+
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFilePluginContentConsumer",new Exception());
+			return;
+		}
 
 		try {
 			URL newURL =
@@ -80,6 +85,11 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 */
 	public void close() throws CoreException {
 	
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFilePluginContentConsumer",new Exception());						
+			return;
+		}
+		
 		if (newPath!=null){
 			// rename file 
 			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);		
@@ -94,15 +104,23 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				throw Utilities.newCoreException(msg,new Exception(msg));
 			}
 		}
+			
 		if (site instanceof SiteFile)
 			 ((SiteFile) site).addPluginEntry(pluginEntry);
+		closed=true;
 	}
 
 	/*
 	 * 
 	 */
 	public void abort() throws CoreException {
-		// FIXME
+		
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFilePluginContentConsumer",new Exception());						
+			return;
+		}		
+		
+		// remove the plugin directory
 		try {
 			URL newURL =
 				new URL(
@@ -111,9 +129,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			String pluginPath = newURL.getFile();
 			UpdateManagerUtils.removeFromFileSystem(new File(pluginPath));
 		} catch (MalformedURLException e) {
-			// FIXME
 			throw Utilities.newCoreException(e.getMessage(), e);
 		}
+		closed = true;
 	}
 
 }

@@ -92,7 +92,6 @@ public interface IFeatureContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-
 	public void abort() throws CoreException;
 
 	/**

@@ -14,9 +14,10 @@ import org.eclipse.update.core.*;
 public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 
 	private String path;
+	private boolean closed = false;
 
-	/**
-	 * Constructor for FileSite
+	/*
+	 * Constructor 
 	 */
 	public SiteFileNonPluginContentConsumer(String featurePath){
 		this.path = featurePath;
@@ -26,6 +27,12 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
+		
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFileNonPluginContentConsumer",new Exception());						
+			return;
+		}	
+		
 		InputStream inStream = null;
 		String featurePath = path;
 		String contentKey = contentReference.getIdentifier();
@@ -48,6 +55,11 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#close()
 	 */
 	public void close() {
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileNonPluginContentConsumer",new Exception());						
+			return;
+		}	
+		closed = true;		
 	}
 	
 		

@@ -41,7 +41,6 @@ public interface IContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-
 	public void close() throws CoreException;
 
 }

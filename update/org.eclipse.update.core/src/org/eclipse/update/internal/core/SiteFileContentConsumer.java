@@ -4,42 +4,42 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ArchiveReferenceModel;
-import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.FeatureReferenceModel;
 
 /**
- * Site on the File System
+ * ContentConsummer for a SiteFile
  */
 public class SiteFileContentConsumer extends SiteContentConsumer {
 
 	private String path;
 	private IFeature feature;
+	private boolean closed = false;
 	
 	// recovery
 	private String oldPath;
 	private String newPath;
+	
+	//  for abort
+	private List /* of SiteFilePluginContentConsumer */ contentConsumers;	
 
-	/**
-	 * Constructor for FileSite
+	/*
+	 * Constructor 
 	 */
 	public SiteFileContentConsumer(IFeature feature) {
 		this.feature = feature;
 	}
 
-	/**
-		 * return the path in whichh the Feature will be installed
-		 */
+	/*
+	 * Returns the path in which the Feature will be installed
+	 */
 	private String getFeaturePath() throws CoreException {
 		String featurePath = null;
 		try {
@@ -74,7 +74,9 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public IContentConsumer open(IPluginEntry pluginEntry)
 		throws CoreException {
-		return new SiteFilePluginContentConsumer(pluginEntry, getSite());
+		SiteFilePluginContentConsumer cons = new SiteFilePluginContentConsumer(pluginEntry, getSite());
+		addContentConsumers(cons);
+		return cons;
 	}
 
 	/*
@@ -84,6 +86,12 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		ContentReference contentReference,
 		IProgressMonitor monitor)
 		throws CoreException {
+			
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFileContentConsumer",new Exception());
+			return;
+		}			
+			
 		InputStream inStream = null;
 		String featurePath = getFeaturePath();
 		String contentKey = contentReference.getIdentifier();
@@ -123,7 +131,11 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public IFeatureReference close() throws CoreException {
 
-		// InternalFeatureReference
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileContentConsumer",new Exception());
+		}			
+
+		// create a new Feature reference to be added to the site
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(getSite());
 		File file = null;
@@ -160,25 +172,47 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 		
 		if (ref != null) {
-			// FIXME make sure we rename the XML files before
+			// the feature MUST have renamed the plugins at that point
+			// (by closing the PluginContentConsumer)
 			commitPlugins(ref);
 			ref.markReadOnly();
 		}
 
+		closed = true;
 		return ref;
 	}
 
 	/*
-	 * 
+	 * @see ISiteContentConsumer#abort()
 	 */
 	public void abort() throws CoreException {
-		// FIXME
+		
+		if (closed){
+			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFileContentConsumer",new Exception());
+			return;
+		}			
+		
+		//abort all plugins content consumer opened
+		if (contentConsumers!=null){
+			Iterator iter = contentConsumers.iterator();
+			while (iter.hasNext()) {
+				SiteFilePluginContentConsumer element = (SiteFilePluginContentConsumer) iter.next();
+				element.abort();
+			}
+		}
+		contentConsumers = null;		
+		
+		// remove the feature,
 		String featurePath = getFeaturePath();
 		UpdateManagerUtils.removeFromFileSystem(new File(featurePath));
+		
+		closed= true;
+		return;
 	}
 
 	/*
 	 * commit the plugins installed as archive on the site
+	 * (creates the map between the plugin id and the location of the plugin)
 	 */
 	private void commitPlugins(IFeatureReference localFeatureReference)
 		throws CoreException {
@@ -237,6 +271,15 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			}
 		}
 		return;
+	}
+
+	/*
+	 * Adds a SiteFilePluginContentConsumer to the list
+	 */
+	private void addContentConsumers(ContentConsumer cons){
+		if (contentConsumers == null)
+			contentConsumers = new ArrayList();
+		contentConsumers.add(cons);
 	}
 
 }
