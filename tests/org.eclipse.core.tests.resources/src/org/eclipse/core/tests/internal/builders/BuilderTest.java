@@ -9,6 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
  
 
 /**
@@ -637,5 +638,70 @@ public void testMoveProject() {
 	} catch (CoreException e) {
 		fail("5.0", e);
 	}
+}
+/**
+ * Tests that turning autobuild on will invoke a build in the next operation.
+ */
+public void testTurnOnAutobuild() throws CoreException {
+
+	// Create some resource handles
+	IProject project = getWorkspace().getRoot().getProject("PROJECT");
+	IFile file = project.getFile("File.txt");
+	
+	try {
+		// Turn auto-building off
+		setAutoBuilding(false);
+		
+		// Create and open a project
+		project.create(getMonitor());
+		project.open(getMonitor());
+		file.create(getRandomContents(), IResource.NONE, getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// Create and set a build spec for the project
+	try {
+		IProjectDescription desc = project.getDescription();
+		ICommand command = desc.newCommand();
+		command.setBuilderName(SortBuilder.BUILDER_NAME);
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	// Set up a plug-in lifecycle verifier for testing purposes
+	TestBuilder verifier = null;
+
+	//try to do an incremental build when there has never
+	//been a batch build
+	try {
+		getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		verifier = SortBuilder.getInstance();
+		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
+		verifier.assertLifecycleEvents("3.1");
+	} catch (CoreException e) {
+		fail("3.2", e);
+	}
+
+	// Now make a change and then turn autobuild on.  Turning it on should cause a build.
+	try {
+		file.setContents(getRandomContents(), IResource.NONE, getMonitor());
+	} catch (CoreException e) {
+		fail("3.5", e);
+	}
+	IWorkspaceRunnable r = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			IWorkspaceDescription desc = getWorkspace().getDescription();
+			desc.setAutoBuilding(true);
+			getWorkspace().setDescription(desc);
+		}
+	};
+	getWorkspace().run(r, getMonitor());
+	verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
+	verifier.assertLifecycleEvents("4.0");
 }
 }
