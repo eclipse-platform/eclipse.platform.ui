@@ -71,7 +71,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private String productInfoFilename;
 	private AboutInfo aboutInfo;
 	private AboutInfo[] featuresInfo;
-	private ProductInfo productInfo;
 	private String[] commandLineArgs;
 	private Window.IExceptionHandler handler;
 	private AcceleratorConfiguration acceleratorConfiguration;
@@ -435,14 +434,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
-	}
-	/**
-	 * @return the product info object
-	 * 
-	 * @deprecated
-	 */
-	public ProductInfo getProductInfo() {
-		return productInfo;
 	}
 	/**
 	 * Returns the shared images for the workbench.
@@ -895,21 +886,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			} 
 		}
 		
-		productInfo = new ProductInfo();
-
 		boolean success = true;
 
 		try {
 			aboutInfo.readINIFile();
 		} catch (CoreException e) {
 			WorkbenchPlugin.log("Error reading about info file", e.getStatus()); //$NON-NLS-1$
-			success = false;
-		}
-
-		try {
-			productInfo.readINIFile();
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error reading product info file", e.getStatus()); //$NON-NLS-1$
 			success = false;
 		}
 

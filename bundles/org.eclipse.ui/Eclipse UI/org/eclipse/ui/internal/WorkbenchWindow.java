@@ -1038,10 +1038,6 @@ public void restoreState(IMemento memento) {
 			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
 			String productName = workbench.getAboutInfo().getProductName();
 			if (productName == null) {
-				// backward compatibility
-				productName = workbench.getProductInfo().getName();
-			}
-			if (productName == null) {
 				productName = ""; //$NON-NLS-1$
 			}
 			getShell().setText(productName);
@@ -1395,10 +1391,6 @@ public void updateTitle() {
 		return;
 		
 	String title = workbench.getAboutInfo().getProductName();
-	if (title == null) {
-		// backward compatibility
-		title = workbench.getProductInfo().getName();
-	}
 	if (title == null) {
 		title = ""; //$NON-NLS-1$
 	}

@@ -54,7 +54,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.AboutItem;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.ProductInfo;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -93,7 +92,6 @@ public class AboutFeaturesDialog extends Dialog {
 
 	private AboutInfo[] featuresInfo;
 	private AboutInfo aboutInfo;
-	private ProductInfo productInfo;
 	
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending

@@ -54,7 +54,6 @@ public class AboutPluginsDialog extends Dialog {
 	private IPluginDescriptor[] info;
 
 	private AboutInfo aboutInfo;
-	private ProductInfo productInfo;
 	
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending

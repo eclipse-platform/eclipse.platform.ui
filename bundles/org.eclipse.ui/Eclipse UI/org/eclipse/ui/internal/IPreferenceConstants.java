@@ -74,5 +74,8 @@ public interface IPreferenceConstants {
 	
 	//Preference key for default editors
 	public final static String DEFAULT_EDITORS = "defaultEditors"; //$NON-NLS-1$
+	
+	//Default Perspective
+	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
 
 }
