@@ -42,11 +42,10 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		URL fileURL = provider.getArchiveReference(getPathID(pluginEntry));
 		String result = fileURL.getFile();
 
-		// return the list of all subdirectories
-		if (!result.endsWith(File.separator))
+		if (!result.endsWith(".jar") && !result.endsWith(File.separator))
 			result += File.separator;
-		File pluginDir = new File(result);
-		if (!pluginDir.exists())
+		File pluginPath = new File(result);
+		if (!pluginPath.exists())
 			throw new IOException(
 				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));
 		//$NON-NLS-1$ //$NON-NLS-2$
@@ -146,9 +145,15 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		InstallMonitor monitor)
 		throws CoreException {
 		ContentReference[] result = new ContentReference[1];
+		String archiveID = getPathID(pluginEntry);
 		try {
-			result[0] =
-				new ContentReference(getPathID(pluginEntry), new File(getPath(pluginEntry)));
+			File archiveFile = new File(getPath(pluginEntry));
+			if(!archiveFile.isDirectory() && archiveFile.getName().endsWith(".jar")){
+				result[0] = new JarContentReference(archiveID, archiveFile);				
+			} else {
+				result[0] =
+					new ContentReference(archiveID, archiveFile);
+			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 					Policy.bind(
@@ -241,18 +246,23 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		InstallMonitor monitor)
 		throws CoreException {
 
+		ContentReference[] references = getPluginEntryArchiveReferences(pluginEntry, monitor);
 		ContentReference[] result = new ContentReference[0];
 
 		try {
-			// return the list of all subdirectories
-			File pluginDir = new File(getPath(pluginEntry));
-			URL pluginURL = pluginDir.toURL();
-			List files = getFiles(pluginDir);
-			result = new ContentReference[files.size()];
-			for (int i = 0; i < result.length; i++) {
-				File currentFile = (File) files.get(i);
-				String relativeString = UpdateManagerUtils.getURLAsString(pluginURL, currentFile.toURL());
-				result[i] = new ContentReference(relativeString, currentFile.toURL());
+			if (references[0] instanceof JarContentReference) {
+				result = ((JarContentReference)references[0]).peek(null, monitor);
+			} else {
+				// return the list of all subdirectories
+				File pluginDir = new File(getPath(pluginEntry));
+				URL pluginURL = pluginDir.toURL();
+				List files = getFiles(pluginDir);
+				result = new ContentReference[files.size()];
+				for (int i = 0; i < result.length; i++) {
+					File currentFile = (File) files.get(i);
+					String relativeString = UpdateManagerUtils.getURLAsString(pluginURL, currentFile.toURL());
+					result[i] = new ContentReference(relativeString, currentFile.toURL());
+				}
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
