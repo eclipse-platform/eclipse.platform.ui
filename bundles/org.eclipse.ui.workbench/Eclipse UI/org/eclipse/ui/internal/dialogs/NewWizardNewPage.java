@@ -428,7 +428,7 @@ class NewWizardNewPage
 		
 		
 		Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
-	    ToolBar toolBar =  new ToolBar(composite, SWT.HORIZONTAL | SWT.FLAT);
+	    ToolBar toolBar =  new ToolBar(composite, SWT.FLAT);
 	    helpButton = new ToolItem(toolBar, SWT.NONE);
 	    helpButton.setImage(buttonImage);
 	    helpButton.setEnabled(false);
