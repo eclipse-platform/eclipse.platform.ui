@@ -136,6 +136,9 @@ public class WorkbenchThemeManager implements IThemeManager {
     		    themeId = IThemeManager.DEFAULT_THEME;
     		
             setCurrentTheme(themeId);
+            if (currentTheme == null) { // bad preference
+            	setCurrentTheme(IThemeManager.DEFAULT_THEME);
+            }
         }
         return currentTheme;
     }
