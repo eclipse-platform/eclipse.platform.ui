@@ -706,4 +706,42 @@ public class ProjectionDocument extends AbstractDocument {
 	public void setAutoExpandMode(boolean autoExpandMode) {
 		fIsAutoExpanding= autoExpandMode;
 	}
+	
+	/**
+	 * Replaces all master document ranges with the given master document range.
+	 * 
+	 * @param offsetInMaster the offset in the master document
+	 * @param lengthInMaster the length in the master document
+	 * @throws BadLocationException if the given range of the master document is not valid
+	 */
+	public void replaceMasterDocumentRanges(int offsetInMaster, int lengthInMaster) throws BadLocationException {
+		try {
+			
+			int previousLength= fMapping.getImageLength();
+			
+			Position[] fragments= getFragments();
+			for (int i= 0; i < fragments.length; i++) {
+				Fragment fragment= (Fragment) fragments[i];
+				fMasterDocument.removePosition(fFragmentsCategory, fragment);
+				removePosition(fSegmentsCategory, fragment.segment);
+			}
+			
+			Fragment fragment= new Fragment(offsetInMaster, lengthInMaster);
+			Segment segment= new Segment(0, 0);
+			segment.fragment= fragment;
+			fragment.segment= segment;
+			fMasterDocument.addPosition(fFragmentsCategory, fragment);
+			addPosition(fSegmentsCategory, segment);
+			segment.setLength(lengthInMaster);
+			
+			
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, previousLength, fMasterDocument.get(offsetInMaster, lengthInMaster));
+			super.fireDocumentAboutToBeChanged(event);
+			getTracker().set(fMasterDocument.get(offsetInMaster, lengthInMaster));
+			super.fireDocumentChanged(event);
+			
+		} catch (BadPositionCategoryException x) {
+			internalError();
+		}
+	}
 }

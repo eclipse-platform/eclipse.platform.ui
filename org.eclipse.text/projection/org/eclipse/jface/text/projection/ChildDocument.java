@@ -11,7 +11,6 @@
 package org.eclipse.jface.text.projection;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -76,27 +75,7 @@ public class ChildDocument extends ProjectionDocument {
 	 * @param length the length of the range
 	 */
 	public void setParentDocumentRange(int offset, int length) throws BadLocationException {
-		try {
-			
-			Position[] fragments= getFragments();
-			for (int i= 0; i < fragments.length; i++) {
-				Fragment fragment= (Fragment) fragments[i];
-				fMasterDocument.removePosition(fFragmentsCategory, fragment);
-				removePosition(fSegmentsCategory, fragment.segment);
-			}
-			
-			Fragment fragment= new Fragment(offset, length);
-			Segment segment= new Segment(0, 0);
-			segment.fragment= fragment;
-			fragment.segment= segment;
-			fMasterDocument.addPosition(fFragmentsCategory, fragment);
-			addPosition(fSegmentsCategory, segment);
-			segment.setLength(length);
-			
-			getTracker().set(fMasterDocument.get(offset, length));
-			
-		} catch (BadPositionCategoryException x) {
-		}
+		replaceMasterDocumentRanges(offset, length);
 	}
 
 	/**
