@@ -123,7 +123,11 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
 				boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
 				int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
-				tabFolder.setStyle(style);
+				tabFolder.setStyle(style);				
+				Iterator iterator = getEditorList().iterator();
+				
+				while (iterator.hasNext())
+				    updateItem((EditorPane) iterator.next());
 			}
 		}
 	};
@@ -678,7 +682,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		if (editorReference.isDirty())
 			text = "*" + text; //$NON-NLS-1$
 		
-		if (editorPane == getVisibleEditor()) {		
+		if (editorPane == getVisibleEditor() && tabFolder != null && (tabFolder.getStyle() & SWT.MULTI) == 0) {		
 			String titleTooltip = editorReference.getTitleToolTip().trim();
 	
 			if (titleTooltip.endsWith(title))
