@@ -27,18 +27,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
@@ -54,8 +49,8 @@ import org.xml.sax.SAXParseException;
  * Content outline page for planty.
  */
 public class PlantyContentOutlinePage extends ContentOutlinePage {
-	protected IFile file;
-
+	
+	private IFile file;
 	
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -158,13 +153,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		 */
 		public Image getImage(Object anElement) {
 			XmlElement tempElement = (XmlElement)anElement;
-			if("target".equals(tempElement.getName())) {
+			if("target".equals(tempElement.getName())) { //$NON-NLS-1$
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
 			}
-			if("project".equals(tempElement.getName())) {
+			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
 			}
-			if("property".equals(tempElement.getName())) {
+			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
 			}
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
@@ -179,26 +174,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}
 
 }
-    
-	class OutlineAction extends Action {
-		private Shell shell;
-		public OutlineAction(String label) {
-			super(label);
-			getTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					setEnabled(!event.getSelection().isEmpty());
-				}
-			});
-		}
-		public void setShell(Shell shell) {
-			this.shell = shell;
-		}
-		public void run() {
-			MessageDialog.openInformation(shell,"Bla", "Blub"); //$NON-NLS-1$
-		}
-	}
-	
-    
+   
 	/**
 	 * Creates a new PlantyContentOutlinePage.
 	 */
@@ -237,7 +213,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * Returns the outline (a list of MarkElements), or null
 	 * if the outline could not be generated.
 	 */
-	protected XmlElement getContentOutline(IAdaptable input) {
+	private XmlElement getContentOutline(IAdaptable input) {
 		/*
 		 * What happens here:
 		 * The file is parsed by the SAX Parser.
@@ -267,8 +243,8 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 
 		// Create the handler
 		OutlinePreparingHandler tempHandler = null;
+		IPath location = tempFile.getLocation();
 		try {
-			IPath location = tempFile.getLocation();
 			File tempParentFile = null;
 			if(location != null) {
 				tempParentFile = location.toFile().getParentFile();
@@ -283,6 +259,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		// Parse!
 		try {
 			InputSource tempInputSource = new InputSource(new StringReader(tempWholeDocumentString));
+			if (location != null) {
+				//needed for resolving relative external entities
+				tempInputSource.setSystemId(location.toOSString());
+			}
 			tempParser.parse(tempInputSource, tempHandler);
 		} catch(SAXParseException e) {
 			// ignore that on purpose
@@ -295,7 +275,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		}
         
 		XmlElement tempRootElement = tempHandler.getRootElement();
-		XmlElement tempElement = new XmlElement("");
+		XmlElement tempElement = new XmlElement(""); //$NON-NLS-1$
         
 		// Fix position of tags
 		if(tempRootElement != null) {
@@ -396,7 +376,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				if(tempElement.getEndingRow() > 1) {
 					tempStartingIndex += tempLineLengths[tempElement.getEndingRow()-2];
 				}
-				tempLength = findIndexOfSubstringAfterIndex(aWholeDocumentString, ">", tempStartingIndex)+1;
+				tempLength = findIndexOfSubstringAfterIndex(aWholeDocumentString, ">", tempStartingIndex)+1; //$NON-NLS-1$
 				tempLength -= tempOffset;
 				if(isMsOs()) {
 					tempLength += tempStartingRow; // add one char for every
@@ -411,8 +391,8 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	/**
 	 * Returns whether we are on a Microsoft OS.
 	 */
-	public boolean isMsOs() {
-		String tempSeparator = System.getProperty("line.separator");
+	private boolean isMsOs() {
+		String tempSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		if(tempSeparator.length() > 1) {
 			return true;
 		}
@@ -454,13 +434,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * <P>
 	 * Tabs will be converted to spaces according to the tab size.
 	 */
-	protected String getFileContentAsString(IFile aFile) {
+	private String getFileContentAsString(IFile aFile) {
 		InputStream tempStream;
 		try {
 			tempStream = aFile.getContents();
 		} catch (CoreException e) {
 			ExternalToolsPlugin.getDefault().log(e);
-			return "";
+			return ""; //$NON-NLS-1$
 		}
         
 		InputStreamReader tempReader = new InputStreamReader(tempStream);
@@ -473,7 +453,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
         
 			while(tempLine != null) {
 				if(tempResult.length() != 0) {
-					tempResult.append("\n");
+					tempResult.append("\n"); //$NON-NLS-1$
 				}
 				tempResult.append(tempLine);
 				tempLine = tempBufferedReader.readLine();
@@ -488,24 +468,23 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		return tempResult.toString();
 	}
 
-
 	/**
 	 * Replaces all tabs with the appropriate amount of spaces in the specified
 	 * <code>StringBuffer</code>.
 	 * 
 	 * @return the modified <code>aStringBuffer</code>
 	 */
-	protected StringBuffer convertTabsToSpacesIn(StringBuffer aStringBuffer) {
+	private StringBuffer convertTabsToSpacesIn(StringBuffer aStringBuffer) {
 	
-		String tempReplacementString = "";
+		String tempReplacementString = ""; //$NON-NLS-1$
 		for(int i=0; i< PlantyEditor.TAB_WIDTH; i++) {
-			tempReplacementString += " ";
+			tempReplacementString += " "; //$NON-NLS-1$
 		}
 		
-		int tempIndex = aStringBuffer.toString().indexOf("\t");
+		int tempIndex = aStringBuffer.toString().indexOf("\t"); //$NON-NLS-1$
 		while(tempIndex != -1) {
 			aStringBuffer = aStringBuffer.replace(tempIndex, tempIndex+1, tempReplacementString);
-			tempIndex = aStringBuffer.toString().indexOf("\t");
+			tempIndex = aStringBuffer.toString().indexOf("\t"); //$NON-NLS-1$
 		}
 		
 		return aStringBuffer;
@@ -519,7 +498,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * @throws PlantyException if the specified sub string does not exist in
 	 * the source string.
 	 */
-	protected int findIndexOfSubstringAfterIndex(String aSourceString, String aSubString, int aStartIndex) {
+	private int findIndexOfSubstringAfterIndex(String aSourceString, String aSubString, int aStartIndex) {
 		int tempIndex = aSourceString.indexOf(aSubString, aStartIndex);
 		if(tempIndex == -1) {
 			throw new PlantyException("Substring '"+aSubString+"' cannot be found in the specified source string.");

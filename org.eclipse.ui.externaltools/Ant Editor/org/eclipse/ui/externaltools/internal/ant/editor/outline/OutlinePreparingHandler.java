@@ -145,10 +145,10 @@ public class OutlinePreparingHandler extends DefaultHandler {
         else {
             throw new PlantyException("Error when parsing document: Neither a local name nor qualified of an element specified");
         }
-        if(tempElementName.equalsIgnoreCase("target") || tempElementName.equalsIgnoreCase("project")) {
+        if(tempElementName.equalsIgnoreCase("target") || tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$ //$NON-NLS-2$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-                    XmlAttribute tempXmlAttr = getAttributeNamed("name");
+                    XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	return tempXmlAttr.getValue();
                     }
@@ -156,34 +156,34 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         }
-        else if(tempElementName.equalsIgnoreCase("property")) {
+        else if(tempElementName.equalsIgnoreCase("property")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-                    XmlAttribute tempXmlAttr = getAttributeNamed("name");
+                    XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	return tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("file");
+                    tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	return "file="+tempXmlAttr.getValue();
+                    	return "file="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
-                    tempXmlAttr = getAttributeNamed("resource");
+                    tempXmlAttr = getAttributeNamed("resource"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	return "resource="+tempXmlAttr.getValue();
+                    	return "resource="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
-                    tempXmlAttr = getAttributeNamed("environment");
+                    tempXmlAttr = getAttributeNamed("environment"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	return "environment="+tempXmlAttr.getValue();
+                    	return "environment="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
                     return super.getDisplayName();
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("antcall")) {
+        else if(tempElementName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-		        	String tempDisplayName = "antcall ";
-                    XmlAttribute tempXmlAttr = getAttributeNamed("target");
+		        	String tempDisplayName = "antcall "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed("target"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -191,11 +191,11 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("mkdir")) {
+        else if(tempElementName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-		        	String tempDisplayName = "mkdir ";
-                    XmlAttribute tempXmlAttr = getAttributeNamed("dir");
+		        	String tempDisplayName = "mkdir "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed("dir"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -203,11 +203,11 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("copy")) {
+        else if(tempElementName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-		        	String tempDisplayName = "copy ";
-                    XmlAttribute tempXmlAttr = getAttributeNamed("file");
+		        	String tempDisplayName = "copy "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -215,60 +215,60 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("tar") 
-        	|| tempElementName.equalsIgnoreCase("jar")
-        	|| tempElementName.equalsIgnoreCase("war")
-        	|| tempElementName.equalsIgnoreCase("zip")) {
+        else if(tempElementName.equalsIgnoreCase("tar")  //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("jar") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("war") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("zip")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("destfile");
+                    XmlAttribute tempXmlAttr = getAttributeNamed("destfile"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	tempDisplayName += " " + tempXmlAttr.getValue();
+                    	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
                     return tempDisplayName;
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("untar") 
-        	|| tempElementName.equalsIgnoreCase("unjar")
-        	|| tempElementName.equalsIgnoreCase("unwar")
-        	|| tempElementName.equalsIgnoreCase("gunzip")
-        	|| tempElementName.equalsIgnoreCase("bunzip2")
-        	|| tempElementName.equalsIgnoreCase("unzip")) {
+        else if(tempElementName.equalsIgnoreCase("untar")  //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("unjar") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("unwar") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("gunzip") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("bunzip2") //$NON-NLS-1$
+        	|| tempElementName.equalsIgnoreCase("unzip")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("src");
+                    XmlAttribute tempXmlAttr = getAttributeNamed("src"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	tempDisplayName += " " + tempXmlAttr.getValue();
+                    	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
                     return tempDisplayName;
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("gzip") 
-        		|| tempElementName.equalsIgnoreCase("bzip2")) {
+        else if(tempElementName.equalsIgnoreCase("gzip")  //$NON-NLS-1$
+        		|| tempElementName.equalsIgnoreCase("bzip2")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("zipfile");
+                    XmlAttribute tempXmlAttr = getAttributeNamed("zipfile"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	tempDisplayName += " " + tempXmlAttr.getValue();
+                    	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
                     return tempDisplayName;
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("exec")) {
+        else if(tempElementName.equalsIgnoreCase("exec")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-		        	String tempDisplayName = "exec ";
-                    XmlAttribute tempXmlAttr = getAttributeNamed("command");
+		        	String tempDisplayName = "exec "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed("command"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("executable");
+                    tempXmlAttr = getAttributeNamed("executable"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -276,15 +276,15 @@ public class OutlinePreparingHandler extends DefaultHandler {
                 }
         	};
         }	
-        else if(tempElementName.equalsIgnoreCase("delete")) {
+        else if(tempElementName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-		        	String tempDisplayName = "delete ";
-                    XmlAttribute tempXmlAttr = getAttributeNamed("file");
+		        	String tempDisplayName = "delete "; //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	return tempDisplayName + tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("dir");
+                    tempXmlAttr = getAttributeNamed("dir"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
                     	return tempDisplayName + tempXmlAttr.getValue();
                     }
