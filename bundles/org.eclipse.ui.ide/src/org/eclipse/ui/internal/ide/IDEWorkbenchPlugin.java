@@ -11,19 +11,14 @@
 
 package org.eclipse.ui.internal.ide;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -102,6 +97,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 				return ret[0];
 		}
 	}
+	
 	/* Return the default instance of the receiver. This represents the runtime plugin.
 	 *
 	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
@@ -109,9 +105,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	public static IDEWorkbenchPlugin getDefault() {
 		return inst;
 	}
-	/* Answer the manager that maps resource types to a the 
-	 * description of the editor to use
-	*/
 
 	/**
 	 * Return the workspace used by the workbench
@@ -122,6 +115,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	public static IWorkspace getPluginWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+	
 	/**
 	 * Log the given status to the ISV log.
 	 *
@@ -149,12 +143,12 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * @param message 	A high level UI message describing when the problem happened.
 	 *
 	 */
-
 	public static void log(String message) {
 		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 		System.err.println(message);
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
+	
 	/**
 	 * Log the given status to the ISV log.
 	 *
@@ -182,7 +176,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *					Must not be null.
 	 *
 	 */
-
 	public static void log(String message, IStatus status) {
 
 		//1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
@@ -197,58 +190,17 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
-	public void startup() throws CoreException {
-		/* The plugin org.eclipse.ui has being separed in
-		   several plugins. Copy the state files from 
-		   org.eclipse.ui to org.eclipse.ui.workbench */
-		
-		IPath locationPath = getStateLocation();
-		File newLocation = locationPath.toFile();
-		File oldLocation = new File(newLocation,"..//org.eclipse.ui"); //$NON-NLS-1$
-		try {
-			oldLocation = oldLocation.getCanonicalFile();
-		} catch (IOException e) {}		
-		String markerFileName = ".copiedStateFiles_Marker"; //$NON-NLS-1$
-		File markerFile = new File(oldLocation,markerFileName);
-		if(markerFile.exists())
-			return;
-			
-		try {
-			String list[] = newLocation.list();
-			if(list != null && list.length != 0)
-				return;
 
-			String oldList[] = oldLocation.list();
-			if(oldList == null || oldList.length == 0)
-				return;
-
-			byte b[] = new byte[1024];
-			for (int i = 0; i < oldList.length; i++) {
-				String string = oldList[i];
-				try {
-					File oldFile = new File(oldLocation,string);
-					FileInputStream in = new FileInputStream(oldFile);
-					FileOutputStream out = new FileOutputStream(new File(newLocation,string));
-					int read = in.read(b);
-					while(read >= 0) {
-						out.write(b,0,read);
-						read = in.read(b);
-					}
-					in.close();
-					out.close();
-					// Don't delete the old file since the public preferences and some 
-					// dialog settings are still read from org.eclipse.ui.
-					// See bug 33334. 
-					// oldFile.delete();
-				} catch (IOException e) {
-					new File(newLocation,string).delete();
-				}
-			}
-		} finally {
-			try { 
-				new FileOutputStream(markerFile).close(); 
-			} catch (IOException e) {}
-		}
+	/** 
+	 * Set default preference values.
+	 * This method must be called whenever the preference store is initially loaded
+	 * because the default values are not stored in the preference store.
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
+		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
+		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
+		store.setDefault(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
+		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
 	}
-
 }
