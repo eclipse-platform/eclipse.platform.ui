@@ -71,6 +71,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
  * This method is long-running; progress and cancellation are provided
  * by the given progress monitor. All builders should report their
  * progress and honor cancel requests in a timely manner.
+ * Cancellation requests should be propagated to the caller by 
+ * throwing <code>OperationCanceledException</code>.
  * </p>
  * <p>
  * All builders should try to be robust in the face of trouble.
