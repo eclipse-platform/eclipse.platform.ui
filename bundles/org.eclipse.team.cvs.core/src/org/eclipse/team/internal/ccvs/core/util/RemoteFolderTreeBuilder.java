@@ -158,7 +158,7 @@ public class RemoteFolderTreeBuilder {
 		// We didn't need one before!!! Perhaps we could support the changing of a sessions root as long as
 		// the folder sync info is the same 
 		remoteRoot =
-			new RemoteFolderTree(null,repository,
+			new RemoteFolderTree(null, root.getName(), repository,
 				new Path(root.getFolderSyncInfo().getRepository()),
 				tagForRemoteFolder(root, tag));
 		session = new Session(repository, remoteRoot, false);
@@ -182,10 +182,7 @@ public class RemoteFolderTreeBuilder {
 	private RemoteFolderTree buildBaseTree(RemoteFolderTree parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
 		
 		// Create a remote folder tree corresponding to the local resource
-		RemoteFolderTree remote = new RemoteFolderTree(parent, repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
-		// Above should be replaces by the following (after M3)
-//		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
-
+		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
 
 		// Create a List to contain the created children
 		List children = new ArrayList();
@@ -244,8 +241,6 @@ public class RemoteFolderTreeBuilder {
 		Map deltas = (Map)fileDeltas.get(localPath);
 		if (deltas == null)
 			deltas = EMPTY_MAP;
-			
-		
 		
 		// If there is a local, use the local children to start buidling the remote children
 		if (local != null) {
@@ -253,9 +248,9 @@ public class RemoteFolderTreeBuilder {
 			ICVSFolder[] folders = local.getFolders();
 			for (int i=0;i<folders.length;i++) {
 				DeltaNode d = (DeltaNode)deltas.get(folders[i].getName());
-				if (folders[i].isCVSFolder() && (d==null || d.getRevision() != DELETED)) {
+				if (folders[i].isCVSFolder() && ! isOrphanedSubtree(session, folders[i]) && (d==null || d.getRevision() != DELETED)) {
 					children.put(folders[i].getName(), 
-						new RemoteFolderTree(remote, repository, 
+						new RemoteFolderTree(remote, folders[i].getName(), repository, 
 							new Path(folders[i].getFolderSyncInfo().getRepository()), 
 							tagForRemoteFolder(folders[i],tag)));
 				}
@@ -552,6 +547,10 @@ public class RemoteFolderTreeBuilder {
 	 */
 	private CVSTag tagForRemoteFolder(ICVSFolder folder, CVSTag tag) throws CVSException {
 		return tag == null ? folder.getFolderSyncInfo().getTag() : tag;
+	}
+	
+	private boolean isOrphanedSubtree(Session session, ICVSFolder mFolder) {
+		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
 	}
 }
 
