@@ -31,6 +31,7 @@
    <extension-point id="editors" name="%ExtPoint.editors" schema="schema/editors.exsd"/>
    <extension-point id="elementFactories" name="%ExtPoint.elementFactories" schema="schema/elementFactories.exsd"/>
    <extension-point id="fontDefinitions" name="%ExtPoint.fontDefinitions" schema="schema/fontDefinitions.exsd"/>
+   <extension-point id="helpSupport" name="%ExtPoint.helpSupport" schema="schema/helpSupport.exsd"/>
    <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions" schema="schema/perspectiveExtensions.exsd"/>
    <extension-point id="perspectives" name="%ExtPoint.perspectives" schema="schema/perspectives.exsd"/>
    <extension-point id="popupMenus" name="%ExtPoint.popupMenus " schema="schema/popupMenus.exsd"/>
