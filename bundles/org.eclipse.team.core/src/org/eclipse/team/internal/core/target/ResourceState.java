@@ -689,11 +689,14 @@ public abstract class ResourceState {
 				resource = resource.getParent();
 			}
 			if (resource.getType() == IResource.FOLDER && ! resource.exists()) {
+				if (!resource.getParent().exists()) {
+					ResourceState parent=getResourceStateFor(resource.getParent());
+					parent.mkLocalDirs(progress);
+				}
 				((IFolder)resource).create(false /* force */, true /* make local */, progress);
 				// Mark the folders as having a base
 				storeState();
 			}
-
 		} catch (CoreException exception) {
 			// The creation failed.
 			throw TeamPlugin.wrapException(exception);
