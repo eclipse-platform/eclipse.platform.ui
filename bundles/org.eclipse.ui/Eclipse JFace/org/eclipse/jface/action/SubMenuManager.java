@@ -125,7 +125,13 @@ public IContributionItem find(String id) {
 		item = unwrap(item);
 		
 	if (item instanceof IMenuManager) {
+		// if it is a menu manager wrap it before returning
 		IMenuManager menu = (IMenuManager)item;
+		if (menu instanceof SubMenuManager)
+			// it it is already wrapped then remover the wrapper and 
+			// rewrap. We have a table of wrappers so we reuse wrappers
+			// we create.
+			menu = (IMenuManager) ((SubMenuManager)menu).getParent();
 		item = getWrapper(menu);
 	}
 
