@@ -172,18 +172,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			        fLock.wait(10000);
 			    }
             }
-			if (fEditor == null) {
-				Runnable r = new Runnable() {				
-					public void run() {
-						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
-						if (activeEditor != null) {
-							System.out.println("ACTIVE: " + activeEditor.getTitle());
-						}
-					}
-				};
-				display.syncExec(r);
-			}
+			
 			assertNotNull("Editor did not open", fEditor);
 			
 			final Exception[] exs = new Exception[1];
