@@ -11,24 +11,70 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.decorators.*;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.OpenStrategy;
+
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
+import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
+import org.eclipse.ui.internal.registry.ProjectImageRegistry;
+import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.internal.registry.ViewRegistryReader;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -76,6 +122,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
 	/**
+	 * The id of the Tasks view.
+	 */
+	private static final String TASK_LIST_ID = PI_WORKBENCH + ".views.TaskList";
+	
+	/**
 	 * The character used to separate preference page category ids
 	 */
 	private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
@@ -91,6 +142,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
 	private MarkerImageProviderRegistry markerImageProviderRegistry;
+	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
 	 * The workbench plugin is effectively the "application" for the workbench UI.
@@ -99,7 +151,61 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public WorkbenchPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		inst = this;
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+			getShowTasksChangeListener(),
+			IResourceChangeEvent.POST_CHANGE);
 	}
+	
+	/**
+	 * Returns the resource change listener for noticing new errors.
+	 * Processes the delta and shows the Tasks view if new errors 
+	 * have appeared.  See PR 2066.
+	 */ 
+	private IResourceChangeListener getShowTasksChangeListener() {
+		return new IResourceChangeListener() {
+			public void resourceChanged(final IResourceChangeEvent event) {	
+				IPreferenceStore store = getWorkbench().getPreferenceStore();
+				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
+					IMarker error = findError(event);
+					if (error != null) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								try {
+									IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+									if (window != null && !window.getShell().isDisposed()) { 
+										IWorkbenchPage page = window.getActivePage();
+										// ensure user has view somewhere on their page
+										if (page != null && page.findView(TASK_LIST_ID) != null)
+											page.showView(TASK_LIST_ID);
+									}
+								} catch (PartInitException e) {
+									getLog().log(e.getStatus()); //$NON-NLS$
+								}
+							}
+						});
+					}
+				}
+			}
+		};
+	}
+			
+	/**
+	 * Finds the first error marker which has been added in the delta.
+	 */
+	private IMarker findError(IResourceChangeEvent event) {
+		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+		for (int i = 0; i < markerDeltas.length; i++) {
+			IMarkerDelta markerDelta = markerDeltas[i];
+			if (markerDelta.getKind() == IResourceDelta.ADDED) {
+				int severity = markerDelta.getAttribute(IMarker.SEVERITY, -1);
+				if (severity == IMarker.SEVERITY_ERROR) {
+					return markerDelta.getMarker();
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of
@@ -391,6 +497,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		store.setDefault(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE, IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE); // Current Window
 		store.setDefault(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA, IPreferenceConstants.EDITOR_LIST_NAME_SORT); // Name Sort
+
+		// Set the default behaviour for showing the task list when there are compiles errors in the build
+		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
 
 		// Set the default configuration for the key binding service
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);

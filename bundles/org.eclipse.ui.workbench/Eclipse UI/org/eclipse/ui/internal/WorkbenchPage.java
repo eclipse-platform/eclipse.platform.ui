@@ -1713,30 +1713,7 @@ public IEditorPart openEditor(IMarker marker)
 public IEditorPart openEditor(IMarker marker, boolean activate) 
 	throws PartInitException 
 {
-	// Get the resource.
-	IFile file = (IFile)marker.getResource();
-
-	// Get the preferred editor id.
-	String editorID = null;
-	try {
-		editorID = (String)marker.getAttribute(EDITOR_ID_ATTR);
-	}
-	catch (CoreException e) {
-		WorkbenchPlugin.log(WorkbenchMessages.getString("WorkbenchPage.ErrorExtractingEditorIDFromMarker"), e.getStatus()); //$NON-NLS-1$
-		return null;
-	}
-	
-	// Create a new editor.
-	IEditorPart editor = null;
-	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,activate,false,null, false);
-	else 
-		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file, false);
-
-	// Goto the bookmark.
-	if (editor != null)
-		editor.gotoMarker(marker);
-	return editor;
+	return openMarker(marker, activate, false);
 }
 /**
  * See IWorkbenchPage.
@@ -1770,6 +1747,12 @@ public IEditorPart openInternalEditor(IEditorInput input, String editorId)
  */
 public IEditorPart openInternalEditor(IMarker marker)
 	throws PartInitException {
+		
+	return openMarker(marker, true, true);
+}
+
+private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceInternal)
+	throws PartInitException {
 	// Get the resource.
 	IFile file = (IFile)marker.getResource();
 
@@ -1786,9 +1769,9 @@ public IEditorPart openInternalEditor(IMarker marker)
 	// Create a new editor.
 	IEditorPart editor = null;
 	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,true,false,null, true);
+		editor = openEditor(new FileEditorInput(file),null,activate,false,null, forceInternal);
 	else
-		editor = openEditor(new FileEditorInput(file),editorID,true,true,file, true);
+		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file, forceInternal);
 
 	// Goto the bookmark.
 	if (editor != null)

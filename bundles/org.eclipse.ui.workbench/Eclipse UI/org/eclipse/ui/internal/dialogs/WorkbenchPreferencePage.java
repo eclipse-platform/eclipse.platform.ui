@@ -25,6 +25,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button refreshButton;
+	private Button showTasks;
 	private IntegerFieldEditor saveInterval;
 
 	private Button doubleClickButton;
@@ -91,6 +92,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 		refreshButton.setFont(font);
 		setButtonLayoutData(refreshButton);
+		
+		showTasks = new Button(composite, SWT.CHECK);
+		showTasks.setText(WorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
+		showTasks.setFont(font);
+		setButtonLayoutData(showTasks);
 
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
@@ -103,7 +109,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-
+		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
+		
 		return composite;
 	}
 	
@@ -303,6 +310,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.AUTO_BUILD));
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
+		showTasks.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
 		
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
@@ -344,6 +352,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the link navigator to editor setting
 		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
+
+		//store the preference for bringing task view to front on build
+		store.setValue(IPreferenceConstants.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
 
 		long oldSaveInterval = description.getSnapshotInterval() / 60000;
 		long newSaveInterval = new Long(saveInterval.getStringValue()).longValue();

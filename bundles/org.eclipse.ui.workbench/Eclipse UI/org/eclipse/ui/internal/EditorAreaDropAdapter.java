@@ -41,7 +41,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 			IResource [] files = (IResource[]) event.data;
 			try { //open all the files
 				for (int i = 0; i < files.length; i++) {
-					page.openInternalEditor((IFile)files[i]);	
+					if (files[i] instanceof IFile)
+						page.openInternalEditor((IFile)files[i]);	
 				}
 			} catch (PartInitException e) {
 				//do nothing, user may have been trying to drag a folder

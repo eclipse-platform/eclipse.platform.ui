@@ -124,5 +124,9 @@ public interface IPreferenceConstants {
 	// Sort criteria for EditorList
 	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA"; //$NON-NLS-1$
 	public static final int EDITOR_LIST_NAME_SORT = 0;
-	public static final int EDITOR_LIST_MRU_SORT = 1;	
+	public static final int EDITOR_LIST_MRU_SORT = 1;
+	
+	// Show Tasks view to users when build contains errors
+	public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$
+
 }

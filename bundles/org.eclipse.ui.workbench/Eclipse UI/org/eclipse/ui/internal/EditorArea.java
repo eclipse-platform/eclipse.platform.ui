@@ -34,12 +34,12 @@ public class EditorArea extends PartSashContainer {
 	private DropTarget dropTarget;
 	private DropTargetAdapter dropTargetAdapter;
 	
-public EditorArea(String editorId, IPartDropListener listener, Listener mouseDownListener, DropTargetAdapter dropTargetListener) {
+public EditorArea(String editorId, IPartDropListener listener, Listener mouseDownListener, WorkbenchPage page) {
 	super(editorId);
 
 	this.partDropListener = listener;
 	this.mouseDownListener = mouseDownListener;
-	this.dropTargetAdapter = dropTargetListener;
+	this.dropTargetAdapter = new EditorAreaDropAdapter(page);
 	createDefaultWorkbook();
 }
 /**

@@ -41,9 +41,8 @@ public EditorPresentation(WorkbenchPage workbenchPage, Listener mouseDownListene
 	
 	this.page = workbenchPage;
 	
-	EditorAreaDropAdapter dropTargetAdapter = new EditorAreaDropAdapter(page);
 	this.editorArea = new EditorArea(IPageLayout.ID_EDITOR_AREA, partDropListener, 
-		mouseDownListener, dropTargetAdapter);
+		mouseDownListener, page);
 }
 /**
  * Closes all of the editors.

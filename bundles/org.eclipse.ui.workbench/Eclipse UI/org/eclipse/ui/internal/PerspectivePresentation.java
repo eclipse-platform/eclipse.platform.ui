@@ -1369,18 +1369,19 @@ private void reorderFastViews(
 	Point point) {
 		
 	IViewReference destinationView = null;
-	boolean useDestination = false;	
+	boolean placeAtEnd = true;	
 	
 	// Get the fast view that it is being dragged to
 	ToolBar bar = (ToolBar)shortcutBarPart.getControl();
 	//get the ToolItem the cursor is over
 	ToolItem destItem = bar.getItem(point);
 	
+	//determine where to place the view
 	if (destItem != null) { //user is over a toolitem, either fast or perspecitve
 		destinationView = (IViewReference)destItem.getData(ShowFastViewContribution.FAST_VIEW);
-		useDestination = true;
+		placeAtEnd = false;
 	}
-	page.getActivePerspective().moveFastView(draggedView, destinationView, useDestination);
+	page.getActivePerspective().moveFastView(draggedView, destinationView, placeAtEnd);
 	
 	//refresh the menu to show the change
 	((WorkbenchWindow)page.getWorkbenchWindow()).getShortcutBar().update(true);

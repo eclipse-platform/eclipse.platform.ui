@@ -14,6 +14,8 @@ package org.eclipse.ui.part;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The <code>EditorInputTransfer</code> class is used to transfer an
@@ -93,7 +95,8 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 	public Object nativeToJava(TransferData transferData) {
 		Object result = super.nativeToJava(transferData);
 		if (isInvalidNativeType(result)) {
-			//TODO: something went wrong, log error message!
+			//something went wrong, log error message
+			WorkbenchPlugin.log(WorkbenchMessages.getString("EditorInputTransfer.errorMessage"));
 		}
 		return new Object [] {editorId, input};
 	}
