@@ -121,8 +121,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		
 		public void streamClosed(IStreamMonitor monitor) {
-			fLineNotifier.streamClosed();
-			fLineNotifier.processNewLines();
+			ConsoleDocumentPartitioner.this.streamAppended("", fStreamIdentifier);
 		}
 		
 		public void connect() {
@@ -322,6 +321,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		addPendingLinks();
 		String text = event.getText();
+		if (text.length() == 0) {
+			// We append an empty string when the stream is closed
+			fLineNotifier.streamClosed();
+		}
 		if (isAppendInProgress()) {
 			// stream input
 			addPartition(new OutputPartition(fLastStreamIdentifier, event.getOffset(), text.length()));
