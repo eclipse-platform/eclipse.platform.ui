@@ -212,31 +212,31 @@ public final class Util {
 	}
 
 	/**
-	 * Tests whether the first list ends with the second list.
+	 * Tests whether the first array ends with the second array.
 	 * 
 	 * @param left
-	 *            The list to check (larger); may be <code>null</code>.
+	 *            The array to check (larger); may be <code>null</code>.
 	 * @param right
-	 *            The list that should be a subsequence (smaller); may be
+	 *            The array that should be a subsequence (smaller); may be
 	 *            <code>null</code>.
 	 * @param equals
-	 *            Whether the two lists are allowed to be equal.
-	 * @return <code>true</code> if the second list is a subsequence of the
-	 *         first list, and they share end elements.
+	 *            Whether the two array are allowed to be equal.
+	 * @return <code>true</code> if the second array is a subsequence of the
+	 *         array list, and they share end elements.
 	 */
-	public static final boolean endsWith(final List left, final List right,
-			final boolean equals) {
+	public static final boolean endsWith(final Object[] left,
+			final Object[] right, final boolean equals) {
 		if (left == null || right == null)
 			return false;
 
-		int l = left.size();
-		int r = right.size();
+		int l = left.length;
+		int r = right.length;
 
 		if (r > l || !equals && r == l)
 			return false;
 
 		for (int i = 0; i < r; i++)
-			if (!equals(left.get(l - i - 1), right.get(r - i - 1)))
+			if (!equals(left[l - i - 1], right[r - i - 1]))
 				return false;
 
 		return true;
@@ -343,31 +343,31 @@ public final class Util {
 	}
 
 	/**
-	 * Checks whether the second list is a subsequence of the first list, and
+	 * Checks whether the second array is a subsequence of the first array, and
 	 * that they share common starting elements.
 	 * 
 	 * @param left
-	 *            The first list to compare (large); may be <code>null</code>.
+	 *            The first array to compare (large); may be <code>null</code>.
 	 * @param right
-	 *            The second list to compare (small); may be <code>null</code>.
+	 *            The second array to compare (small); may be <code>null</code>.
 	 * @param equals
-	 *            Whether it is allowed for the two lists to be equivalent.
-	 * @return <code>true</code> if the first list starts with the second
+	 *            Whether it is allowed for the two arrays to be equivalent.
+	 * @return <code>true</code> if the first arrays starts with the second
 	 *         list; <code>false</code> otherwise.
 	 */
-	public static final boolean startsWith(final List left, final List right,
-			final boolean equals) {
+	public static final boolean startsWith(final Object[] left,
+			final Object[] right, final boolean equals) {
 		if (left == null || right == null)
 			return false;
 
-		int l = left.size();
-		int r = right.size();
+		int l = left.length;
+		int r = right.length;
 
 		if (r > l || !equals && r == l)
 			return false;
 
 		for (int i = 0; i < r; i++)
-			if (!equals(left.get(i), right.get(i)))
+			if (!equals(left[i], right[i]))
 				return false;
 
 		return true;

@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.bindings.keys.formatting;
 
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.bindings.keys.IKeyLookup;
@@ -83,11 +82,12 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	public String format(KeySequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
 
-		Iterator keyStrokeItr = keySequence.getKeyStrokes().iterator();
-		while (keyStrokeItr.hasNext()) {
-			stringBuffer.append(format((KeyStroke) keyStrokeItr.next()));
+		final KeyStroke[] keyStrokes = keySequence.getKeyStrokes();
+		final int keyStrokesLength = keyStrokes.length;
+		for (int i = 0; i < keyStrokesLength; i++) {
+			stringBuffer.append(format(keyStrokes[i]));
 
-			if (keyStrokeItr.hasNext()) {
+			if (i + 1 < keyStrokesLength) {
 				stringBuffer.append(getKeyStrokeDelimiter());
 			}
 		}

@@ -12,8 +12,6 @@
 package org.eclipse.jface.bindings.keys;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -58,7 +56,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * An empty key sequence instance for use by everyone.
 	 */
 	private final static KeySequence EMPTY_KEY_SEQUENCE = new KeySequence(
-			Collections.EMPTY_LIST);
+			new KeyStroke[0]);
 
 	/**
 	 * The delimiter between multiple key strokes in a single key sequence --
@@ -102,9 +100,14 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 		if (keySequence == null || keyStroke == null)
 			throw new NullPointerException();
 
-		final List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
-		keyStrokes.add(keyStroke);
-		return new KeySequence(keyStrokes);
+		final KeyStroke[] oldKeyStrokes = keySequence.getKeyStrokes();
+		final int oldKeyStrokeLength = oldKeyStrokes.length;
+		final KeyStroke[] newKeyStrokes = new KeyStroke[oldKeyStrokeLength + 1];
+		System
+				.arraycopy(oldKeyStrokes, 0, newKeyStrokes, 0,
+						oldKeyStrokeLength);
+		newKeyStrokes[oldKeyStrokeLength] = keyStroke;
+		return new KeySequence(newKeyStrokes);
 	}
 
 	/**
@@ -115,7 +118,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
 	public static final KeySequence getInstance(final KeyStroke keyStroke) {
-		return new KeySequence(Collections.singletonList(keyStroke));
+		return new KeySequence(new KeyStroke[] { keyStroke });
 	}
 
 	/**
@@ -129,7 +132,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
 	public static final KeySequence getInstance(final KeyStroke[] keyStrokes) {
-		return new KeySequence(Arrays.asList(keyStrokes));
+		return new KeySequence(keyStrokes);
 	}
 
 	/**
@@ -143,7 +146,8 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
 	public static final KeySequence getInstance(final List keyStrokes) {
-		return new KeySequence(keyStrokes);
+		return new KeySequence((KeyStroke[]) keyStrokes
+				.toArray(new KeyStroke[keyStrokes.size()]));
 	}
 
 	/**
@@ -170,7 +174,8 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
 
 		try {
-			return new KeySequence(keyStrokes);
+			return new KeySequence((KeyStroke[]) keyStrokes
+					.toArray(new KeyStroke[keyStrokes.size()]));
 		} catch (Throwable t) {
 			throw new ParseException(
 					"Could not construct key sequence with these key strokes: " //$NON-NLS-1$
@@ -187,11 +192,11 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 *            not be <code>null</code>. If this list is not empty, it
 	 *            must only contain instances of <code>KeyStroke</code>.
 	 */
-	protected KeySequence(List keyStrokes) {
+	protected KeySequence(final KeyStroke[] keyStrokes) {
 		super(keyStrokes);
 
-		for (int i = 0; i < triggers.size() - 1; i++) {
-			KeyStroke keyStroke = (KeyStroke) triggers.get(i);
+		for (int i = 0; i < triggers.length - 1; i++) {
+			KeyStroke keyStroke = (KeyStroke) triggers[i];
 
 			if (!keyStroke.isComplete())
 				throw new IllegalArgumentException();
@@ -224,8 +229,11 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 *         empty, it is guaranteed to only contain instances of
 	 *         <code>KeyStroke</code>.
 	 */
-	public final List getKeyStrokes() {
-		return getTriggers();
+	public final KeyStroke[] getKeyStrokes() {
+		final int triggerLength = triggers.length;
+		final KeyStroke[] keyStrokes = new KeyStroke[triggerLength];
+		System.arraycopy(triggers, 0, keyStrokes, 0, triggerLength);
+		return keyStrokes;
 	}
 
 	/*
@@ -236,10 +244,10 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	public List getPrefixes() {
 		final List prefixTriggers = new ArrayList();
 		final List prefixes = new ArrayList();
-		final int numberOfPrefixes = triggers.size() - 1;
+		final int numberOfPrefixes = triggers.length - 1;
 		prefixes.add(KeySequence.getInstance());
 		for (int i = 0; i < numberOfPrefixes; i++) {
-			prefixTriggers.add(triggers.get(i));
+			prefixTriggers.add(triggers[i]);
 			prefixes.add(KeySequence.getInstance(prefixTriggers));
 		}
 
@@ -253,8 +261,8 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return <code>true</code>, iff the key sequence is complete.
 	 */
 	public final boolean isComplete() {
-		return triggers.isEmpty()
-				|| ((KeyStroke) triggers.get(triggers.size() - 1)).isComplete();
+		return (triggers.length == 0)
+				|| ((KeyStroke) triggers[triggers.length - 1]).isComplete();
 	}
 
 	/**

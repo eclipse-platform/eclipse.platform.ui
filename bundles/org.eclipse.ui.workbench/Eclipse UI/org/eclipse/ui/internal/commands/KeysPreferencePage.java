@@ -2013,8 +2013,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		labelBindingsForCommand.setEnabled(commandSelected);
 		tableBindingsForCommand.setEnabled(commandSelected);
 
-		final boolean triggerSequenceSelected = !triggerSequence.getTriggers()
-				.isEmpty();
+		final boolean triggerSequenceSelected = !triggerSequence.isEmpty();
 		labelBindingsForTriggerSequence.setEnabled(triggerSequenceSelected);
 		tableBindingsForTriggerSequence.setEnabled(triggerSequenceSelected);
 

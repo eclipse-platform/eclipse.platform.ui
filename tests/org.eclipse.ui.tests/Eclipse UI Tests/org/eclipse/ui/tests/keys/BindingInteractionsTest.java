@@ -477,6 +477,49 @@ public final class BindingInteractionsTest extends UITestCase {
 	}
 
 	/**
+	 * This tests a Emacs-style scenario. In this scenario a child scheme
+	 * defines a binding in a parent context. The parent scheme bindings the
+	 * same trigger sequence in a child context. The child scheme definition
+	 * should win.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public void testSchemeOverrideDifferentContexts()
+			throws NotDefinedException {
+		final Context parentContext = contextManager.getContext("parent");
+		parentContext.define("parent", "description", null);
+
+		final Context childContext = contextManager.getContext("child");
+		childContext.define("child", "description", null);
+
+		final Scheme parentScheme = bindingManager.getScheme("parent");
+		parentScheme.define("parent", "parent scheme", null);
+
+		final Scheme childScheme = bindingManager.getScheme("child");
+		childScheme.define("child", "child scheme", "parent");
+
+		bindingManager.setActiveScheme(childScheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add(parentContext.getId());
+		activeContextIds.add(childContext.getId());
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final Binding binding1 = new TestBinding("parent",
+				parentScheme.getId(), childContext.getId(), null, null,
+				Binding.SYSTEM);
+		final Binding binding2 = new TestBinding("child", childScheme.getId(),
+				parentContext.getId(), null, null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(binding1);
+		bindings.add(binding2);
+		bindingManager.setBindings(bindings);
+		assertEquals("The binding from the child scheme should be active",
+				binding2.getCommandId(), bindingManager
+						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+	}
+
+	/**
 	 * <p>
 	 * Tests whether a binding in a child scheme will override a binding in a
 	 * parent scheme -- regardless of their type. The test is set-up as follows:

@@ -25,8 +25,8 @@ import java.util.TreeMap;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.window.Window;
@@ -352,35 +352,35 @@ final class KeyAssistDialog extends Dialog {
 				.getActiveBindingsFor("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
 		final Iterator keyBindingItr = keyBindings.iterator();
 		final KeySequence currentState = keyBindingState.getCurrentSequence();
-		final int prefixSize = currentState.getKeyStrokes().size();
+		final int prefixSize = currentState.getKeyStrokes().length;
 
 		// Try to find the first possible matching key binding.
-		TriggerSequence triggerSequence = null;
+		KeySequence keySequence = null;
 		while (keyBindingItr.hasNext()) {
-			triggerSequence = (TriggerSequence) keyBindingItr.next();
+			keySequence = (KeySequence) keyBindingItr.next();
 
 			// Now just double-check to make sure the key is still possible.
 			if (prefixSize > 0) {
-				if (triggerSequence.startsWith(currentState, false)) {
+				if (keySequence.startsWith(currentState, false)) {
 					/*
 					 * Okay, so we have a partial match. Replace the key binding
 					 * with the required suffix completion.
 					 */
-					final List newKeyStrokes = new ArrayList(triggerSequence
-							.getTriggers());
-					for (int i = 0; i < prefixSize; i++) {
-						newKeyStrokes.remove(0);
-					}
-					triggerSequence = KeySequence.getInstance(newKeyStrokes);
+					final KeyStroke[] oldKeyStrokes = keySequence
+							.getKeyStrokes();
+					final int newSize = oldKeyStrokes.length - prefixSize;
+					final KeyStroke[] newKeyStrokes = new KeyStroke[newSize];
+					System.arraycopy(oldKeyStrokes, prefixSize, newKeyStrokes,
+							0, newSize);
+					keySequence = KeySequence.getInstance(newKeyStrokes);
 					break;
-
 				}
 
 				/*
 				 * The prefix doesn't match, so null out the key binding and try
 				 * again.
 				 */
-				triggerSequence = null;
+				keySequence = null;
 				continue;
 
 			}
@@ -388,7 +388,7 @@ final class KeyAssistDialog extends Dialog {
 			// There is no prefix, so just grab the first.
 			break;
 		}
-		if (triggerSequence == null) {
+		if (keySequence == null) {
 			return composite; // couldn't find a suitable key binding
 		}
 
@@ -404,7 +404,7 @@ final class KeyAssistDialog extends Dialog {
 		text.setBackground(composite.getBackground());
 		text.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE,
 				"openPreferencePage"), //$NON-NLS-1$
-				new Object[] { triggerSequence.format() }));
+				new Object[] { keySequence.format() }));
 
 		return composite;
 	}

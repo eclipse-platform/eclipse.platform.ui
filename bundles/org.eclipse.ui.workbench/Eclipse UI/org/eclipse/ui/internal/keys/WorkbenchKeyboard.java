@@ -178,10 +178,10 @@ public final class WorkbenchKeyboard {
 	 */
 	private static boolean isOutOfOrderKey(List keyStrokes) {
 		// Compare to see if one of the possible key strokes is out of order.
-		Iterator keyStrokeItr = keyStrokes.iterator();
-		List outOfOrderKeyStrokes = outOfOrderKeys.getKeyStrokes();
-		while (keyStrokeItr.hasNext()) {
-			if (outOfOrderKeyStrokes.contains(keyStrokeItr.next())) {
+		final KeyStroke[] outOfOrderKeyStrokes = outOfOrderKeys.getKeyStrokes();
+		final int outOfOrderKeyStrokesLength = outOfOrderKeyStrokes.length;
+		for (int i = 0; i < outOfOrderKeyStrokesLength; i++) {
+			if (keyStrokes.contains(outOfOrderKeyStrokes[i])) {
 				return true;
 			}
 		}

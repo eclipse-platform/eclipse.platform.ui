@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.util.Util;
 
@@ -27,7 +28,7 @@ final class TestBinding extends Binding {
 		 *            not be <code>null</code>.
 		 */
 		public TestTriggerSequence() {
-			super(Collections.EMPTY_LIST);
+			super(new Trigger[0]);
 		}
 
 		public final String format() {

@@ -12,9 +12,9 @@ package org.eclipse.ui.internal;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -169,9 +169,11 @@ public class CyclePartAction extends PageEventAction {
 									.next();
 
 							// Compare the last key stroke of the binding.
-							List triggers = triggerSequence.getTriggers();
-							if ((!triggers.isEmpty())
-									&& (triggers.get(triggers.size() - 1)
+							final Trigger[] triggers = triggerSequence
+									.getTriggers();
+							final int triggersLength = triggers.length;
+							if ((triggersLength > 0)
+									&& (triggers[triggersLength - 1]
 											.equals(keyStroke))) {
 								acceleratorForward = true;
 								break;
@@ -189,9 +191,11 @@ public class CyclePartAction extends PageEventAction {
 									.next();
 
 							// Compare the last key stroke of the binding.
-							List triggers = triggerSequence.getTriggers();
-							if ((!triggers.isEmpty())
-									&& (triggers.get(triggers.size() - 1)
+							final Trigger[] triggers = triggerSequence
+									.getTriggers();
+							final int triggersLength = triggers.length;
+							if ((triggersLength > 0)
+									&& (triggers[triggersLength - 1]
 											.equals(keyStroke))) {
 								acceleratorBackward = true;
 								break;

@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -222,10 +221,10 @@ public final class ExternalActionManager {
 			while (bindingItr.hasNext()) {
 				final TriggerSequence triggerSequence = (TriggerSequence) bindingItr
 						.next();
-				final List triggers = triggerSequence.getTriggers();
+				final Trigger[] triggers = triggerSequence.getTriggers();
 
-				if (triggers.size() == 1) {
-					final Trigger trigger = (Trigger) triggers.get(0);
+				if (triggers.length == 1) {
+					final Trigger trigger = triggers[0];
 					if (trigger instanceof KeyStroke) {
 						accelerator = new Integer(
 								SWTKeySupport

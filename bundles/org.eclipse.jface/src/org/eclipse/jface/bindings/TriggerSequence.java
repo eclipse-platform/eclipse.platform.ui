@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.util.Util;
@@ -57,7 +56,7 @@ public abstract class TriggerSequence {
 	 * The list of trigger in this sequence. This value is never
 	 * <code>null</code>, and never contains <code>null</code> elements.
 	 */
-	protected final List triggers;
+	protected final Trigger[] triggers;
 
 	/**
 	 * Constructs a new instance of <code>TriggerSequence</code>.
@@ -67,21 +66,21 @@ public abstract class TriggerSequence {
 	 *            <code>null</code> or contain <code>null</code> elements.
 	 *            May be empty.
 	 */
-	public TriggerSequence(final List triggers) {
+	public TriggerSequence(final Trigger[] triggers) {
 		if (triggers == null) {
 			throw new NullPointerException("The triggers cannot be null"); //$NON-NLS-1$
 		}
 
-		final Iterator triggerItr = triggers.iterator();
-		while (triggerItr.hasNext()) {
-			if (!(triggerItr.next() instanceof Trigger)) {
+		for (int i = 0; i < triggers.length; i++) {
+			if (triggers[i] == null) {
 				throw new IllegalArgumentException(
 						"All triggers in a trigger sequence must be an instance of Trigger"); //$NON-NLS-1$
 			}
 		}
 
-		this.triggers = new ArrayList(triggers); // copied for my protection
-
+		final int triggerLength = triggers.length;
+		this.triggers = new Trigger[triggerLength];
+		System.arraycopy(triggers, 0, this.triggers, 0, triggerLength);
 	}
 
 	/**
@@ -113,8 +112,8 @@ public abstract class TriggerSequence {
 		if (!(object instanceof TriggerSequence))
 			return false;
 
-		final TriggerSequence castedObject = (TriggerSequence) object;
-		return triggers.equals(castedObject.triggers);
+		final TriggerSequence triggerSequence = (TriggerSequence) object;
+		return Arrays.equals(triggers, triggerSequence.triggers);
 	}
 
 	/**
@@ -149,8 +148,11 @@ public abstract class TriggerSequence {
 	 * @return The triggers; never <code>null</code> and guaranteed to only
 	 *         contain instances of <code>Trigger</code>.
 	 */
-	public final List getTriggers() {
-		return triggers;
+	public final Trigger[] getTriggers() {
+		final int triggerLength = triggers.length;
+		final Trigger[] triggerCopy = new Trigger[triggerLength];
+		System.arraycopy(triggers, 0, triggerCopy, 0, triggerLength);
+		return triggerCopy;
 	}
 
 	/**
@@ -159,7 +161,7 @@ public abstract class TriggerSequence {
 	public final int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + triggers.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(triggers);
 			hashCodeComputed = true;
 		}
 
@@ -172,7 +174,7 @@ public abstract class TriggerSequence {
 	 * @return <code>true</code>, iff the trigger sequence is empty.
 	 */
 	public final boolean isEmpty() {
-		return triggers.isEmpty();
+		return (triggers.length == 0);
 	}
 
 	/**

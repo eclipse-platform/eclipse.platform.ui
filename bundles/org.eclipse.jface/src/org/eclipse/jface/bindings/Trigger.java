@@ -29,7 +29,7 @@ package org.eclipse.jface.bindings;
  * 
  * @since 3.1
  */
-public abstract class Trigger {
+public abstract class Trigger implements Comparable {
 
     /**
      * A factor for computing the hash code for all schemes.
