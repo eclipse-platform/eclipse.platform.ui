@@ -8,15 +8,16 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .syncinfo.snap files.
  * 
- * @see org.eclipse.core.tools.metadata.SyncInfoSnapshotDumpingStrategy_3
+ * @see org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumpingStrategy_3
  */
 public class SyncInfoSnapshotDumper extends AbstractDumper {
 
@@ -24,7 +25,7 @@ public class SyncInfoSnapshotDumper extends AbstractDumper {
 	static final byte QNAME = 2;
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#getStringDumpingStrategy(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();
@@ -34,7 +35,7 @@ public class SyncInfoSnapshotDumper extends AbstractDumper {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(File)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#openInputStream(File)
 	 */
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);

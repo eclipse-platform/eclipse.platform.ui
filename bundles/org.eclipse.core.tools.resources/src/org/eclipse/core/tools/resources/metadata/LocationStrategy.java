@@ -8,10 +8,12 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import org.eclipse.core.tools.metadata.DumpException;
+import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
 
 /**
  * A strategy for reading .location files. 
@@ -19,7 +21,7 @@ import java.io.IOException;
 class LocationStrategy implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream dataInput) throws DumpException, IOException {
 		StringBuffer contents = new StringBuffer(100);
@@ -44,7 +46,7 @@ class LocationStrategy implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
 		return "Project location file"; //$NON-NLS-1$

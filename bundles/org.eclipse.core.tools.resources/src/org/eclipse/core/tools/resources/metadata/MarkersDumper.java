@@ -8,17 +8,18 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .markers files.
  * 
- * @see org.eclipse.core.tools.metadata.AbstractDumper
- * @see org.eclipse.core.tools.metadata.MarkersDumpingStrategy_1 
- * @see org.eclipse.core.tools.metadata.MarkersDumpingStrategy_2
- * @see org.eclipse.core.tools.metadata.MarkersDumpingStrategy_3  
+ * @see org.eclipse.core.tools.resources.metadata.AbstractDumper
+ * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_1 
+ * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_2
+ * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_3  
  */
 public class MarkersDumper extends AbstractDumper {
 
@@ -33,7 +34,7 @@ public class MarkersDumper extends AbstractDumper {
 	static final byte ATTRIBUTE_STRING = 3;
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();

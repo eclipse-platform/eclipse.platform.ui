@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tools.AbstractTreeContentProvider;
 import org.eclipse.core.tools.TreeContentProviderNode;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Constructs a tree made of <code>TreeContentProviderNode</code>s, representing
@@ -216,7 +217,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	 *  
 	 * @param input the new input object - must not be null
 	 */
-	protected void rebuild(final Object input) {
+	protected void rebuild(Viewer viewer, final Object input) {
 		Platform.run(new SafeRunnable() {
 			public void run() throws Exception {
 				extractInfo(((IResource) input).getProject());

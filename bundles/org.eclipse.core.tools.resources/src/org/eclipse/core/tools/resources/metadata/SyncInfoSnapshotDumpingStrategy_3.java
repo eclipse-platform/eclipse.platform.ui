@@ -8,11 +8,13 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import org.eclipse.core.tools.ByteUtil;
+import org.eclipse.core.tools.metadata.DumpException;
+import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
 
 /**
  * A strategy for reading .syncinfo.snap files version 3. Layout:
@@ -29,7 +31,7 @@ import org.eclipse.core.tools.ByteUtil;
  */
 class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
@@ -69,7 +71,7 @@ class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
 		return "Sync info snapshot file version 3"; //$NON-NLS-1$

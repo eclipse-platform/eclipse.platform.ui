@@ -8,12 +8,13 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A strategy for reading .markers.snap files version 2. Layout:
@@ -43,7 +44,7 @@ import java.util.List;
 class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream input) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
@@ -128,7 +129,7 @@ class MarkersSnapshotDumpingStrategy_2 implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
 		return "Markers file version 2"; //$NON-NLS-1$

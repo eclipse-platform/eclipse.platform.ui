@@ -8,17 +8,18 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .markers.snap files.
  * 
- * @see org.eclipse.core.tools.metadata.AbstractDumper
- * @see org.eclipse.core.tools.metadata.MarkersSnapshotDumpingStrategy_1
- * @see org.eclipse.core.tools.metadata.MarkersSnapshotDumpingStrategy_2 
+ * @see org.eclipse.core.tools.resources.metadata.AbstractDumper
+ * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_1
+ * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_2 
  */
 public class MarkersSnapshotDumper extends AbstractDumper {
 
@@ -33,7 +34,7 @@ public class MarkersSnapshotDumper extends AbstractDumper {
 	static final byte ATTRIBUTE_STRING = 3;
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId;
@@ -53,7 +54,7 @@ public class MarkersSnapshotDumper extends AbstractDumper {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#openInputStream(java.io.File)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#openInputStream(java.io.File)
 	 */
 	protected InputStream openInputStream(File file) throws IOException {
 		return new SafeChunkyInputStream(file);

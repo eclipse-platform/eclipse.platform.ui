@@ -8,40 +8,41 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.tools.metadata.*;
 
 /**
- * A strategy for reading .markers files version 2. Layout:
+ * A strategy for reading .markers files version 1. Layout:
  * <pre>
  * SAVE_FILE -> VERSION_ID RESOURCE+
- * VERSION_ID -> int
- * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
+ * VERSION_ID -> 
+ * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER*
  * RESOURCE_PATH -> String
  * MARKERS_SIZE -> int
  * MARKER -> MARKER_ID TYPE ATTRIBUTES_SIZE ATTRIBUTE*
  * MARKER_ID -> long
  * TYPE -> INDEX | QNAME
- * INDEX -> byte int
- * QNAME -> byte String
- * ATTRIBUTES_SIZE -> short
+ * INDEX -> int int
+ * QNAME -> int String
+ * ATTRIBUTES_SIZE -> int
  * ATTRIBUTE -> ATTRIBUTE_KEY ATTRIBUTE_VALUE
  * ATTRIBUTE_KEY -> String
  * ATTRIBUTE_VALUE -> INTEGER_VALUE | BOOLEAN_VALUE | STRING_VALUE | NULL_VALUE
- * INTEGER_VALUE -> byte int
- * BOOLEAN_VALUE -> byte boolean
- * STRING_VALUE -> byte String
- * NULL_VALUE -> byte
- * </pre> 
+ * INTEGER_VALUE -> int int
+ * BOOLEAN_VALUE -> int boolean
+ * STRING_VALUE -> int String
+ * NULL_VALUE -> int
+ * </pre>
  */
-public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
+public class MarkersDumpingStrategy_1 implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
@@ -69,18 +70,19 @@ public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 			contents.append('\n');
 			dumpMarkerType(input, contents, markerTypes);
 			dumpAttributes(input, contents);
+			contents.append('\n');
 		}
 	}
 
 	private void dumpAttributes(DataInputStream input, StringBuffer contents) throws IOException, DumpException {
-		int attributesSize = input.readShort();
+		int attributesSize = input.readInt();
 		contents.append("Attributes ["); //$NON-NLS-1$
 		contents.append(attributesSize);
 		contents.append("]:"); //$NON-NLS-1$
 		contents.append('\n');
 		for (int j = 0; j < attributesSize; j++) {
 			contents.append(input.readUTF());
-			byte type = input.readByte();
+			int type = input.readInt();
 			Object value = null;
 			switch (type) {
 				case MarkersDumper.ATTRIBUTE_INTEGER :
@@ -105,7 +107,7 @@ public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 
 	private void dumpMarkerType(DataInputStream input, StringBuffer contents, List markerTypes) throws IOException, DumpException {
 		String markerType;
-		byte constant = input.readByte();
+		int constant = input.readInt();
 		switch (constant) {
 			case MarkersDumper.QNAME :
 				markerType = input.readUTF();
@@ -123,10 +125,9 @@ public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
-		return "Markers snapshot file version 2"; //$NON-NLS-1$
+		return "Markers snapshot file version 1"; //$NON-NLS-1$
 	}
-
 }

@@ -8,16 +8,17 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .syncinfo files.
  *
- * @see org.eclipse.core.tools.metadata.AbstractDumper 
- * @see org.eclipse.core.tools.metadata.SyncInfoDumpingStrategy_2
- * @see org.eclipse.core.tools.metadata.SyncInfoDumpingStrategy_3
+ * @see org.eclipse.core.tools.resources.metadata.AbstractDumper 
+ * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_2
+ * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_3
  */
 public class SyncInfoDumper extends AbstractDumper {
 
@@ -26,7 +27,7 @@ public class SyncInfoDumper extends AbstractDumper {
 	static final byte QNAME = 2;
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.AbstractDumper#getStringDumpingStrategy(java.io.DataInputStream)
 	 */
 	protected IStringDumpingStrategy getStringDumpingStrategy(DataInputStream dataInput) throws Exception {
 		int versionId = dataInput.readInt();

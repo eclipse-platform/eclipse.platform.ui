@@ -8,12 +8,13 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.File;
 import org.eclipse.core.internal.indexing.*;
 import org.eclipse.core.internal.properties.StoreKey;
 import org.eclipse.core.tools.ByteUtil;
+import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .properties files.
@@ -26,7 +27,7 @@ public class PropertiesDumper implements IDumper {
 	 * 
 	 * @param file the file to be dumped
 	 * @return a dump object representing the contents of the file dumped
-	 * @see org.eclipse.core.tools.metadata.IDumper#dump(java.io.File)
+	 * @see org.eclipse.core.tools.resources.metadata.IDumper#dump(java.io.File)
 	 */
 	public IDump dump(File file) {
 		Dump dump = new Dump();

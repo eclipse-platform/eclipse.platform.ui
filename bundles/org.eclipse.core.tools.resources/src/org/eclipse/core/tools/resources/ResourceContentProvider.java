@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Constructs a tree made of <code>TreeContentProviderNode</code>, representing
@@ -328,7 +329,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 *  
 	 * @param input the new input object - must not be null
 	 */
-	protected void rebuild(final Object input) {
+	protected void rebuild(Viewer viewer, final Object input) {
 		Platform.run(new SafeRunnable() {
 			public void run() throws Exception {
 				extractInfo((IResource) input);

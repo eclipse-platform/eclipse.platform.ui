@@ -8,23 +8,23 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tools.metadata;
+package org.eclipse.core.tools.resources.metadata;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.tools.metadata.*;
 
 /**
- * A strategy for reading .markers.snap files version 1. Layout:
+ * A strategy for reading .markers files version 3. Layout:
  * <pre>
-
- * SNAP_FILE -> [VERSION_ID RESOURCE]*
- * VERSION_ID -> int (used for backwards compatibiliy)
- * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
+ * SAVE_FILE -> VERSION_ID RESOURCE+
+ * VERSION_ID -> int
+ * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
  * RESOURCE_PATH -> String
- * MARKER_SIZE -> int
- * MARKER -> MARKER_ID TYPE ATTRIBUTES_SIZE ATTRIBUTE*
+ * MARKERS_SIZE -> int
+ * MARKER -> MARKER_ID TYPE ATTRIBUTES_SIZE ATTRIBUTE* CREATION_TIME
  * MARKER_ID -> long
  * TYPE -> INDEX | QNAME
  * INDEX -> byte int
@@ -32,32 +32,37 @@ import java.util.List;
  * ATTRIBUTES_SIZE -> short
  * ATTRIBUTE -> ATTRIBUTE_KEY ATTRIBUTE_VALUE
  * ATTRIBUTE_KEY -> String
- * ATTRIBUTE_VALUE -> BOOLEAN_VALUE | INTEGER_VALUE | STRING_VALUE | NULL_VALUE
- * BOOLEAN_VALUE -> byte boolean
+ * ATTRIBUTE_VALUE -> INTEGER_VALUE | BOOLEAN_VALUE | STRING_VALUE | NULL_VALUE
  * INTEGER_VALUE -> byte int
+ * BOOLEAN_VALUE -> byte boolean
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
- * </pre>
+ * CREATION_TIME -> long
+ * </pre> 
  */
-class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
+
+public class MarkersDumpingStrategy_3 implements IStringDumpingStrategy {
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream input) throws IOException, DumpException {
+	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
-		DataInputStream dataInput = new DataInputStream(input);
 		List markerTypes = new ArrayList();
-		String resourceName = dataInput.readUTF();
-		contents.append("Resource: "); //$NON-NLS-1$
-		contents.append(resourceName);
-		contents.append('\n');
-		dumpMarkers(dataInput, contents, markerTypes);
+		while (dataInput.available() > 0) {
+			String resourceName = dataInput.readUTF();
+			contents.append("Resource: "); //$NON-NLS-1$
+			contents.append(resourceName);
+			contents.append('\n');
+			dumpMarkers(dataInput, contents, markerTypes);
+			contents.append('\n');
+		}
 		return contents.toString();
 	}
 
 	private void dumpMarkers(DataInputStream input, StringBuffer contents, List markerTypes) throws IOException, DumpException {
 		int markersSize = input.readInt();
+
 		contents.append("Markers ["); //$NON-NLS-1$
 		contents.append(markersSize);
 		contents.append("]:"); //$NON-NLS-1$
@@ -68,6 +73,9 @@ class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
 			contents.append('\n');
 			dumpMarkerType(input, contents, markerTypes);
 			dumpAttributes(input, contents);
+			contents.append("Creation time: "); //$NON-NLS-1$
+			contents.append(input.readLong());
+			contents.append('\n');
 		}
 	}
 
@@ -82,16 +90,16 @@ class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
 			byte type = input.readByte();
 			Object value = null;
 			switch (type) {
-				case MarkersSnapshotDumper.ATTRIBUTE_INTEGER :
+				case MarkersDumper.ATTRIBUTE_INTEGER :
 					value = new Integer(input.readInt());
 					break;
-				case MarkersSnapshotDumper.ATTRIBUTE_BOOLEAN :
+				case MarkersDumper.ATTRIBUTE_BOOLEAN :
 					value = input.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
 					break;
-				case MarkersSnapshotDumper.ATTRIBUTE_STRING :
+				case MarkersDumper.ATTRIBUTE_STRING :
 					value = "\"" + input.readUTF() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					break;
-				case MarkersSnapshotDumper.ATTRIBUTE_NULL :
+				case MarkersDumper.ATTRIBUTE_NULL :
 					break;
 				default :
 					throw new PartialDumpException("Invalid marker attribute type found: " + type, contents); //$NON-NLS-1$
@@ -106,11 +114,11 @@ class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
 		String markerType;
 		byte constant = input.readByte();
 		switch (constant) {
-			case MarkersSnapshotDumper.QNAME :
+			case MarkersDumper.QNAME :
 				markerType = input.readUTF();
 				markerTypes.add(markerType);
 				break;
-			case MarkersSnapshotDumper.INDEX :
+			case MarkersDumper.INDEX :
 				markerType = (String) markerTypes.get(input.readInt());
 				break;
 			default :
@@ -122,9 +130,9 @@ class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
 	}
 
 	/**
-	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#getFormatDescription()
+	 * @see org.eclipse.core.tools.resources.metadata.IStringDumpingStrategy#getFormatDescription()
 	 */
 	public String getFormatDescription() {
-		return "Markers snapshot file version 1"; //$NON-NLS-1$
+		return "Markers snapshot file version 3"; //$NON-NLS-1$
 	}
 }

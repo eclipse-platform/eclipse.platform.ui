@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="metadataDumpers" name="Metadata Dumpers"/>
-   
-   <extension point="org.eclipse.core.tools.resources.metadataDumpers">
-    	<dumper file-name=".markers" class="org.eclipse.core.tools.metadata.MarkersDumper"/>
-    	<dumper file-name=".markers.snap" class="org.eclipse.core.tools.metadata.MarkersSnapshotDumper"/>
-    	<dumper file-name=".syncinfo" class="org.eclipse.core.tools.metadata.SyncInfoDumper"/>
-    	<dumper file-name=".syncinfo.snap" class="org.eclipse.core.tools.metadata.SyncInfoSnapshotDumper"/>
-    	<dumper file-name=".properties" class="org.eclipse.core.tools.metadata.PropertiesDumper"/>
-    	<dumper file-name=".location" class="org.eclipse.core.tools.metadata.LocationDumper"/>    	    	    	    	    	
+   <extension point="org.eclipse.core.tools.metadataDumpers">
+    	<dumper file-name=".markers" class="org.eclipse.core.tools.resources.metadata.MarkersDumper"/>
+    	<dumper file-name=".markers.snap" class="org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumper"/>
+    	<dumper file-name=".syncinfo" class="org.eclipse.core.tools.resources.metadata.SyncInfoDumper"/>
+    	<dumper file-name=".syncinfo.snap" class="org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumper"/>
+    	<dumper file-name=".properties" class="org.eclipse.core.tools.resources.metadata.PropertiesDumper"/>
+    	<dumper file-name=".location" class="org.eclipse.core.tools.resources.metadata.LocationDumper"/>    	    	    	    	    	
    </extension>
 <!--  Actions -->
    <extension
@@ -36,45 +34,6 @@
                id="org.eclipse.core.tools.resources.actionSet">
          </actionSet>
       </perspectiveExtension>
-   </extension>
-<!--  Perspectives -->
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="Metadata"
-            icon="icons/spy.gif"
-            class="org.eclipse.core.tools.metadata.MetadataPerspective"
-            id="org.eclipse.core.tools.metadata.MetadataPerspective">
-      </perspective>
-   </extension>
-<!-- Metadata Views  -->
-   <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="Metadata Tools"
-            id="org.eclipse.core.tools.metadata">
-      </category>
-      <view
-            name="Dump Contents"
-            icon="icons/spy.gif"
-            category="org.eclipse.core.tools.metadata"
-            class="org.eclipse.core.tools.metadata.DumpContentsView"
-            id="org.eclipse.core.tools.metadata.DumpContentsView">
-      </view>
-      <view
-            name="Dump Summary"
-            icon="icons/spy.gif"
-            category="org.eclipse.core.tools.metadata"
-            class="org.eclipse.core.tools.metadata.DumpSummaryView"
-            id="org.eclipse.core.tools.metadata.DumpSummaryView">
-      </view>
-      <view
-            name="Workspace Files Spy"
-            icon="icons/spy.gif"
-            category="org.eclipse.core.tools.metadata"
-            class="org.eclipse.core.tools.metadata.WorkspaceView"
-            id="org.eclipse.core.tools.metadata.WorkspaceView">
-      </view>
    </extension>
 <!-- Resources Views  -->
    <extension point="org.eclipse.ui.views">
