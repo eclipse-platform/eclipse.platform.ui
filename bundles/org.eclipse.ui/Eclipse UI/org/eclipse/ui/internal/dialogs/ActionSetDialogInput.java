@@ -27,9 +27,7 @@ public class ActionSetDialogInput {
 	private final static String ID_WIZARD = "org.eclipse.ui.wizards"; //$NON-NLS-1$
 	private final static String ID_PERSP = "org.eclipse.ui.perspectives"; //$NON-NLS-1$
 	private FakeActionSetCategory viewCat;
-/*
 	private FakeActionSetCategory perspCat;
-*/
 	private FakeActionSetCategory wizardCat;
 /**
  * ActionSetContent constructor comment.
@@ -39,9 +37,7 @@ public ActionSetDialogInput() {
 	initActionSets();
 	initViews();
 	initNewWizards();
-/*
  	initPerspectives();
-*/
 }
 
 /**
@@ -85,11 +81,9 @@ public Object [] getCategories() {
 /**
  * Returns the fake persp action for a particular id.
  */
-/*
 public FakePerspectiveActionSet getPerspectiveActionSet(String id) {
 	return (FakePerspectiveActionSet)perspCat.findActionSet(id);
 }
-*/
 /**
  * Returns the fake view action for a particular id.
  */
@@ -129,7 +123,6 @@ private void initNewWizards() {
 /**
  * Initialize the perspective action sets.
  */
-/*
 private void initPerspectives() {
 	// Create fake category.
 	perspCat = new FakeActionSetCategory(ID_PERSP,		
@@ -144,7 +137,6 @@ private void initPerspectives() {
 		perspCat.addActionSet(actionSet);
 	}
 }
-*/
 /**
  * Initialize the view action sets.
  */
