@@ -27,6 +27,10 @@ import java.util.*;
  */
 public class AuthorizationDatabase {
 	/**
+	 * Version number for the format of the keyring file.
+	 */
+	private static final int KEYRING_FILE_VERSION = 1;
+	/**
 	 * A nested hashtable that stores authorization information. The
 	 * table maps server URLs to realms to authentication schemes to
 	 * authorization information.
@@ -256,11 +260,28 @@ private void load() throws CoreException {
 	}
 }
 private void load(InputStream is) throws IOException, ClassNotFoundException {
-	CipherInputStream cis = new CipherInputStream(is, password);
-	ObjectInputStream ois = new ObjectInputStream(cis);
-	authorizationInfo = (Hashtable) ois.readObject();
-	protectionSpace = (Hashtable) ois.readObject();
-	ois.close();
+	//try to read the file version number. Pre 2.0 versions had no number
+	int version = is.read();
+	if (version == KEYRING_FILE_VERSION) {
+		//read the authorization data
+		CipherInputStream cis = new CipherInputStream(is, password);
+		ObjectInputStream ois = new ObjectInputStream(cis);
+		try {
+			authorizationInfo = (Hashtable) ois.readObject();
+			protectionSpace = (Hashtable) ois.readObject();
+		} finally {
+			ois.close();
+		}
+	} else {
+		//the format has changed, just log a warning and carry on
+		InternalPlatform.log(new Status(
+			IStatus.WARNING, 
+			Platform.PI_RUNTIME, 
+			Platform.FAILED_READ_METADATA, 
+			Policy.bind("meta.authFormatChanged"), 
+			null));
+		needsSaving = true;
+	}
 }
 /**
  * Saves the authorization database to disk.
@@ -283,11 +304,18 @@ public void save() throws CoreException {
 	needsSaving = false;
 }
 private void save(OutputStream os) throws IOException {
+	//write the version number
+	os.write(KEYRING_FILE_VERSION);
+
 	CipherOutputStream cos = new CipherOutputStream(os, password);
 	ObjectOutputStream oos = new ObjectOutputStream(cos);
-	oos.writeObject(authorizationInfo);
-	oos.writeObject(protectionSpace);
-	oos.close();
+	//write the data
+	try {
+		oos.writeObject(authorizationInfo);
+		oos.writeObject(protectionSpace);
+	} finally {
+		oos.close();
+	}
 }
 /**
  * Sets the password to use for accessing this database.  If the database
