@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
  
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabItem;
@@ -15,7 +16,7 @@ public class TeamTab implements ILaunchConfigurationTab {
 	/*
 	 * @see ILaunchConfigurationTab#createTabControl(TabItem)
 	 */
-	public Control createTabControl(TabItem tabItem) {
+	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
 		return null;
 	}
 

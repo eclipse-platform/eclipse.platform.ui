@@ -70,7 +70,7 @@ public interface ILaunchConfigurationTab {
 	 *   for this tab's control
 	 * @return the control to be used for this tab
 	 */
-	public Control createTabControl(TabItem tabItem);
+	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem);
 	
 	/**
 	 * Sets the launch configuration (working copy) that this

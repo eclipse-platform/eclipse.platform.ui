@@ -50,20 +50,20 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 	 */
 	public void run() {
 		
-		// hook for launch configurations - OFF
-//		if (runLaunchConfiguration()) {
-//			return;
-//		}
-		
-		if (!DebugUIPlugin.saveAndBuild()) {
-			return;
-		}
-
 		final IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		final IStructuredSelection selection= resolveSelection(dwindow);
 
 		// if the selection is a debug element, system process, or launch, try to do a relaunch
 		if (selection != null && attemptRelaunch(selection)) {
+			return;
+		}
+
+		// hook for launch configurations - OFF
+//		if (runLaunchConfiguration(selection)) {
+//			return;
+//		}
+		
+		if (!DebugUIPlugin.saveAndBuild()) {
 			return;
 		}
 
@@ -320,8 +320,8 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 	 * 
 	 * @return whether to cancel
 	 */
-	private boolean runLaunchConfiguration() {
-		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell());		
+	private boolean runLaunchConfiguration(IStructuredSelection selection) {
+		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
 		if (lcd.open() == Window.CANCEL) {
 			return true;
 		}		
