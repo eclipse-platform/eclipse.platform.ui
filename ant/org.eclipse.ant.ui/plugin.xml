@@ -49,11 +49,18 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="%AntBuild.externalTools"
+            name="%AntBuild"
             delegate="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools"
             modes="run"
             id="org.eclipse.ant.AntLaunchConfigurationType">
+      </launchConfigurationType>
+      <launchConfigurationType
+            name="%AntBuild"
+            delegate="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
+            category="org.eclipse.ui.externaltools.builder"
+            modes="run"
+            id="org.eclipse.ant.AntBuilderLaunchConfigurationType">
       </launchConfigurationType>
    </extension>
    <extension
@@ -211,16 +218,6 @@
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.consoleColorProvider">
       </consoleColorProvider>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            name="%AntBuild.externalTools"
-            delegate="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
-            category="org.eclipse.ui.externaltools.builder"
-            modes="run"
-            id="org.eclipse.ant.AntBuilderLaunchConfigurationType">
-      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
