@@ -38,14 +38,14 @@ public interface IKeyBinding {
 	 * 
 	 * @return
 	 */	
-	String getKeyConfigurationId();
+	String getContextId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getContextId();
+	String getKeyConfigurationId();
 
 	/**
 	 * JAVADOC

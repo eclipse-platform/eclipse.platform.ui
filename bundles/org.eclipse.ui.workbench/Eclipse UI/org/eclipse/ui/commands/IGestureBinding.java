@@ -38,14 +38,14 @@ public interface IGestureBinding {
 	 * 
 	 * @return
 	 */	
-	String getGestureConfigurationId();
+	String getContextId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getContextId();
+	String getGestureConfigurationId();
 
 	/**
 	 * JAVADOC
