@@ -283,11 +283,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @param format
 	 * @throws CVSException
 	 */
-	private void newFileDiff(final ICVSResource resource, final PrintStream stream, final boolean doNotRecurse, final int format) throws CVSException {
+	private void newFileDiff(final ICVSFolder resource, final PrintStream stream, final boolean doNotRecurse, final int format) throws CVSException {
 		resource.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (!(file.isIgnored() || file.isManaged()))  {
-					addFileToDiff(file, stream, format);
+					addFileToDiff(resource, file, stream, format);
 				}
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
@@ -302,14 +302,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 		});
 	}
 
-	private void addFileToDiff(ICVSFile file, PrintStream stream, int format) throws CVSException {
+	private void addFileToDiff(ICVSFolder cmdRoot, ICVSFile file, PrintStream stream, int format) throws CVSException {
 		
 		String nullFilePrefix = ""; //$NON-NLS-1$
 		String newFilePrefix = ""; //$NON-NLS-1$
 		String positionInfo = ""; //$NON-NLS-1$
 		String linePrefix = ""; //$NON-NLS-1$
 		
-		String pathString = file.getIResource().getProjectRelativePath().toString();
+		String pathString = file.getRelativePath(cmdRoot);
 
 		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
 		int lines = 0;
