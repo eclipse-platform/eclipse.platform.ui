@@ -760,7 +760,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
 			return;
 
-		File lockFile = new File(url.getFile(), CONFIG_FILE_LOCK_SUFFIX);
+		File lockFile = new File(url.getFile(), ConfigurationActivator.NAME_SPACE+ File.separator+CONFIG_FILE_LOCK_SUFFIX);
 		verifyPath(url);
 		try {
 			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
