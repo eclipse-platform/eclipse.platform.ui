@@ -232,6 +232,8 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 						builtProjects.add(unordered[i]);
 					}
 				}
+				//subsequent builds should always be incremental
+				trigger = IncrementalProjectBuilder.INCREMENTAL_BUILD;
 			}
 			// if the status is not ok, throw an exception 
 			if (!status.isOK())
