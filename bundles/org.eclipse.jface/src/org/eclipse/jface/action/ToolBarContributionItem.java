@@ -320,42 +320,56 @@ public class ToolBarContributionItem extends ContributionItem {
 	 */
 	public void updateSize(boolean changeCurrentSize) {
 		// cannot set size if coolItem is null
-		if (coolItem == null || coolItem.isDisposed()) return;
-		// Calculate size of toolbar
-		ToolBar toolBar = (ToolBar)coolItem.getControl();
-		
-		if(toolBar == null)
-			return; 
-		// if the toolbar does not contain any items then dispose of coolItem
-		if (toolBar.getItemCount() <= 0) {	
-			coolItem.setData(null);
-			Control control = coolItem.getControl();
-			if ((control != null) && !control.isDisposed()) {
-				control.dispose();
-				coolItem.setControl(null);
-			}
-			if (!coolItem.isDisposed()) {
-				coolItem.dispose();
-			}
+		if (coolItem == null || coolItem.isDisposed()) {
 			return;
 		}
-		Point toolBarSize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		// Set the preffered size to the size of the toolbar plus trim
-		Point prefferedSize = coolItem.computeSize(toolBarSize.x, toolBarSize.y);
-		coolItem.setPreferredSize(prefferedSize);
-		// note setMinimumSize must be called before setSize, see PR 15565
-		// Set minimum size
-		if (getMinimumItemsToShow() != SHOW_ALL_ITEMS) {
-			int toolItemWidth = toolBar.getItems()[1].getWidth();
-			int minimumWidth = toolItemWidth * getMinimumItemsToShow();
-			coolItem.setMinimumSize(minimumWidth, toolBarSize.y);
-		}else {
-			coolItem.setMinimumSize(toolBarSize.x, toolBarSize.y);
-		}
-		
-		if (changeCurrentSize) {
-			// Set current size to preffered size
-			coolItem.setSize(prefferedSize);
+		boolean locked = false;
+		CoolBar coolBar = coolItem.getParent();
+		try {	
+			// Fix odd behaviour with locked tool bars
+			if (coolBar != null) {
+				if (coolBar.getLocked() == true) {
+					coolBar.setLocked(false);
+					locked = true;
+				}
+			}
+			ToolBar toolBar = (ToolBar)coolItem.getControl();
+			if ( (toolBar == null) || (toolBar.isDisposed()) || (toolBar.getItemCount() <= 0) ) {	
+				// if the toolbar does not contain any items then dispose of coolItem
+				coolItem.setData(null);
+				Control control = coolItem.getControl();
+				if ((control != null) && !control.isDisposed()) {
+					control.dispose();
+					coolItem.setControl(null);
+				}
+				if (!coolItem.isDisposed()) {
+					coolItem.dispose();
+				}
+			}else {
+				// If the toolbar item exists then adjust the size of the cool item
+				Point toolBarSize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				// Set the preffered size to the size of the toolbar plus trim
+				Point prefferedSize = coolItem.computeSize(toolBarSize.x, toolBarSize.y);
+				coolItem.setPreferredSize(prefferedSize);
+				// note setMinimumSize must be called before setSize, see PR 15565
+				// Set minimum size
+				if (getMinimumItemsToShow() != SHOW_ALL_ITEMS) {
+					int toolItemWidth = toolBar.getItems()[1].getWidth();
+					int minimumWidth = toolItemWidth * getMinimumItemsToShow();
+					coolItem.setMinimumSize(minimumWidth, toolBarSize.y);
+				}else {
+					coolItem.setMinimumSize(toolBarSize.x, toolBarSize.y);
+				}
+				if (changeCurrentSize) {
+					// Set current size to preffered size
+					coolItem.setSize(prefferedSize);
+				}
+			}
+		} finally {
+			// If the cool bar was locked, then set it back to locked
+			if ((locked) && (coolBar != null) ) {
+				coolBar.setLocked(true);
+			}
 		}
 	}
 	

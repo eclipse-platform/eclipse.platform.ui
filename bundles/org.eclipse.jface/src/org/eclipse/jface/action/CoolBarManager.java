@@ -641,7 +641,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 							CoolItem item = findCoolItem(contributionItems[i]);
 							if (item == null) {
 								int prevItemCount = coolBar.getItemCount();
-								if (changed = false) {
+								if (changed == false) {
 									if (coolBar.getLocked()) {
 										// workaround for 14330
 										coolBar.setLocked(false);
