@@ -350,6 +350,9 @@
                path="emptyLaunchGroup"
                id="org.eclipse.ui.run">
             <separator
+                  name="relaunchGroup">
+            </separator>
+            <separator
                   name="profileGroup">
             </separator>
          </menu>
