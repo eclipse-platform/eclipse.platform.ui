@@ -175,7 +175,7 @@ protected void saveWidgetValues() {
 	Object[] expandedElements = tree.getExpandedElements();
 	String[] expandedCategoryIds = new String[expandedElements.length];
 	for (int i = 0; i < expandedElements.length; ++i)
-		expandedCategoryIds[i] = ((ICategory)expandedElements[i]).getID();
+		expandedCategoryIds[i] = ((ICategory)expandedElements[i]).getId();
 
 	// Save them for next time.
 	settings.put(

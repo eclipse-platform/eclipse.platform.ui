@@ -115,13 +115,13 @@ public void mapViewsToCategories() {
 			cat = (Category)findCategory(rootCat);
 		}	
 		if (cat != null) {
-			cat.addView(desc);
+			cat.addElement(desc);
 		} else {
 			if (miscCategory == null) {
 				miscCategory = new Category(MISC_ID, MISC_NAME);
 				categories.add(miscCategory);
 			}
-			miscCategory.addView(desc);
+			miscCategory.addElement(desc);
 		}
 	}
 }

@@ -44,13 +44,13 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 		public CategoryNode(Category cat) {
 			category = cat;
 			path = ""; //$NON-NLS-1$
-			String[] categoryPath = category.getParentCategoryPath();
+			String[] categoryPath = category.getParentPath();
 			if (categoryPath != null) {
 				for (int nX = 0; nX < categoryPath.length; nX ++) {
 					path += categoryPath[nX] + '/'; //$NON-NLS-1$
 				}
 			}
-			path += cat.getID();
+			path += cat.getId();
 		}
 		public String getPath() {
 			return path;
@@ -186,7 +186,7 @@ private void finishCategories() {
 private void finishCategory(Category category) {
 	WizardCollectionElement currentResult = (WizardCollectionElement) wizards;
 	
-	String[] categoryPath = category.getParentCategoryPath();
+	String[] categoryPath = category.getParentPath();
 	WizardCollectionElement parent = currentResult; 		// ie.- root
 
 	// Traverse down into parent category.	
@@ -204,12 +204,12 @@ private void finishCategory(Category category) {
 	}
 
 	// If another category already exists with the same id ignore this one.
-	Object test = getChildWithID(parent, category.getID());
+	Object test = getChildWithID(parent, category.getId());
 	if (test != null)
 		return;
 		
 	if (parent != null)
-		createCollectionElement(parent, category.getID(), category.getLabel());
+		createCollectionElement(parent, category.getId(), category.getLabel());
 }
 /**
  *	Insert the passed wizard element into the wizard collection appropriately

@@ -27,8 +27,7 @@ public Object[] getChildren(Object element) {
 		IViewRegistry reg = (IViewRegistry)element;
 		return reg.getCategories();
 	} else if (element instanceof ICategory) {
-		Category cat = (Category)element;
-		ArrayList list = cat.getViews();
+		ArrayList list = ((ICategory)element).getElements();
 		if (list != null) {
 			return list.toArray();
 		} else {

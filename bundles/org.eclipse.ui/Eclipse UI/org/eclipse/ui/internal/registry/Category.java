@@ -10,94 +10,104 @@ import java.util.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
+ * The default implementation of the interface <code>ICategory</code>.
+ * 
  * @see ICategory
  */
 public class Category implements ICategory {
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_PARENT = "parentCategory"; //$NON-NLS-1$
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+	
 	private String id;
 	private String name;
-	private String [] parentCategoryPath;
-	private ArrayList views;
-	private IConfigurationElement config;
-	public static final String ATT_ID="id";//$NON-NLS-1$
-	public static final String ATT_CATEGORY="parentCategory";//$NON-NLS-1$
-	public static final String ATT_NAME="name";//$NON-NLS-1$
-/**
- * A constructor.
- */
-public Category(String id, String name) {
-	this.id = id;
-	this.name = name;
-}
-/**
- * A constructor.
- */
-public Category(IConfigurationElement aConfig) throws CoreException {
-	config = aConfig;
-	id = config.getAttribute(ATT_ID);
-	name = config.getAttribute(ATT_NAME);
-	if (id == null || name == null) {
-		throw new CoreException(new Status(IStatus.ERROR, 
-			WorkbenchPlugin.PI_WORKBENCH,
-			0,
-			"Invalid extension: " + id, //$NON-NLS-1$
-			null));
-	}
-}
-/**
- * Adds a view to this category.
- */
-public void addView(IViewDescriptor desc) {
-	if (views == null)
-		views = new ArrayList(3);
-	views.add(desc);
-}
-/**
- * Returns unique category id.
- */
-public String getID() {
-	return id;
-}
-/**
- * Returns category name.
- */
-public String getLabel() {
-	return name;
-}
-/**
- * Returns tokens that represent a path from the top
- * to this category, or null if not defined.
- */
-public String[] getParentCategoryPath() {
-	if (parentCategoryPath != null) 
-		return parentCategoryPath;
-	if (config != null) {
-		String category = config.getAttribute(ATT_CATEGORY);
-		if (category==null) return null;
-		StringTokenizer stok = new StringTokenizer(category, "/");//$NON-NLS-1$
-		parentCategoryPath = new String [stok.countTokens()];
-		for (int i=0; stok.hasMoreTokens(); i++) {
-			parentCategoryPath[i]=stok.nextToken();
-		}
-	}
-	return parentCategoryPath;
+	private String[] parentPath;
+	private String unparsedPath;
+	private ArrayList elements;
 	
-
-}
-/**
- * Returns the root category for this.
- */
-public String getRootPath() {
-	String result = id;
-	String [] parentPath = getParentCategoryPath();
-	if (parentPath != null && parentPath.length > 0)
-		result = parentPath[0];
-	return result;
-}
-/**
- * Returns the views for this category.
- * May be null.
- */
-public ArrayList getViews() {
-	return views;
-}
+	/**
+	 * Creates an instance of <code>Category</code> with
+	 * an ID and label.
+	 * 
+	 * @param id the unique identifier for the category
+	 * @param label the presentation label for this category
+	 */
+	public Category(String id, String label) {
+		this.id = id;
+		this.name = label;
+	}
+	
+	/**
+	 * Creates an instance of <code>Category</code> using the
+	 * information from the specified configuration element.
+	 * 
+	 * @param configElement the <code>IConfigurationElement<code> containing
+	 * 		the ID, label, and optional parent category path.
+	 * @throws a <code>WorkbenchException</code> if the ID or label is <code>null</code
+	 */
+	public Category(IConfigurationElement configElement) throws WorkbenchException {
+		id = configElement.getAttribute(ATT_ID);
+		name = configElement.getAttribute(ATT_NAME);
+		unparsedPath = configElement.getAttribute(ATT_PARENT);
+		
+		if (id == null || name == null)
+			throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public void addElement(Object element) {
+		if (elements == null)
+			elements = new ArrayList(5);
+		elements.add(element);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public String getId() {
+		return id;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public String getLabel() {
+		return name;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public String[] getParentPath() {
+		if (unparsedPath != null) {
+			StringTokenizer stok = new StringTokenizer(unparsedPath, "/"); //$NON-NLS-1$
+			parentPath = new String[stok.countTokens()];
+			for (int i = 0; stok.hasMoreTokens(); i++) {
+				parentPath[i] = stok.nextToken();
+			}
+			unparsedPath = null;
+		}
+		
+		return parentPath;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public String getRootPath() {
+		String[] path = getParentPath();
+		if (path != null && path.length > 0)
+			return path[0];
+		else
+			return null;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ICategory.
+	 */
+	public ArrayList getElements() {
+		return elements;
+	}
 }
