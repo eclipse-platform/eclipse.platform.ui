@@ -510,8 +510,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 								return (RepositoryProvider) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
 								TeamPlugin.log(e.getStatus());
-								return null;
+							} catch (ClassCastException e) {
+								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.invalidClass", id), e); //$NON-NLS-1$
 							}
+							return null;
 						}
 					}
 				}
