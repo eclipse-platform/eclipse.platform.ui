@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -107,6 +106,9 @@ import org.osgi.framework.BundleContext;
  * (and only) instance of the plug-in class in the singleton when it is created.
  * Then access the singleton when needed through a static <code>getDefault</code>
  * method.
+ * </p>
+ * <p>
+ * See the description on {@link Plugin}.
  * </p>
  */
 public abstract class AbstractUIPlugin extends Plugin {
@@ -492,15 +494,21 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * Note that instances of plug-in runtime classes are automatically created
 	 * by the platform in the course of plug-in activation.
 	 * <p>
-	 * <b>Note:</b> This constructor requires compatibility mode
-	 * (<code>org.eclipse.core.runtime.compatibility</code>). It should <b>NOT
-	 * </b> be used by 3.0 plugins that intend to run without the compatibility
-	 * layer.
 	 * 
-	 * @param descriptor
-	 *            the plug-in descriptor
+	 * @param descriptor the plug-in descriptor
+	 * @see Plugin#Plugin(IPluginDescriptor)
+	 * @deprecated
+	 * In Eclipse 3.0 this constructor has been replaced by
+	 * {@link #AbstractUIPlugin()}. Implementations of
+	 * <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
+	 * <code>MyPlugin()</code> and call <code>super()</code> instead of
+	 * <code>super(descriptor)</code>.
+	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is
+	 * called only for plug-ins which explicitly require the
+	 * org.eclipse.core.runtime.compatibility plug-in (or, as in this case,
+	 * subclasses which might).
 	 */
-	public AbstractUIPlugin(IPluginDescriptor descriptor) {
+	public AbstractUIPlugin(org.eclipse.core.runtime.IPluginDescriptor descriptor) {
 		super(descriptor);
 	}
 	
@@ -815,13 +823,13 @@ public abstract class AbstractUIPlugin extends Plugin {
 
 	/**
 	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
-	 * method refreshes the plug-in actions.  Subclasses may extend this method,
-	 * but must send super first.
+	 * method does nothing.  Subclasses may extend this method, but must send
+	 * super first.
 	 * <p>
 	 * WARNING: Plug-ins may not be started in the UI thread.
 	 * The <code>startup()</code> method should not assume that its code runs in
 	 * the UI thread, otherwise SWT thread exceptions may occur on startup.'
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * In Eclipse 3.0, <code>startup</code> has been replaced by {@link Plugin#start(BundleContext context)}.
 	 * Implementations of <code>startup</code> should be changed to extend
 	 * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
@@ -839,37 +847,50 @@ public abstract class AbstractUIPlugin extends Plugin {
 	
 	/**
 	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
-	 * method saves this plug-in's preference and dialog stores and shuts down 
-	 * its image registry (if they are in use). Subclasses may extend this method,
-	 * but must send super first.
-	 * TODO @deprecated 
-	 * In Eclipse 3.0 <code>shutdown</code> has been replaced by {@link Plugin#stop(BundleContext context)}.
+	 * method does nothing. Subclasses may extend this method, but must send
+	 * super first.
+	 * @deprecated 
+	 * In Eclipse 3.0, <code>shutdown</code> has been replaced by {@link Plugin#stop(BundleContext context)}.
 	 * Implementations of <code>shutdown</code> should be changed to extend 
 	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
 	 * instead of <code>super.shutdown()</code>. Unlike <code>super.shutdown()</code>, 
 	 * <code>super.stop(context)</code> must be called as the very <b>last</b> thing rather
-	 * than as the very first thing. A try-finally statement should be used where necessary
-	 * to ensure that <code>super.shutdown()</code> is always done.
-	 * The <code>shutdown</code> method is called only for plug-ins which explicitly require the 
+	 * than as the very first thing. The <code>shutdown</code> method is called
+	 * only for plug-ins which explicitly require the 
 	 * org.eclipse.core.runtime.compatibility plug-in; 
 	 * in contrast, the <code>stop</code> method is always called.
 	 */
 	public void shutdown() throws CoreException {
 		// this method no longer does anything interesting
-		// the code that used to be here in 2.1 has moved to stop(BundleContext)
+		// the code that used to be here in 2.1 has moved to stop(BundleContext),
+		//   which is called regardless of whether the plug-in being instantiated
+		//   requires org.eclipse.core.runtime.compatibility
 		super.shutdown();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method refreshes the plug-in actions.  Subclasses may extend this method,
+	 * but must send super <b>first</b>.
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		refreshPluginActions();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method saves this plug-in's preference and dialog stores and shuts down 
+	 * its image registry (if they are in use). Subclasses may extend this
+	 * method, but must send super <b>last</b>. A try-finally statement should
+	 * be used where necessary to ensure that <code>super.shutdown()</code> is
+	 * always done.
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
