@@ -29,12 +29,13 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * Scanner that scans the document and partitions the document into the three 
+ * Scanner that scans the document and partitions the document into the four 
  * supported content types:
  * <ul>
  * <li>XML_COMMENT</li>
  * <li>XML_TAG</li>
  * <li>XML_CDATA</li>
+ * <li>XML_DTD</li>
  * </ul>
  */
 public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
@@ -42,13 +43,14 @@ public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
 	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
 	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 	public final static String XML_CDATA = "__xml_cdata"; //$NON-NLS-1$
+	public final static String XML_DTD = "__xml_dtd"; //$NON-NLS-1$
 	
     /**
      * Creates an instance.
      */
 	public AntEditorPartitionScanner() {
 
-		IPredicateRule[] rules =new IPredicateRule[3];
+		IPredicateRule[] rules =new IPredicateRule[4];
 
         IToken xmlCDATA = new Token(XML_CDATA);
 		rules[0]= new MultiLineRule("<![CDATA[", "]]>", xmlCDATA); //$NON-NLS-1$ //$NON-NLS-2$
@@ -59,6 +61,9 @@ public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
         IToken tag = new Token(XML_TAG);
 		rules[2]= new TagRule(tag);
 	
+		IToken xmlDTD = new Token(XML_DTD);
+		rules[3]= new MultiLineRule("<!DOCTYPE", "]>", xmlDTD); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		setPredicateRules(rules);
 	}
 }

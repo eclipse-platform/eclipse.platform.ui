@@ -43,6 +43,7 @@ public class AntStorageDocumentProvider extends StorageDocumentProvider {
 				new AntEditorPartitionScanner(), new String[]{
 						AntEditorPartitionScanner.XML_TAG,
 						AntEditorPartitionScanner.XML_COMMENT,
-						AntEditorPartitionScanner.XML_CDATA});
+						AntEditorPartitionScanner.XML_CDATA,
+						AntEditorPartitionScanner.XML_DTD});
 	}
 }

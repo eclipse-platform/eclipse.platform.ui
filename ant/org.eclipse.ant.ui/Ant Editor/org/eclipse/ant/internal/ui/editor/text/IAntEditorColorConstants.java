@@ -25,6 +25,7 @@ public interface IAntEditorColorConstants {
 	RGB STRING=             new RGB(  0, 128,   0);
 	RGB DEFAULT=            new RGB(  0,   0,   0);
 	RGB TAG=                new RGB(  0,   0, 128);
+	RGB XML_DTD =       	new RGB(128,   0,   0);
 	
 	/**
 	 * The symbolic names for colors used for the various text tokens in the Ant editor
@@ -34,4 +35,5 @@ public interface IAntEditorColorConstants {
 	public static final String STRING_COLOR = "org.eclipse.ant.ui.constantStringsColor"; //$NON-NLS-1$
 	public static final String TEXT_COLOR = "org.eclipse.ant.ui.textColor"; //$NON-NLS-1$
 	public static final String TAG_COLOR = "org.eclipse.ant.ui.tagsColor"; //$NON-NLS-1$
+	public static final String XML_DTD_COLOR = "org.eclipse.ant.ui.dtdColor"; //$NON-NLS-1$
 }

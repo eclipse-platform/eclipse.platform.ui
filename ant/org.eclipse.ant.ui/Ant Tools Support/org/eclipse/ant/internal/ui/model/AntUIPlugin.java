@@ -160,6 +160,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.STRING_COLOR, IAntEditorColorConstants.STRING);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.TAG_COLOR, IAntEditorColorConstants.TAG);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.XML_COMMENT_COLOR, IAntEditorColorConstants.XML_COMMENT);
+		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.XML_DTD_COLOR, IAntEditorColorConstants.XML_DTD);
 		
 		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR, new RGB(255, 0, 0)); // red - exactly the same as debug Console
 		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR, new RGB(250, 100, 0)); // orange

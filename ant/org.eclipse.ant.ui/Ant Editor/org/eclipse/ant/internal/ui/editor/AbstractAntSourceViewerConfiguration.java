@@ -38,7 +38,9 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	private AntEditorTagScanner tagScanner;
     private AntEditorProcInstrScanner instructionScanner;
 	private MultilineDamagerRepairer damageRepairer;
+	private MultilineDamagerRepairer dtdDamageRepairer;
 	private TextAttribute xmlCommentAttribute;
+	private TextAttribute xmlDtdAttribute;
 	
 	private AntEditorProcInstrScanner getDefaultScanner() {
 	    if (instructionScanner == null) {
@@ -70,20 +72,30 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 	
 	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
-	    int style= SWT.NORMAL;
-	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
-	    	style |= SWT.BOLD;
-	    }
-	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
-	    	style |= SWT.ITALIC;
-	    }
-		
+	    int style= getStyle(store, IAntEditorColorConstants.XML_COMMENT_COLOR);
 	    xmlCommentAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR), null, style);
 		damageRepairer= new MultilineDamagerRepairer(null, xmlCommentAttribute);
 	    reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	    reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
+	    
+	    style= getStyle(store, IAntEditorColorConstants.XML_DTD_COLOR);
+	    xmlDtdAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_DTD_COLOR), null, style);
+		dtdDamageRepairer= new MultilineDamagerRepairer(null, xmlDtdAttribute);
+	    reconciler.setDamager(dtdDamageRepairer, AntEditorPartitionScanner.XML_DTD);
+	    reconciler.setRepairer(dtdDamageRepairer, AntEditorPartitionScanner.XML_DTD);
 	
 	    return reconciler;
+	}
+
+	private int getStyle(IPreferenceStore store, String pref) {
+		int style= SWT.NORMAL;
+	    if (store.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+	    	style |= SWT.BOLD;
+	    }
+	    if (store.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+	    	style |= SWT.ITALIC;
+	    }
+		return style;
 	}
 
 	/**
@@ -98,18 +110,25 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 		instructionScanner.adaptToPreferenceChange(event);
 		String property= event.getProperty();
 		if (property.startsWith(IAntEditorColorConstants.XML_COMMENT_COLOR)) {
-			if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
-				adaptToStyleChange(event, SWT.BOLD);
-			} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
-				adaptToStyleChange(event, SWT.ITALIC);
-			} else {
-				adaptToColorChange(event);
-			}
-			damageRepairer.setDefaultTextAttribute(xmlCommentAttribute);
+			xmlCommentAttribute= adaptTextAttribute(event, property, xmlCommentAttribute, damageRepairer);
+		} else if (property.startsWith(IAntEditorColorConstants.XML_DTD_COLOR)) {
+			xmlDtdAttribute= adaptTextAttribute(event, property, xmlDtdAttribute, dtdDamageRepairer);
 		} 
 	}
 	
-	private void adaptToStyleChange(PropertyChangeEvent event, int styleAttribute) {
+	private TextAttribute adaptTextAttribute(PropertyChangeEvent event, String property, TextAttribute textAttribute, MultilineDamagerRepairer repairer) {
+		if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+			textAttribute= adaptToStyleChange(event, SWT.BOLD, textAttribute);
+		} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+			textAttribute= adaptToStyleChange(event, SWT.ITALIC, textAttribute);
+		} else {
+			textAttribute= adaptToColorChange(event, textAttribute);
+		}
+		repairer.setDefaultTextAttribute(textAttribute);
+		return textAttribute;
+	}
+
+	private TextAttribute adaptToStyleChange(PropertyChangeEvent event, int styleAttribute, TextAttribute textAttribute) {
 		boolean eventValue= false;
 		Object value= event.getNewValue();
 		if (value instanceof Boolean) {
@@ -118,16 +137,17 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 			eventValue= true;
 		}
 		
-		boolean activeValue= (xmlCommentAttribute.getStyle() & styleAttribute) == styleAttribute;
+		boolean activeValue= (textAttribute.getStyle() & styleAttribute) == styleAttribute;
 		if (activeValue != eventValue) { 
-			xmlCommentAttribute= new TextAttribute(xmlCommentAttribute.getForeground(), xmlCommentAttribute.getBackground(), eventValue ? xmlCommentAttribute.getStyle() | styleAttribute : xmlCommentAttribute.getStyle() & ~styleAttribute);
+			textAttribute= new TextAttribute(textAttribute.getForeground(), textAttribute.getBackground(), eventValue ? textAttribute.getStyle() | styleAttribute : textAttribute.getStyle() & ~styleAttribute);
 		}	
+		return textAttribute;
 	}
 	
 	 /**
      * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
      */
-    private void adaptToColorChange(PropertyChangeEvent event) {
+    private TextAttribute adaptToColorChange(PropertyChangeEvent event, TextAttribute textAttribute) {
     	RGB rgb= null;
 		
 		Object value= event.getNewValue();
@@ -138,8 +158,9 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 		}
 			
 		if (rgb != null) {
-			xmlCommentAttribute= new TextAttribute(ColorManager.getDefault().getColor(rgb), xmlCommentAttribute.getBackground(), xmlCommentAttribute.getStyle());
+			textAttribute= new TextAttribute(ColorManager.getDefault().getColor(rgb), textAttribute.getBackground(), textAttribute.getStyle());
 		}
+		return textAttribute;
     }
 	
 	/* (non-Javadoc)
@@ -150,7 +171,8 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	        IDocument.DEFAULT_CONTENT_TYPE,
 	        AntEditorPartitionScanner.XML_COMMENT,
 	        AntEditorPartitionScanner.XML_TAG,
-			AntEditorPartitionScanner.XML_CDATA};
+			AntEditorPartitionScanner.XML_CDATA,
+			AntEditorPartitionScanner.XML_DTD};
 	}
 
 	/* (non-Javadoc)
@@ -166,7 +188,8 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 			property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR) ||
 			property.startsWith(IAntEditorColorConstants.STRING_COLOR) ||
 			property.startsWith(IAntEditorColorConstants.TAG_COLOR) ||
-			property.startsWith(IAntEditorColorConstants.XML_COMMENT_COLOR);
+			property.startsWith(IAntEditorColorConstants.XML_COMMENT_COLOR) || 
+			property.startsWith(IAntEditorColorConstants.XML_DTD_COLOR);
 	}
 	
 	/* (non-Javadoc)

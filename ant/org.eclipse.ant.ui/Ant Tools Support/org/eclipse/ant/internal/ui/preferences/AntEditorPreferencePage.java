@@ -276,7 +276,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, null}, //$NON-NLS-1$
 				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.STRING_COLOR, null},  //$NON-NLS-1$
 				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_tags_4"),    IAntEditorColorConstants.TAG_COLOR, null},  //$NON-NLS-1$
-				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.XML_COMMENT_COLOR, null} //$NON-NLS-1$
+				{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.XML_COMMENT_COLOR, null}, //$NON-NLS-1$
+				{AntPreferencesMessages.getString("AntEditorPreferencePage.26"), IAntEditorColorConstants.XML_DTD_COLOR, null} //$NON-NLS-1$
 			};
 		ArrayList overlayKeys= new ArrayList();
 		
