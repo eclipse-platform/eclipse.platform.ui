@@ -96,4 +96,10 @@ public interface ISynchronizeModelProvider {
 	 * @return the sorter for this model.
 	 */
 	public abstract ViewerSorter getViewerSorter();
+
+	/**
+	 * Allows the provider to save state. Is usually called before provider is disposed and it
+	 * is safe to access the viewer.
+	 */
+	public abstract void saveState();
 }

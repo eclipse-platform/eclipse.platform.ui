@@ -47,15 +47,10 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 
 		public void run() {
 			ISynchronizeModelProvider mp = getActiveModelProvider();
-			IStructuredSelection selection = null;
-			if(mp != null) {
-				if(mp.getDescriptor().getId().equals(descriptor.getId())) return;	
-				selection = (IStructuredSelection)configuration.getSite().getSelectionProvider().getSelection();	
-			}
-			internalPrepareInput(descriptor.getId(), null);
-			setInput();
-			if(selection != null) {
-				setSelection(selection.toArray(), true);
+			if (!mp.getDescriptor().getId().equals(descriptor.getId())) {
+				mp.saveState();
+				internalPrepareInput(descriptor.getId(), null);
+				setInput();
 			}
 		}
 		

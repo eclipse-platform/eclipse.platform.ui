@@ -86,17 +86,20 @@ public class SyncSetInputFromSyncSet extends SyncSetInput implements ISyncInfoSe
 	 * @see org.eclipse.team.core.subscribers.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.subscribers.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
-		SyncInfoSet syncSet = getSyncSet();
-		try {
-			syncSet.beginInput();
-			monitor.beginTask(null, 100);
-			syncSet.clear();
-			fetchInput(Policy.subMonitorFor(monitor, 95));
-		} finally {
-			syncSet.endInput(Policy.subMonitorFor(monitor, 5));
-			monitor.done();
-		}
-		
+		if(inputSyncSet == null) {
+			set.removeSyncSetChangedListener(this);
+		} else {
+			SyncInfoSet syncSet = getSyncSet();
+			try {
+				syncSet.beginInput();
+				monitor.beginTask(null, 100);
+				syncSet.clear();
+				fetchInput(Policy.subMonitorFor(monitor, 95));
+			} finally {
+				syncSet.endInput(Policy.subMonitorFor(monitor, 5));
+				monitor.done();
+			}
+		}		
 	}
 
 	/* (non-Javadoc)

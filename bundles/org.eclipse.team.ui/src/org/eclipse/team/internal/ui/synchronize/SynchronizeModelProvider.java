@@ -67,6 +67,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	
 	private ISynchronizePageConfiguration configuration;
 	
+	private boolean disposed = false;
+	
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 			public void propertyChange(final PropertyChangeEvent event) {
 				if (event.getProperty() == SynchronizeModelElement.BUSY_PROPERTY) {
@@ -206,6 +208,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		resourceMap.clear();
 		getSyncInfoSet().removeSyncSetChangedListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		this.disposed = true;
 	}
 	
 	/**
@@ -429,7 +432,11 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
-		reset();
+		if(disposed) {
+			set.removeSyncSetChangedListener(this);
+		} else {
+			reset();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -522,6 +529,13 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				}
 			});
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ISynchronizeModelProvider#saveState()
+	 */
+	public void saveState() {
+		saveViewerState();
 	}
 	
 	/**
