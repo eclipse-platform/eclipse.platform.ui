@@ -40,7 +40,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		setPolicy(configPolicy.getPolicy());
 		setConfiguredFeatureReferences(configPolicy.getConfiguredFeatures());
 		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
-		setConfiguredSiteModel(configPolicy.getConfiguredSiteModel());						
+		setConfiguredSiteModel(configPolicy.getConfiguredSiteModel());
 	}
 
 	/**
@@ -79,8 +79,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		return false;
 	}
 
-
-
 	/**
 	 * adds the feature to the list of features if the policy is USER_INCLUDE
 	 */
@@ -98,7 +96,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		try {
 			feature = featureReference.getFeature(null);
 		} catch (CoreException e) {
-			if (!UpdateManagerUtils.isOptional(featureReference)){			
+			if (!UpdateManagerUtils.isOptional(featureReference)) {
 				URL url = featureReference.getURL();
 				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
 				UpdateCore.warn("Error retrieving feature:" + urlString, e);
@@ -166,8 +164,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 */
 	public boolean unconfigure(IFeatureReference featureReference, boolean callInstallHandler, boolean createActivity) throws CoreException {
 
-		if (isUnconfigured(featureReference)){
-			UpdateCore.warn("Feature already unconfigured");			
+		if (isUnconfigured(featureReference)) {
+			UpdateCore.warn("Feature already unconfigured");
 			return true;
 		}
 
@@ -180,7 +178,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		try {
 			feature = featureReference.getFeature(null);
 		} catch (CoreException e) {
-			if (!UpdateManagerUtils.isOptional(featureReference)){
+			if (!UpdateManagerUtils.isOptional(featureReference)) {
 				URL url = featureReference.getURL();
 				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
 				UpdateCore.warn("Error retrieving feature:" + urlString, e);
@@ -225,18 +223,18 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			// or if the feature is mandatory and non of its parent are configured
 			// removed, not a core issue (so deep down)
 			//if (validateNoConfiguredParents(feature)) {
-				if (handler != null)
-					handler.unconfigureInitiated();
-				addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
-				if (handler != null)
-					handler.completeUnconfigure();
+			if (handler != null)
+				handler.unconfigureInitiated();
+			addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
+			if (handler != null)
+				handler.completeUnconfigure();
 
-				// everything done ok
-				if (activity != null) {
-					activity.setStatus(IActivity.STATUS_OK);
-					installConfig.addActivity(activity);
-				}
-				success = true;
+			// everything done ok
+			if (activity != null) {
+				activity.setStatus(IActivity.STATUS_OK);
+				installConfig.addActivity(activity);
+			}
+			success = true;
 			//} else {
 			//	if (activity != null) {
 			//		activity.setStatus(IActivity.STATUS_NOK);
@@ -278,19 +276,26 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		String[] result;
 		String[] pluginsToWrite;
+
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
 			//           are configured
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.warn("UNCONFIGURED PLUGINS");			
+				UpdateCore.warn("UNCONFIGURED PLUGINS");
 			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.warn("CONFIGURED PLUGINS");			
+				UpdateCore.warn("CONFIGURED PLUGINS");
 			String[] configured = getPluginString(site, getConfiguredFeatures());
-			pluginsToWrite = delta(configured, unconfigured);
+			if (isEnabled())
+				pluginsToWrite = delta(configured, unconfigured);
+			else
+				pluginsToWrite = union(configured, unconfigured);
 		} else {
 			// INCLUDE: return configured plugins
-			pluginsToWrite = getPluginString(site, getConfiguredFeatures());
+			if (isEnabled())
+				pluginsToWrite = getPluginString(site, getConfiguredFeatures());
+			else
+				pluginsToWrite = new String[0];
 		}
 
 		//TRACE
@@ -362,7 +367,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * @return Returns a IConfiguredSite
 	 */
 	public IConfiguredSite getConfiguredSite() {
-		return (IConfiguredSite)getConfiguredSiteModel();
+		return (IConfiguredSite) getConfiguredSiteModel();
 	}
 
 	/**
@@ -429,7 +434,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 								//$NON-NLS-1$ //$NON-NLS-2$
 								pluginsString.add(path);
 								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-									UpdateCore.warn("Add plugin: "+path+" to the list");
+									UpdateCore.warn("Add plugin: " + path + " to the list");
 							}
 						}
 					}
@@ -466,7 +471,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		List list1 = new ArrayList();
 		list1.addAll(Arrays.asList(allPlugins));
 		for (int i = 0; i < pluginsToRemove.length; i++) {
-			if (list1.contains(pluginsToRemove[i])){
+			if (list1.contains(pluginsToRemove[i])) {
 				list1.remove(pluginsToRemove[i]);
 			}
 		}

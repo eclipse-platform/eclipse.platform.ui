@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Laurent Fournier (laurent@fourrier.nom.fr) - HTTP Proxy code and NetAccess Plugin 
+ *     Laurent Fourrier (laurent@fourrier.nom.fr) - HTTP Proxy code and NetAccess Plugin 
  *******************************************************************************/
 package org.eclipse.update.core;
 

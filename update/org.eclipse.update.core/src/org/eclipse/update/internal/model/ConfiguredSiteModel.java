@@ -26,14 +26,12 @@ public class ConfiguredSiteModel extends ModelObject {
 	private ConfigurationPolicyModel policy;
 	private InstallConfigurationModel installConfiguration;
 	private boolean installable = false;
-	private boolean enable;
 
 	/**
 	 * Constructor
 	 */
 	public ConfiguredSiteModel() {
 		super();
-		enable=true;
 	}
 
 	/**
@@ -169,14 +167,14 @@ public class ConfiguredSiteModel extends ModelObject {
 	 * @see org.eclipse.update.configuration.IConfiguredSite#isEnabled()
 	 */
 	public boolean isEnabled() {
-		return enable;
+		return getConfigurationPolicyModel().isEnabled();
 	}
 
 	/**
 	 * @see org.eclipse.update.configuration.IConfiguredSite#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean value) {
-		enable=value;
+		getConfigurationPolicyModel().setEnabled(value);
 	}
 	
 }

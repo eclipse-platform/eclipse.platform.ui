@@ -32,12 +32,16 @@ public class ConfigurationPolicyModel extends ModelObject {
 	
 	// since 2.0.2
 	private ConfiguredSiteModel configuredSiteModel;
+	
+	// since 2.1
+	private boolean enable;
 
 	/**
 	 * Constructor for ConfigurationPolicyModel.
 	 */
 	public ConfigurationPolicyModel() {
 		super();
+		enable = true;
 		configuredFeatureReferences = new HashMap();
 		unconfiguredFeatureReferences = new HashMap();		
 	}
@@ -230,6 +234,20 @@ public class ConfigurationPolicyModel extends ModelObject {
 			configuredFeatureReferences.put(featureReferences[i],null);
 		}		
 	
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public boolean isEnabled() {
+		return enable;
+	}
+
+	/**
+	 * @param value
+	 */
+	public void setEnabled(boolean value) {
+		enable = value;
 	}
 
 
