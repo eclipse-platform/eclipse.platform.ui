@@ -66,12 +66,6 @@ class TaskListContentProvider implements IStructuredContentProvider,
 
 	private void setMarkerLimitExceeded(boolean markerLimitExceeded) {
 		taskList.setMarkerLimitExceeded(markerLimitExceeded);
-
-		viewer.getControl().getDisplay().syncExec(new Runnable() {		
-			public void run() {
-				viewer.refresh();
-			}
-		});
 	}
 
 	/**
@@ -308,30 +302,26 @@ class TaskListContentProvider implements IStructuredContentProvider,
 	 *   - the delta is either an addition or a removal
 	 *   - problem severities don't change
 	 */
-	private void updateMarkerCounts(IMarkerDelta markerDelta, int diff) {
-		if (visibleMarkerCounts == null) {
+	private void updateMarkerCounts(IMarkerDelta markerDelta, int difference) {
+		if (visibleMarkerCounts == null)
 			return;
-		}
 
 		if (markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
-			int severity = markerDelta.getAttribute(IMarker.SEVERITY, 
-					IMarker.SEVERITY_WARNING);
+			int severity = markerDelta.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 
 			switch (severity) {
-			case IMarker.SEVERITY_ERROR:
-				visibleMarkerCounts[ERRORS] += diff;
-				break;
-			case IMarker.SEVERITY_WARNING:
-				visibleMarkerCounts[WARNINGS] += diff;
-				break;
-			case IMarker.SEVERITY_INFO:
-				visibleMarkerCounts[INFOS] += diff;
-				break;
+				case IMarker.SEVERITY_ERROR:
+					visibleMarkerCounts[ERRORS] += difference;
+					break;
+				case IMarker.SEVERITY_WARNING:
+					visibleMarkerCounts[WARNINGS] += difference;
+					break;
+				case IMarker.SEVERITY_INFO:
+					visibleMarkerCounts[INFOS] += difference;
+					break;
 			}
-		}
-		else if (markerDelta.isSubtypeOf(IMarker.TASK)) {
-			visibleMarkerCounts[TASKS] += diff;
-		}
+		} else if (markerDelta.isSubtypeOf(IMarker.TASK))
+			visibleMarkerCounts[TASKS] += difference;
 	}
 
 	/**
@@ -406,6 +396,12 @@ class TaskListContentProvider implements IStructuredContentProvider,
 			if (getFilterOnMarkerLimit() && markers.length > getMarkerLimit()) {
 				if (!isMarkerLimitExceeded()) {
 					setMarkerLimitExceeded(true);
+
+					viewer.getControl().getDisplay().syncExec(new Runnable() {		
+						public void run() {
+							viewer.refresh();
+						}
+					});
 				}
 				
 				return new IMarker[0];
@@ -413,6 +409,12 @@ class TaskListContentProvider implements IStructuredContentProvider,
 			else {
 				if (isMarkerLimitExceeded()) {
 					setMarkerLimitExceeded(false);
+
+					viewer.getControl().getDisplay().syncExec(new Runnable() {		
+						public void run() {
+							viewer.refresh();
+						}
+					});
 				}			
 
 				return markers;
@@ -429,12 +431,15 @@ class TaskListContentProvider implements IStructuredContentProvider,
 	 * @see IResourceChangeListener#resourceChanged
 	 */
 	public void resourceChanged(final IResourceChangeEvent event) {	
-
 		/*
 		 * gather all marker changes from the delta. be sure to do this in the 
 		 * calling thread, as the delta is destroyed when this method returns
 		 */
 		IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
+		
+		if (markerDeltas == null)
+			return;
+		
 		int oldTotal = totalMarkerCount;
 		final List additions = new ArrayList();
 		final List removals = new ArrayList();
@@ -442,9 +447,13 @@ class TaskListContentProvider implements IStructuredContentProvider,
 
 		for (int i = 0; i < markerDeltas.length; i++) {
 			IMarkerDelta markerDelta = markerDeltas[i];
+
+			if (markerDelta == null)
+				continue;
+
 			int iKind = markerDelta.getKind();
 
-			for (int j = 0; j < TasksFilter.ROOT_TYPES.length; ++j) {
+			for (int j = 0; j < TasksFilter.ROOT_TYPES.length; j++) {
 				if (markerDelta.isSubtypeOf(TasksFilter.ROOT_TYPES[j])) {
 
 					/* 
@@ -453,12 +462,12 @@ class TaskListContentProvider implements IStructuredContentProvider,
 					 */
 					if (totalMarkerCount != -1) {
 						switch (iKind) {
-						case IResourceDelta.ADDED:
-							++totalMarkerCount;
-							break;
-						case IResourceDelta.REMOVED:
-							--totalMarkerCount;
-							break;
+							case IResourceDelta.ADDED:
+								totalMarkerCount++;
+								break;
+							case IResourceDelta.REMOVED:
+								totalMarkerCount--;
+								break;
 						}
 					}
 
@@ -471,29 +480,36 @@ class TaskListContentProvider implements IStructuredContentProvider,
 					 * Deltas which are not under the current focus resource are 
 					 * discarded.
 					 * This also updates the marker counts.
-					 */
-					if (taskList.isAffectedBy(markerDelta)) {
+					 */					 
+					 
+					IResource resource = markerDelta.getResource();
+					
+					if (resource == null)
+						continue;
+					 
+					boolean affectedBy = taskList.checkResource(resource) && taskList.getFilter().select(markerDelta);
+
+					if (affectedBy) {
 						IMarker marker = markerDelta.getMarker();
 						
 						switch (iKind) {
-						case IResourceDelta.ADDED:
-							additions.add(marker);														
-							updateMarkerCounts(markerDelta, +1);
-							break;
-						case IResourceDelta.REMOVED:
-							removals.add(marker);
-							updateMarkerCounts(markerDelta, -1);
-							break;
-						case IResourceDelta.CHANGED:
-							changes.add(marker);
-
-							/* 
-							 * Assume attribute changes don't affect marker 
-							 * counts. This is only true if problem severities 
-							 * can't change. 
-							 * */
-							break;
-						}
+							case IResourceDelta.ADDED:
+								additions.add(marker);														
+								updateMarkerCounts(markerDelta, +1);
+								break;
+							case IResourceDelta.REMOVED:
+								removals.add(marker);
+								updateMarkerCounts(markerDelta, -1);
+								break;
+							case IResourceDelta.CHANGED:
+								changes.add(marker);	
+								/* 
+								 * Assume attribute changes don't affect marker 
+								 * counts. This is only true if problem severities 
+								 * can't change. 
+								 */
+								break;
+							}
 					}				
 
 					break;
@@ -501,8 +517,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
 			}
 		}
 	
-		if (oldTotal == totalMarkerCount && additions.size() + removals.size() 
-				+ changes.size() == 0) {
+		if (oldTotal == totalMarkerCount && additions.size() + removals.size() + changes.size() == 0) {
 			// no changes to markers that we care about
 			return;
 		}
@@ -513,15 +528,16 @@ class TaskListContentProvider implements IStructuredContentProvider,
 		 * description
 		 */				
 		viewer.getControl().getDisplay().syncExec(new Runnable() {		
-			public void run() {
-					
+			public void run() {					
 				if (getFilterOnMarkerLimit() && sum(visibleMarkerCounts) > getMarkerLimit()) {
 					if (!isMarkerLimitExceeded()) {			
 						setMarkerLimitExceeded(true);
+						viewer.refresh();
 					}
 				}
 				else if (taskList.isMarkerLimitExceeded()) {
 					setMarkerLimitExceeded(false);
+					viewer.refresh();					
 				}
 				else {
 					updateViewer(additions, removals, changes);

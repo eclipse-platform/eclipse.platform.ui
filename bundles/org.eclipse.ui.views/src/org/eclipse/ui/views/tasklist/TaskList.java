@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -892,13 +891,14 @@ public class TaskList extends ViewPart {
 	 * Returns the message to display in the status line.
 	 */
 	String getStatusMessage(IStructuredSelection selection) {
-		if (selection.size() == 1) {
+		if (selection != null && selection.size() == 1) {
 			IMarker marker = (IMarker) selection.getFirstElement();
 			return MarkerUtil.getMessage(marker);
 		}
-		TaskListContentProvider provider =
-			(TaskListContentProvider) viewer.getContentProvider();
-		if (selection.size() > 1) {
+		
+		TaskListContentProvider provider = (TaskListContentProvider) viewer.getContentProvider();
+		
+		if (selection != null && selection.size() > 1) {
 			return provider.getStatusSummarySelected(selection);
 		} else {
 			return provider.getStatusSummaryVisible();
@@ -939,14 +939,6 @@ public class TaskList extends ViewPart {
 	}
 
 	/**
-	 * Returns whether we are interested in the given marker delta.
-	 */
-	boolean isAffectedBy(IMarkerDelta markerDelta) {
-		return checkResource(markerDelta.getResource())
-			&& getFilter().select(markerDelta);
-	}
-
-	/**
 	 * Returns whether we are interested in markers on the given resource.
 	 */
 	boolean checkResource(IResource resource) {
@@ -968,32 +960,26 @@ public class TaskList extends ViewPart {
 				} else {
 					project = resource2.getProject();
 
-					if (project == null
-						|| project.equals(resource.getProject())) {
+					if (project == null || project.equals(resource.getProject()))
 						return true;
-					}
 				}
 			}
 		}
+
 		if (showChildrenHierarchy()) {
 			for (int i = 0, l = resources.length; i < l; i++) {
 				resource2 = resources[i];
 
-				if (resource2 != null
-					&& resource2.getFullPath().isPrefixOf(
-						resource.getFullPath())) {
+				if (resource2 != null && resource2.getFullPath().isPrefixOf(resource.getFullPath()))
 					return true;
-				}
 			}
-		} else {
+		} else 
 			for (int i = 0, l = resources.length; i < l; i++) {
 				resource2 = resources[i];
 
-				if (resource.equals(resource2)) {
+				if (resource.equals(resource2))
 					return true;
-				}
 			}
-		}
 
 		return false;
 	}
@@ -1135,6 +1121,7 @@ public class TaskList extends ViewPart {
 		updateStatusMessage();
 		updateTitle();
 	}
+
 	void partActivated(IWorkbenchPart part) {
 		if (part == focusPart)
 			return;
@@ -1598,15 +1585,19 @@ public class TaskList extends ViewPart {
 	 * Updates that message displayed in the status line.
 	 */
 	void updateStatusMessage() {
-		updateStatusMessage((IStructuredSelection) viewer.getSelection());
+		ISelection selection = viewer.getSelection();
+		
+		if (selection instanceof IStructuredSelection)
+			updateStatusMessage((IStructuredSelection) selection);
+		else 
+			updateStatusMessage(null);
 	}
 	/**
 	 * Updates that message displayed in the status line.
 	 */
 	void updateStatusMessage(IStructuredSelection selection) {
 		String message = getStatusMessage(selection);
-		getViewSite().getActionBars().getStatusLineManager().setMessage(
-			message);
+		getViewSite().getActionBars().getStatusLineManager().setMessage(message);
 	}
 	/**
 	 * Updates the title of the view.  Should be called when filters change.
