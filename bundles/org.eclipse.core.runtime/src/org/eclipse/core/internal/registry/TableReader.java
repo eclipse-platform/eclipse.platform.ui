@@ -12,8 +12,7 @@ package org.eclipse.core.internal.registry;
 
 import java.io.*;
 import java.util.HashMap;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
@@ -84,7 +83,7 @@ public class TableReader {
 		try {
 			mainInput = new DataInputStream(new BufferedInputStream(new FileInputStream(mainDataFile)));
 		} catch (FileNotFoundException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.unableToReadCache"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToReadCache, e));
 		}
 	}
 
@@ -92,7 +91,7 @@ public class TableReader {
 		try {
 			extraInput = new DataInputStream(new BufferedInputStream(new FileInputStream(extraDataFile)));
 		} catch (FileNotFoundException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.unableToReadCache"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToReadCache, e));
 		}
 	}
 
@@ -100,7 +99,7 @@ public class TableReader {
 		try {
 			mainInput.close();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheReadProblems"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheReadProblems, e));
 		}
 
 	}
@@ -109,7 +108,7 @@ public class TableReader {
 		try {
 			extraInput.close();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheReadProblems"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheReadProblems, e));
 		}
 
 	}
@@ -137,7 +136,7 @@ public class TableReader {
 				} catch (IOException e1) {
 					//Ignore
 				}
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheReadProblems"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheReadProblems, e));
 			return null;
 		}
 
@@ -163,7 +162,7 @@ public class TableReader {
 			InternalPlatform info = InternalPlatform.getDefault();
 			return ((expectedTimestamp == 0 || expectedTimestamp == registryStamp) && (installStamp == info.getStateTimeStamp()) && (osStamp.equals(info.getOS())) && (windowsStamp.equals(info.getWS())) && (localeStamp.equals(info.getNL())) && mainDataFileSize == mainDataFile.length() && extraDataFileSize == extraDataFile.length() && contributionsFileSize == contributionsFile.length() && orphansFileSize == orphansFile.length());
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheInconsistent"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheInconsistent, e));
 			return false;
 		}
 	}
@@ -173,7 +172,7 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadConfigurationElement(mainInput, null);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading a configuration element (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -202,7 +201,7 @@ public class TableReader {
 			goToExtraFile(offset);
 			return loadConfigurationElementAndChildren(null, extraInput, 3, Integer.MAX_VALUE, objectManager, null);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading a third level configuration element (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -248,7 +247,7 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadExtension(mainInput);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 		} finally {
@@ -289,7 +288,7 @@ public class TableReader {
 			}
 			return xpt;
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension point tree (" + offset + ") from the registry cache", e)); //$NON-NLS-1$//$NON-NLS-2$
 			return null;
@@ -304,7 +303,7 @@ public class TableReader {
 			goToInputFile(offset);
 			return basicLoadExtensionPoint();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading an extension point (" + offset + ") from the registry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -351,7 +350,7 @@ public class TableReader {
 			goToExtraFile(dataPosition);
 			return basicLoadExtensionExtraData();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading extension label (" + dataPosition + ") from the registry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -370,7 +369,7 @@ public class TableReader {
 			goToExtraFile(offset);
 			return basicLoadExtensionPointExtraData();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			if (DEBUG)
 				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, "Error reading extension point data (" + offset + ") from the resgistry cache", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
@@ -403,7 +402,7 @@ public class TableReader {
 			}
 			return result;
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading", contributionsFile.toString()), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.bind(Messages.meta_regCacheIOExceptionReading, contributionsFile), e));
 			return null;
 		} finally {
 			if (namespaceInput != null)
@@ -440,7 +439,7 @@ public class TableReader {
 			}
 			loadAllOrphans(objectManager);
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.regCacheIOExceptionReading"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_regCacheIOExceptionReading, e));
 			return false;
 		} finally {
 			closeExtraFile();

@@ -198,7 +198,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
-		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), Messages.bind(Messages.plugin_deactivatedLoad, this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$
 		this.descriptor = descriptor;
 		
 		// on plugin start, find and start the corresponding bundle.
@@ -207,7 +207,7 @@ public abstract class Plugin implements BundleActivator {
 			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
 				bundle.start();
 		} catch (BundleException e) {
-			String message = Policy.bind("plugin.startupProblems", descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.plugin_startupProblems, descriptor.getUniqueIdentifier());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			InternalPlatform.getDefault().log(status);
 		}
@@ -347,8 +347,7 @@ public abstract class Plugin implements BundleActivator {
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
-			String message = Policy.bind("preferences.saveProblems"); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_saveProblems, e);
 			InternalPlatform.getDefault().log(status);
 		}
 	}
@@ -533,7 +532,7 @@ public abstract class Plugin implements BundleActivator {
 		}
 		if (exception == null)
 			return;
-		String message = Policy.bind("plugin.shutdownProblems", descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+		String message = Messages.bind(Messages.plugin_shutdownProblems, descriptor.getUniqueIdentifier());
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, exception);
 		InternalPlatform.getDefault().log(status);
 	}

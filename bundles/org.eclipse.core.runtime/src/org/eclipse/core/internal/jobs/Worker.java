@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -38,7 +38,7 @@ public class Worker extends Thread {
 	}
 
 	private IStatus handleException(InternalJob job, Throwable t) {
-		String message = Policy.bind("jobs.internalError", job.getName()); //$NON-NLS-1$
+		String message = Messages.bind(Messages.jobs_internalError, job.getName());
 		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, t);
 	}
 

@@ -13,7 +13,7 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -43,7 +43,7 @@ public class PlatformLogReader {
 	private static final int UNKNOWN = 32;
 
 	protected void log(Exception ex) {
-		String msg = Policy.bind("meta.exceptionParsingLog", ex.getMessage());
+		String msg = Messages.bind(Messages.meta_exceptionParsingLog, ex.getMessage());
 		list.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 	}
 

@@ -12,6 +12,7 @@ package org.eclipse.core.internal.preferences;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -98,7 +99,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	static void scopeAdded(IConfigurationElement element) {
 		String key = element.getAttribute(ATTRIBUTE_NAME);
 		if (key == null) {
-			String message = Policy.bind("preferences.missingScopeAttribute", element.getDeclaringExtension().getUniqueIdentifier()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_missingScopeAttribute, element.getDeclaringExtension().getUniqueIdentifier());
 			log(createStatusWarning(message, null));
 			return;
 		}
@@ -130,7 +131,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Applying exported preferences: " + ((ExportedPreferences) preferences).toDeepDebugString()); //$NON-NLS-1$
 
-		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("preferences.applyProblems"), null); //$NON-NLS-1$
+		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Messages.preferences_applyProblems, null);
 
 		// create a visitor to apply the given set of preferences
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
@@ -183,16 +184,14 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			// start by visiting the root
 			preferences.accept(visitor);
 		} catch (BackingStoreException e) {
-			String message = Policy.bind("preferences.applyProblems"); //$NON-NLS-1$
-			throw new CoreException(createStatusError(message, e));
+			throw new CoreException(createStatusError(Messages.preferences_applyProblems, e));
 		}
 
 		// save the prefs
 		try {
 			getRootNode().node(preferences.absolutePath()).flush();
 		} catch (BackingStoreException e) {
-			String message = Policy.bind("preferences.saveProblems"); //$NON-NLS-1$
-			throw new CoreException(createStatusError(message, e));
+			throw new CoreException(createStatusError(Messages.preferences_saveProblems, e));
 		}
 
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
@@ -340,8 +339,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				scope = (IScope) ((IConfigurationElement) value).createExecutableExtension(ATTRIBUTE_CLASS);
 				scopeRegistry.put(name, scope);
 			} catch (ClassCastException e) {
-				String message = Policy.bind("preferences.classCast"); //$NON-NLS-1$
-				log(createStatusError(message, e));
+				log(createStatusError(Messages.preferences_classCast, e));
 				return new EclipsePreferences(root, name);
 			} catch (CoreException e) {
 				log(e.getStatus());
@@ -373,8 +371,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		try {
 			properties.store(output, null);
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.exportProblems"); //$NON-NLS-1$
-			throw new CoreException(createStatusError(message, e));
+			throw new CoreException(createStatusError(Messages.preferences_exportProblems, e));
 		}
 		return Status.OK_STATUS;
 	}
@@ -611,8 +608,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		try {
 			properties.load(input);
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.importProblems"); //$NON-NLS-1$
-			throw new CoreException(createStatusError(message, e));
+			throw new CoreException(createStatusError(Messages.preferences_importProblems, e));
 		} finally {
 			try {
 				input.close();
@@ -669,8 +665,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	}
 
 	public IStatus validateVersions(IPath path) {
-		String message = Policy.bind("preferences.validate"); //$NON-NLS-1$
-		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.INFO, message, null);
+		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.INFO, Messages.preferences_validate, null);
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) {
 				if (!(node instanceof ExportedPreferences))
@@ -709,11 +704,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		} catch (FileNotFoundException e) {
 			// ignore...if the file does not exist then all is OK
 		} catch (CoreException e) {
-			message = Policy.bind("preferences.validationException"); //$NON-NLS-1$
-			result.add(createStatusError(message, e));
+			result.add(createStatusError(Messages.preferences_validationException, e));
 		} catch (BackingStoreException e) {
-			message = Policy.bind("preferences.validationException"); //$NON-NLS-1$
-			result.add(createStatusError(message, e));
+			result.add(createStatusError(Messages.preferences_validationException, e));
 		}
 		return result;
 	}
@@ -740,7 +733,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			severity = IStatus.ERROR;
 		else
 			severity = IStatus.WARNING;
-		String msg = Policy.bind("preferences.incompatible", new String[] {pref.toString(), bundle, installed.toString()}); //$NON-NLS-1$
+		String msg = Messages.bind(Messages.preferences_incompatible, new Object[] {pref, bundle, installed});
 		return new Status(severity, Platform.PI_RUNTIME, 1, msg, null);
 	}
 }

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.runtime.ListenerList;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 
@@ -324,7 +324,7 @@ public class Preferences {
 			IEclipsePreferences node = (IEclipsePreferences) service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
 			service.exportPreferences(node, output, null);
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("preferences.errorWriting", file.toString(), e.getMessage()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_errorWriting, file, e.getMessage());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			throw new CoreException(status);
 		} finally {
@@ -361,7 +361,7 @@ public class Preferences {
 	 */
 	public static void importPreferences(IPath path) throws CoreException {
 		if (!path.toFile().exists()) {
-			String msg = Policy.bind("preferences.fileNotFound", path.toOSString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.preferences_fileNotFound, path.toOSString());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
 		IPreferencesService service = Platform.getPreferencesService();
@@ -370,7 +370,7 @@ public class Preferences {
 			input = new BufferedInputStream(new FileInputStream(path.toFile()));
 			service.importPreferences(input);
 		} catch (FileNotFoundException e) {
-			String msg = Policy.bind("preferences.fileNotFound", path.toOSString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.preferences_fileNotFound, path.toOSString());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 		} finally {
 			if (input != null)

@@ -115,7 +115,7 @@ class ThreadJob extends Job {
 		try {
 			return monitor.isCanceled();
 		} catch (RuntimeException e) {
-			String msg = Policy.bind("jobs.internalError"); //$NON-NLS-1$
+			String msg = Messages.jobs_internalError;
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, e);
 			InternalPlatform.getDefault().log(status);
 		}

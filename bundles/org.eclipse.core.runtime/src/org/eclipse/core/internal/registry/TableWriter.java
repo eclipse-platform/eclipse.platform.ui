@@ -13,7 +13,7 @@ package org.eclipse.core.internal.registry;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 
 public class TableWriter {
@@ -61,7 +61,7 @@ public class TableWriter {
 			try {
 				saveExtensionRegistry(objectManager, timestamp);
 			} catch (IOException io) {
-				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheWriteProblems"), io)); //$NON-NLS-1$
+				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheWriteProblems, io));
 				return false;
 			}
 		} finally {
@@ -75,7 +75,7 @@ public class TableWriter {
 			mainOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(mainDataFile)));
 			extraOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(extraDataFile)));
 		} catch (FileNotFoundException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.unableToCreateCache"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToCreateCache, e));
 			return false;
 		}
 		return true;
@@ -88,7 +88,7 @@ public class TableWriter {
 			if (extraOutput != null)
 				extraOutput.close();
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Policy.bind("meta.registryCacheWriteProblems"), e)); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheWriteProblems, e));
 			e.printStackTrace();
 		}
 	}

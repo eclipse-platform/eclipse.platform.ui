@@ -40,13 +40,13 @@ public class PlatformURLFragmentConnection extends PlatformURLConnection {
 		if (spec.startsWith("/")) //$NON-NLS-1$
 			spec = spec.substring(1);
 		if (!spec.startsWith(FRAGMENT))
-			throw new IOException(Policy.bind("url.badVariant", url.toString())); //$NON-NLS-1$
+			throw new IOException(Messages.bind(Messages.url_badVariant, url));
 		int ix = spec.indexOf("/", FRAGMENT.length() + 1); //$NON-NLS-1$
 		String ref = ix == -1 ? spec.substring(FRAGMENT.length() + 1) : spec.substring(FRAGMENT.length() + 1, ix);
 		String id = getId(ref);
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
-			throw new IOException(Policy.bind("url.resolveFragment", url.toString())); //$NON-NLS-1$
+			throw new IOException(Messages.bind(Messages.url_resolveFragment, url));
 		URL result = target.getEntry("/"); //$NON-NLS-1$
 		if (ix == -1 || (ix + 1) >= spec.length())
 			return result;

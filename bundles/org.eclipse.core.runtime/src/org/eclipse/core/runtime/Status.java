@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * A concrete status implementation, suitable either for 
@@ -23,7 +23,7 @@ public class Status implements IStatus {
 	 *
 	 * @since 3.0
 	 */
-	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, OK, Policy.bind("ok"), null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, OK, Messages.ok, null);
 	/**
 	 * A standard CANCEL status with no message.
 	 * 

@@ -16,7 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.internal.content.XMLContentDescriber;
 import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -79,7 +79,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			return INVALID;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
-			String message = Policy.bind("content.parserConfiguration"); //$NON-NLS-1$
+			String message = Messages.content_parserConfiguration;
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, e));
 			throw new RuntimeException(message);
 		}
@@ -130,7 +130,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			elementToFind = (String) parameters.get(ELEMENT_TO_FIND);
 		}
 		if (dtdToFind == null && elementToFind == null) {
-			String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 		}
 	}
