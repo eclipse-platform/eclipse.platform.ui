@@ -20,6 +20,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -184,6 +185,13 @@ public class DefaultPartPresentation extends StackPresentation {
 			}
 		}
 	};
+	
+	private DisposeListener folderDisposeListener = new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			DefaultPartPresentation.this.widgetDisposed();
+		}
+	};
+	
 	private ToolBar viewToolBar;
 	
 	private boolean shellActive = true;
@@ -239,6 +247,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	    shellActive = control.getControl().getShell().equals(control.getControl().getDisplay().getActiveShell());
 	    
 		tabFolder = control;
+		// Add listener to check for premature disposal
+		tabFolder.getControl().addDisposeListener(folderDisposeListener);
 		
 		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
 		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
@@ -390,8 +400,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Sets the font on the title of this stack.
      */
     protected void setTitleAttributes() {
-        if (titleLabel == null || titleLabel.isDisposed())
-            return;
+    	Assert.isTrue(!isDisposed());
+    	
         ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
         Font messageFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT);
         if (!messageFont.equals(titleLabel.getFont())) {
@@ -404,6 +414,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Sets the colors of the tab to the inactive tab colors.
      */
     protected final void setInactiveTabColors() {
+    	Assert.isTrue(!isDisposed());
+    	
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
 
@@ -422,6 +434,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * shell focus.
      */
     protected final void setActiveTabColors() {
+    	Assert.isTrue(!isDisposed());
+    	
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
 	    
@@ -453,7 +467,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Subclasses should override, ensuring that they call
      * super after all color/font changes.
      */
-    protected void updateGradient() {        
+    protected void updateGradient() {
+    	Assert.isTrue(!isDisposed());
     	// do nothing
     }   
 	
@@ -461,6 +476,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * @return the required tab height for this folder.
      */
     protected int computeTabHeight() {
+    	Assert.isTrue(!isDisposed());
+    	
         GC gc = new GC(tabFolder.getControl());
         
 		// Compute the tab height
@@ -481,6 +498,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * Displays the view menu as a popup
 	 */
 	public void showPaneMenu() {
+    	Assert.isTrue(!isDisposed());
+    	
 		IPartMenu menu = getPartMenu();
 		
 		if (menu != null) {
@@ -495,6 +514,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return the currently selected part, or <code>null</code>
 	 */
 	protected IPresentablePart getCurrent() {
+    	Assert.isTrue(!isDisposed());
+    	
 	    return current;
 	}
 	
@@ -507,6 +528,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * if there is no such tab
 	 */
 	private final int indexOf(IPresentablePart part) {
+    	Assert.isTrue(!isDisposed());
+    	
 		if (part == null) {
 			return tabFolder.getItemCount();
 		}
@@ -531,6 +554,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return the tab for the given part, or null if there is no such tab
 	 */
 	protected final CTabItem getTab(IPresentablePart part) {
+    	Assert.isTrue(!isDisposed());
 		CTabItem[] items = tabFolder.getItems();
 		
 		int idx = indexOf(part);
@@ -582,6 +606,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 
 	protected final IPresentablePart getPartForTab(CTabItem item) {
+    	Assert.isTrue(!isDisposed());
+    	
 		IPresentablePart part = (IPresentablePart)item.getData(TAB_DATA);
 		
 		return part;
@@ -593,6 +619,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return
 	 */
 	protected PaneFolder getTabFolder() {
+    	Assert.isTrue(!isDisposed());
 		return tabFolder;
 	}
 	
@@ -614,19 +641,27 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @param vertical
 	 */
 	public void drawGradient(Color fgColor, Color [] bgColors, int [] percentages, boolean vertical) {
+    	Assert.isTrue(!isDisposed());
+    	
 		tabFolder.setSelectionForeground(fgColor);
 		tabFolder.setSelectionBackground(bgColors, percentages, vertical);	
 	}
 	
 	public boolean isActive() {
+    	Assert.isTrue(!isDisposed());
+    	
 		return activeState == StackPresentation.AS_ACTIVE_FOCUS;
 	}
 	
 	public int getActive() {
+    	Assert.isTrue(!isDisposed());
+    	
 	    return activeState;
 	}	
 	
 	protected String getCurrentTitle() {
+    	Assert.isTrue(!isDisposed());
+    	
 		if (current == null) {
 			return ""; //$NON-NLS-1$
 		} 
@@ -637,6 +672,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 
 	protected void layout(boolean changed) {
+    	Assert.isTrue(!isDisposed());
+    	
 		if (changed) {
 			String currentTitle = getCurrentTitle();
 			
@@ -679,6 +716,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * Set the size of a page in the folder.
 	 */
 	protected void setControlSize() {
+    	Assert.isTrue(!isDisposed());
+    	
 		layout(true);
 	}
 	
@@ -689,6 +728,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return the IPartMenu for the currently selected part or null if none
 	 */
 	protected IPartMenu getPartMenu() {
+    	Assert.isTrue(!isDisposed());
+    	
 		IPresentablePart part = getCurrentPart();		
 		if (part == null) {
 			return null;
@@ -704,12 +745,24 @@ public class DefaultPartPresentation extends StackPresentation {
 		if (isDisposed()) {
 			return;
 		}
+		// Dispose the tab folder. This will cause widgetDisposed (below) to be called,
+		// which does the real cleanup. This pattern ensures that the disposal code
+		// will run even if the widget was prematurely disposed (due to its parent
+		// being destroyed).
+		tabFolder.getControl().dispose();		
+	}
+	
+	/**
+	 * Called when the tabFolder is disposed. This does the real cleanup.
+	 */
+	protected void widgetDisposed() {
 		tabFolder.getControl().getShell().removeShellListener(shellListener);
 		PresentationUtil.removeDragListener(tabFolder.getControl(), dragListener);
 		
 		systemMenuManager.dispose();
 		systemMenuManager.removeAll();
-		tabFolder.getControl().dispose();
+		
+		tabFolder.getControl().removeDisposeListener(folderDisposeListener);
 		tabFolder = null;
 		
 		titleLabel.dispose();
@@ -729,10 +782,14 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
 	 */
 	public void setActive(int newState) {
+    	Assert.isTrue(!isDisposed());
+    	
 	    activeState = newState;	   
 	}
 	
 	private CTabItem createPartTab(IPresentablePart part, int tabIndex) {
+    	Assert.isTrue(!isDisposed());
+    	
 		CTabItem tabItem;
 
 		int style = SWT.NONE;
@@ -763,6 +820,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @param part the part being displayed
 	 */
 	protected void initTab(CTabItem tabItem, IPresentablePart part) {
+    	Assert.isTrue(!isDisposed());
+    	
 		tabItem.setText(part.getName());
 		
 		tabItem.setImage(part.getTitleImage());
@@ -967,6 +1026,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#selectPart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void selectPart(IPresentablePart toSelect) {
+    	Assert.isTrue(!isDisposed());
+    	
 		if (toSelect == current) {
 			return;
 		}
@@ -1042,6 +1103,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 	
 	public IPresentablePart getCurrentPart() {
+    	Assert.isTrue(!isDisposed());
+    	
 		return current;
 	}
 	
@@ -1049,6 +1112,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setBounds(org.eclipse.swt.graphics.Rectangle)
 	 */
 	public void setBounds(Rectangle bounds) {
+    	Assert.isTrue(!isDisposed());
+    	
 		tabFolder.aboutToResize();
 		tabFolder.getControl().setBounds(bounds);
 		layout(false);
@@ -1065,6 +1130,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setVisible(boolean)
 	 */
 	public void setVisible(boolean isVisible) {
+    	Assert.isTrue(!isDisposed());
+    	
 		if (current != null) {
 			current.setVisible(isVisible);
 		}
@@ -1075,6 +1142,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setState(int)
 	 */
 	public void setState(int state) {
+    	Assert.isTrue(!isDisposed());
+    	
 		tabFolder.setState(state);
 	}
 	
@@ -1082,6 +1151,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#getSystemMenuManager()
 	 */
 	public IMenuManager getSystemMenuManager() {
+    	Assert.isTrue(!isDisposed());
+    	
 		return systemMenuManager;
 	}
 	
@@ -1090,6 +1161,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @param point
 	 */
 	protected void showSystemMenu(Point point) {
+    	Assert.isTrue(!isDisposed());
+    	
 		Menu aMenu = systemMenuManager.createContextMenu(tabFolder.getControl().getParent());
 		systemMenuManager.update(true);
 		aMenu.setLocation(point.x, point.y);
@@ -1100,6 +1173,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#getControl()
 	 */
 	public Control getControl() {
+    	Assert.isTrue(!isDisposed());
+    	
 		return tabFolder.getControl();
 	}
 
@@ -1107,6 +1182,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#dragOver(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point)
 	 */
 	public StackDropResult dragOver(Control currentControl, Point location) {
+    	Assert.isTrue(!isDisposed());
+    	
 		// Determine which tab we're currently dragging over
 		Point localPos = tabFolder.getControl().toControl(location);
 		
@@ -1164,6 +1241,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @return the current toolbar or null if none
 	 */
 	protected Control getCurrentToolbar() {
+    	Assert.isTrue(!isDisposed());
+    	
 		IPresentablePart part = getCurrentPart();		
 		if (part == null) {
 			return null;
@@ -1176,6 +1255,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.presentations.StackPresentation#showSystemMenu()
 	 */
 	public void showSystemMenu() {
+    	Assert.isTrue(!isDisposed());
+    	
 		IPresentablePart part = getCurrentPart();
 		if (part != null) {
 			Rectangle bounds = DragUtil.getDisplayBounds(tabFolder.getControl());
@@ -1198,6 +1279,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.presentations.StackPresentation#getTabList(IPresentablePart)
 	 */
 	public Control[] getTabList(IPresentablePart part) {
+    	Assert.isTrue(!isDisposed());
+    	
 		ArrayList list = new ArrayList();
 		if (tabFolder.getTabPosition() == SWT.BOTTOM) {
 			if (part.getToolBar() != null) list.add(part.getToolBar());
@@ -1213,6 +1296,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 	
     protected void showList(Shell parentShell, int x, int y) {
+    	Assert.isTrue(!isDisposed());
+    	
         final PaneFolder tabFolder = getTabFolder();
 
         int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
@@ -1242,6 +1327,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Shows the list of tabs at the top left corner of the editor
      */
     public void showPartList() {
+    	Assert.isTrue(!isDisposed());
+    	
     	PaneFolder tabFolder = getTabFolder();
     	Shell shell = tabFolder.getControl().getShell();
     	
@@ -1277,6 +1364,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Returns the List of IPresentablePart currently in this presentation
      */
     List getPresentableParts() {
+    	Assert.isTrue(!isDisposed());
+    	
     	CTabItem[] items = tabFolder.getItems();
     	List result = new ArrayList(items.length);
     	
@@ -1301,6 +1390,8 @@ public class DefaultPartPresentation extends StackPresentation {
      * Answers whether the shell containing this presentation is currently the active shell.
      */
     protected boolean isShellActive() {
+    	Assert.isTrue(!isDisposed());
+    	
         return shellActive;
     }
 }
