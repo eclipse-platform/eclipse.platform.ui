@@ -45,29 +45,33 @@ public class XMLTopicContributor
 	protected void preprocess(Contribution contrib) {
 		updateIDs(contrib);
 		for (Iterator topics = contrib.getChildren(); topics.hasNext();)
-			updateHrefs((Topic) topics.next());
+			updateHrefs((Contribution) topics.next());
 	}
 	/**
 	 * Utility method that scans the topics for all href attributes and update them
 	 * to include the plugin id (i.e. create a help url).
 	 */
-	protected void updateHrefs(Topic topic) {
-		// set the href on the input contribution   
-		String href = topic.getHref();
-		if (href == null)
-			 ((HelpTopic) topic).setHref("");
-		else {
-			if (!href.equals("") // no empty link
-				&& !href.startsWith("/") // no help url
-				&& href.indexOf(':') == -1) // no other protocols
+	protected void updateHrefs(Contribution topic) {
+		if (topic instanceof Topic)
+		{
+			HelpTopic helpTopic = (HelpTopic)topic;
+			// set the href on the input contribution   
+			String href = helpTopic.getHref();
+			if (href == null)
+				 helpTopic.setHref("");
+			else {
+				if (!href.equals("") // no empty link
+					&& !href.startsWith("/") // no help url
+					&& href.indexOf(':') == -1) // no other protocols
 				{
-				((HelpTopic) topic).setHref("/" + plugin.getUniqueIdentifier() + "/" + href);
+					helpTopic.setHref("/" + plugin.getUniqueIdentifier() + "/" + href);
+				}
 			}
 		}
 
 		// recurse to children
 		for (Iterator topics = topic.getChildren(); topics.hasNext();) {
-			updateHrefs((Topic) topics.next());
+			updateHrefs((Contribution) topics.next());
 		}
 	}
 }
