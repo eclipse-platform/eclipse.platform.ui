@@ -41,10 +41,9 @@ public class ReopenEditorMenu extends ContributionItem {
 	/**
 	 * Create a new instance.
 	 */
-	public ReopenEditorMenu(IWorkbenchWindow window, EditorHistory history, boolean showSeparator) {
-		super("Reopen Editor"); //$NON-NLS-1$
+	public ReopenEditorMenu(IWorkbenchWindow window, String id, boolean showSeparator) {
+		super(id);
 		fWindow = window;
-		this.history = history;
 		this.showSeparator = showSeparator;
 	}
 	/**
@@ -161,6 +160,7 @@ public class ReopenEditorMenu extends ContributionItem {
 			return;
 			
 		// Get items.
+		history = ((Workbench) PlatformUI.getWorkbench()).getEditorHistory();
 		EditorHistoryItem[] array = history.getItems();
 
 		// If no items return.
@@ -215,7 +215,7 @@ public class ReopenEditorMenu extends ContributionItem {
 	/**
 	 * Reopens the editor for the given history item.
 	 */
-	void open(EditorHistoryItem item) {
+	private void open(EditorHistoryItem item) {
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
 			try {

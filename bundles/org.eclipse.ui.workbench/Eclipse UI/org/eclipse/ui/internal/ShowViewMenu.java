@@ -69,7 +69,8 @@ public class ShowViewMenu extends ContributionItem {
 	 * 
 	 * @param window the window containing the menu
 	 */
-	public ShowViewMenu(IWorkbenchWindow window) {
+	public ShowViewMenu(IWorkbenchWindow window, String id) {
+		super(id);
 		this.window = window;
 		WorkbenchHelp.setHelp(showDlgAction, IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 	}

@@ -1,0 +1,163 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.actions;
+
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
+import org.eclipse.ui.internal.ReopenEditorMenu;
+import org.eclipse.ui.internal.ShowFastViewContribution;
+import org.eclipse.ui.internal.ShowViewMenu;
+import org.eclipse.ui.internal.SwitchToWindowMenu;
+
+/**
+ * Access to standard contribution items provided by the workbench.
+ * <p>
+ * Most of the functionality of this class is provided by
+ * static methods and fields.
+ * Example usage:
+ * <pre>
+ * MenuManager menu = ...;
+ * IContributionItem perspectives
+ * 	  = ContributionItemFactory.PERSPECTIVES.create(window);
+ * menu.add(perspectives);
+ * </pre>
+ * </p>
+ * <p>
+ * Clients may declare subclasses that provide additional application-specific
+ * contribution item factories.
+ * </p>
+ * 
+ * @since 3.0
+ */
+public abstract class ContributionItemFactory {
+	
+	/**
+	 * Id of contribution items created by this factory.
+	 */
+	private final String contributionItemId;
+	
+	/**
+	 * Creates a new workbench contribution item factory with the given id.
+	 * 
+	 * @param contributionItemId the id of contribution items created by this factory
+	 */
+	protected ContributionItemFactory(String contributionItemId) {
+		this.contributionItemId = contributionItemId;
+	}
+
+	/**
+	 * Creates a new standard contribution item for the given workbench window.
+	 * <p>
+	 * A typical contribution item automatically registers listeners against the
+	 * workbench window so that it can keep its enablement state up to date.
+	 * Ordinarily, the window's references to these listeners will be dropped
+	 * automatically when the window closes. However, if the client needs to get
+	 * rid of a contribution item while the window is still open, the client must
+	 * call {@link IContributionItem#dispose dispose} to give the item an
+	 * opportunity to deregister its listeners and to perform any other cleanup.
+	 * </p>
+	 * 
+	 * @param window the workbench window
+	 * @return the workbench contribution item
+	 */
+	public abstract IContributionItem create(IWorkbenchWindow window);
+
+	/**
+	 * Returns the id of this contribution item factory.
+	 * 
+	 * @return the id of contribution items created by this factory
+	 */
+	public String getId() {
+		return contributionItemId;
+	}
+
+	/**
+	 * Workbench contribution item: An list of windows currently open
+	 * in the workbench. Selecting one of the windows gives it focus.
+	 * This action dynamically maintains the list of windows.
+	 */
+	public static final ContributionItemFactory OPEN_WINDOWS = new ContributionItemFactory("openWindows") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new SwitchToWindowMenu(window, getId(), false);
+			return item;
+		}
+	};
+	
+	/**
+	 * Workbench contribution item: An list of views available to be opened
+	 * in the window. Selecting one of the views opens that view in the window.
+	 * This action dynamically maintains the list of views.
+	 */
+	public static final ContributionItemFactory OPEN_VIEWS = new ContributionItemFactory("openViews") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new ShowViewMenu(window, getId());
+			return item;
+		}
+	};
+	
+	/**
+	 * Workbench contribution item: An list of fast views available to be opened
+	 * in the window. Selecting one of the fast views opens it.
+	 * This action dynamically maintains the list of fast views.
+	 */
+	public static final ContributionItemFactory FAST_VIEWS = new ContributionItemFactory("fastViews") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new ShowFastViewContribution(window, getId());
+			return item;
+		}
+	};
+	
+	/**
+	 * Workbench contribution item: An list of recent editors available to be opened
+	 * in the window. Selecting one of the fast views opens it.
+	 * This action dynamically maintains the list of editors.
+	 */
+	public static final ContributionItemFactory REOPEN_EDITORS = new ContributionItemFactory("reopenEditors") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new ReopenEditorMenu(window, getId(), true);
+			return item;
+		}
+	};
+	
+	/**
+	 * Workbench contribution item: An list of perspectives. Selecting one of
+	 * the perspectives changes the perspective of the current window, or
+	 * opens a new window set to that perspective.
+	 * This action dynamically maintains the list of perspectives.
+	 */
+	public static final ContributionItemFactory PERSPECTIVES = new ContributionItemFactory("perspective") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new ChangeToPerspectiveMenu(window, getId());
+			return item;
+		}
+	};
+}

@@ -48,6 +48,7 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -517,7 +518,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PAGES));
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PERSPECTIVES));
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
-			shortcutBar.add(new ShowFastViewContribution(this));
+			shortcutBar.add(ContributionItemFactory.FAST_VIEWS.create(this));
 		}
 	}
 	/**
@@ -2070,12 +2071,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Returns the unique object that applications use to configure this window.
 	 * <p>
-	 * This method is declared package-private to prevent a client from 
-	 * downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
-	 * a configurer that would allow them to tamper with the window.
+	 * IMPORTANT This method is declared package-private to prevent regular
+	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+	 * hold of the workbench window configurer that would allow them to tamper
+	 * with the workbench window. The workbench window configurer is available
+	 * only to the application.
 	 * </p>
 	 */
-	/* package */ WorkbenchWindowConfigurer getWindowConfigurer() {
+	/* package - DO NOT CHANGE */ WorkbenchWindowConfigurer getWindowConfigurer() {
 		if (windowConfigurer == null) {
 			// lazy initialize
 			windowConfigurer = new WorkbenchWindowConfigurer(this);
@@ -2084,11 +2087,17 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return windowConfigurer;
 	}
 	
-	/*
+	/**
 	 * Returns the workbench adviser. Assumes the workbench
 	 * has been created already.
+	 * <p>
+	 * IMPORTANT This method is declared private to prevent regular
+	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+	 * hold of the workbench adviser that would allow them to tamper with the
+	 * workbench. The workbench adviser is internal to the application.
+	 * </p>
 	 */
-	private WorkbenchAdviser getAdviser() {
+	private /* private - DO NOT CHANGE */ WorkbenchAdviser getAdviser() {
 		return getWorkbenchImpl().getAdviser();
 	}
 	

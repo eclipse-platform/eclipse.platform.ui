@@ -17,13 +17,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A dynamic contribution item which shows all opened perspectives
  * in the window's active page.
  */
 public class OpenedPerspectivesMenu extends ContributionItem {
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 	private boolean showSeparator;
 
 	private static final int MAX_TEXT_LENGTH = 40;
@@ -31,8 +33,8 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 	/**
 	 * Create a new instance.
 	 */
-	public OpenedPerspectivesMenu(WorkbenchWindow window, boolean showSeparator) {
-		super("Opened perspectives"); //$NON-NLS-1$
+	public OpenedPerspectivesMenu(IWorkbenchWindow window, String id, boolean showSeparator) {
+		super(id);
 		this.window = window;
 		this.showSeparator = showSeparator;
 	}
@@ -62,7 +64,7 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 	 * Fills the given menu with menu items for all opened perspectives.
 	 */
 	public void fill(Menu menu, int index) {
-		final WorkbenchPage page = window.getActiveWorkbenchPage();
+		final IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return;
 
@@ -74,7 +76,7 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 
 		// Add one item for each opened perspective.
 		IPerspectiveDescriptor activePersp = page.getPerspective();
-		IPerspectiveDescriptor descriptors[] = page.getOpenedPerspectives();
+		IPerspectiveDescriptor descriptors[] = ((WorkbenchPage) page).getOpenedPerspectives();
 		int count = 1;
 		for (int i = 0; i < descriptors.length; i++) {
 			final IPerspectiveDescriptor desc = (IPerspectiveDescriptor)descriptors[i];
@@ -84,7 +86,7 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 			// avoid hanging onto page or perspective directly in menu
 			mi.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					WorkbenchPage page = window.getActiveWorkbenchPage();
+					IWorkbenchPage page = window.getActivePage();
 					if (page != null) {
 						page.setPerspective(desc);
 					}
