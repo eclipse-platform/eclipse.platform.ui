@@ -4,17 +4,20 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import java.util.Iterator;
-import java.util.ArrayList;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A standard dialog which solicits a list of selections from the user.
@@ -87,6 +90,7 @@ public ListSelectionDialog(
 private void addSelectionButtons(Composite composite) {
 
 	Composite buttonComposite = new Composite(composite, SWT.RIGHT);
+	buttonComposite.setFont(composite.getFont());	
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	buttonComposite.setLayout(layout);
@@ -141,6 +145,9 @@ protected void configureShell(Shell shell) {
 protected Control createDialogArea(Composite parent) {
 	// page group
 	Composite composite = (Composite)super.createDialogArea(parent);
+	
+	Font font = parent.getFont();
+	composite.setFont(font);
 
 	createMessageArea(composite);
 
@@ -152,6 +159,7 @@ protected Control createDialogArea(Composite parent) {
 
 	listViewer.setLabelProvider(labelProvider);
 	listViewer.setContentProvider(contentProvider);
+	listViewer.getControl().setFont(font);
 
 	addSelectionButtons(composite);
 

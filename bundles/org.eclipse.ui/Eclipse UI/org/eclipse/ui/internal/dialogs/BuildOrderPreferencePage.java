@@ -14,18 +14,22 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The BuildOrderPage is the page that is used to determine what order projects
@@ -118,6 +122,8 @@ private void addProject() {
  * @param - enabled - the boolean that indcates if the list will be sensitive initially or not
  */
 private void createBuildOrderList(Composite composite, boolean enabled) {
+	
+	Font font = composite.getFont();
 
 	this.buildLabel = new Label(composite, SWT.NONE);
 	this.buildLabel.setText(LIST_LABEL);
@@ -126,6 +132,7 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
 	gridData.horizontalAlignment = GridData.FILL;
 	gridData.horizontalSpan = 2;
 	this.buildLabel.setLayoutData(gridData);
+	this.buildLabel.setFont(font);
 	
 	this.buildList = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	this.buildList.setEnabled(enabled);
@@ -139,6 +146,7 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
 	data.grabExcessHorizontalSpace = true;
 	data.grabExcessVerticalSpace = true;
 	this.buildList.setLayoutData(data);
+	this.buildList.setFont(font);
 }
 /**
  * Create the widgets that are used to determine the build order.
@@ -149,6 +157,8 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
 protected Control createContents(Composite parent) {
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
+	
+	Font font = parent.getFont();
 
 	//The main composite
 	Composite composite = new Composite(parent, SWT.NULL);
@@ -161,6 +171,7 @@ protected Control createContents(Composite parent) {
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
 	composite.setLayoutData(data);
+	composite.setFont(font);
 
 	String[] buildOrder = getCurrentBuildOrder();
 	boolean useDefault = (buildOrder.length < 1);
@@ -174,6 +185,7 @@ protected Control createContents(Composite parent) {
 	// a note about projects with unspecified build orders
 	noteLabel = new Label(composite, SWT.NONE);
 	noteLabel.setText(NOTE_LABEL);
+	noteLabel.setFont(font);
 
 
 	if (useDefault) {
@@ -214,6 +226,7 @@ private void createDefaultPathButton(Composite composite, boolean selected) {
 	gridData.horizontalAlignment = GridData.FILL;
 	gridData.horizontalSpan = 2;
 	this.defaultOrderButton.setLayoutData(gridData);
+	this.defaultOrderButton.setFont(composite.getFont());
 }
 /**
  * Create the buttons used to manipulate the list. These Add, Remove and Move Up or Down
@@ -222,6 +235,8 @@ private void createDefaultPathButton(Composite composite, boolean selected) {
  * @param enableComposite - boolean that indicates if a composite should be enabled
  */
 private void createListButtons(Composite composite, boolean enableComposite) {
+	
+	Font font = composite.getFont();
 
 	//Create an intermeditate composite to keep the buttons in the same column
 	this.buttonComposite = new Composite(composite, SWT.RIGHT);
@@ -233,17 +248,20 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 	gridData.verticalAlignment = GridData.FILL;
 	gridData.horizontalAlignment = GridData.FILL;
 	this.buttonComposite.setLayoutData(gridData);
+	this.buttonComposite.setFont(font);
 
 	Button upButton = new Button(this.buttonComposite, SWT.CENTER | SWT.PUSH);
 	upButton.setText(UP_LABEL);
 	upButton.setEnabled(enableComposite);
+	upButton.setFont(font);
+	setButtonLayoutData(upButton);
+	
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			moveSelectionUp();
 		}
 	};
 	upButton.addSelectionListener(listener);
-	setButtonGridData(upButton);
 
 	Button downButton = new Button(this.buttonComposite, SWT.CENTER | SWT.PUSH);
 	downButton.setText(DOWN_LABEL);
@@ -254,7 +272,8 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 		}
 	};
 	downButton.addSelectionListener(listener);
-	setButtonGridData(downButton);
+	downButton.setFont(font);
+	setButtonLayoutData(downButton);
 
 	Button addButton = new Button(this.buttonComposite, SWT.CENTER | SWT.PUSH);
 	addButton.setText(ADD_LABEL);
@@ -265,7 +284,8 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 	};
 	addButton.addSelectionListener(listener);
 	addButton.setEnabled(enableComposite);
-	setButtonGridData(addButton);
+	addButton.setFont(font);
+	setButtonLayoutData(addButton);
 
 	Button removeButton = new Button(this.buttonComposite, SWT.CENTER | SWT.PUSH);
 	removeButton.setText(REMOVE_LABEL);
@@ -276,7 +296,8 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 	};
 	removeButton.addSelectionListener(listener);
 	removeButton.setEnabled(enableComposite);
-	setButtonGridData(removeButton);
+	removeButton.setFont(font);
+	setButtonLayoutData(removeButton);
 
 }
 /**
@@ -478,20 +499,7 @@ private void setBuildOrderWidgetsEnablement(boolean value) {
 		children[i].setEnabled(value);
 	}
 }
-/**
- * Set the grid data of the supplied button to grab the whole column
- * @param button org.eclipse.swt.widgets.Button
- */
-private void setButtonGridData(Button button) {
 
-	GridData data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.grabExcessHorizontalSpace = true;
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	button.setLayoutData(data);
-}
 /**
  * Return a sorted array of the names of the projects that are already in the currently 
  * displayed names.

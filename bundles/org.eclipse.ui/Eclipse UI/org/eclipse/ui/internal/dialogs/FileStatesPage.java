@@ -4,19 +4,21 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.swt.SWT;
 import java.text.MessageFormat;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
@@ -66,6 +68,7 @@ public class FileStatesPage
 private Text addLabelAndText(String labelString, String textValue, Composite parent) {
 	Label label = new Label(parent,SWT.LEFT);
 	label.setText(labelString);
+	label.setFont(parent.getFont());
 	
 	Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
 	GridData data = new GridData();
@@ -76,6 +79,7 @@ private Text addLabelAndText(String labelString, String textValue, Composite par
 	data.grabExcessVerticalSpace = false;
 	text.setLayoutData(data);
 	text.setText(textValue);
+	text.setFont(parent.getFont());
 	return text;
 }
 /**
@@ -116,6 +120,7 @@ private void checkState() {
 protected Control createContents(Composite parent) {
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
+	Font font = parent.getFont();
 
 	// button group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -126,6 +131,7 @@ protected Control createContents(Composite parent) {
 	composite.setLayout(layout);
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+	composite.setFont(parent.getFont());
 
 	IWorkspaceDescription description = getWorkspaceDescription();
 

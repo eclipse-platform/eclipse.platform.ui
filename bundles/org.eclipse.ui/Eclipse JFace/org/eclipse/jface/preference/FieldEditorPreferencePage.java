@@ -191,6 +191,7 @@ protected Control createContents(Composite parent) {
 	layout.marginHeight = 0; 
 	layout.marginWidth = 0;
 	fieldEditorParent.setLayout(layout);
+	fieldEditorParent.setFont(parent.getFont());
 
 	createFieldEditors();
 

@@ -74,6 +74,7 @@ protected void createButtonsForButtonBar(Composite parent) {
 protected Label createMessageArea(Composite composite) {
 	Label label = new Label(composite,SWT.NONE);
 	label.setText(message); 
+	label.setFont(composite.getFont());
 	return label;
 }
 /**

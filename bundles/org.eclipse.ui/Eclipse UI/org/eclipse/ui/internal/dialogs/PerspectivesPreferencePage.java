@@ -9,18 +9,23 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 import java.util.ArrayList;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 public class PerspectivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
@@ -78,6 +83,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		Composite pageComponent = new Composite(parent, SWT.NULL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		pageComponent.setLayoutData(data);
+		pageComponent.setFont(parent.getFont());
 
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -100,6 +106,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * @param composite Composite
 	 */
 	private void createOpenPerspButtonGroup(Composite composite) {
+		
+		Font font = composite.getFont();
 
 		Group buttonComposite = new Group(composite, SWT.LEFT);
 		buttonComposite.setText(OPM_TITLE);
@@ -110,10 +118,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		buttonComposite.setLayoutData(data);
+		buttonComposite.setFont(font);
 
 		openSameWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openSameWindowButton.setText(OPM_SAME_WINDOW);
 		openSameWindowButton.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
+		openSameWindowButton.setFont(font);
 		openSameWindowButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openPerspMode = IPreferenceConstants.OPM_ACTIVE_PAGE;
@@ -123,6 +133,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		openNewWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openNewWindowButton.setText(OPM_NEW_WINDOW);
 		openNewWindowButton.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
+		openNewWindowButton.setFont(font);
 		openNewWindowButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openPerspMode = IPreferenceConstants.OPM_NEW_WINDOW;
@@ -135,6 +146,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * @param composite Composite
 	 */
 	private void createOpenViewButtonGroup(Composite composite) {
+		
+		Font font = composite.getFont();
 
 		Group buttonComposite = new Group(composite, SWT.LEFT);
 		buttonComposite.setText(OVM_TITLE);
@@ -145,6 +158,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		buttonComposite.setLayoutData(data);
+		buttonComposite.setFont(font);
 
 		openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 		openEmbedButton.setText(OVM_EMBED);
@@ -155,6 +169,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 				openViewMode = IPreferenceConstants.OVM_EMBED;
 			}
 		});
+		openEmbedButton.setFont(font);
 
 		// Open view as float no longer supported
 		if (openViewMode == IPreferenceConstants.OVM_FLOAT)
@@ -169,21 +184,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 				openViewMode = IPreferenceConstants.OVM_FAST;
 			}
 		});
-
-		/*
-		 * No longer supported - remove when confirmed!
-		 * 
-		 * if (getShell().isReparentable()) {
-		 * 	openFloatButton = new Button(buttonComposite, SWT.RADIO);
-		 * 	openFloatButton.setText(OVM_FLOAT);
-		 * 	openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
-		 * 	openFloatButton.addSelectionListener(new SelectionAdapter() {
-		 * 		public void widgetSelected(SelectionEvent e) {
-		 * 			openViewMode = IPreferenceConstants.OVM_FLOAT;
-		 * 		}
-		 * 	});
-		 * }
-		 */
+		openFastButton.setFont(font);
 	}
 	
 	/**
@@ -191,6 +192,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * preference opening new project selections. 
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
+		
+		Font font = composite.getFont();
 
 		Group buttonComposite = new Group(composite, SWT.LEFT | SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -200,6 +203,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
+		buttonComposite.setFont(font);
 
 		// Open same window button
 		openProjectInSameWindowButton =
@@ -253,10 +257,13 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * perspectives.
 	 */
 	protected Composite createCustomizePerspective(Composite parent) {
+		
+		Font font = parent.getFont();
 
 		// define container & its gridding
 		Composite perspectivesComponent = new Composite(parent, SWT.NULL);
 		perspectivesComponent.setLayoutData(new GridData(GridData.FILL_BOTH));
+		perspectivesComponent.setFont(parent.getFont());
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -270,6 +277,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		// Add perspective list.
 		list = new List(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -278,6 +286,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 				updateButtons();
 			}
 		});
+		
+		list.setFont(font);
 
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = LIST_WIDTH;
@@ -325,17 +335,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		Button button = new Button(parent, SWT.PUSH);
 
 		button.setText(label);
-		GridData data = new GridData();
+		
+		GridData data = setButtonLayoutData(button);
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint =
-			convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint =
-			convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint =
-			Math.max(
-				widthHint,
-				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(data);
 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -373,6 +375,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		layout.verticalSpacing =
 			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		composite.setLayout(layout);
+		composite.setFont(parent.getFont());
 
 		// Add the buttons to the button bar.
 		setDefaultButton = createVerticalButton(composite, WorkbenchMessages.getString("PerspectivesPreference.MakeDefault"), false); //$NON-NLS-1$
