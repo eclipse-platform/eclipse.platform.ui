@@ -664,9 +664,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		console = new CVSOutputConsole();
 		
-		// Ensure that known repository locations are cached.
-		getRepositoryManager().startup();
-		
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {
 			// If we enable the decorator in the XML, the CVS plugin will be loaded

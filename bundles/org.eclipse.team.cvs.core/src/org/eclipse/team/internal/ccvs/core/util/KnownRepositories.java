@@ -31,7 +31,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 public class KnownRepositories {
 
 	private List repositoryListeners = new ArrayList();
-	private Map repositories = new HashMap();
+	private Map repositories;
 
 	private static KnownRepositories instance;
 	
