@@ -14,7 +14,7 @@
       <complexType>
          <sequence>
             <element ref="colorDefinition" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="gradientDefinition"/>
+            <element ref="gradientDefinition" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -85,7 +85,7 @@ Only one of defaultsTo or value may be defined.
          <attribute name="categoryId" type="string">
             <annotation>
                <documentation>
-                  The optional id of the presentation category this color belongs to.
+                  the optional id of the presentation category this color belongs to.
                </documentation>
             </annotation>
          </attribute>
@@ -144,6 +144,13 @@ Only one of defaultsTo or value may be defined.
             <annotation>
                <documentation>
                   The starting color value of this gradient.  This may be a comma seperated integer in the form red,green,blue or a String that maps to an SWT color constant (ie:  COLOR_RED).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="categoryId" type="string">
+            <annotation>
+               <documentation>
+                  the optional id of the presentation category this gradient belongs to.
                </documentation>
             </annotation>
          </attribute>
