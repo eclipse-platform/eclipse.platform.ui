@@ -298,6 +298,7 @@ public class Form extends Composite {
 				TITLE_VMARGIN,
 				carea.width-TITLE_HMARGIN-TITLE_HMARGIN, 
 				textSize.y);
+		bufferGC.fillRectangle(0, 0, carea.width, theight);
 		if (backgroundImage != null) {
 			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
 		}
