@@ -221,6 +221,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private int fLeftLineCount;
 	private int fRightLineCount;
 	
+	private String fLeftEncoding;
+	private String fRightEncoding;
+	
 	private boolean fInScrolling;
 	
 	private int fPts[]= new int[8];	// scratch area for polygon drawing
@@ -1628,8 +1631,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		// set new documents
 		setDocument(fLeft, 'L', left);
 		fLeftLineCount= fLeft.getLineCount();
+		fLeftEncoding= getEncoding(left);
+
 		setDocument(fRight, 'R', right);
 		fRightLineCount= fRight.getLineCount();
+		fRightEncoding= getEncoding(right);
 		
 		setDocument(fAncestor, 'A', ancestor);
 					
@@ -1654,6 +1660,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				);
 			}
 		}
+	}
+	
+	private static String getEncoding(Object o) {
+		String encoding= null;
+		if (o instanceof IEncodedStreamContentAccessor) {
+			try {
+				encoding= ((IEncodedStreamContentAccessor)o).getCharset();
+			} catch (CoreException e) {
+				// ignored
+			}
+		}
+		if (encoding == null)
+			encoding= ResourcesPlugin.getEncoding();
+		return encoding;
 	}
 	
 	private void updateDiffBackground(Diff diff) {
@@ -1810,7 +1830,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				
 		IDocument newDoc= null;
 		Position range= null;
-		
+
 		if (o instanceof IDocumentRange) {
 			newDoc= ((IDocumentRange)o).getDocument();
 			range= ((IDocumentRange)o).getRange();
@@ -1984,7 +2004,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (contents != null) {
 					byte[] bytes;
 					try {
-						bytes= contents.getBytes(ResourcesPlugin.getEncoding());
+						bytes= contents.getBytes(left ? fLeftEncoding : fRightEncoding);
 					} catch(UnsupportedEncodingException ex) {
 						// use default encoding
 						bytes= contents.getBytes();
@@ -1995,34 +2015,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}	
 		return null;	
 	}
-				
-//	/**
-//	 * Returns the contents of the underlying document as an array of bytes.
-//	 * 
-//	 * @param left if <code>true</code> the contents of the left side is returned; otherwise the right side
-//	 * @return the contents of the left or right document or null
-//	 */
-//	protected byte[] getContents(boolean left, String encoding) {
-//		MergeSourceViewer v= left ? fLeft : fRight;
-//		if (v != null) {
-//			IDocument d= v.getDocument();
-//			if (d != null) {
-//				String contents= d.get();
-//				if (contents != null) {
-//					byte[] bytes;
-//					try {
-//						bytes= contents.getBytes(encoding);
-//					} catch(UnsupportedEncodingException ex) {
-//						// use default encoding
-//						bytes= contents.getBytes();
-//					}
-//					return bytes;
-//				}
-//			}
-//		}	
-//		return null;	
-//	}
-	
+		
 	private IRegion normalizeDocumentRegion(IDocument doc, IRegion region) {
 		
 		if (region == null || doc == null)
