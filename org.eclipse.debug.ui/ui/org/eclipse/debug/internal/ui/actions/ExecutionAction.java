@@ -8,20 +8,21 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.IActionDelegateWithEvent;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * This is the super class of the Run & Debug actions which appears in the desktop menu and toolbar.
  */
-public abstract class ExecutionAction implements IActionDelegateWithEvent {
+public abstract class ExecutionAction implements IActionDelegate2 {
 	
 	/**
-	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
+	 * @see IActionDelegate2#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		openLaunchConfigurationDialog();
+		run(action);
 	}
 
 	/**
@@ -42,4 +43,29 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 */
 	protected abstract String getMode();
 	
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	public void run(IAction action) {
+		openLaunchConfigurationDialog();
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
 }

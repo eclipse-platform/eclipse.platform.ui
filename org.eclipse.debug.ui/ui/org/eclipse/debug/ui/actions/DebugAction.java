@@ -17,6 +17,8 @@ import org.eclipse.debug.internal.ui.actions.ExecutionAction;
  * be instantiated.
  * </p>
  * @since 2.0
+ * @deprecated - use <code>AbstractLaunchHistoryAction</code> and
+ * <code>AbstractLaunchToolbarAction</code>
  */
 public final class DebugAction extends ExecutionAction /*implements IViewActionDelegate*/ {
 	
