@@ -103,7 +103,7 @@ public StringFieldEditor(String name, String labelText, int width, Composite par
 	init(name, labelText);
 	widthInChars = width;
 	isValid = false;
-	errorMessage = "StringFieldEditor.errorMessage";//$NON-NLS-1$
+	errorMessage = JFaceResources.getString("StringFieldEditor.errorMessage");//$NON-NLS-1$
 	createControl(parent);
 }
 /**
