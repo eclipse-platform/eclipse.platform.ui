@@ -69,11 +69,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
 	 */
 	protected void printMessage(String message, PrintStream stream, int priority) {
-		StringBuffer sendMessage= new StringBuffer();
-		sendMessage.append(priority);
-		sendMessage.append(',');
-		sendMessage.append(message.trim());
-		sendMessage(sendMessage.toString());
+		marshalMessage(priority, message);
 	}
 	
 	/**
@@ -248,17 +244,20 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		if (eventMessage.length() == 0) {
 			return;
 		}
+		marshalMessage(event.getPriority(), eventMessage);
+	}
+
+	private void marshalMessage(int priority, String message) {
 		try {
-			BufferedReader r = new BufferedReader(new StringReader(eventMessage));
+			BufferedReader r = new BufferedReader(new StringReader(message));
 			String line = r.readLine();
-			StringBuffer message;
-			int priority= event.getPriority();
+			StringBuffer messageLine;
 			while (line != null) {
-				message= new StringBuffer();
-				message.append(priority);
-				message.append(',');
-				message.append(line);
-				sendMessage(message.toString());
+				messageLine= new StringBuffer();
+				messageLine.append(priority);
+				messageLine.append(',');
+				messageLine.append(line);
+				sendMessage(messageLine.toString());
 				line = r.readLine();
 			}
 		} catch (IOException e) {
