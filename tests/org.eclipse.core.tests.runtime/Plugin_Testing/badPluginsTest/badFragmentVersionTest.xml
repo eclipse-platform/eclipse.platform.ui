@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<fragment
-  name="Bad Fragment Version Test"
-  id="BadFragmentVersionTest"
-  version="1.2.bad"
-  plugin-id="aPlugin"
-  plugin-version="1.1.1">
-
-</fragment>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<fragment
-  name="Blank Fragment Plugin Id Test"
-  id="BlankFragmentPluginIdTest"
-  version="1.2.0"
-  plugin-id=""
-  plugin-version="1.1.1">
-
-</fragment>

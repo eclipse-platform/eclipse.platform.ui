@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin
-  name="Bad Plugin Version 3 Test"
-  id="BadPluginVersion3Test"
-  version="..."
-  provider-name="OTI">
-
-</plugin>

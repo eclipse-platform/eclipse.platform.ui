@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<component
-  name="Bad Component 1 Attributes Test"
-  id="badComponent1AttributesTest"
-  version="1.2"
-  vendor-name="OTI"
-  a-bad-attribute="nothing">
-
-</component>
