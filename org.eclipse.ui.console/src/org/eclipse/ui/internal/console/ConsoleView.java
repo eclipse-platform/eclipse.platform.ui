@@ -277,10 +277,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
-		mgr.add(new Separator(IConsoleConstants.LAUNCH_GROUP));
-		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
 		mgr.add(fPinAction);
 		mgr.add(fDisplayConsoleAction);
+		mgr.add(new Separator(IConsoleConstants.LAUNCH_GROUP));
+		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
 	}
 
 	/* (non-Javadoc)
