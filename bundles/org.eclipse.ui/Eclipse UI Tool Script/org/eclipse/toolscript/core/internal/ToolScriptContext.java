@@ -12,7 +12,6 @@ Contributors:
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.tools.ant.BuildListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,9 +19,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.toolscript.ui.internal.ToolScriptMessages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -98,6 +102,14 @@ public final class ToolScriptContext implements IToolScriptContext {
 		if (expandedDirectory == null)
 			expandedDirectory = expandVariables(script.getWorkingDirectory());
 		return expandedDirectory;
+	}
+	
+	/**
+	 * Returns whether or not the script's execution log should appear
+	 * on the log console.
+	 */
+	public boolean getShowLog() {
+		return script.getShowLog();	
 	}
 
 	/**
@@ -175,13 +187,12 @@ public final class ToolScriptContext implements IToolScriptContext {
 	}
 	
 	/**
-	 * Runs the tool script and does a resource refresh if specified. 
-	 * An additional listener may be provided for logging more feedback.
+	 * Executes the runner to launch the script. A resource refresh
+	 * is done if specified.
 	 * 
-	 * @param listener the listener to provide feedback to, or null.
-	 * @param monitor the monitor to report progress to, or null.
+	 * @param monitor the monitor to report progress to, or <code>null</code>.
 	 */
-	public void run(BuildListener listener, IProgressMonitor monitor) throws CoreException {
+	private void executeRunner(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
@@ -189,10 +200,10 @@ public final class ToolScriptContext implements IToolScriptContext {
 			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(script.getType());
 			if (runner != null) {
 				if (scope[0] == null || script.REFRESH_SCOPE_NONE.equals(scope[0])) {
-					runner.execute(listener, monitor, this);
+					runner.execute(monitor, this);
 				} else {
 					monitor.beginTask(ToolScriptMessages.getString("ToolScriptContext.runningToolScript"), 100); //$NON-NLS-1$
-					runner.execute(listener, new SubProgressMonitor(monitor, 70), this);
+					runner.execute(new SubProgressMonitor(monitor, 70), this);
 					refreshResources(new SubProgressMonitor(monitor, 30), scope[0], scope[1]);
 				}
 			}
@@ -201,6 +212,54 @@ public final class ToolScriptContext implements IToolScriptContext {
 		}
 	}
 	
+	/**
+	 * Runs the tool script and does a resource refresh if specified.
+	 * The script is validated within this context before being
+	 * runned. Any problems will cause an exception to be thrown.
+	 * 
+	 * @param monitor the monitor to report progress to, or <code>null</code>.
+	 */
+	public void run(IProgressMonitor monitor) throws CoreException {
+		String problem = validateScriptInContext();
+		if (problem != null) {
+			IStatus status = new Status(IStatus.WARNING, ToolScriptPlugin.PLUGIN_ID, 0, problem, null);
+			throw new CoreException(status);
+		}
+		
+		executeRunner(monitor);
+	}
+	
+	/**
+	 * Runs the tool script and does a resource refresh if specified.
+	 * The script is validated within this context before being
+	 * runned. Any problems are displayed to the user in a dialog box.
+	 * <p>
+	 * <b>Note:</b> Only call this method if running within the UI thread
+	 * </p>
+	 * 
+	 * @param monitor the monitor to report progress to, or <code>null</code>.
+	 * @param shell the shell to parent the error message dialog
+	 */
+	public void run(IProgressMonitor monitor, Shell shell) {
+		try {
+			String problem = validateScriptInContext();
+			if (problem != null) {
+				MessageDialog.openWarning(
+					shell, 
+					ToolScriptMessages.getString("ToolScriptContext.errorShellTitle"), //$NON-NLS-1$
+					problem);
+			}
+			
+			executeRunner(monitor);
+		} catch(CoreException e) {
+			ErrorDialog.openError(
+				shell,
+				ToolScriptMessages.getString("ToolScriptContext.errorShellTitle"), //$NON-NLS-1$
+				ToolScriptMessages.getString("ToolScriptContext.errorMessage"), //$NON-NLS-1$
+				e.getStatus());
+		}
+	}
+
 	/**
 	 * Causes the specified resources to be refreshed.
 	 */
@@ -262,7 +321,7 @@ public final class ToolScriptContext implements IToolScriptContext {
 	 * @return the problem text is validate fails, or <code>null</code>
 	 * 		if all seems valid.
 	 */
-	public String validateScriptInContext() {
+	private String validateScriptInContext() {
 		String loc = getExpandedLocation();
 		if (loc == null || loc.length() == 0)
 			return ToolScriptMessages.format("ToolScriptContext.invalidLocation", new Object[] {script.getName()}); //$NON-NLS-1$

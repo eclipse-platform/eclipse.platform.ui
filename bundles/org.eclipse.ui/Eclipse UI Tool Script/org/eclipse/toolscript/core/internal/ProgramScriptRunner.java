@@ -36,17 +36,20 @@ public class ProgramScriptRunner extends ToolScriptRunner {
 	/* (non-Javadoc)
 	 * Method declared in ToolScriptRunner.
 	 */
-	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
+	public void execute(IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 		String commandLine = scriptContext.getExpandedLocation() + " " + scriptContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
 			startMonitor(monitor, scriptContext);
 			Process p = Runtime.getRuntime().exec(commandLine);
 			boolean[] finished = new boolean[1];
-			if (listener != null) {
-				finished[0] = false;
-				new Thread(getRunnable(p.getInputStream(), listener, Project.MSG_INFO, finished)).start();
-				new Thread(getRunnable(p.getErrorStream(), listener, Project.MSG_ERR, finished)).start();
-			}
+			
+			//
+			// DO TO: This needs to be updated to use log document support
+			//
+//			finished[0] = false;
+//			new Thread(getRunnable(p.getInputStream(), null, Project.MSG_INFO, finished)).start();
+//			new Thread(getRunnable(p.getErrorStream(), null, Project.MSG_ERR, finished)).start();
+
 			p.waitFor();
 			finished[0] = true;
 		} catch (Exception e) {

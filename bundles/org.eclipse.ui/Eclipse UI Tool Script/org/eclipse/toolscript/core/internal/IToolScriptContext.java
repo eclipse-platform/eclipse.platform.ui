@@ -47,4 +47,10 @@ public interface IToolScriptContext {
 	 * expanded.
 	 */
 	public String getExpandedWorkingDirectory();
+	
+	/**
+	 * Returns whether or not the execution log for the
+	 * script should appear on the log console.
+	 */
+	public boolean getShowLog();
 }

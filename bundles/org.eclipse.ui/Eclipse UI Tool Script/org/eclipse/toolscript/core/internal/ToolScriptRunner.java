@@ -30,9 +30,11 @@ public abstract class ToolScriptRunner {
 	}
 
 	/**
-	 * Execute the tool script
+	 * Execute the tool script within the given context. Subclasses
+	 * are responsible for showing the script's execution log if
+	 * specified in the context.
 	 */
-	public abstract void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException;
+	public abstract void execute(IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException;
 	
 	/**
 	 * Handles exceptions that may occur while running the script

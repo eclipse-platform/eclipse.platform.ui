@@ -44,13 +44,7 @@ public final class ToolScriptBuilder extends IncrementalProjectBuilder {
 		ToolScript script = ToolScript.fromArgumentMap(args);
 		if (script != null) {
 			ToolScriptContext context = new ToolScriptContext(script, getProject(), PlatformUI.getWorkbench().getWorkingSetManager());
-			String problem = context.validateScriptInContext();
-			if (problem != null) {
-				IStatus status = new Status(IStatus.WARNING, ToolScriptPlugin.PLUGIN_ID, 0, problem, null);
-				throw new CoreException(status);
-			} else {
-				context.run(null, monitor);
-			}
+			context.run(monitor);
 		}
 		
 		return null;

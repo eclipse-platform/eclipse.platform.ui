@@ -29,7 +29,7 @@ public class AntScriptRunner extends ToolScriptRunner {
 	/* (non-Javadoc)
 	 * Method declared in ToolScriptRunner.
 	 */
-	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
+	public void execute(IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 		try {
 			startMonitor(monitor, scriptContext);
 			AntRunner runner = new AntRunner();
@@ -38,8 +38,10 @@ public class AntScriptRunner extends ToolScriptRunner {
 			String[] targets = scriptContext.getAntTargets();
 			if (targets.length > 0)
 				runner.setExecutionTargets(targets);
-			if (listener != null)
-				runner.addBuildListener(listener.getClass().getName());
+			//
+			// TO DO: This needs to be updated to use the log document support
+			//
+//			runner.addBuildListener(listener.getClass().getName());
 			runner.run();
 		} catch (Exception e) {
 			handleException(e);

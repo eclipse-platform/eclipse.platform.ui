@@ -164,31 +164,8 @@ public class ToolScriptConfigureAction extends ActionDelegate implements IWorkbe
 		if (script == null)
 			return;
 
-		BuildListener listener = null;
-		//	AntConsole[] consoles = new AntConsole[AntConsole.instances.size()];
-		//	AntConsole.instances.toArray(consoles);
-		//	for (int i = 0; i<consoles.length; i++)
-		//		consoles[i].clearOutput();
-		//	return new UIBuildListener(null, null, null, consoles);
-
-		try {
-			ToolScriptContext context = new ToolScriptContext(script, null, window.getWorkbench().getWorkingSetManager());
-			String problem = context.validateScriptInContext();
-			if (problem != null) {
-				MessageDialog.openWarning(
-					window.getShell(), 
-					ToolScriptMessages.getString("ToolScriptConfigureAction.errorShellTitle"), //$NON-NLS-1$
-					problem);
-			} else {
-				context.run(listener, null);
-			}
-		} catch(CoreException e) {
-			ErrorDialog.openError(
-				window.getShell(),
-				ToolScriptMessages.getString("ToolScriptConfigureAction.errorShellTitle"), //$NON-NLS-1$
-				ToolScriptMessages.getString("ToolScriptConfigureAction.errorMessage"), //$NON-NLS-1$
-				e.getStatus());
-		}
+		ToolScriptContext context = new ToolScriptContext(script, null, window.getWorkbench().getWorkingSetManager());
+		context.run(null, window.getShell());
 	}
 	
 	/**
