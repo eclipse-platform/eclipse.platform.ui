@@ -73,9 +73,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		changeProperties.setLayout(layout);
 		changeProperties.setFont(font);
 		
-		useDefaultButton= new Button(changeProperties, SWT.CHECK);
-		useDefaultButton.setFont(font);
-		useDefaultButton.setText(AntLaunchConfigurationMessages.getString("AntPropertiesTab.6")); //$NON-NLS-1$
+		useDefaultButton= createCheckButton(changeProperties, AntLaunchConfigurationMessages.getString("AntPropertiesTab.6")); //$NON-NLS-1$
 		useDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				toggleUseDefaultProperties();

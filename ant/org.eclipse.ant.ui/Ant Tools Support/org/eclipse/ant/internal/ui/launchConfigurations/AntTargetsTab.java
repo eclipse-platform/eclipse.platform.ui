@@ -152,8 +152,17 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		createTargetsTable(comp);
 		createSelectionCount(comp);
-		createSortTargets(comp);
-		createFilterInternalTargets(comp);
+		
+		Composite buttonComposite= new Composite(comp, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonComposite.setLayout(layout);
+		
+		createSortTargets(buttonComposite);
+		createFilterInternalTargets(buttonComposite);
+		
 		createVerticalSpacer(comp, 1);
 		createTargetOrder(comp);
 	}
@@ -214,9 +223,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the parent composite
 	 */
 	private void createFilterInternalTargets(Composite parent) {
-		fFilterInternalTargets= new Button(parent, SWT.CHECK);
-		fFilterInternalTargets.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
-		fFilterInternalTargets.setFont(parent.getFont());
+		fFilterInternalTargets= createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
 		fFilterInternalTargets.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleFilterTargetsSelected();
@@ -229,9 +236,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the parent composite
 	 */
 	private void createSortTargets(Composite parent) {
-		fSortButton= new Button(parent, SWT.CHECK);
-		fSortButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.14")); //$NON-NLS-1$
-		fSortButton.setFont(parent.getFont());
+		fSortButton= createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntTargetsTab.14")); //$NON-NLS-1$
 		fSortButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSortTargetsSelected();

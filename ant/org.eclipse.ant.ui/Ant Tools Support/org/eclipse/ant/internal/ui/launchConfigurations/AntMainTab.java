@@ -99,12 +99,10 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createCaptureOutputComponent(Composite parent) {
-		captureOutputButton = new Button(parent, SWT.CHECK);
-		captureOutputButton.setText(AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
+		captureOutputButton = createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		captureOutputButton.setLayoutData(data);
-		captureOutputButton.setFont(parent.getFont());
 		captureOutputButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
