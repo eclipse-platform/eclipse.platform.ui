@@ -300,6 +300,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
+
+		if (getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE))
+			enableOverwriteMode(false);
 	}
 	
 	
@@ -818,6 +821,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					showOverviewRuler();
 				else
 					hideOverviewRuler();
+				return;
+			}
+			
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE.equals(property)) {
+				if (event.getNewValue() instanceof Boolean) {
+					Boolean disable= (Boolean) event.getNewValue();
+					enableOverwriteMode(!disable.booleanValue());
+				}
 				return;
 			}
 			

@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 
-
 /**
  * Preference constants used in the extended text editor preference store.
  * 
@@ -312,6 +311,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_HYPERLINK_COLOR= DefaultHyperlinkPresenter.HYPERLINK_COLOR;
 	
 	/**
+	 * A named preference that controls disabling of the overwrite mode.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.1
+	 */	
+	public static final String EDITOR_DISABLE_OVERWRITE_MODE= "disable_overwrite_mode"; //$NON-NLS-1$
+	
+	/**
   	* Initializes the given preference store with the default values.
 	 * 
   	* @param store the preference store to be initialized
@@ -361,6 +370,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, new RGB(0, 0, 255));
+		
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE, false);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
