@@ -83,6 +83,14 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	}
 
 	/*
+	 * @see IFeatureEntry#getFeaturePluginIdentifier()
+	 */
+	public String getFeaturePluginIdentifier() {
+		// if no plugin is specified, use the feature id
+		return pluginIdentifier != null && pluginIdentifier.length() > 0 ? pluginIdentifier : id;
+	}
+	
+	/*
 	 * @see IFeatureEntry#getFeatureApplication()
 	 */
 	public String getFeatureApplication() {
@@ -102,31 +110,25 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	public boolean canBePrimary() {
 		return primary;
 	}
-	/*
-	 * @see IFeatureEntry#getFeaturePluginIdentifier()
-	 */
-	public String getFeaturePluginIdentifier() {
-		return pluginIdentifier;
-	}
 
 	public Element toXML(Document doc) {
 	
 		Element featureElement = doc.createElement(CFG_FEATURE_ENTRY);		
 		// write out feature entry settings
-		if (getFeatureIdentifier() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, getFeatureIdentifier()); 
-		if (canBePrimary())
+		if (id != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, id); 
+		if (primary)
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true");
-		if (getFeatureVersion() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, getFeatureVersion()); 
-		if (getFeaturePluginVersion() != null && !getFeaturePluginVersion().equals(getFeatureVersion()) && getFeaturePluginVersion().length() > 0)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_VERSION, getFeaturePluginVersion()); 
-		if (getFeaturePluginIdentifier() != null && !getFeaturePluginIdentifier().equals(getFeatureIdentifier()))
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, getFeaturePluginIdentifier());
-		if (getFeatureApplication() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, getFeatureApplication());
-		if (getURL() != null)
-			featureElement.setAttribute(CFG_URL, getURL());
+		if (version != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, version); 
+		if (pluginVersion != null && !pluginVersion.equals(version) && pluginVersion.length() > 0)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_VERSION, pluginVersion); 
+		if (pluginIdentifier != null && pluginIdentifier.equals(id) && pluginIdentifier.length() > 0)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, pluginIdentifier);
+		if (application != null)
+			featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, application);
+		if (url != null)
+			featureElement.setAttribute(CFG_URL, url);
 		
 		URL[] roots = getFeatureRootURLs();
 		for (int i=0; i<roots.length; i++) {
