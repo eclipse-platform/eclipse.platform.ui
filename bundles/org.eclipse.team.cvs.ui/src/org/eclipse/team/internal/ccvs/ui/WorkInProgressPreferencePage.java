@@ -22,7 +22,7 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 	public WorkInProgressPreferencePage() {
 		super(GRID);
 		setTitle("CVS Work In Progress");
-		setDescription("Preferences for enabling features that are not copmlete:");
+		setDescription("Preferences for enabling features that are not complete:");
 		setPreferenceStore(CVSUIPlugin.getPlugin().getPreferenceStore());
 	}
 
