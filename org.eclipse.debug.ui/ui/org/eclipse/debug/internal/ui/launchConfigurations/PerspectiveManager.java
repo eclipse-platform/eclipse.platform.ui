@@ -325,7 +325,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 						switchToPerspective(targetId);
 					}
 				}
-				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
 					showDebugView();
 				}
 			}
@@ -344,7 +344,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when the given launch suspends
 	 */
 	protected boolean shouldSwitchPerspectiveForSuspend(String perspectiveId) {
-		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.13"), IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); //$NON-NLS-1$
+		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.13"), IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); //$NON-NLS-1$
 	}
 	
 	/**
@@ -358,7 +358,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when a launch occurs
 	 */
 	protected boolean shouldSwitchPerspectiveForLaunch(String perspectiveId) {
-		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.15"), IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); //$NON-NLS-1$
+		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.15"), IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); //$NON-NLS-1$
 	}
 	
 	/**

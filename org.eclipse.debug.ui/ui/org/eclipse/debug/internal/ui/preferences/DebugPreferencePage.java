@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.preferences;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -57,7 +58,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		createSpacer(getFieldEditorParent(), 2);
 		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.getString("DebugPreferencePage.3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.getString("DebugPreferencePage.26"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.getString("DebugPreferencePage.26"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createSwitchPerspectiveOnSuspendEditor();
 
 		createSpacer(getFieldEditorParent(), 2);
@@ -72,7 +73,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 	
 	private void createSwitchPerspectiveOnSuspendEditor() {
-		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
+		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
 				DebugPreferencesMessages.getString("DebugPreferencePage.21"), 3, //$NON-NLS-1$
 				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.22"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
 								{DebugPreferencesMessages.getString("DebugPreferencePage.23"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$

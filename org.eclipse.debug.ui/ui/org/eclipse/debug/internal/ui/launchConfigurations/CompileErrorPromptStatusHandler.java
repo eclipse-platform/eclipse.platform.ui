@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,14 +33,14 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		String message = LaunchConfigurationsMessages.getString("CompileErrorPromptStatusHandler.1"); //$NON-NLS-1$
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
-		String pref = store.getString(IDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
+		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(AlwaysNeverDialog.ALWAYS)) {
 				return new Boolean(true);
 			}
 		}
 		
-		PromptDialog pd = new PromptDialog(shell, title, message, IDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
+		PromptDialog pd = new PromptDialog(shell, title, message, IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
 		pd.open();
 		
 		int returnValue = pd.getReturnCode();

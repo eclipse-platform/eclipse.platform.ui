@@ -145,33 +145,12 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".build_before_launch"; //$NON-NLS-1$
 	/**
-	 * String preference controlling whether editors are saved before launching.
-	 * Valid values are either "always", "never", or "prompt".
-	 * If "always" or "never", launching will save editors (or not) automatically.
-	 * If "prompt", the user will be prompted each time.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".save_dirty_editors_before_launch"; //$NON-NLS-1$
-	/**
 	 * Boolean preference controlling automatic removal of terminated launches
 	 * when a new launch is registered.
 	 * @since 2.0
 	 */
 	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches"; //$NON-NLS-1$
 
-	/**
-	 * Preference specifiying that all launches should be DEBUG_MODE if breakpoints exist in the workspace
-	 * @since 3.0
-	 */
-	public static final String PREF_RELAUNCH_IN_DEBUG_MODE = PLUGIN_ID + ".relaunch_in_debug_mode"; //$NON-NLS-1$
-	
-	/**
-	 * Preference specifying that launches should continue when compile errors exist.
-	 * @since 3.0
-	 */
-	public static final String PREF_CONTINUE_WITH_COMPILE_ERROR = PLUGIN_ID + ".cancel_launch_with_compile_errors"; //$NON-NLS-1$	
-	
 	/**
 	 * Boolean preference controlling whether the debugger re-uses non-dirty editors
 	 * that it opens when displaying source. When <code>true</code> the debugger
@@ -216,47 +195,6 @@ public interface IDebugUIConstants {
 	 * @since 2.1
 	 */
 	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference controlling whether the debugger will force activate the debug
-	 * view when a breakpoint is hit.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_ACTIVATE_DEBUG_VIEW= PLUGIN_ID + ".activate_debug_view"; //$NON-NLS-1$
-	
-	/**
-	 * String preference controlling whether the debugger switching to
-	 * the associated perspective when launching.
-	 * Valid values are either "always", "never", or "prompt".
-	 * If "always" or "never", launching will switch perspectives (or not) automatically.
-	 * If "prompt", the user will be prompted each time.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_SWITCH_TO_PERSPECTIVE= PLUGIN_ID + ".switch_to_perspective"; //$NON-NLS-1$
-	
-	/**
-	 * String preference controlling whether the debugger switching to
-	 * the associated perspective when a launch suspends.
-	 * Valid values are either "always", "never", or "prompt".
-	 * If "always" or "never", suspension will switch perspectives (or not) automatically.
-	 * If "prompt", the user will be prompted each time.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_SWITCH_PERSPECTIVE_ON_SUSPEND= PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
-	
-	/**
-	 * String preference controlling whether the debugger waits for a currently
-	 * pending (running or waiting) background build to complete before launching.
-	 * Valid values are either "always", "never", or "prompt".
-	 * If "always" or "never", launching will wait for builds to finish (or not) automatically.
-	 * If "prompt", the user will be prompted each time.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_WAIT_FOR_BUILD= PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference controlling whether breakpoints are

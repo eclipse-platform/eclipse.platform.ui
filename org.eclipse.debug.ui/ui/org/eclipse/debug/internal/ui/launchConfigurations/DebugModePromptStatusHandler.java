@@ -17,8 +17,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -36,7 +36,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		
 		ILaunchConfiguration configuration = (ILaunchConfiguration)source;
 		
-		String pref = store.getString(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
+		String pref = store.getString(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE); 
 		if (pref != null) {
 			if (pref.equals(AlwaysNeverDialog.NEVER)) {
 				return new Boolean(false);
@@ -46,7 +46,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		boolean switchToDebug = AlwaysNeverDialog.openQuestion(activeShell, title, message, IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, store); 
+		boolean switchToDebug = AlwaysNeverDialog.openQuestion(activeShell, title, message, IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, store); 
 		if (switchToDebug) {
 			relaunchInDebugMode(configuration);
 		}
