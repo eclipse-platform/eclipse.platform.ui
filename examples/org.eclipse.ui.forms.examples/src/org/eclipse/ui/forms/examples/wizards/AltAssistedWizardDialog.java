@@ -8,7 +8,9 @@ package org.eclipse.ui.forms.examples.wizards;
 
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.views.ReusableHelpPart;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.*;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
@@ -17,6 +19,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.part.services.NullStatusLineManager;
 
 /**
  * @author dejan
@@ -28,23 +31,20 @@ public class AltAssistedWizardDialog extends WizardDialog {
 	private Button helpButton;
 	private ContextHelpWindow contextHelpWindow;
 
-	private class ContextHelpWindow extends ApplicationWindow {
+	private class ContextHelpWindow extends Window {
 		private ReusableHelpPart helpPart;
 
 		private FormToolkit toolkit;
 
 		public ContextHelpWindow(Shell parent) {
 			super(parent);
-			addToolBar(SWT.FLAT);
-			addStatusLine();
-			helpPart = new ReusableHelpPart(this);
-			helpPart.init(null, getToolBarManager(), getStatusLineManager());
+			setShellStyle(SWT.CLOSE|SWT.RESIZE);
 			parent.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					//syncHelpBounds();
+					syncHelpBounds();
 				}
 				public void controlResized(ControlEvent e) {
-					//syncHelpBounds();
+					syncHelpBounds();
 				}
 			});
 		}
@@ -72,20 +72,28 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			container.setLayout(layout);
 
 			GridData gd;
+			ToolBarManager tbm = new ToolBarManager();
+			tbm.createControl(container);
+			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			gd.grabExcessHorizontalSpace=true;
+			tbm.getControl().setLayoutData(gd);
 			Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.heightHint = 1;
-			separator.setLayoutData(gd);			
+			separator.setLayoutData(gd);
+			helpPart = new ReusableHelpPart(AltAssistedWizardDialog.this);
+			helpPart.init(null, tbm, new NullStatusLineManager());				
 			helpPart.createControl(container, toolkit);
 			helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-			separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			gd.heightHint = 1;
-			separator.setLayoutData(gd);				
+			//separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+			//gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			//gd.heightHint = 1;
+			//separator.setLayoutData(gd);				
 			
 			helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 			updateForPage(getCurrentPage());
-			return helpPart.getControl();
+			container.setLayoutData(new GridData(GridData.FILL_BOTH));
+			return container;
 		}
 		
 		public void updateForPage(IWizardPage page) {
@@ -138,10 +146,10 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			helpShell.open();
 			helpShell.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
-					//syncParentShell();
+					syncParentShell();
 				}
 				public void controlResized(ControlEvent e) {
-					//syncParentShell();
+					syncParentShell();
 				}
 			});
 			helpWindow = contextHelpWindow;
