@@ -1608,7 +1608,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 firePageOpened(newPage);
             } catch (WorkbenchException e) {
                 WorkbenchPlugin
-                        .log("Unable to restore perspective - constructor failed."); //$NON-NLS-1$
+                        .log("Unable to restore perspective - constructor failed.", e); //$NON-NLS-1$
                 result.add(e.getStatus());
                 continue;
             }
@@ -1628,7 +1628,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 firePageOpened(newPage);
             } catch (WorkbenchException e) {
                 WorkbenchPlugin
-                        .log("Unable to create default perspective - constructor failed."); //$NON-NLS-1$
+                        .log("Unable to create default perspective - constructor failed.", e); //$NON-NLS-1$
                 result.add(e.getStatus());
                 String productName = WorkbenchPlugin.getDefault()
                         .getProductName();

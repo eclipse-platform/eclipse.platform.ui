@@ -1114,7 +1114,7 @@ public class EditorManager {
                     // TODO commented during presentation refactor ((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
                 } catch (PartInitException e) {
                     WorkbenchPlugin
-                            .log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
+                            .log("Exception creating editor: " + e.getMessage(), e); //$NON-NLS-1$
                     result[0] = unableToCreateEditor(ref, e);
                 }
             }

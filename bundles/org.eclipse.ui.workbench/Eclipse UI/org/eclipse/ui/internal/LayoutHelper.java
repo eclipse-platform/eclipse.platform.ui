@@ -101,7 +101,7 @@ class LayoutHelper {
                             try {
                                 partPage.showView(viewId);
                             } catch (PartInitException e) {
-                                WorkbenchPlugin.log(e.getMessage());
+                                WorkbenchPlugin.log(getClass(), "identifierChanged", e); //$NON-NLS-1$
                             }
                         } else { // show when the perspective becomes active							
                             partPage.getWorkbenchWindow()
@@ -123,9 +123,7 @@ class LayoutHelper {
                                                             page
                                                                     .showView(viewId);
                                                         } catch (PartInitException e) {
-                                                            WorkbenchPlugin
-                                                                    .log(e
-                                                                            .getMessage());
+                                                            WorkbenchPlugin.log(getClass(), "perspectiveActivated", e); //$NON-NLS-1$
                                                         }
                                                     }
                                                 }

@@ -260,7 +260,7 @@ public final class XMLMemento implements IMemento {
             return new Float(strValue);
         } catch (NumberFormatException e) {
             WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
-                    + key + " value: " + strValue); //$NON-NLS-1$
+                    + key + " value: " + strValue, e); //$NON-NLS-1$
             return null;
         }
     }
@@ -285,7 +285,7 @@ public final class XMLMemento implements IMemento {
         } catch (NumberFormatException e) {
             WorkbenchPlugin
                     .log("Memento problem - invalid integer for key: " + key //$NON-NLS-1$
-                            + " value: " + strValue); //$NON-NLS-1$
+                            + " value: " + strValue, e); //$NON-NLS-1$
             return null;
         }
     }

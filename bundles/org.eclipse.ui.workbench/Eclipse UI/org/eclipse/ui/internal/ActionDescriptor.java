@@ -332,8 +332,8 @@ public class ActionDescriptor implements IPluginContribution {
             try {
                 action.setAccelerator(Integer.valueOf(acceleratorText)
                         .intValue());
-            } catch (NumberFormatException exception) {
-                WorkbenchPlugin.log("Invalid accelerator declaration: " + id); //$NON-NLS-1$
+            } catch (NumberFormatException e) {
+                WorkbenchPlugin.log("Invalid accelerator declaration for action: " + id, e); //$NON-NLS-1$
             }
         } else
             action.setAccelerator(Action.convertAccelerator(acceleratorText));

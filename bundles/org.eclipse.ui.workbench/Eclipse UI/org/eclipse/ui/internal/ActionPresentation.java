@@ -153,7 +153,7 @@ public class ActionPresentation {
                     mapDescToRec.put(desc, rec);
                 } catch (CoreException e) {
                     WorkbenchPlugin
-                            .log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
+                            .log("Unable to create ActionSet: " + desc.getId(), e);//$NON-NLS-1$
                 }
             }
         }

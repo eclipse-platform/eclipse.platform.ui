@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -543,33 +544,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Log the given status to the ISV log.
-     *
-     * When to use this:
-     *
-     *		This should be used when a PluginException or a
-     *		ExtensionException occur but for which an error
-     *		dialog cannot be safely shown.
-     *
-     *		If you can show an ErrorDialog then do so, and do
-     *		not call this method.
-     *
-     *		If you have a plugin exception or core exception in hand
-     *		call log(String, IStatus)
-     *
-     * This convenience method is for internal use by the Workbench only
-     * and must not be called outside the workbench.
-     *
-     * This method is supported in the event the log allows plugin related
-     * information to be logged (1FTTJKV). This would be done by this method.
-     *
-     * This method is internal to the workbench and must not be called
-     * by any plugins, or examples.
-     *
-     * @param message 	A high level UI message describing when the problem happened.
-     *
+     * Logs the given message to the platform log.
+     * 
+     * If you have an exception in hand, call log(String, Throwable) instead.
+     * 
+     * If you have a status object in hand call log(String, IStatus) instead.
+     * 
+     * This convenience method is for internal use by the Workbench only and
+     * must not be called outside the Workbench.
+     * 
+     * @param message
+     *            A high level UI message describing when the problem happened.
      */
-
     public static void log(String message) {
         getDefault().getLog().log(
                 StatusUtil.newStatus(IStatus.ERROR, message, null));
@@ -578,33 +564,56 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Log the given status to the ISV log.
-     *
-     * When to use this:
-     *
-     *		This should be used when a PluginException or a
-     *		ExtensionException occur but for which an error
-     *		dialog cannot be safely shown.
-     *
-     *		If you can show an ErrorDialog then do so, and do
-     *		not call this method.
-     *
-     * This convenience method is for internal use by the workbench only
-     * and must not be called outside the workbench.
-     *
-     * This method is supported in the event the log allows plugin related
-     * information to be logged (1FTTJKV). This would be done by this method.
-     *
-     * This method is internal to the workbench and must not be called
-     * by any plugins, or examples.
-     *
-     * @param message 	A high level UI message describing when the problem happened.
-     *					May be null.
-     * @param status  	The status describing the problem.
-     *					Must not be null.
-     *
+     * Logs the given message and throwable to the platform log.
+     * 
+     * If you have a status object in hand call log(String, IStatus) instead.
+     * 
+     * This convenience method is for internal use by the Workbench only and
+     * must not be called outside the Workbench.
+     * 
+     * @param message
+     *            A high level UI message describing when the problem happened.
+     * @param t
+     *            The throwable from where the problem actually occurred.
      */
-
+    public static void log(String message, Throwable t) {
+        IStatus status = StatusUtil.newStatus(IStatus.ERROR, message, t);
+        log(message, status);
+    }
+    
+    /**
+     * Logs the given throwable to the platform log, indicating the class and
+     * method from where it is being logged (this is not necessarily where it
+     * occurred).
+     * 
+     * This convenience method is for internal use by the Workbench only and
+     * must not be called outside the Workbench.
+     * 
+     * @param clazz
+     *            The calling class.
+     * @param methodName
+     *            The calling method name.
+     * @param t
+     *            The throwable from where the problem actually occurred.
+     */
+    public static void log(Class clazz, String methodName, Throwable t) {
+        String msg = MessageFormat.format("Exception in {0}.{1}: {2}", //$NON-NLS-1$
+                new Object[] { clazz.getName(), methodName, t });
+        log(msg, t);
+    }
+    
+    /**
+     * Logs the given message and status to the platform log.
+     * 
+     * This convenience method is for internal use by the Workbench only and
+     * must not be called outside the Workbench.
+     * 
+     * @param message
+     *            A high level UI message describing when the problem happened.
+     *            May be <code>null</code>.
+     * @param status
+     *            The status describing the problem. Must not be null.
+     */
     public static void log(String message, IStatus status) {
 
         //1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info

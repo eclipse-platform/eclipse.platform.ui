@@ -82,7 +82,7 @@ public class FolderLayout implements IFolderLayout {
             }
         } catch (PartInitException e) {
             // cannot safely open the dialog so log the problem
-            WorkbenchPlugin.log(e.getMessage());
+            WorkbenchPlugin.log(getClass(), "addView(String)", e); //$NON-NLS-1$
         }
     }
 

@@ -221,7 +221,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 public void handleException(Throwable e) {
                     // just skip the item if there's an error,
                     // e.g. in the calculation of the shortened name
-                    WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e); //$NON-NLS-1$
+                    WorkbenchPlugin.log(getClass(), "fill", e); //$NON-NLS-1$
                 }
             });
         }

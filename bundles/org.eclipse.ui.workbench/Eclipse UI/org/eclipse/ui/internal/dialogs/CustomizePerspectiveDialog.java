@@ -918,7 +918,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             actionSet.init(null, bars);
         } catch (CoreException ex) {
             WorkbenchPlugin
-                    .log("Unable to create action set " + actionSetDesc.getId()); //$NON-NLS-1$
+                    .log("Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
             return;
         }
         builder.buildMenuAndToolBarStructure(actionSet, window);

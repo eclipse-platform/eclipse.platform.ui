@@ -384,7 +384,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 							Thread
 									.sleep(ProgressManagerUtil.SHORT_OPERATION_TIME);
 						} catch (InterruptedException e) {
-							WorkbenchPlugin.log(e.getLocalizedMessage());
+							WorkbenchPlugin.log(getClass(), "show(Job)", e); //$NON-NLS-1$
 						}
 					}
 				});

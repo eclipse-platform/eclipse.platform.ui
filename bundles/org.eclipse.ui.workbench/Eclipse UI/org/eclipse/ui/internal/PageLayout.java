@@ -128,7 +128,7 @@ public class PageLayout implements IPageLayout {
             // Add it to the layout.
             rootLayoutContainer.add(newPart);
         } catch (PartInitException e) {
-            WorkbenchPlugin.log(e.getMessage());
+            WorkbenchPlugin.log(getClass(), "addEditorArea()", e); //$NON-NLS-1$
         }
     }
 
@@ -171,7 +171,7 @@ public class PageLayout implements IPageLayout {
                     rec.fastViewWidthRatio = ratio;
                 }
             } catch (PartInitException e) {
-                WorkbenchPlugin.log(e.getMessage());
+                WorkbenchPlugin.log(getClass(), "addFastView", e); //$NON-NLS-1$
             }
         }
     }
@@ -373,7 +373,7 @@ public class PageLayout implements IPageLayout {
                 getViewLayoutRec(viewId, true);
             }
         } catch (PartInitException e) {
-            WorkbenchPlugin.log(e.getMessage());
+            WorkbenchPlugin.log(getClass(), "addView", e); //$NON-NLS-1$
         }
     }
 
@@ -744,7 +744,7 @@ public class PageLayout implements IPageLayout {
             } else
                 stackPart(newPart, viewId, refId);
         } catch (PartInitException e) {
-            WorkbenchPlugin.log(e.getMessage());
+            WorkbenchPlugin.log(getClass(), "stackView", e); //$NON-NLS-1$
         }
     }
 

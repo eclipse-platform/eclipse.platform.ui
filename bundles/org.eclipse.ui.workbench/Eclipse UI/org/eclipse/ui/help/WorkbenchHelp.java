@@ -532,7 +532,7 @@ public class WorkbenchHelp {
                                     HELP_SYSTEM_CLASS_ATTRIBUTE);
                 } catch (CoreException e) {
                     WorkbenchPlugin
-                            .log("Unable to instantiate help UI" + e.getStatus());//$NON-NLS-1$
+                            .log("Unable to instantiate help UI" + e.getStatus(), e);//$NON-NLS-1$
                 }
             }
         });

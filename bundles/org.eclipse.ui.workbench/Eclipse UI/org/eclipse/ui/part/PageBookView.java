@@ -370,7 +370,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
         try {
             page.init(new PageSite(getViewSite()));
         } catch (PartInitException e) {
-            WorkbenchPlugin.log(e.getMessage());
+            WorkbenchPlugin.log(getClass(), "initPage", e); //$NON-NLS-1$
         }
     }
 
