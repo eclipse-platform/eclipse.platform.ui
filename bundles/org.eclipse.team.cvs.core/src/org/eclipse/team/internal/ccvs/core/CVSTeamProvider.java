@@ -538,7 +538,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// Even if we are not supposed to recurse we still need to go into
 				// the root directory.
-				if (folder.isIgnored() || (doNotRecurse && !folder.equals(resource)))  {
+				if (!folder.exists() || folder.isIgnored() || (doNotRecurse && !folder.equals(resource)))  {
 					return;
 				} else  {
 					folder.acceptChildren(this);
