@@ -172,7 +172,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 */
 	protected boolean walkHierarchy(Object element, List elements) {
 		Object parent= getParent(element);
-		if (parent == null) {
+		if (parent == null || parent == element) {
 			return true;
 		}
 		if (elements.contains(parent)) {
