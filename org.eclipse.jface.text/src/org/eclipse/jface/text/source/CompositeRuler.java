@@ -60,7 +60,7 @@ import org.eclipse.jface.text.ITextViewerExtension;
  * @see ITextViewer
  * @since 2.0
  */
-public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
+public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	
 	
 	/**
@@ -85,6 +85,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 				size.x += s.x;
 				size.y= Math.max(size.y, s.y);
 			}
+			size.x += (Math.max(0, children.length -1) * fGap);
 			return size;
 		}
 		
@@ -101,7 +102,7 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 				IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
 				int columnWidth= column.getWidth();
 				column.getControl().setBounds(x, 0, columnWidth, rulerHeight);
-				x += columnWidth;
+				x += (columnWidth + fGap);
 			}
 		}
 	};
@@ -507,12 +508,21 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 	private Point fLocation= new Point(-1, -1);
 	/** The cached line of the list mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
+	/** The gap between the individual columns of this composite ruler */
+	private int fGap;
 	
 	
 	/**
 	 * Constructs a new composite vertical ruler.
 	 */
 	public CompositeRuler() {
+		this(0);
+	}
+	
+	/**
+	 * Constructs a new composite ruler with the given gap between its columns.	 * @param gap	 */
+	public CompositeRuler(int gap) {
+		fGap= gap;
 	}
 	
 	/**
@@ -660,9 +670,9 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		Iterator e= fDecorators.iterator();
 		while (e.hasNext()) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) e.next();
-			width += column.getWidth();
+			width += (column.getWidth() + fGap);
 		}
-		return width;
+		return Math.max(0, width - fGap);
 	}
 	
 	/*
