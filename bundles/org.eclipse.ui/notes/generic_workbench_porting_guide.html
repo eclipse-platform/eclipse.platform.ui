@@ -12,17 +12,34 @@
 
 <h1>Eclipse 3.0 Porting Guide<br>
 Generic Workbench</h1>
-<p>Last revised July 21, 2003</p>
+<p>Last revised July 22, 2003</p>
+<p><i>[Under construction]</i></p>
+<p>Note that the changes described here are still at the proposal stage.</p>
 <p>In 3.0, the Eclipse Platform UI changed to separate out generic workbench
 from IDE specifics. This resulted in changes to API packages and extension
 points. This document describes how to port existing Eclipse 2.1 plug-ins to 3.0
 in light of these changes.</p>
-<p><i>[Under construction]</i></p>
+<ul>
+  <li><a href="#Plug-in changes">Plug-in changes</a></li>
+  <li><a href="#Extension points that have moved">Extension points that have
+    moved to different plug-ins</a></li>
+  <li><a href="#API packages that have moved">API packages that have moved to
+    different plug-ins</a></li>
+  <li><a href="#API packages that were subdivided">API packages that were
+    subdivided and are now split across plug-ins</a></li>
+  <li><a href="#API classes and interface that have been changed">API classes
+    and interface that have changed</a></li>
+</ul>
+<h2><a name="Plug-in changes">Plug-in changes</a></h2>
 <p>The org.eclipse.ui plug-in which used to be the main Platform UI plug-in, now
 contains just the API and extension points for the generic workbench. Optional
 and IDE-specific API and extension points have moved to other plug-ins;
 IDE-specific functionality is now in the org.eclipse.ui.ide plug-in; text
-editors are now in the org.eclipse.ui.ide plug-in;&nbsp; </p>
+editors are now in the org.eclipse.ui.workbench.texteditor and
+org.eclipse.ui.editors plug-ins; the properties, content outline, and navigator
+views are now in their own separate plug-ins: org.eclipse.ui.views.properties,
+org.eclipse.ui.views.contentoutline, and org.eclipse.ui.views.navigator
+respectively.</p>
 <p>The org.eclipse.ui.workbench plug-in was deleted. This was an internal UI
 plug-in, which client plug-ins would not ordinarily reference (it has no
 extension points, and all its API was re-exported by the org.eclipse.ui
@@ -42,8 +59,729 @@ requires the org.eclipse.ui.views plug-in should be changed to require (a
 sufficient subset of) these plug-ins instead: org.eclipse.ui.views.navigator,
 org.eclipse.ui.views.properties, org.eclipse.ui.views.contentoutline,
 org.eclipse.ui.ide.</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h2><a name="Extension points that have moved">Extension points that have moved</a>
+to different plug-ins</h2>
+<p>The following extension points have moved to different plug-ins, causing
+their extension point ids to change.</p>
+<p>The following extension points moved from the org.eclipse.ui plug-in to the
+org.eclipse.ui.ide.plug-in. In the extension element in the plug-in manifest
+file, change references to the extension points &quot;org.eclipse.ui.<i>foo</i>&quot;
+to refer to &quot;org.eclipse.ui.ide.<i>foo</i>&quot; instead.</p>
+<ul>
+  <li>org.eclipse.ui.markerImageProvider</li>
+  <li>org.eclipse.ui.capabilities</li>
+  <li>org.eclipse.ui.exportWizards</li>
+  <li>org.eclipse.ui.importWizards</li>
+  <li>org.eclipse.ui.markerHelp</li>
+  <li>org.eclipse.ui.markerImageProviders</li>
+  <li>org.eclipse.ui.markerResolution</li>
+  <li>org.eclipse.ui.newWizards</li>
+  <li>org.eclipse.ui.projectNatureImages</li>
+  <li>org.eclipse.ui.resourceFilters</li>
+  <li>org.eclipse.ui.workingSets</li>
+</ul>
+<p>The following extension points moved from the org.eclipse.ui plug-in to the
+org.eclipse.ui.workbench.texteditor plug-in. In the extension element in the
+plug-in manifest file, change references to the extension points &quot;org.eclipse.ui.<i>foo</i>&quot;
+to refer to &quot;org.eclipse.ui.workbench.texteditor.<i>foo</i>&quot; instead.</p>
+<ul>
+  <li>org.eclipse.ui.markerUpdaters</li>
+  <li>org.eclipse.ui.documentProviders</li>
+</ul>
+<p>The following extension points moved from the org.eclipse.help plug-in to the
+org.eclipse.help.base plug-in. In the extension element in the plug-in manifest
+file, change references to the extension points &quot;org.eclipse.help.<i>foo</i>&quot;
+to refer to &quot;org.eclipse.help.base.<i>foo</i>&quot; instead.</p>
+<ul>
+  <li>org.eclipse.help.browser</li>
+  <li>org.eclipse.help.luceneAnalyzer</li>
+  <li>org.eclipse.help.webapp</li>
+</ul>
+<h2><a name="API packages that have moved">API packages that have moved</a> to
+different plug-ins</h2>
+<p>The following API packages have moved between plug-ins. These movements
+necessitate adjusting &quot;&lt;requires&gt;&quot; elements in plug-in manifest
+files to compensate.</p>
+<ul>
+  <li>org.eclipse.ui.views.properties API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.views.properties
+    plug-in. If your plug-in depends on anything in the
+    org.eclipse.ui.views.properties package, your plug-in must require the
+    org.eclipse.ui.views.properties plug-in. (The
+    org.eclipse.ui.views.properties API package was exported by the
+    org.eclipse.ui.views plug-in, and re-exported by org.eclipse.ui plug-in. So
+    even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.views plug-in, it may get it indirectly by depending on the
+    org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.views.contentoutline API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.views.contentoutline
+    plug-in. If your plug-in depends on anything in the
+    org.eclipse.ui.views.contentoutline package, your plug-in must require the
+    org.eclipse.ui.views.contentoutline plug-in. (The
+    org.eclipse.ui.views.contentoutline API package was exported by the
+    org.eclipse.ui.views plug-in, and re-exported by org.eclipse.ui plug-in. So
+    even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.views plug-in, it may get it indirectly by depending on the
+    org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.views.navigator API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.views.navigator
+    plug-in. If your plug-in depends on anything in the
+    org.eclipse.ui.views.navigator package, your plug-in must require the
+    org.eclipse.ui.views.navigator plug-in. (The org.eclipse.ui.views.navigator
+    API package was exported by the org.eclipse.ui.views plug-in, and
+    re-exported by org.eclipse.ui plug-in. So even if your plug-in does not
+    directly appear to depend on the org.eclipse.ui.views plug-in, it may get it
+    indirectly by depending on the org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.views.bookmarkexplorer API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.ide plug-in. If your
+    plug-in depends on anything in the org.eclipse.ui.views.bookmarkexplorer
+    package, your plug-in must require the org.eclipse.ui.ide plug-in. (The
+    org.eclipse.ui.views.bookmarkexploter API package was exported by the
+    org.eclipse.ui.views plug-in, and re-exported by org.eclipse.ui plug-in. So
+    even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.views plug-in, it may get it indirectly by depending on the
+    org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.views.markers API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.ide plug-in. If your
+    plug-in depends on anything in the org.eclipse.ui.views.markers package,
+    your plug-in must require the org.eclipse.ui.ide plug-in. (The
+    org.eclipse.ui.views.markers API package was exported by the
+    org.eclipse.ui.views plug-in, and re-exported by org.eclipse.ui plug-in. So
+    even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.views plug-in, it may get it indirectly by depending on the
+    org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.views.tasklist API package moved from the
+    org.eclipse.ui.views plug-in to a new org.eclipse.ui.ide plug-in. If your
+    plug-in depends on anything in the org.eclipse.ui.views.tasklist package,
+    your plug-in must require the org.eclipse.ui.ide plug-in. (The
+    org.eclipse.ui.views.tasklist API package was exported by the
+    org.eclipse.ui.views plug-in, and re-exported by org.eclipse.ui plug-in. So
+    even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.views plug-in, it may get it indirectly by depending on the
+    org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.wizards.newresource package moved from the
+    org.eclipse.ui.workbench plug-in to a new org.eclipse.ui.ide plug-in. If
+    your plug-in depends on anything in the org.eclipse.ui.wizards.newresource
+    package, your plug-in must require the org.eclipse.ui.ide plug-in. (The
+    org.eclipse.ui.wizards.newresource API package was exported by the
+    org.eclipse.ui.workbench plug-in, and re-exported by org.eclipse.ui plug-in.
+    So even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.workbench plug-in, it may get it indirectly by depending on
+    the org.eclipse.ui plug-in.)</li>
+  <li>org.eclipse.ui.wizards.datatransfer package moved from the
+    org.eclipse.ui.workbench plug-in to a new org.eclipse.ui.ide plug-in. If
+    your plug-in depends on anything in the org.eclipse.ui.wizards.datatransfer
+    package, your plug-in must require the org.eclipse.ui.ide plug-in. (The
+    org.eclipse.ui.wizards.datatransfer API package was exported by the
+    org.eclipse.ui.workbench plug-in, and re-exported by org.eclipse.ui plug-in.
+    So even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.workbench plug-in, it may get it indirectly by depending on
+    the org.eclipse.ui plug-in.)</li>
+</ul>
+<h2><a name="API packages that were subdivided">API packages that were
+subdivided</a> and are now split across plug-ins</h2>
+<p>The following API packages have been split across different plug-ins in order
+to separate generic workbench API from IDE-specific API. These movements
+necessitate adjusting &quot;&lt;requires&gt;&quot; elements in plug-in manifest
+files to compensate.</p>
+<ul>
+  <li>org.eclipse.ui API package, formerly in the org.eclipse.ui.workbench
+    plug-in, is now split between org.eclipse.ui plug-in and the new
+    org.eclipse.ui.ide plug-in. If your plug-in depends on anything in
+    org.eclipse.ui package, your plug-in may require the org.eclipse.ui.ide
+    plug-in in addition to the org.eclipse.ui plug-in. (The org.eclipse.ui API
+    package was exported by the org.eclipse.ui.workbench plug-in, and
+    re-exported by org.eclipse.ui plug-in. So even if your plug-in does not
+    directly appear to depend on the org.eclipse.ui.workbench plug-in, it may
+    get it indirectly by depending on the org.eclipse.ui plug-in.)
+    <ul>
+      <li>org.eclipse.ui API classes and interfaces in org.eclipse.ui plug-in.
+        (These ones did not move.)
+        <ul>
+          <li>AboutInfo</li>
+          <li>IActionBars</li>
+          <li>IActionDelegate</li>
+          <li>IActionDelegate2</li>
+          <li>IActionDelegateWithEvent</li>
+          <li>IActionFilter</li>
+          <li>IContainmentAdapter</li>
+          <li>IDecoratorManager</li>
+          <li>IEditorActionBarContributor</li>
+          <li>IEditorActionDelegate</li>
+          <li>IEditorDescriptor</li>
+          <li>IEditorInput</li>
+          <li>IEditorLauncher</li>
+          <li>IEditorPart</li>
+          <li>IEditorReference</li>
+          <li>IEditorRegistry</li>
+          <li>IEditorSite</li>
+          <li>IElementFactory</li>
+          <li>IKeyBindingService</li>
+          <li>IMemento</li>
+          <li>INavigationHistory</li>
+          <li>INavigationLocation</li>
+          <li>INavigationLocationProvider</li>
+          <li>INullSelectionListener</li>
+          <li>IObjectActionDelegate</li>
+          <li>IPageLayout</li>
+          <li>IPageListener</li>
+          <li>IPageService</li>
+          <li>IPartListener</li>
+          <li>IPartListener2</li>
+          <li>IPartService</li>
+          <li>IPersistableElement</li>
+          <li>IPerspectiveDescriptor</li>
+          <li>IPerspectiveFactory</li>
+          <li>IPerspectiveListener</li>
+          <li>IPerspectiveRegistry</li>
+          <li>IPlaceholderFolderLayout</li>
+          <li>IProjectActionFilter</li>
+          <li>IPropertyListener</li>
+          <li>IResourceActionFilter</li>
+          <li>IReusableEditor</li>
+          <li>ISaveablePart</li>
+          <li>ISelectionListener</li>
+          <li>ISelectionService</li>
+          <li>ISharedImages</li>
+          <li>IStartup</li>
+          <li>IViewActionDelegate</li>
+          <li>IViewPart</li>
+          <li>IViewReference</li>
+          <li>IViewSite</li>
+          <li>IWindowListener</li>
+          <li>IWorkbench</li>
+          <li>IWorkbenchActionConstants</li>
+          <li>IWorkbenchPage</li>
+          <li>IWorkbenchPart</li>
+          <li>IWorkbenchPartDescriptor</li>
+          <li>IWorkbenchPartReference</li>
+          <li>IWorkbenchPartSite</li>
+          <li>IWorkbenchPreferenceConstants</li>
+          <li>IWorkbenchPreferencePage</li>
+          <li>IWorkbenchPropertyPage</li>
+          <li>IWorkbenchSite</li>
+          <li>IWorkbenchWindow</li>
+          <li>IWorkbenchWindowActionDelegate</li>
+          <li>IWorkbenchWindowPulldownDelegate</li>
+          <li>IWorkbenchWindowPulldownDelegate2</li>
+          <li>IWorkbenchWizard</li>
+          <li>IWorkingSet</li>
+          <li>IWorkingSetManager</li>
+          <li>NavigationLocation</li>
+          <li>PartInitException</li>
+          <li>PlatformUI</li>
+          <li>SubActionBars</li>
+          <li>WorkbenchException</li>
+          <li>XMLMemento</li>
+        </ul>
+      </li>
+      <li>org.eclipse.ui API classes and interfaces in org.eclipse.ui.ide
+        plug-in. All these actions are IDE-specific (most deal with workspace
+        resources). These classes did move.
+        <ul>
+          <li>ICapabilityWizard</li>
+          <li>ICapabilityInstallWizard</li>
+          <li>ICapabilityUninstallWizard</li>
+          <li>IContributorResourceAdapter</li>
+          <li>IExportWizard</li>
+          <li>IFileEditorInput</li>
+          <li>IFileEditorMapping</li>
+          <li>IFolderLayout</li>
+          <li>IImportWizard</li>
+          <li>IMarkerHelpRegistry</li>
+          <li>IMarkerActionFilter</li>
+          <li>IMarkerResolution</li>
+          <li>IMarkerResolutionGenerator</li>
+          <li>IMarkerResolutionGenerator2</li>
+          <li>INewWizard</li>
+          <li>IStorageEditorInput</li>
+          <li>ResourceWorkingSetFilter</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>org.eclipse.ui.actions API package, formerly in the
+    org.eclipse.ui.workbench plug-in, is now split between org.eclipse.ui
+    plug-in and the new org.eclipse.ui.ide plug-in. If your plug-in depends on
+    anything in org.eclipse.ui.actions package, your plug-in may require the
+    org.eclipse.ui.ide plug-in in addition to the org.eclipse.ui plug-in. (The
+    org.eclipse.ui.actions API package was exported by the
+    org.eclipse.ui.workbench plug-in, and re-exported by org.eclipse.ui plug-in.
+    So even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.workbench plug-in, it may get it indirectly by depending on
+    the org.eclipse.ui plug-in.)
+    <ul>
+      <li>org.eclipse.ui.actions API classes and interfaces in org.eclipse.ui
+        plug-in. (These ones did not move.)
+        <ul>
+          <li>ActionContext</li>
+          <li>ActionDelegate</li>
+          <li>ActionGroup</li>
+          <li>LabelRetargetAction</li>
+          <li>OpenInNewWindowAction</li>
+          <li>OpenNewPageMenu</li>
+          <li>OpenNewWindowMenu</li>
+          <li>OpenPerspectiveMenu</li>
+          <li>PartEventAction</li>
+          <li>RetargetAction</li>
+          <li>SelectionListenerAction</li>
+          <li>SelectionProviderAction</li>
+        </ul>
+      </li>
+      <li>org.eclipse.ui.actions API classes and interfaces in
+        org.eclipse.ui.ide plug-in. All these actions are IDE-specific (most
+        deal with workspace resources). These classes did move.
+        <ul>
+          <li>AddBookmarkAction</li>
+          <li>BuildAction</li>
+          <li>CloseResourceAction</li>
+          <li>CopyFilesAndFoldersOperation</li>
+          <li>CopyProjectAction</li>
+          <li>CopyProjectOperation</li>
+          <li>CopyResourceAction</li>
+          <li>CreateFileAction</li>
+          <li>CreateFolderAction</li>
+          <li>CreateProjectAction</li>
+          <li>DeleteResourceAction</li>
+          <li>ExportResourcesAction</li>
+          <li>GlobalBuildAction</li>
+          <li>ImportResourcesAction</li>
+          <li>MoveFilesAndFoldersOperation</li>
+          <li>MoveProjectAction</li>
+          <li>MoveResourceAction</li>
+          <li>NewExampleAction</li>
+          <li>NewProjectAction</li>
+          <li>NewWizardAction</li>
+          <li>NewWizardMenu</li>
+          <li>OpenFileAction</li>
+          <li>OpenResourceAction</li>
+          <li>OpenSystemEditorAction</li>
+          <li>OpenWithMenu</li>
+          <li>PerspectiveMenu</li>
+          <li>QuickStartAction</li>
+          <li>ReadOnlyStateChecker</li>
+          <li>RefreshAction</li>
+          <li>RenameResourceAction</li>
+          <li>ScrubLocalAction</li>
+          <li>SimpleWildcardTester</li>
+          <li>TextActionHandler</li>
+          <li>WorkingSetFilterActionGroup</li>
+          <li>WorkspaceAction</li>
+          <li>WorkspaceModifyDelegatingOperation</li>
+          <li>WorkspaceModifyOperation</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>org.eclipse.ui.dialogs API package, formerly in the
+    org.eclipse.ui.workbench plug-in, is now split between org.eclipse.ui
+    plug-in and the new org.eclipse.ui.ide plug-in. If your plug-in depends on
+    anything in org.eclipse.ui.dialogs package, your plug-in may require the
+    org.eclipse.ui.ide plug-in in addition to the org.eclipse.ui plug-in. (The
+    org.eclipse.ui.dialogs API package was exported by the
+    org.eclipse.ui.workbench plug-in, and re-exported by org.eclipse.ui plug-in.
+    So even if your plug-in does not directly appear to depend on the
+    org.eclipse.ui.workbench plug-in, it may get it indirectly by depending on
+    the org.eclipse.ui plug-in.)
+    <ul>
+      <li>org.eclipse.ui.dialogs API classes and interfaces in org.eclipse.ui
+        plug-in. (These ones did not move.)
+        <ul>
+          <li>AbstractElementListSelectionDialog</li>
+          <li>CheckedTreeSelectionDialog</li>
+          <li>ElementListSelectionDialog</li>
+          <li>ElementTreeSelectionDialog</li>
+          <li>FileEditorMappingContentProvider</li>
+          <li>FileEditorMappingLabelProvider</li>
+          <li>FileSelectionDialog</li>
+          <li>FileSystemElement</li>
+          <li>FilteredList</li>
+          <li>IOverwriteQuery</li>
+          <li>ISelectionStatusValidator</li>
+          <li>ISelectionValidator</li>
+          <li>IWorkingSetEditWizard</li>
+          <li>IWorkingSetPage</li>
+          <li>IWorkingSetSelectionDialog</li>
+          <li>ListDialog</li>
+          <li>ListSelectionDialog</li>
+          <li>MarkerResolutionSelectionDialog</li>
+          <li>PropertyDialogAction</li>
+          <li>PropertyPage</li>
+          <li>SelectionDialog</li>
+          <li>SelectionStatusDialog</li>
+          <li>TwoArrayQuickSorter</li>
+          <li>TwoPaneElementSelector</li>
+          <li>TypeFilteringDialog</li>
+          <li>YesNoCancelListSelectionDialog</li>
+        </ul>
+      </li>
+      <li>org.eclipse.ui.dialogs API classes and interfaces in
+        org.eclipse.ui.ide plug-in. All these dialogs are IDE-specific (most
+        deal with workspace resources).&nbsp; These classes did move.
+        <ul>
+          <li>ContainerGenerator</li>
+          <li>ContainerSelectionDialog</li>
+          <li>NewFolderDialog</li>
+          <li>ProjectLocationMoveDialog</li>
+          <li>ProjectLocationSelectionDialog</li>
+          <li>ResourceListSelectionDialog</li>
+          <li>ResourceSelectionDialog</li>
+          <li>SaveAsDialog</li>
+          <li>WizardDataTransferPage</li>
+          <li>WizardExportPage</li>
+          <li>WizardExportResourcesPage</li>
+          <li>WizardImportPage</li>
+          <li>WizardNewFileCreationPage</li>
+          <li>WizardNewFolderMainPage</li>
+          <li>WizardNewLinkPage</li>
+          <li>WizardNewProjectCreationPage</li>
+          <li>WizardNewProjectReferencePage</li>
+          <li>WizardResourceImportPage</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>org.eclipse.ui.part API package, formerly in the org.eclipse.ui.workbench
+    plug-in, is now split between org.eclipse.ui plug-in and the new
+    org.eclipse.ui.ide plug-in. If your plug-in depends on anything in
+    org.eclipse.ui.part package, your plug-in may require the org.eclipse.ui.ide
+    plug-in in addition to the org.eclipse.ui plug-in. (The org.eclipse.ui.part
+    API package was exported by the org.eclipse.ui.workbench plug-in, and
+    re-exported by org.eclipse.ui plug-in. So even if your plug-in does not
+    directly appear to depend on the org.eclipse.ui.workbench plug-in, it may
+    get it indirectly by depending on the org.eclipse.ui plug-in.)
+    <ul>
+      <li>org.eclipse.ui.part API classes and interfaces in org.eclipse.ui
+        plug-in. (These ones did not move.)
+        <ul>
+          <li>CellEditorActionHandler</li>
+          <li>CoolItemGroupMarker</li>
+          <li>DrillDownAdapter</li>
+          <li>DrillDownComposite</li>
+          <li>DrillFrame</li>
+          <li>DrillStack</li>
+          <li>EditorActionBarContributor</li>
+          <li>EditorInputTransfer</li>
+          <li>EditorPart</li>
+          <li>IContributedContentsView</li>
+          <li>IDropActionDelegate</li>
+          <li>IPage</li>
+          <li>IPageBookViewPage</li>
+          <li>IPageSite</li>
+          <li>ISetSelectionTarget</li>
+          <li>IShowInSource</li>
+          <li>IShowInTarget</li>
+          <li>IShowInTargetList</li>
+          <li>MessagePage</li>
+          <li>MultiEditor</li>
+          <li>MultiEditorInput</li>
+          <li>MultiPageEditor</li>
+          <li>MultiPageEditorActionBarContributor</li>
+          <li>MultiPageEditorPart</li>
+          <li>MultiPageEditorSite</li>
+          <li>MultiPageSelectionProvider</li>
+          <li>Page</li>
+          <li>PageBook</li>
+          <li>PageBookView</li>
+          <li>PageSite</li>
+          <li>PluginDropAdapter</li>
+          <li>PluginTransfer</li>
+          <li>PluginTransferData</li>
+          <li>ShowInContext</li>
+          <li>ViewPart</li>
+          <li>WorkbenchPart</li>
+        </ul>
+      </li>
+      <li>org.eclipse.ui.part API classes and interfaces in org.eclipse.ui.ide
+        plug-in. All these dialogs are IDE-specific (most deal with workspace
+        resources). These classes did move.
+        <ul>
+          <li>FileEditorInput</li>
+          <li>FileEditorInputFactory</li>
+          <li>MarkerTransfer</li>
+          <li>ResourceTransfer</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h2><a name="API classes and interface that have been changed">API classes and
+interface that have changed</a></h2>
+<h3>Package org.eclipse.ui</h3>
+<h4>IWorkbench (package org.eclipse.ui)</h4>
+<ul>
+  <li>The following method was removed from this interface because it was
+    resource-specific:
+    <ul>
+      <li>public IMarkerHelpRegistry getMarkerHelpRegistry()</li>
+    </ul>
+  </li>
+  <li>Clients should instead call the public static method
+    IDE.getMarkerHelpRegistry() declared in the org.eclipse.ui.ide package of
+    the org.eclipse.ui.ide plug-in.</li>
+</ul>
+<h4>IWorkbenchPage (package org.eclipse.ui)</h4>
+<ul>
+  <li>The following methods were removed from this interface because they were
+    resource-specific:
+    <ul>
+      <li>public IEditorPart openEditor(IFile input)</li>
+      <li>public IEditorPart openEditor(IFile input, String editorID)</li>
+      <li>public IEditorPart openEditor(IFile input, String editorID, boolean
+        activate)</li>
+      <li>public IEditorPart openEditor(IMarker marker)</li>
+      <li>public IEditorPart openEditor(IMarker marker, boolean activate)</li>
+      <li>public void openSystemEditor(IFile input)</li>
+    </ul>
+  <li>Clients of openEditor(IFile, ...) methods should instead create an
+    FileEditorInput with the IFile and then call the most appropriate
+    openEditor(IEditorInput, …) method.</li>
+  <li>Clients of openEditor(IMarker, ...) methods should instead do the
+    following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+  <li>Clients of openSystemEditor(IFile) method should instead do the following
+    [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+</ul>
+<h4>IEditorPart (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following method was removed from this interface because it was
+    resource-specific:
+    <ul>
+      <li>public void gotoMarker(IMarker marker)</li>
+    </ul>
+  </li>
+  <li>Clients that called this method should instead do the following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+</ul>
+<h4>IEditorRegistry (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following methods were removed from this interface because they were
+    resource-specific:
+    <ul>
+      <li>public IEditorDescriptor getDefaultEditor(IFile file)</li>
+      <li>public ImageDescriptor getImageDescriptor(IFile file)</li>
+      <li>public void setDefaultEditor(IFile file, String editorId)</li>
+    </ul>
+  </li>
+  <li>Clients should instead do the following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+</ul>
+<h4>IEditorLauncher (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following methods were removed from this interface because they were
+    resource-specific:
+    <ul>
+      <li>public void open(IFile file)</li>
+    </ul>
+  </li>
+  <li>Clients should instead do the following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>
+    - clients will use open(IPath) method]</li>
+</ul>
+<h4>ISharedImages (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following fields [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    were removed (deprecated) from this interface because they were
+    IDE-specific:
+    <ul>
+      <li>String IMG_OBJ_FILE</li>
+      <li>String IMG_OBJ_FOLDER</li>
+      <li>String IMG_OBJ_PROJECT</li>
+      <li>String IMG_OBJ_PROJECT_CLOSED</li>
+      <li>String IMG_OPEN_MARKER</li>
+      <li>String IMG_OBJS_ERROR_TSK</li>
+      <li>String IMG_OBJS_WARN_TSK</li>
+      <li>String IMG_OBJS_INFO_TSK</li>
+      <li>String IMG_OBJS_TASK_TSK</li>
+      <li>String IMG_OBJS_BKMRK_TSK</li>
+      <li>String IMG_TOOL_NEW_WIZARD</li>
+      <li>String IMG_TOOL_NEW_WIZARD_DISABLED</li>
+      <li>String IMG_TOOL_NEW_WIZARD_HOVER</li>
+    </ul>
+  </li>
+  <li>Clients should instead use the fields of the same names declared on [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    IIDESharedImages in the org.eclipse.ui.ide package of the org.eclipse.ui.ide
+    plug-in.</li>
+</ul>
+<h4>IWorkbenchActionConstants (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following fields [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    were removed (deprecated) from this interface because they were
+    IDE-specific:
+    <ul>
+      <li>String ABOUT</li>
+      <li>String ADD_EXT</li>
+      <li>String ADD_TASK</li>
+      <li>String BACK</li>
+      <li>String BOOKMARK</li>
+      <li>String BUILD</li>
+      <li>String BUILD_EXT</li>
+      <li>String BUILD_GROUP</li>
+      <li>String BUILD_PROJECT</li>
+      <li>String CLOSE</li>
+      <li>String CLOSE_ALL</li>
+      <li>String CLOSE_EXT</li>
+      <li>String CLOSE_PROJECT</li>
+      <li>String COPY</li>
+      <li>String CUT</li>
+      <li>String CUT_EXT</li>
+      <li>String DELETE</li>
+      <li>String EDIT_END</li>
+      <li>String EDIT_START</li>
+      <li>String EXPORT</li>
+      <li>String FILE_END</li>
+      <li>String FILE_START</li>
+      <li>String FIND</li>
+      <li>String FIND_EXT</li>
+      <li>String FORWARD</li>
+      <li>String[] GLOBAL_ACTIONS</li>
+      <li>String GO_INTO</li>
+      <li>String GO_TO</li>
+      <li>String GO_TO_RESOURCE</li>
+      <li>String GROUP_ADD</li>
+      <li>String GROUP_EDITOR</li>
+      <li>String GROUP_FILE</li>
+      <li>String GROUP_MANAGING</li>
+      <li>String GROUP_REORGANIZE</li>
+      <li>String GROUP_SHOW_IN</li>
+      <li>String HELP_END</li>
+      <li>String HELP_START</li>
+      <li>String HISTORY_GROUP</li>
+      <li>String IMPORT</li>
+      <li>String IMPORT_EXT</li>
+      <li>String LAUNCH_EXT</li>
+      <li>String M_EDIT</li>
+      <li>String M_FILE</li>
+      <li>String M_HELP</li>
+      <li>String M_LAUNCH</li>
+      <li>String M_NAVIGATE</li>
+      <li>String M_PROJECT</li>
+      <li>String M_VIEW</li>
+      <li>String M_WINDOW</li>
+      <li>String M_WORKBENCH</li>
+      <li>String MB_ADDITIONS</li>
+      <li>String MENU_PREFIX</li>
+      <li>String MOVE</li>
+      <li>String MRU</li>
+      <li>String NAV_END</li>
+      <li>String NAV_START</li>
+      <li>String NEW</li>
+      <li>String NEW_EXT</li>
+      <li>String NEW_GROUP</li>
+      <li>String NEXT</li>
+      <li>String OPEN_EXT</li>
+      <li>String OPEN_PROJECT</li>
+      <li>String PASTE</li>
+      <li>String PIN_GROUP</li>
+      <li>String PREVIOUS</li>
+      <li>String PRINT</li>
+      <li>String PRINT_EXT</li>
+      <li>String PROJ_END</li>
+      <li>String PROJ_START</li>
+      <li>String PROPERTIES</li>
+      <li>String QUIT</li>
+      <li>String REBUILD_ALL</li>
+      <li>String REBUILD_PROJECT</li>
+      <li>String REDO</li>
+      <li>String REFRESH</li>
+      <li>String RENAME</li>
+      <li>String REVERT</li>
+      <li>String SAVE</li>
+      <li>String SAVE_ALL</li>
+      <li>String SAVE_AS</li>
+      <li>String SAVE_EXT</li>
+      <li>String SAVE_GROUP</li>
+      <li>String SELECT_ALL</li>
+      <li>String SEP</li>
+      <li>String SHOW_EXT</li>
+      <li>String SHOW_IN</li>
+      <li>String SYNC_EDITOR</li>
+      <li>String TOOLBAR_FILE</li>
+      <li>String TOOLBAR_NAVIGATE</li>
+      <li>String UNDO</li>
+      <li>String UNDO_EXT</li>
+      <li>String UP</li>
+      <li>String VIEW_EXT</li>
+      <li>String WB_END</li>
+      <li>String WB_START</li>
+      <li>String WINDOW_EXT</li>
+    </ul>
+  </li>
+  <li>Clients should instead use the fields of the same names declared on [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    IIDEActionConstants in the org.eclipse.ui.ide package of the
+    org.eclipse.ui.ide plug-in.</li>
+</ul>
+<h4>IWorkbenchPreferenceConstants (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following fields [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    were removed (deprecated) from this interface because they were
+    IDE-specific:
+    <ul>
+      <li>String ALTERNATE_OPEN_NEW_PERSPECTIVE</li>
+      <li>String DEFAULT_PERSPECTIVE_ID</li>
+      <li>String LINK_NAVIGATOR_TO_EDITOR</li>
+      <li>String NO_NEW_PERSPECTIVE</li>
+      <li>String OPEN_NEW_PERSPECTIVE</li>
+      <li>String OPEN_PERSPECTIVE_PAGE</li>
+      <li>String OPEN_PERSPECTIVE_REPLACE</li>
+      <li>String OPEN_PERSPECTIVE_WINDOW</li>
+      <li>String PROJECT_OPEN_NEW_PERSPECTIVE</li>
+      <li>String SHIFT_OPEN_NEW_PERSPECTIVE</li>
+    </ul>
+  </li>
+  <li>Clients should instead use the fields of the same names declared on [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    IIDEPreferenceConstants in the org.eclipse.ui.ide package of the
+    org.eclipse.ui.ide plug-in.</li>
+</ul>
+<h3>Package org.eclipse.ui.actions</h3>
+<h4>SelectionListenerAction (package org.eclipse.ui.actions)</h4>
+<ul>
+  <li>The following resource-specific protected methods were removed from this
+    class, and now appear in a new IDE-specific subclass:
+    <ul>
+      <li>protected List&lt;Object&gt; getSelectedNonResources()</li>
+      <li>protected List&lt;IResource&gt; getSelectedResources()</li>
+      <li>protected boolean resourceIsType(IResource resource, int resourceMask)</li>
+      <li>protected boolean selectionIsOfType(int resourceMask)</li>
+    </ul>
+  </li>
+  <li>Clients that implement or call any of these these methods should subclass
+    [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    ResourceSelectionListenerAction instead (in the org.eclipse.ui.actions
+    package extension in the new org.eclipse.ui.ide plug-in).</li>
+</ul>
+<h3>Package org.eclipse.ui.model</h3>
+<h4>WorkbenchContentProvider (package org.eclipse.ui.model)</h4>
+<ul>
+  <li>This API class implements IResourceChangeListener. This superinterface and
+    the following resource-specific methods were removed from this class:
+    <ul>
+      <li>protected void processDelta(IResourceDelta delta)</li>
+      <li>public void resourceChanged(final IResourceChangeEvent event)</li>
+    </ul>
+  </li>
+  <li>Clients should listen for resource changes themselves and update the
+    viewer. Or they should use [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>]
+    IDEWorkbenchContentProvider instead (in the org.eclipse.ui.ide package in
+    the new org.eclipse.ui.ide plug-in).</li>
+</ul>
+<h3>Package org.eclipse.ui.part</h3>
+<h4>EditorPart (package org.eclipse.ui.part)</h4>
+<ul>
+  <li>The following IEditorPart method was removed from this class because it
+    was resource-specific:
+    <ul>
+      <li>public void gotoMarker(IMarker marker)</li>
+    </ul>
+  </li>
+  <li>Clients that called this method should instead do the following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+</ul>
+<h4>MultiEditor (package org.eclipse.ui.part)</h4>
+<ul>
+  <li>The following IEditorPart method was removed from this class because it
+    was resource-specific:
+    <ul>
+      <li>public void gotoMarker(IMarker marker)</li>
+    </ul>
+  </li>
+  <li>Clients that called this method should instead do the following [<span style="BACKGROUND-COLOR: #ffff00">TBD</span>].</li>
+</ul>
 
 </body>
 
