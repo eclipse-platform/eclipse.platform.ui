@@ -418,8 +418,8 @@ private void makeActions() {
 	pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
 	partService.addPartListener(pasteAction);
 
-	printAction = new RetargetAction(IWorkbenchActionConstants.PRINT,"Print"); //$NON-NLS-1$
-	printAction.setToolTipText("Print contents of active editor"); //$NON-NLS-1$
+	printAction = new RetargetAction(IWorkbenchActionConstants.PRINT,WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
+	printAction.setToolTipText(WorkbenchMessages.getString("Workbench.printToolTip")); //$NON-NLS-1$
 	printAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
 	printAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
 	printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
