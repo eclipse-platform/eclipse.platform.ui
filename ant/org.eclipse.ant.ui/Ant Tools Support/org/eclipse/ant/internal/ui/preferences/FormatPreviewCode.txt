@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="create-buildfile" default="build">
+<!-- - - - - - - - - - - - - - -->
+<!-- target: build             -->
+<!-- - - - - - - - - - - - - - -->
+<target name="build" description="Display a valid buildfile which 
+greets the user with the value of ${favoriteGreeting}.">
+<echo>Example buildfile that echos</echo>
+<property name="favoriteGreeting" value="buenos dias"/>
+<xml-greeting greeting-text="${favoriteGreeting}"/>
+</target>
+
+<!-- - - - - - - - - - - - - - -->
+<!-- macrodef: xml-greeting    -->
+<!-- - - - - - - - - - - - - - -->
+<macrodef name="xml-greeting" description="This macrodef echos a hello 
+world to stdout.">
+<attribute name="greeting-text" default="hello world" />
+<sequential>
+<echo message= "@{greeting-text}"> 
+</echo>
+</sequential>
+</macrodef>
+</project>

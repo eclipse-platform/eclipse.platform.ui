@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -723,27 +719,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private HighlightingColorListItem getHighlightingColorListItem() {
 		IStructuredSelection selection= (IStructuredSelection) fHighlightingColorListViewer.getSelection();
 		return (HighlightingColorListItem) selection.getFirstElement();
-	}
-	
-	private String loadPreviewContentFromFile(String filename) {
-		String line;
-		String separator= System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buffer= new StringBuffer(512);
-		BufferedReader reader= null;
-		try {
-			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-			while ((line= reader.readLine()) != null) {
-				buffer.append(line);
-				buffer.append(separator);
-			}
-		} catch (IOException io) {
-			AntUIPlugin.log(io);
-		} finally {
-			if (reader != null) {
-				try { reader.close(); } catch (IOException e) {}
-			}
-		}
-		return buffer.toString();
 	}
 	
 	/* (non-Javadoc)

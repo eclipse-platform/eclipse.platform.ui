@@ -12,6 +12,8 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -29,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
- * Handles Java editor font changes for Java source preview viewers.
+ * Handles changes for Ant preview viewers.
  * 
  * @since 3.0
  */
@@ -48,7 +50,7 @@ class AntPreviewerUpdater {
 	 * @param configuration the configuration
 	 * @param preferenceStore the preference store
 	 */
-	AntPreviewerUpdater(final SourceViewer viewer, final AbstractAntSourceViewerConfiguration configuration, final IPreferenceStore preferenceStore) {
+	public AntPreviewerUpdater(final SourceViewer viewer, final AbstractAntSourceViewerConfiguration configuration, final IPreferenceStore preferenceStore) {
 		
 		initializeViewerColors(viewer, preferenceStore);
 		
@@ -69,7 +71,7 @@ class AntPreviewerUpdater {
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
 				
-					String property= event.getProperty();
+				String property= event.getProperty();
 					
 				if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property) || AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
 						AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property) ||	AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property) ||
@@ -77,12 +79,28 @@ class AntPreviewerUpdater {
 						AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND.equals(property) ||	AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT.equals(property))
 					{
 						initializeViewerColors(viewer, preferenceStore);
-					} 
+				} 
 				
 				if (configuration.affectsTextPresentation(event)) {
 					configuration.adaptToPreferenceChange(event);
 					viewer.invalidateTextPresentation();
 				}
+				
+				if (FormattingPreferences.affectsFormatting(event)) {
+					format(viewer, preferenceStore);
+				}
+			}
+
+			/**
+			 * @param viewer
+			 * @param preferenceStore
+			 */
+			private void format(final SourceViewer sourceViewer, final IPreferenceStore store) {
+				String contents= sourceViewer.getDocument().get();
+				FormattingPreferences prefs= new FormattingPreferences();
+				prefs.setPreferenceStore(store);
+				contents= XmlFormatter.format(contents, prefs);
+				viewer.getDocument().set(contents);
 			}
 		};
 		viewer.getTextWidget().addDisposeListener(new DisposeListener() {
