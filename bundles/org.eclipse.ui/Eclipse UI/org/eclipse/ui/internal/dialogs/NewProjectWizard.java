@@ -145,6 +145,20 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 		return WorkbenchMessages.getString("WizardProjectReviewPage.description");
 	}
 		
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected String getFinishStepLabel(WizardStep[] steps) {
+		// The first step is the project creation which has no wizard
+		// pages, so ignore it. If there is only one step after that,
+		// then it needs the "Finish" label. So the "Finish Step" label
+		// is only needed if more than 2 steps in the list.
+		if (steps.length > 2)
+			return super.getFinishStepLabel(steps);
+		else
+			return null;
+	}
+	
 	/**
 	 * Returns the newly created project.
 	 *

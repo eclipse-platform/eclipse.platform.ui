@@ -110,11 +110,15 @@ public class MultiStepWizardDialog extends WizardDialog {
 		if (button == null)
 			return;
 
-		if (label == null)
-			button.setText(IDialogConstants.FINISH_LABEL);
-		else
+		if (label == null) {
+			if (!button.getText().equals(IDialogConstants.FINISH_LABEL)) {
+				button.setText(IDialogConstants.FINISH_LABEL);
+				((Composite)button.getParent()).layout(true);
+			}
+		} else {
 			button.setText(label);
-		((Composite)button.getParent()).layout(true);
+			((Composite)button.getParent()).layout(true);
+		}
 	}
 	
 	/**

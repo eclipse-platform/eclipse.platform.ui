@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.MultiStepConfigureWizardPage.WizardStepContainer;
 
 /**
@@ -106,6 +107,22 @@ public abstract class MultiStepWizard extends Wizard {
 	 * page.
 	 */
 	protected abstract String getReviewPageTitle();
+
+	/**
+	 * Returns the label used on the finish button to
+	 * to indicate finishing a step. Can be <code>null</code>
+	 * if no special label is required.
+	 * <p>
+	 * The default implementation is to return the translated
+	 * label "Finish Step".
+	 * </p><p>
+	 * On the last step, the finish button label is changed to
+	 * be "Finish" and will no be changed.
+	 * </p>
+	 */
+	protected String getFinishStepLabel(WizardStep[] steps) {
+		return WorkbenchMessages.getString("MultiStepWizard.finishLabel"); //$NON-NLS-1$
+	}
 	
 	/* (non-Javadoc)
 	 * Method declared on IWizard.

@@ -156,6 +156,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		WizardStep[] steps = stepGroup.getSteps();
+		MultiStepWizard stepWizard = wizardDialog.getMultiStepWizard();
+		wizardDialog.setFinishLabel(stepWizard.getFinishStepLabel(steps));
 		
 		getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -354,11 +357,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			WizardStep[] steps = stepGroup.getSteps();
 			while (stepIndex < steps.length) {
 				// adjust the finish button label
-				if (stepIndex == 0 && steps.length > 1)
-					wizardDialog.setFinishLabel(WorkbenchMessages.getString("MultiStepConfigureWizardPage.finishLabel")); //$NON-NLS-1$
-				if (stepIndex == (steps.length - 1) && steps.length > 1)
+				if (stepIndex == (steps.length - 1))
 					wizardDialog.setFinishLabel(null);
-					
+
 				final WizardStep step = steps[stepIndex];
 				stepGroup.setCurrentStep(step);
 
