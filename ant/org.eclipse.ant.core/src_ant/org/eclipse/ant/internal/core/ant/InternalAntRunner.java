@@ -262,23 +262,23 @@ public class InternalAntRunner {
 		
 		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
 			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
-			try {
-				Class taskClass = Class.forName(task.getClassName());
-				if (isVersionCompatible("1.5")) { //$NON-NLS-1$
-					try {
-						project.checkTaskClass(taskClass);
-					} catch (BuildException e) {
-						IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Error_setting_Ant_task"), new String[]{task.getTaskName()}), e); //$NON-NLS-1$
-						AntCorePlugin.getPlugin().getLog().log(status);
-						continue;
+				try {
+					Class taskClass = Class.forName(task.getClassName());
+					if (isVersionCompatible("1.5")) { //$NON-NLS-1$
+						try {
+							project.checkTaskClass(taskClass);
+						} catch (BuildException e) {
+							IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Error_setting_Ant_task"), new String[]{task.getTaskName()}), e); //$NON-NLS-1$
+							AntCorePlugin.getPlugin().getLog().log(status);
+							continue;
+						}
 					}
+					project.addTaskDefinition(task.getTaskName(), taskClass);
+				} catch (ClassNotFoundException e) {
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getClassName(), task.getTaskName()}), e); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
 				}
-				project.addTaskDefinition(task.getTaskName(), taskClass);
-			} catch (ClassNotFoundException e) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getClassName(), task.getTaskName()}), e); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
 			}
-		}
 	}
 
 	private void setTypes(Project project) {
@@ -286,13 +286,13 @@ public class InternalAntRunner {
 		
 		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 			Type type = (Type) iterator.next();
-			try {
-				Class typeClass = Class.forName(type.getClassName());
-				project.addDataTypeDefinition(type.getTypeName(), typeClass);
-			} catch (ClassNotFoundException e) {
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getClassName(), type.getTypeName()}), e); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-			}
+				try {
+					Class typeClass = Class.forName(type.getClassName());
+					project.addDataTypeDefinition(type.getTypeName(), typeClass);
+				} catch (ClassNotFoundException e) {
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getClassName(), type.getTypeName()}), e); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
+				}
 		}
 	}
 
@@ -587,7 +587,7 @@ public class InternalAntRunner {
 				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
 			} else {
 				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-					getCurrentProject().setDefaultInputStream(System.in);
+					getCurrentProject().setDefaultInputStream(originalIn);
 				}
 			}
 			
