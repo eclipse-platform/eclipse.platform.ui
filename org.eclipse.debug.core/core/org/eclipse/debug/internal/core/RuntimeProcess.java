@@ -141,6 +141,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 					return;
 				} catch (IllegalThreadStateException ie) {
 				}
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+				}
 			}
 			// clean-up
 			fMonitor.stopMonitoring();
