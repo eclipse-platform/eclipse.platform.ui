@@ -5,8 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -149,6 +148,20 @@ public class CoolBarContributionItem extends ContributionItem {
 			return true;
 		}
 		return false;
+	}
+	/**
+	 * Returns whether this contribution item isEmpty.  If no items
+	 * exist or only marker/separator items exist, this method will
+	 * answer true.
+	 */
+	public boolean isEmpty() {
+		IContributionItem[] items = toolBarManager.getItems();
+		for (int i=0; i<items.length; i++) {
+			IContributionItem item = items[i];
+			if (item.isSeparator() || item.isGroupMarker()) continue;
+			return false;
+		}
+		return true;
 	}
 	/**
 	 */

@@ -1045,7 +1045,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				ArrayList cbItemsToRemove = new ArrayList(items.length);
 				for (int i = 0; i < items.length; i++) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
-					if (cbItem.getItems().length == 0) {
+					if (cbItem.isEmpty()) {
 						CoolItem coolItem = findCoolItem(cbItem);
 						if (!useRedraw && coolItem != null) {
 							int visualIndex = coolBar.indexOf(coolItem);
