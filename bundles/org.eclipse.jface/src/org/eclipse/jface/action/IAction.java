@@ -192,7 +192,7 @@ public IMenuCreator getMenuCreator();
  * Return this action's style.
  *
  * @return one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
- * <code>AS_RADIO_BUTTON</code> and <code>AS_DROP_DOWN</code>.
+ * <code>AS_RADIO_BUTTON</code> and <code>AS_DROP_DOWN_MENU</code>.
  */
 public int getStyle();
 /**
@@ -377,10 +377,8 @@ public void setId(String id);
  */
 public void setImageDescriptor(ImageDescriptor newImage);
 /**
- * Sets the menu creator for this action.
- * <p>
- * Note that if this method is called, it overrides the check status.
- * </p>
+ * Sets the menu creator for this action. Applicable for style
+ * <code>AS_DROP_DOWN_MENU</code>.
  *
  * @param creator the menu creator, or <code>null</code> if none
  */
