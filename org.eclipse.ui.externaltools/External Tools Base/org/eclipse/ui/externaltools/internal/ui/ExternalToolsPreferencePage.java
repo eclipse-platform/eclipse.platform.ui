@@ -53,7 +53,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		
 		Group group= new Group(composite, SWT.NONE);
 		group.setText("Project Builders");
-		data= new GridData(GridData.GRAB_HORIZONTAL);
+		data= new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
 		layout= new GridLayout();
 		group.setLayout(layout);
