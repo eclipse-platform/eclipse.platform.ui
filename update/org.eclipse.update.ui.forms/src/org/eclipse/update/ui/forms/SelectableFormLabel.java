@@ -64,7 +64,7 @@ public class SelectableFormLabel extends FormLabel {
 	   		GC gc = e.gc;
 	   		Point size = getSize();
 	   		gc.setForeground(getForeground());
-	   		gc.drawFocus(0, 0, size.x-1, size.y-1);
+	   		gc.drawFocus(0, 0, size.x, size.y);
 		}
 	}
 
