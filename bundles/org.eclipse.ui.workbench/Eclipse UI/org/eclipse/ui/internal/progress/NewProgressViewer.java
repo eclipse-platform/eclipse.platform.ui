@@ -82,6 +82,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Cursor normalCursor;
 	private Font defaultFont= JFaceResources.getDefaultFont();
 	private HashMap map= new HashMap();
+    private IJobProgressManagerListener progressManagerListener;
 
 	
 	class ListLayout extends Layout {
@@ -493,6 +494,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (keepItem) {
 				boolean changed= false;
 				if (progressBar != null && !progressBar.isDisposed()) {
+				    progressBar.setSelection(100);
 					progressBar.dispose();
 					changed= true;
 				}
@@ -672,18 +674,23 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    	setImage(checkIcon());
 
 			// name
-		    String name= jobTreeElement.getDisplayString();
-		    int ll= name.length();
-		    if (ll > 0) {
-		        if (name.charAt(0) == '(') {
-		            int pos= name.indexOf("%) ");
-		            if (pos >= 0)
-		                name= name.substring(pos+3);
-		        } else if (name.charAt(ll-1) == ')') {
-		            int pos= name.lastIndexOf(": (");
-		            if (pos >= 0)
-		                name= name.substring(0, pos);
-		        }
+		    String name;
+		    if (jobTerminated) {
+		        name= "Terminated: " + jobTreeElement.getCondensedDisplayString();
+		    } else {
+			    name= jobTreeElement.getDisplayString();
+			    int ll= name.length();
+			    if (ll > 0) {
+			        if (name.charAt(0) == '(') {
+			            int pos= name.indexOf("%) ");
+			            if (pos >= 0)
+			                name= name.substring(pos+3);
+			        } else if (name.charAt(ll-1) == ')') {
+			            int pos= name.lastIndexOf(": (");
+			            if (pos >= 0)
+			                name= name.substring(0, pos);
+			        }
+			    }
 		    }
 		    nameItem.setText(shortenText(nameItem, name));
 
@@ -762,6 +769,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
         Tree c = getTree();
         if (c instanceof Tree)
             c.dispose();
+        
+	    progressManagerListener= new IJobProgressManagerListener() {
+            public void addJob(JobInfo info) { }
+            public void addGroup(GroupInfo info) { }
+            public void refreshJobInfo(JobInfo info) { }
+            public void refreshGroup(GroupInfo info) { }
+            public void refreshAll() { }
+            public void removeJob(JobInfo info) {
+                forcedRemove(info);
+            }
+            public void removeGroup(GroupInfo group) {
+                forcedRemove(group);
+            }
+            public boolean showsDebug() {
+                return false;
+            }
+	    };
+	    ProgressManager.getInstance().addListener(progressManagerListener);	
        
         FinishedJobs.getInstance().addListener(this);
 		
@@ -800,6 +825,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     protected void handleDispose(DisposeEvent event) {
         super.handleDispose(event);
         FinishedJobs.getInstance().removeListener(this);
+	    ProgressManager.getInstance().removeListener(progressManagerListener);	
     }
  
     public Control getControl() {
@@ -1010,21 +1036,38 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			return ((ITreeContentProvider)provider).getElements(parent);
 		return new Object[0];
 	}
+	
+	private void forcedRemove(JobTreeElement jte) {
+		final JobTreeItem ji= findJobItem(jte, false);
+		if (ji != null) {
+	        ji.getDisplay().asyncExec(new Runnable() {
+	            public void run() {
+	                System.err.println("  forced remove");
+	                if (ji.remove())
+	                    relayout(true, true);
+	            }
+	        });
+		}	    
+	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#added(org.eclipse.ui.internal.progress.JobInfo)
+     * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#finished(org.eclipse.ui.internal.progress.JobInfo)
      */
-    public void added(JobInfo info) {
-    	// we should not have to do anything here
+    public void finished(JobInfo info) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobInfo)
      */
     public void removed(JobInfo info) {
-		JobTreeItem ji= findJobItem(info, false);
-		if (ji != null)
-			ji.kill(true, false);
+		final JobTreeItem ji= findJobItem(info, false);
+		if (ji != null) {
+	        ji.getDisplay().asyncExec(new Runnable() {
+	            public void run() {
+	                ji.kill(true, false);
+	            }
+	        });
+		}
     }
 
 	/* (non-Javadoc)

@@ -9,7 +9,7 @@ import org.eclipse.jface.util.ListenerList;
 class FinishedJobs {
     
     static interface KeptJobsListener {
-        void added(JobInfo info);
+        void finished(JobInfo info);
         void removed(JobInfo info);
         void infoVisited();
     }
@@ -79,7 +79,7 @@ class FinishedJobs {
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
 			    KeptJobsListener jv= (KeptJobsListener) l[i];
-			    jv.added(info);
+			    jv.finished(info);
 			}
         }
     }

@@ -158,7 +158,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
     	infoVisited();
     }
     
-    public void added(JobInfo info) {
+    public void finished(JobInfo info) {
         final Job job= info.getJob();
         if (job != null) {
 		    final Display display= Display.getDefault();
