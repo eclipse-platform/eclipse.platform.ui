@@ -20,10 +20,6 @@ public class RegistryResolver {
 	private boolean trimPlugins = true;
 	private boolean crossLink = true;
 
-	public static final int MATCH_EXACT = 0;
-	public static final int MATCH_COMPATIBLE = 1;
-	public static final int MATCH_LATEST = 2;
-
 	private boolean DEBUG_RESOLVE = false;
 	private static final String OPTION_DEBUG_RESOLVE = "org.eclipse.core.runtime/registry/debug/resolve";
 
@@ -36,7 +32,7 @@ public class RegistryResolver {
 		private PluginDescriptorModel parent;
 		private PluginPrerequisiteModel prq;
 		private PluginVersionIdentifier ver;
-		private int type = MATCH_LATEST;
+		private byte type = PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED;
 		private ConstraintsEntry cEntry = null;
 
 		private Constraint(PluginDescriptorModel parent, PluginPrerequisiteModel prq) {
@@ -44,13 +40,10 @@ public class RegistryResolver {
 			this.prq = prq;
 			if (prq != null) {
 				ver = RegistryResolver.this.getVersionIdentifier(prq);
-				if (ver == null)
-					type = MATCH_LATEST;
-				else
-					if (prq.getMatch())
-						type = MATCH_EXACT;
-					else
-						type = MATCH_COMPATIBLE;
+				type = prq.getMatch();
+				if ((ver != null) &&
+				    (type == PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED))
+					type = PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE;
 			}
 		}
 
@@ -83,7 +76,23 @@ public class RegistryResolver {
 				return "(null)";
 			String s = parent.toString() + "->" + prq.getPlugin();
 			String v = prq.getVersion();
-			s += v == null ? "(any)" : (prq.getMatch() ? "(" + v + ",exact)" : "(" + v + ",compatible)");
+			switch (prq.getMatch()) {
+				case PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED:
+					s += "(any)";
+					break;
+				case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT:
+					s += IModel.PLUGIN_REQUIRES_MATCH_PERFECT;
+					break;
+				case PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT:
+					s += IModel.PLUGIN_REQUIRES_MATCH_EQUIVALENT;
+					break;
+				case PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE:
+					s += IModel.PLUGIN_REQUIRES_MATCH_COMPATIBLE;
+					break;
+				case PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL:
+					s += IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL;
+					break;
+			}
 			return s;
 		}
 	}
@@ -209,19 +218,30 @@ public class RegistryResolver {
 				
 				// constraintList is all the Constraint entries for this ConstraintsEntry.
 				Constraint c = (Constraint) list.next();
-				if (c.getMatchType() == MATCH_LATEST)
+				if (c.getMatchType() == PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED)
 					continue;
 				for (Iterator list2 = parent.versions().iterator(); list2.hasNext();) {
 					PluginDescriptorModel pd = (PluginDescriptorModel) list2.next();
 					if (!pd.getEnabled())
 						// ignore disabled plugins
 						continue;
-					if (c.getMatchType() == MATCH_EXACT) {
-						if (!getVersionIdentifier(pd).isEquivalentTo(c.getVersionIdentifier()))
-							constrained.remove(pd);
-					} else {
-						if (!getVersionIdentifier(pd).isCompatibleWith(c.getVersionIdentifier()))
-							constrained.remove(pd);
+					switch (c.getMatchType()) {
+						case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT:
+							if (!getVersionIdentifier(pd).isPerfect(c.getVersionIdentifier()))
+								constrained.remove(pd);
+							break;
+						case PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT:
+							if (!getVersionIdentifier(pd).isEquivalentTo(c.getVersionIdentifier()))
+								constrained.remove(pd);
+							break;
+						case PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE:
+							if (!getVersionIdentifier(pd).isCompatibleWith(c.getVersionIdentifier()))
+								constrained.remove(pd);
+							break;
+						case PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL:
+							if (!getVersionIdentifier(pd).isGreaterOrEqualTo(c.getVersionIdentifier()))
+								constrained.remove(pd);
+							break;
 					}
 				}
 			}
@@ -732,7 +752,15 @@ private void resolve() {
 	// resolve root descriptors
 	List roots = resolveRootDescriptors();
 	if (roots.size() == 0) {
-		// no roots ... quit
+		// No roots, likely due to a circular dependency
+		// (or multiple circular dependencies).  Disable
+		// all plugins before returning.  Remember to trim
+		// the registry if needed.
+		PluginDescriptorModel[] plugins = reg.getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			plugins[i].setEnabled (false);
+		}
+		resolvePluginRegistry();
 		idmap = null;
 		reg = null;
 		error(Policy.bind("plugin.unableToResolve"));
