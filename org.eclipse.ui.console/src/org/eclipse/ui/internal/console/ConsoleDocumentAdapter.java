@@ -75,10 +75,22 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                     regions.add(new Region(offset, 0));
                 } else {
                     while (length > 0) {
-                        int wrappedLength = consoleWidth > 0 ? Math.min(consoleWidth, length) : length;
-                        regions.add(new Region(offset, wrappedLength));
-                        offset += wrappedLength;
-                        length -= wrappedLength;
+                        String lineDelimiter = document.getLineDelimiter(i);
+                        int lineDelimiterLength = 0;
+                        if (lineDelimiter != null) {
+                            lineDelimiterLength = lineDelimiter.length(); 
+                            length -= lineDelimiterLength;
+                        }
+
+                        int wrappedLength = length;
+                        if (consoleWidth > 0 && consoleWidth < length) {
+                            wrappedLength = consoleWidth;
+                            regions.add(new Region(offset, wrappedLength));
+                        } else {
+                            regions.add(new Region(offset, wrappedLength+lineDelimiterLength));
+                        }
+                        offset += (wrappedLength+lineDelimiterLength);
+                        length -= (wrappedLength+lineDelimiterLength);
                     }
                 }
             }
