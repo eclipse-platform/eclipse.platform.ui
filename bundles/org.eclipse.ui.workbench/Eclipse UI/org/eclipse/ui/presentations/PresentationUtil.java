@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.Listener;
  * @since 3.0
  */
 public class PresentationUtil {
-	private static Control dragControl;
 	private static Point anchor;
 	private final static int HYSTERESIS = 10;
 	private final static String LISTENER_ID = PresentationUtil.class.getName() + ".dragListener"; //$NON-NLS-1$
 	private static Event dragEvent;
+	private static Listener currentListener = null;
 	
 	private static Listener dragListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -67,8 +67,11 @@ public class PresentationUtil {
 
 	private static Listener mouseDownListener = new Listener() {
 		public void handleEvent(Event event) {
-			dragControl = (Control)event.widget;
-			anchor = getEventLoc(event);	
+			if (event.widget instanceof Control) {
+				Control dragControl = (Control)event.widget;
+				currentListener = (Listener)dragControl.getData(LISTENER_ID);
+				anchor = getEventLoc(event);	
+			}
 		}
 	};
 	
@@ -77,20 +80,17 @@ public class PresentationUtil {
 	}
 	
 	private static void handleMouseMove(Event e) {
-		if (dragControl != null && dragEvent != null && hasMovedEnough(e)) {
-			Control c = dragControl;
-			Listener l = (Listener)c.getData(LISTENER_ID);
+		if (currentListener != null && dragEvent != null && hasMovedEnough(e)) {
 			Event de = dragEvent;
+			Listener l = currentListener;
 			cancelDrag();
-			if (l != null) {
-				l.handleEvent(de);
-			}
+			l.handleEvent(de);
 		}
 	}	
 	
 	private static void cancelDrag() {
-		if (dragControl != null) {
-			dragControl = null;
+		if (currentListener != null) {
+			currentListener = null;
 		}
 		
 		dragEvent = null;
