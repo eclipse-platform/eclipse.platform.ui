@@ -104,7 +104,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * The range in which all highlight annotations can be found.
 	 * @since 3.0
 	 */
-	private Position fHighlightAnnotationRange= new Position(0);
+	private Position fHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
 
 	
 	/**
@@ -228,9 +228,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						}
 					}
 				}
-				if (!fHighlightedDecorations.isEmpty()) {
-					fHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
-					fHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
+				if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
+					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, highlightAnnotationRangeStart);
+					fHighlightAnnotationRange.length= Math.max(fHighlightAnnotationRange.length, highlightAnnotationRangeEnd - highlightAnnotationRangeStart);
 				}
 			}
 		}
@@ -504,7 +504,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return the corresponding widget region
 	 */
 	private IRegion getWidgetRange(Position p) {
-		if (p == null)
+		if (p == null || p.offset == Integer.MAX_VALUE)
 			return null;
 		
 		if (fSourceViewer instanceof ITextViewerExtension3) {
