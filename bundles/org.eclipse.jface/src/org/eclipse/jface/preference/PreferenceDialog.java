@@ -115,7 +115,6 @@ public class PreferenceDialog
 	 */
 	private PreferenceManager preferenceManager;
 
-
 	/**
 	 * The Composite in which a page is shown.
 	 */
@@ -336,11 +335,11 @@ public class PreferenceDialog
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				control[0] = PreferenceDialog.super.createContents(parent);
-		
+
 				// Add the first page
 				selectSavedItem();
 			}
-		});	
+		});
 		return control[0];
 	}
 	/* (non-Javadoc)
@@ -503,12 +502,10 @@ public class PreferenceDialog
 						Object data = event.item.getData();
 						if (data instanceof IPreferenceNode) {
 							if (!isCurrentPageValid()) {
-								showPageFlippingAbortDialog();
-								selectCurrentPageAgain();
+								handleError();
 							} else if (!showPage((IPreferenceNode) data)) {
 								// Page flipping wasn't successful
-								showPageFlippingAbortDialog();
-								selectCurrentPageAgain();
+								handleError();
 							} else {
 								// Everything went well
 								currentTreeItem = (TreeItem) event.item;
@@ -517,6 +514,12 @@ public class PreferenceDialog
 							// Keep focus in tree.  See bugs 2692, 2621, and 6775.
 							tree.setFocus();
 						}
+					}
+
+					private void handleError() {
+						showPageFlippingAbortDialog();
+						selectCurrentPageAgain();
+						clearSelectedNode();
 					}
 				});
 			}
@@ -656,6 +659,7 @@ public class PreferenceDialog
 	 * this dialog.
 	 */
 	protected void okPressed() {
+
 		// Notify all the pages and give them a chance to abort
 		Iterator nodes =
 			preferenceManager
@@ -703,8 +707,6 @@ public class PreferenceDialog
 					tree.setFocus();
 				}
 			}
-			//Now clear the selection in case of error
-			clearSelectedNode();
 		}
 	}
 
@@ -1073,7 +1075,7 @@ public class PreferenceDialog
 	 */
 	private void showPageFlippingAbortDialog() {
 		MessageDialog.openError(
-			getShell(),
+			getShell(), 
 			JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
 			JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
