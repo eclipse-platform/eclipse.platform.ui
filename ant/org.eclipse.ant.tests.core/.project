@@ -15,7 +15,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>Ant Test Support Lib Builder.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Ant Test Support Lib Builder.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>

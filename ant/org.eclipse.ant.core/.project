@@ -25,7 +25,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>Build Ant Support JAR.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Build Ant Support JAR.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
