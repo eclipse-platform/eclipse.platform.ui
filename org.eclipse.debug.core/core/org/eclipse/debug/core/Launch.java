@@ -79,6 +79,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 *
 	 * @param launcher the launcher that created this launch
 	 * @param mode the mode of this launch - run or debug
+	 * @param launchedElement the element that was launched
 	 * @param locator the source locator to use for this debug session, or
 	 * 	<code>null</code> if not supported
 	 * @param processes the processes created by this launch, empty
