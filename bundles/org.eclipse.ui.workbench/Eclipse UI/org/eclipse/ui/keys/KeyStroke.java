@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeyStroke implements Comparable {
 
 	public final static char KEY_DELIMITER = '\u002B';
-	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$	
+	public final static String KEY_DELIMITERS = KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
 		
 	private final static Comparator modifierKeyComparator = new Comparator() {
 
@@ -299,7 +299,8 @@ public final class KeyStroke implements Comparable {
 	 * @return
 	 */
 	public String format() {
-		String keyDelimiter = Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, Character.toString(KEY_DELIMITER), false, false);
+		// TODO consider platform-specific resource bundles
+		String keyDelimiter = "carbon".equals(SWT.getPlatform()) ? Util.ZERO_LENGTH_STRING : Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, Character.toString(KEY_DELIMITER), false, false); //$NON-NLS-1$
 		SortedSet modifierKeys = new TreeSet(modifierKeyComparator);
 		modifierKeys.addAll(this.modifierKeys);
 		StringBuffer stringBuffer = new StringBuffer();
