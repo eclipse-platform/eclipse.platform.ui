@@ -203,33 +203,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				}
 			}
 		}
-		//sendMessage("Target Started: " + event.getTarget().getName());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetFinished(BuildEvent event) {
-		super.targetFinished(event);
-		//sendMessage("Target Finished: " + event.getTarget().getName());
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
-	public void taskStarted(BuildEvent event) {
-		super.taskStarted(event);
-		//sendMessage("Task started: " + event.getTask().getTaskName());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void taskFinished(BuildEvent event) {
-		super.taskFinished(event);
-		//sendMessage("Task finished: " + event.getTask().getTaskName());
-		
 	}
 
 	/* (non-Javadoc)
@@ -264,10 +237,20 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				String line = r.readLine();
 				StringBuffer message= null;
 				String taskName= event.getTask().getTaskName();
+				StringBuffer labelBuff= new StringBuffer();
+				labelBuff.append('[');
+				labelBuff.append(taskName);
+				labelBuff.append("] "); //$NON-NLS-1$
+				String label= labelBuff.toString();
 				Location location= event.getTask().getLocation();
 				while (line != null) {
 					message= new StringBuffer(MessageIds.TASK);
 					message.append(taskName);
+					message.append(',');
+					line= (label + line).trim();
+					message.append(line.length());
+					message.append(',');
+					message.append(line);
 					message.append(',');
 					message.append(location);
 					sendMessage(message.toString());

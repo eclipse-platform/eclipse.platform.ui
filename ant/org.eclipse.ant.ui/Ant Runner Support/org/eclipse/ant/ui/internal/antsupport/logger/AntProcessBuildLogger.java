@@ -29,11 +29,9 @@ import org.eclipse.ant.ui.internal.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.ui.internal.launchConfigurations.TaskLinkManager;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -66,19 +64,6 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		
 		AntStreamMonitor monitor = getMonitor(priority);
 		
-		if (event.getTarget() == null) {
-			// look for "Buildfile:" message
-			if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
-				String fileName = message.substring(10).trim();
-				IFile file = AntUtil.getFileForLocation(fileName, fBuildFileParent);
-				if (file != null) {
-					FileLink link = new FileLink(file, null,  -1, -1, -1);
-					TaskLinkManager.addTaskHyperlink(antProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName); //$NON-NLS-1$
-					fBuildFileParent= file.getLocation().toFile().getParentFile();
-				}
-			}
-		}
-		
 		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 		
 		if (event.getTask() != null && !fEmacsMode) {
@@ -109,35 +94,35 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		for (int i = 0; i < size; i++) {
 			fullMessage.append(' ');
 		}
-		StringBuffer label= new StringBuffer();
-		label.append('[');
-		label.append(name);
-		label.append("] "); //$NON-NLS-1$
+		StringBuffer labelBuff= new StringBuffer();
+		labelBuff.append('[');
+		labelBuff.append(name);
+		labelBuff.append("] "); //$NON-NLS-1$
 		
 		int offset = Math.max(size, 0) + 1;
-		int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
-		
+		String label= labelBuff.toString();
 		try {
 			BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
 			String line = r.readLine();
-			IRegion region= new Region(offset, length);
-			appendAndLink(fullMessage, name, location, label, region, line);
+			appendAndLink(fullMessage, location, label, offset, line);
 			line = r.readLine();
 			while (line != null) {
 				fullMessage.append(System.getProperty("line.separator")); //$NON-NLS-1$
-				appendAndLink(fullMessage, name, location, label, region, line);
+				appendAndLink(fullMessage, location, label, offset, line);
 				line = r.readLine();
 			}
 		} catch (IOException e) {
-			fullMessage.append(label.toString()).append(event.getMessage());
+			fullMessage.append(label).append(event.getMessage());
 		}
 	}
 	
-	private void appendAndLink(StringBuffer fullMessage, String name, Location location, StringBuffer label, IRegion region, String line) {
-		fullMessage.append(label.toString());
+	private void appendAndLink(StringBuffer fullMessage, Location location, String label, int offset, String line) {
+		fullMessage.append(label);
 		fullMessage.append(line);
 		if (location != null) {
-			TaskLinkManager.addTaskHyperlink(getAntProcess(null), getTaskLink(location), region, name);
+			String newLine= (label + line).trim();
+			IRegion region= new Region(offset, label.length() - 3); // only want the name length "[name] "
+			TaskLinkManager.addTaskHyperlink(getAntProcess(null), getTaskLink(location), region, newLine);
 		}
 	}
 
