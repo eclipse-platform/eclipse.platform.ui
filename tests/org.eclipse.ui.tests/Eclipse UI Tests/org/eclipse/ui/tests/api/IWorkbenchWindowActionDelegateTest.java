@@ -1,7 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.test.harness.util.ActionUtil;
-
+import org.eclipse.ui.junit.util.*;
 
 /**
  * Tests the lifecycle for a window action delegate.
@@ -24,7 +23,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		// Verify lifecycle.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assert(delegate.callHistory.contains(delegate, 
+		assertTrue(delegate.callHistory.contains( 
 			new String [] {"init", "selectionChanged", "run"}));
 	}
 	
@@ -43,7 +42,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		removeAction();
 		
 		// Verify lifecycle.
-		assert(delegate.callHistory.contains(delegate, "dispose"));
+		assertTrue(delegate.callHistory.contains("dispose"));
 	}
 	
 	/**

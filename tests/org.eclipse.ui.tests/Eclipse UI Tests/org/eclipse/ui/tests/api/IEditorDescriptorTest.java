@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 import org.eclipse.ui.*;
 
 public class IEditorDescriptorTest extends TestCase {
@@ -14,7 +14,7 @@ public class IEditorDescriptorTest extends TestCase {
 	
 	public void setUp()
 	{
-		IFileEditorMapping mapping = ( IFileEditorMapping )ArrayUtil.pick( 
+		IFileEditorMapping mapping = ( IFileEditorMapping )ArrayUtil.pickRandom( 
 				PlatformUI.getWorkbench().getEditorRegistry().getFileEditorMappings() 
 			);
 		fEditors = mapping.getEditors();

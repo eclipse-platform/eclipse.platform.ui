@@ -1,17 +1,17 @@
 @echo off
 rem This is the UI Sniff test batch file.  
 
-set CLASSPATH=plugins\org.eclipse.ui.test.harness.launcher\bin;startup.jar
+set CLASSPATH=startup.jar
 
 set LOCATION=ui_sniff_folder
-del /q /s %LOCATION%
-echo Running ui.testSuite
-.\jre\bin\java -cp %CLASSPATH% org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data %LOCATION% -uiTest ui.TestSuite
+del /Q /S %LOCATION%
+echo Running UiTestSuite
+.\jre\bin\java -cp %CLASSPATH% org.eclipse.core.launcher.UIMain -application org.eclipse.ui.junit.runner -dev bin -data %LOCATION% -testPluginName org.eclipse.ui.tests -className org.eclipse.ui.tests.UiTestSuite -console
 
 set LOCATION=ui_session_sniff_folder
-del /q /s %LOCATION%
-echo Running ui.api.SessionCreateTest
-.\jre\bin\java -cp %CLASSPATH% org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data %LOCATION% -uiTest ui.api.SessionCreateTest
-echo Running ui.api.SessionRestoreTest
-.\jre\bin\java -cp %CLASSPATH% org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data %LOCATION% -uiTest ui.api.SessionRestoreTest
+del /Q /S %LOCATION%
+echo Running SessionCreateTest
+.\jre\bin\java -cp %CLASSPATH% org.eclipse.core.launcher.UIMain -application org.eclipse.ui.junit.runner -dev bin -data %LOCATION% -testPluginName org.eclipse.ui.tests -className org.eclipse.ui.tests.api.SessionCreateTest -console
+echo Running SessionRestoreTest
+.\jre\bin\java -cp %CLASSPATH% org.eclipse.core.launcher.UIMain -application org.eclipse.ui.junit.runner -dev bin -data %LOCATION% -testPluginName org.eclipse.ui.tests -className org.eclipse.ui.tests.api.SessionRestoreTest -console
 

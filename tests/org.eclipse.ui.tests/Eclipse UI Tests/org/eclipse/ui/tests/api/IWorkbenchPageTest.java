@@ -4,12 +4,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.*;
+import org.eclipse.ui.junit.util.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
 
-public class IWorkbenchPageTest extends AbstractTestCase {
+public class IWorkbenchPageTest extends UITestCase {
 
 	private IWorkbenchPage fActivePage;
 	private IWorkbenchWindow fWin;
@@ -44,10 +44,10 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	 */
 	public void testGet_SetEditorAreaVisible() throws Throwable {
 		fActivePage.setEditorAreaVisible(true);
-		assert(fActivePage.isEditorAreaVisible() == true);
+		assertTrue(fActivePage.isEditorAreaVisible() == true);
 
 		fActivePage.setEditorAreaVisible(false);
-		assert(fActivePage.isEditorAreaVisible() == false);
+		assertTrue(fActivePage.isEditorAreaVisible() == false);
 	}
 
 	public void testGetPerspective() throws Throwable {
@@ -89,14 +89,14 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		callTrace = part2.getCallHistory();
 		callTrace.clear();
 		fActivePage.activate(part2);
-		assert(callTrace.contains("setFocus"));
-		assert(listener.getCallHistory().contains("partActivated"));
+		assertTrue(callTrace.contains("setFocus"));
+		assertTrue(listener.getCallHistory().contains("partActivated"));
 
 		callTrace = part.getCallHistory();
 		callTrace.clear();
 		fActivePage.activate(part);
-		assert(callTrace.contains("setFocus"));
-		assert(listener.getCallHistory().contains("partActivated"));
+		assertTrue(callTrace.contains("setFocus"));
+		assertTrue(listener.getCallHistory().contains("partActivated"));
 	}
 
 	public void testBringToTop() throws Throwable {
@@ -130,9 +130,8 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	*/		
 		MockViewPart view = (MockViewPart) fActivePage.showView(MockViewPart.ID);
 		assertNotNull(view);
-		assert(
+		assertTrue(
 			view.getCallHistory().verifyOrder(
-				view,
 				new String[] { "init", "createPartControl", "setFocus" }));
 	
 		fActivePage.showView(MockViewPart.ID2 );
@@ -158,7 +157,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	*/
 		IFile file = FileUtil.createFile("test.mock1", proj);
 		IEditorPart editor = fActivePage.openEditor(file);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editor.getSite().getId(),
 			fWorkbench.getEditorRegistry().getDefaultEditor(file).getId());
@@ -177,7 +176,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		if (!platform.equals("motif")) {
 			file = FileUtil.createFile("a.null and void", proj);
 			editor = fActivePage.openEditor(file);
-			assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+			assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 			assertEquals(fActivePage.getActiveEditor(), editor);
 			assertEquals(editor.getSite().getId(), "org.eclipse.ui.DefaultTextEditor");
 		}
@@ -206,7 +205,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	*/	
 		IEditorPart editor = fActivePage.openEditor(file, id);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
 		//open another editor to take the focus away from the first editor
@@ -235,7 +234,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(input, id);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
 		//open another editor to take the focus away from the first editor
@@ -270,7 +269,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(input, id, true);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains( "partActivated"), true);
 		fActivePage.closeEditor(editor, false);
@@ -284,7 +283,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(input, id, false);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(callTrace.contains( "partActivated"), false);
 		assertEquals(callTrace.contains( "partBroughtToTop"), false);
 
@@ -329,7 +328,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains( "gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
@@ -342,7 +341,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID1);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains( "gotoMarker"), true);
 		//do not close the editor this time
@@ -380,7 +379,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
 	/*	
@@ -397,7 +396,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(listenerCall.contains( "partBroughtToTop"), false);
 		assertEquals(listenerCall.contains( "partActivated"), false);	
 		assertEquals(editorCall.contains( "gotoMarker"), true);		
@@ -416,7 +415,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editorCall.contains( "gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
@@ -428,7 +427,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(editorCall.contains( "gotoMarker"), true);
 		assertEquals(listenerCall.contains( "partActivated"), false);
 		assertEquals(listenerCall.contains( "partBroughtToTop"), false);
@@ -475,11 +474,11 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		int totalBefore = fActivePage.getViews().length;
 
 		IViewPart view = fActivePage.showView(MockViewPart.ID2);
-		assertEquals(ArrayUtil.has(fActivePage.getViews(), view), true);
+		assertEquals(ArrayUtil.contains(fActivePage.getViews(), view), true);
 		assertEquals(fActivePage.getViews().length, totalBefore + 1);
 
 		fActivePage.hideView(view);
-		assertEquals(ArrayUtil.has(fActivePage.getViews(), view), false);
+		assertEquals(ArrayUtil.contains(fActivePage.getViews(), view), false);
 		assertEquals(fActivePage.getViews().length, totalBefore);
 	}
 
@@ -488,7 +487,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		fActivePage.hideView(view);
 		CallHistory callTrace = ((MockViewPart) view).getCallHistory();
-		assert(callTrace.contains( "dispose"));
+		assertTrue(callTrace.contains( "dispose"));
 	}
 
 	public void testClose() throws Throwable {
@@ -505,7 +504,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	*/		
 		assertEquals(page.close(), true);
 		assertEquals(
-			callTrace.verifyOrder(editor, new String[] { "isDirty", "dispose" }),
+			callTrace.verifyOrder(new String[] { "isDirty", "dispose" }),
 			true);
 		assertEquals(fWin.getActivePage(), fActivePage);	
 	}
@@ -530,7 +529,6 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals( fActivePage.closeEditor(editor, true), true );
 		assertEquals(
 			callTrace.verifyOrder(
-				editor,
 				new String[] { "isSaveOnCloseNeeded", "isDirty", "dispose" }),
 			true);
 
@@ -640,7 +638,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		callTrace.clear();
 		assertEquals(fActivePage.saveEditor(editor, false), true);
 		assertEquals(
-			callTrace.verifyOrder(editor, new String[] { "isDirty", "doSave" }),
+			callTrace.verifyOrder(new String[] { "isDirty", "doSave" }),
 			true);
 	}
 
@@ -691,7 +689,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(fActivePage.saveAllEditors(false), true);
 		for (int i = 0; i < total; i++)
 			assertEquals(
-				callTraces[i].verifyOrder(editors[i], new String[] { "isDirty", "doSave" }),
+				callTraces[i].verifyOrder(new String[] { "isDirty", "doSave" }),
 				true);
 	}
 
@@ -703,12 +701,12 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		for (int i = 0; i < num; i++) {
 			editors[i] = fActivePage.openEditor(FileUtil.createFile(i + ".mock2", proj));
-			assertEquals(ArrayUtil.has(fActivePage.getEditors(), editors[i]), true);
+			assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editors[i]), true);
 		}
 		assertEquals(fActivePage.getEditors().length, totalBefore + num);
 
 		fActivePage.closeEditor(editors[0], false);
-		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editors[0]), false);
+		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editors[0]), false);
 		assertEquals(fActivePage.getEditors().length, totalBefore + num - 1);
 
 		fActivePage.closeAllEditors(false);

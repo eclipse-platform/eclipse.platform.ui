@@ -1,28 +1,17 @@
 package org.eclipse.ui.tests.dialogs;
 
 import junit.framework.TestCase;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.ExportWizard;
-import org.eclipse.ui.internal.dialogs.ImportWizard;
-import org.eclipse.ui.internal.dialogs.NewWizard;
-import org.eclipse.ui.test.harness.DialogCheck;
-import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.junit.util.DialogCheck;
+import org.eclipse.ui.wizards.newresource.*;
 
 
 public class UIWizards extends TestCase {

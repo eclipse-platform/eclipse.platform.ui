@@ -1,4 +1,6 @@
 package org.eclipse.ui.tests.api;
+
+import org.eclipse.ui.junit.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.*;
 
@@ -7,7 +9,7 @@ import org.eclipse.ui.*;
  * presistance tests.
  * 
 */
-public class SessionRestoreTest extends AbstractTestCase {
+public class SessionRestoreTest extends UITestCase {
 
 	/** 
 	 * Construct an instance.
@@ -73,7 +75,7 @@ public class SessionRestoreTest extends AbstractTestCase {
 		IEditorSite site = part.getEditorSite();
 		assertEquals(site.getId(), MockEditorPart.ID1);
 		IEditorInput input = part.getEditorInput();
-		assert(input instanceof IFileEditorInput);
+		assertTrue(input instanceof IFileEditorInput);
 		IFile file = ((IFileEditorInput)input).getFile();
 		assertEquals(fileName, file.getName());
 	}

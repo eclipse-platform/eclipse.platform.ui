@@ -1,12 +1,13 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.junit.util.*;
 
 
 /**
  * Tests the site for an IWorkbenchPart.
  */
-public abstract class IWorkbenchPartSiteTest extends AbstractTestCase {
+public abstract class IWorkbenchPartSiteTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
 	protected IWorkbenchPage fPage;
@@ -83,7 +84,7 @@ public abstract class IWorkbenchPartSiteTest extends AbstractTestCase {
 		
 		IWorkbenchPart part = createTestPart(fPage);
 		IWorkbenchPartSite site = part.getSite();
-		assert(part instanceof MockWorkbenchPart);
+		assertTrue(part instanceof MockWorkbenchPart);
 		MockWorkbenchPart mock = (MockWorkbenchPart)part;
 		assertEquals(mock.getSelectionProvider(), site.getSelectionProvider());
 	}

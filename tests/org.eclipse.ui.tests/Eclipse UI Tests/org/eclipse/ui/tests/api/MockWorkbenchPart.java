@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.test.harness.util.CallHistory;
+import org.eclipse.ui.junit.util.*;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
