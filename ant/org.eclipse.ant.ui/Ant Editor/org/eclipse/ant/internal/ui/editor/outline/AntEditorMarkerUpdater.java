@@ -26,6 +26,7 @@ public class AntEditorMarkerUpdater {
 	private AntModel fModel= null;
 	private List fCollectedProblems= new ArrayList();
 	public static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".buildFileProblem"; //$NON-NLS-1$
+	private IFile fFile= null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
@@ -39,17 +40,15 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	private void removeProblems() {
-		IFile file= fModel.getFile();
 		try {
-			if (file != null && file.exists())
-				file.deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			getFile().deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			// assume there were no problems
 		}
 	}
 	
 	private void createMarker(IProblem problem) {
-		IFile file = fModel.getFile();
+		IFile file = getFile();
 		int lineNumber= problem.getLineNumber();
 		
 		int severity= IMarker.SEVERITY_ERROR;
@@ -85,14 +84,24 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	public void updateMarkers() {
-		removeProblems();
-		if (fCollectedProblems.size() > 0) {
-			Iterator e= fCollectedProblems.iterator();
-			while (e.hasNext()) {
-				IProblem problem= (IProblem) e.next();
-				createMarker(problem);
+		IFile file= getFile();
+		if (file != null && file.exists()) {
+			removeProblems();
+			if (fCollectedProblems.size() > 0) {
+				Iterator e= fCollectedProblems.iterator();
+				while (e.hasNext()) {
+					IProblem problem= (IProblem) e.next();
+					createMarker(problem);
+				}
+				fCollectedProblems.clear();
 			}
-			fCollectedProblems.clear();
 		}
+	}
+	
+	private IFile getFile() {
+		if (fFile == null) {
+			fFile= fModel.getFile();
+		}
+		return fFile;
 	}
 }

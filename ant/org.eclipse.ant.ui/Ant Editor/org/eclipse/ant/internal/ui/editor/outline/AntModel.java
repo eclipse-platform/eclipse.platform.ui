@@ -1181,7 +1181,12 @@ public class AntModel {
 		return null;
 	}
 	
+	/**
+	 * The Ant model has been reconciled for the first time with the contents displayed in the Ant editor.
+	 * Since problem marker creation has been added after many buildfiles have been created (or if the file has been
+	 * created outside of Eclipse) we need to update the markers to match the problems.
+	 */
 	public void updateForInitialReconcile() {
-		fMarkerUpdater.updateForInitialReconcile();
+		fMarkerUpdater.updateMarkers();
 	}
 }
