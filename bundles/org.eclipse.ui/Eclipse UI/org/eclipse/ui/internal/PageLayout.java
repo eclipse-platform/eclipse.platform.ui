@@ -294,10 +294,10 @@ public boolean isEditorAreaVisible() {
  * Trim the ratio so that direct manipulation of parts is easy.
  */
 private float normalizeRatio(float in) {
-	if (in < 0.05)
-		in = 0.05f;
-	if (in > 0.95)
-		in = 0.96f;
+	if (in < RATIO_MIN)
+		in = RATIO_MIN;
+	if (in > RATIO_MAX)
+		in = RATIO_MAX;
 	return in;
 }
 /**

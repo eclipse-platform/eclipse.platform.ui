@@ -99,6 +99,19 @@ public interface IPageLayout {
 	 * relative.
 	 */
 	public static final int BOTTOM = 4;
+	
+	/**
+	 * Minimum acceptable ratio value when adding a view
+	 * @since 2.0
+	 */
+	public static final float RATIO_MIN = 0.05f;
+	
+	/**
+	 * Maximum acceptable ratio value when adding a view
+	 * @since 2.0
+	 */
+	public static final float RATIO_MAX = 0.95f;
+	
 /**
  * Adds an action set with the given id to this page layout.
  * The id must name an action set contributed to the workbench's extension 
