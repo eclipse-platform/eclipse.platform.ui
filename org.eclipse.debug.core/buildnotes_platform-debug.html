@@ -14,6 +14,30 @@ Platform Debug</h1>
 April 30, 2002
 <h3>
 What's new in this drop</h3>
+<li>Changes in the launch configuration dialog:
+	<ul>
+	<li>To free up screen realestate for editing launch configurations, the tree of launch
+		configurations has been made more narrow by removing the "copy" button from the
+		dialog. The "new" button copies a configuration when a configuration is selected, and
+		creates a new configuration (based on the workbench selection) when a configuration
+		type is selected.</li>
+	<li>The "Cancel" button has been replaced with a "Close" button (closing the dialog
+		does not cancel changes). You will be prompted to save unsaved changes.</li>
+	<li>A "Revert" button has been added to the edit area to revert changes on the 
+		currently selected launch configuration (under edit).</li>
+	</ul>
+</li>
+<li>Changes to launch behavior
+	<ul>
+	<li>Pressing the run or debug toolbar buttons launches the configuration that was last launched
+		(in the workspace), in the appropriate mode (run or debug).</li>
+	<li>To create a new launch configuration, use the cascading menu items on the run or debug
+		menu. For example "New Configuration -> Local Java Application" - this will create a new 
+		configuration based on the selection in the workbench (or active editor).</li>
+	<li>"Single-click launching" preference has been removed. It was determined that a preference
+		which changes the behavior of a toolbar button is disorienting to the user.</li>
+	</ul>
+</li>
 
 <h3>
 Problem Reports Fixed</h3>
