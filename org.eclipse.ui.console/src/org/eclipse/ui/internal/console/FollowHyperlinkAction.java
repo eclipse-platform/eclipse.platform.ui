@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
  * Follows a hyperlink in the console

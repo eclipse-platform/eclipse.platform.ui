@@ -17,7 +17,9 @@ import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.WorkbenchEncoding;
+import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
+import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console that displays text, accepts keyboard input from users,
@@ -108,6 +110,13 @@ public class IOConsole extends TextConsole {
      */
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         this(name, null, imageDescriptor);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
+     */
+    public IPageBookViewPage createPage(IConsoleView view) {
+        return new IOConsolePage(this, view);
     }
     
     /**

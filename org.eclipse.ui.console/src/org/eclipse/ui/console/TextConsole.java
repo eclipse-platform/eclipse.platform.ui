@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.ConsoleDocument;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.ConsolePatternMatcher;
-import org.eclipse.ui.internal.console.TextConsolePage;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -426,9 +425,10 @@ public abstract class TextConsole extends AbstractConsole {
      * @throws BadLocationException if the specified location is not valid.
      */
     public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
+        IDocument document = getDocument();
 		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
-			getDocument().addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
+			document.addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
 		} catch (BadPositionCategoryException e) {
 			ConsolePlugin.log(e);
 		} 

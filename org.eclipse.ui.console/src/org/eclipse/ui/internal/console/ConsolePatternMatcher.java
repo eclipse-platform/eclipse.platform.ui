@@ -117,6 +117,9 @@ public class ConsolePatternMatcher implements IDocumentListener {
                                         startOfNextSearch = lengthToSearch;
                                     }
                                 }
+                                if (startOfNextSearch < 0) {
+                                    startOfNextSearch = 0;
+                                }
                                 if (startOfNextSearch < lengthToSearch) {
                                     if (reg.find(startOfNextSearch)) {
                                         endOfLastMatch = reg.end();
