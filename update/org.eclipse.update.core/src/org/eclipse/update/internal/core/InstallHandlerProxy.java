@@ -15,6 +15,7 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.osgi.framework.*;
 
 public class InstallHandlerProxy implements IInstallHandler {
 
@@ -25,8 +26,58 @@ public class InstallHandlerProxy implements IInstallHandler {
 	private boolean DEBUG = false;
 
 	private static final String EXT_PLUGIN = "org.eclipse.update.core"; //$NON-NLS-1$
+	private static final String UI_PLUGIN = "org.eclipse.ui"; //$NON-NLS-1$
 	private static final String EXT_POINT = "installHandlers"; //$NON-NLS-1$
 
+	/**
+	 * A class loader that combines a the org.eclipse.update.core plugin class loader with the
+	 * org.eclipse.ui class loader (only when UI is active).
+	 */
+	private static class InstallHandlerClassLoader extends URLClassLoader {
+		private Bundle updateCore;
+		private Bundle eclipseUI;
+
+		public InstallHandlerClassLoader(URL classpath) {
+			super(new URL[] {classpath});
+			updateCore = Platform.getBundle(EXT_PLUGIN);
+			eclipseUI = Platform.getBundle(UI_PLUGIN);
+			if (eclipseUI.getState() != Bundle.ACTIVE) 
+				eclipseUI = null;
+		}
+
+		public Class loadClass(String className) throws ClassNotFoundException {
+			// First check update core plugin loader, then the eclipse ui plugin loader
+			Class c = null;
+			try {
+				c = updateCore.loadClass(className);
+			} catch (ClassNotFoundException e) {
+				try {
+					if(eclipseUI != null)
+						c = eclipseUI.loadClass(className);
+				} catch (ClassNotFoundException e2) {
+				} finally {
+				}
+			} finally {
+			}
+			if (c != null)
+				return c;
+			else
+				return super.loadClass(className);
+		}
+
+		public URL getResource(String resName) {
+			// First check update core plugin loader, then the eclipse ui plugin loader
+			URL u = updateCore.getResource(resName);
+			if(u == null && eclipseUI != null)
+				u = eclipseUI.getResource(resName);
+				
+			if (u != null)
+				return u;
+			else
+				return super.getResource(resName);
+		}
+	}
+	
 	private InstallHandlerProxy() {
 	}
 
@@ -473,8 +524,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		}
 
 		// create class loader, load and instantiate handler
-		URLClassLoader loader =
-			new URLClassLoader(new URL[] { cp }, this.getClass().getClassLoader());
+		ClassLoader loader = new InstallHandlerClassLoader(cp);
 		Class clazz = loader.loadClass(name);
 		IInstallHandler handler = (IInstallHandler) clazz.newInstance();
 		return handler;
