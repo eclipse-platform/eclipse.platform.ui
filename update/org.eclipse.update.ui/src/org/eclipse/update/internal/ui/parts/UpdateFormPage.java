@@ -7,16 +7,15 @@ import org.eclipse.jface.action.*;
 public abstract class UpdateFormPage implements IUpdateFormPage {
 	private Form form;
 	private Control control;
-	private MultiPageEditor editor;
+	private MultiPageView view;
 	private String title;
 
-public UpdateFormPage(MultiPageEditor editor, String title) {
-	this.editor = editor;
+public UpdateFormPage(MultiPageView view, String title) {
+	this.view = view;
 	form = createForm();
-	//form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_BANNER));
 	this.title = title;
 }
-
+
 public boolean becomesInvisible(IFormPage newPage) {
 	return true;
 }
@@ -34,7 +33,7 @@ protected abstract Form createForm();
 
 public void createControl(Composite parent) {
 	control = form.createControl(parent);
-	control.setMenu(editor.getContextMenu());
+	control.setMenu(view.getContextMenu());
 	form.initialize(null);
 }
 
@@ -46,8 +45,8 @@ public Control getControl() {
 	return control;
 }
 
-public MultiPageEditor getEditor() {
-	return editor;
+public MultiPageView getView() {
+	return view;
 }
 
 public Form getForm() {
@@ -67,7 +66,7 @@ public boolean isSource() {
 }
 
 public boolean isVisible() {
-	return getEditor().getCurrentPage()==this;
+	return getView().getCurrentPage()==this;
 }
 
 public void openTo(Object object) {
@@ -75,7 +74,7 @@ public void openTo(Object object) {
 }
 
 public IAction getAction(String id) {
-	return editor.getAction(id);
+	return view.getAction(id);
 }
 
 public void performGlobalAction(String id) {

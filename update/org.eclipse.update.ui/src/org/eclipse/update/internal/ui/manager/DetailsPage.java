@@ -3,13 +3,13 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.update.internal.ui.parts.UpdateFormPage;
 import org.eclipse.update.ui.forms.*;
 
-public class UpdatesPage extends UpdateFormPage {
+public class DetailsPage extends UpdateFormPage {
 	
-	public UpdatesPage(UpdateManager manager, String title) {
-		super(manager, title);
+	public DetailsPage(DetailsView view, String title) {
+		super(view, title);
 	}
 	
 	public Form createForm() {
-		return new UpdatesForm(this);
+		return new DetailsForm(this);
 	}
 }

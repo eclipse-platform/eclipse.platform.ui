@@ -107,7 +107,7 @@ public Label createHeadingLabel(Composite parent, String text, Color bg) {
 
 public Label createHeadingLabel(Composite parent, String text, Color bg, int style) {
 	Label label = new Label(parent, style);
-	label.setText(text);
+	if (text!=null) label.setText(text);
 	label.setBackground(backgroundColor);
 	label.setForeground(foregroundColor);
     label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));

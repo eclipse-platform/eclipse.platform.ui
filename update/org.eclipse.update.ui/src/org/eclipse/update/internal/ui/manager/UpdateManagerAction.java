@@ -6,6 +6,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.ui.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Insert the type's description here.
@@ -24,22 +25,16 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 	 */
 	public void run(IAction action)  {
 		IWorkbenchPage page = UpdateUIPlugin.getActiveWorkbenchWindow().getActivePage();
-		if (page == null)
+		if (page == null || 
+		   page.getPerspective().
+		         getId().equals(UpdatePerspective.PERSPECTIVE_ID))
 			return;
-		page.setEditorAreaVisible(true);
-
-		// see if we already have an update manager
-		IEditorPart[] editors = page.getEditors();
-		for (int i = 0; i < editors.length; i++){
-			if (editors[i] instanceof UpdateManager) {
-				page.bringToTop(editors[i]);
-				return;
-			}
-		}
-	
+		IWorkbenchWindow window = page.getWorkbenchWindow();
+
 		try {
-			page.openEditor(new UpdateManagerInput(), UpdateUIPlugin.UPDATE_MANAGER_ID);
-		} catch (PartInitException e) {
+			IAdaptable input = UpdateUIPlugin.getWorkspace();
+			window.openPage(UpdatePerspective.PERSPECTIVE_ID, input);
+		} catch (WorkbenchException e) {
 		/*
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 			ErrorDialog.openError(

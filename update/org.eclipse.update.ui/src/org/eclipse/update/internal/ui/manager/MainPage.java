@@ -5,8 +5,8 @@ import org.eclipse.update.ui.forms.*;
 
 public class MainPage extends UpdateFormPage {
 	
-	public MainPage(UpdateManager manager, String title) {
-		super(manager, title);
+	public MainPage(DetailsView view, String title) {
+		super(view, title);
 	}
 	
 	public Form createForm() {

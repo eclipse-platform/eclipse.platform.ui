@@ -6,15 +6,17 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.*;
 import org.eclipse.swt.layout.*;
 
-public class HistoryForm extends UpdateForm {
-	
-	public HistoryForm(UpdateFormPage page) {
+public class DetailsForm extends UpdateForm {
+private DetailsSection detailsSection;
+
+	public DetailsForm(UpdateFormPage page) {
 		super(page);
 		setVerticalFit(true);
+		//setHeadingVisible(false);
 	}
 	
 public void initialize(Object modelObject) {
-	setTitle("Installation History");
+	setTitle("Feature Details");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	super.initialize(modelObject);
 	getControl().layout(true);
@@ -28,7 +30,22 @@ public void createFormClient(Composite parent) {
 	layout.horizontalSpacing = 15;
 	parent.setLayout(layout);	
 	
+	GridData gd;
+	Control child;
+	
 	FormWidgetFactory factory = getFactory();
+	detailsSection = new DetailsSection(this.getPage());
+	Control c = detailsSection.createControl(parent, factory);
+	gd = new GridData(GridData.FILL_BOTH);
+	c.setLayoutData(gd);
+	registerSection(detailsSection);
 }
 
+public void expandTo(Object obj) {
+	detailsSection.expandTo(obj);
+}
+
+private void goToPage(String pageId) {
+	getPage().getView().showPage(pageId);
+}
 }

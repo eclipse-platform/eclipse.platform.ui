@@ -6,6 +6,7 @@ import org.eclipse.core.resources.*;
 import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.model.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -17,6 +18,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	private static UpdateUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	
+	private UpdateModel model;
 	
 	/**
 	 * The constructor.
@@ -84,4 +87,21 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
+	
+	public void startup() throws CoreException {
+		super.startup();
+		model = new UpdateModel();
+		model.startup();
+	}
+	
+	public void shutdown() throws CoreException {
+		model.shutdown();
+		super.shutdown();
+	}
+	
+	public UpdateModel getUpdateModel() {
+		return model;
+	}
+	
+	
 }

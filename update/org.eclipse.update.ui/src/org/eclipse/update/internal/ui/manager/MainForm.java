@@ -5,6 +5,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.ui.*;
 
 public class MainForm extends UpdateForm {
 	
@@ -34,33 +35,27 @@ public void initialize(Object modelObject) {
 
 public void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
+	//layout.numColumns = 2;
 	layout.marginWidth = 10;
 	//layout.makeColumnsEqualWidth = true;
 	layout.horizontalSpacing = 15;
 	parent.setLayout(layout);	
 	
+	GridData gd;
+	Control child;
+	
 	FormWidgetFactory factory = getFactory();
-	bookmarkSection = new PopularSitesSection(getPage());
-	Control child = bookmarkSection.createControl(parent, factory);
-	GridData gd = new GridData(GridData.FILL_VERTICAL);
-	gd.widthHint = 200;
-	child.setLayoutData(gd);
-	
-	Composite column = factory.createComposite(parent);
-	gd = new GridData(GridData.FILL_BOTH);
-	column.setLayoutData(gd);
-	layout = new GridLayout();
-	column.setLayout(layout);
-	
 	EmptySection section = new EmptySection() {
 		public void titleActivated() {
-			goToPage(UpdateManager.UPDATE_PAGE);
+			showView(UpdatePerspective.ID_LOCAL_SITE);
 		}
 	};
 	section.setHeaderText("Feature Updates");
-	section.setDescription("Go here to download the latest updates for the currently installed features.");
-	child = section.createControl(column, factory);
+	section.setDescription(
+	"To check for updates for features you have installed, "+
+	"go to the \"My Eclipse\" view and expand \"Available Updates\" folder. "+
+	"You can drag new updates into the Checklist folder.");
+	child = section.createControl(parent, factory);
 	//gd = new GridData(GridData.FILL_HORIZONTAL |GridData.VERTICAL_ALIGN_BEGINNING);
 	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	gd = new GridData(GridData.FILL_BOTH);
@@ -68,12 +63,16 @@ public void createFormClient(Composite parent) {
 	
 	section = new EmptySection() {
 		public void titleActivated() {
-			goToPage(UpdateManager.INSTALL_PAGE);
+			showView(UpdatePerspective.ID_SITES);
 		}
 	};
 	section.setHeaderText("New Feature Installs");
-	section.setDescription("Browse Eclipse sites and discover new features to add to your workbench.");
-	child = section.createControl(column, factory);
+	section.setDescription(
+	"To install new features, open \"Update Sites\" view and expand"+
+	"the desired site (this operation may take time). Select features and "+
+	"read about them in the \"Details\" view. If you want to install a feature, "+
+	"just drag it into the \"Checklist\" view.");
+	child = section.createControl(parent, factory);
 	//gd = new GridData(GridData.FILL_HORIZONTAL |GridData.VERTICAL_ALIGN_BEGINNING);
 	gd = new GridData(GridData.FILL_BOTH);
 	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
@@ -81,29 +80,36 @@ public void createFormClient(Composite parent) {
 	
 	section = new EmptySection() {
 		public void titleActivated() {
-			goToPage(UpdateManager.REMOVE_PAGE);
+			showView(UpdatePerspective.ID_LOCAL_SITE);
 		}
 	};
-	section.setHeaderText("Feature Removal");
-	section.setDescription("Go here to remove currently installed features.");
-	child = section.createControl(column, factory);
+	section.setHeaderText("Uninstalling Features");
+	section.setDescription("To uninstall a feature, open \"My Eclipse\" view, "+
+	"expand \"Installed Features\" folder, select the desired feature and drag it "+
+	"into the \"Checklist\" folder.");
+	child = section.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	child.setLayoutData(gd);
 	
 	section = new EmptySection() {
 		public void titleActivated() {
-			goToPage(UpdateManager.HISTORY_PAGE);
+			showView(UpdatePerspective.ID_HISTORY);
 		}
 	};
 	section.setHeaderText("Installation History");
-	section.setDescription("Review your installation history or choose to revert to one of the previous stable states.");
-	child = section.createControl(column, factory);
+	section.setDescription("You can review your installation history or revert to one of the previous stable states."+
+	" To do so, open \"Update History\" view.");
+	child = section.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	//gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	child.setLayoutData(gd);
 }
-private void goToPage(String pageId) {
-	getPage().getEditor().showPage(pageId);
+private void showView(String viewId) {
+	try {
+		IViewPart part = UpdateUIPlugin.getActivePage().showView(viewId);
+	}
+	catch (PartInitException e) {
+	}
 }
 }
