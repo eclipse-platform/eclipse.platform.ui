@@ -720,6 +720,12 @@ public class EditorManager {
 					Editor e = new Editor();
 					e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)));
 					result.add(restoreEditor(e,editorMem));
+					IEditorPart editor = (IEditorPart)e.getPart(true);
+					if(editor == null) {
+						page.closeEditor(e,false);
+						visibleEditors.remove(e);
+						errorWorkbooks.add(editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK));
+					}
 					page.addPart(e);
 				} else {
 					//if the editor is not visible, ensure it is put in the correct workbook. PR 24091
@@ -844,6 +850,7 @@ public class EditorManager {
 						openInternalEditor(ref,desc, editorInput, false);
 					}
 					ref.getPane().createChildControl();
+					((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
 					result[0] = unableToCreateEditor(editorMem,e);				

@@ -1005,7 +1005,7 @@ public void updateEditorTab(PartPane pane,String title,boolean isDirty,Image ima
 	tab.setText(title);
 
 	// Update the tab image
-	if (image == null) {
+	if (image == null || image.isDisposed()) {
 		// Normal image.
 		tab.setImage(null);
 		// Disabled image.
