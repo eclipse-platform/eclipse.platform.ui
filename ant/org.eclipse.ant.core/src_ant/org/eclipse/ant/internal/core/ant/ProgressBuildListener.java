@@ -105,9 +105,10 @@ public class ProgressBuildListener implements BuildListener {
 	protected int countTarget(Target target) {
 		int result = 1;
 		Project project = target.getProject();
+		Hashtable targets= project.getTargets();
 		for (Enumeration dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
 			String targetName = (String) dependencies.nextElement();
-			Target dependency = (Target) project.getTargets().get(targetName);
+			Target dependency = (Target)targets.get(targetName);
 			if (dependency != null) {
 				result = result + countTarget(dependency);
 			}
@@ -119,7 +120,7 @@ public class ProgressBuildListener implements BuildListener {
 				// As we do not have access to the information (at least in Ant 1.4.1)
 				// describing what target is executed by this antcall task, we assume
 				// a scenario where it depends on all targets of the project but itself.
-				result = result + (project.getTargets().size() - 1);
+				result = result + (targets.size() - 1);
 			}
 		}
 		return result;
