@@ -68,13 +68,14 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		StringBuffer fullMessage= new StringBuffer();
 		fullMessage.append(StringUtils.LINE_SEP);
 		
+		int linkAdjustment= 0;
 		if (event.getTask() != null && !fEmacsMode) {
-			getAdornedMessage(event, fullMessage);
+			linkAdjustment= getAdornedMessage(event, fullMessage);
 		}
 		fullMessage.append(message);
 		message= fullMessage.toString();
 		
-		IConsoleHyperlink link = getHyperLink(message, event);
+		IConsoleHyperlink link = getHyperLink(message, event, linkAdjustment);
 		if (link != null) {
 			fProcess.getConsole().addLink(link);
 		}
@@ -84,7 +85,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fLength += message.length();	
 	}
 
-	private void getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
+	private int getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
 		int size = LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
@@ -93,6 +94,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fullMessage.append('[');
 		fullMessage.append(name);
 		fullMessage.append("] ");
+		return size;
 	}
 
 	private AntStreamMonitor getMonitor(int priority) {
@@ -135,9 +137,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/**
 	 * Returns a hyperlink for the given build event, or <code>null</code> if
 	 * none.
-	 * 
-	 * @param event	 * @return hyper link, or <code>null</code>	 */
-	private IConsoleHyperlink getHyperLink(String message, BuildEvent event) {
+	 * 	 * @return hyper link, or <code>null</code>	 */
+	private IConsoleHyperlink getHyperLink(String message, BuildEvent event, int linkAdjustment) {
 		Task task = event.getTask();
 		if (task != null) {
 			Location location = task.getLocation();
@@ -161,7 +162,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 					if (file != null && file.exists()) {
 						try {
 							int line = Integer.valueOf(lineNumber).intValue();
-							return new FileLink(fLength, message.length(), file, null, -1, -1, line);
+							return new FileLink(fLength + linkAdjustment + StringUtils.LINE_SEP.length(), message.length() - linkAdjustment, file, null, -1, -1, line);
 						} catch (NumberFormatException e) {
 						}
 					}
