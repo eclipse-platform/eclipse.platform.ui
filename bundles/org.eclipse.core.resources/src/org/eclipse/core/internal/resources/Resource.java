@@ -926,9 +926,6 @@ public int hashCode() {
 	// does not exist so don't bother with it in the hash
 	return getFullPath().hashCode();
 }
-protected void internalAccept(ElementTreeIterator iterator, final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException, ResourceException {
-
-}
 /**
  * Sets the M_LOCAL_EXISTS flag. Is internal so we don't have
  * to begin an operation.
