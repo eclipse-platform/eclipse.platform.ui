@@ -22,7 +22,7 @@ public class IJobManagerTest extends TestCase {
 	class TestJobListener extends JobChangeAdapter  {
 		private Set scheduled = Collections.synchronizedSet(new HashSet());
 		public void cancelAllJobs() {
-			Job[] jobs = (Job[]) scheduled.toArray(new Job[scheduled.size()]);
+			Job[] jobs = (Job[]) scheduled.toArray(new Job[0]);
 			for (int i = 0; i < jobs.length; i++) {
 				jobs[i].cancel();
 			}
