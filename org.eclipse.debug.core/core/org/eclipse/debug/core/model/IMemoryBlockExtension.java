@@ -48,8 +48,8 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	/**
 	 * Returns the hard start address of this memory block as a big integer, or 
 	 * <code>null</code> if none. A <code>null</code> start address indicates that
-	 * memory may be retrieved outside the bounds of this memory block's base
-	 * address and length.
+	 * memory may be retrieved at any address less than this memory block's base
+	 * address.
 	 * 
 	 * @return the hard start address of this memory block or <code>null</code>
 	 * @throws DebugException if unable to retrieve the start address of this memory block.
@@ -59,8 +59,8 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	/**
 	 * Returns the hard end address of this memory block as a big integer, or
 	 * <code>null</code> if none. A <code>null</code> end address indicates that
-	 * memory may be retrieved outside the bounds of this memory block's base
-	 * address and length. 
+	 * memory may be retrieved from any positive offset relative to the base address
+	 * of this memory block. 
 	 * 
 	 * @return the hard end address of this memory block or <code>null</code>
 	 * @throws DebugException if unable to retrieve the end address of this memory block.
