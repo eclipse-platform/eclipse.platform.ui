@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -271,10 +272,17 @@ public void tearDown() {
 		// BUG: non-polymorphic behaviour
 		// if (fViewer instanceof TableViewer || fViewer instanceof TableTreeViewer)
 		// 	return;
-		fViewer.setLabelProvider(new TestLabelProvider());
+		fViewer.setLabelProvider(getTestLabelProvider());
 		TestElement first= fRootElement.getFirstChild();
 		String newLabel= providedString(first);
 		assertEquals("rendered label", newLabel, getItemText(0));
+	}
+
+	/**
+	 * @return IBaseLabelProvder used in this test
+	 */
+	public IBaseLabelProvider getTestLabelProvider() {
+		return new TestLabelProvider();
 	}
 	public void testLabelProviderStateChange() {
 		// BUG: non-polymorphic behaviour
