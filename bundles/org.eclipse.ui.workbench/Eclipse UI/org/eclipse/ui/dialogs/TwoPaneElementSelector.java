@@ -201,13 +201,13 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
     private void handleUpperSelectionChanged() {
         int index = getSelectionIndex();
         fLowerList.removeAll();
-        if (index < 0)
-            return;
-        fQualifierElements = getFoldedElements(index);
-        if (fQualifierElements == null)
-            updateLowerListWidget(new Object[] {});
-        else
-            updateLowerListWidget(fQualifierElements);
+        if (index >= 0) {
+	        fQualifierElements = getFoldedElements(index);
+	        if (fQualifierElements == null)
+	            updateLowerListWidget(new Object[] {});
+	        else
+	            updateLowerListWidget(fQualifierElements);
+        }
         validateCurrentSelection();
     }
 
