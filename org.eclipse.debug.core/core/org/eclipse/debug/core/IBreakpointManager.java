@@ -15,10 +15,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * program being debugged. The kinds of breakpoint supported by each
  * debug architecture and the information required to create those
  * breakpoints is dictated by each debug architecture.
- * <p>
- * Breakpoint creation is a client responsibility. Breakpoints
- * are only considered active when registered with the breakpoint manager. 
- * </p>
+ * Breakpoint creation is a client responsibility.
  * <p>
  * Clients interested in breakpoint change notification may
  * register with the breakpoint manager - see
@@ -52,11 +49,12 @@ public interface IBreakpointManager {
 	void addBreakpoint(IBreakpoint breakpoint) throws DebugException;
 	
 	/**
-	 * Returns the breakpoint that is associated with marker or
+	 * Returns the breakpoint associated with the given marker or
 	 * <code>null</code> if no such breakpoint exists
 	 * 
 	 * @param marker the marker
-	 * @return the breakpoint associated with the marker or null if none exists
+	 * @return the breakpoint associated with the marker
+	 * 	or <code>null</code> if none exists
 	 */
 	IBreakpoint getBreakpoint(IMarker marker);	
 	

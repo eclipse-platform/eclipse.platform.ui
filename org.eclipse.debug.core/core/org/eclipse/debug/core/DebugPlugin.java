@@ -5,9 +5,17 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.core.*;
+import org.eclipse.debug.internal.core.BreakpointManager;
+import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.debug.internal.core.Launcher;
+import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.debug.internal.core.RuntimeProcess;
 
 /**
  * There is one instance of the debug plugin available from
@@ -75,8 +83,8 @@ public class DebugPlugin extends Plugin {
 	private ListenerList fEventListeners= new ListenerList(20);
 
 	/**
-	 * Internal state...<code>true</code> if this plugin is in the 
-	 * process of shutting down.
+	 * Whether this plugin is in the process of shutting
+	 * down.
 	 */
 	private boolean fShuttingDown= false;	
 	
@@ -85,6 +93,16 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static DebugPlugin getDefault() {
 		return fgDebugPlugin;
+	}
+	
+	/**
+	 * Sets the singleton instance of the debug plug-in.
+	 * 
+	 * @param plugin the debug plug-in, or <code>null</code>
+	 *  when shutting down
+	 */
+	private static void setDefault(DebugPlugin plugin) {
+		fgDebugPlugin = plugin;
 	}
 
 	/**
@@ -100,7 +118,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	public DebugPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		fgDebugPlugin= this;
+		setDefault(this);
 	}
 
 	/**
@@ -120,12 +138,12 @@ public class DebugPlugin extends Plugin {
 	 * @param event the debug event to fire
 	 */
 	public void fireDebugEvent(DebugEvent event) {
-		if (fShuttingDown || event == null)
+		if (isShuttingDown() || event == null)
 			return;
 		
-		Object[] listeners= fEventListeners.getListeners();
+		Object[] listeners= getEventListeners();
 		for (int i= 0; i < listeners.length; i++) {
-			((IDebugEventListener) listeners[i]).handleDebugEvent(event);
+			((IDebugEventListener)listeners[i]).handleDebugEvent(event);
 		}
 	}
 	
@@ -162,11 +180,12 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Loads all launcher extensions.
+	 * Creates proxy launchers for all launcher delegates
+	 * defined in launcher extensions.
 	 *
 	 * @exception CoreException if creation of a launcher extension fails
 	 */
-	protected void loadLaunchers() throws CoreException {
+	private void createLaunchers() throws CoreException {
 		IPluginDescriptor descriptor= getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_LAUNCHER);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
@@ -198,11 +217,11 @@ public class DebugPlugin extends Plugin {
 	 * @exception CoreException if this plug-in fails to shut down
 	 */
 	public void shutdown() throws CoreException {
-		fShuttingDown= true;
+		setShuttingDown(true);
 		super.shutdown();
 		fLaunchManager.shutdown();
 		fBreakpointManager.shutdown();
-		fgDebugPlugin= null;
+		setDefault(null);
 	}
 
 	/**
@@ -221,7 +240,7 @@ public class DebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		fLaunchManager= new LaunchManager();
 		fBreakpointManager= new BreakpointManager();
-		loadLaunchers();	
+		createLaunchers();	
 		fBreakpointManager.startup();
 	}
 	
@@ -237,6 +256,39 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static IProcess newProcess(Process process, String label) {
 		return new RuntimeProcess(process, label);
+	}
+	
+	/**
+	 * Returns whether this plug-in is in the process of 
+	 * being shutdown.
+	 * 
+	 * @return whether this plug-in is in the process of 
+	 *  being shutdown
+	 */
+	private boolean isShuttingDown() {
+		return fShuttingDown;
+	}
+	
+	/**
+	 * Sets whether this plug-in is in the process of 
+	 * being shutdown.
+	 * 
+	 * @param value whether this plug-in is in the process of 
+	 *  being shutdown
+	 */
+	private void setShuttingDown(boolean value) {
+		fShuttingDown = value;
+	}
+	
+	/**
+	 * Returns the collection of debug event listeners registered
+	 * with this plug-in.
+	 * 
+	 * @return list of registered debug event listeners, instances
+	 *  of <code>IDebugEventListener</code>	
+	 */
+	private Object[] getEventListeners() {
+		return fEventListeners.getListeners();
 	}
 }
 
