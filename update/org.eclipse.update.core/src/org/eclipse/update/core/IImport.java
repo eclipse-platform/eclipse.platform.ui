@@ -1,40 +1,73 @@
 package org.eclipse.update.core;
-
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-
+ 
 /**
- * an Import is a requirement on a plug-in with a matching rule
+ * Plug-in dependency entry.
+ * Describes a feture dependency on a particular plug-in. The dependency 
+ * can specify a specific plug-in version and a matching rule for 
+ * satisfying the dependency.
+ * <p>
+ * Clients may implement this interface. However, in most cases clients should 
+ * directly instantiate or subclass the provided implementation of this 
+ * interface.
+ * </p>
+ * @see org.eclipse.update.core.Import
+ * @since 2.0
  */
 public interface IImport {
 
 	/**
-	 * Rules
+	 * No matching rule specified 
+	 * @since 2.0
 	 */
-	//	perfect | equivalent | compatible | greaterOrEqual
-	static final int RULE_NONE 			= 0;
-	static final int RULE_PERFECT			= 1;
-	static final int RULE_EQUIVALENT 		= 2;
-	static final int RULE_COMPATIBLE		= 3;
-	static final int RULE_GRATER_OR_EQUAL	= 4;
+	public static final int RULE_NONE = 0;
+
+	/**
+	 * Dependency can be satisfied only with plug-in version matching 
+	 * exactly the specified version.
+	 * @since 2.0
+	 */	
+	public static final int RULE_PERFECT = 1;
+
+	/**
+	 * Dependency can be satisfied only with plug-in version that is 
+	 * equivalent to the specified version (same major and minor version
+	 * identifier, greater than or equal service identifier).
+	 * @since 2.0
+	 */
+	public static final int RULE_EQUIVALENT = 2;
+
+	/**
+	 * Dependency can be satisfied only with plug-in version that is 
+	 * compatible with the specified version (either is equivalent,
+	 * or greater minor identifier (but same major identifier)).
+	 * @since 2.0
+	 */
+	public static final int RULE_COMPATIBLE = 3;
+
+	/**
+	 * Dependency can be satisfied only with plug-in version that is 
+	 * greater or equal to the specified version.
+	 * @since 2.0
+	 */
+	public static final int RULE_GRATER_OR_EQUAL = 4;
+	
 	/** 
-	 * Returns the Identifier of the required plug-in.
+	 * Returns an identifier of the dependent plug-in.
 	 * 
-	 * @return the plug-in Identifier
+	 * @return plug-in identifier
 	 * @since 2.0 
 	 */
-
 	VersionedIdentifier getVersionedIdentifier();
-	
+
 	/**
-	 * Returns a atching rule
+	 * Returns the matching rule for the dependency.
 	 * 
 	 * @return matching rule
 	 * @since 2.0 
 	 */
-
 	int getRule();
 }
-
