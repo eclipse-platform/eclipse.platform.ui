@@ -43,7 +43,7 @@ public final class AboutInfo {
 	private String featurePluginLabel;
 	private String providerName;
 	private String appName;
-	private ImageDescriptor windowImage;
+	private ImageDescriptor[] windowImages;
 	private ImageDescriptor aboutImage;
 	private ImageDescriptor featureImage;
 	private String aboutText;
@@ -80,7 +80,7 @@ public final class AboutInfo {
 		if (!status.isOK()) {
 			return null;
 		}
-		
+
 		AboutInfo info = new AboutInfo(featureId);
 		Hashtable runtimeMappings  = new Hashtable();
 		runtimeMappings.put("{featureVersion}", versionId); //$NON-NLS-1$
@@ -89,7 +89,13 @@ public final class AboutInfo {
 		info.providerName = reader.getProviderName();
 		info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
 		info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
-		info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
+
+		// look for the newer array, but if its not there then use the older,
+		// single image definition
+		info.windowImages = reader.getImages("windowImages"); //$NON-NLS-1$
+		if (info.windowImages == null)
+			info.windowImages = reader.getImages("windowImage"); //$NON-NLS-1$
+
 		info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
 		info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
 		info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
@@ -292,12 +298,16 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Returns the image descriptor for the window image to use for this product.
-	 * Products designed to run "headless" typically would not have such an image.
+	 * Return an array of image descriptors for the window images to use for
+	 * this product. The expectations is that the elements will be the same
+	 * image rendered at different sizes. Products designed to run "headless"
+	 * typically would not have such images.
 	 * 
-	 * @return the image descriptor for the window image, or <code>null</code> if none
+	 * @return an array of the image descriptors for the window images, or
+	 *         <code>null</code> if none
+	 * @since 3.0
 	 */
-	public ImageDescriptor getWindowImage() {
-		return windowImage;
+	public ImageDescriptor[] getWindowImages() {
+		return windowImages;
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.window;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -102,11 +104,12 @@ public abstract class Window {
 	public static final int CANCEL = 1;
 	
 	/**
-	 * Default title image, or <code>null</code> if none.
-	 * 
-	 * @see #setDefaultImage
+	 * An array of images to be used for the window.  It is
+	 * expected that the array will contain the same icon
+	 * rendered at different resolutions.
 	 */
-	private static Image defaultImage;
+	private static Image[] defaultImages;
+
 	/**
 	 * This interface defines a Exception Handler which 
 	 * can be set as a global handler and will be called
@@ -272,17 +275,28 @@ public boolean close() {
  */
 protected void configureShell(Shell newShell) {
 
-	if (defaultImage != null) {	
-		if (defaultImage.isDisposed())  // workaround for bug 46624 - [RCP] Walkback while exiting eclipse (on Mac)
-			System.err.println("Window.configureShell: image disposed"); //$NON-NLS-1$
-		else
-			newShell.setImage(defaultImage);
+	// The single image version of this code had a comment related to bug 46624,
+	// and some code that did nothing if the stored image was already disposed.
+	// The equivalent in the multi-image version seems to be to remove the
+	// disposed images from the array passed to the shell.
+	if(defaultImages != null && defaultImages.length > 0) {
+		ArrayList nonDisposedImages = new ArrayList(defaultImages.length);
+			for (int i = 0; i < defaultImages.length; ++i)
+				if (defaultImages[i] != null && !defaultImages[i].isDisposed())
+					nonDisposedImages.add(defaultImages[i]);
+
+		if(nonDisposedImages.size() <= 0)
+			System.err.println("Window.configureShell: images disposed"); //$NON-NLS-1$
+		else {
+			Image[] array = new Image[nonDisposedImages.size()];
+			nonDisposedImages.toArray(array);
+			newShell.setImages(array);
+		}
 	}
+
 	Layout layout = getLayout();
-	
-	if (layout != null) {
+	if (layout != null)
 		newShell.setLayout(layout);
-	}
 }
 
 
@@ -423,7 +437,9 @@ protected Control getContents() {
  * @see #setDefaultImage
  */
 public static Image getDefaultImage() {
-	return defaultImage;
+	return (defaultImages == null || defaultImages.length < 1)
+			? null
+			: defaultImages[0];
 }
 /**
  * Returns the initial location to use for the shell.
@@ -664,8 +680,27 @@ public void setBlockOnOpen(boolean shouldBlock) {
  * @param image the default image, or <code>null</code> if none
  */
 public static void setDefaultImage(Image image) {
-	defaultImage= image;
+	defaultImages = image == null ? null : new Image[]{image};
 }
+
+/**
+ * Sets the receiver's images to the argument, which may be an empty array.
+ * It is expected that the array will contain the same icon rendered at
+ * different resolutions.
+ * 
+ * @see Decorations.setImages
+ * 
+ * @param images
+ *            the array of images to be used when the receiver window is
+ *            opened
+ * @since 3.0
+ */
+public static void setDefaultImages(Image[] images) {
+	Image[] newArray = new Image[images.length];
+	System.arraycopy(images, 0, newArray, 0, newArray.length);
+	defaultImages = newArray;
+}
+
 /**
  * Sets this window's return code. The return code is automatically returned
  * by <code>open</code> if block on open is enabled. For non-blocking
