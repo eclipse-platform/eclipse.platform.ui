@@ -2156,7 +2156,7 @@
       <!-- Properties -->
       <keyBinding
             commandId="org.eclipse.ui.file.properties"
-            keySequence="M3+Enter"
+            keySequence="M3+Cr"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Exit -->
