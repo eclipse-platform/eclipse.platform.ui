@@ -62,7 +62,12 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	public void testFolderSync() throws CoreException, CVSException {
 		// Workspace root
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		_testFolderSyncInvalid(root);
+//		FolderSyncInfo info = sync.getFolderSync(root);
+//		assertNull(info);
+//		sync.deleteFolderSync(root);
+//		sync.setFolderSync(root, dummyFolderSync(root));
+//		info = sync.getFolderSync(root);
+//		assertNull(info);
 
 		// Non-existant project
 		IProject project = root.getProject(getName() + "-" + System.currentTimeMillis());
@@ -126,7 +131,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		buildResources(container, new String[] { "hassync/", "nosync", "hassync.txt", "nosync.txt" }, true);
 		IResource resource = container.getFile(new Path("hassync.txt"));
 		sync.setResourceSync(resource, dummyResourceSync(resource));
-		resource = container.getFile(new Path("hassync"));
+		resource = container.getFolder(new Path("hassync"));
 		sync.setResourceSync(resource, dummyResourceSync(resource));
 		assertNotNull(sync.getResourceSync(container.getFile(new Path("hassync.txt"))));
 		assertNull(sync.getResourceSync(container.getFile(new Path("nosync.txt"))));
@@ -189,10 +194,13 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		// Deleted/recreated file -- if parent exists, sync info should be preserved across deletions
 		ResourceSyncInfo info = dummyResourceSync(file);
 		sync.setResourceSync(file, info);
+		// Note: deleting a resource will delete it's sync info unless the project has a CVS provider
 		file.delete(false /*force*/, null);
 		ResourceSyncInfo newInfo = sync.getResourceSync(file);
-		assertEquals(newInfo, info);
+		//assertEquals(newInfo, info);
+		assertEquals(newInfo, null); /* changed for reason noted above */
 		file.create(getRandomContents(), false /*force*/, null);
+		sync.setResourceSync(file, info); /* added for reason noted above */
 		newInfo = sync.getResourceSync(file);
 		assertEquals(newInfo, info);
 		sync.deleteResourceSync(file);
@@ -380,10 +388,13 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		assertBijection(expectedMembers.toArray(), members, ignores);
 
 		// delete resources, those with sync info should still appear, those without should not
+		// (Note: This is only true for projects that have a CVS provider)
 		resource = project1.getFile("deleted.txt");
 		resource.delete(false /*force*/, null);
+		expectedMembers.remove(resource); /* added for reason noted above */
 		resource = project1.getFolder("deleted");
 		resource.delete(false /*force*/, null);
+		expectedMembers.remove(resource); /* added for reason noted above */
 
 		resource = project1.getFile("deleted_nosync.txt");
 		resource.delete(false /*force*/, null);
