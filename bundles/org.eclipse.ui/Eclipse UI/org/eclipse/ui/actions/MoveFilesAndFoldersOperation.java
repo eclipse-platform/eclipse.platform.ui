@@ -92,8 +92,11 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	}
 	/* (non-Javadoc)
 	 * Overrides method in CopyFilesAndFoldersOperation
+	 *
+	 * Note this method is for internal use only. It is not API.
+	 *
 	 */
-	protected String validateDestination(IContainer destination, IResource[] sourceResources) {
+	public String validateDestination(IContainer destination, IResource[] sourceResources) {
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
 

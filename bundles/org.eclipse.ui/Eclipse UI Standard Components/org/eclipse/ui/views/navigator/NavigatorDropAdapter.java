@@ -4,17 +4,13 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -23,8 +19,6 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  * Implements drop behaviour for drag and drop operations
@@ -53,6 +47,12 @@ public class NavigatorDropAdapter
 	 * A flag indicating that overwrites should always occur.
 	 */
 	private boolean alwaysOverwrite = false;
+	
+	/**
+	 * The selected resources if the drag and drop operation takes place 
+	 * within the same widget.
+	 */
+	private IResource[] sourceResources;
 
 	/**
 	 * Constructs a new drop adapter.
@@ -61,6 +61,27 @@ public class NavigatorDropAdapter
 		super(viewer);
 	}
 
+	/**
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(DropTargetEvent)
+	 */
+	public void dragEnter(DropTargetEvent event) {
+		if (event.getSource() == event.widget) {
+			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+			List sourceList = selection.toList();
+			sourceResources = (IResource[]) sourceList.toArray(new IResource[sourceList.size()]);
+		}
+		else {
+			sourceResources = null;
+		}
+		super.dragEnter(event);
+	}
+	/**
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragLeave(DropTargetEvent)
+	 */
+	public void dragLeave(DropTargetEvent event) {
+		sourceResources = null;
+		super.dragLeave(event);
+	}
 	/**
 	 * @see DropTargetListener#dragOver
 	 */
@@ -348,12 +369,30 @@ public class NavigatorDropAdapter
 	 */
 	public boolean validateDrop(
 		Object target,
-		int operation,
+		int dragOperation,
 		TransferData transferType) {
-		if (super.validateDrop(target, operation, transferType)) {
+		if (super.validateDrop(target, dragOperation, transferType)) {
 			return true;
 		}
-		return validateTarget(target).isOK();
+		if (!validateTarget(target).isOK()) {
+			return false;
+		}
+		IContainer destination = getActualTarget((IResource) target);
+		if (FileTransfer.getInstance().isSupportedType(transferType)) {
+			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
+			return copyOperation.validateImportDestination(destination, sourceNames) == null;
+		} else if (sourceResources != null) {
+			CopyFilesAndFoldersOperation operation;
+			if (dragOperation == DND.DROP_COPY) {
+				operation = new CopyFilesAndFoldersOperation(getShell());
+			}
+			else {
+				operation = new MoveFilesAndFoldersOperation(getShell());
+			}
+			return operation.validateDestination(destination, sourceResources) == null;			
+		}		
+		return true;
 	}
 	
 	/**

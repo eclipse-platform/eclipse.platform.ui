@@ -649,12 +649,15 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Checks whether the destination is valid for copying the source 
 	 * resources.
+	 * <p>
+	 * Note this method is for internal use only. It is not API.
+	 * </p>
 	 *
 	 * @param destination the destination container
 	 * @param sourceResources the source resources
 	 * @return an error message, or <code>null</code> if the path is valid
 	 */
-	protected String validateDestination(IContainer destination, IResource[] sourceResources) {
+	public String validateDestination(IContainer destination, IResource[] sourceResources) {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
@@ -678,12 +681,15 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Checks whether the destination is valid for copying the source 
 	 * files.
+	 * <p>
+	 * Note this method is for internal use only. It is not API.
+	 * </p>
 	 *
 	 * @param destination the destination container
 	 * @param sourceNames the source file names
 	 * @return an error message, or <code>null</code> if the path is valid
 	 */
-	String validateImportDestination(IContainer destination, String[] sourceNames) {
+	public String validateImportDestination(IContainer destination, String[] sourceNames) {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
