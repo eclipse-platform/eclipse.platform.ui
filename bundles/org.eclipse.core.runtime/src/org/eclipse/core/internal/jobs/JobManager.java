@@ -444,7 +444,7 @@ public class JobManager implements IJobManager {
 		if (waiting.getRule() == null)
 			return null;
 		synchronized (lock) {
-			//check the running job and all blocked jobs
+			//check the running jobs
 			for (Iterator it = running.iterator(); it.hasNext();) {
 				InternalJob job = (InternalJob) it.next();
 				if (waiting.isConflicting(job))
@@ -463,27 +463,6 @@ public class JobManager implements IJobManager {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the thread that owns the rule that is blocking this job from running, or 
-	 * null if there is none.
-	 */
-	protected Thread getBlockingThread(InternalJob job) {
-		Thread result = null;
-		synchronized (lock) {
-			if (job.internalGetState() == InternalJob.BLOCKED) {
-				//if this job is blocked, then the head of the queue is the job that is blocking it
-				InternalJob next = job.next();
-				while (next.next() != null)
-					next = next.next();
-				result = next == null ? null : next.getThread();
-			}
-		}
-		//if nobody is blocking this job, kick start the system by creating another worker
-		if (result == null)
-			pool.jobQueued(job);
-		return result;
 	}
 
 	public LockManager getLockManager() {
@@ -596,6 +575,7 @@ public class JobManager implements IJobManager {
 		}
 		//spin until all jobs are completed
 		try {
+			//TODO: report blockage before starting
 			monitor.beginTask(Policy.bind("jobs.blocked0"), jobCount); //$NON-NLS-1$
 			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
 			int jobsLeft;
