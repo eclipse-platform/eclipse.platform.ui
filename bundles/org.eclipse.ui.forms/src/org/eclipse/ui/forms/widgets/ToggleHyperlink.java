@@ -41,18 +41,26 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public ToggleHyperlink(Composite parent, int style) {
 		super(parent, style);
-		addListener(SWT.MouseEnter, new Listener() {
+		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				hover = true;
-				redraw();
+				switch (e.type) {
+					case SWT.MouseEnter:
+						hover=true;
+						redraw();
+						break;
+					case SWT.MouseExit:
+						hover = false;
+						redraw();
+						break;
+					case SWT.KeyDown:
+						onKeyDown(e);
+						break;
+				}
 			}
-		});
-		addListener(SWT.MouseExit, new Listener() {
-			public void handleEvent(Event e) {
-				hover = false;
-				redraw();
-			}
-		});
+		};
+		addListener(SWT.MouseEnter, listener);
+		addListener(SWT.MouseExit, listener);
+		addListener(SWT.KeyDown, listener);
 		addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				setExpanded(!isExpanded());
@@ -174,5 +182,19 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 								: "0";
 					}
 				});
+	}
+	private void onKeyDown(Event e) {
+		if (e.keyCode==SWT.ARROW_RIGHT) {
+			// expand if collapsed
+			if (!isExpanded()) {
+				handleActivate(e);
+			}
+		}
+		else if (e.keyCode==SWT.ARROW_LEFT) {
+			// collapse if expanded
+			if (isExpanded()) {
+				handleActivate(e);
+			}
+		}
 	}
 }
