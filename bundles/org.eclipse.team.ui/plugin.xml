@@ -47,7 +47,7 @@
      point="org.eclipse.ui.popupMenus">
 	<objectContribution
 	   id="org.eclipse.team.ui.ProjectContributions"
-	   objectClass="org.eclipse.core.resources.IProject">
+	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 		<menu
 			id="team.main"
 			path="additions"
