@@ -62,6 +62,7 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -738,7 +739,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
-		ISelection selection= new StructuredSelection(getInput());
+		IPath fullPath= getLocation(getInput());
+		IFile file= AntUtil.getFile(fullPath.toOSString());
+		ISelection selection= new StructuredSelection(file);
 		return new ShowInContext(null, selection);
 	}
 	
