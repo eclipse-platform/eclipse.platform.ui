@@ -12,16 +12,8 @@ public class InternalBootLoader2 {
 	private static PlatformConfiguration current = null;
 	
 	public static PlatformConfiguration getPlatformConfiguration() {
-		
-		int status;
-		
-		if (current == null) {
+		if (current == null) 
 			current = new PlatformConfiguration();
-			try {
-				current.save();
-			} catch (IOException e) {
-			}
-		}
 		return current;
 	}
 

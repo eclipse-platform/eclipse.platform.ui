@@ -16,47 +16,9 @@ import java.net.URL;
 public interface IPlatformConfiguration {
 	
 	/**
-	 * Configuration change status constants.
-	 */
-	
-	/**
-	 * No changes 
-	 */
-	public static final int NO_CHANGES = 0;
-	
-	/**
-	 * Plug-in changes only
-	 */
-	public static final int PLUGIN_CHANGES = 1;
-	
-	/**
-	 * Feature changes
-	 */
-	public static final int FEATURE_CHANGES = 2;
-	
-	/**
 	 * Configuration entry representing an install site. 
 	 */
 	public interface ISiteEntry {
-		
-		/**
-		 * Site policy constants.
-		 */
-	
-		/** 
-		 * Auto-detect changes to plug-in and feature configuration on startup
-		 */
-		public static final int USER_CONFIGURED_PLUS_CHANGES = 1;
-	
-		/**
-		 * Only use plug-ins explicitly configured by user
-		 */
-		public static final int USER_CONFIGURED = 2;
-	
-		/**
-		 * Only use plug-in explicitly configured via site file (eg. by administrator)
-		 */
-		public static final int SITE_CONFIGURED = 3;
 		
 		/**
 		 * Returns the URL for this site
@@ -66,80 +28,131 @@ public interface IPlatformConfiguration {
 		public URL getURL();
 		
 		/**
-		 * Returns the policy setting for this site
+		 * Returns the policy for this site
 		 * 
-		 * @return site policy setting
+		 * @return site policy
 		 */				
-		public int getPolicy();		
-					
-		/**
-		 * Configures the specified plug-in entry. If the plug-in entry is already
-		 * configured this method does nothing.
-		 * 
-		 * @param entry plug-in entry 
-		 */	
-		public void configurePluginEntry(IPluginEntry entry);
-							
-		/**
-		 * Unconfigures the specified entry. Does not do anything is the entry
-		 * is not configured.
-		 * 
-		 * @param entry plug-in entry
-		 */	
-		public void unconfigurePluginEntry(IPluginEntry entry);
-				
-		/**
-		 * Returns all configured plug-in entries for this site
-		 * 
-		 * @return array of plug-in entries. An empty array is returned
-		 * if there are no plug-ins explicitly configured for this site.
-		 * An empty array is always returned for sites using
-		 * <code>AUTO_DISCOVER_CHANGES</code> and <code>SITE_CONFIGURED_PLUGINS</code>
-		 * policies.
-		 */
-		public IPluginEntry[] getConfiguredPluginEntries();
-				
-		/**
-		 * Tests if specified plug-in entry is configured on this site
-		 * 
-		 * @param entry plug-in entry
-		 * @return <code>true</code> if plug-in entry is configured, <code>false</code> otherwise
-		 */	
-		public boolean isConfigured(IPluginEntry entry);
-				
-	}
+		public ISitePolicy getSitePolicy();
 		
-	/**
-	 * Configuration entry representing a plug-in or plug-in fragment.
-	 */
-	public interface IPluginEntry {
-				
 		/**
-		 * Returns the relative path to plugin.xnml or fragment.xml on its site
+		 * Sets the site policy
 		 * 
-		 * @return path relative to site entry URL
-		 */				
-		public String getRelativePath();
-				
-}
-			
+		 * @param policy site policy
+		 */
+		public void setSitePolicy(ISitePolicy policy);				
+	}
+	
 	/**
-	 * Create a plug-in entry
-	 *
-	 * @param path site-relative path of the plugin.xml or fragment.xml
-	 * for this entry
-	 * @return created plug-in entry
-	 */		
-	public IPluginEntry createPluginEntry(String path);
+	 * Site policy. The site policy object determines how plug-ins
+	 * contained on the site are processed during startup. In general,
+	 * there are 3 ways of configuring a site policy
+	 * <ul>
+	 * <li>explicitly specify which plug-ins are to be included at
+	 * startup (type==USER_INCLUDE). Any other plug-ins located
+	 * at the site are ignored at startup. This is typically the best
+	 * policy when using remote sites where the user wishes
+	 * to retain explicit control over the plug-ins that are included
+	 * from such site.
+	 * <li>explicitly specify which plug-ins are to be excluded at
+	 * startup (type==USER-EXCLUDE). All other plug-ins located
+	 * at the site are used at startup. This policy requires that
+	 * the site support an access "protocol" that allows plug-in
+	 * discovery. In general, these are sites defined using the "file"
+	 * URL protocol. This is typically the best policy for local
+	 * install sites (on the user system).
+	 * <li>specify site-defined plug-in list(s) (type==SITE_INCLUDE). 
+	 * This is typically the best policy when using a remote administered 
+	 * site where the user wants to defer to the site administrator the
+	 * maintenance of the list of plug-ins that will be included at
+	 * startup.
+	 * </ul>
+	 */
+	public interface ISitePolicy {
+		
+		/**
+		 * Policy type constants.
+		 */
+	
+		/** 
+		 * User-defined inclusion list. The list associated with this
+		 * policy type is interpreted as path entries to included plugin.xml
+		 * or fragment.xml <b>relative</b> to the site URL
+		 */
+		public static final int USER_INCLUDE = 0;
+	
+		/**
+		 * User-defined exclusion list. The list associated with this
+		 * policy type is interpreted as path entries to excluded plugin.xml
+		 * or fragment.xml <b>relative</b> to the site URL
+		 */
+		public static final int USER_EXCLUDE = 1;
+	
+		/**
+		 * Site-defined inclusion list. The list associated with this
+		 * policy type is interpreted as path entries of site-include
+		 * files <b>relative</b> to the site URL. Each site-include file
+		 * is a Java properties file with one or more properties containing
+		 * comma-separated list of plugin.xml or fragment.xml paths 
+		 * <b>relative</b> to the site URL. The property keys are not
+		 * interpreted. They are simply supported as a convenience to the
+		 * list administrator (able to organize the site-include file
+		 * as several shorter path lists, rather than one long one).
+		 * 
+		 * Following is an example of the content of a site-include file.
+		 * <code>
+		 * tools.xml = plugins/com.xyz.xml_1.0.3/plugin.xml,\
+		 *             plugins/com.xyz.xml.nl/fragment.xml
+		 * tools.ejb = ejb/com.xyz.ejbV1/plugin.xml,\
+		 *             plugins/com.xyz.ejb_3/plugin.xml
+		 * util.common = utils/testharness/plugin.xml,\
+		 *               utils/relengtools/plugin.xml,\
+		 *               utils/nltools/plugin.xml
+		 * </code>
+		 */
+		public static final int SITE_INCLUDE = 2;
+		
+		/**
+		 * Return policy type
+		 * 
+		 * @return policy type
+		 */
+		public int getType();
+		
+		/**
+		 * Return policy inclusion/ exclusion list
+		 * 
+		 * @return the list as an array
+		 */
+		public String[] getList();
+		
+		/**
+		 * Set new policy list
+		 * 
+		 * @param list policy inclusion/ exclusion list as an array.
+		 * Returns an empty array if there are no entries.
+		 */
+		public void setList(String[] list);
+	}
 	
 	/**
 	 * Create a site entry
 	 *
 	 * @param url site URL
-	 * @param int site policy
+	 * @param policy site policy
 	 * @return created site entry
 	 */	
-	public ISiteEntry createSiteEntry(URL url, int policy);		
+	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy);
+			
+	/**
+	 * Create a site policy. The policy determines the way the site
+	 * plug-in are processed at startpu
+	 *
+	 * @param type policy type
+	 * @param list an array of site-relative paths representing the
+	 * inclusion/ exclusion list
+	 * @return created site policy entry
+	 */		
+	public ISitePolicy createSitePolicy(int type, String[] list);		
 		
 	/**
 	 * Configures the specified site entry. If a site entry with the
@@ -147,41 +160,26 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @param entry site entry 
 	 */	
-	public void configureSiteEntry(ISiteEntry entry);
+	public void configureSite(ISiteEntry entry);
 		
 	/**
-	 * Configures the specified site entry. Note, that policy change may cause explicitly configured
-	 * plug-in entries to be discarded, as follows:
-	 * <ul>
-	 * <li>USER_CONFIGURED_PLUS_CHANGES to USER_CONFIGURED: configured plug-in
-	 * entries are reused, but the site no longer detects changes
-	 * <li>USER_CONFIGURED_PLUS_CHANGES to SITE_CONFIGURED: configured plug-in
-	 * entries are discarded. Site-specified configuration is used
-	 * <li>USER_CONFIGURED to USER_CONFIGURED_PLUS_CHANGES: configured plug-in
-	 * entries are reused, and changes are detected on startup
-	 * <li>USER_CONFIGURED to SITE_CONFIGURED: configured plug-in
-	 * entries are discarded. Site-specified configuration is used
-	 * <li>SITE_CONFIGURED to USER_CONFIGURED_PLUS_CHANGES: the site is initialized
-	 * with no plugins configured (the site-specified setting are not saved).
-	 * Changes are detected on startup.
-	 * <li>SITE_CONFIGURED to USER_CONFIGURED: the site is initialized
-	 * with no plugins configured (the site-specified setting are not saved).
-	 * Changes are not detected on startup.
-	 * </ul>
+	 * Configures the specified site entry. If a site entry with the
+	 * same site URL is already configured, the replacement behavior for
+	 * the entry can be specified.
 	 * 
 	 * @param entry site entry 
 	 * @param  flag indicating whether an existing configured entry with
 	 * the same URL should be replaced (<code>true</code>) or not (<code>false</code>).
 	 */	
-	public void configureSiteEntry(ISiteEntry entry, boolean replace);
+	public void configureSite(ISiteEntry entry, boolean replace);
 		
 	/**
-	 * Unconfigures the specified entry. Does not do anything is the entry
+	 * Unconfigures the specified entry. Does not do anything if the entry
 	 * is not configured.
 	 * 
 	 * @param entry site entry
 	 */	
-	public void unconfigureSiteEntry(ISiteEntry entry);
+	public void unconfigureSite(ISiteEntry entry);
 		
 	/**
 	 * Returns configured site entries
@@ -189,7 +187,7 @@ public interface IPlatformConfiguration {
 	 * @return array of site entries. Returns an empty array if no sites are
 	 * configured
 	 */	
-	public ISiteEntry[] getConfiguredSiteEntries();
+	public ISiteEntry[] getConfiguredSites();
 		
 	/**
 	 * Returns a site entry matching the specified URL
@@ -197,7 +195,7 @@ public interface IPlatformConfiguration {
 	 * @param url site url
 	 * @return matching site entry, or <code>null</code> if no match found
 	 */	
-	public ISiteEntry findConfiguredSiteEntry(URL url);
+	public ISiteEntry findConfiguredSite(URL url);
 	
 	/**
 	 * Returns the URL location of the configuration information
@@ -207,20 +205,6 @@ public interface IPlatformConfiguration {
 	 */
 	public URL getConfigurationLocation();
 	
-	/**
-	 * Returns a status code indicating if the referenced site
-	 * content has changes since the last time the configuration
-	 * was saved. The status is computed at the time the 
-	 * IPlatformConfiguration object is constructed. It takes into
-	 * account the policy settings specified for each of its sites.
-	 * Only sites that specify USER_CONFIGURED_PLUS_CHANGES policy
-	 * are considered when computing the change status.
-	 * 
-	 * @return change status code. Valid values are NO_CHANGES,
-	 * PLUGIN_CHANGES, FEATURE_CHANGES
-	 */
-	public int getChangeStatus();
-		
 	/**
 	 * Called to save the configuration information
 	 */	

@@ -3,7 +3,7 @@ package org.eclipse.core.internal.boot;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,51 +17,57 @@ import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.boot.IPlatformConfiguration.IPluginEntry;
+import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
-	
+
 	private URL configLocation;
 	private HashMap sites;
-	private HashMap sitesNative;
-	private int changeStatus;
-	
+	private HashMap nativeSites;
+
 	public static boolean DEBUG = true;
-	
+
 	private static final String PLUGINS = "plugins";
 	private static final String INSTALL = "install";
 	private static final String CONFIG_FILE = "platform.cfg";
-	private static final String FEATURES = INSTALL+"/features";
-	private static final String LINKS = INSTALL+"/links";
+	private static final String FEATURES = INSTALL + "/features";
+	private static final String LINKS = INSTALL + "/links";
 	private static final String PLUGIN_XML = "plugin.xml";
 	private static final String FRAGMENT_XML = "fragment.xml";
-	
+	private static final String FEATURE_XML = "feature.xml";
+
 	private static final String CFG_SITE = "site";
 	private static final String CFG_URL = "url";
 	private static final String CFG_POLICY = "policy";
-	private static final String CFG_CONFIGURED = "configured";
-	private static final String CFG_UNCONFIGURED = "unconfigured";
-	private static final String CFG_UNMANAGED = "unmanaged";
+	private static final String[] CFG_POLICY_TYPE = {"USER-INCLUDE", "USER-EXCLUDE", "SITE-INCLUDE"};
+	private static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN";
+	private static final String CFG_LIST = "list";
+	private static final String CFG_VERSION = "version";
+	private static final String VERSION = "1.0";
 	private static final String EOF = "eof";
 	private static final int CFG_LIST_LENGTH = 10;
-	
+
 	public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
-		
+
 		private URL url;
-		private int policy;
-		
-		private HashMap plugins;
-		private HashMap pluginsUncfgd;
-		private HashMap pluginsUnmgd;
-		
-		private SiteEntry() {}
-		private SiteEntry(URL url, int policy) {
+		private ISitePolicy policy;
+		private ArrayList features;
+		private ArrayList plugins;
+
+		private SiteEntry() {
+		}
+		private SiteEntry(URL url, ISitePolicy policy) {
+			if (url==null)
+				throw new IllegalArgumentException();
+				
+			if (policy==null)
+				throw new IllegalArgumentException();
+				
 			this.url = url;
 			this.policy = policy;
-			this.plugins = new HashMap();
-			this.pluginsUncfgd = new HashMap();
-			this.pluginsUnmgd = new HashMap();
+			this.features = null;
+			this.plugins = null;
 		}
 
 		/*
@@ -72,199 +78,239 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 
 		/*
-		 * @see ISiteEntry#getPolicy()
-		 */
-		public int getPolicy() {
+		* @see ISiteEntry#getSitePolicy()
+		*/
+		public ISitePolicy getSitePolicy() {
 			return policy;
 		}
 
 		/*
-		 * @see ISiteEntry#configurePluginEntry(IPluginEntry)
+		 * @see ISiteEntry#setSitePolicy(ISitePolicy)
 		 */
-		public void configurePluginEntry(IPluginEntry entry) {
-			if (entry == null)
-				return;
+		public void setSitePolicy(ISitePolicy policy) {				
+			if (policy==null)
+				throw new IllegalArgumentException();
+			this.policy = policy;
+		}
+		
+		private String[] detectFeatures() {
+			if (!supportsDetection())
+				return new String[0];
+
+			// locate feature entries on site
+			features = new ArrayList();
+			File root =
+				new File(url.getFile().replace('/', File.separatorChar) + FEATURES);
+			String[] list = root.list();
+			String path;
+			File plugin;
+			for (int i = 0; list != null && i < list.length; i++) {
+				path = list[i] + File.separator + FEATURE_XML;
+				plugin = new File(root, path);
+				if (!plugin.exists()) {
+					continue;
+				}
+				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/'));
+			}				
 				
-			String key = entry.getRelativePath();
-			if (key == null)
-				return;
+			return (String[])features.toArray(new String[0]);
+		}
+		
+		private String[] detectPlugins() {
+			if (!supportsDetection())
+				return new String[0];
+								
+			// locate plugin entries on site
+			plugins = new ArrayList();
+			File root =
+				new File(url.getFile().replace('/', File.separatorChar) + PLUGINS);
+			String[] list = root.list();
+			String path;
+			File plugin;
+			for (int i = 0; list != null && i < list.length; i++) {
+				path = list[i] + File.separator + PLUGIN_XML;
+				plugin = new File(root, path);
+				if (!plugin.exists()) {
+					path = list[i] + File.separator + FRAGMENT_XML;
+					plugin = new File(root, path);
+					if (!plugin.exists())
+						continue;
+				}
+				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/'));
+			}				
 				
-			if (!plugins.containsKey(key))
-				plugins.put(key,entry);
+			return (String[])plugins.toArray(new String[0]);
+		}
+		
+		private boolean supportsDetection() {
+			return url.getProtocol().equals("file");
+		}
+		
+		private String[] getDetectedFeatures() {
+			if (features == null)
+				return detectFeatures();
+			else
+				return (String[])features.toArray(new String[0]);
+		}
+		
+		private String[] getDetectedPlugins() {
+			if (plugins == null)
+				return detectPlugins();
+			else 
+				return (String[])plugins.toArray(new String[0]);
+		}
+	}
+
+	public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
+
+		private int type;
+		private String[] list;
+
+		private SitePolicy() {
+		}
+		private SitePolicy(int type, String[] list) {
+			if (type != ISitePolicy.USER_INCLUDE
+				&& type != ISitePolicy.USER_EXCLUDE
+				&& type != ISitePolicy.SITE_INCLUDE)
+				throw new IllegalArgumentException();
+			this.type = type;
+
+			if (list == null)
+				this.list = new String[0];
+			else
+				this.list = list;
 		}
 
 		/*
-		 * @see ISiteEntry#unconfigurePluginEntry(IPluginEntry)
+		 * @see ISitePolicy#getType()
 		 */
-		public void unconfigurePluginEntry(IPluginEntry entry) {
-			if (entry == null)
-				return;
-				
-			String key = entry.getRelativePath();
-			if (key == null)
-				return;
-				
-			plugins.remove(key);
-		}		
-			
-		/*
-		 * @see ISiteEntry#getConfiguredPluginEntries()
-		 */
-		public IPluginEntry[] getConfiguredPluginEntries() {
-			if (plugins.size() == 0)
-				return new IPluginEntry[0];
-				
-			return (IPluginEntry[]) plugins.values().toArray();
+		public int getType() {
+			return type;
 		}
 
 		/*
-		 * @see ISiteEntry#isConfigured(IPluginEntry)
-		 */
-		public boolean isConfigured(IPluginEntry entry) {
-			if (entry == null)
-				return false;
-				
-			String key = entry.getRelativePath();
-			if (key == null)
-				return false;
-				
-			return plugins.containsKey(key);
+		* @see ISitePolicy#getList()
+		*/
+		public String[] getList() {
+			return list;
 		}
 
-}
-	
-	public class PluginEntry implements IPlatformConfiguration.IPluginEntry {
-		
-		private String path;
-		
-		private PluginEntry() {}
-		private PluginEntry(String path) {
-			this.path = path;
-		}
-		
-			/*
-		 * @see IPluginEntry#getRelativePath()
+		/*
+		 * @see ISitePolicy#setList(String[])
 		 */
-		public String getRelativePath() {
-			return path;
+		public void setList(String[] list) {
+			if (list == null)
+				this.list = new String[0];
+			else
+				this.list = list;
 		}
 
-}
-	
-	PlatformConfiguration() {			
+	}
+
+	PlatformConfiguration() {
 		this.sites = new HashMap();
-		this.sitesNative = new HashMap();
-		this.changeStatus = initialize();
-		
-		if (DEBUG)
-			debug("change status="+Integer.toString(this.changeStatus));
+		this.nativeSites = new HashMap();
+		initialize();
 	}
 
 	/*
-	 * @see IPlatformConfiguration#createPluginEntry(String)
+	 * @see IPlatformConfiguration#createSiteEntry(URL, ISitePolicy)
 	 */
-	public IPluginEntry createPluginEntry(String path) {
-		return new PlatformConfiguration.PluginEntry(path);
-	}
-
-	/*
-	 * @see IPlatformConfiguration#createSiteEntry(URL, int)
-	 */
-	public ISiteEntry createSiteEntry(URL url, int policy) {
+	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy) {
 		return new PlatformConfiguration.SiteEntry(url, policy);
 	}
-	
+
 	/*
-	 * @see IPlatformConfiguration#configureSiteEntry(ISiteEntry)
+	 * @see IPlatformConfiguration#createSitePolicy(int, String[])
 	 */
-	public void configureSiteEntry(ISiteEntry entry) {
-		configureSiteEntry(entry, false);
+	public ISitePolicy createSitePolicy(int type, String[] list) {
+		return new PlatformConfiguration.SitePolicy(type, list);
 	}
 
 	/*
-	 * @see IPlatformConfiguration#configureSiteEntry(ISiteEntry, boolean)
+	 * @see IPlatformConfiguration#configureSite(ISiteEntry)
 	 */
-	public void configureSiteEntry(ISiteEntry entry, boolean replace) {
-		
+	public void configureSite(ISiteEntry entry) {
+		configureSite(entry, false);
+	}
+
+	/*
+	 * @see IPlatformConfiguration#configureSite(ISiteEntry, boolean)
+	 */
+	public void configureSite(ISiteEntry entry, boolean replace) {
+
 		if (entry == null)
 			return;
-				
+
 		URL key = entry.getURL();
 		if (key == null)
 			return;
-				
+
 		if (sites.containsKey(key) && !replace)
 			return;
-		
-		sites.put(key,entry);
+
+		sites.put(key, entry);
 	}
 
 	/*
-	 * @see IPlatformConfiguration#unconfigureSiteEntry(ISiteEntry)
+	 * @see IPlatformConfiguration#unconfigureSite(ISiteEntry)
 	 */
-	public void unconfigureSiteEntry(ISiteEntry entry) {
+	public void unconfigureSite(ISiteEntry entry) {
 		if (entry == null)
 			return;
-				
+
 		URL key = entry.getURL();
 		if (key == null)
 			return;
-				
+
 		sites.remove(key);
 	}
 
 	/*
-	 * @see IPlatformConfiguration#getConfiguredSiteEntries()
+	 * @see IPlatformConfiguration#getConfiguredSites()
 	 */
-	public ISiteEntry[] getConfiguredSiteEntries() {
+	public ISiteEntry[] getConfiguredSites() {
 		if (sites.size() == 0)
 			return new ISiteEntry[0];
-				
-		return (ISiteEntry[]) sites.values().toArray();
+
+		return (ISiteEntry[]) sites.values().toArray(new ISiteEntry[0]);
 	}
 
 	/*
-	 * @see IPlatformConfiguration#findConfiguredSiteEntry(URL)
+	 * @see IPlatformConfiguration#findConfiguredSite(URL)
 	 */
-	public ISiteEntry findConfiguredSiteEntry(URL url) {
+	public ISiteEntry findConfiguredSite(URL url) {
 		if (url == null)
 			return null;
-			
+
 		return (ISiteEntry) sites.get(url);
 	}
-	
+
 	/*
 	 * @see IPlatformConfiguration#getConfigurationLocation()
 	 */
 	public URL getConfigurationLocation() {
 		return configLocation;
 	}
-	
-	/*
-	 * @see IPlatformConfiguration#getChangeStatus()
-	 */
-	public int getChangeStatus() {
-		return changeStatus;
-	}
 
 	/*
 	 * @see IPlatformConfiguration#save()
 	 */
 	public void save() throws IOException {
-		
+
 		String fn = configLocation.getFile();
 		FileOutputStream fs = new FileOutputStream(fn);
 		PrintWriter w = new PrintWriter(fs);
 		write(w);
 		w.close();
 	}
-		
-	private int initialize() {
-		
+
+	private void initialize() {
+
 		// check for safe mode
 		// flag: -safe		come up in safe mode (loads configuration
 		//                  but compute "safe" plugin path
-		
+
 		// determine configuration to use
 		// flag: -config COMMON | HOME | CURRENT | <path>
 		//        COMMON	in <eclipse>/install/<cfig>
@@ -276,215 +322,101 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// CURRENT, HOME, COMMON
 		// if none found new configuration is created in the first
 		// r/w location in order of COMMON, HOME, CURRENT
-				
+
 		// load configuration. 
-		
+
 		// if none found, do default setup
 		setupDefaultConfiguration();
-		
+
 		// detect links
-		
+
 		// detect changes
-		int changeStatus = detectChanges();
-		
+
 		// if (feature changes)
 		// 	trigger alternate startup (into update app)
 		// else 
 		//	process any plugin-only changes
-		
-		return changeStatus;
+
 	}
-	
-	private int detectChanges() {
-		
-		if (sites.size() == 0)
-			return NO_CHANGES;
-					
-		// do a pass trying to detect feature changes. Exist on first change
-		Iterator site = sites.values().iterator();
-		SiteEntry se;
-		while(site.hasNext()) {
-			se = (SiteEntry) site.next();
-			if (detectFeatureChanges(se))
-				return FEATURE_CHANGES;
-		}
-		
-		// look for plugin changes	
-		boolean pluginChanges = false;
-		site = sites.values().iterator();
-		while(site.hasNext()) {
-			se = (SiteEntry) site.next();
-			pluginChanges |= detectPluginChanges(se);
-		}	
-		
-		if (pluginChanges)
-			return PLUGIN_CHANGES;
-		else
-			return NO_CHANGES;
-	}
-	
-	private boolean detectFeatureChanges(SiteEntry se) {
-		return false;
-	}
-	
-	private boolean detectPluginChanges(SiteEntry se) {
-		
-		boolean pluginChanges = false;
-		
-		// ensure site uses "auto-discover" policy
-		if (se.getPolicy()!= IPlatformConfiguration.ISiteEntry.USER_CONFIGURED_PLUS_CHANGES)
-			return false;
-			
-		// ensure sire supports "auto-discovery"
-		URL siteURL = se.getURL();
-		if (!supportsDiscovery(siteURL))
-			return false;
-			
-		// locate plugin entries on site
-		ArrayList plugins = new ArrayList();
-		File root = new File(siteURL.getFile().replace('/',File.separatorChar)+PLUGINS);
-		String[] list = root.list();
-		String path;
-		File plugin;
-		for (int i=0; i<list.length; i++) {
-			path = list[i]+File.separator+PLUGIN_XML;
-			plugin = new File(root,path);
-			if (!plugin.exists()) {
-				path = list[i]+File.separator+FRAGMENT_XML;
-				plugin = new File(root,path);
-				if (!plugin.exists())
-					continue;
-			}
-			plugins.add(createPluginEntry(path.replace(File.separatorChar,'/')));
-		}
-				
-		// check for additions ... picked up as unmanaged
-		Iterator i = plugins.iterator();
-		PluginEntry pe;
-		while (i.hasNext()) {
-			pe = (PluginEntry) i.next();
-			path = pe.getRelativePath();
-			if (se.plugins.containsKey(path))
-				continue;
-			if (se.pluginsUncfgd.containsKey(path))
-				continue;
-			if (se.pluginsUnmgd.containsKey(path))
-				continue;
-			if (DEBUG)
-				debug("add unmanaged plug-in entry "+path);
-			pluginChanges = true;
-			se.pluginsUnmgd.put(path,pe);			
-		}
-		
-		// check for deletions from configured list ... removed
-		i = ((HashMap)se.plugins.clone()).keySet().iterator();
-		while (i.hasNext()) {
-			pe = (PluginEntry) i.next();
-			if (!plugins.contains(pe)) {
-				if (DEBUG)
-					debug("remove configured plug-in entry "+pe.getRelativePath());
-				pluginChanges = true;
-				se.plugins.remove(pe);
-			}
-		}
-		
-		// check for deletions from unconfigured list ... removed
-		i = ((HashMap)se.pluginsUncfgd.clone()).keySet().iterator();
-		while (i.hasNext()) {
-			pe = (PluginEntry) i.next();
-			if (!plugins.contains(pe)) {
-				if (DEBUG)
-					debug("remove unconfigured plug-in entry "+pe.getRelativePath());
-				pluginChanges = true;
-				se.pluginsUncfgd.remove(pe);
-			}
-		}
-		
-		// check for deletions from unmanaged list ... removed
-		i = ((HashMap)se.pluginsUnmgd.clone()).keySet().iterator();
-		while (i.hasNext()) {
-			pe = (PluginEntry) i.next();
-			if (!plugins.contains(pe)) {
-				if (DEBUG)
-					debug("remove unmanaged plug-in entry "+pe.getRelativePath());
-				pluginChanges = true;
-				se.pluginsUnmgd.remove(pe);
-			}
-		}
-			
-		return pluginChanges;
-	}
-	
-	private boolean supportsDiscovery(URL url) {
-		return url.getProtocol().equals("file");
-	}
-	
+
 	private void setupDefaultConfiguration() {
 		// default initial startup configuration:
-		// site: current install, policy: AUTO_DISCOVER
-		ISiteEntry se = createSiteEntry(BootLoader.getInstallURL(), IPlatformConfiguration.ISiteEntry.USER_CONFIGURED_PLUS_CHANGES);
-		configureSiteEntry(se);
+		// site: current install, policy: USER_EXCLUDE, empty list
+		ISitePolicy sp = createSitePolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE, new String[0]);
+		ISiteEntry se =
+			createSiteEntry(
+				BootLoader.getInstallURL(), sp);
+		configureSite(se);
 		try {
-			configLocation = new URL(BootLoader.getInstallURL(),INSTALL+"/"+CONFIG_FILE);
-		} catch(MalformedURLException e) {
+			configLocation =
+				new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
+		} catch (MalformedURLException e) {
 		}
 		if (DEBUG)
-			debug("creating default configuration "+configLocation.getFile());
+			debug("creating default configuration " + configLocation.getFile());
 	}
-	
+
 	private void write(PrintWriter w) {
-		SiteEntry[] list = (SiteEntry[]) sites.values().toArray();
+		writeAttribute(w, CFG_VERSION, VERSION);
+		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
 		if (list.length == 0)
 			return;
-			
-		for (int i=0; i<list.length; i++) {
-			writeSite(w, CFG_SITE+"."+Integer.toString(i), list[i]);
+
+		for (int i = 0; i < list.length; i++) {
+			writeSite(w, CFG_SITE + "." + Integer.toString(i), list[i]);
 		}
-		writeAttribute(w,EOF,EOF);		
+		writeAttribute(w, EOF, EOF);
 	}
-	
+
 	private void writeSite(PrintWriter w, String id, SiteEntry entry) {
-		writeAttribute(w,id+"."+CFG_URL,entry.getURL().toString());
-		writeAttribute(w,id+"."+CFG_POLICY,Integer.toString(entry.getPolicy()));
-		writePluginMap(w,id+"."+CFG_CONFIGURED,entry.plugins);
-		writePluginMap(w,id+"."+CFG_UNCONFIGURED,entry.pluginsUncfgd);
-		writePluginMap(w,id+"."+CFG_UNMANAGED,entry.pluginsUnmgd);
+		writeAttribute(w, id + "." + CFG_URL, entry.getURL().toString());
+		int type = entry.getSitePolicy().getType();
+		String typeString = CFG_POLICY_TYPE_UNKNOWN;
+		try {
+			typeString = CFG_POLICY_TYPE[type];
+		} catch (IndexOutOfBoundsException e) {
+		}
+		writeAttribute(w, id + "." + CFG_POLICY, typeString);
+		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList());
+		
+		// temp code
+		writeListAttribute(w, id + "." + "features", entry.getDetectedFeatures());
+		writeListAttribute(w, id + "." + "plugins", entry.getDetectedPlugins());
 	}
 	
-	private void writePluginMap(PrintWriter w, String id, Map map) {
-		if (map.size() == 0)
+	private void writeListAttribute(PrintWriter w, String id, String[] list) {
+		if (list == null || list.length == 0)
 			return;
 			
-		PluginEntry[] list = (PluginEntry[]) map.values().toArray();
 		String value = "";
 		int listLen = 0;
 		int listIndex = 0;
-		for (int i=0; i<list.length; i++) {
-			if (listLen!=0)
+		for (int i = 0; i < list.length; i++) {
+			if (listLen != 0)
 				value += ",";
-			else value = "";
-			value += list[i].getRelativePath();
-			
-			if (listLen++ > CFG_LIST_LENGTH) {
-				writeAttribute(w,id+"."+Integer.toString(listIndex++),value);
-				listLen = 0;	
+			else
+				value = "";
+			value += list[i];
+
+			if (++listLen >= CFG_LIST_LENGTH) {
+				writeAttribute(w, id + "." + Integer.toString(listIndex++), value);
+				listLen = 0;
 			}
 		}
 		if (listLen != 0)
-			writeAttribute(w,id+"."+Integer.toString(listIndex),value);
+			writeAttribute(w, id + "." + Integer.toString(listIndex), value);
 	}
-	
+
 	private void writeAttribute(PrintWriter w, String id, String value) {
-		w.println(id+"="+escapedValue(value));
+		w.println(id + "=" + escapedValue(value));
 	}
-	
+
 	private String escapedValue(String value) {
 		// FIXME: implement escaping for property file
 		return value;
-	}	
-	
+	}
+
 	private static void debug(String s) {
-		System.out.println("PlatformConfiguration: "+s);
+		System.out.println("PlatformConfiguration: " + s);
 	}
 }
-
