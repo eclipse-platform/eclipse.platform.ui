@@ -43,6 +43,8 @@ import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -95,13 +97,18 @@ public class AntModel {
 	private AntEditorMarkerUpdater fMarkerUpdater= null;
 	private Set fNamesOfOldDefiningNodes;
 	
-	private Preferences.IPropertyChangeListener fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
+	private Preferences.IPropertyChangeListener fCorePropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
-			fgClassLoader= null;
-			AntDefiningTaskNode.setJavaClassPath();
-			fIsDirty= true;
-			reconcile(null);
-			updateMarkers();
+			reconcileForPropertyChange();
+		}
+	};
+	
+	private Preferences.IPropertyChangeListener fUIPropertyChangeListener= new Preferences.IPropertyChangeListener() {
+		public void propertyChange(Preferences.PropertyChangeEvent event) {
+			String property= event.getProperty();
+			if (property.startsWith(AntEditorPreferenceConstants.PROBLEM)) {
+				reconcileForPropertyChange();
+			}
 		}
 	};
 
@@ -112,9 +119,18 @@ public class AntModel {
 		fMarkerUpdater= new AntEditorMarkerUpdater();
 		fMarkerUpdater.setModel(this);
 		fLocationProvider= locationProvider;
-		AntCorePlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(fPropertyChangeListener);
+		AntCorePlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(fCorePropertyChangeListener);
+		AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 		AntDefiningTaskNode.setJavaClassPath();
 		fgInstanceCount++;
+	}
+
+	private void reconcileForPropertyChange() {
+		fgClassLoader= null;
+		AntDefiningTaskNode.setJavaClassPath();
+		fIsDirty= true;
+		reconcile(null);
+		updateMarkers();
 	}
 
 	public void install() {
@@ -139,7 +155,8 @@ public class AntModel {
 			ProjectHelper.setAntModel(null);
 		}
 		
-		AntCorePlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(fPropertyChangeListener);
+		AntCorePlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(fCorePropertyChangeListener);
+		AntUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(fUIPropertyChangeListener);
 		fgInstanceCount--;
 		if (fgInstanceCount == 0) {
 			fgClassLoader= null;
@@ -166,8 +183,8 @@ public class AntModel {
 				fReplaceHasOccurred= false;
 				return;
 			}
-				fIsDirty= false;
-			}
+			fIsDirty= false;
+		}
 
 		synchronized (this) {
 			if (fCore == null) {

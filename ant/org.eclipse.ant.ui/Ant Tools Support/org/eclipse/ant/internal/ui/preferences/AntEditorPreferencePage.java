@@ -11,6 +11,9 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateViewerConfiguration;
@@ -41,6 +44,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -48,6 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -59,6 +64,40 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
  * The page for setting the editor options.
  */
 public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
+	
+	protected static class ControlData {
+		private String fKey;
+		private String[] fValues;
+		
+		public ControlData(String key, String[] values) {
+			fKey= key;
+			fValues= values;
+		}
+		
+		public String getKey() {
+			return fKey;
+		}
+		
+		public String getValue(boolean selection) {
+			int index= selection ? 0 : 1;
+			return fValues[index];
+		}
+		
+		public String getValue(int index) {
+			return fValues[index];
+		}		
+		
+		public int getSelection(String value) {
+			if (value != null) {
+				for (int i= 0; i < fValues.length; i++) {
+					if (value.equals(fValues[i])) {
+						return i;
+					}
+				}
+			}
+			return fValues.length -1; // assume the last option is the least severe
+		}
+	}
 	
 	/**
 	 * Item in the highlighting color list.
@@ -214,6 +253,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	
 	private SourceViewer fPreviewViewer;
 	private AntPreviewerUpdater fPreviewerUpdater;
+	
+	private SelectionListener fSelectionListener;
+	protected Map fWorkingValues;
+	protected ArrayList fComboBoxes;
 	
 	public AntEditorPreferencePage() {
 		super();
@@ -457,6 +500,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.1")); //$NON-NLS-1$
 		item.setControl(createSyntaxPage(folder));
+		
+		item= new TabItem(folder, SWT.NONE);
+		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.10")); //$NON-NLS-1$
+		item.setControl(createProblemsTabContent(folder));
 					
 		initialize();
 		
@@ -535,6 +582,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		handleAppearanceColorListSelection();
 		handleSyntaxColorListSelection();
 		initializeBackgroundColorFields();
+		restoreWorkingValuesToDefaults();
 	}
 	
 	private Control createSyntaxPage(Composite parent) {
@@ -729,5 +777,138 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		if (fPreviewerUpdater != null) {
 			fPreviewerUpdater.dispose();
 		}
+	}
+	
+	private Composite createProblemsTabContent(TabFolder folder) {
+		fComboBoxes= new ArrayList();
+		initializeWorkingValues();
+		
+		String[] errorWarningIgnoreLabels= new String[] {
+				AntPreferencesMessages.getString("AntEditorPreferencePage.11"), AntPreferencesMessages.getString("AntEditorPreferencePage.12"), AntPreferencesMessages.getString("AntEditorPreferencePage.13")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String[] errorWarningIgnore= new String[] { 
+				AntEditorPreferenceConstants.BUILDFILE_ERROR, 
+				AntEditorPreferenceConstants.BUILDFILE_WARNING, 
+				AntEditorPreferenceConstants.BUILDFILE_IGNORE };
+		
+		int nColumns= 3;
+		
+		GridLayout layout= new GridLayout();
+		layout.numColumns= nColumns;
+
+		Composite othersComposite= new Composite(folder, SWT.NULL);
+		othersComposite.setLayout(layout);
+		
+		Label description= new Label(othersComposite, SWT.WRAP);
+		description.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.14")); //$NON-NLS-1$
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan= nColumns;
+		description.setLayoutData(gd);
+				
+		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.15"); //$NON-NLS-1$
+		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_CLASSPATH, errorWarningIgnore, errorWarningIgnoreLabels, 0);	
+		
+		label= AntPreferencesMessages.getString("AntEditorPreferencePage.16"); //$NON-NLS-1$
+		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_PROPERTIES, errorWarningIgnore, errorWarningIgnoreLabels, 0);
+
+		label= AntPreferencesMessages.getString("AntEditorPreferencePage.17"); //$NON-NLS-1$
+		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_IMPORTS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
+		
+		return othersComposite;
+	}
+	
+	/**
+	 * 
+	 */
+	private void initializeWorkingValues() {
+		fWorkingValues= new HashMap(3);
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_CLASSPATH, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_CLASSPATH));
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_PROPERTIES, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_PROPERTIES));
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_IMPORTS, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_IMPORTS));
+	}
+	
+	private void restoreWorkingValuesToDefaults() {
+		fWorkingValues= new HashMap();
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_CLASSPATH, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_CLASSPATH));
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_PROPERTIES, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_PROPERTIES));
+		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_IMPORTS, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_IMPORTS));
+		updateControls();
+	}
+
+	protected Combo addComboBox(Composite parent, String label, String key, String[] values, String[] valueLabels, int indent) {
+		ControlData data= new ControlData(key, values);
+		
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indent;
+				
+		Label labelControl= new Label(parent, SWT.LEFT | SWT.WRAP);
+		labelControl.setText(label);
+		labelControl.setLayoutData(gd);
+		
+		Combo comboBox= new Combo(parent, SWT.READ_ONLY);
+		comboBox.setItems(valueLabels);
+		comboBox.setData(data);
+		comboBox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		comboBox.addSelectionListener(getSelectionListener());
+		
+		Label placeHolder= new Label(parent, SWT.NONE);
+		placeHolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		String currValue= (String)fWorkingValues.get(key);	
+		comboBox.select(data.getSelection(currValue));
+		
+		fComboBoxes.add(comboBox);
+		return comboBox;
+	}
+	
+	protected SelectionListener getSelectionListener() {
+		if (fSelectionListener == null) {
+			fSelectionListener= new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {}
+	
+				public void widgetSelected(SelectionEvent e) {
+					controlChanged(e.widget);
+				}
+			};
+		}
+		return fSelectionListener;
+	}
+	
+	protected void controlChanged(Widget widget) {
+		ControlData data= (ControlData) widget.getData();
+		String newValue= null;
+		if (widget instanceof Button) {
+			newValue= data.getValue(((Button)widget).getSelection());			
+		} else if (widget instanceof Combo) {
+			newValue= data.getValue(((Combo)widget).getSelectionIndex());
+		} else {
+			return;
+		}
+		fWorkingValues.put(data.getKey(), newValue);
+		
+		//validateSettings(data.getKey(), newValue);
+	}
+	
+	protected void updateControls() {
+		// update the UI
+		for (int i= fComboBoxes.size() - 1; i >= 0; i--) {
+			Combo curr= (Combo) fComboBoxes.get(i);
+			ControlData data= (ControlData) curr.getData();
+			
+			String currValue= (String) fWorkingValues.get(data.getKey());	
+			curr.select(data.getSelection(currValue));			
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		Iterator iter= fWorkingValues.keySet().iterator();
+		IPreferenceStore store= getPreferenceStore();
+		while (iter.hasNext()) {
+			String key = (String) iter.next();
+			store.putValue(key, (String)fWorkingValues.get(key));
+		}
+		return super.performOk();
 	}
 }

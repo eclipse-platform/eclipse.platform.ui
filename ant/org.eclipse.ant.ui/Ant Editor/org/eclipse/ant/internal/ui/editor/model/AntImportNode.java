@@ -16,6 +16,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
@@ -65,7 +66,7 @@ public class AntImportNode extends AntTaskNode {
 			configured= true;
 			return true;
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this);
+			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_IMPORTS);
 		}
 		return false;
 	}

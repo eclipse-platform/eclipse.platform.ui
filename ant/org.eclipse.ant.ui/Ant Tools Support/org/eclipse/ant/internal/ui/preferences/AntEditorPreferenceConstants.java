@@ -139,28 +139,61 @@ public class AntEditorPreferenceConstants {
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
-	 * 
 	 */
 	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key prefix for all problem preference keys.
+	 */
+	public static final String PROBLEM= "problem"; //$NON-NLS-1$
+	
+	/**
+	 * String preference identifier constant which specifies the severity level for problems 
+	 * related to classpath in the Ant editor
+	 */
+	public static final String PROBLEM_CLASSPATH= PROBLEM + "_classpath";  //$NON-NLS-1$
+	
+	/**
+	 * String preference identifier constant which specifies the severity level for problems 
+	 * related to properties in the Ant editor
+	 */
+	public static final String PROBLEM_PROPERTIES= PROBLEM + "_properties";  //$NON-NLS-1$
+	
+	/**
+	 * String preference identifier constant which specifies the severity level for problems 
+	 * related to imports in the Ant editor
+	 */
+	public static final String PROBLEM_IMPORTS= PROBLEM + "_imports";  //$NON-NLS-1$
+	
+	/**
+	 * The constants allowable for the severity levels for problem preferences
+	 */
+	public static final String BUILDFILE_ERROR = "error"; //$NON-NLS-1$
+	public static final String BUILDFILE_WARNING = "warning"; //$NON-NLS-1$
+	public static final String BUILDFILE_IGNORE = "ignore"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
-		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, true);
-		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, true);
-		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 500);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
-		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
+		store.setDefault(CODEASSIST_AUTOINSERT, true);
+		store.setDefault(CODEASSIST_AUTOACTIVATION, true);
+		store.setDefault(CODEASSIST_AUTOACTIVATION_DELAY, 500);
+		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
+		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
+		store.setDefault(CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
+		store.setDefault(EDITOR_SPACES_FOR_TABS, false);
 		
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, true);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH, 80);
-		store.setDefault(AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, false);
+		store.setDefault(FORMATTER_TAB_CHAR, true);
+		store.setDefault(FORMATTER_TAB_SIZE, 4);
+		store.setDefault(FORMATTER_ALIGN, false);
+		store.setDefault(FORMATTER_MAX_LINE_LENGTH, 80);
+		store.setDefault(FORMATTER_WRAP_LONG, false);
 		
-		store.setDefault(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER, true);
+		store.setDefault(TEMPLATES_USE_CODEFORMATTER, true);
+		
+		store.setDefault(PROBLEM_CLASSPATH, BUILDFILE_WARNING);
+		store.setDefault(PROBLEM_PROPERTIES, BUILDFILE_IGNORE);
+		store.setDefault(PROBLEM_IMPORTS, BUILDFILE_WARNING);
 	}
 }

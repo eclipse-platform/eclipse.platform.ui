@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -115,5 +116,12 @@ public class AntTaskNode extends AntElementNode {
 
 	protected void nodeSpecificConfigure() {
 		//by default do nothing
+	}
+
+	protected void handleBuildException(BuildException be, String preferenceKey) {
+		int severity= XMLProblem.getSeverity(preferenceKey);
+		if (severity != XMLProblem.NO_PROBLEM) {
+			getAntModel().handleBuildException(be, this, severity);
+		}
 	}
 }

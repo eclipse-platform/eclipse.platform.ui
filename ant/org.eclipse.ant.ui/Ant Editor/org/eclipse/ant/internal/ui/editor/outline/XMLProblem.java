@@ -11,6 +11,9 @@
 
 package org.eclipse.ant.internal.ui.editor.outline;
 
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Region;
 
 public class XMLProblem extends Region implements IProblem {
@@ -120,5 +123,17 @@ public class XMLProblem extends Region implements IProblem {
 	 */
 	public String getUnmodifiedMessage() {
 		return fMessage;
+	}
+	
+	public static int getSeverity(String preferenceKey) {
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+		String severityLevel= store.getString(preferenceKey);
+		if (severityLevel.length() == 0 || severityLevel.equals(AntEditorPreferenceConstants.BUILDFILE_ERROR)) {
+			return SEVERITY_ERROR;
+		} else if (severityLevel.equals(AntEditorPreferenceConstants.BUILDFILE_WARNING)) {
+			return SEVERITY_WARNING;
+		} else {
+			return NO_PROBLEM;
+		}
 	}
 }

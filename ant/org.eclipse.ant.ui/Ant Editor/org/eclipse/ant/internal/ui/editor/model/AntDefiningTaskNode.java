@@ -20,9 +20,9 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -49,7 +49,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			getTask().execute();
 			return false;
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this, XMLProblem.SEVERITY_WARNING);
+			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
 		}
 		return false;
 	}

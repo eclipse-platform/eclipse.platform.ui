@@ -15,6 +15,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
 
@@ -69,10 +70,7 @@ public class AntPropertyNode extends AntTaskNode {
 			getTask().execute();
 			configured= true;
 		} catch (BuildException be) {
-			//configuration of reporting build exceptions from property nodes has been
-			//deferred to post 3.0
-			//bug 61830
-			//getAntModel().handleBuildException(be, this, XMLProblem.SEVERITY_WARNING);
+			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
 		}
 		return false;
 	}
