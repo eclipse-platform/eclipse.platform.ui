@@ -6,11 +6,13 @@ package org.eclipse.team.internal.ui;
  */
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -39,7 +41,24 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), null, getAvailableWizards());
+		AdaptableList wizards = getAvailableWizards();
+		if (wizards.size() == 1) {
+			// If there is only one wizard, skip the first page.
+			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
+			try {
+				IConfigurationWizard wizard = (IConfigurationWizard)element.createExecutableExtension();
+				wizard.init(workbench, project);
+				wizard.addPages();
+				IWizardPage[] pages = wizard.getPages();
+				for (int i = 0; i < pages.length; i++) {
+					addPage(pages[i]);
+				}
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e.getStatus());
+			}
+			return;
+		}
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), null, wizards);
 		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description"));
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
