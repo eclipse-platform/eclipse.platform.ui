@@ -20,6 +20,8 @@ import java.util.Vector;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -183,6 +185,9 @@ public class UpdateSyncAction extends MergeAction {
 							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:
+							// Unmanage the file if necessary and delete it.
+							deletions.add(changedNode);
+							break;
 						case Differencer.CHANGE:
 							updateDeep.add(changedNode);
 							break;
@@ -300,7 +305,7 @@ public class UpdateSyncAction extends MergeAction {
 				ITeamNode node = (ITeamNode)it.next();
 				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
 				element.makeIncoming(Policy.subMonitorFor(monitor, 100));
-				element.getLocal().delete(true, Policy.subMonitorFor(monitor, 100));
+				deleteAndKeepHistory(element.getLocal(), Policy.subMonitorFor(monitor, 100));
 			}
 			
 			if (updateShallow.size() > 0) {
@@ -332,6 +337,19 @@ public class UpdateSyncAction extends MergeAction {
 		}
 		return syncSet;
 	}
+
+	/**
+	 * Method deleteAndKeepHistory.
+	 * @param iResource
+	 * @param iProgressMonitor
+	 */
+	private void deleteAndKeepHistory(IResource resource, IProgressMonitor monitor) throws CoreException {
+		if (resource.getType() == IResource.FILE)
+			((IFile)resource).delete(false /* force */, true /* keep history */, monitor);
+		else
+			resource.delete(false /* force */, monitor);
+	}
+
 	
 	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		manager.update(getIResourcesFrom(nodes), Command.NO_LOCAL_OPTIONS, false, monitor);
