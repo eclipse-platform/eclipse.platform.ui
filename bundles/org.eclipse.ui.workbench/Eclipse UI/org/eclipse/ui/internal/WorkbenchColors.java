@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.internal.misc.Assert;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import java.util.*;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * This class manages the common workbench colors.  
@@ -38,15 +39,13 @@ public class WorkbenchColors {
 	static private Color[] activeViewGradient;
 	static private Color[] deactivatedViewGradient;
 	static private Color[] activeEditorGradient;
-	static private Color[] activeNoFocusEditorGradient;
-	static private Color[] activeNoFocusViewGradient;
+	//static private Color[] activeNoFocusEditorGradient;
 	static private Color[] deactivatedEditorGradient;
 	static private Color activeViewForeground;
 	static private int[] activeViewPercentages;
 	static private int[] deactivatedViewPercentages;
 	static private int[] activeEditorPercentages;
-	static private int[] activeNoFocusEditorPercentages;
-	static private int[] activeNoFocusViewPercentages;
+	//static private int[] activeNoFocusEditorPercentages;
 	static private int[] deactivatedEditorPercentages;
 	static private final String CLR_VIEW_GRAD_START = "clrViewGradStart";//$NON-NLS-1$
 	static private final String CLR_VIEW_GRAD_END = "clrViewGradEnd";//$NON-NLS-1$
@@ -67,9 +66,9 @@ private static void disposeWorkbenchColors() {
 /**
  * Returns the active editor foreground.
  */
-static public Color getActiveEditorForeground() {
-	return activeEditorForeground;
-}
+//static public Color getActiveEditorForeground() {
+//	return activeEditorForeground;
+//}
 
 /**
  * Returns the active view foreground.
@@ -81,17 +80,17 @@ static public Color getActiveViewForeground() {
 /**
  * Returns the active editor gradient.
  */
-static public Color [] getActiveEditorGradient() {
-	return activeEditorGradient;
-}
+//static public Color [] getActiveEditorGradient() {
+//	return activeEditorGradient;
+//}
 /**
  * Returns the active editor gradient end color.
  */
-static public Color getActiveEditorGradientEnd() {
-	Color clr = (Color)systemColorMap.get(CLR_EDITOR_GRAD_END);
-	Assert.isNotNull(clr);
-	return clr;
-}
+//static public Color getActiveEditorGradientEnd() {
+//	Color clr = (Color)systemColorMap.get(CLR_EDITOR_GRAD_END);
+//	Assert.isNotNull(clr);
+//	return clr;
+//}
 
 /**
  * Returns the active no focus editor gradient end color.
@@ -105,41 +104,41 @@ static public Color getActiveNoFocusEditorGradientEnd() {
 /**
  * Returns the active editor gradient percents.
  */
-static public int [] getActiveEditorGradientPercents() {
-	return activeEditorPercentages;
-}
+//static public int [] getActiveEditorGradientPercents() {
+//	return activeEditorPercentages;
+//}
 /**
  * Returns the active editor gradient start color.
  */
-static public Color getActiveEditorGradientStart() {
-	Color clr = (Color)systemColorMap.get(CLR_EDITOR_GRAD_START);
-	Assert.isNotNull(clr);
-	return clr;
-}
+//static public Color getActiveEditorGradientStart() {
+//	Color clr = (Color)systemColorMap.get(CLR_EDITOR_GRAD_START);
+//	Assert.isNotNull(clr);
+//	return clr;
+//}
 /**
  * Returns the active no focus editor gradient.
  */
-static public Color [] getActiveNoFocusEditorGradient() {
-	return activeNoFocusEditorGradient;
-}
+//static public Color [] getActiveNoFocusEditorGradient() {
+//	return activeNoFocusEditorGradient;
+//}
 /**
  * Returns the active no focus editor gradient percents.
  */
-static public int [] getActiveNoFocusEditorGradientPercents() {
-	return activeNoFocusEditorPercentages;
-}
+//static public int [] getActiveNoFocusEditorGradientPercents() {
+//	return activeNoFocusEditorPercentages;
+//}
 /**
  * Returns the active no focus editor gradient.
  */
-static public Color [] getActiveNoFocusViewGradient() {
-	return activeNoFocusViewGradient;
-}
+//static public Color [] getActiveNoFocusViewGradient() {
+//	return activeNoFocusViewGradient;
+//}
 /**
  * Returns the active no focus editor gradient percents.
  */
-static public int [] getActiveNoFocusViewGradientPercents() {
-	return activeNoFocusViewPercentages;
-}
+//static public int [] getActiveNoFocusViewGradientPercents() {
+//	return activeNoFocusViewPercentages;
+//}
 /**
  * Returns the active gradient for views.
  */
@@ -149,11 +148,11 @@ static public Color [] getActiveViewGradient() {
 /**
  * Returns the active view gradient end color.
  */
-static public Color getActiveViewGradientEnd() {
-	Color clr = (Color)systemColorMap.get(CLR_VIEW_GRAD_END);
-	Assert.isNotNull(clr);
-	return clr;
-}
+//static public Color getActiveViewGradientEnd() {
+//	Color clr = (Color)systemColorMap.get(CLR_VIEW_GRAD_END);
+//	Assert.isNotNull(clr);
+//	return clr;
+//}
 /**
  * Returns the active view gradient percents.
  */
@@ -163,25 +162,25 @@ static public int [] getActiveViewGradientPercents() {
 /**
  * Returns the active view gradient start color.
  */
-static public Color getActiveViewGradientStart() {
-	Color clr = (Color)systemColorMap.get(CLR_VIEW_GRAD_START);
-	Assert.isNotNull(clr);
-	return clr;
-}
+//static public Color getActiveViewGradientStart() {
+//	Color clr = (Color)systemColorMap.get(CLR_VIEW_GRAD_START);
+//	Assert.isNotNull(clr);
+//	return clr;
+//}
 /**
  * Returns the gradient for editors when the window
  * is deactivated.
  */
-static public Color [] getDeactivatedEditorGradient() {
-	return deactivatedEditorGradient;
-}
+//static public Color [] getDeactivatedEditorGradient() {
+//	return deactivatedEditorGradient;
+//}
 /**
  * Returns the editor gradient percents when the window
  * is deactivated.
  */
-static public int [] getDeactivatedEditorGradientPercents() {
-	return deactivatedEditorPercentages;
-}
+//static public int [] getDeactivatedEditorGradientPercents() {
+//	return deactivatedEditorPercentages;
+//}
 /**
  * Returns the gradient for views when the window
  * is deactivated.
@@ -199,15 +198,15 @@ static public int [] getDeactivatedViewGradientPercents() {
 /**
  * Returns a color identified by an RGB value.
  */
-static public Color getColor(RGB rgbValue) {
-	Color clr = (Color)colorMap.get(rgbValue);
-	if (clr == null) {
-		Display disp = Display.getDefault();
-		clr = new Color(disp, rgbValue);
-		colorMap.put(rgbValue, clr);
-	}
-	return clr;
-}
+//static public Color getColor(RGB rgbValue) {
+//	Color clr = (Color)colorMap.get(rgbValue);
+//	if (clr == null) {
+//		Display disp = Display.getDefault();
+//		clr = new Color(disp, rgbValue);
+//		colorMap.put(rgbValue, clr);
+//	}
+//	return clr;
+//}
 /**
  * Returns a system color identified by a SWT constant.
  */
@@ -358,8 +357,8 @@ static public void startup() {
 	activeEditorForeground = JFaceColors.getTabFolderSelectionForeground(Display.getDefault());
 	
 	// Define active no focus editor gradient
-	activeNoFocusEditorGradient = new Color[] {inactiveGradientBlend, clr3};
-	activeNoFocusEditorPercentages = activeEditorPercentages;
+//	activeNoFocusEditorGradient = new Color[] {inactiveGradientBlend, clr3};
+//	activeNoFocusEditorPercentages = activeEditorPercentages;
 	
 	// Define editor gradient for deactivated window using same OS title gradient colors.
 	deactivatedEditorGradient = new Color[] {clr3, inactiveGradientBlend};
@@ -369,9 +368,9 @@ static public void startup() {
 	activeViewGradient = activeEditorGradient;
 	activeViewPercentages = activeEditorPercentages;
 
-	// Define active no focus view gradient
-	activeNoFocusViewGradient = activeNoFocusEditorGradient;
-	activeNoFocusViewPercentages = activeNoFocusEditorPercentages;
+//	// Define active no focus view gradient
+//	activeNoFocusViewGradient = activeNoFocusEditorGradient;
+//	activeNoFocusViewPercentages = activeNoFocusEditorPercentages;
 
 	deactivatedViewGradient = deactivatedEditorGradient;
 	deactivatedViewPercentages = deactivatedEditorPercentages;
@@ -398,9 +397,9 @@ private static int blend(int temp1, int temp2) {
  * @param color
  * @return
  */
-public static Color createGradient(Display display, Color color) {
-	return createGradient(display, getSystemColor(BASE_COLOR), color);
-}
+//public static Color createGradient(Display display, Color color) {
+//	return createGradient(display, getSystemColor(BASE_COLOR), color);
+//}
 
 /**
  * Create an blended gradient color between the base color and the end color returning
@@ -412,6 +411,8 @@ public static Color createGradient(Display display, Color color) {
  * @param startColor
  * @param endColor
  * @return a <code>Color</code>  the blend of the two colors provided
+ *
+ * @deprecated
  */
 public static Color createGradient(Display display, Color startColor, Color endColor) {
 	int red = blend(startColor.getRed(), endColor.getRed());
@@ -431,6 +432,8 @@ public static Color createGradient(Display display, Color startColor, Color endC
  * @param startColor
  * @param endColor
  * @return an array of <code>Color</code> objects representing the gradients
+ *
+ * @deprecated
  */
 public static Color[] createGradientArray(Display display, Color startColor, Color endColor) {
 	int red = blend(startColor.getRed(), endColor.getRed());
@@ -449,6 +452,8 @@ public static Color[] createGradientArray(Display display, Color startColor, Col
  * @param display
  * @param endColor
  * @return an array of <code>Color</code> objects representing the gradients
+ * 
+ * @deprecated
  */
 public static Color[] createGradientArray(Display display, Color endColor) {
 	return createGradientArray(display, getSystemColor(BASE_COLOR), endColor);

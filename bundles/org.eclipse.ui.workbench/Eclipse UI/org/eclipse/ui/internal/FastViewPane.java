@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -17,18 +19,14 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
-
-import org.eclipse.jface.util.Geometry;
 
 /**
  * Handles the presentation of an active fastview. A fast view pane docks to one side of a
@@ -44,13 +42,6 @@ class FastViewPane {
 	private int side = SWT.LEFT;
 
 	private Sash fastViewSash;
-	private Color borderColor1;
-	private Color borderColor2;
-	private Color borderColor3;
-	// TODO these colors should (probably) not be hardcoded
-	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
-	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
-	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
 	private ViewPane currentPane;
 	private Composite clientComposite;
 	private static final int SASH_SIZE = 3;
@@ -73,10 +64,10 @@ class FastViewPane {
 	
 	private PaintListener paintListener = new PaintListener() {
 		public void paintControl(PaintEvent event) {
-			if (borderColor1 == null) borderColor1 = WorkbenchColors.getColor(RGB_COLOR1);
-			if (borderColor2 == null) borderColor2 = WorkbenchColors.getColor(RGB_COLOR2);
-			if (borderColor3 == null) borderColor3 = WorkbenchColors.getColor(RGB_COLOR3);
-			
+		    if (currentPane == null)
+		        return;
+		    ColorRegistry registry = currentPane.getPage().getTheme().getColorRegistry();
+		    
 			Point size = fastViewSash.getSize();
 			Rectangle d = new Rectangle(0, 0, size.x, size.y);
 			GC gc = event.gc;
@@ -90,13 +81,13 @@ class FastViewPane {
 				deltay = d.height;
 			}
 
-			gc.setForeground(borderColor1);
+			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_1));
 			gc.drawLine(d.x, d.y, d.x + deltax, d.y + deltay);
 			
-			gc.setForeground(borderColor2);
+			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_2));
 			gc.drawLine(d.x + 1, d.y + 1, d.x + 1 + deltax, d.y + 1 + deltay);
 			
-			gc.setForeground(borderColor3);
+			gc.setForeground(registry.get(IWorkbenchPresentationConstants.FAST_VIEW_BORDER_3));
 			gc.drawLine(d.x + 2, d.y + 2, d.x + 2 + deltax, d.y + 2 + deltay);
 		}
 	};

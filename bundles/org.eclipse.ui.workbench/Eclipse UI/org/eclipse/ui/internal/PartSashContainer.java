@@ -363,6 +363,15 @@ public Control getControl() {
 public LayoutTree getLayoutTree() {
 	return root;
 }
+
+/**
+ * For themes.
+ * 
+ * @return the current WorkbenchPage.
+ */
+public WorkbenchPage getPage() {
+    return page;
+}
 /**
  * Return the interested listener of mouse down events.
  */

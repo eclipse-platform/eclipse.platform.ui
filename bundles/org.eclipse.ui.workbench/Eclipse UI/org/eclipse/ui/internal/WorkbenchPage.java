@@ -82,6 +82,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.themes.ITheme;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 
@@ -3439,6 +3440,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	}
 	
 	public ITheme getTheme() {
-	    return getActivePerspective().getTheme();
+	    Perspective activePerspective = getActivePerspective();
+	    if (activePerspective == null)
+	        return WorkbenchThemeManager.getInstance().getTheme(null);
+        return activePerspective.getTheme();
 	}
 }

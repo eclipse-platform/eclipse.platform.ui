@@ -20,19 +20,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.Gradient;
+import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.resource.JFaceColors;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
-
 import org.eclipse.ui.internal.dnd.DragUtil;
 
 /**
@@ -198,36 +197,34 @@ public abstract class EditorWorkbook
 	 * Draws the applicable gradient on the active item.
 	 */
 	public void drawGradient() {
-		Color fgColor;
-		Color[] bgColors = new Color[1];
-		int[] bgPercents = null;
+		Color fgColor = null;
+		
+		Gradient bgGradient = null;
 
+		ColorRegistry colorRegistry = editorArea.getPage().getTheme().getColorRegistry();
+		GradientRegistry gradientRegistry = editorArea.getPage().getTheme().getGradientRegistry();
+
+		
 		switch (activeState) {
 			case ACTIVE_FOCUS :
-				fgColor = WorkbenchColors.getActiveEditorForeground();
-				bgColors = WorkbenchColors.getActiveEditorGradient();
-				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
+				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
 				break;
 			case ACTIVE_NOFOCUS :
-				fgColor = WorkbenchColors.getActiveEditorForeground();
-				bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
-				bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
+				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS);
+				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
 				break;
 			case INACTIVE :
-				fgColor = JFaceColors.getTabFolderSelectionForeground(getControl().getDisplay());
-				bgColors[0] = JFaceColors.getTabFolderSelectionBackground(getControl().getDisplay());
-				bgPercents = null;
+				fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_INACTIVE);
+				bgGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_INACTIVE);
 				break;
 			default :
-				fgColor = null;
-				bgColors[0] = null;
-				bgPercents = null;
-				break;
+			    // hmm.
 		}
-		drawGradient(fgColor, bgColors, bgPercents,activeState == ACTIVE_FOCUS);
+		drawGradient(fgColor, bgGradient, activeState == ACTIVE_FOCUS);
 	}
-
-	protected abstract void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean activeState);
+	
+	protected abstract void drawGradient(Color fgColor, Gradient gradient, boolean activeState);
 
 	/**
 	 * enableDrop

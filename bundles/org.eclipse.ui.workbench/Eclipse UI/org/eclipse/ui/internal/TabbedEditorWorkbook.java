@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.Gradient;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -700,16 +701,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		mapTabToEditor.clear();
 	}
 
-	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {
-		tabFolder.setSelectionForeground(fgColor);
-		//tabFolder.setBorderVisible(active);
-		if (bgPercents == null)
-			tabFolder.setSelectionBackground(bgColors[0]);
-		else
-			tabFolder.setSelectionBackground(bgColors, bgPercents, true);
-		tabFolder.update();		
-	}
-
 	// getMinimumHeight() added by cagatayk@acm.org 
 	/**
 	 * @see LayoutPart#getMinimumHeight()
@@ -996,6 +987,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	public boolean allowsAutoFocus() {
 		return true;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.EditorWorkbook#drawGradient(org.eclipse.swt.graphics.Color, org.eclipse.jface.resource.Gradient, boolean)
+     */
+    protected void drawGradient(Color fgColor, Gradient gradient, boolean activeState) {
+		tabFolder.setSelectionForeground(fgColor);
+		tabFolder.setSelectionBackground(gradient.getColors(), gradient.getPercents(), gradient.getDirection() == SWT.VERTICAL);
+		tabFolder.update();        
+    }
 
 	}
 	

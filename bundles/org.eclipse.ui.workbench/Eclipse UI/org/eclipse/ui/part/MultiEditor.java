@@ -12,6 +12,9 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.GradientRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,7 +25,7 @@ import org.eclipse.ui.internal.*;
 /**
  * A MultiEditor is a composite of editors.
  * 
- * This class is intended to be supclassed.
+ * This class is intended to be subclassed.
  * 		
  */
 public abstract class MultiEditor extends EditorPart {
@@ -82,6 +85,7 @@ public abstract class MultiEditor extends EditorPart {
 	 * @see IEditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
+	    //no-op
 	}
 
 	/*
@@ -186,26 +190,42 @@ public abstract class MultiEditor extends EditorPart {
 		boolean activeEditor = editor == getSite().getPage().getActiveEditor();
 		boolean activePart = editor == getSite().getPage().getActivePart();
 
-		Gradient g;
-
-		if (activePart) {
-			if (getShellActivated())
-				g = Gradient.BLUE;
-			else
-				g = Gradient.BLACK;
+		org.eclipse.jface.resource.Gradient jfaceGradient;
+		Gradient g = new Gradient();
+		
+		// TODO : should this come from theme colors? 
+		GradientRegistry gradientRegistry = JFaceResources.getGradientRegistry();        
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+        if (activePart) {
+			if (getShellActivated()) {
+			    jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
+			    g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+			}
+			else {
+			    jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_NOFOCUS);
+			    g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_NOFOCUS);
+			}
 		} else {
-			if (activeEditor)
-				g = Gradient.WHITE;
-			else
-				g = Gradient.GRAY;
+			if (activeEditor) {
+				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_ACTIVE_FOCUS);
+				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+			}
+			else {
+				jfaceGradient = gradientRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_GRADIENT_INACTIVE);
+				g.fgColor = colorRegistry.get(IWorkbenchPresentationConstants.EDITOR_TITLE_TEXT_COLOR_ACTIVE_FOCUS);
+			}
 		}
+		
+	    g.bgColors = jfaceGradient.getColors();
+	    g.bgPercents = jfaceGradient.getPercents();
+		
 		drawGradient(editor, g);
 	}
 	/**
 	 * Draw the gradient in the title bar.
 	 */
 	protected abstract void drawGradient(IEditorPart innerEditor,Gradient g);
-	
+		
 	/**
 	 * Return true if the shell is activated.
 	 */
@@ -213,7 +233,8 @@ public abstract class MultiEditor extends EditorPart {
 		WorkbenchWindow window = (WorkbenchWindow) getSite().getPage().getWorkbenchWindow();
 		return window.getShellActivated();
 	}
-	/*
+	
+	/**
 	 * The colors used to draw the title bar of the inner editors
 	 */
 	public static class Gradient {
@@ -221,27 +242,27 @@ public abstract class MultiEditor extends EditorPart {
 		public Color[] bgColors;
 		public int[] bgPercents;
 
-		private static Gradient BLUE = new Gradient();
-		private static Gradient BLACK = new Gradient();
-		private static Gradient GRAY = new Gradient();
-		private static Gradient WHITE = new Gradient();
-
-		static {
-			BLUE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-			BLUE.bgColors = WorkbenchColors.getActiveEditorGradient();
-			BLUE.bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
-
-			BLACK.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-			BLACK.bgColors = WorkbenchColors.getDeactivatedEditorGradient();
-			BLACK.bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
-
-			WHITE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_BLACK);
-			WHITE.bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
-			WHITE.bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
-
-			GRAY.fgColor = null;
-			GRAY.bgColors = null;
-			GRAY.bgPercents = null;
-		}
+//		private static Gradient BLUE = new Gradient();
+//		private static Gradient BLACK = new Gradient();
+//		private static Gradient GRAY = new Gradient();
+//		private static Gradient WHITE = new Gradient();
+//
+//		static {
+//			BLUE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+//			BLUE.bgColors = WorkbenchColors.getActiveEditorGradient();
+//			BLUE.bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
+//
+//			BLACK.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+//			BLACK.bgColors = WorkbenchColors.getDeactivatedEditorGradient();
+//			BLACK.bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
+//
+//			WHITE.fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_BLACK);
+//			WHITE.bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
+//			WHITE.bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
+//
+//			GRAY.fgColor = null;
+//			GRAY.bgColors = null;
+//			GRAY.bgPercents = null;
+//		}
 	}
 }
