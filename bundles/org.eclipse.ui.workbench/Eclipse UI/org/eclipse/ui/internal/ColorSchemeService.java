@@ -22,6 +22,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.BasicStackPresentation;
 import org.eclipse.ui.themes.ITheme;
@@ -47,8 +48,7 @@ public class ColorSchemeService {
                     
                     String property = event.getProperty();
                     if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
-                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
-                            || property.equals(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT)) {
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)) {
                         setViewColors(control);                        
                     }
                 }	            
@@ -73,7 +73,6 @@ public class ColorSchemeService {
 	        .addPropertyChangeListener(listener);	
 	    }
 	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));
-	    control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
     }
     
 	public static void setTabAttributes(BasicStackPresentation presentation, final CTabFolder control) {
@@ -155,5 +154,51 @@ public class ColorSchemeService {
         for (int i = 0; i < items.length; i++) {
 			items[i].setFont(tabFont);
 		}
-	}	
+	}
+
+    public static void setViewTitleFont(BasicStackPresentation presentation, final Label control) {
+        if (presentation == null)  // the reference to the presentation was lost by the listener
+	    	return;	    
+
+	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+	    if (control.getData(LISTENER_KEY) == null) {
+	    	final WeakReference ref = new WeakReference(presentation);
+	        final IPropertyChangeListener listener = new IPropertyChangeListener() {
+
+                /* (non-Javadoc)
+                 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+                 */
+                public void propertyChange(PropertyChangeEvent event) {
+                    
+                    String property = event.getProperty();
+                    if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
+                            || property.equals(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT)) {
+                        setViewTitleFont((BasicStackPresentation) ref.get(), control);   
+                        // have to call setControlSize here because it is not safe to call until
+                        // the presentation is fully initialized.
+                        ((BasicStackPresentation) ref.get()).setControlSize();
+                    }
+                }	            
+	        };
+	        control.setData(LISTENER_KEY, listener);
+	        control.addDisposeListener(new DisposeListener() {
+
+                /* (non-Javadoc)
+                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                 */
+                public void widgetDisposed(DisposeEvent e) {
+                    PlatformUI
+                    .getWorkbench()
+                    .getThemeManager()
+                    .removePropertyChangeListener(listener);
+                    control.setData(LISTENER_KEY, null);
+                }});
+	        
+	        PlatformUI
+	        .getWorkbench()
+	        .getThemeManager()
+	        .addPropertyChangeListener(listener);	
+	    }
+	    control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));	    
+    }	
 }

@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -213,6 +214,7 @@ public class BasicStackPresentation extends StackPresentation {
 
 		titleLabel = new Label(control.getParent(), SWT.WRAP);
 		titleLabel.setVisible(false);
+		ColorSchemeService.setViewTitleFont(this, titleLabel);
 		
 		viewToolBar = new ToolBar(control.getParent(), SWT.HORIZONTAL 
 				| SWT.FLAT | SWT.WRAP);
@@ -462,8 +464,12 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	/**
 	 * Set the size of a page in the folder.
+	 * 
+	 * TODO: Kim here...I had to make this public so that the when the font
+	 * was updated via the color scheme service it could relayout the 
+	 * presentation... calling control.getLayout() doesn't do the trick.
 	 */
-	protected void setControlSize() {
+	public void setControlSize() {
 		// Set up the top-right controls
 		List topRight = new ArrayList(3);
 		
@@ -478,8 +484,6 @@ public class BasicStackPresentation extends StackPresentation {
 			layout.setNumLeftAligned(1);
 			titleLabel.setText(currentTitle);
 			titleLabel.setVisible(true);
-			titleLabel.setFont(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
-					.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
 		} else {
 			titleLabel.setVisible(false);
 			layout.setNumLeftAligned(0);
