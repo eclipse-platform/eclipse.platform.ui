@@ -14,15 +14,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 
 public class FileLabelProvider extends DecoratingLabelProvider {
@@ -95,20 +92,7 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 		return super.getImage(((ISearchResultViewEntry) element).getResource());
 	}
 
-	private static IWorkbenchPartSite getSite() {
-		IWorkbenchPage page= SearchPlugin.getActivePage();
-		if (page != null) {
-			IWorkbenchPart part= page.getActivePart();
-			if (part != null)
-				return part.getSite();
-		}
-		return null;
-	}		
-
 	private static ILabelDecorator getDecoratorManager() {
-		if (getSite() != null)
-			return getSite().getDecoratorManager();
-		else
-			return null;
+		return PlatformUI.getWorkbench().getDecoratorManager();
 	}
 }

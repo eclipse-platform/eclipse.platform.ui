@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
@@ -80,7 +81,7 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), fOuterPart.getSite().getDecoratorManager()));
+		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager()));
 
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
 
@@ -306,7 +307,7 @@ class SearchResultViewer extends TableViewer {
 	}
 
 	void internalSetLabelProvider(ILabelProvider provider) {
-		setLabelProvider(new SearchResultLabelProvider(provider, fOuterPart.getSite().getDecoratorManager()));
+		setLabelProvider(new SearchResultLabelProvider(provider, PlatformUI.getWorkbench().getDecoratorManager()));
 	}
 
 	/**

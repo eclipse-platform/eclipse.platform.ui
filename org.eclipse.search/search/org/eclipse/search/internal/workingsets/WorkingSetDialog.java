@@ -31,8 +31,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -150,17 +149,8 @@ class WorkingSetDialog extends InputDialog {
 	}
 
 	private ILabelProvider createLabelProvider() {
-		ILabelDecorator decorationMgr= null;
-		IWorkbenchPage page= SearchPlugin.getActivePage();
-		if (page != null) {
-			IWorkbenchPart part= page.getActivePart();
-			if (part != null)
-				decorationMgr= part.getSite().getDecoratorManager();
-		}
-		ILabelProvider labelProvider= new WorkbenchLabelProvider();
-		if (decorationMgr != null);
-			labelProvider= new DecoratingLabelProvider(labelProvider, decorationMgr);
-		return labelProvider;
+		ILabelDecorator decorationMgr= PlatformUI.getWorkbench().getDecoratorManager();
+		return new DecoratingLabelProvider(new WorkbenchLabelProvider(), decorationMgr);
 	}
 
 	private void disableClosedProjects() {
