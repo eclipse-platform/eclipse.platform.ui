@@ -428,15 +428,17 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * bounds.
 	 */
 	protected void addPendingLinks() {
-		if (fPendingLinks.isEmpty()) {
-			return;
-		}
-		Iterator links = fPendingLinks.iterator();
-		while (links.hasNext()) {
-			HyperlinkPosition link = (HyperlinkPosition)links.next();
-			if ((link.getOffset() + link.getLength()) <= fDocument.getLength()) {
-				links.remove();
-				addLink(link.getHyperLink(), link.getOffset(), link.getLength());
+		synchronized (fPendingLinks) {
+			if (fPendingLinks.isEmpty()) {
+				return;
+			}
+			Iterator links = fPendingLinks.iterator();
+			while (links.hasNext()) {
+				HyperlinkPosition link = (HyperlinkPosition)links.next();
+				if ((link.getOffset() + link.getLength()) <= fDocument.getLength()) {
+					links.remove();
+					addLink(link.getHyperLink(), link.getOffset(), link.getLength());
+				}
 			}
 		}
 	}
@@ -639,7 +641,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Checks to see if the console buffer has overflowed, and empties the
 	 * overflow if needed, updating partitions and hyperlink positions.
 	 */
-	protected void checkOverflow() {
+	protected synchronized void checkOverflow() {
 		if (fHighWaterMark >= 0) {
 			if (fDocument.getLength() > fHighWaterMark) {
 				int lineDifference = 0;
