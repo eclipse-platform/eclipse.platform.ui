@@ -131,12 +131,13 @@ private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
  *
  * @param menu the menu to add the item to
  * @param descriptor the editor descriptor, or null for the system editor
- * @param isPreferredEditor whether the editor descriptor is the preferred one for the selected file
+ * @param preferredEditor the descriptor of the preferred editor, or <code>null</code>
  */
-private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boolean isPreferredEditor) {
+private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, final IEditorDescriptor preferredEditor) {
 	// XXX: Would be better to use bold here, but SWT does not support it.
 	MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-	menuItem.setSelection(isPreferredEditor);
+	boolean isPreferred = preferredEditor != null && descriptor.getId().equals(preferredEditor.getId());
+	menuItem.setSelection(isPreferred);
 	menuItem.setText(descriptor.getLabel());
 	Image image = getImage(descriptor);
 	if (image != null) {
@@ -162,35 +163,31 @@ public void fill(Menu menu, int index) {
 		return;
 	}
 
-	IEditorDescriptor defaultEditor = registry.getDefaultEditor();
-	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file);
+	IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
+	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file); // may be null
+	
 	Object[] editors = sorter.sort(registry.getEditors(file));
 	boolean defaultFound = false;
 
 	for (int i = 0; i < editors.length; i++) {
 		IEditorDescriptor editor = (IEditorDescriptor) editors[i];
-		createMenuItem(menu, editor, editor.getId().equals(preferredEditor.getId()));
-		if (editor.getId().equals(defaultEditor.getId()))
+		createMenuItem(menu, editor, preferredEditor);
+		if (defaultEditor != null && editor.getId().equals(defaultEditor.getId()))
 			defaultFound = true;
 	}
 
-	//Only add a separator if there is something to separate
-	if(editors.length > 0)
+	// Only add a separator if there is something to separate
+	if (editors.length > 0)
 		new MenuItem(menu, SWT.SEPARATOR);
 
 	// Add default editor. Check it if it is saved as the preference.
-	boolean isPreferred = false;
-	if (!defaultFound) {
-		if (preferredEditor != null)
-			isPreferred = defaultEditor.getId().equals(preferredEditor.getId());
-		createMenuItem(menu, defaultEditor, isPreferred);
+	if (!defaultFound && defaultEditor != null) {
+		createMenuItem(menu, defaultEditor, preferredEditor);
 	}
 
 	// Add system editor.
 	IEditorDescriptor descriptor = EditorDescriptor.getSystemEditorDescriptor();
-	if (preferredEditor != null)
-		isPreferred = descriptor.getId().equals(preferredEditor.getId());
-	createMenuItem(menu, descriptor, isPreferred);
+	createMenuItem(menu, descriptor, preferredEditor);
 	createDefaultMenuItem(menu, file);
 }
 /**
