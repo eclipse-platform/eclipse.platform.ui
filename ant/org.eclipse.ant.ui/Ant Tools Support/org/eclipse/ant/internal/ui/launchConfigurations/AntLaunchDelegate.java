@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juan A. Hernandez - bug 89926
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
@@ -586,8 +587,15 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			String swtLocation= getSWTLibraryLocation();
 			if (swtLocation != null) {
 				vmArgs.append(" -Djava.library.path=\""); //$NON-NLS-1$
+				String javaLibPath= System.getProperty("java.library.path"); //$NON-NLS-1$
+				if (javaLibPath != null) {
+					vmArgs.append(javaLibPath);
+					if (vmArgs.charAt(vmArgs.length() - 1) != File.pathSeparatorChar) {
+						vmArgs.append(File.pathSeparatorChar);
+					}
+				}
 				vmArgs.append(swtLocation);
-				vmArgs.append('\"');
+				vmArgs.append('"');
 			}
 		}
 		return vmArgs;
