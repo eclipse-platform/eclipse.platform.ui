@@ -56,8 +56,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	private Button switchOnNewProjectButton;
 	private boolean switchOnNewProject;
 
-	private static final int LIST_WIDTH = 200;
-	private static final int LIST_HEIGHT = 200;
+//	private static final int LIST_WIDTH = 200;
+//	private static final int LIST_HEIGHT = 200;
 
 	// labels
 	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
@@ -252,8 +252,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		list.setFont(font);
 
 		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = LIST_WIDTH;
-		data.heightHint = LIST_HEIGHT;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
 		list.setLayoutData(data);
 
 		// Populate the perspective list
