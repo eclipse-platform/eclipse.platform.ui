@@ -279,13 +279,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -295,6 +288,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -370,6 +370,53 @@ This particular API should still be considered experimental.  While you may use 
                <appInfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="scope">
+      <annotation>
+         <documentation>
+            This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this scope for display in the UI.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this scope.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
+
+@deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

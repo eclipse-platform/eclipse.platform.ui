@@ -30,7 +30,23 @@ final class Persistence {
 
     final static String TAG_NAME = "name"; //$NON-NLS-1$		
 
+    /**
+     * Equivalent to <code>TAG_PARENT_ID</code>.
+     * 
+     * @deprecated This is needed for deprecation support for the "scope"
+     *             elements in the "commands" extension point.
+     */
+    final static String TAG_PARENT = "parent"; //$NON-NLS-1$
+
     final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
+    
+    /**
+     * Equivalent to <code>TAG_PARENT_ID</code>.
+     * 
+     * @deprecated This is needed for deprecation support for
+     *             "acceleratorScopes".
+     */
+    final static String TAG_PARENT_SCOPE = "parentScope"; //$NON-NLS-1$
 
     final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
@@ -43,6 +59,21 @@ final class Persistence {
         String parentId = memento.getString(TAG_PARENT_ID);
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
+        
+        /* TODO DEPRECATED Support for the old "commands" extension point way
+         * of specifying parents, and for the old "acceleratorScopes" extension
+         * point way of specifying parents.
+         */
+        if (parentId == null) {
+            // "acceleratorScopes" support
+            parentId = memento.getString(TAG_PARENT_SCOPE);
+        }
+        if (parentId == null) {
+            // "commands" support
+            parentId = memento.getString(TAG_PARENT);
+        }
+        // TODO DEPRECATED END
+        
         return new ContextDefinition(id, name, parentId, sourceId);
     }
 
