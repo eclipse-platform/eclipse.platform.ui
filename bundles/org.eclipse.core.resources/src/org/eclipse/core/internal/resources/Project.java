@@ -306,7 +306,7 @@ public void create(IProgressMonitor monitor) throws CoreException {
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
-	//    delete((isOpen() ? DELETE_PROJECT_CONTENT : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
+	//    delete((force ? FORCE : IResource.NONE), monitor);
 	delete(isOpen(), force, monitor);
 }
 
@@ -316,7 +316,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for deleting projects needs to be moved to Resource.delete
 	//   so that IResource.delete(int,IProgressMonitor) works properly for
-	//   projects and honours the DELETE_PROJECT_HISTORY update flag
+	//   projects and honours the ALWAYS/NEVER_DELETE_PROJECT_CONTENTS update flags
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString());

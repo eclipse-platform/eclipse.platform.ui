@@ -59,7 +59,6 @@ public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throw
  * @see IResourceDelta#accept(IResourceDeltaVisitor, int)
  */
 public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
-	// FIXME - handle team private members
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	int mask = includePhantoms ? ALL_WITH_PHANTOMS : REMOVED | ADDED | CHANGED;
 	if ((getKind() | mask) == 0)
@@ -68,7 +67,13 @@ public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreEx
 		return;
 	//recurse over children
 	for (int i = 0; i < children.length; i++) {
-		children[i].accept(visitor, memberFlags);
+		IResourceDelta childDelta = children[i];
+		IResource child = childDelta.getResource();
+		// quietly exclude team-private members unless explicitly included
+		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0
+		     || !child.isTeamPrivateMember()) {
+			childDelta.accept(visitor, memberFlags);
+		}
 	}
 }
 
@@ -163,22 +168,43 @@ protected void fixMovesAndMarkers() {
  * @see IResourceDelta#getAffectedChildren
  */
 public IResourceDelta[] getAffectedChildren() {
-	return getAffectedChildren(ADDED | REMOVED | CHANGED);
+	return getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
 }
 /**
  * @see IResourceDelta#getAffectedChildren(int)
  */
-public IResourceDelta[] getAffectedChildren(int mask) {
+public IResourceDelta[] getAffectedChildren(int kindMask) {
+	return getAffectedChildren(kindMask, IResource.NONE);
+}
+
+/*
+ * @see IResourceDelta#getAffectedChildren(int, int)
+ */
+public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 	int numChildren = children.length;
 	//if there are no children, they all match
-	if (numChildren == 0)
+	if (numChildren == 0) {
 		return children;
+	}
+	if ((memberFlags & IContainer.INCLUDE_PHANTOMS) != 0) {
+		// reduce INCLUDE_PHANTOMS member flag to kind mask
+		kindMask |= ADDED_PHANTOM | REMOVED_PHANTOM;
+	}
 
 	//first count the number of matches so we can allocate the exact array size
 	int matching = 0;
-	for (int i = 0; i < numChildren; i++)
-		if ((children[i].getKind() & mask) != 0)
-			matching++;
+	for (int i = 0; i < numChildren; i++) {
+		if ((children[i].getKind() & kindMask) == 0) {
+			// child has wrong kind
+			continue;
+		}
+		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
+		    && children[i].getResource().isTeamPrivateMember()) {
+			// child has is a team-private member which are not included
+			continue;
+		}
+		matching++;
+	}
 			
 	//use arraycopy if all match
 	if (matching == numChildren) {
@@ -189,12 +215,23 @@ public IResourceDelta[] getAffectedChildren(int mask) {
 		
 	//create the appropriate sized array and fill it
 	IResourceDelta[] result = new IResourceDelta[matching];
-	matching = 0;
-	for (int i = 0; i < numChildren; i++)
-		if ((children[i].getKind() & mask) != 0)
-			result[matching++] = children[i];
+	int nextPosition = 0;
+	for (int i = 0; i < numChildren; i++) {
+		if ((children[i].getKind() & kindMask) == 0) {
+			// child has wrong kind
+			continue;
+		}
+		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
+		    && children[i].getResource().isTeamPrivateMember()) {
+			// child has is a team-private member which are not included
+			continue;
+		}
+		result[nextPosition++] = children[i];
+	}
 	return result;
 }
+
+
 protected ResourceDeltaInfo getDeltaInfo() {
 	return deltaInfo;
 }

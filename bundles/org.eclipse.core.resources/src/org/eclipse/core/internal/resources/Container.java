@@ -39,62 +39,34 @@ public void convertToPhantom() throws CoreException {
 public boolean exists(IPath path) {
 	return workspace.getResourceInfo(getFullPath().append(path), false, false) != null;
 }
-
 /**
  * @see IContainer#findMember(String)
  */
 public IResource findMember(String name) {
-	// forward to central method
-	return findMember(name, IResource.NONE);
+	return findMember(name, false);
 }
-
 /**
  * @see IContainer#findMember(String, boolean)
  */
 public IResource findMember(String name, boolean phantom) {
-	// forward to central method
-	return findMember(name, phantom ? INCLUDE_PHANTOMS : IResource.NONE);
-}
-
-/*
- * @see IContainer
- */
-public IResource findMember(String name, int memberFlags) {
-	// FIXME - handle team private member flag
-	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	IPath childPath = getFullPath().append(name);
 	ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
 	return info == null ? null : workspace.newResource(childPath, info.getType());
 }
-
 /**
  * @see IContainer#findMember(IPath)
  */
 public IResource findMember(IPath path) {
-	// forward to central method
-	return findMember(path, IResource.NONE);
+	return findMember(path, false);
 }
-
 /**
  * @see IContainer#findMember(IPath)
  */
 public IResource findMember(IPath path, boolean phantom) {
-	// forward to central method
-	return findMember(path, phantom ? INCLUDE_PHANTOMS : IResource.NONE);
-}
-
-/*
- * @see IContainer
- */
-public IResource findMember(IPath path, int memberFlags) {
-	// FIXME - handle team private member flag
-	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	path = getFullPath().append(path);
 	ResourceInfo info = workspace.getResourceInfo(path, phantom, false);
 	return (info == null) ? null : workspace.newResource(path, info.getType());
 }
-
-
 /**
  */
 protected void fixupAfterMoveSource() throws CoreException {
@@ -195,11 +167,42 @@ public IResource[] members(boolean phantom) throws CoreException {
  * @see IContainer
  */
 public IResource[] members(int memberFlags) throws CoreException {
-	// FIXME - handle team private member flag
 	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(phantom, false);
 	checkExists(getFlags(info), true);
-	return getChildren(this, phantom);
+	IResource[] allMembers = getChildren(this, phantom);
+	if ((memberFlags & INCLUDE_TEAM_PRIVATE_MEMBERS) != 0) {
+		// if team-private members are wanted, return the whole list
+		return allMembers;
+	} else {
+		// filter out team-private members (if any)
+		int teamPrivateMemberCount = 0;
+		// make a quick first pass to see if there is anything to exclude
+		for (int i = 0; i < allMembers.length; i++) {
+			Resource child = (Resource) allMembers[i];
+			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
+			if (isTeamPrivateMember(getFlags(childInfo))) {
+				teamPrivateMemberCount++;
+			}
+		}
+		// common case: nothing to exclude
+		if (teamPrivateMemberCount == 0) {
+			return allMembers;
+		}
+		// FIXME - investigate potential concurrency issues (2 calls to members)
+		// make a second pass to copy the ones we want
+		IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
+		int nextPosition = 0;
+		for (int i = 0; i < allMembers.length; i++) {
+			Resource child = (Resource) allMembers[i];
+			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
+			if (!isTeamPrivateMember(getFlags(childInfo))) {
+				reducedMembers[nextPosition] = child;
+				nextPosition++;
+			}
+		}
+		return reducedMembers;
+	}		
 }
 
 /**

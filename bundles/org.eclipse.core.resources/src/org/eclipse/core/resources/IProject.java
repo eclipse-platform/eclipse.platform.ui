@@ -240,7 +240,10 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete((deleteContent ? DELETE_PROJECT_CONTENT : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
+ *   delete(
+ *     (deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT )
+ *        | (force ? FORCE : IResource.NONE),
+ *     monitor);
  * </pre>
  * </p>
  * <p>

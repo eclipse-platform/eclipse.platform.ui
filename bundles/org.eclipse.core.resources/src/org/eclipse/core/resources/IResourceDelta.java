@@ -156,7 +156,9 @@ public interface IResourceDelta extends IAdaptable {
  * the resource delta's children are also visited.
  * <p>
  * This is a convenience method, fully equivalent to 
- * <code>accept(visitor,IResource.NONE)</code>.
+ * <code>accept(visitor, IResource.NONE)</code>.
+ * Although the visitor will be invoked for this resource delta, it will not be
+ * invoked for any team-private member resources.
  * </p>
  *
  * @param visitor the visitor
@@ -175,6 +177,8 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException;
  * <pre>
  *   accept(visitor, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
+ * Although the visitor will be invoked for this resource delta, it will not be
+ * invoked for any team-private member resources.
  * </p>
  *
  * @param visitor the visitor
@@ -194,10 +198,12 @@ public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throw
  * resource delta. If the visitor returns <code>true</code>,
  * the resource delta's children are also visited.
  * <p>
+ * The member flags determine which child deltas of this resource delta will be visited.
+ * The visitor will always be invoked for this resource delta.
+ * <p>
  * If the <code>INCLUDE_PHANTOMS</code> member flag is not specified
- * (recommended), only resource deltas involving existing resources will be visited
- * (kinds <code>ADDED</code>, <code>REMOVED</code>, 
- * and <code>CHANGED</code>).
+ * (recommended), only child resource deltas involving existing resources will be visited
+ * (kinds <code>ADDED</code>, <code>REMOVED</code>, and <code>CHANGED</code>).
  * If the <code>INCLUDE_PHANTOMS</code> member flag is specified,
  * the result will also include additions and removes of phantom resources
  * (kinds <code>ADDED_PHANTOM</code> and <code>REMOVED_PHANTOM</code>).
@@ -247,31 +253,35 @@ public IResourceDelta findMember(IPath path);
  * which were added, removed, or changed. Returns an empty
  * array if there are no affected children.
  * <p>
- * Equivalent to <code>getAffectedChildren(ADDED | REMOVED | CHANGED)</code>.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
+ * </pre>
+ * Team-private member resources are <b>not</b> included in the result; neither are
+ * phantom resources.
  * </p>
  *
  * @return the resource deltas for all affected children
  * @see IResourceDelta#ADDED
  * @see IResourceDelta#REMOVED
  * @see IResourceDelta#CHANGED
- * @see #getAffectedChildren(int)
+ * @see #getAffectedChildren(int,int)
  */
 public IResourceDelta[] getAffectedChildren();
 /**
  * Returns resource deltas for all children of this resource 
- * whose kind is included in the given mask. Mask are formed
+ * whose kind is included in the given mask. Kind mask are formed
  * by the bitwise or of <code>IResourceDelta</code> kind constants.
  * Returns an empty array if there are no affected children.
  * <p>
- * Specify <code>ALL_WITH_PHANTOMS</code> to see all child
- * resource deltas including phantoms.
- * </p>
- * <p>
- * Use the <code>getAffectedChildren()</code> method to see all
- * resource deltas excluding phantoms.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   getAffectedChildren(kindMask, IResource.NONE);
+ * </pre>
+ * Team-private member resources are <b>not</b> included in the result.
  * </p>
  *
- * @param mask a mask formed by the bitwise or of <code>IResourceDelta </code> 
+ * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta </code> 
  *    delta kind constants
  * @return the resource deltas for all affected children
  * @see IResourceDelta#ADDED
@@ -280,9 +290,46 @@ public IResourceDelta[] getAffectedChildren();
  * @see IResourceDelta#ADDED_PHANTOM
  * @see IResourceDelta#REMOVED_PHANTOM
  * @see IResourceDelta#ALL_WITH_PHANTOMS
- * @see #getAffectedChildren()
+ * @see #getAffectedChildren(int,int)
  */
-public IResourceDelta[] getAffectedChildren(int mask);
+public IResourceDelta[] getAffectedChildren(int kindMask);
+
+/**
+ * Returns resource deltas for all children of this resource 
+ * whose kind is included in the given mask. Mask are formed
+ * by the bitwise or of <code>IResourceDelta</code> kind constants.
+ * Returns an empty array if there are no affected children.
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member flag is not specified,
+ * (recommended), resource deltas involving team private member resources will be 
+ * excluded. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member
+ * flag is specified, the result will also include resource deltas of the 
+ * specified kinds to team private member resources.
+ * </p>
+ * <p>
+ * Specifying the <code>INCLUDE_PHANTOMS</code> member flag is equivalent
+ * to including <code>ADDED_PHANTOM</code> and <code>REMOVED_PHANTOM</code>
+ * in the kind mask.
+ * </p>
+ *
+ * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta </code> 
+ *    delta kind constants
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @return the resource deltas for all affected children
+ * @see IResourceDelta#ADDED
+ * @see IResourceDelta#REMOVED
+ * @see IResourceDelta#CHANGED
+ * @see IResourceDelta#ADDED_PHANTOM
+ * @see IResourceDelta#REMOVED_PHANTOM
+ * @see IResourceDelta#ALL_WITH_PHANTOMS
+ * @see IContainer#INCLUDE_PHANTOMS
+ * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+ * @since 2.0
+ */
+public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);
+
 /**
  * Returns flags which describe in more detail how a resource has been affected.
  * <p>

@@ -144,11 +144,39 @@ public interface IResource extends IAdaptable {
 
 	/**
 	 * Update flag constant (bit mask value 4) indicating that the operation
-	 * should delete the project's files and folders.
+	 * should delete the files and folders of a project.
+	 * <p>
+	 * Deleting a project that is open ordinarily deletes all its files and folders, 
+	 * whereas deleting a project that is closed retains its files and folders.
+	 * Specifying <code>ALWAYS_DELETE_PROJECT_CONTENT</code> indicates that the contents
+	 * of a project are to be deleted regardless of whether the project is open or closed
+	 * at the time; specifying <code>NEVER_DELETE_PROJECT_CONTENT</code> indicates that
+	 * the contents of a project are to be retained regardless of whether the project
+	 * is open or closed at the time.
+	 * </p>
 	 * 
+	 * @see #NEVER_DELETE_PROJECT_CONTENT
 	 * @since 2.0
 	 */
-	public static final int DELETE_PROJECT_CONTENT = 0x4;
+	public static final int ALWAYS_DELETE_PROJECT_CONTENT = 0x4;
+
+	/**
+	 * Update flag constant (bit mask value 4) indicating that the operation
+	 * should preserve the files and folders of a project.
+	 * <p>
+	 * Deleting a project that is open ordinarily deletes all its files and folders, 
+	 * whereas deleting a project that is closed retains its files and folders.
+	 * Specifying <code>ALWAYS_DELETE_PROJECT_CONTENT</code> indicates that the contents
+	 * of a project are to be deleted regardless of whether the project is open or closed
+	 * at the time; specifying <code>NEVER_DELETE_PROJECT_CONTENT</code> indicates that
+	 * the contents of a project are to be retained regardless of whether the project
+	 * is open or closed at the time.
+	 * </p>
+	 * 
+	 * @see #ALWAYS_DELETE_PROJECT_CONTENT
+	 * @since 2.0
+	 */
+	public static final int NEVER_DELETE_PROJECT_CONTENT = 0x8;
 
 	/*====================================================================
 	 * Other constants:
@@ -299,11 +327,11 @@ public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws 
 public void clearHistory(IProgressMonitor monitor) throws CoreException;
 
 /**
- * Makes a copy of this resource at a project using the given project description.
+ * Makes a copy of this project using the given project description.
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   copy(destination, (force ? FORCE : IResource.NONE), monitor);
+ *   copy(description, (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p> 
@@ -316,7 +344,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * by the given progress monitor. 
  * </p>
  *
- * @param destination the destination project description
+ * @param description the destination project description
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param monitor a progress monitor, or <code>null</code> if progress
@@ -325,6 +353,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
  * <li> The project described by the given description already exists.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>force</code> is <code>false</code>.</li>
@@ -334,7 +363,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  */
-public void copy(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException;
+public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
 /**
  * Makes a copy of this resource at the given path. 
@@ -363,6 +392,9 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed project.</li>
  * <li> A resource at destination path does exist.</li>
@@ -378,8 +410,8 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 /**
- * Makes a copy of this resource at a project using the given project description. 
- * The resource's descendents are copied as well. The description 
+ * Makes a copy of this project using the given project description. 
+ * The project's descendents are copied as well. The description 
  * specifies the name, location and attributes of the new project.
  * After successful completion, corresponding new resources will exist 
  * at the given path; their contents and properties will be copies of 
@@ -417,7 +449,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * by the given progress monitor. 
  * </p>
  *
- * @param destination the destination project description
+ * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
  *   (only <code>FORCE</code> is relevant here)
  * @param monitor a progress monitor, or <code>null</code> if progress
@@ -426,6 +458,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
  * <li> The project described by the given description already exists.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>FORCE</code> is not specified.</li>
@@ -436,14 +469,14 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * </ul>
  * @since 2.0
  */
-public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 /**
  * Makes a copy of this resource at the given path. The resource's
  * descendents are copied as well. 
  * The path of this resource must not be a prefix of the destination path.
  * The workspace root may not be the source or destination location 
- * of a copy operation.  
+ * of a copy operation, and a project can only be copied to another project.
  * After successful completion, corresponding new resources will exist 
  * at the given path; their contents and properties will be copies of 
  * the originals. The original resources are not affected.
@@ -502,6 +535,9 @@ public void copy(IProjectDescription destination, int updateFlags, IProgressMoni
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed project.</li>
  * <li> A resource at destination path does exist.</li>
@@ -636,19 +672,21 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * when deleting files and folders, but not projects.
  * </p>
  * <p>
- * The <code>DELETE_PROJECT_CONTENTS</code> update flag controls how project
- * deletions are handled. If <code>DELETE_PROJECT_CONTENTS</code> is specified,
+ * The <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> update flag controls how project
+ * deletions are handled. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> is specified,
  * closed projects will be opened if necessary and then deleted. This has the
  * effect of deleting the project's resources from the project's local content
- * area. If <code>DELETE_PROJECT_CONTENTS</code> is not specified, the project
+ * area. If <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, the project
  * will be closed if necessary and then deleted. This has the effect of 
  * retaining the project's resources in the project's local content area while
- * dropping the project from the workspace.
+ * dropping the project from the workspace. If neither of these flags is specified,
+ * files and folders are deleted from open projects, but not from closed projects.
  * </p>
  * 
  * @param updateFlags bit-wise or of update flag constants (
- *   <code>FORCE</code>, <code>KEEP_HISTORY</code>, and
- *   <code>DELETE_PROJECT_CONTENTS</code>)
+ *   <code>FORCE</code>, <code>KEEP_HISTORY</code>,
+ *   <code>ALWAYS_DELETE_PROJECT_CONTENTS</code>,
+ *   and <code>NEVER_DELETE_PROJECT_CONTENTS</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
@@ -663,7 +701,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * @see IFolder#delete
  * @see #FORCE
  * @see #KEEP_HISTORY
- * @see #DELETE_PROJECT_CONTENTS
+ * @see #ALWAYS_DELETE_PROJECT_CONTENTS
+ * @see #NEVER_DELETE_PROJECT_CONTENTS
  * @since 2.0
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1090,12 +1129,12 @@ public boolean isPhantom();
 public boolean isReadOnly();
 
 /**
- * Moves this resource so that it is the project specified by the given project 
+ * Renames or relocates this project so that it is the project specified by the given project 
  * description.
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
+ *   move(description, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -1111,7 +1150,7 @@ public boolean isReadOnly();
  * by the given progress monitor. 
  * </p>
  *
- * @param destination the destination project description
+ * @param description the destination project description
  * @param force a flag controlling whether resources that are not
  *    in sync with the local file system will be tolerated
  * @param keepHistory a flag indicating whether or not to keep
@@ -1122,6 +1161,7 @@ public boolean isReadOnly();
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
  * <li> The project at the destination already exists.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>force</code> is <code>false</code>.</li>
@@ -1132,7 +1172,7 @@ public boolean isReadOnly();
  * </ul>
  * @see IResourceDelta#getFlags
  */
-public void move(IProjectDescription destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 /**
  * Moves this resource so that it is located at the given path.  
@@ -1164,6 +1204,9 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed 
  *      project.</li>
@@ -1182,9 +1225,9 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 /**
- * Moves this resource so that it is the project specified by the given project 
- * description.  The description specifies the name, location and attributes 
- * of the new project. After successful completion, the resource and 
+ * Renames or relocates this project so that it is the project specified by the given
+ * project description.  The description specifies the name, location and attributes 
+ * of the new project. After successful completion, the old project and 
  * any direct or indirect members will no longer exist; but corresponding 
  * new resources will now exist at the project.
  * <p>
@@ -1193,8 +1236,8 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * markers.
  * </p>
  * <p>
- * When this resource is itself a project, and this project's location is the 
- * default location, then the directories and files on disk are moved to be in
+ * When this project's location is the default location, then the directories
+ * and files on disk are moved to be in
  * the location specified by the given description. If the given description
  * specifies the default location for the project, the directories and files
  * are moved to the default location. In all other cases the directories and
@@ -1248,7 +1291,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * by the given progress monitor. 
  * </p>
  *
- * @param destination the destination project description
+ * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
  *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
@@ -1257,6 +1300,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
  * <li> The project at the destination already exists.</li>
  * <li> This resource or one of its descendents is out of sync with the local file system
  *      and <code>FORCE</code> is not specified.</li>
@@ -1270,13 +1314,14 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * @see #KEEP_HISTORY
  * @since 2.0
  */
-public void move(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 /**
  * Moves this resource so that it is located at the given path.  
  * The path of the resource must not be a prefix of the destination path.
  * The workspace root may not be the source or destination location 
- * of a move operation.  After successful completion, the resource and 
+ * of a move operation, and a project can only be moved to another project.
+ * After successful completion, the resource and 
  * any direct or indirect members will no longer exist; but corresponding 
  * new resources will now exist at the given path.
  * <p>
@@ -1351,6 +1396,9 @@ public void move(IProjectDescription destination, int updateFlags, IProgressMoni
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed 
  *      project.</li>
@@ -1568,6 +1616,10 @@ public boolean isDerived();
  * is saved.
  * </p>
  * <p>
+ * Projects and the workspace root are never considered derived; attempts to
+ * mark them as derived are ignored.
+ * </p>
+ * <p>
  * This operation does <b>not</b> result in a resource change event, and does not
  * trigger auto-builds.
  * </p>
@@ -1610,6 +1662,10 @@ public boolean isTeamPrivateMember();
  * in the in-memory resource tree, and are discarded when the resources is deleted.
  * Team private member marks are saved to disk when a project is closed, or when the
  * workspace is saved.
+ * </p>
+ * <p>
+ * Projects and the workspace root are never considered team private members; attempts to
+ * mark them as derived are ignored.
  * </p>
  * <p>
  * This operation does <b>not</b> result in a resource change event, and does not

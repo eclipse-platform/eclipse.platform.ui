@@ -46,7 +46,6 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
  * @see IResource#accept
  */
 public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
-	// FIXME - handle team private members
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(includePhantoms, false);
 	checkExists(getFlags(info), true);
@@ -287,6 +286,8 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
  * @see IResource#copy
  */
 public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - funnel through a central method
+	// FIXME - ensure source is a project
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.copying", getFullPath().toString());
@@ -332,6 +333,7 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME
+	// FIXME - ensure source and dest are the right types
 	copy(destination, (updateFlags & IResource.FORCE) != 0, monitor);
 }
 
@@ -339,6 +341,8 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * @see IResource#copy
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - funnel through a central method
+	// FIXME - ensure source and dest are the right types
 	if (destination.isAbsolute() && destination.segmentCount() == 1) {
 		copy(workspace.newProjectDescription(destination.lastSegment()), force, monitor);
 		return;
@@ -757,6 +761,7 @@ protected IPath makePathAbsolute(IPath target) {
  * @see IResource#move
  */
 public void move(IProjectDescription destDesc, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	// FIXME - ensure source is a project
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.moving", getFullPath().toString());
@@ -816,6 +821,7 @@ public void move(IProjectDescription destDesc, boolean force, boolean keepHistor
  */
 public void move(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME
+	// FIXME - ensure source is a project
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
 	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 	move(destDesc, force, keepHistory, monitor);
@@ -825,6 +831,7 @@ public void move(IProjectDescription destDesc, int updateFlags, IProgressMonitor
  * @see IResource#move
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - ensure source and dest are the right types
 	move(destination, force, false, monitor);
 }
 
@@ -832,6 +839,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * @see IResource#move
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	// FIXME - ensure source and dest are the right types
 	if (destination.isAbsolute() && destination.segmentCount() == 1) {
 		move(workspace.newProjectDescription(destination.lastSegment()), force, keepHistory, monitor);
 		return;
@@ -1080,30 +1088,79 @@ private String findVariant(String target, String[] list) {
  * @see IResource
  */
 public boolean isDerived() {
-	// FIXME - missing implementation
-	return false;
+	ResourceInfo info = getResourceInfo(false, false);
+	return isDerived(getFlags(info));
+}
+
+/**
+ * Returns whether the derived flag is set in the given resource info flags.
+ * 
+ * @param flags resource info flags (bitwuise or of M_* constants)
+ * @return <code>true</code> if the derived flag is set, and <code>false</code>
+ *    if the derived flag is not set or if the flags are <code>NULL_FLAG</code>
+ */
+public boolean isDerived(int flags) {
+	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
 }
 
 /*
  * @see IResource
  */
 public void setDerived(boolean isDerived) throws CoreException {
-	// FIXME - missing implementation
+	// fetch the info but don't bother making it mutable even though we are going
+	// to modify it.  We don't know whether or not the tree is open and it really doesn't
+	// matter as the change we are doing does not show up in deltas.
+	ResourceInfo info = getResourceInfo(false, false);
+	int flags = getFlags(info);
+	checkAccessible(flags);
+	// ignore attempts to set derived flag on anything except files and folders
+	if (info.getType() == FILE || info.getType() == FOLDER) {
+		if (isDerived) {
+			info.set(ICoreConstants.M_DERIVED);
+		} else {
+			info.clear(ICoreConstants.M_DERIVED);
+		}
+	}
 }
 
 /*
  * @see IResource
  */
 public boolean isTeamPrivateMember() {
-	// FIXME - missing implementation
-	return false;
+	ResourceInfo info = getResourceInfo(false, false);
+	return isTeamPrivateMember(getFlags(info));
+}
+
+/**
+ * Returns whether the team private member flag is set in the given resource info flags.
+ * 
+ * @param flags resource info flags (bitwuise or of M_* constants)
+ * @return <code>true</code> if the team private member flag is set, and 
+ *    <code>false</code> if the flag is not set or if the flags are <code>NULL_FLAG</code>
+ */
+public boolean isTeamPrivateMember(int flags) {
+	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 }
 
 /*
  * @see IResource
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
-	// FIXME - missing implementation
+	// fetch the info but don't bother making it mutable even though we are going
+	// to modify it.  We don't know whether or not the tree is open and it really doesn't
+	// matter as the change we are doing does not show up in deltas.
+	ResourceInfo info = getResourceInfo(false, false);
+	int flags = getFlags(info);
+	checkAccessible(flags);
+	// ignore attempts to set team private member flag on anything except files and folders
+	if (info.getType() == FILE || info.getType() == FOLDER) {
+		if (isTeamPrivate) {
+			// FIXME - 2002-03-12 code temporarily disabled until implementation and tests fixed
+			info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+		} else {
+			info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+		}
+	}
 }
 
 }

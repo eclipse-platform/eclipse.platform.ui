@@ -28,6 +28,16 @@ public interface ICoreConstants {
 	static final int M_TYPE_START = 8;
 	static final int M_MARKERS_SNAP_DIRTY = 0x1000;
 	static final int M_SYNCINFO_SNAP_DIRTY = 0x2000;
+	/** 
+	 * Marks this resource as derived.
+	 * @since 2.0
+	 */
+	static final int M_DERIVED = 0x4000;
+	/** 
+	 * Marks this resource as a team-private member of its container.
+	 * @since 2.0
+	 */
+	static final int M_TEAM_PRIVATE_MEMBER = 0x8000;
 	static final int NULL_FLAG = -1;
 
 	// Internal status codes	

@@ -63,16 +63,12 @@ public interface IContainer extends IResource, IAdaptable {
  * @see IResource#exists
  */
 public boolean exists(IPath path);
-
 /**
  * Finds and returns the member resource (project, folder, or file)
  * with the given name in this container, or <code>null</code> if no such
  * resource exists.
- * <p>
- * This is a convenience method, fully equivalent to <code>findMember(name,IResource.NONE)</code>.
- * </p>
- * <p> 
- * N.B. Unlike the methods which traffic strictly in resource
+ * 
+ * <p> N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
  * </p>
@@ -82,45 +78,20 @@ public boolean exists(IPath path);
  * 		resource exists
  */
 public IResource findMember(String name);
-
 /**
  * Finds and returns the member resource (project, folder, or file)
  * with the given name in this container, or <code>null</code> if 
  * there is no such resource.
  * <p>
- * This is a convenience method, fully equivalent to:
- * <pre>
- *   findMember(name, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
- * </pre>
- * </p>
- *
- * @param name the string name of the member resource
- * @param includePhantoms <code>true</code> if phantom resources are
- *   of interest; <code>false</code> if phantom resources are not of
- *   interest
- * @return the member resource, or <code>null</code> if no such
- * 		resource exists
- * @see IResource#isPhantom
- */
-public IResource findMember(String name, boolean includePhantoms);
-
-/**
- * Finds and returns the member resource (project, folder, or file)
- * with the given name in this container, or <code>null</code> if 
- * there is no such resource.
- * <p>
- * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
- * flags (recommended), only a member resource with given name will
- * be returned. If the <code>INCLUDE_PHANTOMS</code> flag is specified,
- * the result also returns any phantom member resource with the given name
- * that the workspace is keeping track of.
+ * If the <code>includePhantoms</code> argument is <code>false</code>, 
+ * only a member resource with the given name that exists will be returned.
+ * If the <code>includePhantoms</code> argument is <code>true</code>,
+ * the method also returns a phantom member resource with 
+ * the given name that the workspace is keeping track of.
  * </p>
  * <p>
- * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
- * (recommended), the result will not consider team private members of this
- * resource. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is 
- * specified in the member flags, team private member resources are 
- * taken into account.
+ * Note that no attempt is made to exclude team-private member resources
+ * as with <code>members</code>.
  * </p>
  * <p>
  * N.B. Unlike the methods which traffic strictly in resource
@@ -129,29 +100,28 @@ public IResource findMember(String name, boolean includePhantoms);
  * </p>
  *
  * @param name the string name of the member resource
- * @param memberFlags bit-wise or of member flag constants
- *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
- *   indicating which members are of interest
+ * @param includePhantoms <code>true</code> if phantom resources are
+ *   of interest; <code>false</code> if phantom resources are not of
+ *   interest
  * @return the member resource, or <code>null</code> if no such
  * 		resource exists
+ * @see #members
  * @see IResource#isPhantom
- * @see IResource#isTeamPrivateMember
- * @since 2.0
  */
-public IResource findMember(String name, int memberFlags);
-
+public IResource findMember(String name, boolean includePhantoms);
 /**
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if no such resource exists.
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource.   Trailing separators are ignored.
  * If the path is empty this container is returned.
+ * <p>
+ * Note that no attempt is made to exclude team-private member resources
+ * as with <code>members</code>.
+ * </p>
  * <p> N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
- * </p>
- * <p>
- * This is a convenience method, fully equivalent to <code>findMember(path,IResource.NONE)</code>.
  * </p>
  *
  * @param path the path of the desired resource
@@ -159,7 +129,6 @@ public IResource findMember(String name, int memberFlags);
  * 		resource exists
  */
 public IResource findMember(IPath path);
-
 /**
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if there is no such resource.
@@ -167,10 +136,20 @@ public IResource findMember(IPath path);
  * interpreted as relative to this resource.  Trailing separators are ignored.
  * If the path is empty this container is returned.
  * <p>
- * This is a convenience method, fully equivalent to:
- * <pre>
- *   findMember(path, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
- * </pre>
+ * If the <code>includePhantoms</code> argument is <code>false</code>, 
+ * only a resource that exists at the given path will be returned.
+ * If the <code>includePhantoms</code> argument is <code>true</code>,
+ * the method also returns a phantom member resource at the given path
+ * that the workspace is keeping track of.
+ * </p>
+ * <p>
+ * Note that no attempt is made to exclude team-private member resources
+ * as with <code>members</code>.
+ * </p>
+ * <p>
+ * N.B. Unlike the methods which traffic strictly in resource
+ * handles, this method infers the resulting resource's type from the
+ * existing resource (or phantom) at the calculated path in the workspace.
  * </p>
  *
  * @param path the path of the desired resource
@@ -183,45 +162,6 @@ public IResource findMember(IPath path);
  * @see IResource#isPhantom
  */
 public IResource findMember(IPath path, boolean includePhantoms);
-
-/**
- * Finds and returns the member resource identified by the given path in
- * this container, or <code>null</code> if there is no such resource.
- * The supplied path may be absolute or relative; in either case, it is
- * interpreted as relative to this resource.  Trailing separators are ignored.
- * If the path is empty this container is returned.
- * <p>
- * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
- * flags (recommended), only a resource that exists at the given path will
- * be returned. If the <code>INCLUDE_PHANTOMS</code> flag is specified,
- * the result also returns any phantom member resource at the given path
- * that the workspace is keeping track of.
- * </p>
- * <p>
- * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
- * (recommended), the result will not consider team private members of this
- * resource, or their team private members, and so on. If the 
- * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
- * flags, team private member resources are taken into account.
- * </p>
- * <p>
- * N.B. Unlike the methods which traffic strictly in resource
- * handles, this method infers the resulting resource's type from the
- * existing resource (or phantom) at the calculated path in the workspace.
- * </p>
- *
- * @param path the path of the desired resource
- * @param memberFlags bit-wise or of member flag constants
- *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
- *   indicating which members are of interest
- * @return the member resource, or <code>null</code> if no such
- * 		resource exists
- * @see IResource#isPhantom
- * @see IResource#isTeamPrivateMember
- * @since 2.0
- */
-public IResource findMember(IPath path, int memberFlags);
-
 /**
  * Returns a handle to the file identified by the given path in this
  * container.
@@ -272,6 +212,7 @@ public IFolder getFolder(IPath path);
  * in this resource, in no particular order.
  * <p>
  * This is a convenience method, fully equivalent to <code>members(IResource.NONE)</code>.
+ * Team-private member resources are <b>not</b> included in the result.
  * </p>
  * <p>
  * Note that the members of a project or folder are the files and folders
@@ -298,6 +239,7 @@ public IResource[] members() throws CoreException;
  * <pre>
  *   members(includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
+ * Team-private member resources are <b>not</b> included in the result.
  * </p>
  *
  * @return an array of members of this resource
@@ -335,10 +277,10 @@ public IResource[] members(boolean includePhantoms) throws CoreException;
  * member resources.
  * </p>
  *
- * @return an array of members of this resource
  * @param memberFlags bit-wise or of member flag constants
  *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
  *   indicating which members are of interest
+ * @return an array of members of this resource
  * @exception CoreException if this request fails. Reasons include:
  * <ul>
  * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
