@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -53,9 +55,13 @@ public class WelcomeEditor extends EditorPart {
 	private WelcomeParser parser;
 	private Image image;
 	
+	private ArrayList hyperlinkRanges = new ArrayList();
 	private ArrayList texts = new ArrayList();
 	private StyledText lastNavigatedText = null;
 	private ScrolledComposite scrolledComposite;
+	
+	private IPropertyChangeListener colorListener;
+		
 	
 	/**
 	 * The keyListener innerClass for the welcome editor
@@ -215,7 +221,7 @@ private Composite createInfoArea(Composite parent) {
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = JFaceColors.getBannerBackground(display);;
+	Color bg = JFaceColors.getBannerBackground(display);
 	infoArea.setBackground(bg);
 
 	StyledText sampleStyledText = null;
@@ -310,6 +316,8 @@ private Composite createInfoArea(Composite parent) {
 
 	return infoArea;
 }
+
+
 /**
  * Creates the SWT controls for this workbench part.
  * <p>
@@ -356,6 +364,23 @@ public void createPartControl(Composite parent) {
 	createInfoArea(editorComposite);
 
 	WorkbenchHelp.setHelp(editorComposite, IHelpContextIds.WELCOME_EDITOR);
+	
+	this.colorListener = 
+		new IPropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event){
+				if(event.getProperty().equals(JFacePreferences.HYPERLINK_COLOR)){
+					Color fg = JFaceColors.getHyperlinkText(editorComposite.getDisplay());
+					Iterator links = hyperlinkRanges.iterator();
+					while(links.hasNext()){
+						StyleRange range = (StyleRange) links.next();
+						range.foreground = fg;
+					}
+				}
+			}
+		};
+		
+	JFacePreferences.getPreferenceStore().addPropertyChangeListener(this.colorListener);
+		
 }
 /**
  * Creates the wizard's title area.
@@ -428,6 +453,8 @@ public void dispose() {
 		busyCursor.dispose();
 	if (handCursor != null)
 		handCursor.dispose();
+	JFacePreferences.getPreferenceStore().
+		removePropertyChangeListener(this.colorListener);
 }
 /* (non-Javadoc)
  * Saves the contents of this editor.
@@ -650,6 +677,8 @@ private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
 	for (int i = 0; i < linkRanges.length; i++) {
 		StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
 		styledText.setStyleRange(r);
+		hyperlinkRanges.add(r);
 	}
 }
+
 }
