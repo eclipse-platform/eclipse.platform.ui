@@ -126,6 +126,14 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	public void stop(BundleContext ctx) throws Exception {
+		// quick fix (hack) for bug 47861
+		try {
+			PlatformConfiguration.shutdown();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		platform = null;
 		releasePlatform();
 		converter = null;
