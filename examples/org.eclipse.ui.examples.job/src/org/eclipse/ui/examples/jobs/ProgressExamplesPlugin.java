@@ -1,12 +1,10 @@
 package org.eclipse.ui.examples.jobs;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.examples.jobs.views.ProgressExampleAdapterFactory;
 import org.eclipse.ui.examples.jobs.views.SlowElement;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -31,9 +29,10 @@ public class ProgressExamplesPlugin extends AbstractUIPlugin {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		IAdapterManager m = Platform.getAdapterManager();
 		IAdapterFactory f = new ProgressExampleAdapterFactory();
 		m.registerAdapters(f, SlowElement.class);
