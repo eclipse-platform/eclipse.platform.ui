@@ -214,6 +214,8 @@ public final class HelpSystem {
 		getInstance().plugin = plugin;
 	}
 	public static void setRemoteServerInfo(String url) {
+		URL oldURL=getInstance().remoteServerURL;
+		String oldPath=getInstance().remoteServerPath;
 		try {
 			if (url != null) {
 				URL fullURL = new URL(url);
@@ -223,6 +225,23 @@ public final class HelpSystem {
 			}
 		} catch (MalformedURLException mue) {
 		}
+		if (getInstance().install == 1) {// remote
+			if((oldURL==null || !oldURL.equals(getInstance().remoteServerURL)
+				|| (oldPath==null || !oldPath.equals(getInstance().remoteServerPath))) ){
+				// contextManager stays the same
+	
+				// contribution manager stays the same
+
+				// need new navigation manager
+				if (getInstance().navigationManager != null)
+					getInstance().navigationManager = null;
+	
+				// need new search manager
+				if (getInstance().searchManager != null)
+					getInstance().searchManager = null;
+			}
+		}
+
 	}
 	/**
 	 * Shuts down the Help System.
