@@ -338,7 +338,8 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				if(status != null) {
 					int code = e.getStatus().getCode();
 					if(code == IResourceStatus.RESOURCE_NOT_LOCAL ||
-					    code == IResourceStatus.RESOURCE_NOT_FOUND) {
+					    code == IResourceStatus.RESOURCE_NOT_FOUND ||
+					    code == IResourceStatus.PROJECT_NOT_OPEN) {
 					    	// ignore error since a phantom would of been created
 					    	// and we can safely ignore these cases
 					}
