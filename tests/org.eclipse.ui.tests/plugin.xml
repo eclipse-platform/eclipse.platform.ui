@@ -355,8 +355,45 @@
                menubarPath="org.eclipse.ui.OpenFileAction"
                id="resource action">
          </action>
+         
+      <!-- ObjectContributionTest: This is the content-type-based object contribution -->
       </objectContribution>
+           <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.xml"
+            id="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+         <visibility>
+            <objectState
+                  name="contentTypeId"
+                  value="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+            </objectState>
+         </visibility>
+         <action
+               label="XML Top Level Element"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               tooltip="This is a contribution for ObjectContributionTest.testObjectStateContentType"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.ui.tests.ObjectContributionTest.testObjectStateContentType">
+         </action>
+      </objectContribution>
+      
    </extension>
+   
+   <extension
+   		point="org.eclipse.core.runtime.contentTypes">
+   		
+      	<!-- ObjectContributionTest: This is the content-type-based object contribution -->
+		<content-type 
+			id="ObjectContributionTest.testObjectStateContentType"
+			name="Tests top-level element recognition" 	
+			base-type="org.eclipse.core.runtime.xml"
+			priority="high">
+			<describer class="org.eclipse.ui.internal.ide.model.XMLRootElementContentDescriber:project"/>
+		</content-type>
+   </extension>
+   		
    <extension
          point="org.eclipse.ui.actionSets">
 <!-- ActionSetExpressionTest -->
