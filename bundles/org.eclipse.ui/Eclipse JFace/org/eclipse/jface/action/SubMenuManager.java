@@ -5,6 +5,8 @@ package org.eclipse.jface.action;
  * All Rights Reserved.
  */
 import java.util.*;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.*;
@@ -82,8 +84,7 @@ public void fill(ToolBar parent, int index) {
 public IMenuManager findMenuUsingPath(String path) {
 	IContributionItem item = findUsingPath(path);
 	if (item instanceof IMenuManager) {
-		IMenuManager menu = (IMenuManager)item;
-		return getWrapper(menu);
+		return (IMenuManager)item;
 	}
 	return null;
 }
@@ -107,11 +108,27 @@ public IContributionItem findUsingPath(String path) {
 	if (rest != null && item instanceof IMenuManager) {
 		IMenuManager menu = (IMenuManager) item;
 		item = menu.findUsingPath(rest);
-		item = unwrap(item);
 	}
 	return item;
 }
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ *
+ * Returns the item passed to us, not the wrapper.
+ * In the case of menu's not added by this manager,
+ * ensure that we return a wrapper for the menu.
+ */
+public IContributionItem find(String id) {
+	IContributionItem item = parentMgr.find(id);
+	if (item instanceof IMenuManager) {
+		IMenuManager menu = (IMenuManager)item;
+		return getWrapper(menu);
+	}
 
+	// Return the item passed to us, not the wrapper.
+	item = unwrap(item);
+	return item;
+}
 /* (non-Javadoc)
  * Method declared on IMenuManager.
  */
@@ -122,7 +139,7 @@ public String getId() {
  * Method declared on IMenuManager.
  */
 public boolean getRemoveAllWhenShown() {
-	return parentMgr.getRemoveAllWhenShown();
+	return false;
 }
 /**
  * Returns the menu wrapper for a menu manager.
@@ -201,7 +218,7 @@ public void setParent(IContributionManager parent) {
  * Method declared on IMenuManager.
  */
 public void setRemoveAllWhenShown(boolean removeAll) {
-	parentMgr.setRemoveAllWhenShown(removeAll);
+	Assert.isTrue(false, "Should not be called on submenu manager");
 }
 /* (non-Javadoc)
  * Method declared on SubContributionManager.
@@ -258,22 +275,4 @@ protected SubMenuManager wrapMenu(IMenuManager menu) {
 	return mgr;
 }
 
-/**
- * Unwrap an item or menu manager.
- */
-protected IContributionItem unwrap(IContributionItem item) {
-	// Remove any wrappers around the item contribution
-	while (true) {
-		if (item instanceof SubContributionItem) {
-			item = ((SubContributionItem)item).getInnerItem();
-		}
-		else if (item instanceof SubMenuManager) {
-			item = ((SubMenuManager)item).parentMgr;
-		}
-		else {
-			break;
-		}
-	}
-	return item;
-}
 }
