@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="org.eclipse.ui.intro"
+   id="org.eclipse.ui.intro"  
    name="%plugin_name"
    version="3.0.0"
    provider-name="%provider_name"
@@ -11,7 +11,7 @@
       <library name="intro.jar">
          <export name="*"/>
       </library>
-   </runtime>
+   </runtime>  
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>

@@ -27,150 +27,146 @@ import org.eclipse.ui.intro.internal.util.*;
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.
  */
-public class FormIntroPartImplementation
-	extends AbstractIntroPart
-	implements IPropertyListener {
+public class FormIntroPartImplementation extends AbstractIntroPart implements
+        IPropertyListener {
 
-	private FormToolkit toolkit = null;
-	//private Form mainForm = null;
-	private ScrolledPageBook mainPageBook = null;
-	// cache model instance for reuse.
-	private IntroModelRoot model = getModelRoot();
-	private FormStyleManager styleManager;
+    private FormToolkit toolkit = null;
 
-	static {
-		// register all common images here. Even if this part implementation is
-		// created again, the images will remain in plugin registry.
-		ImageUtil.registerImage(ImageUtil.ROOT_LINK, "overview_96.gif");
-		ImageUtil.registerImage(ImageUtil.ROOT_LINK_SMALL, "overview_64.gif");
-		ImageUtil.registerImage(ImageUtil.FORM_BG, "form_banner.gif");
-		ImageUtil.registerImage(ImageUtil.LINK, "bpel_16.gif");
-	}
+    //private Form mainForm = null;
+    private ScrolledPageBook mainPageBook = null;
 
-	private Action homeAction = new Action() {
-		{
-			setToolTipText(
-				IntroPlugin.getResourceString("Browser_home_tooltip"));
-			setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif"));
-		}
+    // cache model instance for reuse.
+    private IntroModelRoot model = getModelRoot();
 
-		public void run() {
-			IntroHomePage rootPage = getModelRoot().getHomePage();
-			if (rootPage.isDynamic())
-				getModelRoot().setCurrentPageId(rootPage.getId());
-		}
-	};
+    private FormStyleManager styleManager;
 
-	public FormIntroPartImplementation() {
-		styleManager = new FormStyleManager(getModelRoot());
+    static {
+        // REVISIT: register all common images here. Even if this part implementation is
+        // created again, the images will remain in plugin registry.
+        ImageUtil.registerImage(ImageUtil.ROOT_LINK, "overview_96.gif");
+        ImageUtil.registerImage(ImageUtil.ROOT_LINK_SMALL, "overview_64.gif");
+        ImageUtil.registerImage(ImageUtil.FORM_BG, "form_banner.gif");
+        ImageUtil.registerImage(ImageUtil.LINK, "bpel_16.gif");
+    }
 
-	}
+    private Action homeAction = new Action() {
 
-	public void createPartControl(Composite container) {
-		toolkit = new FormToolkit(container.getDisplay());
-		Color bg = styleManager.getColor(toolkit, "bg");
-		if (bg != null) {
-			toolkit.setBackground(bg);
-		}
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-			HyperlinkGroup.UNDERLINE_ROLLOVER);
-		Form mainForm = toolkit.createForm(container);
-		Color fg = styleManager.getColor(toolkit, "title.fg");
-		if (fg != null)
-			mainForm.setForeground(fg);
-		IPluginDescriptor pd =
-			getModelRoot()
-				.getPresentation()
-				.getConfigurationElement()
-				.getDeclaringExtension()
-				.getDeclaringPluginDescriptor();
-		Image bgImage = styleManager.getImage(pd, "title.image", null, null);
-		mainForm.setBackgroundImage(bgImage);
-		String repeat = styleManager.getProperty("title.image.repeat");
-		if (repeat != null && repeat.toLowerCase().equals("true"))
-			mainForm.setBackgroundImageTiled(true);
-		mainForm.setText(getModelRoot().getPresentation().getTitle());
-		mainPageBook = createMainPageBook(toolkit, mainForm);
-		// Add this presentation as a listener to model.
-		getModelRoot().addPropertyListener(this);
+        {
+            setToolTipText(IntroPlugin
+                    .getResourceString("Browser_home_tooltip"));
+            setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif"));
+        }
 
-		addToolBarActions();
-	}
+        public void run() {
+            IntroHomePage rootPage = getModelRoot().getHomePage();
+            if (rootPage.isDynamic())
+                    getModelRoot().setCurrentPageId(rootPage.getId());
+        }
+    };
 
-	private ScrolledPageBook createMainPageBook(
-		FormToolkit toolkit,
-		Form form) {
+    public FormIntroPartImplementation() {
+        styleManager = new FormStyleManager(getModelRoot());
 
-		// get body and create page book in it. Body has GridLayout.
-		Composite body = form.getBody();
-		//Util.printLayout("Initial Form body layout", body.getLayout());
-		body.setLayout(new GridLayout());
+    }
 
-		// make sure page book expands h and v.
-		ScrolledPageBook pageBook =
-			toolkit.createPageBook(body, SWT.V_SCROLL | SWT.H_SCROLL);
-		pageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// creating root page form.
-		if (!pageBook.hasPage(model.getHomePage().getId())) {
-			// if we do not have a root page form. create one.
-			RootPageForm rootPageForm = new RootPageForm(toolkit, model);
-			rootPageForm.createPartControl(pageBook, styleManager);
-			pageBook.showPage(model.getHomePage().getId());
-		}
+    public void createPartControl(Composite container) {
+        toolkit = new FormToolkit(container.getDisplay());
+        Color bg = styleManager.getColor(toolkit, "bg");
+        if (bg != null) {
+            toolkit.setBackground(bg);
+        }
+        toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+                HyperlinkGroup.UNDERLINE_ROLLOVER);
+        Form mainForm = toolkit.createForm(container);
+        Color fg = styleManager.getColor(toolkit, "title.fg");
+        if (fg != null) mainForm.setForeground(fg);
+        IPluginDescriptor pd = getModelRoot().getPresentation()
+                .getConfigurationElement().getDeclaringExtension()
+                .getDeclaringPluginDescriptor();
+        Image bgImage = styleManager.getImage(pd, "title.image", null, null);
+        mainForm.setBackgroundImage(bgImage);
+        String repeat = styleManager.getProperty("title.image.repeat");
+        if (repeat != null && repeat.toLowerCase().equals("true"))
+                mainForm.setBackgroundImageTiled(true);
+        mainForm.setText(getModelRoot().getPresentation().getTitle());
+        mainPageBook = createMainPageBook(toolkit, mainForm);
+        // Add this presentation as a listener to model.
+        getModelRoot().addPropertyListener(this);
 
-		// creating static page form.
-		if (!pageBook.hasPage(PageForm.PAGE_FORM_ID)) {
-			// if we do not have this page create one in main page book and
-			// show it.
-			PageForm pageForm = new PageForm(toolkit, model);
-			pageForm.createPartControl(pageBook, styleManager);
-		}
+        addToolBarActions();
+    }
 
-		return pageBook;
-	}
+    private ScrolledPageBook createMainPageBook(FormToolkit toolkit, Form form) {
 
-	public void dispose() {
-		toolkit.dispose();
-	}
+        // get body and create page book in it. Body has GridLayout.
+        Composite body = form.getBody();
+        //Util.printLayout("Initial Form body layout", body.getLayout());
+        body.setLayout(new GridLayout());
 
-	/**
-	 * Handle model property changes. The UI is notified here of a change to
-	 * the current page in the model. This happens if an intro URL showPage
-	 * method is executed.
-	 * 
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-	 *      int)
-	 */
-	public void propertyChanged(Object source, int propId) {
-		if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-			String pageId = getModelRoot().getCurrentPageId();
-			if (pageId == null | pageId.equals(""))
-				// If page ID was not set properly. exit.
-				return;
+        // make sure page book expands h and v.
+        ScrolledPageBook pageBook = toolkit.createPageBook(body, SWT.V_SCROLL
+                | SWT.H_SCROLL);
+        pageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
+        // creating root page form.
+        if (!pageBook.hasPage(model.getHomePage().getId())) {
+            // if we do not have a root page form. create one.
+            RootPageForm rootPageForm = new RootPageForm(toolkit, model);
+            rootPageForm.createPartControl(pageBook, styleManager);
+            pageBook.showPage(model.getHomePage().getId());
+        }
 
-			String rootPageId = getModelRoot().getHomePage().getId();
+        // creating static page form.
+        if (!pageBook.hasPage(PageForm.PAGE_FORM_ID)) {
+            // if we do not have this page create one in main page book and
+            // show it.
+            PageForm pageForm = new PageForm(toolkit, model);
+            pageForm.createPartControl(pageBook, styleManager);
+        }
 
-			// if we are showing a regular intro page, set the page id to the
-			// static PageForm id.
-			if (!pageId.equals(rootPageId))
-				pageId = PageForm.PAGE_FORM_ID;
+        return pageBook;
+    }
 
-			mainPageBook.showPage(pageId);
-		}
-	}
+    public void dispose() {
+        toolkit.dispose();
+    }
 
-	protected void addToolBarActions() {
-		// Handle menus:
-		IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
-		IToolBarManager toolBarManager = actionBars.getToolBarManager();
-		toolBarManager.add(homeAction);
-		toolBarManager.update(true);
-		actionBars.updateActionBars();
-		//super.addToolBarActions();
-	}
+    /**
+     * Handle model property changes. The UI is notified here of a change to
+     * the current page in the model. This happens if an intro URL showPage
+     * method is executed.
+     * 
+     * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
+     *      int)
+     */
+    public void propertyChanged(Object source, int propId) {
+        if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
+            String pageId = getModelRoot().getCurrentPageId();
+            if (pageId == null | pageId.equals(""))
+            // If page ID was not set properly. exit.
+                    return;
 
-	public void setFocus() {
-		mainPageBook.getCurrentPage().setFocus();
-	}
+            String rootPageId = getModelRoot().getHomePage().getId();
+
+            // if we are showing a regular intro page, set the page id to the
+            // static PageForm id.
+            if (!pageId.equals(rootPageId)) pageId = PageForm.PAGE_FORM_ID;
+
+            mainPageBook.showPage(pageId);
+        }
+    }
+
+    protected void addToolBarActions() {
+        // Handle menus:
+        IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
+        IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        toolBarManager.add(homeAction);
+        toolBarManager.update(true);
+        actionBars.updateActionBars();
+        super.addToolBarActions();
+    }
+
+    public void setFocus() {
+        mainPageBook.getCurrentPage().setFocus();
+    }
 
 }

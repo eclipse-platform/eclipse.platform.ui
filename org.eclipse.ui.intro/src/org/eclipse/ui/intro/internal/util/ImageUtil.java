@@ -40,7 +40,7 @@ public final class ImageUtil {
 	public static final String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	/**
-	 * Convenience method to create an image descriptor.
+	 * Convenience method to create an image descriptor from the intro plugin.
 	 * 
 	 * Method assumes that images are under the "icons" directory, so don't
 	 * append that directory name for "imageName".
@@ -74,7 +74,7 @@ public final class ImageUtil {
 	}
 
 	/**
-	 * Convenience method to create an image.
+	 * Convenience method to create an image from the intro plugin.
 	 * 
 	 * Method assumes that images are under the "icons" directory, so don't
 	 * append that directory name for "imageName".
