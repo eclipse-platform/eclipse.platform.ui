@@ -1228,6 +1228,10 @@ public class PerspectivePresentation {
 	}
 	/**
 	 * Add a part to the presentation.
+	 * 
+	 * Note: unlike all other LayoutParts, PartPlaceholders will still point to
+	 * their parent container even when it is inactive. This method relies on this
+	 * fact to locate the parent.
 	 */
 	public void replacePlaceholderWithPart(LayoutPart part) {
 		// If part added / removed always zoom out.

@@ -656,6 +656,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
 
                 // Create the part.
                 LayoutPart part = new PartPlaceholder(partID);
+				part.setContainer(this);            
                 add(part);
                 //1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
                 //part.setContainer(this);

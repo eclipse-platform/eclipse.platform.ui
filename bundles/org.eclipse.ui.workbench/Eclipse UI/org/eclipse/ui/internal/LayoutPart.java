@@ -87,8 +87,21 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 //			return container.getRootContainer();
 //		return null;
 //	}
+	
 	/**
 	 * Gets the parent for this part.
+	 * <p>
+	 * In general, this is non-null if the object has been added to a container and the
+	 * container's widgetry exists. The exception to this rule is PartPlaceholders
+	 * created when restoring a PartTabFolder using restoreState, which point to the 
+	 * PartTabFolder even if its widgetry doesn't exist yet. Returns null in the remaining
+	 * cases.
+	 * </p> 
+	 * <p>
+	 * TODO: change the semantics of this method to always point to the parent container,
+	 * regardless of whether its widgetry exists. Locate and refactor code that is currently 
+	 * depending on the special cases.
+	 * </p>
 	 */
 	public ILayoutContainer getContainer() {
 		return container;
