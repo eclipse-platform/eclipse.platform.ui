@@ -197,7 +197,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		ConsoleTerminateActionDelegate delegate = new ConsoleTerminateActionDelegate();
 		delegate.init(this);
 		IAction terminate = new ControlAction(getViewer(), delegate);
-		setAction("Terminate", terminate);
+		setAction("Terminate", terminate); //$NON-NLS-1$
 				
 		// initialize input, after viewer has been created
 		setViewerInput(DebugUITools.getCurrentProcess());
@@ -213,7 +213,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(fClearOutputAction);
-		mgr.add(getAction("Terminate"));
+		mgr.add(getAction("Terminate")); //$NON-NLS-1$
 	}
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
@@ -239,7 +239,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(getAction("Terminate"));
+		menu.add(getAction("Terminate")); //$NON-NLS-1$
 	}
 
 	/**
