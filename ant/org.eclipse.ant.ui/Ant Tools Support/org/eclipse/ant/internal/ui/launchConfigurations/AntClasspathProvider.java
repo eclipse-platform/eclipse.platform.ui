@@ -86,7 +86,9 @@ public class AntClasspathProvider implements IRuntimeClasspathProvider {
 		for (int j = 0; j < antURLs.length; j++) {
 			URL url = antURLs[j];
 			IPath path= new Path(url.getPath());
-			rtes[i] = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
+			IRuntimeClasspathEntry antEntry= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
+			antEntry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+			rtes[i]= antEntry;
 			i++;
 		}
 		return rtes;		
