@@ -33,7 +33,6 @@ public class AntFileRunner extends ExternalToolsRunner {
 	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
 		try {
 			String[] targets = runnerContext.getAntTargets();
-			startMonitor(monitor, runnerContext, targets.length);
 			AntRunner runner = new AntRunner();
 			String args = runnerContext.getExpandedArguments();
 			String baseDir = runnerContext.getExpandedWorkingDirectory();
