@@ -6,6 +6,7 @@ package org.eclipse.search.internal.ui;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -13,6 +14,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -32,7 +34,7 @@ public class CopyToClipboardActionDelegate implements IViewActionDelegate {
 		if (shell == null)
 			return;
 		
-		SearchResultLabelProvider labelProvider= SearchResultLabelProvider.getInstance();
+		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
 		String lineDelim= System.getProperty("line.separator");
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();

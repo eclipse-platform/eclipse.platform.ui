@@ -3,6 +3,9 @@
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -18,7 +21,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,13 +35,12 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
-
+
 /**
  * A special viewer to present search results. The viewer implements an
  * optimized adding and removing strategy. Furthermore it manages
@@ -60,12 +61,12 @@ class SearchResultViewer extends TableViewer {
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
+	private Map fSorters;
 	
 	/*
 	 * These static fields will go away when support for 
 	 * multiple search will be implemented
 	 */
-	private SearchResultLabelProvider fLabelProvider;
 	private static IContextMenuContributor fgContextMenuContributor;
 	private static IAction fgGotoMarkerAction;
 	
@@ -77,9 +78,9 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(SearchResultLabelProvider.getInstance());
+		setLabelProvider(new SearchResultLabelProvider());
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
-
+
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
 		fShowPreviousResultAction= new ShowPreviousResultAction(this);
@@ -96,7 +97,9 @@ class SearchResultViewer extends TableViewer {
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
 		fSearchDropDownAction.setEnabled(hasSearch);
-		addSelectionChangedListener(
+		fSorters= new HashMap(5);
+
+		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					int selectionCount= getSelectedEntriesCount();
@@ -139,7 +142,7 @@ class SearchResultViewer extends TableViewer {
 		// Register menu
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
 	}
-
+
 	void enableActions() {
 		/*
 		 * Note: The check before each set operation reduces flickering
@@ -164,7 +167,7 @@ class SearchResultViewer extends TableViewer {
 		if (state != fRemoveMatchAction.isEnabled())
 			fRemoveMatchAction.setEnabled(state);
 	}
-
+
 	protected void inputChanged(Object input, Object oldInput) {
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
@@ -180,7 +183,7 @@ class SearchResultViewer extends TableViewer {
 		return selection.size();
 	}
 	//--- Contribution management -----------------------------------------------
-
+
 	protected boolean enableRemoveMatchMenuItem() {
 		if (getSelectedEntriesCount() != 1)
 			return false;
@@ -211,9 +214,9 @@ class SearchResultViewer extends TableViewer {
 	
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
-
+
 	}
-
+
 	IAction getGotoMarkerAction() {
 		// null as return value is covered (no action will take place)
 		return fgGotoMarkerAction;
@@ -221,15 +224,26 @@ class SearchResultViewer extends TableViewer {
 	void setGotoMarkerAction(IAction gotoMarkerAction) {
 		fgGotoMarkerAction= gotoMarkerAction;
 	}
-
+
 	void setContextMenuTarget(IContextMenuContributor contributor) {
 		fgContextMenuContributor= contributor;
 	}
-
+
 	void setPageId(String pageId) {
 		fSortDropDownAction.setPageId(pageId);
+		ILabelProvider labelProvider= fOuterPart.getLabelProvider(pageId);
+		if (labelProvider != null)
+			internalSetLabelProvider(labelProvider);
+		Object value= value= fSorters.get(pageId);
+		if (value instanceof ViewerSorter)
+			setSorter((ViewerSorter)value);
 	}
-
+
+	public void setSorter(ViewerSorter sorter) {
+		super.setSorter(sorter);
+		fSorters.put(SearchManager.getDefault().getCurrentSearch().getPageId(), sorter);
+	}
+
 	void fillToolBar(IToolBarManager tbm) {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
@@ -264,19 +278,10 @@ class SearchResultViewer extends TableViewer {
 			((SearchResultLabelProvider)getLabelProvider()).setLabelProvider(provider);
 		else {
 			// should never happen - just to be safe
-			setLabelProvider(SearchResultLabelProvider.getInstance());
+			setLabelProvider(new SearchResultLabelProvider());
 			internalSetLabelProvider(provider);
 		}
-	}
-
-	ILabelProvider internalGetLabelProvider(){
-		IBaseLabelProvider tableLabelProvider= getLabelProvider();
-		if (tableLabelProvider instanceof SearchResultLabelProvider)
-			return ((SearchResultLabelProvider)tableLabelProvider).getLabelProvider();
-		else
-			return null;
-	}
-
+	}
 	/**
 	 * Makes the first marker of the current result entry
 	 * visible in an editor. If no result
@@ -286,17 +291,17 @@ class SearchResultViewer extends TableViewer {
 		Table table= getTable();
 		if (!canDoShowResult(table))
 			return;
-
+
 		int index= table.getSelectionIndex();
 		if (index < 0)
 			return;
 		SearchResultViewEntry entry= (SearchResultViewEntry)getTable().getItem(index).getData();
-
+
 		fMarkerToShow= 0;
 		entry.setSelectedMarkerIndex(0);
 		openCurrentSelection();
 	}
-
+
 	/**
 	 * Makes the next result (marker) visible in an editor. If no result
 	 * is visible, this method makes the first result visible.
@@ -309,7 +314,7 @@ class SearchResultViewer extends TableViewer {
 		SearchResultViewEntry entry= null;
 		if (index > -1)
 			entry= (SearchResultViewEntry)table.getItem(index).getData();
-
+
 		fMarkerToShow++;
 		if (entry == null || fMarkerToShow >= entry.getMatchCount()) {
 			// move selection
@@ -327,7 +332,7 @@ class SearchResultViewer extends TableViewer {
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
 	}
-
+
 	/**
 	 * Makes the previous result (marker) visible. If there isn't any
 	 * visible result, this method makes the last result visible.
@@ -377,7 +382,7 @@ class SearchResultViewer extends TableViewer {
 		if (action != null)
 			action.run();
 	}
-
+
 	/**
 	 * Update the title and the title's tooltip
 	 */
@@ -400,7 +405,7 @@ class SearchResultViewer extends TableViewer {
 		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
 			fOuterPart.setTitleToolTip(toolTip);
 	}
-
+
 	/**
 	 * Sets the message text to be displayed on the status line.
 	 * The image on the status line is cleared.
@@ -424,7 +429,7 @@ class SearchResultViewer extends TableViewer {
 	protected void handleAddMatch(ISearchResultViewEntry entry) {
 		insert(entry, -1);
 	}
-
+
 	/**
 	 * Handle a single remove.
 	 */
@@ -440,14 +445,14 @@ class SearchResultViewer extends TableViewer {
 		else
 			updateItem(item, entry);
 	}
-
+
 	/**
 	 * Handle remove all.
 	 */
 	protected void handleRemoveAll() {
 		setInput(null);
 	}
-
+
 	/**
 	 * Handle an update of an entry.
 	 */

@@ -24,11 +24,6 @@ public class ResourcenameSorter extends ViewerSorter {
 		String name1= null;
 		String name2= null;
 		
-		// Set label provider to show "resource - path"
-		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
-		if (labelProvider instanceof FileLabelProvider)
-			((FileLabelProvider)labelProvider).setOrder(FileLabelProvider.SHOW_LABEL_PATH);
-		
 		if (e1 instanceof ISearchResultViewEntry)
 			name1= ((ISearchResultViewEntry)e1).getResource().getName();
 		if (e2 instanceof ISearchResultViewEntry)
@@ -46,5 +41,16 @@ public class ResourcenameSorter extends ViewerSorter {
 	public boolean isSorterProperty(Object element, String property) {
 		return true;
 	}
+
+	/*
+	 * Overrides method from ViewerSorter
+	 */
+	public void sort(Viewer viewer, Object[] elements) {
+		// Set label provider to show "resource - path"
+		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
+		if (labelProvider instanceof FileLabelProvider)
+			((FileLabelProvider)labelProvider).setOrder(FileLabelProvider.SHOW_LABEL_PATH);
+		
+		super.sort(viewer, elements);
+	}
 }
-	

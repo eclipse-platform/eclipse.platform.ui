@@ -4,7 +4,9 @@
  */
 package org.eclipse.search.internal.ui;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
@@ -24,12 +26,13 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private String fPageId;
 	private Menu fMenu;
 	private String fCheckedId;
+	private Map fLastCheckedForType;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
 		super(SearchMessages.getString("SortDropDownAction.label")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SORT);
 		fViewer= viewer;
-		fCheckedId= ""; //$NON-NLS-1$
+		fLastCheckedForType= new HashMap(5);
 		setToolTipText(SearchMessages.getString("SortDropDownAction.tooltip")); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
@@ -37,7 +40,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	public void dispose() {
 		fViewer= null;
 		fPageId= null;
-		fCheckedId= null;
+		fLastCheckedForType= null;
 	}
 
 	public Menu getMenu(Control parent) {
@@ -53,6 +56,13 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		Menu menu= new Menu(parent);
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
+			Object value= fLastCheckedForType.get(fPageId);
+			final String checkedId;
+			if (value instanceof String)
+				checkedId= (String)value;
+			else
+				checkedId= ""; //$NON-NLS-1$
+			
 			final SorterDescriptor sorterDesc= (SorterDescriptor) iter.next();
 			if (!sorterDesc.getPageId().equals(fPageId) && !sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				continue;
@@ -60,8 +70,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 			if (sorter != null) {
 				final Action action= new Action() {
 					public void run() {
-						if (!fCheckedId.equals(sorterDesc.getId())) {
-							fCheckedId= sorterDesc.getId();
+						if (!checkedId.equals(sorterDesc.getId())) {
+							fLastCheckedForType.put(fPageId, sorterDesc.getId());
 							BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 								public void run() {
 									fViewer.setSorter(sorter);
@@ -73,7 +83,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				action.setText(sorterDesc.getLabel());
 				action.setImageDescriptor(sorterDesc.getImage());
 				action.setToolTipText(sorterDesc.getToolTipText());
-				action.setChecked(fCheckedId.equals(sorterDesc.getId()));
+				action.setChecked(checkedId.equals(sorterDesc.getId()));
 				addActionToMenu(menu, action);
 				hasEntries= true;
 			}

@@ -6,34 +6,24 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
-
 class SearchResultLabelProvider extends LabelProvider implements ILabelProvider {
-
-	private static SearchResultLabelProvider fgInstance= new SearchResultLabelProvider();
-	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider(FileLabelProvider.SHOW_PATH_LABEL);
+	
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-	private static ILabelProvider fLabelProvider= DEFAULT_LABEL_PROVIDER;
-
-	private SearchResultLabelProvider() {
-	}
-
-	public static SearchResultLabelProvider getInstance () {
-		return fgInstance;
-	}
+	private static ILabelProvider fLabelProvider;
 	
 	public ILabelProvider getLabelProvider() {
 		return fLabelProvider;
 	}
 	
 	public void setLabelProvider(ILabelProvider provider) {
-		if (provider == null)
-			provider= DEFAULT_LABEL_PROVIDER;
 		fLabelProvider= provider;
 	}
 	

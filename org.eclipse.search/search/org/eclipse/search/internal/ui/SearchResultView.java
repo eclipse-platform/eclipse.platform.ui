@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
-
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -30,10 +31,15 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
-
+
 public class SearchResultView extends ViewPart implements ISearchResultView {
+
+	private static Map fgLabelProviders= new HashMap(5);;
+	
 	private SearchResultViewer fViewer;
 	private Map fResponse;
+	private Map fSorters;
+
 	
 	/**
 	 * Creates the search list inner viewer.
@@ -61,7 +67,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	}
 	
 	//---- IWorkbenchPart ------------------------------------------------------
-
+
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
@@ -86,19 +92,23 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fViewer.fillToolBar(tbm);
 	}	
 
-	public ILabelProvider getLabelProvider() {
-		return fViewer.internalGetLabelProvider();
+	ILabelProvider getLabelProvider(String pageId) {
+		if (pageId != null) {
+			Object value;
+			value= fgLabelProviders.get(pageId);
+			if (value instanceof ILabelProvider)
+				return (ILabelProvider)value;
+		}
+		return null;
+	}
+	public ILabelProvider getLabelProvider() {
+		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
+		if (labelProvider instanceof SearchResultLabelProvider)
+			return ((SearchResultLabelProvider)labelProvider).getLabelProvider();
+		else
+			return null;
 	}
 
-	private void setLabelProvider(final ILabelProvider provider) {
-		// Make sure we are doing it in the right thread.
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				fViewer.internalSetLabelProvider(provider);
-			}
-		});
-	}
-	
 	private void setContextMenuContributor(final IContextMenuContributor contributor) {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {
@@ -116,20 +126,20 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			}
 		});
 	}
-
+
 	Display getDisplay() {
 		return fViewer.getControl().getDisplay();
 	}	
-
+
 	//---- ISearchResultView --------------------------------------------------
-
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
 	public ISelection getSelection() {
 		return fViewer.getSelection();
 	}
-
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
@@ -142,26 +152,28 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				IAction			gotoAction,
 				IGroupByKeyComputer	groupByKeyComputer,
 				IRunnableWithProgress	operation) {
-
+
 		Assert.isNotNull(pageId);
 		Assert.isNotNull(label);
 		Assert.isNotNull(gotoAction);		
-
+
 		fResponse= new HashMap(500);
 		setGotoMarkerAction(gotoAction);
-
+
+		fgLabelProviders.put(pageId, labelProvider);
+
 		SearchManager.getDefault().addNewSearch(		
 			new Search(
 				pageId,
 				label,
-				labelProvider,
+				null,
 				imageDescriptor,
 				fViewer.getGotoMarkerAction(),
 				contributor,
 				groupByKeyComputer,
 				operation));
 	};
-
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
@@ -173,7 +185,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		}
 		entry.add(marker);
 	}
-
+
 	/*
 	 * Implements method from ISearchResultView
 	 */

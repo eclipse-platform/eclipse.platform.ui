@@ -223,12 +223,11 @@ public class SearchManager implements IResourceChangeListener {
 		if (display != null && !display.isDisposed()) {
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
-				viewer.setPageId(search.getPageId());
 				viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 				viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
-						viewer.internalSetLabelProvider(search.getLabelProvider());
+						viewer.setPageId(search.getPageId());						
 						viewer.setInput(getCurrentResults());
 					}
 				});
@@ -386,7 +385,6 @@ public class SearchManager implements IResourceChangeListener {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
 			viewer.setPageId(search.getPageId());
 			viewer.setContextMenuTarget(search.getContextMenuContributor());
-			viewer.internalSetLabelProvider(search.getLabelProvider());
 			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 			viewer.setInput(getCurrentResults());
 		}
