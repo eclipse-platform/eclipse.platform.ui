@@ -46,14 +46,6 @@ public class FormattingPreferences {
         return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_ALIGN);        
     }
 
-    public boolean formatComments() {
-        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_COMMENTS);
-    }
-    
-    public boolean stripBlankLines() {
-        return fPrefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES);
-    }
-
 	public int getTabWidth() {
 		return fPrefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE);
 	}

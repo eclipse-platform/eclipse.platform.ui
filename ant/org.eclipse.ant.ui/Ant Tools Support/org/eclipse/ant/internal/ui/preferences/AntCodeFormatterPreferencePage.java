@@ -82,9 +82,7 @@ public class AntCodeFormatterPreferencePage extends PreferencePage implements IW
 	private OverlayPreferenceStore createOverlayStore() {
 		List overlayKeys= new ArrayList();
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_ALIGN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_COMMENTS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_ALIGN));				
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_TAB_CHAR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.FORMATTER_TAB_SIZE));
@@ -149,14 +147,6 @@ public class AntCodeFormatterPreferencePage extends PreferencePage implements IW
 		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG, 1);
 		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.5"); //$NON-NLS-1$
 		addCheckBox(wrappingGroup, labelText, AntEditorPreferenceConstants.FORMATTER_ALIGN, 1);
-		
-		Group whiteSpaceGroup= createGroup(numColumns, result, AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.11")); //$NON-NLS-1$
-		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.12"); //$NON-NLS-1$
-		addCheckBox(whiteSpaceGroup, labelText, AntEditorPreferenceConstants.FORMATTER_DELETE_BLANK_LINES, 1);
-		
-		Group commentsGroup= createGroup(numColumns, result, AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.13")); //$NON-NLS-1$
-		labelText= AntPreferencesMessages.getString("AntCodeFormatterPreferencePage.14"); //$NON-NLS-1$
-		addCheckBox(commentsGroup, labelText, AntEditorPreferenceConstants.FORMATTER_COMMENTS, 1);
 		
 		initializeFields();
 		
