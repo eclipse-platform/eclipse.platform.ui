@@ -101,6 +101,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 	private int pageWidth = SWT.DEFAULT;
 	private int pageHeight = SWT.DEFAULT;
 	private static final String FOCUS_CONTROL = "focusControl"; //$NON-NLS-1$
+	private boolean lockedUI = false;
 	/**
 	 * A layout for a container which includes several pages, like
 	 * a notebook, wizard, or preference dialog. The size computed by
@@ -487,14 +488,16 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 			 */
 			public void setBlocked(IStatus reason) {
 				super.setBlocked(reason);
-				getBlockedHandler().showBlocked(getShell(), this, reason, currentTask);
+				if(!lockedUI)//Do not show blocked if we are locking the UI
+					getBlockedHandler().showBlocked(getShell(), this, reason, currentTask);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#clearBlocked()
 			 */
 			public void clearBlocked() {
 				super.clearBlocked();
-				getBlockedHandler().clearBlocked();
+				if(!lockedUI)//Do not vlear if we never set it
+					getBlockedHandler().clearBlocked();
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String, int)
@@ -736,7 +739,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 			state = aboutToStart(fork && cancelable);
 		activeRunningOperations++;
 		try {
+			if(!fork)//If we are not forking do not open other dialogs
+				lockedUI = true;
 			ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
+			lockedUI = false;
 		} finally {
 			activeRunningOperations--;
 			//Stop if this is the last one
