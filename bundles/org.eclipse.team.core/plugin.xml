@@ -21,6 +21,16 @@
 <extension-point id="fileTypes" name="File Types Registry"/>
 <extension-point id="ignore" name="Global Ignore Registry"/>
 
+<!-- Define some example text extensions. This will be done
+     by other plugins later. -->
+     
+<extension point="org.eclipse.team.core.fileTypes">
+  <fileTypes extension="txt" type="text"/>
+  <fileTypes extension="java" type="text"/>
+  <fileTypes extension="properties" type="text"/>
+  <fileTypes extension="xml" type="text"/>
+</extension>
+
 <extension point="org.eclipse.core.resources.fileModificationValidator">
 	<fileModificationValidator class="org.eclipse.team.core.internal.FileModificationValidator"/>
 </extension>
