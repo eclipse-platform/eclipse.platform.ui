@@ -354,7 +354,7 @@ public class TextViewer extends Viewer implements
 		/** List of pending batches. */
 		private List fBatched= new ArrayList();
 		/** The currently active iterator. */
-		private Iterator fIterator;
+		private int fReentranceCount= 0;
 		
 		/*
 		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
@@ -362,15 +362,19 @@ public class TextViewer extends Viewer implements
 		public void verifyKey(VerifyEvent event) {
 			if (fListeners.isEmpty())
 				return;
-				
-			fIterator= fListeners.iterator();
-			while (fIterator.hasNext() && event.doit) {
-				VerifyKeyListener listener= (VerifyKeyListener) fIterator.next();
-				listener.verifyKey(event);
-			}
-			fIterator= null;
 			
-			processBatchedRequests();
+			try {
+				fReentranceCount++;
+				Iterator iterator= fListeners.iterator();
+				while (iterator.hasNext() && event.doit) {
+					VerifyKeyListener listener= (VerifyKeyListener) iterator.next();
+					listener.verifyKey(event);
+				}
+			} finally {
+				fReentranceCount--;
+			}
+			if (fReentranceCount == 0)
+				processBatchedRequests();
 		}
 		
 		/**
@@ -409,7 +413,7 @@ public class TextViewer extends Viewer implements
 				removeListener(listener);
 			} else if (listener != null) {
 				
-				if (fIterator != null) {
+				if (fReentranceCount > 0) {
 					
 					fBatched.add(new Batch(listener, index));
 				
@@ -453,7 +457,7 @@ public class TextViewer extends Viewer implements
 			if (listener == null)
 				return;
 			
-			if (fIterator != null) {
+			if (fReentranceCount > 0) {
 				
 				fBatched.add(new Batch(listener, -1));
 			
