@@ -111,5 +111,15 @@ public class DebugUITools {
 	public static void removeEventFilter(IDebugUIEventFilter filter) {
 		DebugUIPlugin.getDefault().removeEventFilter(filter);
 	}
+	
+	/**
+	 * Returns a new debug model presentation that delegates to
+	 * appropriate debug models.
+	 * 
+	 * @return a debug model presentation
+	 */
+	public static IDebugModelPresentation newDebugModelPresentation() {
+		return new DelegatingModelPresentation();
+	}
 }
 
