@@ -93,6 +93,8 @@ public class UpdateListener extends CommandOutputListener {
 	 *    cvs server: nothing known about ...
 	 * Tag error that really means there are no files in a directory
 	 *    cvs [server aborted]: no such tag
+	 * Merge contained conflicts
+	 *    rcsmerge: warning: conflicts during merge
 	 */
 	public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
@@ -174,6 +176,9 @@ public class UpdateListener extends CommandOutputListener {
 				} else {
 					return super.errorLine(line, location, commandRoot, monitor);
 				}
+			} else if (line.equals("rcsmerge: warning: conflicts during merge")) {
+				// There were conflicts in the merge
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 			}
 		}
 		return super.errorLine(line, location, commandRoot, monitor);

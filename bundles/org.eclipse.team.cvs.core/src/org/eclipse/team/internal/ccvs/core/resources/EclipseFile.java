@@ -179,7 +179,14 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 */
 	public void copyTo(String filename) throws CVSException {
 		try {
-			getIFile().copy(new Path(filename), true /*force*/, null);
+			IPath targetPath = new Path(filename);
+			IFile targetFile = getIFile().getParent().getFile(targetPath);
+			if (targetFile.exists()) {
+				// There is a file in the target location. 
+				// Delete it and keep the history just in case
+				targetFile.delete(false /* force */, true /* keep history */, null);
+			}
+			getIFile().copy(targetPath, true /*force*/, null);
 		} catch(CoreException e) {
 			throw new CVSException(e.getStatus());
 		}

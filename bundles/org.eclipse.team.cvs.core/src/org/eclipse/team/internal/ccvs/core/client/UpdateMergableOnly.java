@@ -51,7 +51,7 @@ public class UpdateMergableOnly extends Update {
 				adjustedFileName = ".##" + adjustedFileName;
 				skippedFiles.add(((IContainer)mParent.getIResource()).getFile(new Path(fileName)));
 			}
-			return super.getTargetFile(mParent, fileName, entryBytes);
+			return super.getTargetFile(mParent, adjustedFileName, entryBytes);
 		}
 		
 		/* (non-Javadoc)

@@ -74,7 +74,7 @@ public class MergeUpdateAction extends SubscriberUpdateAction {
 			// It is possible that some of the conflicting changes were not auto-mergable
 			SyncResourceSet failedSet = createFailedSet(syncSet, willFail, (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]));
 			if (failedSet.isEmpty()) return;
-			promptForOverwrite(failedSet);
+			if (!promptForOverwrite(failedSet)) return;
 			runOverwrite(failedSet.getSyncResources(), Policy.subMonitorFor(monitor, willFail.length * 100));
 		} finally {
 			monitor.done();

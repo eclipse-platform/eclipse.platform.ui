@@ -69,7 +69,7 @@ public class UpdateOnlyMergableOperation extends RepositoryProviderOperation {
 						getCVSArguments(resources),
 						null, 
 						monitor);
-					if (status.isOK()) {
+					if (status.getCode() != IStatus.ERROR) {
 						addSkippedFiles(update.getSkippedFiles());
 					} else {
 						addError(status);
