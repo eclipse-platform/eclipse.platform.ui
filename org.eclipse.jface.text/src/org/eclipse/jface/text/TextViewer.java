@@ -914,7 +914,8 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Value object used as key in the text hover configuration table. It is
 	 * modifiable only for efficiency reasons only inside this compilation unit
-	 * to allow the reuse of created objects.	 */
+	 * to allow the reuse of created objects.
+	 */
 	protected class TextHoverKey {
 
 		private String fContentType;
@@ -1174,16 +1175,18 @@ public class TextViewer extends Viewer implements
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
 		}
 
-//		TODO: must be reviewed		
-//		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {			
-		if (fHoverControlCreator != null && fTextHoverManager == null) {			
-			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
-			fTextHoverManager.install(this.getTextWidget());
-		}
+		ensureHoverControlManagerInstalled();
 		
 		if (fUndoManager != null) {
 			fUndoManager.connect(this);
 			fUndoManager.reset();
+		}
+	}
+
+	private void ensureHoverControlManagerInstalled() {
+		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {	
+			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
+			fTextHoverManager.install(this.getTextWidget());
 		}
 	}
 	
@@ -1370,11 +1373,14 @@ public class TextViewer extends Viewer implements
 	public void setTextHover(ITextHover hover, String contentType, int stateMask) {
 		TextHoverKey key= new TextHoverKey(contentType, stateMask);
 		if (hover != null) {
-			if (fTextHovers == null)
+			if (fTextHovers == null) {
 				fTextHovers= new HashMap();
+			}
 			fTextHovers.put(key, hover);
 		} else if (fTextHovers != null)
 			fTextHovers.remove(key);
+
+		ensureHoverControlManagerInstalled();
 	}
 	
 	/**
