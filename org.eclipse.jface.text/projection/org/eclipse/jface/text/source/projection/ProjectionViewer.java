@@ -155,6 +155,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			fReplaceVisibleDocumentExecutionTrigger= event.getDocument();
+			fRememberedTopIndex= getTopIndex();
 		}
 
 		/*
@@ -162,6 +163,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 */
 		public void documentChanged(DocumentEvent event) {
 			fReplaceVisibleDocumentExecutionTrigger= null;
+			fRememberedTopIndex= -1;
 		}
 	}
 	
@@ -185,6 +187,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private IDocument fReplaceVisibleDocumentExecutionTrigger;
 	/** Internal document listener */
 	private IDocumentListener fDocumentListener= new DocumentListener();
+	/** Remembered top index when the master document changes*/
+	private int fRememberedTopIndex= -1;
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -581,8 +585,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				removeMasterDocumentRange(projection, offset, length);
 				
 		} finally {
-			if (textWidget != null && !textWidget.isDisposed())
+			if (textWidget != null && !textWidget.isDisposed()) {
+				if (fRememberedTopIndex != -1)
+					setTopIndex(fRememberedTopIndex);
 				textWidget.setRedraw(true);
+			}
 		}
 		
 		if (projection != null && fireRedraw) {
@@ -630,8 +637,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 			
 			} finally {
-				if (textWidget != null && !textWidget.isDisposed())
+				if (textWidget != null && !textWidget.isDisposed()) {
+					if (fRememberedTopIndex != -1)
+						setTopIndex(fRememberedTopIndex);
 					textWidget.setRedraw(true);
+				}
 			}
 			
 			IDocument master= getDocument();
