@@ -85,7 +85,9 @@ public class InstallWizard extends Wizard {
 	private IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
-			return localSite.cloneCurrentConfiguration(null, null);
+			IInstallConfiguration config = localSite.cloneCurrentConfiguration(null, null);
+			config.setLabel(config.getCreationDate().toString());
+			return config;
 		}
 		catch (CoreException e) {
 			UpdateUIPlugin.logException(e);

@@ -29,6 +29,7 @@ public class SnapshotForm extends PropertyWebForm {
 	private Label currentLabel;
 	private ActivitySection activitySection;
 	private RevertSection revertSection;
+	private IUpdateModelChangedListener modelListener;
 	
 public SnapshotForm(UpdateFormPage page) {
 	super(page);
@@ -43,6 +44,19 @@ public void initialize(Object modelObject) {
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	modelListener = new IUpdateModelChangedListener() {
+		public void objectAdded(Object parent, Object child) {
+		}
+		public void objectRemoved(Object parent, Object child) {
+		}
+		public void objectChanged(Object obj, String property) {
+			if (obj.equals(currentConfiguration)) {
+				inputChanged(currentConfiguration);
+			}
+		}
+	};
+	model.addUpdateModelChangedListener(modelListener);
 }
 
 protected void createContents(Composite parent) {

@@ -148,7 +148,7 @@ public class UpdateModel {
 		}
 	}
 	
-	void fireObjectChanged(Object object, String property) {
+	public void fireObjectChanged(Object object, String property) {
 		for (Iterator iter=listeners.iterator();
 			iter.hasNext();) {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();

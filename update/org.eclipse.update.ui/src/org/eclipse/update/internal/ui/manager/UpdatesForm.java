@@ -60,8 +60,7 @@ class SearchMonitor extends ProgressMonitorPart {
 		Date date = new Date();
 		String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 		String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
-		//infoLabel.setText(text);
-		//infoLabel.getParent().layout(true);
+		infoLabel.setText(text);
 		reflow();
 		updateSize();
 		enableOptions(true);

@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.action.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
  * Insert the type's description here.
@@ -36,7 +37,10 @@ private Image featureImage;
 private Image siteImage;
 private Image currentConfigImage;
 private Action revertAction;
+private Action propertiesAction;
+private IUpdateModelChangedListener modelListener;
 private static final String KEY_RESTORE = "HistoryView.Popup.restore";
+
 
 class HistoryProvider extends DefaultContentProvider 
 						implements ITreeContentProvider {
@@ -144,11 +148,21 @@ public void initProviders() {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		viewer.setInput(localSite);
 		localSite.addLocalSiteChangedListener(this);
-		
 	}
 	catch (CoreException e) {
 		UpdateUIPlugin.logException(e);
 	}
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	modelListener = new IUpdateModelChangedListener () {
+		public void objectAdded(Object parent, Object child) {
+		}
+		public void objectRemoved(Object parent, Object child) {
+		}
+		public void objectChanged(Object obj, String property) {
+			viewer.update(obj, null);
+		}
+	};
+	model.addUpdateModelChangedListener(modelListener);
 }
 
 protected void partControlCreated() {
@@ -167,7 +181,8 @@ public void dispose() {
 	catch (CoreException e) {
 		UpdateUIPlugin.logException(e);
 	}
-	
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	model.removeUpdateModelChangedListener(modelListener);
 	super.dispose();
 }
 
@@ -196,6 +211,7 @@ protected void makeActions() {
 		}
 	};
 	revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
+	propertiesAction = new PropertyDialogAction(UpdateUIPlugin.getActiveWorkbenchShell(), viewer);
 }
 
 protected void fillContextMenu(IMenuManager manager) {
@@ -205,6 +221,7 @@ protected void fillContextMenu(IMenuManager manager) {
 		manager.add(new Separator());
 	}
 	super.fillContextMenu(manager);
+	manager.add(propertiesAction);
 }
 
 public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {

@@ -23,23 +23,23 @@
 <extension
       point="org.eclipse.ui.editors">
    <editor
-         name="%editors.updateManager.name"
          icon="icons/basic/obj16/comp_mf_obj.gif"
          class="org.eclipse.update.internal.ui.manager.UpdateManager"
-         id="org.eclipse.update.ui.updateManager">
+         id="org.eclipse.update.ui.updateManager"
+         name="%editors.updateManager.name">
    </editor>
 </extension>
 <extension
       point="org.eclipse.ui.actionSets">
    <actionSet
-         label="%actionSets.softwareUpdates.label"
          visible="true"
-         id="org.eclipse.update.ui.softwareUpdates">
+         id="org.eclipse.update.ui.softwareUpdates"
+         label="%actionSets.softwareUpdates.label">
       <action
-            label="%actionSets.updateManager.label"
-            class="org.eclipse.update.internal.ui.manager.UpdateManagerAction"
             menubarPath="help/helpEnd"
-            id="org.eclipse.update.ui.updateManager">
+            class="org.eclipse.update.internal.ui.manager.UpdateManagerAction"
+            id="org.eclipse.update.ui.updateManager"
+            label="%actionSets.updateManager.label">
       </action>
    </actionSet>
 </extension>
@@ -53,60 +53,66 @@
 <extension
       point="org.eclipse.ui.views">
    <category
-         name="Update Manager"
-         id="org.eclipse.update.ui">
+         id="org.eclipse.update.ui"
+         name="Update Manager">
    </category>
    <view
-         name="Update Sites"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.SiteView"
-         id="org.eclipse.update.ui.SiteView">
+         id="org.eclipse.update.ui.SiteView"
+         name="Update Sites">
    </view>
    <view
-         name="My Eclipse"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.LocalSiteView"
-         id="org.eclipse.update.ui.LocalSiteView">
+         id="org.eclipse.update.ui.LocalSiteView"
+         name="My Eclipse">
    </view>
    <view
-         name="Install History"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.HistoryView"
-         id="org.eclipse.update.ui.HistoryView">
+         id="org.eclipse.update.ui.HistoryView"
+         name="Install History">
    </view>
    <view
-         name="Update Checklist"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.ChecklistView"
-         id="org.eclipse.update.ui.ChecklistView">
+         id="org.eclipse.update.ui.ChecklistView"
+         name="Update Checklist">
    </view>
    <view
-         name="Preview"
          icon="icons/full/view16/registry.gif"
          category="org.eclipse.update.ui"
          class="org.eclipse.update.internal.ui.manager.DetailsView"
-         id="org.eclipse.update.ui.DetailsView">
+         id="org.eclipse.update.ui.DetailsView"
+         name="Preview">
    </view>
 </extension>
 <extension
       point="org.eclipse.ui.perspectives">
    <perspective
-         name="Install/Update"
          class="org.eclipse.update.internal.ui.manager.UpdatePerspective"
-         id="org.eclipse.update.ui.UpdatePerspective">
+         id="org.eclipse.update.ui.UpdatePerspective"
+         name="Install/Update">
    </perspective>
 </extension>
 <extension
       point="org.eclipse.ui.propertyPages">
    <page
-         objectClass="org.eclipse.update.ui.internal.model.SiteBookmark"
-         name="Site Information"
          class="org.eclipse.update.internal.ui.manager.SiteBookmarkPropertyPage"
-         id="org.eclipse.update.ui.propertyPage">
+         id="org.eclipse.update.ui.sitePropertyPage"
+         objectClass="org.eclipse.update.ui.internal.model.SiteBookmark"
+         name="Site Properties">
+   </page>
+   <page
+         class="org.eclipse.update.internal.ui.manager.ConfigurationPropertyPage"
+         id="org.eclipse.update.ui.configPropertyPage"
+         objectClass="org.eclipse.update.core.IInstallConfiguration"
+         name="Configuration Properties">
    </page>
 </extension>
 </plugin>
