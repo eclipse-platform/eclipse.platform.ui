@@ -24,7 +24,8 @@
          point="org.eclipse.ui.intro">
       <intro
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
-            id="org.eclipse.platform.intro">
+            id="org.eclipse.platform.intro"
+            icon="intro.gif">
       </intro>
       <introProductBinding
             introId="org.eclipse.platform.intro"
