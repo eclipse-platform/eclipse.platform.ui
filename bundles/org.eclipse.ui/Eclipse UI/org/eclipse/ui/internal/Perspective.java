@@ -726,8 +726,14 @@ public void restoreState(IMemento memento) {
 	}	
 	this.memento = memento;
 	// Add the visible views.
-	IMemento [] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	List errors = new ArrayList();
+	IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	createReferences(views);
+	
+	memento = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
+	views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+	createReferences(views);	
+}
+private void createReferences(IMemento views[]) {
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
@@ -814,13 +820,13 @@ public void restoreState() {
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
 			// Create and open the view.
-			try {
-				IViewReference ref = viewFactory.createView(viewID);
-				page.addPart(ref);
-				fastViews.add(ref.getPart(true));
-			} catch (PartInitException e) {
-				errors.add(e.getStatus());
-			}
+			IViewReference ref = viewFactory.getView(viewID);
+			if(ref == null) {
+				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+				continue;
+			}		
+			page.addPart(ref);
+			fastViews.add(ref.getPart(true));
 		}
 	}
 
