@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.IMemento;
@@ -82,8 +83,8 @@ public class ChooseWorkspaceData {
 	 */
 	public String getInitialDefault() {
 		if (initialDefault == null)
-			initialDefault = System.getProperty("user.dir") //$NON-NLS-1$
-					+ File.separator + "workspace"; //$NON-NLS-1$
+			initialDefault = new Path(System.getProperty("user.dir") //$NON-NLS-1$
+					+ File.separator + "workspace").toOSString(); //$NON-NLS-1$
 		return initialDefault;
 	}
 
