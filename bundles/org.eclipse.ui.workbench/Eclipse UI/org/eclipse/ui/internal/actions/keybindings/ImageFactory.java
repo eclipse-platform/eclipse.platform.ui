@@ -28,6 +28,7 @@ final class ImageFactory {
 		put("exclamation", "icons/full/keybindings/exclamation.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("key", "icons/full/keybindings/key.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("minus", "icons/full/keybindings/minus.gif"); //$NON-NLS-1$//$NON-NLS-2$
+		put("pencil", "icons/full/keybindings/pencil.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "icons/full/keybindings/plus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 

@@ -28,7 +28,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -40,35 +43,53 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	private Button buttonCustomize;
 	private Combo comboConfiguration;
+	private String configurationId;
 	private HashMap nameToConfigurationMap;
+	private KeyManager keyManager;
+	private SortedSet preferenceBindingSet;
 	private IPreferenceStore preferenceStore;
-	private IWorkbench workbench;
-	private KeyManager keyManager; 
+	private SortedSet registryBindingSet;
 	private SortedMap registryConfigurationMap;
 	private SortedMap registryScopeMap;
-	private SortedSet preferenceBindingSet;
-	private SortedSet registryBindingSet;
-	private String configurationId;
+	private TabFolder tabFolder;
+	private IWorkbench workbench;
 
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
+		GridLayout gridLayoutComposite = new GridLayout();
+		gridLayoutComposite.marginWidth = 0;
+		gridLayoutComposite.marginHeight = 0;
+		composite.setLayout(gridLayoutComposite);
 
-		Label label = new Label(composite, SWT.LEFT);
-		label.setFont(parent.getFont());
-		label.setText("Configuration:");
+		tabFolder = new TabFolder(composite, SWT.NULL);
+		GridData gridDataTabFolder = new GridData(GridData.FILL_BOTH);
+		tabFolder.setLayoutData(gridDataTabFolder);
 		
-		comboConfiguration = new Combo(composite, SWT.READ_ONLY);				
+		TabItem tabItemGeneral = new TabItem(tabFolder, SWT.NULL);
+		tabItemGeneral.setText("General");
+		tabItemGeneral.setImage(ImageFactory.getImage("key"));
+
+		Composite compositeGeneral = new Composite(tabFolder, SWT.NULL);
+		compositeGeneral.setFont(composite.getFont());
+		GridLayout layoutGeneral = new GridLayout();
+		layoutGeneral.marginWidth = 8;
+		layoutGeneral.marginHeight = 8;
+		compositeGeneral.setLayout(layoutGeneral);
+
+		tabItemGeneral.setControl(compositeGeneral);
+
+		Label label = new Label(compositeGeneral, SWT.LEFT);
+		label.setFont(parent.getFont());
+		label.setText("Active Configuration:");
+
+		comboConfiguration = new Combo(compositeGeneral, SWT.READ_ONLY);
 		GridData gridData = new GridData();
 		gridData.widthHint = 200;
 		comboConfiguration.setLayoutData(gridData);
 
 		if (nameToConfigurationMap.isEmpty())
-			comboConfiguration.setEnabled(false);						
+			comboConfiguration.setEnabled(false);
 		else {
 			String[] items = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
 			Arrays.sort(items, Collator.getInstance());
@@ -78,11 +99,19 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			if (configuration != null)
 				comboConfiguration.select(comboConfiguration.indexOf(configuration.getLabel().getName()));
 		}
+		
+		TabItem tabItemCustomize = new TabItem(tabFolder, SWT.NULL);
+		tabItemCustomize.setText("Customize");
+		tabItemCustomize.setImage(ImageFactory.getImage("pencil"));
 
-		Composite compositeCustomize = new Composite(composite, SWT.NULL);		
-		GridLayout gridLayoutCompositeCustomize = new GridLayout();
-		gridLayoutCompositeCustomize.marginWidth = 0;
-		compositeCustomize.setLayout(gridLayoutCompositeCustomize);
+		Composite compositeCustomize = new Composite(tabFolder, SWT.NULL);		
+		compositeCustomize.setFont(composite.getFont());
+		GridLayout layoutCustomize = new GridLayout();
+		layoutCustomize.marginWidth = 8;
+		layoutCustomize.marginHeight = 8;
+		compositeCustomize.setLayout(layoutCustomize);
+
+		tabItemCustomize.setControl(compositeCustomize);
 
 		buttonCustomize = new Button(compositeCustomize, SWT.LEFT | SWT.PUSH);
 		buttonCustomize.setText("Customize Key Bindings...");
@@ -101,8 +130,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			}	
 		});
 
-		//buttonCustomize.setVisible(false);
 		//TBD: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
+		
 		return composite;	
 	}
 
