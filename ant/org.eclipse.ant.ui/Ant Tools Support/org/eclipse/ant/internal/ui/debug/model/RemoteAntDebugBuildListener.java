@@ -53,6 +53,8 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 						receiveMessage(message);
 					}
 				} 
+			} catch (IOException ie) { //the other end has shutdown
+				RemoteAntDebugBuildListener.this.shutDown();
 			} catch (Exception e) {
 				AntUIPlugin.log("Internal error processing remote response", e); //$NON-NLS-1$
 				RemoteAntDebugBuildListener.this.shutDown();
@@ -71,6 +73,15 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		}
 		if (message.startsWith(DebugMessageIds.BUILD_STARTED)) {
 			IProcess process= getProcess();
+			while(process == null) {
+				try {
+					synchronized (this) {
+						wait(400);
+					}
+					process= getProcess();
+				} catch (InterruptedException ie) {
+				}
+			}
 			fTarget= new AntDebugTarget(fLaunch, process, this);
 			fLaunch.addDebugTarget(fTarget);
 			

@@ -311,8 +311,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	    Map currentProperties= null;
 	    if (fCurrentTarget != null) {
-	        Map currentProperties= fCurrentTarget.getProject().getProperties();
+	        currentProperties= fCurrentTarget.getProject().getProperties();
 	        
 	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
 	            //no new properties
@@ -341,6 +342,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	            }
 	        }
 	    }
+	    fProperties= currentProperties;
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
 	

@@ -186,13 +186,15 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	 * Returns the associated process, finding it if necessary.
 	 */
 	protected IProcess getProcess() {
-		if (fProcess == null && fProcessId != null) {
-			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
-			for (int i = 0; i < all.length; i++) {
-				IProcess process = all[i];
-				if (fProcessId.equals(process.getAttribute(AntProcess.ATTR_ANT_PROCESS_ID))) {
-					fProcess = process;
-					break;
+		if (fProcess == null) {
+			if (fProcessId != null) {
+				IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
+				for (int i = 0; i < all.length; i++) {
+					IProcess process = all[i];
+					if (fProcessId.equals(process.getAttribute(AntProcess.ATTR_ANT_PROCESS_ID))) {
+						fProcess = process;
+						break;
+					}
 				}
 			}
 		}
