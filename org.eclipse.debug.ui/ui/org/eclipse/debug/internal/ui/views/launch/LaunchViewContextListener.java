@@ -139,6 +139,10 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		if (window != null) {
 			window.addPageListener(this);
 			window.addPerspectiveListener(this);
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				showDebugActionSet(page);
+			}
 		}
 	}
 	
@@ -815,6 +819,15 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	
 	/**
+	 * Turns on the debug action set in the given page.
+	 */
+	private void showDebugActionSet(IWorkbenchPage page) {
+		if (page != null) {
+			page.showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
+		}
+	}
+	
+	/**
 	 * Reset context state when the perspective is reset
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
@@ -887,10 +900,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		if (ref instanceof IViewReference) {
 			IViewPart part = ((IViewReference) ref).getView(false);
 			if (part == launchView) {
-				IWorkbenchPage page = getActiveWorkbenchPage();
-				if (page != null) {
-					page.showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
-				}
+				showDebugActionSet(getActiveWorkbenchPage());
 			}
 		}
 	}
