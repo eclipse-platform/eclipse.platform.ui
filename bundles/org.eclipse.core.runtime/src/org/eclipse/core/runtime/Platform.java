@@ -1025,6 +1025,20 @@ public final class Platform {
 	}
 
 	/**
+	 * Returns the resolved bundle with the specified symbolic name
+	 * and version, or <code>null</code> if there is no such bundle.
+	 *
+	 * @param symbolicName the symbolic name of the bundle to be returned.
+	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
+	 * @param version bundle version identifier. If <code>null</code> is specified,
+	 * a non-deterministically chosen version of the identified plug-in (if any)
+	 * will be returned
+	 * @return the bundle or <code>null</code>
+	 */
+	public static Bundle getBundle(String symbolicName, String version) {
+		return InternalPlatform.getDefault().getBundle(symbolicName, version);
+	}
+	/**
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
 	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.

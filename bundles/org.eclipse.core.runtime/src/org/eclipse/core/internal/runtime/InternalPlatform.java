@@ -862,7 +862,11 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public Bundle getBundle(String symbolicName) {
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null, null);
+		return getBundle(symbolicName, null);
+	}
+
+	public Bundle getBundle(String symbolicName, String version) {
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version, null);
 		if (bundles == null)
 			return null;
 		for (int i = 0; i < bundles.length; i++) {
@@ -872,7 +876,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return null;
 	}
-
+	
 	public boolean isFragment(Bundle bundle) {
 		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
 	}
