@@ -92,7 +92,7 @@ import org.eclipse.swt.dnd.Transfer;
  */
 public class DelegatingDragAdapter implements DragSourceListener {
 	private List listeners = new ArrayList();
-	private List activeListeners;
+	private List activeListeners = new ArrayList();
 	private TransferDragSourceListener currentListener;
 
 	/**
@@ -131,7 +131,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 			}
 		});
 		currentListener = null;
-		activeListeners = null;
+		activeListeners.clear();
 	}
 	/**
 	 * The drop data is requested.
@@ -169,7 +169,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 		boolean doit = false;	// true if any one of the listeners can handle the drag
 		List transfers = new ArrayList(listeners.size());
 		
-		activeListeners = new ArrayList();
+		activeListeners.clear();
 		for (int i = 0; i < listeners.size(); i++) {
 			final TransferDragSourceListener listener = (TransferDragSourceListener)listeners.get(i);
 			event.doit = true;		// restore event.doit
