@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -242,6 +243,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
 			setAction(action);
+			if (getView() == null) {
+				//update on the selection in the debug view
+				IWorkbenchWindow window= getWindow();
+				if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
+					IWorkbenchPage page= window.getActivePage();
+					selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+				}
+			}
 			update(action, selection);
 			setInitialized(true);
 			return true;

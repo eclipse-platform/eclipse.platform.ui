@@ -150,14 +150,14 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	/**
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
 	 */
-	public void pageActivated(final IWorkbenchPage page) {	
-		if (getPage() != null && getPage().equals(page)) {
+	public void pageActivated(IWorkbenchPage page) {
+		if (getAction() != null && getView() != null && getPage() != null && getPage().equals(page)) {
 			Runnable r= new Runnable() {
 				public void run() {
 					if (getPage() != null) {
 						IWorkbenchWindow window= getPage().getWorkbenchWindow();
 						if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-							ISelection selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+							ISelection selection= getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 							update(getAction(), selection);
 						}
 					}
