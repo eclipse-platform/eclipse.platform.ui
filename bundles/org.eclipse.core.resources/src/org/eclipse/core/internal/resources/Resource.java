@@ -889,8 +889,11 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 					break;
 				case IResource.PROJECT:
 					IProject project = (IProject) this;
-					// if there is a change in name, then we are deleting the source project so notify
-					if (!getName().equals(path.lastSegment())) {
+					// if there is a change in name, then we are deleting the source project so notify.
+					// else there is nothing to do so return.
+					if (getName().equals(path.lastSegment())) {
+						return;
+					} else {
 						workspace.changing(project);
 						workspace.deleting(project);
 					}
@@ -1167,7 +1170,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 	if (info.getType() == FILE || info.getType() == FOLDER) {
 		if (isTeamPrivate) {
 			// FIXME - 2002-03-12 code temporarily disabled until implementation and tests fixed
-			info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+//			info.set(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		} else {
 			info.clear(ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		}
