@@ -19,5 +19,6 @@
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.search"/>
+    <classpathentry kind="src" path="Remote Ant Support"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
