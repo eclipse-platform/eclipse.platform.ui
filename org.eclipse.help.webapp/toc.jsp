@@ -46,11 +46,11 @@ UL.collapsed {
 }
 
 LI.expanded {
-	list-style-image: url("images/minus.gif");
+	list-style-image: url("images/minus_tree.gif");
 }
 
 LI.collapsed {
-	list-style-image: url("images/plus.gif");
+	list-style-image: url("images/plus_tree.gif");
 }
 
 LI.leaf {
@@ -60,7 +60,7 @@ LI.leaf {
 
 A {
 	text-decoration:none; 
-	text-indent:20px;
+	text-indent:15px;
 	color:WindowText; 
 	padding:0px;;
 	/* this works in ie5.5, but not in ie5.0  */
@@ -76,7 +76,7 @@ A.node {
       
 A.leaf {
 	background-image: url("images/topic_obj.gif");
-	background-position:top left;
+	background-position:center left;
 	background-repeat:no-repeat;
 }
 
@@ -84,21 +84,21 @@ A.leaf {
 A.activeNode { 
 	background:ActiveBorder;
 	background-image: url("images/container_obj.gif");
-	background-position:top left;
+	background-position:center left;
 	background-repeat:no-repeat;
 }
      
 A.activeLeaf { 
 	background:ActiveBorder;
 	background-image: url("images/topic_obj.gif");
-	background-position:top left;
+	background-position:center left;
 	background-repeat:no-repeat;
 }
     
 
 A.book {
 	background-image: url("images/container_obj.gif");
-	background-position:top left;
+	background-position:center left;
 	background-repeat:no-repeat;
 	margin-top:5px;
 	margin-left:-24px;
@@ -113,7 +113,7 @@ A.book {
  <script language="JavaScript">
  var extraStyle = "";
   if (isMozilla)
-  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:20px;  }</style>";
+  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:15px;  }</style>";
   else if (isIE)
  	extraStyle =  "<style type='text/css'>A {	height:18px; } </style>";
  	

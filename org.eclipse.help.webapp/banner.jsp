@@ -114,7 +114,7 @@ function doSearch()
 <table width="100%" height="100%" cellspacing=0 cellpading=0 border=0>
 <tr>
 <td align=left>
-	<img src="images/brand.jpg">
+	<img src="images/banner_prod.jpg">
 </td>
 <td align=right >
 	<table height="100%" cellspacing=0 cellpading=0 border=0 style="margin-right:5px;" >
