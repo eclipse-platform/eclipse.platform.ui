@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.workbench.texteditor">
+<schema targetNamespace="org.eclipse.ui.editors">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
+         <meta.schema plugin="org.eclipse.ui.editors" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
       </appInfo>
       <documentation>
          This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.MarkerAnnotationPreferences.
@@ -80,16 +80,15 @@ since: 3.0
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="highlightPreferenceKey" type="string">
             <annotation>
                <documentation>
                   The preference key for highlighting in text.
 since: 3.0
-               </documentation>
-            </annotation>
-         </attribute>
-                  
                </documentation>
             </annotation>
          </attribute>
@@ -146,7 +145,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="highlightPreferenceValue" type="boolean">
             <annotation>
                <documentation>
@@ -155,7 +153,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="annotationType" type="string" use="required">
             <annotation>
                <documentation>
@@ -163,7 +160,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="contributesToHeader" type="boolean">
             <annotation>
                <documentation>
@@ -171,7 +167,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="showInNextPrevDropdownToolbarActionKey" type="string">
             <annotation>
                <documentation>
@@ -180,7 +175,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="showInNextPrevDropdownToolbarAction" type="boolean">
             <annotation>
                <documentation>
@@ -189,7 +183,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="isGoToNextNavigationTargetKey" type="string">
             <annotation>
                <documentation>
@@ -198,7 +191,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="isGoToNextNavigationTarget" type="boolean">
             <annotation>
                <documentation>
@@ -207,7 +199,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="isGoToPreviousNavigationTargetKey" type="string">
             <annotation>
                <documentation>
@@ -216,7 +207,6 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-
          <attribute name="isGoToPreviousNavigationTarget" type="boolean">
             <annotation>
                <documentation>
