@@ -519,9 +519,22 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 		// Set up the active scheme.
 		try {
-			bindingManager
-					.setActiveScheme(bindingManager
-							.getScheme("org.eclipse.ui.defaultAcceleratorConfiguration")); //$NON-NLS-1$
+			final List activeSchemeDefinitions = new ArrayList();
+			activeSchemeDefinitions.addAll(commandRegistry
+					.getActiveKeyConfigurationDefinitions());
+			activeSchemeDefinitions.addAll(mutableCommandRegistry
+					.getActiveKeyConfigurationDefinitions());
+			if (activeSchemeDefinitions.isEmpty()) {
+				bindingManager
+						.setActiveScheme(bindingManager
+								.getScheme("org.eclipse.ui.defaultAcceleratorConfiguration")); //$NON-NLS-1$
+			} else {
+				final ActiveKeyConfigurationDefinition definition = (ActiveKeyConfigurationDefinition) activeSchemeDefinitions
+						.get(activeSchemeDefinitions.size() - 1);
+				final String schemeId = definition.getKeyConfigurationId();
+				bindingManager.setActiveScheme(bindingManager
+						.getScheme(schemeId));
+			}
 		} catch (final NotDefinedException e) {
 			// Oh, well....
 		}
@@ -616,16 +629,17 @@ public final class CommandManagerWrapper implements ICommandManager,
 		while (entryItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) entryItr.next();
 			final String commandId = (String) entry.getKey();
-			
+
 			// Convert the handler to the right kind of handler.
 			final Object value = entry.getValue();
 			final IHandler handler;
 			if (value instanceof IHandler) {
 				handler = (IHandler) value;
 			} else {
-				handler = new LegacyHandlerWrapper((org.eclipse.ui.commands.IHandler) value);
+				handler = new LegacyHandlerWrapper(
+						(org.eclipse.ui.commands.IHandler) value);
 			}
-			
+
 			// Set the handler on the command.
 			final Command command = commandManager.getCommand(commandId);
 			command.setHandler(handler);
