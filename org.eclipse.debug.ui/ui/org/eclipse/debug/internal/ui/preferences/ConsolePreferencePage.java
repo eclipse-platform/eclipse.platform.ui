@@ -11,9 +11,11 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,11 +30,40 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
+	/**
+	 * This class exists to provide visibility to the
+	 * <code>refreshValidState</code> method and to perform more intelligent
+	 * clearing of the error message.
+	 */
+	protected class ConsoleIntegerFieldEditor extends IntegerFieldEditor {						
+		
+		public ConsoleIntegerFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+		}
+		
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
+		 */
+		protected void refreshValidState() {
+			super.refreshValidState();
+		}
+		
+		/**
+		 * Clears the error message from the message line if the error
+		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (canClearErrorMessage()) {
+				super.clearErrorMessage();
+			}
+		}
+	}
+	
 	private BooleanFieldEditor2 fWrapEditor = null;
-	private IntegerFieldEditor fWidthEditor = null;
+	private ConsoleIntegerFieldEditor fWidthEditor = null;
 	
 	private BooleanFieldEditor2 fUseBufferSize = null;
-	private IntegerFieldEditor fBufferSizeEditor = null;
+	private ConsoleIntegerFieldEditor fBufferSizeEditor = null;
 	
 	/**
 	 * Create the console page.
@@ -61,7 +92,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fWrapEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("ConsolePreferencePage.Wrap_text_1"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(fWrapEditor);
 		
-		fWidthEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
+		fWidthEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fWidthEditor);
 		fWidthEditor.setValidRange(80, Integer.MAX_VALUE - 1);
 		fWidthEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.console_width")); //$NON-NLS-1$
@@ -77,7 +108,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fUseBufferSize = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Limit_console_output_1"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(fUseBufferSize);
 		
-		fBufferSizeEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_buffer_size_(characters)__2"), getFieldEditorParent()); //$NON-NLS-1$
+		fBufferSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_buffer_size_(characters)__2"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fBufferSizeEditor);
 		fBufferSizeEditor.setValidRange(1000, Integer.MAX_VALUE);
 		fBufferSizeEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.The_console_buffer_size_must_be_at_least_1000_characters._1")); //$NON-NLS-1$
@@ -160,4 +191,36 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		updateWidthEditor();
 	}
 	
+	protected boolean canClearErrorMessage() {
+		if (fWidthEditor.isValid() && fBufferSizeEditor.isValid()) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+
+		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+			boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
+			// If the new value is true then we must check all field editors.
+			// If it is false, then the page is invalid in any case.
+			if (newValue) {
+				if (fWidthEditor != null && event.getSource() != fWidthEditor) {
+					fWidthEditor.refreshValidState();
+				} 
+				if (fBufferSizeEditor != null && event.getSource() != fBufferSizeEditor) {
+					fBufferSizeEditor.refreshValidState();
+				}
+				checkState();
+			} else {
+				super.propertyChange(event);
+			}
+
+		} else {
+			super.propertyChange(event);
+		}
+	}
 }
