@@ -2306,10 +2306,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public boolean getStatusLineVisible() {
 		return statusLineVisible;
 	}	
+
 	/** 
+	 * Note that this will only have an effect if the default implementation of
+	 * WorkbenchAdvisor.createWindowContents() has been invoked.
+	 *  
+	 * called  IWorkbench
 	 * @since 3.0
 	 */
 	private void updateLayoutDataForContents() {
+	    if (defaultLayout == null) 
+	        return;
+	    
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		//   separately configurable
 		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar()) || (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar())) {
