@@ -370,7 +370,7 @@ public abstract class Plugin implements BundleActivator {
 	 * TODO @deprecated
 	 * @since 3.0
 	 */
-	public void legacyInitializeDefaultPluginPreferences() {
+	public final void internalInitializeDefaultPluginPreferences() {
 		initializeDefaultPluginPreferences();
 	}
 

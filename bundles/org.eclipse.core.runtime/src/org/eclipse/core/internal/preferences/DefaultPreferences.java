@@ -30,7 +30,7 @@ public class DefaultPreferences extends EclipsePreferences {
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_QUALIFIER = "qualifier"; //$NON-NLS-1$
 
-	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.defaults.filename"; //$NON-NLS-1$
+	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.customization"; //$NON-NLS-1$
 	private EclipsePreferences loadLevel;
 
 	// cached values
@@ -169,7 +169,7 @@ public class DefaultPreferences extends EclipsePreferences {
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Applying plug-in default preference overrides for plug-in: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
-		plugin.legacyInitializeDefaultPluginPreferences();
+		plugin.internalInitializeDefaultPluginPreferences();
 	}
 
 	/*
