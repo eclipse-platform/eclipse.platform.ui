@@ -354,7 +354,7 @@ public class GenerateDiffFileWizard extends Wizard {
 		private Button contextDiffOption;
 		private Button unifiedDiffOption;
 		private Button regularDiffOption;
-		private Button dontIncludeNewFilesOptions;
+		private Button includeNewFilesOptions;
 		
 		/**
 		 * Constructor for PatchFileCreationOptionsPage.
@@ -382,9 +382,11 @@ public class GenerateDiffFileWizard extends Wizard {
 			
 			recurseOption = new Button(composite, SWT.CHECK);
 			recurseOption.setText(Policy.bind("Do_not_recurse_into_sub-folders_10")); //$NON-NLS-1$
+			recurseOption.setSelection(true);
 			
-			dontIncludeNewFilesOptions = new Button(composite, SWT.CHECK);
-			dontIncludeNewFilesOptions.setText(Policy.bind("Do_not_include_new_files_in_patch_11")); //$NON-NLS-1$
+			includeNewFilesOptions = new Button(composite, SWT.CHECK);
+			includeNewFilesOptions.setText(Policy.bind("Do_not_include_new_files_in_patch_11")); //$NON-NLS-1$
+			includeNewFilesOptions.setSelection(true);
 			
 			Group diffTypeGroup = new Group(composite, SWT.NONE);
 			layout = new GridLayout();
@@ -415,10 +417,10 @@ public class GenerateDiffFileWizard extends Wizard {
 		 */
 		public LocalOption[] getOptions() {
 			List options = new ArrayList(5);
-			if(!dontIncludeNewFilesOptions.getSelection()) {
+			if(includeNewFilesOptions.getSelection()) {
 				options.add(Diff.INCLUDE_NEWFILES);
 			}
-			if(recurseOption.getSelection()) {
+			if(!recurseOption.getSelection()) {
 				options.add(Diff.DO_NOT_RECURSE);
 			}
 			if(unifiedDiffOption.getSelection()) {
