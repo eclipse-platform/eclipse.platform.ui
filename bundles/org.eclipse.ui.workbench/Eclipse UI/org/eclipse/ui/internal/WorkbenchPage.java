@@ -2465,7 +2465,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 		activatePart(activePart);
 		
 		if(markLocation && activePart != null && activePart instanceof IEditorPart)
-			navigationHistory.markEditor(getActiveEditor());
+			navigationHistory.markEditor((IEditorPart)activePart);
 	
 		// Fire notifications
 		if (oldPart != null)
