@@ -1,5 +1,7 @@
+package org.eclipse.ui;
+
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -8,8 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM - Initial implementation
 ************************************************************************/
-
-package org.eclipse.ui;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,20 +32,30 @@ import org.eclipse.jface.viewers.ISelection;
  * notified of all selection changes, allowing it to enable or disable the 
  * proxy action appropriately.
  * </p><p>
- * An action delegates cannot be consulted about selection changes before the
- * action is performed because it does not exist.  For this reason, control 
- * of action's enable state should also be exercised through simple XML rules 
- * contained in the extension.  These rules allow enable state control before 
+ * An action delegate cannot be consulted about selection changes before the
+ * action is performed because it does not exist.  For this reason, control of
+ * the action's enable state should also be exercised through simple XML rules
+ * contained in the extension.  These rules allow enable state control before
  * the action delegate's plug-in is loaded.
+ * </p><p>
+ * Clients can choose to subclass the provided abstract implementation
+ * <code>org. eclipse. ui. actions. ActionDelegate</code> or implement the
+ * interface directly.
  * </p>
+ * 
+ * @see org.eclipse.ui.actions.ActionDelegate
  * @see org.eclipse.ui.IActionDelegate2
  */
 public interface IActionDelegate {
 	/**
 	 * Performs this action.
 	 * <p>
-	 * This method is called when the delegating action has been triggered.
-	 * Implement this method to do the actual work.
+	 * This method is called by the proxy action when the action has been
+	 * triggered. Implement this method to do the actual work.
+	 * </p><p>
+	 * <b>Note:</b> If the action delegate also implements
+	 * <code>IActionDelegate2</code>, then this method is not invoked but
+	 * instead the <code>runWithEvent(IAction, Event)</code> method is called.
 	 * </p>
 	 *
 	 * @param action the action proxy that handles the presentation portion of the
