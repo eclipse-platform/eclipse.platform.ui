@@ -111,7 +111,7 @@ public void registerContextMenu(MenuManager menuManager,
  * </p>
  * 
  * @return the key binding service in use
- * @since 2.0
+ * @since 2.1
  */
 public IKeyBindingService getKeyBindingService();
 }
