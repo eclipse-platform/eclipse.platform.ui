@@ -57,6 +57,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private PerspectiveList perspList = new PerspectiveList();
 	private Listener mouseDownListener;
 	private PerspectiveDescriptor deferredActivePersp;
+	private NavigationHistory navigationHistory = new NavigationHistory(this);	
 	private IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
 		/*
 		 * Remove the working set from the page if the working set is deleted.
@@ -326,7 +327,6 @@ public void activate(IWorkbenchPart part) {
 	if(part instanceof MultiEditor) { 
 		part = ((MultiEditor)part).getActiveEditor();
 	}
-			
 	// Activate part.
 	if(window.getActivePage() == this) {
 		bringToTop(part);
@@ -997,6 +997,19 @@ private void disposePerspective(Perspective persp) {
 		}
 	}
 }
+/**
+ * * @return NavigationHistory */
+public NavigationHistory getNavigationHistory() {
+	return navigationHistory;
+}
+/*
+ * (non-Javadoc)
+ * Method declared on IWorkbenchPage
+ */
+public void addNavigationHistoryEntry(ISelection selection) {
+	getNavigationHistory().add(selection);
+}
+
 /**
  * Edits the action sets.
  */
@@ -2089,6 +2102,8 @@ private void setActivePart(IWorkbenchPart newPart) {
 	}
 	activatePart(activePart);
 	
+	if(activePart instanceof IEditorPart)
+		getNavigationHistory().add((IEditorPart)activePart);		
 
 	// Fire notifications
 	if (oldPart != null)

@@ -25,6 +25,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	
+	//Must be deleted once the final code for bug 5700 is released.
+	private static final boolean use5700 = false;
+	
 	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
 	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
 	private static final String printActionDefId = "org.eclipse.ui.file.print"; //$NON-NLS-1$
@@ -51,11 +54,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
 	private static final String buildActionDefId = "org.eclipse.ui.project.buildProject";	 //$NON-NLS-1$
+	private static final String backwardHistoryActionDefId = "org.eclipse.ui.backwardHistory";	 //$NON-NLS-1$
+	private static final String forwardHistoryActionDefId = "org.eclipse.ui.forwardHistory";	 //$NON-NLS-1$
 
 	private static final String workbenchToolGroupId = "org.eclipse.ui.internal";
 	
 	//pin editor group in the toolbar
 	private static final String pinEditorGroup = "pinEditorGroup"; //$NON-NLS-1$
+
+	//history group in the toolbar
+	private static final String historyGroup = "historyGroup"; //$NON-NLS-1$
 	
 	// target
 	private WorkbenchWindow window;
@@ -132,6 +140,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction closeProjectAction;
 	
 	private KeyBindingMenu keyBindingMenu;
+	private NavigationHistoryAction backwardHistoryAction;
+	private NavigationHistoryAction forwardHistoryAction;
 // end menu reorg	
 
 	/**
@@ -403,6 +413,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(previousAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_END));
+		
+		//TBD: Location of this actions
+		if(use5700) {
+			menu.add(new Separator());
+			menu.add(backwardHistoryAction);
+			menu.add(forwardHistoryAction);
+		}
 		return menu;
 	}
 
@@ -635,6 +652,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
 		}
+		if(use5700)
+			addHistoryActions();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			addPinEditorAction();
@@ -916,6 +935,17 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		closePerspAction = new ClosePerspectiveAction(window);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
 		
+		//Must change/copy the image. It is using a local toolbar image and colored.
+		backwardHistoryAction = new NavigationHistoryAction(window, false);
+		backwardHistoryAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV));
+		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
+		keyBindingService.registerGlobalAction(backwardHistoryAction);	
+
+		forwardHistoryAction = new NavigationHistoryAction(window, true);
+		forwardHistoryAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV));
+		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
+		keyBindingService.registerGlobalAction(forwardHistoryAction);					
+		
 		// menu reorg
 		if (usingMenuReorg) {
 			// create the new actions needed for the reorg
@@ -1006,6 +1036,33 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			}
 		}
 	}
+	/*
+	 * Adds the pin action to the toolbar.
+	 */
+	private void addHistoryActions() {
+		IToolBarManager toolsMgr = window.getToolsManager();
+		if (toolsMgr instanceof CoolBarManager) {
+			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
+			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, historyGroup); //$NON-NLS-1$
+			// we want to add the history cool item before the editor cool item (if it exists)
+			IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
+			if (refItem == null) {
+				cBarMgr.add(coolBarItem);
+			} else {
+				cBarMgr.insertBefore(refItem.getId(), coolBarItem);
+			}
+			coolBarItem.setVisible(true);
+			IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
+			tBarMgr.add(new GroupMarker(historyGroup));
+			tBarMgr.insertAfter(historyGroup,forwardHistoryAction);
+			tBarMgr.insertAfter(historyGroup,backwardHistoryAction);			
+		} else {
+			toolsMgr.add(new GroupMarker(historyGroup));
+			toolsMgr.insertAfter(historyGroup,forwardHistoryAction);
+			toolsMgr.insertAfter(historyGroup,backwardHistoryAction);
+		}
+		toolsMgr.update(true);
+	}	
 	/*
 	 * Adds the pin action to the toolbar.
 	 */
