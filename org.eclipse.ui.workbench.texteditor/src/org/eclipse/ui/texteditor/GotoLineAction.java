@@ -96,6 +96,7 @@ public class GotoLineAction extends TextEditorAction {
 		protected Control createDialogArea(Composite parent) {
 			Control result= super.createDialogArea(parent);
 			getText().setFocus();
+			applyDialogFont(result);
 			return result;
 		}
 	};

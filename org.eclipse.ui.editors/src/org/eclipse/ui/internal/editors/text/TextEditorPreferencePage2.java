@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
@@ -417,7 +418,7 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		item.setControl(createAnnotationsPage(folder));
 
 		initialize();
-		
+		Dialog.applyDialogFont(folder);
 		return folder;
 	}
 	
