@@ -74,6 +74,9 @@ public interface ICheatSheetResource {
 	public static final String ERROR_FINDING_PLUGIN_FOR_ACTION = "%ERROR_FINDING_PLUGIN_FOR_ACTION"; //$NON-NLS-1$
 	public static final String ERROR_DATA_MISSING = "%ERROR_DATA_MISSING"; //$NON-NLS-1$
 	public static final String ERROR_DATA_MISSING_LOG = "%ERROR_DATA_MISSING_LOG"; //$NON-NLS-1$
+	public static final String ERROR_CONDITIONAL_DATA_MISSING_LOG = "%ERROR_CONDITIONAL_DATA_MISSING_LOG"; //$NON-NLS-1$
+	public static final String ERROR_LOADING_CLASS_FOR_ACTION = "%ERROR_LOADING_CLASS_FOR_ACTION"; //$NON-NLS-1$
+	public static final String ERROR_CREATING_CLASS_FOR_ACTION = "%ERROR_CREATING_CLASS_FOR_ACTION"; //$NON-NLS-1$
 	// IntroItem
 	public static final String START_CHEATSHEET_TOOLTIP = "%START_CHEATSHEET_TOOLTIP"; //$NON-NLS-1$
 	public static final String RESTART_CHEATSHEET_TOOLTIP = "%RESTART_CHEATSHEET_TOOLTIP"; //$NON-NLS-1$
@@ -92,9 +95,10 @@ public interface ICheatSheetResource {
 	public static final String ERROR_LOADING_CHEATSHEET_CONTENT = "%ERROR_LOADING_CHEATSHEET_CONTENT"; //$NON-NLS-1$
 	public static final String ERROR_PAGE_MESSAGE = "%ERROR_PAGE_MESSAGE"; //$NON-NLS-1$
 
-	// CheatSheetElement, CheatSheetItemExtensionElement, CoreItem
-	public static final String ERROR_LOADING_CLASS_FOR_ACTION = "%ERROR_LOADING_CLASS_FOR_ACTION"; //$NON-NLS-1$
-	public static final String ERROR_CREATING_CLASS_FOR_ACTION = "%ERROR_CREATING_CLASS_FOR_ACTION"; //$NON-NLS-1$
+
+	// CheatSheetElement, CheatSheetItemExtensionElement
+	public static final String ERROR_LOADING_CLASS = "%ERROR_LOADING_CLASS"; //$NON-NLS-1$
+	public static final String ERROR_CREATING_CLASS = "%ERROR_CREATING_CLASS"; //$NON-NLS-1$
 
 	// CheatSheetRegistryReader
 	public static final String CHEAT_SHEET_OTHER_CATEGORY = "%CHEAT_SHEET_OTHER_CATEGORY"; //$NON-NLS-1$

@@ -262,7 +262,7 @@ public class CoreItem extends ViewItem {
 				RepeatedSubItem repeatedSubItem = (RepeatedSubItem)subItem;
 				String values = repeatedSubItem.getValues();
 				values = viewer.getManager().getVariableData(values);
-				if(values == null || values.length() <= 0) {
+				if(values == null || values.length() <= 0 || (values.startsWith("${") && values.endsWith("}"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_DATA_MISSING_LOG, new Object[] {repeatedSubItem.getValues()});
 					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
@@ -289,6 +289,17 @@ public class CoreItem extends ViewItem {
 
 				sub.setSelectedSubItem(viewer.getManager());
 				SubItem selectedSubItem = sub.getSelectedSubItem();
+
+				if(selectedSubItem == null) {
+					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CONDITIONAL_DATA_MISSING_LOG, new Object[] {sub.getCondition(), getItem().getTitle()});
+					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+
+					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_DATA_MISSING), null);
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+					org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
+					break;
+				}
 
 				createSubItemButtons(selectedSubItem, null, i);
 			} else if( subItem instanceof SubItem ) {
@@ -395,9 +406,10 @@ public class CoreItem extends ViewItem {
 	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION, new Object[] {pluginId});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		Class actionClass;
@@ -405,17 +417,19 @@ public class CoreItem extends ViewItem {
 		try {
 			actionClass = bundle.loadClass(className);
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION, new Object[] {className});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		try {
 			action = (IAction) actionClass.newInstance();
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION, new Object[] {className});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 
@@ -512,9 +526,10 @@ public class CoreItem extends ViewItem {
 				SubItemCompositeHolder s = (SubItemCompositeHolder)l.get(j);
 				if(s.isCompleted() || s.isSkipped())
 					s.getIconLabel().setImage(null);
-				if(s.startButton != null)
+				if(s.startButton != null) {
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
-					
+					s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+				}
 			}					
 		}	
 	}

@@ -721,7 +721,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		} catch (RuntimeException e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 		} finally {
 			link.setCursor(null);
 		}
@@ -747,7 +747,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		} catch (RuntimeException e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 		} finally {
 			link.setCursor(null);
 		}

@@ -106,7 +106,8 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 			Bundle bundle = Platform.getBundle(pluginId);
 			extClass = bundle.loadClass(className);
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_LOADING_CLASS, new Object[] {className});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 		try {
@@ -116,7 +117,8 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
 			}
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_CLASS, new Object[] {className});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 		
