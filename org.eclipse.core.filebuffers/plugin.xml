@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.core.filebuffers"
+   name="%pluginName"
+   version="3.0"
+   provider-name="%providerName"
+   class="org.eclipse.core.internal.filebuffers.FileBuffersPlugin">
+
+   <runtime>
+      <library name="filebuffers.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.core.filebuffers,org.eclipse.core.internal.filebuffers"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.text"/>
+   </requires>
+
+
+   <extension-point id="documentCreation" name="%documentCreationPoint" schema="schema/documentCreation.exsd"/>
+   <extension-point id="documentSetup" name="%documentSetupPoint" schema="schema/documentSetup.exsd"/>
+
+   <extension
+         id="DefaultDocumentFactory"
+         name="%defaultDocumentFactory"
+         point="org.eclipse.core.filebuffers.documentCreation">
+      <factory
+            extensions="*"
+            class="org.eclipse.core.internal.filebuffers.DefaultDocumentFactory">
+      </factory>
+   </extension>
+</plugin>
