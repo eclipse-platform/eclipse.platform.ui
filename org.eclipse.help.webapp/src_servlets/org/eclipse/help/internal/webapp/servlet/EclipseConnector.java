@@ -60,8 +60,14 @@ public class EclipseConnector {
 					|| !UrlUtil.isLocalRequest(req)) {
 					return;
 				}
-			} else
+			} else {
+				// enable the role
+				IHelpRoleManager roleManager = HelpSystem.getRoleManager();
+				if (roleManager != null)
+					roleManager.enabledActivities(url);
+				
 				url = "help:" + url;
+			}
 
 			URLConnection con = openConnection(url, req, resp);
 			resp.setContentType(con.getContentType());

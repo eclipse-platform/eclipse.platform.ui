@@ -45,8 +45,10 @@ public class TocData extends RequestData {
 	// Number of topics generated so far
 	private int topicsGenerated = 0;
 
-	// List of TOC's
+	// List of TOC's, unfiltered
 	private IToc[] tocs;
+	// List of TOC's, filtered by roles
+	IToc[] filteredTocs;
 
 	// images directory
 	private String imagesDirectory;
@@ -100,19 +102,20 @@ public class TocData extends RequestData {
 	//       and allow help classes in JSP's.
 
 	public int getTocCount() {
-		return tocs.length;
+		// get filtered tocs
+		return filteredTocs.length;
 	}
 
 	public String getTocLabel(int i) {
-		return tocs[i].getLabel();
+		return filteredTocs[i].getLabel();
 	}
 
 	public String getTocHref(int i) {
-		return tocs[i].getHref();
+		return filteredTocs[i].getHref();
 	}
 
 	public String getTocDescriptionTopic(int i) {
-		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
+		return UrlUtil.getHelpURL(filteredTocs[i].getTopic(null).getHref());
 	}
 
 	/**
@@ -155,6 +158,7 @@ public class TocData extends RequestData {
 
 	private void loadTocs() {
 		tocs = HelpSystem.getTocManager().getTocs(getLocale());
+		filteredTocs = HelpSystem.getTocManager().getTocs(getLocale(), true);
 		// Find the requested TOC
 		selectedToc = -1;
 		if (tocHref != null && tocHref.length() > 0) {

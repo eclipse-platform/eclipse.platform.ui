@@ -54,6 +54,8 @@ public final class HelpSystem {
 	private IBrowser browser;
 	private IHelp helpSupport = null;
 	private boolean webappRunning = false;
+	
+	private IHelpRoleManager roleManager;
 
 	/**
 	 * HelpSystem constructor comment.
@@ -347,4 +349,21 @@ public final class HelpSystem {
 		return pfd.getLabel();
 	}
 
+	/**
+	 * Used to obtain Role Manager
+	 * @return instance of IHelpRoleManager
+	 * EXPERIMENTAL
+	 */
+	public static IHelpRoleManager getRoleManager() {
+		return getInstance().roleManager;
+	}
+	
+	/**
+	 * Sets the role manager
+	 * @param roleManager
+	 * EXPERIMENTAL
+	 */
+	public static void setRoleManager(IHelpRoleManager roleManager) {
+		getInstance().roleManager = roleManager;
+	}
 }

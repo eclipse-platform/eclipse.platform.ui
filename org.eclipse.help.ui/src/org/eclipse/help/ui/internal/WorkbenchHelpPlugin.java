@@ -15,6 +15,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.help.ui.internal.workingset.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.roles.*;
 import org.eclipse.ui.plugin.*;
 
 /**
@@ -119,6 +120,8 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 				workingSetListener);
 			HelpSystem.getWorkingSetManager().addPropertyChangeListener(
 				workingSetListener);
+			
+			HelpSystem.setRoleManager(new HelpRoleManager(RoleManager.getInstance()));
 		}
 	}
 
