@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,9 +60,9 @@ public abstract class ResourceState {
 	 */
 	protected IResource localResource;
 	
-	protected QualifiedName stateKey;
+	protected QualifiedName stateKey = new QualifiedName("org.eclipse.team.target", "state_info");
 
-	protected IPath root;
+	protected URL rootUrl;
 
 	/**
 	 * Constructor for a resource state given a local resource.
@@ -69,16 +70,13 @@ public abstract class ResourceState {
 	 * 
 	 * @param localResource the local part of a synchronized pair of resources.
 	 */
-	public ResourceState(IResource localResource, IPath root) {
+	public ResourceState(IResource localResource, URL rootUrl) {
 		super();
-		this.root = root;
-		this.stateKey = new QualifiedName(getType(), root.toString());
+		this.rootUrl = rootUrl;
 		SynchronizedTargetProvider.getSynchronizer().add(stateKey);
 		this.localResource = localResource;
 	}
 	
-	public abstract String getType();
-
 	/**
 	 * Get the timestamp that represents the base state of the local resource, that is
 	 * the state that the local resource had when it was initially fetched from the repository.
@@ -437,10 +435,10 @@ public abstract class ResourceState {
 	}
 
 	/**
-	 * Gets the root.
-	 * @return Returns a IPath
+	 * Method getRoot.
+	 * @return URL of this resource's parent
 	 */
-	public IPath getRoot() {
-		return root;
+	public URL getRoot() {
+		return rootUrl;
 	}
 }

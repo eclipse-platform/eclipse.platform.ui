@@ -10,26 +10,32 @@
  ******************************************************************************/
 package org.eclipse.team.core.target;
 
+import java.io.ObjectInputStream;
 import java.util.Properties;
 
+/**
+ * The <code>ISiteFactory</code> interface must be implemented by any plug-in
+ * that is providing target management. It provides mechanisms for creating
+ * concrete <code>Site</code> instances for it's target type.
+ * 
+ * @see Site
+ */
 public interface ISiteFactory {
-	
 	/**
-	 * Returns a new target site for the given target specific 
-	 * description.
+	 * Responsible for reading from the stream and restoring the classes fields
+	 * then returning a new <code>Site</code> instance. The <code>Site</code>
+	 * instances are written using the <code>Site#writeObject</code> method.
 	 * 
-	 * @param description the target specific description encoded
-	 * as a string
+	 * @param is the input stream that contains the output of Site#writeObject
 	 * @return a new target site
 	 */	
-	public Site newSite(String description);
+	public Site newSite(ObjectInputStream is);
 	
 	/**
-	 * Returns a new target site for the given target specific 
-	 * properties.
+	 * Returns a new target site for the given target specific properties. This
+	 * is mainly used for testing purposes.
 	 * 
-	 * @param properties the target specific location encoded
-	 * in properties
+	 * @param properties the target specific location encoded in properties
 	 * @return a new target site
 	 */	
 	public Site newSite(Properties properties);

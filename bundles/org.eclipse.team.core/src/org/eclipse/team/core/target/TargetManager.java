@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core.target;
 
 import java.io.DataInputStream;
@@ -6,6 +16,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -24,8 +37,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.LocationMapping;
 
 public class TargetManager {
@@ -52,7 +65,7 @@ public class TargetManager {
 		save();
 	}
 
-	/**
+   /**
 	* @see TargetProvider#map(IProject)
 	*/
 	public static void map(IProject project, Site site, IPath path) throws TeamException {
@@ -102,7 +115,7 @@ public class TargetManager {
 			} else {
 				LocationMapping mapping = new LocationMapping(mappingBytes);
 				Site site =
-					getSite(mapping.getType(), mapping.getLocationId());
+					getSite(mapping.getType(), mapping.getURL());
 				if (site != null) {
 					return site.newProvider(mapping.getPath());
 				}
@@ -115,11 +128,11 @@ public class TargetManager {
 		}
 	}
 
-	public static Site getSite(String type, String id) {
+	public static Site getSite(String type, URL id) {
 		for (Iterator it = sites.iterator(); it.hasNext();) {
 			Site element = (Site) it.next();
 			if (element.getType().equals(type)
-				&& element.getUniqueIdentifier().equals(id)) {
+				&& element.getURL().equals(id)) {
 				return element;
 			}
 		}
@@ -173,14 +186,13 @@ public class TargetManager {
 		int repoCount = dis.readInt();
 		for (int i = 0; i < repoCount; i++) {
 			String id = dis.readUTF();
-			String siteData = dis.readUTF();
 			ISiteFactory factory =
 				(ISiteFactory) getSiteFactory(id);
 			if (factory == null) {
 				//todo: log error
 				return;
 			}
-			Site site = factory.newSite(siteData);
+			Site site = factory.newSite(new ObjectInputStream(dis));
 			sites.add(site);
 		}
 	}
@@ -192,7 +204,7 @@ public class TargetManager {
 		while (iter.hasNext()) {
 			Site site = (Site) iter.next();
 			dos.writeUTF(site.getType());
-			dos.writeUTF(site.encode());
+			site.writeObject(new ObjectOutputStream(dos));
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -15,18 +16,18 @@ public class LocationMapping {
 	private final long SERIAL_ID = 1;
 	
 	private String type;
-	private String locationId;
+	private URL url;
 	private IPath  path;
 	
 	public LocationMapping(Site site, IPath path) {
 		this.type = site.getType();
-		this.locationId = site.getUniqueIdentifier();
+		this.url = site.getURL();
 		this.path = path;
 	}
 	
-	public LocationMapping(String type, String locationId, IPath path) {
+	public LocationMapping(String type, URL url, IPath path) {
 		this.type = type;
-		this.locationId = locationId;
+		this.url = url;
 		this.path = path;
 	}
 	
@@ -35,7 +36,7 @@ public class LocationMapping {
 		DataInputStream is = new DataInputStream(bis);
 		long id = is.readLong();
 		this.type = is.readUTF();
-		this.locationId = is.readUTF();
+		this.url = new URL(is.readUTF());
 		this.path = new Path(is.readUTF());
 	}
 
@@ -49,29 +50,13 @@ public class LocationMapping {
 	}
 
 	/**
-	 * Sets the type.
-	 * @param type The type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	/**
 	 * Gets the locationId.
 	 * @return Returns a String
 	 */
-	public String getLocationId() {
-		return locationId;
+	public URL getURL() {
+		return url;
 	}
 
-	/**
-	 * Sets the locationId.
-	 * @param locationId The locationId to set
-	 */
-	public void setLocationId(String locationId) {
-		this.locationId = locationId;
-	}
-	
 	/**
 	 * @see Object#equals(Object)
 	 */
@@ -80,7 +65,8 @@ public class LocationMapping {
 		if(! (other instanceof LocationMapping)) return false;
 		LocationMapping location = (LocationMapping)other;
 		return getType().equals(location.getType()) && 
-				getLocationId().equals(location.getLocationId());
+				getURL().equals(location.getURL()) &&
+				getPath().equals(location.getPath());
 	}
 	/**
 	 * Gets the path.
@@ -96,7 +82,7 @@ public class LocationMapping {
 		DataOutputStream os = new DataOutputStream(bos);
 		os.writeLong(SERIAL_ID);
 		os.writeUTF(getType());
-		os.writeUTF(getLocationId());
+		os.writeUTF(getURL().toExternalForm());
 		os.writeUTF(getPath().toString());
 		return bos.toByteArray();
 	}

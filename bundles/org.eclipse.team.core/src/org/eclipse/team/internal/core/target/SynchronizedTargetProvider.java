@@ -27,10 +27,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
 
 public abstract class SynchronizedTargetProvider extends TargetProvider {
 
-	/*
-	 * Configuration serialization identifier.
-	 */
-
 	private static final int CONFIG_FORMAT_VERSION = 2;
 
 	private final int depth = IResource.DEPTH_INFINITE;
@@ -50,19 +46,17 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	}
 
 	/**
-	 * Create a target provider.
-	 */
-	public SynchronizedTargetProvider() {
-		super();
-	}
-	 
-	/**
 	 * Answers the synchronizer.
 	 */		
 	final protected static ISynchronizer getSynchronizer() {
 		return ResourcesPlugin.getWorkspace().getSynchronizer();
 	}
 
+	/**
+	 * Answers a new state based on an existing local resource.
+	 */
+	abstract public ResourceState newState(IResource resource);
+	
 	/**
 	 * Get the state descriptor for a given resource.
 	 */
@@ -72,25 +66,6 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		state.loadState();
 		return state;
 	}
-
-	/**
-	 * Answers a new state based on an existing local resource.
-	 */
-	abstract public ResourceState newState(IResource resource);
-
-/**
-	 * Providers must override this method to configure instances based on the given
-	 * properties map.  Different providers will require different types of configuration,
-	 * and therefore they will look for different keys in the properties table.  If the provider
-	 * cannot be configured with the values given a <code>TeamException</code> is
-	 * thrown.  Subclasses should override this method (and call <code>
-	 * super.configureProvider(Properties)</code>).
-	 */
-//	abstract public void configure(Properties properties) throws TeamException;
-
-
-
-	/*************** Inherited Methods ***************/
 
 	/**
 	 * Get the resource from the provider to the workspace, and remember the fetched
@@ -112,11 +87,8 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	/**
 	 * Put the resources to the remote.
 	 */
-	public void put(
-		IResource[] resources,
-		IProgressMonitor progress)
+	public void put(IResource[] resources, IProgressMonitor progress)
 		throws TeamException {
-			
 		execute(new IRecursiveOperation() {
 			public IStatus visit(IResource resource, IProgressMonitor progress) {
 				// The resource state must be checked-out.

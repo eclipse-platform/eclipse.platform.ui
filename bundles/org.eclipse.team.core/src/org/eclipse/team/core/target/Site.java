@@ -1,31 +1,84 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core.target;
+
+import java.io.ObjectOutputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.TeamException;
 
+/**
+ * A <code>Site</code> is a place where resources can be deployed and 
+ * retrieved via a target provider.
+ * 
+ * @see ISiteFactory
+ */
 public abstract class Site {
 
-	/*
-	 * Initialize a new Site of the given type.
+	/**
+	 * Answers a <code>TargetProvider</code> instance for the given path at 
+	 * this site.
 	 */
-	 
-	public Site() {
-		super();
-	}
-	
-	public abstract TargetProvider newProvider(IPath intrasitePath) throws TeamException;
-	
-	public abstract String getType();
-	
-	public abstract String getDisplayName();
-	
-	public abstract String getUniqueIdentifier();
-	
-	public abstract String encode();
-	
-	public abstract IPath getPath();
+	public abstract TargetProvider newProvider(IPath intrasitePath) 
+		throws TeamException;
 	
 	/**
+	 * Answers the type identifier for this site. For example:
+	 * <blockquote><pre>
+	 * org.eclipse.team.target.webdav
+	 * </pre></blockquote>
+	 * 
+	 * @return string identifier for this site
+	 */
+	public abstract String getType();
+	
+	/**
+	 * Answers the location of this site as a URL. For example:
+	 * <blockquote><pre>
+	 * http://www.mysite.com:14356/dav
+	 * </pre></blockquote>
+	 * 
+	 * @return URL location of this site
+	 */
+	public abstract URL getURL();
+	
+	/**
+	 * Answers a string that can be displayed to the user that represents
+	 * this site. For example:
+	 * <blockquote><pre>
+	 * http://usename@www.mysite.com/dav (WebDav)
+ 	 * </pre></blockquote>
+	 */
+	public abstract String getDisplayName();
+	
+	/**
+	 * Writes the state of this site such that the corresponding concrete
+	 * <code>ISiteFactory</code> class can restore the site.
+	 * 
+	 * @param os the object stream into which to write it's state
+	 */
+	public abstract void writeObject(ObjectOutputStream os);
+		
+	/**
+	 * Compares two Sites. The result is <code>true</code> if and only if 
+	 * the argument is not <code>null</code> and is a Site object that 
+	 * represents the same Site as this object. Two Site objects are equal 
+	 * if they have the same types and URLs.
+	 * 
+	 * @param other the Site to compare against
+	 * 
+	 * @return <code>true</code> if the Sites are the same; <code>false</code>
+	 * otherwise
+	 * 
 	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object other) {
@@ -33,13 +86,15 @@ public abstract class Site {
 		if(! (other instanceof Site)) return false;
 		Site location = (Site)other;
 		return getType().equals(location.getType()) && 
-				getUniqueIdentifier().equals(location.getUniqueIdentifier());
+				getURL().equals(location.getURL());
 	}
 	
 	/**
+	 * Debugging helper
+	 * 
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return getType() + ":" + getUniqueIdentifier();
+		return getDisplayName();
 	}
 }
