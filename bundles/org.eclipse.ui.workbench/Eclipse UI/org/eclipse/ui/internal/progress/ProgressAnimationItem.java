@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.dialogs.ProgressIndicator;
-
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Create an instance of the receiver in the window.
@@ -26,15 +26,24 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 public class ProgressAnimationItem extends AnimationItem {
 
 	ProgressIndicator bar;
+	MouseListener mouseListener;
+	boolean addedListener = false;
 
 	/**
-	 * Create an instance of the receiver in the window.
+	 * Create an instance of the receiver in the supplied region.
 	 * 
-	 * @param workbenchWindow
-	 *            The window this is being created in.
+	 * @param region. The ProgressRegion that contains the receiver.
 	 */
-	ProgressAnimationItem(WorkbenchWindow workbenchWindow) {
-		super(workbenchWindow);
+	ProgressAnimationItem(final ProgressRegion region) {
+		super(region.workbenchWindow);
+		mouseListener = new MouseAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDoubleClick(MouseEvent e) {
+				region.processDoubleClick();
+			}
+		};
 	}
 
 	/*
@@ -66,6 +75,7 @@ public class ProgressAnimationItem extends AnimationItem {
 		super.animationDone();
 		if(bar.isDisposed())
 			return;
+		
 		bar.done();
 	}
 
@@ -79,6 +89,10 @@ public class ProgressAnimationItem extends AnimationItem {
 		if(bar.isDisposed())
 			return;
 		bar.beginAnimatedTask();
+		if(!addedListener){
+			bar.getControl().addMouseListener(mouseListener);
+			addedListener = true;
+		}
 	}
 
 

@@ -398,9 +398,14 @@ public class ProgressManager extends ProgressProvider implements
                             .getPreferenceStore()
                             .getBoolean(
                                     IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
-                    if (inDialog)
-                            new ProgressMonitorFocusJobDialog(null, event
-                                    .getJob()).scheduleOpen();
+                    if (inDialog){
+                    	
+                    	ProgressMonitorFocusJobDialog dialog =
+                    		new ProgressMonitorFocusJobDialog(null);
+                    	dialog.setJobAndOpen(event.getJob(),false);
+                    	return;
+                    }
+                           
                 }
 
             }
