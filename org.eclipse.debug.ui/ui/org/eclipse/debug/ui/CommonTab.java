@@ -594,16 +594,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		setErrorMessage(null);
 		
+		return validateLocalShared();
+	}
+	
+	private boolean validateLocalShared() {
 		if (isShared()) {
 			String path = fSharedLocationText.getText().trim();
 			IContainer container = getContainer(path);
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
-				setErrorMessage("Invalid location.");
+				setErrorMessage("Invalid shared configuration location.");
 				return false;
 			}
 		}
 		
-		return true;
+		return true;		
 	}
 
 	/**
@@ -678,6 +682,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	public String getName() {
 		return "&Common";
+	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#canSave()
+	 */
+	public boolean canSave() {
+		return validateLocalShared();
 	}
 
 }

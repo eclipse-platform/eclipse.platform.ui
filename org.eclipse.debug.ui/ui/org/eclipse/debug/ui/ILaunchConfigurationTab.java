@@ -156,6 +156,22 @@ public interface ILaunchConfigurationTab {
 	public boolean isValid();	
 	
 	/**
+	 * Returns whether this tab is in a state that allows the launch configuration whose values
+	 * this tab is showing to be saved.  This differs from <code>isValid()</code> in that <code>canSave()</code>
+	 * determines if this tab prevents the current launch configuration from being saved, whereas
+	 * <code>isValid()</code> determines if this tab prevents the current launch configuration from
+	 * being launched.
+	 * 
+	 * <p>
+	 * This information is typically used by the launch configuration
+	 * dialog to decide when it is okay to save a launch configuration.
+	 * </p>
+	 * 
+	 * @return whether this tab is in a state that allows the current launch configuration to be saved
+	 */
+	public boolean canSave();
+	
+	/**
 	 * Sets the launch configuration dialog that hosts this tab.
 	 * This is the first method called on a launch configuration
 	 * tab, and marks the beginning of this tab's lifecycle.

@@ -239,6 +239,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected static final String LAUNCH_STATUS_OK_MESSAGE = "Ready to launch";
 	protected static final String LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE 
 										= "Select a configuration to launch or a config type to create a new configuration";
+
+	private String fCantSaveErrorMessage;
 	
 	/**
 	 * Constructs a new launch configuration dialog on the given
@@ -1538,8 +1540,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected boolean showDiscardChangesDialog() {
 		StringBuffer buffer = new StringBuffer("The configuration \"");
-		buffer.append(getLaunchConfiguration().getName());
-		buffer.append("\" has unsaved changes that CANNOT be saved.  Do you wish to discard them?");
+		buffer.append(getNameTextWidget().getText());
+		buffer.append("\" has unsaved changes that CANNOT be saved because of the following error:\n");
+		buffer.append(fCantSaveErrorMessage);
+		buffer.append("\nDo you wish to discard changes?");
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 "Discard changes?",
 												 null,
@@ -1563,12 +1567,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * has no specified location would cause this method to return <code>false</code>.
 	 */
 	protected boolean canSaveConfig() {
+		
+		fCantSaveErrorMessage = null;
+
+		// First make sure that name doesn't prevent saving the config
 		try {
 			verifyName();
-			return true;
 		} catch (CoreException ce) {
+			fCantSaveErrorMessage = ce.getStatus().getMessage();
 			return false;
 		}
+		
+		// Next, make sure none of the tabs object to saving the config
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (tabs == null) {
+			fCantSaveErrorMessage = "No tabs found";
+			return false;
+		}
+		for (int i = 0; i < tabs.length; i++) {
+			if (!tabs[i].canSave()) {
+				fCantSaveErrorMessage = tabs[i].getErrorMessage();
+				return false;
+			}
+		}
+		return true;		
 	}
 
 	/**

@@ -180,6 +180,13 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	protected Button createPushButton(Composite parent, String label, Image image) {
 		return SWTUtil.createPushButton(parent, label, image);	
 	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#canSave()
+	 */
+	public boolean canSave() {
+		return true;
+	}
 		
 }
 
