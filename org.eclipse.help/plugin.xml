@@ -18,8 +18,6 @@
    </requires>
 
 
-<!-- Extension points -->
-   <extension-point id="app-server" name="%app_server"/>
    <extension-point id="contexts" name="%contexts_extention_point_name"/>
    <extension-point id="luceneAnalyzer" name="%lucene_analyzer"/>
    <extension-point id="prebuiltIndex" name="%prebuilt_index"/>
