@@ -63,38 +63,6 @@ public class Tool {
 		}
 	}
 
-	private static IProject createProject( String name )
-	{
-		return null;
-	}
-	
-	private static IFolder createFolder( String name )
-	{
-		return null;
-	}
-	
-	public static IFile createFile(String name) throws Throwable {
-		File localFile = new File(name);
-
-		localFile.createNewFile();
-		System.out.println(localFile.getPath());
-		FileInputStream is = new FileInputStream(localFile);
-
-		IFile coreFile =
-			ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectName).getFile(name);
-		coreFile.create(is, false, null);
-
-		return coreFile;
-	}
-
-	public static String pickKnownFileName() {
-		return KnownFileName[randomBox.nextInt(KnownFileName.length)];
-	}
-
-	public static String pickUnknownFileName() {
-		return UnknownFileName[randomBox.nextInt(UnknownFileName.length)];
-	}
-
 	public static boolean equals(Object[] one, Object[] two) {
 		if (one.length != two.length)
 			return false;
