@@ -595,24 +595,37 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 			side = Geometry.getClosestSide(targetBounds, position);
 		}
 		
+		// A "pointless drop" would be one that will put the dragged object back where it started.
+		// Note that it should be perfectly valid to drag an object back to where it came from -- however,
+		// the drop should be ignored.
+		
+		boolean pointlessDrop = false;
+
+		if (sourcePart == targetPart) {
+			pointlessDrop = true;
+		}
+		
+		ILayoutContainer sourceContainer = sourcePart.getContainer();
+		if ((sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
+			pointlessDrop = true;
+		}
+		
+		if (side == SWT.CENTER && sourcePart.getContainer() == targetPart) {
+			pointlessDrop = true;
+		}
+		
+		if (pointlessDrop) {
+			side = SWT.CENTER;
+		}
+		
 		final int finalSide = side;
+		final boolean finalPointlessDrop = pointlessDrop;
 		
 		return new AbstractDropTarget() {
 			public void drop() {
-				if (sourcePart == targetPart) {
-					return;
+				if (!finalPointlessDrop) {
+					dropObject(sourcePart, targetPart, finalSide);
 				}
-				
-				ILayoutContainer sourceContainer = sourcePart.getContainer();
-				if ((sourceContainer == targetPart) && sourceContainer.getChildren().length == 1) {
-					return;
-				}
-				
-				if (finalSide == SWT.CENTER && sourcePart.getContainer() == targetPart) {
-					return;
-				}
-				 
-				dropObject(sourcePart, targetPart, finalSide);
 			}
 
 			public Cursor getCursor() {
@@ -739,6 +752,11 @@ protected void derefPart(LayoutPart sourcePart) {
 		}
 	}
 }
+
+protected int getVisibleChildrenCount(ILayoutContainer container) {
+	return container.getChildren().length;
+}
+
 protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
 	return 0.5f;
 }

@@ -239,6 +239,7 @@ protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart
 	tabFolder.setSelection(visiblePart);
 }
 
+
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
  */
@@ -250,5 +251,12 @@ protected LayoutPart getVisiblePart(ILayoutContainer container) {
  */
 protected void derefPart(LayoutPart sourcePart) {
 	page.getActivePerspective().getPresentation().derefPart(sourcePart);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#getVisibleChildrenCount(org.eclipse.ui.internal.ILayoutContainer)
+ */
+protected int getVisibleChildrenCount(ILayoutContainer container) {
+	return ((PartTabFolder)container).getItemCount();
 }
 }
