@@ -34,7 +34,7 @@ public class CompareWithRemoteAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		String title = Policy.bind("CompareWithStreamAction.compare");
+		String title = Policy.bind("CompareWithRemoteAction.compare");
 		try {
 			IResource[] resources = getSelectedResources();
 			if (resources.length != 1) return;

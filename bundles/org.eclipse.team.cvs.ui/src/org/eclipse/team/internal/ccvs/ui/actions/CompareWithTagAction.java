@@ -34,7 +34,7 @@ public class CompareWithTagAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		String title = Policy.bind("CompareWithVersionAction.compare");
+		String title = Policy.bind("CompareWithTagAction.compare");
 		try {
 			IResource[] resources = getSelectedResources();
 			if (resources.length != 1) return;

@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -30,13 +31,14 @@ public class ReplaceWithTagAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		String title = Policy.bind("CompareWithVersionAction.compare");
+		String title = Policy.bind("ReplaceWithTagAction.compare");
 		try {
 			IResource[] resources = getSelectedResources();
 			if (resources.length != 1) return;
 			IResource resource = resources[0];
 
 			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
+			// To do: check for local changes and warn of overwriting.
 			LocalResource cvsResource = null;
 			if (resources[0].getType()==IResource.FILE) {
 				cvsResource = new LocalFile(resource.getLocation().toFile());
