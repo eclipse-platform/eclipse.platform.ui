@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.runtime;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import java.util.*;
 
@@ -15,6 +15,27 @@ public class Policy {
 	static {
 		relocalize();
 	}
+/**
+ * Lookup the message with the given ID in this catalog 
+ */
+public static String bind(String id) {
+	return bind(id, (String[])null);
+}
+/**
+ * Lookup the message with the given ID in this catalog and bind its
+ * substitution locations with the given string.
+ */
+public static String bind(String id, String binding) {
+	return bind(id, new String[] {binding});
+}
+/**
+ * Lookup the message with the given ID in this catalog and bind its
+ * substitution locations with the given strings.
+ */
+public static String bind(String id, String binding1, String binding2) {
+	return bind(id, new String[] {binding1, binding2});
+}
+
 /**
  * Lookup the message with the given ID in this catalog and bind its
  * substitution locations with the given string values.
