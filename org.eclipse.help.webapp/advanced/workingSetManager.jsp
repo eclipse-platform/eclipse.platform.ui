@@ -41,7 +41,8 @@ TD, TR {
 #workingSetContainer {
 	background:Window;
 	border:1px solid ThreeDShadow;
-	margin:0px 10px;
+	margin:0px 5px;
+	padding:5px;
 	overflow:auto;
 }
 
