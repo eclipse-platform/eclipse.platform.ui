@@ -111,11 +111,12 @@ public class TagRefreshButtonArea extends DialogArea {
 	}
     
     private void setBusy(final boolean busy) {
-    	shell.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				refreshButton.setEnabled(! busy);
-			}
-		});
+    	if (shell != null && !shell.isDisposed())
+			shell.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					refreshButton.setEnabled(!busy);
+				}
+			});
     }
 	
 	/*

@@ -298,17 +298,19 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
     
     private void setBusy(final boolean busy) {
 		final Shell shell = getShell();
-		shell.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				Cursor cursor = null;
-				if (busy) {
-					if (appBusyCursor == null)
-						appBusyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_APPSTARTING);
-					cursor = appBusyCursor;
+		if (shell != null && !shell.isDisposed()) {
+			shell.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					Cursor cursor = null;
+					if (busy) {
+						if (appBusyCursor == null)
+							appBusyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_APPSTARTING);
+						cursor = appBusyCursor;
+					}
+					shell.setCursor(cursor);
 				}
-				shell.setCursor(cursor);
-			}
-		});
+			});
+		}
 	}
         
 	public boolean close() {
