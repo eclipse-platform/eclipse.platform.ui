@@ -66,6 +66,17 @@ public class FastViewPane {
 	private int size;
 	private Sash sash;
 	
+	// Traverse listener -- listens to ESC and closes the active fastview 
+	private Listener escapeListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.character == SWT.ESC) {
+				if (currentPane != null) {
+					currentPane.getPage().hideFastView();
+				}
+			}
+		}
+	};
+	
 	// Counts how many times we've scheduled a redraw... use this to avoid resizing
 	// the widgetry when we're getting resize requests faster than we can process them.
 	// This is needed for GTK, which resizes slowly (bug 54517)
@@ -80,7 +91,7 @@ public class FastViewPane {
 			ViewPane pane = currentPane;
 			switch(newState) {
 				case IStackPresentationSite.STATE_MINIMIZED: 
-					currentPane.getPage().toggleFastView(null);//currentPane.getViewReference());
+					currentPane.getPage().hideFastView();
 					break;
 				case IStackPresentationSite.STATE_MAXIMIZED:
 					sash.setVisible(false);
@@ -360,6 +371,8 @@ public class FastViewPane {
 			ctrl = pane.getControl();			
 		}
 
+		ctrl.addListener(SWT.Traverse, escapeListener);
+		
 		// Temporarily use the same appearance as docked views .. eventually, fastviews will
 		// be independently pluggable.
 		AbstractPresentationFactory factory = ((WorkbenchWindow) pane.getWorkbenchWindow())
@@ -428,26 +441,7 @@ public class FastViewPane {
 	 * of the view itself.
 	 */
 	public void dispose() {
-		if (clientComposite != null) {
-			Display display = clientComposite.getDisplay();
-			
-			display.removeFilter(SWT.MouseDown, mouseDownListener);
-		}
-		
-		if (sash != null) {
-			sash.dispose();
-		}
-				
-		StackPresentation presentation = getPresentation();
-		
-		if (presentation != null) {
-			presentation.getSystemMenuManager().remove(systemMenuContribution);
-			// TODO spec says not to call this directly
-			systemMenuContribution.dispose();
-			systemMenuContribution = null;
-		}
-		
-		site.dispose();
+		hideView();
 	}
 
 	/**
@@ -513,6 +507,8 @@ public class FastViewPane {
 		// Hide the right side sash first
 		//hideFastViewSash();
 		Control ctrl = currentPane.getControl();
+		
+		ctrl.removeListener(SWT.Traverse, escapeListener);
 		
 		// Hide it completely.
 		getPresentation().setVisible(false);

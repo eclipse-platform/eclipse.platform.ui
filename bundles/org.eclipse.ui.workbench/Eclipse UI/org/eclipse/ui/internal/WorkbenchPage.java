@@ -2922,6 +2922,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				return false;
 		}
 	}
+	
+	/**
+	 * Hides the active fast view. Has no effect if there is no fast view active.
+	 */
+	public void hideFastView() {
+		Perspective persp = getActivePerspective();
+		if (persp != null) {
+			IViewReference ref = persp.getActiveFastView();
+			if (ref != null) {
+				toggleFastView(ref);
+			}
+		}
+	}
+	
 	/**
 	 * Toggles the visibility of a fast view. If the view is active it is
 	 * deactivated. Otherwise, it is activated.
