@@ -402,6 +402,8 @@ private CTabItem createTab(EditorPane editorPane, int index) {
 	mapTabToEditor.put(tab, editorPane);
 	enableTabDrag(editorPane, tab);
 	updateEditorTab((IEditorReference)editorPane.getPartReference());
+	if (tabFolder.getItemCount() == 1)
+		pullDownBar.setVisible(true);
 	return tab;
 }
 private void disableTabDrag(LayoutPart part) {
