@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
@@ -43,8 +42,7 @@ import org.eclipse.ui.intro.*;
  * implmenetation.</li>
  * <ul>
  */
-public class IntroPartPresentation extends AbstractIntroElement implements
-        IRegistryChangeListener {
+public class IntroPartPresentation extends AbstractIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
     private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
@@ -162,9 +160,6 @@ public class IntroPartPresentation extends AbstractIntroElement implements
         // there is no valid implementation.
         this.introPart = introPart;
         this.memento = memento;
-        // add the registry listerner for dynamic awarness.
-        Platform.getExtensionRegistry().addRegistryChangeListener(this,
-                IIntroConstants.PLUGIN_ID);
     }
 
     /**
@@ -421,7 +416,6 @@ public class IntroPartPresentation extends AbstractIntroElement implements
     public void dispose() {
         if (implementation != null)
             implementation.dispose();
-        Platform.getExtensionRegistry().removeRegistryChangeListener(this);
     }
 
     /**
@@ -431,10 +425,8 @@ public class IntroPartPresentation extends AbstractIntroElement implements
      * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
     public void registryChanged(IRegistryChangeEvent event) {
-        ExtensionPointManager.getInst().clear();
         if (implementation != null)
             implementation.registryChanged(event);
-
     }
 
     /**

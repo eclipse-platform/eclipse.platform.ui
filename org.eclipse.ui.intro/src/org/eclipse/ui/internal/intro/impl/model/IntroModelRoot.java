@@ -54,6 +54,10 @@ import org.w3c.dom.*;
  * be resolved correctly.</li>
  * <li>unresolved includes are left as children of the parent container.</li>
  * <li>Unresolved extensions are left as children of the targetted model.</li>
+ * <li>For dynamic awarness, the model is nulled and then reloaded. However, we
+ * need to preserve the presentation instance since the UI is already loaded.
+ * This is done by reloading the model, and directly resetting the presentation
+ * to what it was.</li>
  * </ol>
  */
 public class IntroModelRoot extends AbstractIntroContainer {
@@ -152,6 +156,19 @@ public class IntroModelRoot extends AbstractIntroContainer {
         setModelState(true, true, getHomePage().isDynamic());
     }
 
+    /**
+     * Sets the presentation to the given presentation. The model always has the
+     * presentation as the first child, so use that fact. This method is used
+     * for dynamic awarness to enable replacing the new presentation with the
+     * existing one after a model refresh.
+     * 
+     * @param presentation
+     */
+    public void setPresentation(IntroPartPresentation presentation) {
+        this.introPartPresentation = presentation;
+        presentation.setParent(this);
+        children.set(0, presentation);
+    }
 
     /**
      * Resolve each include in this container's children.
@@ -449,12 +466,19 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * id, the message is logged, and the model retains its old current page.
      * 
      * @param currentPageId
-     *            The currentPageId to set.
+     *            The currentPageId to set. *
+     * @param fireEvent
+     *            flag to indicate if event notification is needed.
      * @return true if the model has a page with the passed id, false otherwise.
      *         If the method fails, the current page remains the same as the
      *         last state.
      */
-    public boolean setCurrentPageId(String pageId) {
+    public boolean setCurrentPageId(String pageId, boolean fireEvent) {
+        if (pageId == currentPageId)
+            // setting to the same page does nothing. Return true because we did
+            // not actually fail. just a no op.
+            return true;
+
         AbstractIntroPage page = (AbstractIntroPage) findChild(pageId, PAGE);
         if (page == null) {
             // not a page. Test for root page.
@@ -466,8 +490,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
         }
 
         currentPageId = pageId;
-        firePropertyChange(CURRENT_PAGE_PROPERTY_ID);
+        if (fireEvent)
+            firePropertyChange(CURRENT_PAGE_PROPERTY_ID);
         return true;
+    }
+
+    public boolean setCurrentPageId(String pageId) {
+        return setCurrentPageId(pageId, true);
     }
 
     public void addPropertyListener(IPropertyListener l) {
@@ -483,16 +512,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public void firePropertyChange(final int propertyId) {
         Object[] array = propChangeListeners.getListeners();
-        Log.info("entering fire Property change.");
         for (int i = 0; i < array.length; i++) {
-            Log.info("entering loop in Property change.");
             final IPropertyListener l = (IPropertyListener) array[i];
             Platform.run(new SafeRunnable() {
 
                 public void run() {
-                    Log.info("entering run Property change.");
                     l.propertyChanged(this, propertyId);
-                    Log.info("leaving Property change.");
                 }
 
                 public void handleException(Throwable e) {

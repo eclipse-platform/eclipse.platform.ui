@@ -46,11 +46,11 @@ public class BrowserIntroPartImplementation extends
         public void run() {
             // Home is URL of root page in static case, and root page in
             // dynamic.
-            IntroHomePage rootPage = getModelRoot().getHomePage();
+            IntroHomePage rootPage = getModel().getHomePage();
             String location = null;
-            if (getModelRoot().isDynamic()) {
+            if (getModel().isDynamic()) {
                 location = rootPage.getId();
-                getModelRoot().setCurrentPageId(location);
+                getModel().setCurrentPageId(location);
             } else {
                 location = rootPage.getUrl();
                 browser.setUrl(location);
@@ -60,7 +60,7 @@ public class BrowserIntroPartImplementation extends
     };
 
     protected void updateNavigationActionsState() {
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             forwardAction.setEnabled(canNavigateForward());
             backAction.setEnabled(canNavigateBackward());
             return;
@@ -111,13 +111,13 @@ public class BrowserIntroPartImplementation extends
 
         addToolBarActions();
 
-        if (!getModelRoot().hasValidConfig()) {
+        if (!getModel().hasValidConfig()) {
             browser.setText(IntroPlugin.getString("Browser.invalidConfig")); //$NON-NLS-1$
             return;
         }
 
         // root page is what decides if the model is dynamic or not.
-        if (getModelRoot().isDynamic())
+        if (getModel().isDynamic())
             handleDynamicIntro();
         else
             handleStaticIntro();
@@ -127,7 +127,7 @@ public class BrowserIntroPartImplementation extends
 
     private void handleDynamicIntro() {
 
-        IntroHomePage homePage = getModelRoot().getHomePage();
+        IntroHomePage homePage = getModel().getHomePage();
         // check cache state.
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null) {
@@ -143,8 +143,8 @@ public class BrowserIntroPartImplementation extends
             } else {
                 // Generate HTML for the cached page, and set it
                 // on the browser.
-                getModelRoot().setCurrentPageId(cachedPage);
-                generateDynamicContentForPage(getModelRoot().getCurrentPage());
+                getModel().setCurrentPageId(cachedPage);
+                generateDynamicContentForPage(getModel().getCurrentPage());
             }
             updateHistory(cachedPage);
 
@@ -157,7 +157,7 @@ public class BrowserIntroPartImplementation extends
 
         // Add this presentation as a listener to model
         // only in dynamic case, for now.
-        getModelRoot().addPropertyListener(this);
+        getModel().addPropertyListener(this);
 
         // REVISIT: update the history here. The design of the history
         // navigation is that it has to be updated independant of the
@@ -173,7 +173,7 @@ public class BrowserIntroPartImplementation extends
         String url = getCachedCurrentPage();
         if (!isURL(url))
             // no cached state, or invalid state.
-            url = getModelRoot().getHomePage().getUrl();
+            url = getModel().getHomePage().getUrl();
 
         if (url == null) {
             // We have no content to display. log an error
@@ -267,11 +267,11 @@ public class BrowserIntroPartImplementation extends
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-            String pageId = getModelRoot().getCurrentPageId();
+            String pageId = getModel().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
                 // page ID was not set properly. exit.
                 return;
-            generateDynamicContentForPage(getModelRoot().getCurrentPage());
+            generateDynamicContentForPage(getModel().getCurrentPage());
         }
     }
 
@@ -316,7 +316,7 @@ public class BrowserIntroPartImplementation extends
      */
     public boolean navigateBackward() {
         boolean success = false;
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
             if (canNavigateBackward()) {
                 navigateHistoryBackward();
@@ -325,8 +325,7 @@ public class BrowserIntroPartImplementation extends
                 } else
                     // we need to regen HTML. Set current page, and this
                     // will triger regen.
-                    success = getModelRoot().setCurrentPageId(
-                            getCurrentLocation());
+                    success = getModel().setCurrentPageId(getCurrentLocation());
             } else
                 success = false;
         } else
@@ -345,7 +344,7 @@ public class BrowserIntroPartImplementation extends
      */
     public boolean navigateForward() {
         boolean success = false;
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
             if (canNavigateForward()) {
                 navigateHistoryForward();
@@ -354,8 +353,7 @@ public class BrowserIntroPartImplementation extends
                 } else
                     // we need to regen HTML. Set current page, and this
                     // will triger regen.
-                    success = getModelRoot().setCurrentPageId(
-                            getCurrentLocation());
+                    success = getModel().setCurrentPageId(getCurrentLocation());
 
             } else
                 success = false;
@@ -374,12 +372,13 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
     protected void handleRegistryChanged(IRegistryChangeEvent event) {
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             // null generator first.
             htmlGenerator = null;
-            //  Add this presentation as a listener to model
-            // only in dynamic case, for now.
-            getModelRoot().addPropertyListener(this);
+            // Add this presentation as a listener to mode only in dynamic case.
+            getModel().addPropertyListener(this);
+            getModel().firePropertyChange(
+                    IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);
         }
     }
 

@@ -90,7 +90,7 @@ public abstract class AbstractIntroPartImplementation {
                     getIntroPart().getIntroSite().getShell(),
                     new IntroModelLabelProvider(),
                     new IntroModelContentProvider());
-            treeViewer.setInput(getModelRoot());
+            treeViewer.setInput(getModel());
             treeViewer.open();
         }
     };
@@ -120,7 +120,7 @@ public abstract class AbstractIntroPartImplementation {
     /**
      * @return
      */
-    public IntroModelRoot getModelRoot() {
+    public IntroModelRoot getModel() {
         return IntroPlugin.getDefault().getIntroModelRoot();
     }
 
@@ -311,7 +311,7 @@ public abstract class AbstractIntroPartImplementation {
      * @param memento
      */
     protected void saveCurrentPage(IMemento memento) {
-        IntroModelRoot model = getModelRoot();
+        IntroModelRoot model = getModel();
 
         if (memento == null || model == null)
             return;
@@ -361,9 +361,6 @@ public abstract class AbstractIntroPartImplementation {
         navigationLocation = 0;
         // give implementation a chance to react to change.
         handleRegistryChanged(event);
-        getModelRoot().firePropertyChange(
-                IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);
-        Log.info("fired current page event");
     }
 
     /*

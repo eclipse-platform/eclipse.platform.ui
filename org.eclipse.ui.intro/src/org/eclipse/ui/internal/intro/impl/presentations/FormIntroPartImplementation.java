@@ -21,6 +21,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.swt.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.config.*;
@@ -34,7 +35,7 @@ public class FormIntroPartImplementation extends
     private FormToolkit toolkit = null;
     private ScrolledPageBook mainPageBook = null;
     // cache model instance for reuse.
-    private IntroModelRoot model = getModelRoot();
+    private IntroModelRoot model = getModel();
     private SharedStyleManager sharedStyleManager;
 
     static {
@@ -61,12 +62,12 @@ public class FormIntroPartImplementation extends
         }
 
         public void run() {
-            IntroHomePage rootPage = getModelRoot().getHomePage();
-            if (getModelRoot().isDynamic()) {
+            IntroHomePage rootPage = getModel().getHomePage();
+            if (getModel().isDynamic()) {
                 CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                         .getIntro();
                 currentIntroPart.getControl().setRedraw(false);
-                getModelRoot().setCurrentPageId(rootPage.getId());
+                getModel().setCurrentPageId(rootPage.getId());
                 updateHistory(rootPage.getId());
                 currentIntroPart.getControl().setRedraw(true);
             }
@@ -75,7 +76,7 @@ public class FormIntroPartImplementation extends
 
 
     protected void updateNavigationActionsState() {
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             forwardAction.setEnabled(canNavigateForward());
             backAction.setEnabled(canNavigateBackward());
             return;
@@ -85,12 +86,12 @@ public class FormIntroPartImplementation extends
 
     public FormIntroPartImplementation() {
         // Shared style manager
-        sharedStyleManager = new SharedStyleManager(getModelRoot());
+        sharedStyleManager = new SharedStyleManager(getModel());
     }
 
     public void createPartControl(Composite container) {
 
-        if (getModelRoot().isDynamic())
+        if (getModel().isDynamic())
             handleDynamicIntro(container);
         else {
             // create just a dummy composite for now, to enable...
@@ -105,7 +106,7 @@ public class FormIntroPartImplementation extends
      * of the root page.
      */
     private void handleStaticIntro() {
-        String rootPageUrl = getModelRoot().getHomePage().getUrl();
+        String rootPageUrl = getModel().getHomePage().getUrl();
         Util.openBrowser(rootPageUrl);
     }
 
@@ -142,7 +143,7 @@ public class FormIntroPartImplementation extends
 
         mainPageBook = createMainPageBook(toolkit, mainForm);
         // Add this presentation as a listener to model.
-        getModelRoot().addPropertyListener(this);
+        getModel().addPropertyListener(this);
 
         // Clear memory. No need for style manager any more.
         sharedStyleManager = null;
@@ -186,7 +187,7 @@ public class FormIntroPartImplementation extends
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null & !isURL(cachedPage))
             model.setCurrentPageId(cachedPage);
-        AbstractIntroPage pageToShow = getModelRoot().getCurrentPage();
+        AbstractIntroPage pageToShow = getModel().getCurrentPage();
 
         if (pageToShow != null) {
             if (pageBook.hasPage(pageToShow.getId()))
@@ -221,26 +222,17 @@ public class FormIntroPartImplementation extends
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-            try {
-                Log.info("entering Property change.");
-                String pageId = getModelRoot().getCurrentPageId();
-                Log.info("current page id is: " + pageId);
-                if (pageId == null | pageId.equals("")) //$NON-NLS-1$
-                    // If page ID was not set properly. exit.
-                    return;
+            String pageId = getModel().getCurrentPageId();
+            if (pageId == null | pageId.equals("")) //$NON-NLS-1$
+                // If page ID was not set properly. exit.
+                return;
 
-                // if we are showing a regular intro page, or if the Home Page
-                // has a
-                // regular page layout, set the page id to the static PageForm
-                // id.
-                if (!mainPageBook.hasPage(pageId))
-                    pageId = PageForm.PAGE_FORM_ID;
-                Log.info("before show page");
-                mainPageBook.showPage(pageId);
-                Log.info("after show page. ");
-            } catch (Exception e) {
-                Log.error("Property change failed.", e);
-            }
+            // if we are showing a regular intro page, or if the Home Page
+            // has a regular page layout, set the page id to the static PageForm
+            // id.
+            if (!mainPageBook.hasPage(pageId))
+                pageId = PageForm.PAGE_FORM_ID;
+            mainPageBook.showPage(pageId);
         }
     }
 
@@ -285,7 +277,7 @@ public class FormIntroPartImplementation extends
      */
     public boolean navigateBackward() {
         boolean success = false;
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
             if (canNavigateBackward()) {
                 navigateHistoryBackward();
@@ -296,8 +288,7 @@ public class FormIntroPartImplementation extends
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                             .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
-                    success = getModelRoot().setCurrentPageId(
-                            getCurrentLocation());
+                    success = getModel().setCurrentPageId(getCurrentLocation());
                     currentIntroPart.getControl().setRedraw(true);
                 }
             }
@@ -316,7 +307,7 @@ public class FormIntroPartImplementation extends
     public boolean navigateForward() {
         boolean success = false;
 
-        if (getModelRoot().isDynamic()) {
+        if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
             if (canNavigateForward()) {
                 navigateHistoryForward();
@@ -327,8 +318,7 @@ public class FormIntroPartImplementation extends
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                             .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
-                    success = getModelRoot().setCurrentPageId(
-                            getCurrentLocation());
+                    success = getModel().setCurrentPageId(getCurrentLocation());
                     currentIntroPart.getControl().setRedraw(true);
                 }
             }
@@ -344,7 +334,14 @@ public class FormIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
     protected void handleRegistryChanged(IRegistryChangeEvent event) {
-        // TODO Auto-generated method stub
+        if (getModel().isDynamic()) {
+            IntroPlugin.closeIntro();
+            String currentPageId = model.getCurrentPageId();
+            IntroModelRoot model = ExtensionPointManager.getInst()
+                    .getCurrentModel();
+            model.setCurrentPageId(currentPageId, false);
+            IntroPlugin.showIntro(false);
+        }
 
     }
 

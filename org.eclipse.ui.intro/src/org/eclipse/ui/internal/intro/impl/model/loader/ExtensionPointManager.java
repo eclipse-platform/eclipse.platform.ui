@@ -105,7 +105,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
         currentModel = null;
         sharedConfigExtensionsManager = null;
         introModels.clear();
-        Log.info("Cleared Intro model");
+        Log.info("Cleared Intro model"); //$NON-NLS-1$
     }
 
 

@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
@@ -58,7 +57,6 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
         if (this.isOfType(AbstractIntroElement.MODEL_ROOT))
             // root element is not filtered.
             return false;
-        Log.info("checkFilter: parent: " + getParentPage());
         IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
         return root.getPresentation().getImplementationKind().equals(
                 filteredFrom) ? true : false;

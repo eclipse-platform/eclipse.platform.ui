@@ -54,13 +54,13 @@ import org.eclipse.ui.part.*;
  * @since 3.0
  */
 public final class CustomizableIntroPart extends IntroPart implements
-        IIntroConstants {
+        IIntroConstants, IRegistryChangeListener {
 
-    private IntroModelRoot model;
     private IntroPartPresentation presentation;
     private StandbyPart standbyPart;
     private Composite container;
     private IMemento memento;
+    private IntroModelRoot model;
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
@@ -93,6 +93,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     }
 
 
+
     /*
      * (non-Javadoc)
      * 
@@ -120,6 +121,9 @@ public final class CustomizableIntroPart extends IntroPart implements
                         MEMENTO_PRESENTATION_TAG));
             // standby part is not created here for performance.
             this.memento = memento;
+            // add the registry listerner for dynamic awarness.
+            Platform.getExtensionRegistry().addRegistryChangeListener(this,
+                    IIntroConstants.PLUGIN_ID);
         }
 
         if (model == null || !model.hasValidConfig())
@@ -242,6 +246,8 @@ public final class CustomizableIntroPart extends IntroPart implements
         // clean platform adapter.
         Platform.getAdapterManager().unregisterAdapters(factory,
                 CustomizableIntroPart.class);
+        if (model != null && model.hasValidConfig())
+            Platform.getExtensionRegistry().removeRegistryChangeListener(this);
     }
 
     /**
@@ -287,7 +293,36 @@ public final class CustomizableIntroPart extends IntroPart implements
         return memento.getChild(key);
     }
 
+    /**
+     * Support dynamic awarness.
+     * 
+     * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+     */
+    public void registryChanged(final IRegistryChangeEvent event) {
+        // Clear cached models first, then update UI by delegating to
+        // implementation. wrap in synchExec because notification is
+        // asynchronous. The design here is that the notification is centralized
+        // here, then this event propagates and each receiving class reacts
+        // accordingly.
+        Display.getDefault().syncExec(new Runnable() {
 
+            public void run() {
+                String currentPageId = model.getCurrentPageId();
+                // clear model
+                ExtensionPointManager.getInst().clear();
+                // refresh to new model.
+                model = ExtensionPointManager.getInst().getCurrentModel();
+                // reuse existing presentation, since we just nulled it.
+                model.setPresentation(getPresentation());
+                // keep same page on refresh. No need for notification here.
+                model.setCurrentPageId(currentPageId, false);
+                if (presentation != null)
+                    presentation.registryChanged(event);
+
+            }
+        });
+
+    }
 
 }
 
