@@ -217,6 +217,18 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 		return singleton;
 	}
+	
+	/**
+	 * monitor is done. Clear the receiver.
+	 * @param monitor. The monitor that is now cleared.
+	 */
+	public static void clear(IProgressMonitor monitor) {
+		if(singleton == null)
+			return;
+		singleton.close(monitor);
+		
+	}
+	
 	/**
 	 * Creates a progress monitor dialog under the given shell. It also sets the
 	 * dialog's\ message. <code>open</code> is non-blocking.
@@ -419,4 +431,5 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	void setBlockedTaskName(String taskName) {
 		this.blockedTaskName = taskName;
 	}
+	
 }

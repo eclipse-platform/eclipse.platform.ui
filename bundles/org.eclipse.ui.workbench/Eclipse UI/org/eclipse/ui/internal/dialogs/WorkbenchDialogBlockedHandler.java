@@ -19,8 +19,8 @@ import org.eclipse.ui.internal.progress.BlockedJobsDialog;
  * handler for the workbench.
  */
 public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
-	BlockedJobsDialog blockedDialog;
-	IProgressMonitor currentMonitor;
+	IProgressMonitor outerMonitor;
+	int nestingDepth = 0;
 	/**
 	 * Create a new instance of the receiver.
 	 */
@@ -33,11 +33,17 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	 * @see org.eclipse.jface.dialogs.IDialogBlockedHandler#clearBlocked()
 	 */
 	public void clearBlocked() {
-		if (blockedDialog == null)
+		if (nestingDepth == 0)
 			return;
-		blockedDialog.close(currentMonitor);
-		blockedDialog = null;
-		currentMonitor = null;
+
+		nestingDepth--;
+
+		if (nestingDepth <= 0) {
+			BlockedJobsDialog.clear(outerMonitor);
+			outerMonitor = null;
+			nestingDepth = 0;
+		}
+
 	}
 	/*
 	 * (non-Javadoc)
@@ -50,12 +56,16 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 			IProgressMonitor blockingMonitor, IStatus blockingStatus,
 			String blockedName) {
 
-		currentMonitor = blockingMonitor;
-		//Try to get a name as best as possible
-		if (blockedName == null && parentShell != null)
-			blockedName = parentShell.getText();
-		blockedDialog = BlockedJobsDialog.createBlockedDialog(parentShell,
-				blockingMonitor, blockingStatus, blockedName);
+		nestingDepth++;
+		if (outerMonitor == null) {
+			outerMonitor = blockingMonitor;
+			//Try to get a name as best as possible
+			if (blockedName == null && parentShell != null)
+				blockedName = parentShell.getText();
+			BlockedJobsDialog.createBlockedDialog(parentShell, blockingMonitor,
+					blockingStatus, blockedName);
+		}
+
 	}
 	/*
 	 * (non-Javadoc)
