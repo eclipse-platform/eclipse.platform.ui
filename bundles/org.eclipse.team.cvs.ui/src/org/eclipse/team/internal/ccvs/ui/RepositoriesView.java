@@ -180,7 +180,7 @@ public class RepositoriesView extends ViewPart {
 	 * @see WorkbenchPart#dispose
 	 */
 	public void dispose() {
-		CVSUIPlugin.getPlugin().getRepositoryManager().remoteRepositoryListener(listener);
+		CVSUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(listener);
 	}
 	
 	/**

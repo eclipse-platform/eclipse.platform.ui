@@ -427,7 +427,7 @@ public class RepositoryManager {
 		listeners.add(listener);
 	}
 	
-	public void remoteRepositoryListener(IRepositoryListener listener) {
+	public void removeRepositoryListener(IRepositoryListener listener) {
 		listeners.remove(listener);
 	}
 	
