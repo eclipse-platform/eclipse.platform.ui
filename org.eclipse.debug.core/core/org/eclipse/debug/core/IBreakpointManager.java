@@ -247,6 +247,28 @@ public interface IBreakpointManager {
      * @since 3.1
      */
     public String getTypeName(IBreakpoint breakpoint);
+    
+    /**
+     * Sets the group which breakpoints will be automatically
+     * added to when they're added to this manager. If <code>null</code>,
+     * breakpoints will not be automatically added to any group.
+     * @param group the group to automatically add breakpoints to
+     *  or <code>null</code>
+     * @see IBreakpoint#setGroup(String)
+     * @since 3.1
+     */
+    public void setAutoGroup(String group);
+    
+    /**
+     * Returns the group which breakpoints will be automatically
+     * added to when they're added to this manager or <code>null</code>
+     * if none.
+     * @return the group which breakpoints will be automatically added
+     *  to or <code>null</code>
+     * @see IBreakpoint#getGroup()
+     * @since 3.1
+     */
+    public String getAutoGroup();
 	
 }
 

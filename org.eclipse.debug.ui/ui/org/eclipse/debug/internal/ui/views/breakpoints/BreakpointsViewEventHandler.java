@@ -68,18 +68,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						String autoGroup= fView.getAutoGroup();
-						if (autoGroup != null) {
-						    // Add any new breakpoints to the "default group"
-							for (int i = 0; i < breakpoints.length; i++) {
-								try {
-									breakpoints[i].setGroup(autoGroup);
-								} catch (CoreException e) {
-								}
-							}
-						}
-						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
-						viewer.refresh();
+						fView.getCheckboxViewer().refresh();
 						if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
                         	fView.updateViewerBackground();
                         }

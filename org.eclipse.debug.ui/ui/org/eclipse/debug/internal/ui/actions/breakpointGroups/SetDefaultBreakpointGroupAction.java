@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 
 /**
- * 
+ * Action which prompts the user to set a default breakpoint group.
+ * @see org.eclipse.debug.core.IBreakpointManager#setAutoGroup(String)
  */
 public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
     
@@ -23,7 +26,8 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        String currentGroup= fView.getAutoGroup();
+        IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+        String currentGroup= manager.getAutoGroup();
         if (currentGroup == null) {
             currentGroup= ""; //$NON-NLS-1$
         }
@@ -32,7 +36,7 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
             return;
         }
         String group= dialog.getValue();
-        fView.setAutoGroup(group);
+        manager.setAutoGroup(group);
     }
 
     /* (non-Javadoc)

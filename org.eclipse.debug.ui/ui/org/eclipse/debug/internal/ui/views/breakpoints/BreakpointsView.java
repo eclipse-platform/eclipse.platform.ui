@@ -75,7 +75,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_BREAKPOINT_CONTAINER_FACTORIES= "breakpointContainerFactories"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
-	private String fAutoGroup= null;
 	private BreakpointsViewContentProvider fContentProvider;
 	
 	/**
@@ -281,28 +280,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	    if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 	    	viewer.setGrayed(group, true);
 	    }
-	}
-	
-	/**
-	 * Sets the group that new breakpoints will automatically be
-	 * added to.
-	 * @param group the group name
-	 */
-	public void setAutoGroup(String group) {
-	    if (group != null && group.length() < 1) {
-	        group= null;
-	    }
-		fAutoGroup= group;
-	}
-	
-	/**
-	 * Returns the group that new breakpoints will be automatically
-	 * added to or <code>null</code> if none.
-	 * @return the group that new breakpoints will be automatically
-	 *  added to or <code>null</code> if none
-	 */
-	public String getAutoGroup() {
-		return fAutoGroup;
 	}
 		
 	/**
@@ -662,7 +639,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void setBreakpointContainerFactories(List selectedContainers) {
 		fContentProvider.setBreakpointContainerFactories(selectedContainers);
 		getViewer().refresh();
-		//getCheckboxViewer().expandAll();
 	}
 	
 	public List getBreakpointContainerFactories() {

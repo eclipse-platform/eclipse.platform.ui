@@ -38,6 +38,18 @@ class SelectBreakpointGroupDialog extends InputDialog {
     
     private BreakpointsView fView;
 
+    /**
+     * Creates a new SelectBreakpointGroupDialog.
+     * 
+     * @param view the breakpoints view
+     * @param dialogTitle the dialog title, or <code>null</code> if none
+     * @param dialogMessage the dialog message, or <code>null</code> if none
+     * @param initialValue the initial input value, or <code>null</code> if none
+     *  (equivalent to the empty string)
+     * @param validator an input validator, or <code>null</code> if none
+     * 
+     * @see org.eclipse.jface.dialogs.InputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator)
+     */
     public SelectBreakpointGroupDialog(BreakpointsView view, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
         super(view.getViewSite().getShell(), dialogTitle, dialogMessage, initialValue, validator);
         fView= view;
@@ -53,7 +65,6 @@ class SelectBreakpointGroupDialog extends InputDialog {
 		GridData data= (GridData) button.getLayoutData();
 		data.horizontalAlignment= GridData.BEGINNING;
 		data.verticalAlignment= GridData.BEGINNING;
-		
 
         Object[] children = fView.getTreeContentProvider().getElements(fView.getViewer().getInput());
         final List groups= new ArrayList();

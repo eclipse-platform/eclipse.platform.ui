@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
- * 
+ * An action which clears (sets the null) the default breakpoint group.
+ * @see org.eclipse.debug.core.IBreakpointManager#setAutoGroup(String)
  */
 public class ClearDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
 
@@ -22,7 +24,7 @@ public class ClearDefaultBreakpointGroupAction extends AbstractBreakpointsViewAc
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        fView.setAutoGroup(null);
+        DebugPlugin.getDefault().getBreakpointManager().setAutoGroup(null);
     }
 
     /* (non-Javadoc)

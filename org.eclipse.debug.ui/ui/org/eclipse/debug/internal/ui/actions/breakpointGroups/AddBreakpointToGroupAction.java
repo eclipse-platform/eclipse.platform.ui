@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An action which prompts the user to asign a breakpoint to a group.
+ * @see org.eclipse.debug.core.model.IBreakpoint#setGroup(String)
  */
 public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 	
@@ -40,7 +42,7 @@ public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String initialValue= preferenceStore.getString(IDebugPreferenceConstants.LAST_BREAKPOINT_GROUP);
 		if (initialValue == null || initialValue.length() < 1) {
-		    initialValue= fView.getAutoGroup();
+		    initialValue= DebugPlugin.getDefault().getBreakpointManager().getAutoGroup();
 		}
 		SelectBreakpointGroupDialog dialog = new SelectBreakpointGroupDialog(fView, BreakpointGroupMessages.getString("AddBreakpointToGroupAction.0"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.1"), initialValue, null); //$NON-NLS-1$ //$NON-NLS-2$
 		int dialogResult = dialog.open();
