@@ -11,7 +11,7 @@
 package org.eclipse.update.operations;
 
 /**
- * IConfigFeatureOperation
+ * Operation that enable a feature in a configuration.
  */
 public interface IConfigFeatureOperation extends IFeatureOperation {
 }

@@ -16,10 +16,25 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * IOperation
+ * Base update manager operation.
  */
 public interface IOperation {
+	/**
+	 * Returns true when the operation has been processed.
+	 * @return
+	 */
 	public abstract boolean isProcessed();
+	/**
+	 * Marks the operation as processed.
+	 */
 	public abstract void markProcessed();
+	/**
+	 * Executes operation.
+	 * @param pm Progress monitor for the operation
+	 * @param listener Operation listener
+	 * @return
+	 * @throws CoreException
+	 * @throws InvocationTargetException
+	 */
 	public abstract boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException, InvocationTargetException;
 }

@@ -15,13 +15,37 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 /**
- * IOperation
+ * An operation that applies to a feature, such as install, uninstall, etc.
  */
 public interface IFeatureOperation extends IOperation {
+	/**
+	 * Return the feature to which the operation applies.
+	 * @return
+	 */
 	public abstract IFeature getFeature();
+	/**
+	 * Returns the site in which the operation is applied.
+	 * @return
+	 */
 	public abstract IConfiguredSite getTargetSite();
+	/**
+	 * Returns the installation configuration in which the operation takes place.
+	 * @return
+	 */
 	public abstract IInstallConfiguration getInstallConfiguration();
+	/**
+	 * Returns the previous version of the feature (if any).
+	 * @return
+	 */
 	public abstract IFeature getOldFeature();
+	/**
+	 * Sets the site in which the feature is being operated on.
+	 * @param targetSite
+	 */
 	public abstract void setTargetSite(IConfiguredSite targetSite);
+	/**
+	 * Sets the installation configuration in which the operation takes place.
+	 * @param config
+	 */
 	public abstract void setInstallConfiguration(IInstallConfiguration config);
 }

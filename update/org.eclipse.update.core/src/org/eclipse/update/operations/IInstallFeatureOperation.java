@@ -13,8 +13,12 @@ package org.eclipse.update.operations;
 import org.eclipse.update.core.*;
 
 /**
- * IConfigFeatureOperation
+ * An installation operation.
  */
 public interface IInstallFeatureOperation extends IFeatureOperation {
+	/**
+	 * Returns the list of optional features to be installed.
+	 * @return
+	 */
 	public IFeatureReference[] getOptionalFeatures();
 }

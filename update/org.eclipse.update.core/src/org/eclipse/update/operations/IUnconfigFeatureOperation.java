@@ -12,7 +12,7 @@
 package org.eclipse.update.operations;
 
 /**
- * IUnconfigFeatureOperation
+ * An operation that disables a feature in a site.
  */
 public interface IUnconfigFeatureOperation  extends IFeatureOperation {
 }

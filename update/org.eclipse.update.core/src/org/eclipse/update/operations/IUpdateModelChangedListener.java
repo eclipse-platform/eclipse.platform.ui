@@ -10,8 +10,30 @@
  *******************************************************************************/
 package org.eclipse.update.operations;
 
+/**
+ * Listener for update model changes. 
+ * Usually, when features are installed, configured, etc.
+ * a GUI may need to update its state, so it will have to register
+ * with the OperationsManager for update events.
+ * IUpdateModelChangedListener
+ */
 public interface IUpdateModelChangedListener {
+	/**
+	 * Called after a feature/site/etc. is added
+	 * @param parent
+	 * @param children
+	 */
 	public void objectsAdded(Object parent, Object [] children);
+	/**
+	 * Called after a feature/site/etc. is removed.
+	 * @param parent
+	 * @param children
+	 */
 	public void objectsRemoved(Object parent, Object [] children);
+	/**
+	 * Called when there are changes to a site/feature/etc.
+	 * @param object
+	 * @param property
+	 */
 	public void objectChanged(Object object, String property);
 }

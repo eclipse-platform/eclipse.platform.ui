@@ -12,8 +12,12 @@
 package org.eclipse.update.operations;
 
 /**
- * IOperation
+ * Batch of operations on feature. For example, a batch features installation.
  */
 public interface IBatchOperation  extends IOperation {
+	/**
+	 * Returns the batch operations.
+	 * @return
+	 */
 	public abstract IFeatureOperation[] getOperations();
 }

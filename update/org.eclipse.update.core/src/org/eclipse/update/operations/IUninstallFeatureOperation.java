@@ -12,7 +12,7 @@ package org.eclipse.update.operations;
 
 
 /**
- * IConfigFeatureOperation
+ * A feature uninstall operation.
  */
 public interface IUninstallFeatureOperation extends IFeatureOperation {
 }

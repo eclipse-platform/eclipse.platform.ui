@@ -4,7 +4,7 @@
 package org.eclipse.update.operations;
 
 /**
- * IRevertConfigurationOperation
+ * An operation in which the unconfigured/configured state of a site is toggled.
  */
 public interface IToggleSiteOperation extends IOperation {
 }

@@ -4,7 +4,7 @@
 package org.eclipse.update.operations;
 
 /**
- * IRevertConfigurationOperation
+ * An operation in which the current configuration is replaced by a previous one.
  */
 public interface IRevertConfigurationOperation extends IOperation {
 }

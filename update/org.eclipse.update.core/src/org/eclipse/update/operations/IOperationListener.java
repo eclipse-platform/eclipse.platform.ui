@@ -11,9 +11,21 @@
 package org.eclipse.update.operations;
 
 /**
- * IConfigFeatureOperation
+ * Listener for operation lifecycle.
  */
 public interface IOperationListener {
+	/**
+	 * May be called before an operation starts executing.
+	 * @param operation
+	 * @param data
+	 * @return
+	 */
 	public boolean beforeExecute(IOperation operation, Object data);
+	/**
+	 * May be called after an operation finishes executing.
+	 * @param operation
+	 * @param data
+	 * @return
+	 */
 	public boolean afterExecute(IOperation operation, Object data);
 }
