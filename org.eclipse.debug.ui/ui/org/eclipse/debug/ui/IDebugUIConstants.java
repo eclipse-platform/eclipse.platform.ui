@@ -137,6 +137,8 @@ public interface IDebugUIConstants {
 	 * preference is <code>true</code> and a debug session is launched or suspends,
 	 * and a launch view is not present in the current perspective, a debug perspective
 	 * of the appropriate kind is created (or switched to if already created).
+	 * 
+	 * @deprecated to be deleted, similar function replaced with ATTR_TARGET_DEBUG_PERSPECTIVE
 	 */
 	public static final String PREF_AUTO_SHOW_DEBUG_VIEW= PLUGIN_ID + ".auto_show_debug_view"; //$NON-NLS-1$
 	
@@ -147,6 +149,8 @@ public interface IDebugUIConstants {
 	 * and a program is launched, and a launch view is not present in the current
 	 * perspective, a debug perspective of the appropriate kind is created (or switched
 	 * to if already created).
+	 * 
+	 * @deprecated to be deleted, similar function replaced with ATTR_TARGET_RUN_PERSPECTIVE
 	 */
 	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	 //$NON-NLS-1$
 
