@@ -124,7 +124,8 @@ public class FilteredTree extends Composite {
             public void keyReleased(KeyEvent e) {
             	if(e.keyCode == SWT.ARROW_DOWN)
             		treeViewer.getTree().setFocus();
-                textChanged();
+            	else
+            		textChanged();
             }
         });
         GridData data = new GridData(GridData.FILL_HORIZONTAL
