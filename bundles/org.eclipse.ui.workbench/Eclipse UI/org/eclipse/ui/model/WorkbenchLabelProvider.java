@@ -24,98 +24,101 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 * Maps ImageDescriptor->Image.
 	 */
 	private Map imageTable;
-/**
- * Creates a new workbench label provider.
- */
-public WorkbenchLabelProvider() {
-}
-/**
- * Returns an image descriptor that is based on the given descriptor,
- * but decorated with additional information relating to the state
- * of the provided object.
- *
- * Subclasses may reimplement this method to decorate an object's
- * image.
- * @see org.eclipse.jface.resource.CompositeImage
- */
-protected ImageDescriptor decorateImage(ImageDescriptor input, Object element) {
-	return input;
-}
-/**
- * Returns a label that is based on the given label,
- * but decorated with additional information relating to the state
- * of the provided object.
- *
- * Subclasses may implement this method to decorate an object's
- * label.
- */
-protected String decorateText(String input, Object element) {
-	return input;
-}
-/* (non-Javadoc)
- * Method declared on IBaseLabelProvider
- */
-/**
- * Disposes of all allocated images.
- */
-public final void dispose() {
-	if (imageTable != null) {
-		for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
-			((Image) i.next()).dispose();
+	/**
+	 * Creates a new workbench label provider.
+	 */
+	public WorkbenchLabelProvider() {
+	}
+
+	/**
+	 * Returns an image descriptor that is based on the given descriptor,
+	 * but decorated with additional information relating to the state
+	 * of the provided object.
+	 *
+	 * Subclasses may reimplement this method to decorate an object's
+	 * image.
+	 * @see org.eclipse.jface.resource.CompositeImage
+	 */
+	protected ImageDescriptor decorateImage(
+		ImageDescriptor input,
+		Object element) {
+		return input;
+	}
+	/**
+	 * Returns a label that is based on the given label,
+	 * but decorated with additional information relating to the state
+	 * of the provided object.
+	 *
+	 * Subclasses may implement this method to decorate an object's
+	 * label.
+	 */
+	protected String decorateText(String input, Object element) {
+		return input;
+	}
+	/* (non-Javadoc)
+	 * Method declared on IBaseLabelProvider
+	 */
+	/**
+	 * Disposes of all allocated images.
+	 */
+	public final void dispose() {
+		if (imageTable != null) {
+			for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
+				((Image) i.next()).dispose();
+			}
+			imageTable = null;
 		}
-		imageTable = null;
 	}
-}
-/**
- * Returns the implementation of IWorkbenchAdapter for the given
- * object.  Returns <code>null</code> if the adapter is not defined or the
- * object is not adaptable.
- */
-protected final IWorkbenchAdapter getAdapter(Object o) {
-	if (!(o instanceof IAdaptable)) {
-		return null;
+	/**
+	 * Returns the implementation of IWorkbenchAdapter for the given
+	 * object.  Returns <code>null</code> if the adapter is not defined or the
+	 * object is not adaptable.
+	 */
+	protected final IWorkbenchAdapter getAdapter(Object o) {
+		if (!(o instanceof IAdaptable)) {
+			return null;
+		}
+		return (IWorkbenchAdapter) ((IAdaptable) o).getAdapter(
+			IWorkbenchAdapter.class);
 	}
-	return (IWorkbenchAdapter)((IAdaptable)o).getAdapter(IWorkbenchAdapter.class);
-}
-/* (non-Javadoc)
- * Method declared on ILabelProvider
- */
-public final Image getImage(Object element) {
-	//obtain the base image by querying the element
-	IWorkbenchAdapter adapter = getAdapter(element);
-	if (adapter == null)
-		return null;
-	ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-	if (descriptor == null)
-		return null;
+	/* (non-Javadoc)
+	 * Method declared on ILabelProvider
+	 */
+	public final Image getImage(Object element) {
+		//obtain the base image by querying the element
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter == null)
+			return null;
+		ImageDescriptor descriptor = adapter.getImageDescriptor(element);
+		if (descriptor == null)
+			return null;
 
-	//add any annotations to the image descriptor
-	descriptor = decorateImage(descriptor, element);
+		//add any annotations to the image descriptor
+		descriptor = decorateImage(descriptor, element);
 
-	//obtain the cached image corresponding to the descriptor
-	if (imageTable == null) {
-		 imageTable = new Hashtable(40);
+		//obtain the cached image corresponding to the descriptor
+		if (imageTable == null) {
+			imageTable = new Hashtable(40);
+		}
+		Image image = (Image) imageTable.get(descriptor);
+		if (image == null) {
+			image = descriptor.createImage();
+			imageTable.put(descriptor, image);
+		}
+		return image;
 	}
-	Image image = (Image) imageTable.get(descriptor);
-	if (image == null) {
-		image = descriptor.createImage();
-		imageTable.put(descriptor, image);
+	/* (non-Javadoc)
+	 * Method declared on ILabelProvider
+	 */
+	public final String getText(Object element) {
+		//query the element for its label
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter == null)
+			return ""; //$NON-NLS-1$
+		String label = adapter.getLabel(element);
+
+		//return the decorated label
+		return decorateText(label, element);
 	}
-	return image;
-}
-/* (non-Javadoc)
- * Method declared on ILabelProvider
- */
-public final String getText(Object element) {
-	//query the element for its label
-	IWorkbenchAdapter adapter = getAdapter(element);
-	if (adapter == null)
-		return "";//$NON-NLS-1$
-	String label = adapter.getLabel(element);
-
-	//return the decorated label
-	return decorateText(label, element);
-}
-
 
 }
