@@ -557,8 +557,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (editor == null) {
 				IEditorReference[] refs = page.getEditorReferences();
 				for (int i = 0; i < refs.length; i++) {
-					IEditorPart refEditor= refs[i].getEditor(false);
-					if (input.equals(refEditor.getEditorInput())) {
+					IEditorPart refEditor= refs[i].getEditor(true);
+					if (refEditor != null && input.equals(refEditor.getEditorInput())) {
 						editor = refEditor;
 						page.bringToTop(editor);
 						break;
