@@ -64,20 +64,9 @@ import org.eclipse.ui.texteditor.IUpdate;
  * This view shows variables and their values for a particular stack frame
  */
 public class VariablesView extends AbstractDebugView implements ISelectionListener, 
-																	IDoubleClickListener, 
 																	IPropertyChangeListener,
 																	IValueDetailListener {
 
-	/**
-	 * Actions hosted in this view, either in the toolbar, or in one of the 
-	 * context menus.
-	 */
-	private ShowQualifiedAction fShowQualifiedAction;
-	private ShowTypesAction fShowTypesAction;
-	private ChangeVariableValueAction fChangeVariableAction;
-	private AddToInspectorAction fAddToInspectorAction;
-	private ControlAction fCopyToClipboardAction;
-	private ShowVariableDetailPaneAction fShowDetailPaneAction;
 	
 	/**
 	 * The model presentation used as the label provider for the tree viewer,
@@ -197,7 +186,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		vv.setContentProvider(new VariablesContentProvider(this));
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);
-		vv.addDoubleClickListener(this);
 		
 		// add text viewer
 		fDetailTextViewer = new TextViewer(getSashForm(), SWT.V_SCROLL | SWT.H_SCROLL);
@@ -305,27 +293,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			}
 		}
 	}
-	
-	/**
-	 * Create the context menu particular to the tree pane.  Note that anyone
-	 * wishing to contribute an action to this menu must use
-	 * <code>IDebugUIConstants.VARIABLE_VIEW_VARIABLE_ID</code> as the
-	 * <code>targetID</code> in the extension XML.
-	 */
-	protected void createTreeContextMenu(Control menuControl) {
-		MenuManager menuMgr= new MenuManager(); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
-		Menu menu= menuMgr.createContextMenu(menuControl);
-		menuControl.setMenu(menu);
-
-		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_VARIABLE_ID, menuMgr, getViewer());
-	}
 
 	/**
 	 * Create the context menu particular to the detail pane.  Note that anyone
@@ -352,26 +319,31 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		setShowTypesAction(new ShowTypesAction(getViewer()));
-		getShowTypesAction().setChecked(false);
+		IAction action = new ShowTypesAction(getViewer());
+		action.setChecked(false);
+		setAction("ShowTypeNames",action);
 		
-		setShowQualifiedAction(new ShowQualifiedAction(getViewer()));
-		getShowQualifiedAction().setChecked(false);
+		action = new ShowQualifiedAction(getViewer());
+		action.setChecked(false);
+		setAction("ShowQualifiedNames", action);
 		
-		setAddToInspectorAction(new AddToInspectorAction(getViewer()));
+		setAction("AddToInspector", new AddToInspectorAction(getViewer()));
 		
-		setChangeVariableAction(new ChangeVariableValueAction(getViewer()));
-		getChangeVariableAction().setEnabled(false);
+		action = new ChangeVariableValueAction(getViewer());
+		action.setEnabled(false);
+		setAction("ChangeVariableValue", action);
+		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		setCopyToClipboardAction(new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
+		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
 		
-		setShowDetailPaneAction(new ShowVariableDetailPaneAction(this));
-		getShowDetailPaneAction().setChecked(false);
+		action = new ShowVariableDetailPaneAction(this);
+		action.setChecked(false);
+		setAction("ShowDetailPane", action);
 	
 		IActionBars actionBars= getViewSite().getActionBars();
-		TextViewerAction action= new TextViewerAction(getDetailTextViewer(), getDetailTextViewer().getTextOperationTarget().COPY);
-		action.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
+		TextViewerAction textAction= new TextViewerAction(getDetailTextViewer(), getDetailTextViewer().getTextOperationTarget().COPY);
+		textAction.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, textAction);
 
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
@@ -393,10 +365,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(getShowTypesAction());
-		tbm.add(getShowQualifiedAction());
+		tbm.add(getAction("ShowTypeNames"));
+		tbm.add(getAction("ShowQualifiedNames"));
 		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
-		tbm.add(getShowDetailPaneAction());
+		tbm.add(getAction("ShowDetailPane"));
 	}
 
    /**
@@ -409,13 +381,13 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAddToInspectorAction());
-		menu.add(getChangeVariableAction());
-		menu.add(getCopyToClipboardAction());
+		menu.add(getAction("AddToInspector"));
+		menu.add(getAction("ChangeVariableValue"));
+		menu.add(getAction("CopyToClipboard"));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getShowTypesAction());
-		menu.add(getShowQualifiedAction());
+		menu.add(getAction("ShowTypeNames"));
+		menu.add(getAction("ShowQualifiedNames"));
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -564,61 +536,5 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			((IUpdate) action).update();
 	}
 	
-	/**
-	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
-	 */
-	public void doubleClick(DoubleClickEvent event) {
-		if (getChangeVariableAction().isEnabled()) {
-			getChangeVariableAction().run();
-		}
-	}
-	
-	protected AddToInspectorAction getAddToInspectorAction() {
-		return fAddToInspectorAction;
-	}
-
-	protected void setAddToInspectorAction(AddToInspectorAction addToInspectorAction) {
-		fAddToInspectorAction = addToInspectorAction;
-	}
-
-	protected ChangeVariableValueAction getChangeVariableAction() {
-		return fChangeVariableAction;
-	}
-
-	protected void setChangeVariableAction(ChangeVariableValueAction changeVariableAction) {
-		fChangeVariableAction = changeVariableAction;
-	}
-
-	protected ControlAction getCopyToClipboardAction() {
-		return fCopyToClipboardAction;
-	}
-
-	protected void setCopyToClipboardAction(ControlAction copyToClipboardAction) {
-		fCopyToClipboardAction = copyToClipboardAction;
-	}
-
-	protected ShowQualifiedAction getShowQualifiedAction() {
-		return fShowQualifiedAction;
-	}
-
-	protected void setShowQualifiedAction(ShowQualifiedAction showQualifiedAction) {
-		fShowQualifiedAction = showQualifiedAction;
-	}
-
-	protected ShowTypesAction getShowTypesAction() {
-		return fShowTypesAction;
-	}
-
-	protected void setShowTypesAction(ShowTypesAction showTypesAction) {
-		fShowTypesAction = showTypesAction;
-	}
-	
-	protected void setShowDetailPaneAction(ShowVariableDetailPaneAction action) {
-		fShowDetailPaneAction = action;
-	}
-	
-	protected ShowVariableDetailPaneAction getShowDetailPaneAction() {
-		return fShowDetailPaneAction;
-	}
 }
 

@@ -39,7 +39,7 @@ import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
+public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener {
 	
 	/**
 	 * Updates the state of the buttons in the view
@@ -85,7 +85,6 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 		boolean showDebugTargets = getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW);
 		LaunchesViewer lv = new LaunchesViewer(parent, showDebugTargets, this);
 		lv.addSelectionChangedListener(this);
-		lv.addDoubleClickListener(this);
 		lv.setContentProvider(getContentProvider());
 		lv.setLabelProvider(new DelegatingModelPresentation());
 		lv.setUseHashlookup(true);
@@ -143,7 +142,6 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 */
 	public void dispose() {
 		if (getViewer() != null) {
-			getViewer().removeDoubleClickListener(this);
 			getViewer().removeSelectionChangedListener(this);
 		}
 		super.dispose();

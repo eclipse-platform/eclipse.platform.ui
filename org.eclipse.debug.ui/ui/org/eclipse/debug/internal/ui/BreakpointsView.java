@@ -33,7 +33,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
-public class BreakpointsView extends AbstractDebugView implements IDoubleClickListener {
+public class BreakpointsView extends AbstractDebugView {
 	
 	private Vector fBreakpointListenerActions;
 	
@@ -45,9 +45,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		viewer.setContentProvider(new BreakpointsContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation());
 		viewer.setSorter(new WorkbenchViewerSorter());
-				
-		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
-		viewer.addDoubleClickListener(this);			
+		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());		
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
 		return viewer;
@@ -65,9 +63,6 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 */
 	public void dispose() {
 		super.dispose();
-		if (getViewer() != null) {
-			getViewer().removeDoubleClickListener(this);
-		}
 		cleanupActions();
 	}
 
@@ -87,7 +82,10 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		action.setChecked(true);
 		setAction("ShowQualifiedNames", action);
 		
-		setAction("GotoMarker", new OpenBreakpointMarkerAction(getViewer()));
+		action = new OpenBreakpointMarkerAction(getViewer());
+		setAction("GotoMarker", action);
+		setAction(DOUBLE_CLICK_ACTION, action);
+		
 		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer()));
 		
 		addBreakpointListenerAction(getAction("EnableDisableBreakpoint"));
@@ -138,16 +136,6 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		getBreakpointListenerActions().add(action);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener((IBreakpointListener)action);		
 	}	
-	
-	/**
-	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
-	 */
-	public void doubleClick(DoubleClickEvent event) {
-		IAction action = getAction("GotoMarker");
-		if (action != null) {
-			action.run();
-		}
-	}
 
 	/**
 	 * Returns an editor part that is open on this breakpoint's

@@ -18,6 +18,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -46,10 +48,13 @@ import org.eclipse.ui.texteditor.IUpdate;
  * <li>Hooks a key press listener, and invokes the
  * 		<code>REMOVE_ACTION</code> when the delete key 
  * 		is pressed.</li>
+ * <li>Hooks a double-click listener, and invokes the
+ * 		<code>DOUBLE_CLICK_ACTION</code> when the mouse 
+ * 		is double-clicked.</li>
  * </ul>
  */
 
-public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter {
+public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter, IDoubleClickListener {
 	
 	/**
 	 * Underlying viewer that displays the contents of
@@ -72,6 +77,16 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see #setAction(String, IAction)
 	 */
 	protected static final String REMOVE_ACTION = "Remove_ActionId";
+	
+	/**
+	 * Action id for a view's double-click action. Any view
+	 * with an action that should be invoked when
+	 * the mouse is double-clicked should store their
+	 * action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	protected static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	
 	
 	/**
 	 * Constructs a new debug view.
@@ -98,9 +113,10 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	/**
 	 * Creates this view's underlying viewer and actions.
 	 * Hooks a pop-up menu to the underlying viewer's control,
-	 * as well as a key listener. Hooks help to this view.
-	 * Subclasses must implement the following methods which
-	 * are called in the following order when a view is
+	 * as well as a key listener. When the delete key is pressed,
+	 * the <code>REMOVE_ACTION</code> is invoked. Hooks help to
+	 * this view. Subclasses must implement the following methods
+	 * which are called in the following order when a view is
 	 * created:<ul>
 	 * <li><code>createViewer(Composite)</code> - the context
 	 *   menu is hooked to the viewer's control.</li>
@@ -128,7 +144,8 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
-		});			
+		});
+		viewer.addDoubleClickListener(this);	
 	}	
 	/**
 	 * Creates and returns this view's underlying viewer.
@@ -159,6 +176,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		if (getViewer() != null) {
+			getViewer().removeDoubleClickListener(this);
+		}
 		setViewer(null);
 		super.dispose();
 	}
@@ -353,6 +373,19 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			if (action != null && action.isEnabled()) {
 				action.run();
 			}
+		}
+	}	
+	
+	/**
+	 * Delegate to the <code>DOUBLE_CLICK_ACTION</code>,
+	 * if any.
+	 *  
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		IAction action = getAction(DOUBLE_CLICK_ACTION);
+		if (action != null) {
+			action.run();
 		}
 	}	
 }	

@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * A view that shows items that have been added to a inspector
  */
-public class InspectorView extends AbstractDebugView  implements IDoubleClickListener{
+public class InspectorView extends AbstractDebugView {
 	
 	private InspectorContentProvider fContentProvider;
 	
@@ -34,9 +34,7 @@ public class InspectorView extends AbstractDebugView  implements IDoubleClickLis
 		vv.setContentProvider(getContentProvider());
 		vv.setLabelProvider(new DelegatingModelPresentation());
 		vv.setUseHashlookup(true);
-		
 		vv.setInput(getContentProvider().getInspectorList());		
-		vv.addDoubleClickListener(this);
 		return vv;
 	}
 	
@@ -71,6 +69,7 @@ public class InspectorView extends AbstractDebugView  implements IDoubleClickLis
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action);
+		setAction(DOUBLE_CLICK_ACTION, action);
 		
 		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
 	}
@@ -131,16 +130,6 @@ public class InspectorView extends AbstractDebugView  implements IDoubleClickLis
 	 */
 	public void removeAllFromInspector() {
 		getContentProvider().removeAll();
-	}
-	
-	/**
-	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
-	 */
-	public void doubleClick(DoubleClickEvent event) {
-		IAction action = getAction("ChangeVariableValue");
-		if (action != null && action.isEnabled()) {
-			action.run();
-		}
 	}
 	
 	protected void setContentProvider(InspectorContentProvider contentProvider) {

@@ -68,7 +68,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener, IPartListener {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPartListener {
 
 	/**
 	 * Event handler for this view
@@ -181,7 +181,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	protected StructuredViewer createViewer(Composite parent) {
 		LaunchViewer lv = new LaunchViewer(parent);
 		lv.addSelectionChangedListener(this);
-		lv.addDoubleClickListener(this);
 		lv.setContentProvider(createContentProvider());
 		lv.setLabelProvider(new DelegatingModelPresentation());
 		lv.setUseHashlookup(true);
@@ -215,7 +214,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	public void dispose() {
 		if (getViewer() != null) {
-			getViewer().removeDoubleClickListener(this);
 			getViewer().removeSelectionChangedListener(this);
 		}
 		getSite().getPage().removePartListener(this);
@@ -251,7 +249,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 		showMarkerForCurrentSelection();
-	}		
+	}
+			
 	/**
 	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */

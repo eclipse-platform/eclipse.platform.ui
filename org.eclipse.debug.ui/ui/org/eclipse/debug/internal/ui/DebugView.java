@@ -77,9 +77,9 @@ public class DebugView extends LaunchesView implements IPartListener {
 	/**
 	 * @see IWorkbenchPart#dispose()
 	 */
-	public void dispose() {
-		super.dispose();
+	public void dispose() {		
 		getSite().getPage().removePartListener(this);
+		super.dispose();
 	}
 
 	/**
