@@ -17,12 +17,14 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.preferences.PreferenceTransferElement;
 
 /**
  * Page 1 of the base preference export Wizard
@@ -81,6 +83,33 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage
         return PreferencesMessages.WizardPreferencesExportPage1_file;
     }
 
+    /*
+     * return the PreferenceTransgerElements specified
+     */
+    protected PreferenceTransferElement[] getTransfers() {
+        PreferenceTransferElement[] elements = super.getTransfers();
+		PreferenceTransferElement[] returnElements = new PreferenceTransferElement[elements.length];
+		IPreferenceFilter[] filters = new IPreferenceFilter[1];
+		IPreferenceFilter[] matches;
+		IPreferencesService service = Platform.getPreferencesService();
+		int count = 0;
+		try {
+		for (int i = 0; i < elements.length; i++) {
+			PreferenceTransferElement element = elements[i];
+			filters[0] = element.getFilter();
+			matches = service.matches((IEclipsePreferences)service.getRootNode().node("instance"), filters); //$NON-NLS-1$
+			if (matches.length > 0)
+				returnElements[count++] = element;				
+		}
+		elements = new PreferenceTransferElement[count];
+		System.arraycopy(returnElements, 0, elements, 0, count);
+		} catch (CoreException e) {
+            WorkbenchPlugin.log(e.getMessage(), e);
+            return new PreferenceTransferElement[0];
+		}
+        return elements;
+    }
+	
     /**
      * @param transfers
      * @return <code>true</code> if the transfer was succesful, and
