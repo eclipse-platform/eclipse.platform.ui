@@ -58,8 +58,12 @@ public class CheatSheetSelectionAction extends Action {
 	public void run() {
 		CheatSheetSelectionDialog dialog = new CheatSheetSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 
-		if(dialog.open() != Window.OK || dialog.getResult().length != 1)
+		if(dialog.open() != Window.OK || dialog.getResult().length != 1) {
+			notifyResult(false);
 			return;
+		}
+
+		notifyResult(true);
 
 		new OpenCheatSheetAction(((CheatSheetElement)dialog.getResult()[0]).getID()).run();
 	}

@@ -60,8 +60,12 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 
 		CheatSheetCategoryBasedSelectionDialog dialog = new CheatSheetCategoryBasedSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), cheatSheets);
 
-		if(dialog.open() != Window.OK || dialog.getResult().length != 1)
+		if(dialog.open() != Window.OK || dialog.getResult().length != 1) {
+			notifyResult(false);
 			return;
+		}
+		
+		notifyResult(true);
 
 		CheatSheetElement result = (CheatSheetElement)dialog.getResult()[0];
 
