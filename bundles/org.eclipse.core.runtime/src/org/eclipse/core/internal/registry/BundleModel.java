@@ -25,6 +25,7 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
 	private transient ResourceBundle resourceBundle;
+	private boolean missingResourceBundle = false;
 	private String schemaVersion;
 	private Bundle bundle; //Introduced to fix #46308
 
@@ -160,10 +161,20 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 	}
 
 	public String getResourceString(String value) {
+		if (resourceBundle != null)
+			return ResourceTranslator.getResourceString(null, value, resourceBundle);
+		
+		if (missingResourceBundle)
+			return value;
+		
 		if (resourceBundle == null)
 			resourceBundle = ResourceTranslator.getResourceBundle(bundle);
-		if (resourceBundle == null)
+		
+		if (resourceBundle == null) {
+			missingResourceBundle = true;
 			return value;
+		}
+		
 		return ResourceTranslator.getResourceString(null, value, resourceBundle);
 	}
 }
