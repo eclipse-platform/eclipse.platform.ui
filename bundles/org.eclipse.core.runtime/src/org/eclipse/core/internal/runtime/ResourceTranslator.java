@@ -65,7 +65,13 @@ public class ResourceTranslator {
 
 	public static ResourceBundle getResourceBundle(Bundle bundle) {
 		if (hasRuntime21(bundle)) {
-			return ResourceBundle.getBundle("plugin", Locale.getDefault(), createTempClassloader(bundle)); //$NON-NLS-1$
+			try {
+				// TODO the resource need not be named "plugin".  In the case of fragments it is "fragment"
+				return ResourceBundle.getBundle("plugin", Locale.getDefault(), createTempClassloader(bundle)); //$NON-NLS-1$
+			} catch (MissingResourceException e) {
+				// the resource need not exist.  return null if it is not found
+				return null;
+			}
 		}
 		return localizationService.getLocalization(bundle, null);
 	}
