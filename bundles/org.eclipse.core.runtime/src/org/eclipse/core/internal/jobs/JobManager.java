@@ -627,6 +627,10 @@ public class JobManager implements IJobManager {
 			//can't schedule a job that is waiting or sleeping
 			if (job.getState() != Job.NONE)
 				return;
+		}
+		//notify listeners outside sync block
+		jobListeners.scheduled((Job) job, delay);
+		synchronized (lock) {
 			//if it's a decoration job, don't run it right now if the system is busy
 			if (job.getPriority() == Job.DECORATE) {
 				long minDelay = running.size() * 100;
@@ -640,9 +644,6 @@ public class JobManager implements IJobManager {
 				changeState(job, Job.WAITING);
 			}
 		}
-		//notify listeners outside sync block
-		jobListeners.scheduled((Job) job, delay);
-
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued(job);
 	}
