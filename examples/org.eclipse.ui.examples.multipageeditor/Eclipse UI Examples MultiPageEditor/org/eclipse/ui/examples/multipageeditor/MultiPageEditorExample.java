@@ -65,7 +65,7 @@ void createPage0() {
 		setPageText(index, editor.getTitle());
 	}
 	catch (PartInitException e) {
-		ErrorDialog.openError(getSite().getShell(), MPEMessages.getString("ErrorCreatingNestedEditor"), null, e.getStatus()); //$NON-NLS-1$
+		ErrorDialog.openError(getSite().getShell(), MessageUtil.getString("ErrorCreatingNestedEditor"), null, e.getStatus()); //$NON-NLS-1$
 	}
 }
 /**
@@ -83,7 +83,7 @@ void createPage1() {
 	GridData gd = new GridData(GridData.BEGINNING);
 	gd.horizontalSpan = 2;
 	fontButton.setLayoutData(gd);
-	fontButton.setText(MPEMessages.getString("ChangeFont")); //$NON-NLS-1$
+	fontButton.setText(MessageUtil.getString("ChangeFont")); //$NON-NLS-1$
 
 	fontButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -92,7 +92,7 @@ void createPage1() {
 	});
 
 	int index = addPage(composite);
-	setPageText(index, MPEMessages.getString("Properties")); //$NON-NLS-1$
+	setPageText(index, MessageUtil.getString("Properties")); //$NON-NLS-1$
 }
 /**
  * Creates page 2 of the multi-page editor,
@@ -106,7 +106,7 @@ void createPage2() {
 	text.setEditable(false);
 	
 	int index = addPage(composite);
-	setPageText(index, MPEMessages.getString("Preview")); //$NON-NLS-1$
+	setPageText(index, MessageUtil.getString("Preview")); //$NON-NLS-1$
 }
 /**
  * Creates the pages of the multi-page editor.
@@ -146,7 +146,7 @@ public void gotoMarker(IMarker marker) {
  */
 public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
 	if (!(editorInput instanceof IFileEditorInput)) 
-		throw new PartInitException(MPEMessages.getString("InvalidInput")); //$NON-NLS-1$
+		throw new PartInitException(MessageUtil.getString("InvalidInput")); //$NON-NLS-1$
 	super.init(site, editorInput);
 }
 /* (non-Javadoc)
