@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.ILibrary;
  * <p>
  * This class may be instantiated, or further subclassed.
  * </p>
- * TODO @deprecated In Eclipse 3.0 the runtime was refactored and all 
+ * @deprecated In Eclipse 3.0 the runtime was refactored and all 
  * non-essential elements removed.  This class provides facilities primarily intended
  * for tooling.  As such it has been removed and no directly substitutable API provided.
  */

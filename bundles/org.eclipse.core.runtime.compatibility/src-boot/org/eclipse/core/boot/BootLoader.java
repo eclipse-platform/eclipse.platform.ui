@@ -37,7 +37,7 @@ import org.osgi.framework.ServiceReference;
  * </p>
  * 
  * @see Platform
- * TODO @deprecated 
+ * @deprecated 
  * In Eclipse 3.0 the runtime has been refactored such that the <code>BootLoader</code>
  * class is no longer relevant.  Most of the function found on <code>BootLoader</code> is
  * however still supported and has been relocated described in the method comments.
@@ -76,7 +76,7 @@ public final class BootLoader implements Constants {
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * 
 	 * @return the command line used to start the platform
-	 * TODO @deprecated Replaced by {@link Platform#getCommandLineArgs()}.
+	 * @deprecated Replaced by {@link Platform#getCommandLineArgs()}.
 	 */
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
@@ -87,7 +87,7 @@ public final class BootLoader implements Constants {
 	 * 
 	 * @return platform configuration used in current instance of platform
 	 * @since 2.0
-	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
+	 * @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static org.eclipse.core.boot.IPlatformConfiguration getCurrentPlatformConfiguration() {
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
@@ -109,7 +109,7 @@ public final class BootLoader implements Constants {
 	 * The returned value is distinct from the location of any given platform's data.
 	 *
 	 * @return the URL indicating where the platform runtime is installed.
-	 * TODO @deprecated 
+	 * @deprecated 
 	 */
 	public static URL getInstallURL() {
 		return InternalPlatform.getDefault().getInstallURL();
@@ -120,7 +120,7 @@ public final class BootLoader implements Constants {
 	 * whose path starts with <code>$nl$</code>.
 	 *
 	 * @return the string name of the current locale
-	 * TODO @deprecated Replaced by {@link Platform#getNL()}.
+	 * @deprecated Replaced by {@link Platform#getNL()}.
 	 */
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
@@ -136,7 +136,7 @@ public final class BootLoader implements Constants {
 	 *
 	 * @return the string name of the current operating system
 	 * @see #knownOSValues
-	 * TODO @deprecated Replaced by {@link Platform#getOS()}.
+	 * @deprecated Replaced by {@link Platform#getOS()}.
 	 */
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
@@ -150,7 +150,7 @@ public final class BootLoader implements Constants {
 	 * 
 	 * @return the string name of the current system architecture
 	 * @since 2.0
-	 * TODO @deprecated Replaced by {@link Platform#getOSArch()}.
+	 * @deprecated Replaced by {@link Platform#getOSArch()}.
 	 */
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
@@ -165,7 +165,7 @@ public final class BootLoader implements Constants {
 	 * @return platform configuration used in current instance of platform
 	 * @exception IOException if the configuration cannot be read
 	 * @since 2.0
-	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
+	 * @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static org.eclipse.core.boot.IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
@@ -188,7 +188,7 @@ public final class BootLoader implements Constants {
 	 * if the window system cannot be determined.
 	 *
 	 * @return the string name of the current window system or <code>null</code>
-	 * TODO @deprecated Replaced by {@link Platform#getWS()}.
+	 * @deprecated Replaced by {@link Platform#getWS()}.
 	 */
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
@@ -257,7 +257,7 @@ public final class BootLoader implements Constants {
 	 * in debug mode using the "-debug" command line argument.
 	 *
 	 * @return whether or not the platform is running in debug mode
-	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDebugMode()}.
+	 * @deprecated Replaced by {@link EnvironmentInfo#inDebugMode()}.
 	 */
 	public static boolean inDebugMode() {
 		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
@@ -270,7 +270,7 @@ public final class BootLoader implements Constants {
 	 * in development mode using the "-dev" command line argument.
 	 *
 	 * @return whether or not the platform is running in development mode
-	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDevelopmentMode()}.
+	 * @deprecated Replaced by {@link EnvironmentInfo#inDevelopmentMode()}.
 	 */
 	public static boolean inDevelopmentMode() {
 		// TODO: need an API to access this (at least a constant for the property name)
@@ -282,7 +282,7 @@ public final class BootLoader implements Constants {
 	 *
 	 * @return <code>true</code> if the platform is running, 
 	 *		and <code>false</code> otherwise
-	 * TODO @deprecated Replaced by {@link Platform#isRunning()}.
+	 * @deprecated Replaced by {@link Platform#isRunning()}.
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
@@ -295,7 +295,7 @@ public final class BootLoader implements Constants {
 	 *
 	 * @param pluginPathLocation the location of the plug-in path to load
 	 * @return the complete set of URLs which locate plug-ins
-	 * TODO @deprecated This functionality has moved to the Eclipse Update manager plug-in.
+	 * @deprecated This functionality has moved to the Eclipse Update manager plug-in.
 	 */
 	public static URL[] getPluginPath(URL pluginPathLocation) {
 		return InternalPlatform.getDefault().getPluginPath(pluginPathLocation);

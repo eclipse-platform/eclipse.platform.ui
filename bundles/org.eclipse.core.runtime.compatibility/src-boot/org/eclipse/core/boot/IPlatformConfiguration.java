@@ -20,7 +20,7 @@ import java.net.URL;
  * platform
  * 
  * @since 2.0
- * TODO @deprecated 
+ * @deprecated 
  * In Eclipse 3.0 the Update mechanism was cleanly separated from the runtime.
  * <code>IPlatformConfiguration</code> is part of the Update story and as such has
  * been moved to {@link org.eclipse.update.configurator.IPlatformConfiguration} in the 
