@@ -37,7 +37,11 @@ public class Path implements IPath, Cloneable {
 	private static final int HAS_LEADING = 1;
 	private static final int IS_UNC = 2;
 	private static final int HAS_TRAILING = 4;
+	private static final int ALL_SEPARATORS = HAS_LEADING | IS_UNC | HAS_TRAILING;
 	
+	/** Mask for all bits that are involved in the hashcode */
+	private static final int HASH_MASK = ~HAS_TRAILING;
+		
 	/** Constant value indicating no segments */
 	private static final String[] NO_SEGMENTS = new String[0];
 
@@ -66,10 +70,11 @@ private Path() {
 /* (Intentionally not included in javadoc)
  * Private constructor.
  */
-private Path(String device, String[] segments, int separators) {
+private Path(String device, String[] segments, int _separators) {
 	this.segments = segments;
 	this.device = device;
-	this.separators = separators;
+	//hashcode is cached in all but the bottom three bits of the separators field
+	this.separators = (computeHashCode() << 3) | (_separators & ALL_SEPARATORS);
 }
 
 /** 
@@ -188,18 +193,21 @@ public IPath append(IPath tail) {
  * "." segments, and parent references ("..") are collapsed
  * where possible.
  * </p>
- * @return the canonicalized path
+ * @return true if the path was modified, and false otherwise.
  */
-private void canonicalize() {
+private boolean canonicalize() {
 	//look for segments that need canonicalizing
 	for (int i = 0, max = segments.length; i < max; i++) {
 		String segment = segments[i];
 		if (segment.charAt(0) == '.' && (segment.equals("..") || segment.equals("."))) {
 			//path needs to be canonicalized
 			collapseParentReferences();
-			return;
+			//recompute hash because canonicalize affects hash
+			separators = (separators & ALL_SEPARATORS) | (computeHashCode() << 3);
+			return true;
 		}
 	}
+	return false;
 }
 /* (Intentionally not included in javadoc)
  * Clones this object.
@@ -291,6 +299,17 @@ private String collapseSlashes(String path) {
 	return new String(result, 0, count);
 }
 /* (Intentionally not included in javadoc)
+ * Computes the hash code for this object.
+ */
+private int computeHashCode() {
+	int hash = device == null ? 0 : device.hashCode();
+	int segmentCount = segments.length;
+	for (int i = 0; i < segmentCount; i++) {
+		hash += segments[i].hashCode();
+	}
+	return hash;
+}
+/* (Intentionally not included in javadoc)
  * Returns the size of the string that will be created by toString or toOSString.
  */
 private int computeLength() {
@@ -373,39 +392,30 @@ private String[] computeSegments(String path) {
  * Compares objects for equality.
  */
 public boolean equals(Object obj) {
-	if (this == obj) {
+	if (this == obj)
 		return true;
-	}
-	if (!(obj instanceof Path)) {
+	if (!(obj instanceof Path))
 		return false;
-	}
 	Path target = (Path)obj;
-	//check leading separators
-	int mask = HAS_LEADING | IS_UNC;
-	if ((separators & mask) != (target.separators & mask)) {
+	//check leading separators and hashcode
+	if ((separators & HASH_MASK) != (target.separators & HASH_MASK))
 		return false;
-	}
 	//check segment count
 	int segmentCount = segments.length;
-	if (segmentCount != target.segmentCount()) {
+	if (segmentCount != target.segments.length)
 		return false;
-	}
 	//check device
 	if (device == null) {
-		if (target.device != null) {
+		if (target.device != null)
 			return false;
-		}
 	} else {
-		if (!device.equals(target.device)) {
+		if (!device.equals(target.device))
 			return false;
-		}
 	}
 	//check segments
-	for (int i = 0; i < segmentCount; i++) {
-		if (!segments[i].equals(target.segment(i))) {
+	for (int i = 0; i < segmentCount; i++)
+		if (!segments[i].equals(target.segment(i)))
 			return false;
-		}
-	}
 	//they're the same!
 	return true;
 }
@@ -437,12 +447,7 @@ public String getFileExtension() {
  * Computes the hash code for this object.
  */
 public int hashCode() {
-	int hash = device == null ? 0 : device.hashCode();
-	int segmentCount = segments.length;
-	for (int i = 0; i < segmentCount; i++) {
-		hash += segments[i].hashCode();
-	}
-	return hash;
+	return separators & HASH_MASK;
 }
 
 /* (Intentionally not included in javadoc)
@@ -458,7 +463,9 @@ private void initialize(String device, String fullPath) {
 	Assert.isNotNull(fullPath);
 	this.device = device;
 
-	String path = fullPath.replace('\\', SEPARATOR);
+	//indexOf is much faster than replace
+	String path = fullPath.indexOf('\\') == -1 ? fullPath : fullPath.replace('\\', SEPARATOR);
+	
 	int i = path.indexOf(DEVICE_SEPARATOR);
 	if (i != -1) {
 		// if the specified device is null then set it to
@@ -468,10 +475,11 @@ private void initialize(String device, String fullPath) {
 		path = path.substring(i + 1, path.length());
 	}
 	path = collapseSlashes(path);
+	int len = path.length();
 
 	//compute the separators array
-	if (path.length() < 2) {
-		if (path.length() == 1 && path.charAt(0) == SEPARATOR) {
+	if (len < 2) {
+		if (len == 1 && path.charAt(0) == SEPARATOR) {
 			this.separators = HAS_LEADING;
 		} else {
 			this.separators = 0;
@@ -480,15 +488,17 @@ private void initialize(String device, String fullPath) {
 		boolean hasLeading = path.charAt(0) == SEPARATOR;
 		boolean isUNC = hasLeading && path.charAt(1) == SEPARATOR;
 		//UNC path of length two has no trailing separator
-		boolean hasTrailing = !(isUNC && path.length() == 2) && path.charAt(path.length()-1) == SEPARATOR;
+		boolean hasTrailing = !(isUNC && len == 2) && path.charAt(len-1) == SEPARATOR;
 		separators = hasLeading ? HAS_LEADING : 0;
 		if (isUNC) separators |= IS_UNC;
 		if (hasTrailing) separators |= HAS_TRAILING;
 	}
 	//compute segments and ensure canonical form
 	segments = computeSegments(path);
-	canonicalize();
-
+	if (!canonicalize()) {
+		//compute hash now because canonicalize didn't need to do it
+		separators = (separators & ALL_SEPARATORS) | (computeHashCode() << 3);
+	}
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#isAbsolute
@@ -536,7 +546,7 @@ public boolean isPrefixOf(IPath anotherPath) {
  */
 public boolean isRoot() {
 	//must have no segments, a leading separator, and not be a UNC path.
-	return this == ROOT || (segments.length == 0 && isAbsolute() && ((separators & IS_UNC) == 0));
+	return this == ROOT || (segments.length == 0 && ((separators & ALL_SEPARATORS) == HAS_LEADING));
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#isUNC
@@ -684,7 +694,8 @@ public IPath removeLastSegments(int count) {
 	if (count == 0)
 		return this;
 	if (count >= segments.length) {
-		return new Path(device, NO_SEGMENTS, separators);
+		//result will have no trailing separator
+		return new Path(device, NO_SEGMENTS, separators & (HAS_LEADING|IS_UNC));
 	}
 	Assert.isLegal(count > 0);
 	int newSize = segments.length - count;
