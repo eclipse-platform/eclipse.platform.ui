@@ -218,31 +218,37 @@ public class CheatSheetManager implements ICheatSheetManager {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#addCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
+	/**
+	 * Adds a cheat sheet listener to this cheat sheet manager.
+     * Has no effect if an identical listener is already registered.
+	 * 
+	 * @param listener the cheat sheet listener to add
+	 * @exception IllegalArgumentException if <code>listener</code>
+	 * is <code>null</code>
 	 */
 	public void addCheatSheetListener(CheatSheetListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
 		}
-		// TODO (lorne) - ensure that duplicate (==) listeners are quietly ignored
-		// N.B. - must be careful when notifying listeners since there is a good
-		// chance that this method will be called from within a notification
-		throw new RuntimeException("Not implemented yet");
+		// TODO (lorne) - missing implementation
+		throw new RuntimeException("Not implemented yet"); //$NON-NLS-1$
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#removeCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
+	/**
+	 * Removes a cheat sheet listener from this cheat sheet manager.
+     * Has no affect if the listener is not registered.
+	 * 
+	 * @param listener the cheat sheet listener to remove
+	 * @exception IllegalArgumentException if <code>listener</code>
+	 * is <code>null</code>
 	 */
 	public void removeCheatSheetListener(CheatSheetListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
 		}
-		// TODO (lorne) - ensure that unknown listeners are quitely ignored
-		// N.B. - must be careful when notifying listeners since there is a good
-		// chance that this method will be called from within a notification
-		throw new RuntimeException("Not implemented yet");
+		// TODO (lorne) - missing implementation
+		throw new RuntimeException("Not implemented yet"); //$NON-NLS-1$
 	}
 
 }

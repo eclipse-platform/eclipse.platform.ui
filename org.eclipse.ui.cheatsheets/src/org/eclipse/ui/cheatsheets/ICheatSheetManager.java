@@ -22,8 +22,10 @@ package org.eclipse.ui.cheatsheets;
  * {@link #setData(String, String)}. If the workbench is shut down while the
  * cheat sheet is in progress, this data will generally be saved and later
  * restored when the workbench is restarted and cheat sheet is resumed. The
- * manager also supports listeners, which are kept informed of life cycle events
- * over the course of the cheat sheet's life time.
+ * manager also supports a {@link CheatSheetListener}(specified via the
+ * "listener" attribute of the "cheatsheet" element in the cheat sheet content
+ * file), which is kept informed of life cycle events over the course of the
+ * cheat sheet's life time.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -46,6 +48,8 @@ public interface ICheatSheetManager {
 	 * @param key the key
 	 * @return the string data associated with the key, or
 	 * <code>null</code> none
+	 * @exception IllegalArgumentException if <code>key</code>
+	 * is <code>null</code>
 	 */
 	public String getData(String key);
 
@@ -60,22 +64,8 @@ public interface ICheatSheetManager {
 	 * @param key the key
 	 * @param data the string data associated with the key,
 	 * or <code>null</code> to remove
+	 * @exception IllegalArgumentException if <code>key</code>
+	 * is <code>null</code>
 	 */
 	public void setData(String key, String data);
-
-	/**
-	 * Adds a cheat sheet listener to this cheat sheet manager.
-     * Has no effect if an identical listener is already registered.
-	 * 
-	 * @param listener the cheat sheet listener to add
-	 */
-	public void addCheatSheetListener(CheatSheetListener listener);
-
-	/**
-	 * Removes a cheat sheet listener from this cheat sheet manager.
-     * Has no affect if the listener is not registered.
-	 * 
-	 * @param listener the cheat sheet listener to remove
-	 */
-	public void removeCheatSheetListener(CheatSheetListener listener);
 }
