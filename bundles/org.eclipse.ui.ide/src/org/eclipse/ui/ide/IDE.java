@@ -35,7 +35,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
@@ -556,7 +555,7 @@ public final class IDE {
 		if (resourceRoots.length == 0) 
 			return result[0];
 		
-		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
+		Platform.run(new SafeRunnable(IDEWorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
 				ArrayList dirtyEditors = new ArrayList();

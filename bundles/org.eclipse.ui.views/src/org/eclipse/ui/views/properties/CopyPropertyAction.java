@@ -14,9 +14,11 @@ package org.eclipse.ui.views.properties;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Copies a property to the clipboard.
@@ -71,8 +73,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 		} catch (SWTError e){
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(getPropertySheet().getControl().getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
-				setClipboard(text);
+			if (MessageDialog
+                    .openQuestion(
+                            getPropertySheet().getControl().getShell(),
+                            PropertiesMessages.getString("CopyToClipboardProblemDialog.title"), //$NON-NLS-1$
+                            PropertiesMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$
+                    setClipboard(text);
 		}	
 	}
 }
