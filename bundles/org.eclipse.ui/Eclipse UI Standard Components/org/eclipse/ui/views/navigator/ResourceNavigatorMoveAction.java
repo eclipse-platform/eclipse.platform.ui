@@ -4,34 +4,33 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.core.runtime.IPath;
+import java.util.*;
+
 import org.eclipse.core.resources.IResource;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.MoveResourceAction;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.help.*;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
  * to show the result of the move.
  */
 /* package */ class ResourceNavigatorMoveAction extends MoveResourceAction {
-	private TreeViewer viewer;
+	private StructuredViewer viewer;
 /**
  * Create a ResourceNavigatorMoveAction and use the supplied viewer to update the UI.
  * @param shell Shell
- * @param treeViewer TreeViewer
+ * @param structureViewer StructuredViewer
  */
-public ResourceNavigatorMoveAction(Shell shell, TreeViewer treeViewer) {
+public ResourceNavigatorMoveAction(Shell shell, StructuredViewer structureViewer) {
 	super(shell);
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION});
-	this.viewer = treeViewer;
+	this.viewer = structureViewer;
 }
 /* (non-Javadoc)
  * Method declared on IAction.

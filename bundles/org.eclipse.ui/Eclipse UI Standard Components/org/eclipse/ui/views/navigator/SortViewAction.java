@@ -17,7 +17,7 @@ import org.eclipse.ui.help.*;
  * @param navigator the resource navigator
  * @param sortByType <code>true</code> for sort by type, <code>false</code> for sort by name
  */
-public SortViewAction(ResourceNavigator navigator, boolean sortByType) {
+public SortViewAction(IResourceNavigatorPart navigator, boolean sortByType) {
 	super(navigator, sortByType ? ResourceNavigatorMessages.getString("SortView.byType") : ResourceNavigatorMessages.getString("SortView.byName")); //$NON-NLS-2$ //$NON-NLS-1$
 	if (sortByType) {
 		setToolTipText(ResourceNavigatorMessages.getString("SortView.toolTipByType")); //$NON-NLS-1$
