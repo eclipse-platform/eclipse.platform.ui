@@ -13,15 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
-
-/**
- * @version 	1.0
- * @author
- */
 public class AdaptableResourceWrapper implements IAdaptable {
 
 	IResource resource;
