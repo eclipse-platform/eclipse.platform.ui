@@ -31,7 +31,9 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 			return null;	
 		}
 		Object input = viewer.getInput();
-		if (input == null) return null;
+		if (input == null) {
+			return null;
+		}
 		return (SyncSet)input;
 	}
 	

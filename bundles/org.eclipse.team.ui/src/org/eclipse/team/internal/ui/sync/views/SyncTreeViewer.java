@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -29,22 +30,19 @@ import org.eclipse.swt.widgets.TreeItem;
  * a subclass just for this!
  */
 public class SyncTreeViewer extends TreeViewer implements INavigableControl {
-	private final SyncViewer viewer;
-	public SyncTreeViewer(SyncViewer viewer, Composite parent, int style) {
+	public SyncTreeViewer(Composite parent, int style) {
 		super(parent, style);
-		this.viewer = viewer;
 	}
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] changed= event.getElements();
-		if (changed != null && this.viewer.getInput() != null) {
+		if (changed != null && getInput() != null) {
 			ArrayList others= new ArrayList();
 			for (int i= 0; i < changed.length; i++) {
 				Object curr = changed[i];
 				if (curr instanceof IResource) {
-					// TODO: This may be the wrong model object!
-					SyncSetContentProvider provider = viewer.getContentProvider();
-					if (provider != null) {
-						curr = provider.getModelObject((IResource)curr);
+					IContentProvider provider = getContentProvider();
+					if (provider != null && provider instanceof SyncSetContentProvider) {
+						curr = ((SyncSetContentProvider)provider).getModelObject((IResource)curr);
 					}
 				}
 				others.add(curr);

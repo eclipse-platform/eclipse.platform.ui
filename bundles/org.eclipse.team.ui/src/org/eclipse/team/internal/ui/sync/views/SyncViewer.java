@@ -252,7 +252,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 
 	private void createTreeViewerPartControl(Composite parent) {
-		viewer = new SyncTreeViewer(this, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new SyncTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		setTreeViewerContentProvider();
 		viewer.setLabelProvider(SyncViewerLabelProvider.getDecoratingLabelProvider());
 		viewer.setSorter(new SyncViewerSorter(ResourceSorter.NAME));
