@@ -10,33 +10,31 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ui;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.LabelProvider;
-
-import org.eclipse.ui.roles.ICategory;
-import org.eclipse.ui.roles.ICategoryManager;
-import org.eclipse.ui.roles.NotDefinedException;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.NotDefinedException;
 
 /**
- * Provides labels for <code>IRole</code> objects. They may be passed
+ * Provides labels for <code>ICategory</code> objects. They may be passed
  * directly or as <code>String</code> identifiers that are matched against
- * the role manager.
+ * the activity manager.
  * 
  * @since 3.0
  */
 public class CategoryLabelProvider extends LabelProvider {
 
-	private ICategoryManager roleManager;
+	private IActivityManager activityManager;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param roleManager
+	 * @param activityManager
 	 * @since 3.0
 	 */
-	public CategoryLabelProvider(ICategoryManager roleManager) {
-		this.roleManager = roleManager;
+	public CategoryLabelProvider(IActivityManager activityManager) {
+		this.activityManager = activityManager;
 	}
 
 	/*
@@ -49,14 +47,14 @@ public class CategoryLabelProvider extends LabelProvider {
 	}
 
 	/**
-	 * @param role
+	 * @param category
 	 * @return @since 3.0
 	 */
-	private String getRoleText(ICategory role) {
+	private String getCategoryText(ICategory category) {
 		try {
-			return role.getName();
+			return category.getName();
 		} catch (NotDefinedException e) {
-			return role.getId();
+			return category.getId();
 		}
 	}
 
@@ -67,9 +65,9 @@ public class CategoryLabelProvider extends LabelProvider {
 	 */
 	public String getText(Object element) {
 		if (element instanceof String) {
-			return getRoleText(roleManager.getRole((String) element));
+			return getCategoryText(activityManager.getCategory((String) element));
 		} else if (element instanceof ICategory) {
-			return getRoleText((ICategory) element);
+			return getCategoryText((ICategory) element);
 		} else {
 			throw new IllegalArgumentException();
 		}

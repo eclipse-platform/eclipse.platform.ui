@@ -9,20 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
-final class CategoryRegistryEvent {
+public interface IActivityBindingDefinition extends Comparable {
 
-	private ICategoryRegistry roleRegistry;
+	String getActivityId();
 
-	CategoryRegistryEvent(ICategoryRegistry roleRegistry) {
-		if (roleRegistry == null)
-			throw new NullPointerException();
+	String getPluginId();
 
-		this.roleRegistry = roleRegistry;
-	}
-
-	public ICategoryRegistry getRoleRegistry() {
-		return roleRegistry;
-	}
+	String getRoleId();
 }

@@ -752,8 +752,7 @@ public abstract class ActionFactory {
             IWorkbench workbench = window.getWorkbench();
             // TODO cast
             IWorkbenchAction action = new ActivityEnablerAction(
-                    (IMutableActivityManager)workbench.getActivityManager(), 
-                    workbench.getRoleManager());
+                    (IMutableActivityManager)workbench.getActivityManager()); 
             action.setId(getId());
             return action;
         }

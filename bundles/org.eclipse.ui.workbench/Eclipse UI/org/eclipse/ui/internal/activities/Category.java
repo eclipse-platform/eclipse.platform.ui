@@ -9,18 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.ui.activities.CategoryEvent;
+import org.eclipse.ui.activities.IActivityBinding;
+import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.ICategoryListener;
+import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.ICategory;
-import org.eclipse.ui.roles.ICategoryListener;
-import org.eclipse.ui.roles.NotDefinedException;
-import org.eclipse.ui.roles.CategoryEvent;
 
 final class Category implements ICategory {
 
@@ -29,6 +29,8 @@ final class Category implements ICategory {
 
 	private Set activityBindings;
 	private transient IActivityBinding[] activityBindingsAsArray;
+	private MutableActivityManager activityManager;
+	private List categoryListeners;
 	private boolean defined;
 	private String description;
 
@@ -36,29 +38,27 @@ final class Category implements ICategory {
 	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
-	private List roleListeners;
-	private CategoryManager roleManager;
 	private transient String string;
 
-	Category(CategoryManager roleManager, String id) {
-		if (roleManager == null || id == null)
+	Category(MutableActivityManager activityManager, String id) {
+		if (activityManager == null || id == null)
 			throw new NullPointerException();
 
-		this.roleManager = roleManager;
+		this.activityManager = activityManager;
 		this.id = id;
 	}
 
-	public void addRoleListener(ICategoryListener roleListener) {
-		if (roleListener == null)
+	public void addCategoryListener(ICategoryListener categoryListener) {
+		if (categoryListener == null)
 			throw new NullPointerException();
 
-		if (roleListeners == null)
-			roleListeners = new ArrayList();
+		if (categoryListeners == null)
+			categoryListeners = new ArrayList();
 
-		if (!roleListeners.contains(roleListener))
-			roleListeners.add(roleListener);
+		if (!categoryListeners.contains(categoryListener))
+			categoryListeners.add(categoryListener);
 
-		roleManager.getRolesWithListeners().add(this);
+		activityManager.getCategoriesWithListeners().add(this);
 	}
 
 	public int compareTo(Object object) {
@@ -100,13 +100,14 @@ final class Category implements ICategory {
 		return equals;
 	}
 
-	void fireRoleChanged(CategoryEvent roleEvent) {
-		if (roleEvent == null)
+	void fireCategoryChanged(CategoryEvent categoryEvent) {
+		if (categoryEvent == null)
 			throw new NullPointerException();
 
-		if (roleListeners != null)
-			for (int i = 0; i < roleListeners.size(); i++)
-				 ((ICategoryListener) roleListeners.get(i)).roleChanged(roleEvent);
+		if (categoryListeners != null)
+			for (int i = 0; i < categoryListeners.size(); i++)
+				((ICategoryListener) categoryListeners.get(i)).categoryChanged(
+					categoryEvent);
 	}
 
 	public Set getActivityBindings() {
@@ -149,15 +150,15 @@ final class Category implements ICategory {
 		return defined;
 	}
 
-	public void removeRoleListener(ICategoryListener roleListener) {
-		if (roleListener == null)
+	public void removeCategoryListener(ICategoryListener categoryListener) {
+		if (categoryListener == null)
 			throw new NullPointerException();
 
-		if (roleListeners != null)
-			roleListeners.remove(roleListener);
+		if (categoryListeners != null)
+			categoryListeners.remove(categoryListener);
 
-		if (roleListeners.isEmpty())
-			roleManager.getRolesWithListeners().remove(this);
+		if (categoryListeners.isEmpty())
+			activityManager.getCategoriesWithListeners().remove(this);
 	}
 
 	boolean setActivityBindings(Set activityBindings) {

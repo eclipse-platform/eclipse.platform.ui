@@ -14,11 +14,12 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.roles.ICategoryManager;
+import org.eclipse.ui.activities.IActivityManager;
 
 /**
- * The RoleContentProvider is a class that supplies the contents for the viewer
+ * The CategoryContentProvider is a class that supplies the contents for the viewer
  * in the RolePreferencePage.
+ * TODO: kim.. RolePreferencePage can't be the correct name here.
  */
 public class CategoryContentProvider implements IStructuredContentProvider {
 
@@ -43,13 +44,13 @@ public class CategoryContentProvider implements IStructuredContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		Object[] roles = new Object[0];
-		if (inputElement instanceof ICategoryManager) {
-			roles = ((ICategoryManager) inputElement).getDefinedRoleIds().toArray();
+		Object[] categories = new Object[0];
+		if (inputElement instanceof IActivityManager) {
+			categories = ((IActivityManager) inputElement).getDefinedCategoryIds().toArray();
 		} else if (inputElement instanceof Collection) {
-			roles = ((Collection) inputElement).toArray();
+			categories = ((Collection) inputElement).toArray();
 		}
-		return roles;
+		return categories;
 	}
 
 	/*

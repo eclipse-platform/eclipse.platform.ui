@@ -128,7 +128,8 @@ public class WorkbenchActivityHelper {
     private WorkbenchActivityHelper() {
         loadEnabledStates();
 
-        boolean noRoles = PlatformUI.getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty();
+        // TODO kim: shouldn't you want to check for any activities (not categories)?        
+        boolean noRoles = PlatformUI.getWorkbench().getActivityManager().getDefinedActivityIds().isEmpty();
         
         if (noRoles) {
         	// TODO cast

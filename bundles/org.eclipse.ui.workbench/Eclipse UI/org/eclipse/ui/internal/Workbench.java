@@ -105,8 +105,6 @@ import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.roles.ICategoryManager;
-import org.eclipse.ui.roles.CategoryManagerFactory;
 
 /**
  * The workbench class represe
@@ -283,10 +281,8 @@ public final class Workbench implements IWorkbench {
 		return testableObject;
 	}
 
-	
 	private IMutableActivityManager activityManager;	
 	/* TODO private */ ICommandManager commandManager;
-	private ICategoryManager roleManager;
 	private WorkbenchActivityService workbenchActivityService;
 	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
 	// TODO reduce visibility
@@ -304,10 +300,6 @@ public final class Workbench implements IWorkbench {
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
-
-	public ICategoryManager getRoleManager() {
-		return roleManager;
-	}		
 
 	public IActivityService getActivityService() {
 		return workbenchActivityService;
@@ -737,9 +729,6 @@ public final class Workbench implements IWorkbench {
 		activityManager = ActivityManagerFactory.getMutableActivityManager();
 		activityManager.addActivityManagerListener(workbenchActivitiesCommandsAndRoles.activityManagerListener);                   
 		
-		// create a role manager
-		roleManager = CategoryManagerFactory.getRoleManager();       
-
 		// create a command manager
 		commandManager = CommandManagerFactory.getCommandManager(); 
 		commandManager.addCommandManagerListener(workbenchActivitiesCommandsAndRoles.commandManagerListener);

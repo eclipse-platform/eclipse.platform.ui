@@ -1,4 +1,4 @@
-/*******************************************************************************
+ /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
@@ -9,26 +9,27 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.activities;
 
 import java.util.Set;
 
+
 /**
  * <p>
- * An instance of <code>IRole</code> is a handle representing an role as
- * defined by the extension point <code>org.eclipse.ui.roles</code>. The
- * identifier of the handle is identifier of the role being represented.
+ * An instance of <code>ICategory</code> is a handle representing an category as
+ * defined by the extension point <code>org.eclipse.ui.activities</code>. The
+ * identifier of the handle is identifier of the category being represented.
  * </p>
  * <p>
- * An instance of <code>IRole</code> can be obtained from an instance of
- * <code>IRoleManager</code> for any identifier, whether or not a role with
+ * An instance of <code>ICategory</code> can be obtained from an instance of
+ * <code>ICategoryManager</code> for any identifier, whether or not a category with
  * that identifier is defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
  * plugin activation and deactivation, which causes dynamic changes to the
  * plugin registry, and therefore, potentially, dynamic changes to the set of
- * role definitions.
+ * category definitions.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -39,29 +40,29 @@ import java.util.Set;
  * 
  * @since 3.0
  * @see IActivityBinding
- * @see IRoleListener
- * @see IRoleManager
+ * @see IActivityManager
+ * @see ICategoryListener
  */
 public interface ICategory extends Comparable {
 
 	/**
-	 * Registers an instance of <code>IRoleListener</code> to listen for
+	 * Registers an instance of <code>ICategoryListener</code> to listen for
 	 * changes to attributes of this instance.
 	 * 
-	 * @param roleListener
-	 *            the instance of <code>IRoleListener</code> to register.
+	 * @param categoryListener
+	 *            the instance of <code>ICategoryListener</code> to register.
 	 *            Must not be <code>null</code>. If an attempt is made to
-	 *            register an instance of <code>IRoleListener</code> which is
+	 *            register an instance of <code>ICategoryListener</code> which is
 	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */
-	void addRoleListener(ICategoryListener roleListener);
+	void addCategoryListener(ICategoryListener categoryListener);
 
 	/**
 	 * <p>
 	 * Returns the set of activity bindings for this handle. This method will
 	 * return all activity bindings for this handle's identifier, whether or
-	 * not the role represented by this handle is defined.
+	 * not the category represented by this handle is defined.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
@@ -76,7 +77,7 @@ public interface ICategory extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the description of the role represented by this handle, suitable
+	 * Returns the description of the category represented by this handle, suitable
 	 * for display to the user.
 	 * </p>
 	 * <p>
@@ -84,10 +85,10 @@ public interface ICategory extends Comparable {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the description of the role represented by this handle.
+	 * @return the description of the category represented by this handle.
 	 *         Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if the role represented by this handle is not defined.
+	 *             if the category represented by this handle is not defined.
 	 */
 	String getDescription() throws NotDefinedException;
 
@@ -100,7 +101,7 @@ public interface ICategory extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the name of the role represented by this handle, suitable for
+	 * Returns the name of the category represented by this handle, suitable for
 	 * display to the user.
 	 * </p>
 	 * <p>
@@ -108,37 +109,37 @@ public interface ICategory extends Comparable {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the name of the role represented by this handle. Guaranteed not
+	 * @return the name of the category represented by this handle. Guaranteed not
 	 *         to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if the role represented by this handle is not defined.
+	 *             if the category represented by this handle is not defined.
 	 */
 	String getName() throws NotDefinedException;
 
 	/**
 	 * <p>
-	 * Returns whether or not the role represented by this handle is defined.
+	 * Returns whether or not the category represented by this handle is defined.
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff the role represented by this handle is
+	 * @return <code>true</code>, iff the category represented by this handle is
 	 *         defined.
 	 */
 	boolean isDefined();
 
 	/**
-	 * Unregisters an instance of <code>IRoleListener</code> listening for
+	 * Unregisters an instance of <code>ICategoryListener</code> listening for
 	 * changes to attributes of this instance.
 	 * 
-	 * @param roleListener
-	 *            the instance of <code>IRoleListener</code> to unregister.
+	 * @param categoryListener
+	 *            the instance of <code>ICategoryListener</code> to unregister.
 	 *            Must not be <code>null</code>. If an attempt is made to
-	 *            unregister an instance of <code>IRoleListener</code> which
+	 *            unregister an instance of <code>ICategoryListener</code> which
 	 *            is not already registered with this instance, no operation is
 	 *            performed.
 	 */
-	void removeRoleListener(ICategoryListener roleListener);
+	void removeCategoryListener(ICategoryListener categoryListener);
 }

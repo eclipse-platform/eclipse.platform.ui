@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 

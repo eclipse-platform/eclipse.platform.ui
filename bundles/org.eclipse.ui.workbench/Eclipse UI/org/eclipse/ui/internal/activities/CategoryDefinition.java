@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,52 +25,52 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	private final static int HASH_INITIAL =
 		CategoryDefinition.class.getName().hashCode();
 
-	static Map roleDefinitionsById(
-		Collection roleDefinitions,
+	static Map categoryDefinitionsById(
+		Collection categoryDefinitions,
 		boolean allowNullIds) {
-		if (roleDefinitions == null)
+		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();
-		Iterator iterator = roleDefinitions.iterator();
+		Iterator iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition roleDefinition = (ICategoryDefinition) object;
-			String id = roleDefinition.getId();
+			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			String id = categoryDefinition.getId();
 
 			if (allowNullIds || id != null)
-				map.put(id, roleDefinition);
+				map.put(id, categoryDefinition);
 		}
 
 		return map;
 	}
 
-	static Map roleDefinitionsByName(
-		Collection roleDefinitions,
+	static Map categoryDefinitionsByName(
+		Collection categoryDefinitions,
 		boolean allowNullNames) {
-		if (roleDefinitions == null)
+		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();
-		Iterator iterator = roleDefinitions.iterator();
+		Iterator iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition roleDefinition = (ICategoryDefinition) object;
-			String name = roleDefinition.getName();
+			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {
-				Collection roleDefinitions2 = (Collection) map.get(name);
+				Collection categoryDefinitions2 = (Collection) map.get(name);
 
-				if (roleDefinitions2 == null) {
-					roleDefinitions2 = new HashSet();
-					map.put(name, roleDefinitions2);
+				if (categoryDefinitions2 == null) {
+					categoryDefinitions2 = new HashSet();
+					map.put(name, categoryDefinitions2);
 				}
 
-				roleDefinitions2.add(roleDefinition);
+				categoryDefinitions2.add(categoryDefinition);
 			}
 		}
 

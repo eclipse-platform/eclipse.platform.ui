@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * <p>
  * An instance of <code>IMutableActivityManager</code> can be used to obtain
- * instances of <code>IActivity</code>, as well as manage whether or not
+ * instances of <code>IActivity</code> and <code>ICategory</code>, as well as manage whether or not
  * those instances are enabled or disabled.
  * </p>
  * <p>
@@ -30,6 +30,7 @@ import java.util.Set;
  * @see ActivityManagerFactory
  * @see IActivity
  * @see IActivityManagerListener
+ * @see ICategory
  */
 public interface IMutableActivityManager extends IActivityManager {
 
@@ -42,4 +43,14 @@ public interface IMutableActivityManager extends IActivityManager {
 	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
 	void setEnabledActivityIds(Set enabledActivityIds);
+	
+	/**
+	 * Sets the set of identifiers to enabled categories.
+	 * 
+	 * @param enabledCategoryIds
+	 *            the set of identifiers to enabled categories. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
+	 */
+	void setEnabledCategoryIds(Set enabledCategoryIds);	
 }

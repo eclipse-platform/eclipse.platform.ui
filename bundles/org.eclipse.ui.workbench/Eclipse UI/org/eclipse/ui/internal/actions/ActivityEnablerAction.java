@@ -10,19 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
-
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
-import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Activates the Activity configuration dialog. 
@@ -32,17 +29,15 @@ import org.eclipse.ui.roles.ICategoryManager;
 public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
     protected ActivityEnabler enabler;
 	private IMutableActivityManager activityManager;
-	private ICategoryManager roleManager;
 
     /**
      * Create a new instance of the receiver.
      * 
      * @since 3.0
      */
-    public ActivityEnablerAction(IMutableActivityManager activityManager, ICategoryManager roleManager) {
+    public ActivityEnablerAction(IMutableActivityManager activityManager) {
         super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
         this.activityManager = activityManager;
-        this.roleManager = roleManager;
     }
 
     /*
@@ -60,7 +55,7 @@ public class ActivityEnablerAction extends Action implements ActionFactory.IWork
                 data.widthHint = 600;
                 data.heightHint = 240;
 
-                enabler = new ActivityEnabler(activityManager, roleManager);
+                enabler = new ActivityEnabler(activityManager);
                 enabler.createControl(composite).setLayoutData(data);
 
                 return composite;

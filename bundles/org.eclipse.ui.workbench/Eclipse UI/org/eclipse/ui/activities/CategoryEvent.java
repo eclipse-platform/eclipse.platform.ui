@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>RoleEvent</code> describes changes to an instance of
- * <code>IRole</code>.
+ * An instance of <code>CategoryEvent</code> describes changes to an instance
+ * of <code>ICategory</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -24,36 +24,36 @@ package org.eclipse.ui.roles;
  * </p>
  * 
  * @since 3.0
- * @see IRole
- * @see IRoleListener#roleChanged
+ * @see ICategory
+ * @see ICategoryListener#categoryChanged
  */
 public final class CategoryEvent {
 
 	private boolean activityBindingsChanged;
+	private ICategory category;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean nameChanged;
-	private ICategory role;
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param role
+	 * @param category
 	 * @param activityBindingsChanged
 	 * @param definedChanged
 	 * @param descriptionChanged
 	 * @param nameChanged
 	 */
 	public CategoryEvent(
-		ICategory role,
+		ICategory category,
 		boolean activityBindingsChanged,
 		boolean definedChanged,
 		boolean descriptionChanged,
 		boolean nameChanged) {
-		if (role == null)
+		if (category == null)
 			throw new NullPointerException();
 
-		this.role = role;
+		this.category = category;
 		this.activityBindingsChanged = activityBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
@@ -61,13 +61,13 @@ public final class CategoryEvent {
 	}
 
 	/**
-	 * Returns the instance of <code>IRole</code> that has changed.
+	 * Returns the instance of <code>ICategory</code> that has changed.
 	 * 
-	 * @return the instance of <code>IRole</code> that has changed.
+	 * @return the instance of <code>ICategory</code> that has changed.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	public ICategory getRole() {
-		return role;
+	public ICategory getCategory() {
+		return category;
 	}
 
 	/**

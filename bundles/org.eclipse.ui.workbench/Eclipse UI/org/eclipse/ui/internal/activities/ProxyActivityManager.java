@@ -17,6 +17,7 @@ import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.ICategory;
 
 public final class ProxyActivityManager extends AbstractActivityManager {
 
@@ -36,7 +37,7 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 					new ActivityManagerEvent(
 						ProxyActivityManager.this,
 						activityManagerEvent.haveDefinedActivityIdsChanged(),
-						activityManagerEvent.haveEnabledActivityIdsChanged());
+						activityManagerEvent.haveEnabledActivityIdsChanged(), false, false);
 				fireActivityManagerChanged(proxyActivityManagerEvent);
 			}
 		});
@@ -54,6 +55,18 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 		return activityManager.getEnabledActivityIds();
 	}
 
+	public ICategory getCategory(String categoryId) {
+		return activityManager.getCategory(categoryId);
+	}
+
+	public Set getDefinedCategoryIds() {
+		return activityManager.getDefinedCategoryIds();
+	}
+
+	public Set getEnabledCategoryIds() {
+		return activityManager.getEnabledCategoryIds();
+	}	
+	
 	public boolean match(String string, Set activityIds) {
 		return activityManager.match(string, activityIds);
 	}

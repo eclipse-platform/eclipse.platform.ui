@@ -9,9 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
-public interface ICategoryRegistryListener {
+public interface ICategoryDefinition extends Comparable {
 
-	void roleRegistryChanged(CategoryRegistryEvent roleRegistryEvent);
+	String getDescription();
+
+	String getId();
+
+	String getName();
+
+	String getPluginId();
 }

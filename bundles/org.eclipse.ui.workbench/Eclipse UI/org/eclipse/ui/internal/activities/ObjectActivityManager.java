@@ -29,7 +29,6 @@ import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
-import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Provides a registry of id-&gt;object mappings (likely derived from extension
@@ -85,8 +84,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 					id,
 					(IMutableActivityManager) PlatformUI
 						.getWorkbench()
-						.getActivityManager(),
-					PlatformUI.getWorkbench().getRoleManager());
+						.getActivityManager());
 			managersMap.put(id, manager);
 		}
 		return manager;
@@ -155,11 +153,6 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	private Map objectMap = new HashMap();
 
 	/**
-	 * The <code>IRoleManager</code> to which this manager is bound.
-	 */
-	private ICategoryManager roleManager;
-
-	/**
 	 * Create an instance with the given id that is bound to the provided
 	 * managers.
 	 * 
@@ -172,8 +165,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 */
 	public ObjectActivityManager(
 		String id,
-		IMutableActivityManager activityManager,
-		ICategoryManager roleManager) {
+		IMutableActivityManager activityManager) {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
@@ -181,7 +173,6 @@ public class ObjectActivityManager implements IObjectActivityManager {
 		managerId = id;
 
 		this.activityManager = activityManager;
-		this.roleManager = roleManager;
 
 		activityManager.addActivityManagerListener(activityManagerListener);
 	}
@@ -304,7 +295,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 */
 	public Collection getActiveObjects() {
 		synchronized (activeObjects) {
-			if (!roleManager.getDefinedRoleIds().isEmpty()) {
+			if (!activityManager.getDefinedCategoryIds().isEmpty()) {
 				if (dirty) {
 					activeObjects.clear();
 					Collection activeActivities =

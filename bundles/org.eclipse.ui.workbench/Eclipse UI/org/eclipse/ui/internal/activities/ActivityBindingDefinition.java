@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,11 +65,11 @@ final class ActivityBindingDefinition implements IActivityBindingDefinition {
 
 	ActivityBindingDefinition(
 		String activityId,
-		String pluginId,
-		String roleId) {
+		String categoryId,
+		String pluginId) {
 		this.activityId = activityId;
 		this.pluginId = pluginId;
-		this.roleId = roleId;
+		this.roleId = categoryId;
 	}
 
 	public int compareTo(Object object) {

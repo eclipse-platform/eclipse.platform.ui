@@ -31,18 +31,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityBinding;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.ICategory;
-import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Utility class that will create controls (two lists and swap buttons) for
  * managing IActivity objects in the system manager as well as methods to
  * update the state of currently enabled IActivity objects based on the
  * contents of the lists. This control will only display IActivity objects that
- * are bound to some IRole object in the system manager.
+ * are bound to some ICategory object in the system manager.
  * 
  * @since 3.0
  */
@@ -98,20 +97,22 @@ public class SwapActivityHelper {
 	private Composite mainComposite;
 
 	/**
-	 * Answers whether the given activity id is bound to a role.
+	 * Answers whether the given activity id is bound to a category.
 	 * 
 	 * @param activityId
 	 *            the activity id to test.
-	 * @return whether the given activity is bound to a role.
+	 * @return whether the given activity is bound to a category.
 	 * @since 3.0
 	 */
-	private boolean belongsToARole(String activityId) {
-		ICategoryManager roleManager = PlatformUI.getWorkbench().getRoleManager();
-		for (Iterator roleItr = roleManager.getDefinedRoleIds().iterator();
-			roleItr.hasNext();
+	private boolean belongsToACategory(String activityId) {
+		IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
+		
+		for (Iterator categoryItr = activityManager.getDefinedCategoryIds().iterator();
+			categoryItr.hasNext();
 			) {
-			ICategory role = roleManager.getRole((String) roleItr.next());
-			for (Iterator bindingItr = role.getActivityBindings().iterator();
+			ICategory category = activityManager.getCategory((String) categoryItr.next());
+			
+			for (Iterator bindingItr = category.getActivityBindings().iterator();
 				bindingItr.hasNext();
 				) {
 				IActivityBinding binding = (IActivityBinding) bindingItr.next();
@@ -178,7 +179,7 @@ public class SwapActivityHelper {
 		List active = new ArrayList(), potential = new ArrayList();
 		for (Iterator i = activityIds.iterator(); i.hasNext();) {
 			IActivity activity = activityManager.getActivity((String) i.next());
-			if (belongsToARole(activity.getId())) {
+			if (belongsToACategory(activity.getId())) {
 				if (activity.isEnabled()) {
 					active.add(activity);
 				} else {

@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
  * An instance of <code>IActivityBinding</code> represents a binding between
- * a role and an activity.
+ * a category and an activity.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -24,7 +24,8 @@ package org.eclipse.ui.roles;
  * </p>
  * 
  * @since 3.0
- * @see org.eclipse.ui.roles.IRole
+ * @see IActivity
+ * @see ICategory
  */
 public interface IActivityBinding extends Comparable {
 

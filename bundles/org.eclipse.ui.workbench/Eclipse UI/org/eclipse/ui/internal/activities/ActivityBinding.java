@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles;
+package org.eclipse.ui.internal.activities;
 
+import org.eclipse.ui.activities.IActivityBinding;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.roles.IActivityBinding;
 
 final class ActivityBinding implements IActivityBinding {
 

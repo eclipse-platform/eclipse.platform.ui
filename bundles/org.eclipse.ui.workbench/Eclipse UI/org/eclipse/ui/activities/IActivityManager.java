@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * <p>
  * An instance of <code>IActivityManager</code> can be used to obtain
- * instances of <code>IActivity</code>.
+ * instances of <code>IActivity</code> and <code>ICategory</code>.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -29,6 +29,7 @@ import java.util.Set;
  * @see ActivityManagerFactory
  * @see IActivity
  * @see IActivityManagerListener
+ * @see ICategory
  */
 public interface IActivityManager {
 
@@ -87,6 +88,48 @@ public interface IActivityManager {
 	 */
 	Set getEnabledActivityIds();
 
+	/**
+	 * Returns a handle to an category given an identifier.
+	 * 
+	 * @param categoryId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to an category.
+	 */
+	ICategory getCategory(String categoryId);
+
+	/**
+	 * <p>
+	 * Returns the set of identifiers to defined categories.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute
+	 * changes.
+	 * </p>
+	 * 
+	 * @return the set of identifiers to defined categories. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
+	 *         <code>String</code>.
+	 */
+	Set getDefinedCategoryIds();
+
+	/**
+	 * <p>
+	 * Returns the set of identifiers to enabled categories. This set is not
+	 * necessarily a subset of the set of identifiers to defined categories.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute
+	 * changes.
+	 * </p>
+	 * 
+	 * @return the set of identifiers to enabled categories. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
+	 *         <code>String</code>.
+	 */
+	Set getEnabledCategoryIds();	
+	
 	/**
 	 * TODO javadoc
 	 */

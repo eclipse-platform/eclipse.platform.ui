@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IRoleListener</code> can be used by clients to
- * receive notification of changes to one or more instances of <code>IRole</code>.
+ * An instance of <code>ICategoryListener</code> can be used by clients to
+ * receive notification of changes to one or more instances of <code>ICategory</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -24,18 +24,18 @@ package org.eclipse.ui.roles;
  * </p>
  * 
  * @since 3.0
- * @see IRole#addRoleListener
- * @see IRole#removeRoleListener
- * @see RoleEvent
+ * @see ICategory#addCategoryListener
+ * @see ICategory#removeCategoryListener
+ * @see CategoryEvent
  */
 public interface ICategoryListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>IRole</code>
-	 * have changed. Specific details are described in the <code>RoleEvent</code>.
+	 * Notifies that one or more attributes of an instance of <code>ICategory</code>
+	 * have changed. Specific details are described in the <code>CategoryEvent</code>.
 	 * 
-	 * @param role
-	 *            the role event. Guaranteed not to be <code>null</code>.
+	 * @param category
+	 *            the category event. Guaranteed not to be <code>null</code>.
 	 */
-	void roleChanged(CategoryEvent roleEvent);
+	void categoryChanged(CategoryEvent categoryEvent);
 }
