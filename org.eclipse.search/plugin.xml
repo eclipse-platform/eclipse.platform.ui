@@ -10,172 +10,182 @@
 	provider-name="%providerName"
 	class="org.eclipse.search.internal.ui.SearchPlugin">
 
-<requires>
-  <import plugin="org.apache.xerces"/>
-  <import plugin="org.eclipse.core.resources"/>
-  <import plugin="org.eclipse.ui"/>
-</requires>
-
-<runtime>
-	<library name="search.jar" >
-		<export name = "*"/>
-		<packages prefixes="org.eclipse.search.ui,org.eclipse.search.internal"/>
-	</library>
-</runtime>
-
-
-<!-- Search extension point definitions -->
-
-<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
-<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
-
-
-<!-- Extensions -->
-
-<extension point="org.eclipse.core.resources.markers" id="searchmarker" name="%searchMarker">
-	<super type="org.eclipse.core.resources.textmarker"/>
-	<attribute name="line"/>
-	<attribute name="potentialMatch"/>
-</extension>
-
-<extension 
-	point="org.eclipse.ui.markerImageProviders">
-	<imageprovider 
-		id="org.eclipse.ui.searchMarkerProvider"
-		markertype="org.eclipse.search.searchmarker"
-		icon="icons/full/obj16/searchm_obj.gif">
-	</imageprovider>
-</extension>
-
-
-<extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition
-		id="org.eclipse.search.ui.openSearchDialog"
-		name= "%ActionDefinition.openSearchDialog.name"
-		description="%ActionDefinition.openSearchDialog.description"
-	/>
-	<actionDefinition
-		id="org.eclipse.search.ui.openFileSearchPage"
-		name= "%ActionDefinition.openFileSearchPage.name"
-		description="%ActionDefinition.openFileSearchPage.description"
-	/>
-</extension>
-
-<extension point="org.eclipse.ui.acceleratorSets">
-	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-		<accelerator key="Ctrl+H" id="org.eclipse.search.ui.openSearchDialog" />
-		<accelerator key="" id="org.eclipse.search.ui.openFileSearchPage" />
-	</acceleratorSet>
+	<requires>
+	  <import plugin="org.apache.xerces"/>
+	  <import plugin="org.eclipse.core.resources"/>
+	  <import plugin="org.eclipse.ui"/>
+	</requires>
 	
-	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-		<accelerator key="Ctrl+H" id="org.eclipse.search.ui.openSearchDialog" />
-		<accelerator key="" id="org.eclipse.search.ui.openFileSearchPage" />
-	</acceleratorSet>
-</extension>
+	<runtime>
+		<library name="search.jar" >
+			<export name = "*"/>
+			<packages prefixes="org.eclipse.search.ui,org.eclipse.search.internal"/>
+		</library>
+	</runtime>
+	
+	
+	<!-- Search extension point definitions -->
+	
+	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
+	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
+	
+	
+	<!-- Extensions -->
+	
+	<extension point="org.eclipse.core.resources.markers" id="searchmarker" name="%searchMarker">
+		<super type="org.eclipse.core.resources.textmarker"/>
+		<attribute name="line"/>
+		<attribute name="potentialMatch"/>
+	</extension>
+	
+	<extension 
+		point="org.eclipse.ui.markerImageProviders">
+		<imageprovider 
+			id="org.eclipse.ui.searchMarkerProvider"
+			markertype="org.eclipse.search.searchmarker"
+			icon="icons/full/obj16/searchm_obj.gif">
+		</imageprovider>
+	</extension>
+	
+	<!-- commands and their bindings -->   
+	<extension point="org.eclipse.ui.commands">
+		<category
+			name="%searchCategory.name"
+			description="%searchCategory.description"
+			id="org.eclipse.search.ui.category.search"
+		/>
 
-<extension point="org.eclipse.ui.actionSets">
-	<actionSet
-		id="org.eclipse.search.searchActionSet"
-        label="%search"
-		visible="true">
+		<command
+			category="org.eclipse.search.ui.category.search"
+			id="org.eclipse.search.ui.openSearchDialog"
+			name= "%ActionDefinition.openSearchDialog.name"
+			description="%ActionDefinition.openSearchDialog.description"
+		/>
+		<keyBinding
+			string="Ctrl+H"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.openSearchDialog"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string="Ctrl+H"
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.search.ui.openSearchDialog"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>
 
-		<!-- =================================================================== -->
-		<!-- Search Menu                                                         -->
-		<!-- =================================================================== -->
-		
-      	<menu
-            id="org.eclipse.search.menu"
-            label="%searchMenu.label"
-            path="navigate">
-			<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
-			<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
-         	<separator name="contextMenuActionsGroup"/>
-      	</menu>
-      	
-      	<!-- dialog group  -->
-		<action id="org.eclipse.search.OpenFileSearchPage"
-			definitionId="org.eclipse.search.ui.openFileSearchPage"
-			menubarPath="org.eclipse.search.menu/internalDialogGroup"
-			label="%openFileSearchPageAction.label"
+		<command
+			category="org.eclipse.search.ui.category.search"
+			id="org.eclipse.search.ui.openFileSearchPage"
+			name= "%ActionDefinition.openFileSearchPage.name"
+			description="%ActionDefinition.openFileSearchPage.description"
+		/>
+	</extension>
+	
+	<!-- action sets -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet
+			id="org.eclipse.search.searchActionSet"
+	        label="%search"
+			visible="true">
+	
+			<!-- =================================================================== -->
+			<!-- Search Menu                                                         -->
+			<!-- =================================================================== -->
+			
+	      	<menu
+	            id="org.eclipse.search.menu"
+	            label="%searchMenu.label"
+	            path="navigate">
+				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
+				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
+	         	<separator name="contextMenuActionsGroup"/>
+	      	</menu>
+	      	
+	      	<!-- dialog group  -->
+			<action id="org.eclipse.search.OpenFileSearchPage"
+				definitionId="org.eclipse.search.ui.openFileSearchPage"
+				menubarPath="org.eclipse.search.menu/internalDialogGroup"
+				label="%openFileSearchPageAction.label"
+				icon="icons/full/obj16/tsearch_obj.gif"
+				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
+	
+			<action id="org.eclipse.search.OpenSearchDialog"
+				definitionId="org.eclipse.search.ui.openSearchDialog"
+				toolbarPath="Normal/Search"			
+				menubarPath="org.eclipse.search.menu/internalDialogGroup"
+				label="%openSearchDialogAction.label"
+				tooltip="%openSearchDialogAction.tooltip"
+				icon="icons/full/ctool16/search.gif"
+				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
+	     </actionSet>
+	</extension>
+	
+	<extension point="org.eclipse.ui.views">
+		<view
+		   id="org.eclipse.search.SearchResultView"
+		   name="%searchResultViewName"
+		   category="org.eclipse.ui"
+		   class="org.eclipse.search.internal.ui.SearchResultView"
+		   icon="icons/full/cview16/searchres.gif">
+		</view>
+	</extension>
+	
+	<extension point="org.eclipse.search.searchPages">
+		<page
+			id="org.eclipse.search.internal.ui.text.TextSearchPage"
+			label="%fileSearch"
 			icon="icons/full/obj16/tsearch_obj.gif"
-			class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
-
-		<action id="org.eclipse.search.OpenSearchDialog"
-			definitionId="org.eclipse.search.ui.openSearchDialog"
-			toolbarPath="Normal/Search"			
-			menubarPath="org.eclipse.search.menu/internalDialogGroup"
-			label="%openSearchDialogAction.label"
-			tooltip="%openSearchDialogAction.tooltip"
-			icon="icons/full/ctool16/search.gif"
-			class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
-     </actionSet>
-</extension>
-
-<extension point="org.eclipse.ui.views">
-	<view
-	   id="org.eclipse.search.SearchResultView"
-	   name="%searchResultViewName"
-	   category="org.eclipse.ui"
-	   class="org.eclipse.search.internal.ui.SearchResultView"
-	   icon="icons/full/cview16/searchres.gif">
-	</view>
-</extension>
-
-<extension point="org.eclipse.search.searchPages">
-	<page
-		id="org.eclipse.search.internal.ui.text.TextSearchPage"
-		label="%fileSearch"
-		icon="icons/full/obj16/tsearch_obj.gif"
-		sizeHint="250,160"
-		tabPosition="1"
-		extensions="*:1"
-		showScopeSection="true"		
-		class="org.eclipse.search.internal.ui.text.TextSearchPage">
-	</page>
-</extension>
-
-<extension point="org.eclipse.search.searchResultSorters">
-	<sorter
-		id="org.eclipse.search.internal.ui.ResourcenameSorter"
-		pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
-		label="%ResourcenameSorter.label"
-		tooltip="%ResourcenameSorter.tooltip"
-		icon="icons/full/clcl16/search_sortmatch.gif"
-		class="org.eclipse.search.internal.ui.text.ResourcenameSorter">
-	</sorter>
-	<sorter
-		id="org.eclipse.search.internal.ui.ResourcePathSorter"
-		pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
-		label="%ResourcePathSorter.label"
-		tooltip="%ResourcePathSorter.tooltip"
-		icon="icons/full/clcl16/search_sortmatch.gif"
-		class="org.eclipse.search.internal.ui.text.ResourcePathSorter">
-	</sorter>
-</extension>
-
-<extension
-	point="org.eclipse.ui.preferencePages">
-	<page name="%SearchPreferencePage.label"
-		id="org.eclipse.search.preferences.SearchPreferencePage"
-		class="org.eclipse.search.internal.ui.SearchPreferencePage"
-		category="org.eclipse.ui.preferencePages.Workbench">
-	</page>
-</extension>
-
-<extension
-     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
-     <specification
-      		annotationType="org.eclipse.search.results"
-            label="%SearchMarkerPreference.label"
-            markerType="org.eclipse.search.searchmarker"
-            textPreferenceKey="searchResultIndication"
-            textPreferenceValue="true"
-            overviewRulerPreferenceKey="searchResultIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="true"
-            colorPreferenceKey="searchResultIndicationColor"
-            colorPreferenceValue="192,192,192"
-            presentationLayer="3">
-     </specification>
-</extension>
+			sizeHint="250,160"
+			tabPosition="1"
+			extensions="*:1"
+			showScopeSection="true"		
+			class="org.eclipse.search.internal.ui.text.TextSearchPage">
+		</page>
+	</extension>
+	
+	<extension point="org.eclipse.search.searchResultSorters">
+		<sorter
+			id="org.eclipse.search.internal.ui.ResourcenameSorter"
+			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
+			label="%ResourcenameSorter.label"
+			tooltip="%ResourcenameSorter.tooltip"
+			icon="icons/full/clcl16/search_sortmatch.gif"
+			class="org.eclipse.search.internal.ui.text.ResourcenameSorter">
+		</sorter>
+		<sorter
+			id="org.eclipse.search.internal.ui.ResourcePathSorter"
+			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
+			label="%ResourcePathSorter.label"
+			tooltip="%ResourcePathSorter.tooltip"
+			icon="icons/full/clcl16/search_sortmatch.gif"
+			class="org.eclipse.search.internal.ui.text.ResourcePathSorter">
+		</sorter>
+	</extension>
+	
+	<extension
+		point="org.eclipse.ui.preferencePages">
+		<page name="%SearchPreferencePage.label"
+			id="org.eclipse.search.preferences.SearchPreferencePage"
+			class="org.eclipse.search.internal.ui.SearchPreferencePage"
+			category="org.eclipse.ui.preferencePages.Workbench">
+		</page>
+	</extension>
+	
+	<extension
+	     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
+	     <specification
+	      		annotationType="org.eclipse.search.results"
+	            label="%SearchMarkerPreference.label"
+	            markerType="org.eclipse.search.searchmarker"
+	            textPreferenceKey="searchResultIndication"
+	            textPreferenceValue="true"
+	            overviewRulerPreferenceKey="searchResultIndicationInOverviewRuler"
+	            overviewRulerPreferenceValue="true"
+	            colorPreferenceKey="searchResultIndicationColor"
+	            colorPreferenceValue="192,192,192"
+	            presentationLayer="3">
+	     </specification>
+	</extension>
 
 </plugin>
