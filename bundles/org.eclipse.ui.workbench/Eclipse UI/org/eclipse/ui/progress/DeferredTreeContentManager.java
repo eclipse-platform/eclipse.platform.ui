@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -291,7 +292,7 @@ public class DeferredTreeContentManager {
      * @param placeholder
      */
     protected void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
-        if (placeholder.isRemoved())
+        if (placeholder.isRemoved() || !PlatformUI.isWorkbenchRunning())
             return;
         //Clear the placeholder if it is still there
         WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages
