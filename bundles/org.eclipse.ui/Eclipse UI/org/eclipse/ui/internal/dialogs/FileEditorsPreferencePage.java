@@ -45,7 +45,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 	protected Button addEditorButton;
 	protected Button removeEditorButton;
 	protected Button defaultEditorButton;
-	protected Label editorLabel;
 
 	protected IWorkbench workbench;
 	protected List imagesToDispose;
@@ -104,37 +103,38 @@ public void addResourceType(String newName, String newExtension) {
  * Creates the page's UI content.
  */
 protected Control createContents(Composite parent) {
-	imagesToDispose = new ArrayList();
-	editorsToImages = new HashMap(50);
-
-	// define container & its gridding
-	Composite pageComponent = new Composite(parent, SWT.NULL);
+	
+	Composite mainComposite = new Composite(parent,SWT.NULL);
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	pageComponent.setLayout(layout);
+	mainComposite.setLayout(layout);
 	GridData data = new GridData();
 	data.verticalAlignment = GridData.FILL;
 	data.horizontalAlignment = GridData.FILL;
-	pageComponent.setLayoutData(data);
+	mainComposite.setLayoutData(data);
+	
+	
+	imagesToDispose = new ArrayList();
+	editorsToImages = new HashMap(50);
 
-	//layout the contents
-
-	//layout the top table & its buttons
-	Label label = new Label(pageComponent, SWT.LEFT);
-	label.setText(WorkbenchMessages.getString("FileEditorPreference.fileTypes")); //$NON-NLS-1$
+	// define file editors container & its gridding
+	Group fileEditorsGroup = new Group(mainComposite, SWT.NULL);
+	layout = new GridLayout();
+	layout.numColumns = 2;
+	fileEditorsGroup.setLayout(layout);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
-	data.horizontalSpan = 2;
-	label.setLayoutData(data);
+	data.grabExcessHorizontalSpace = true;
+	fileEditorsGroup.setLayoutData(data);
+	fileEditorsGroup.setText(WorkbenchMessages.getString("FileEditorPreference.fileTypes"));//$NON-NLS-1$
 
-	resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
+	resourceTypeTable = new Table(fileEditorsGroup, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
 	resourceTypeTable.addListener(SWT.Selection, this);
 	resourceTypeTable.addListener(SWT.DefaultSelection, this);
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = resourceTypeTable.getItemHeight()*12;
 	resourceTypeTable.setLayoutData(data);
 
-	Composite groupComponent= new Composite(pageComponent, SWT.NULL);
+	Composite groupComponent= new Composite(fileEditorsGroup, SWT.NULL);
 	groupComponent.setLayout(new GridLayout());
 	data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -162,28 +162,32 @@ protected Control createContents(Composite parent) {
 	removeResourceTypeButton.setLayoutData(data);
 	
 	//Spacer
-	label = new Label(pageComponent, SWT.LEFT);
+	Label label = new Label(fileEditorsGroup, SWT.LEFT);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.horizontalSpan = 2;
 	label.setLayoutData(data);
 
-	// layout the bottom table & its buttons
-	editorLabel = new Label(pageComponent, SWT.LEFT);
-	editorLabel.setText(WorkbenchMessages.getString("FileEditorPreference.associatedEditors")); //$NON-NLS-1$
+	
+	// define file editors container & its gridding
+	Group associatedEditorsGroup = new Group(mainComposite, SWT.NULL);
+	layout = new GridLayout();
+	layout.numColumns = 2;
+	associatedEditorsGroup.setLayout(layout);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
-	data.horizontalSpan = 2;
-	editorLabel.setLayoutData(data);
+	data.grabExcessHorizontalSpace = true;
+	associatedEditorsGroup.setLayoutData(data);
+	associatedEditorsGroup.setText(WorkbenchMessages.getString("FileEditorPreference.associatedEditors")); //$NON-NLS-1$
 
-	editorTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER);
+	editorTable = new Table(associatedEditorsGroup, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
 	editorTable.addListener(SWT.DefaultSelection, this);
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = editorTable.getItemHeight()*7;
 	editorTable.setLayoutData(data);
 	
-	groupComponent = new Composite(pageComponent, SWT.NULL);
+	groupComponent = new Composite(associatedEditorsGroup, SWT.NULL);
 	groupComponent.setLayout(new GridLayout());
 	data = new GridData();
 	data.verticalAlignment = GridData.FILL;
@@ -229,7 +233,7 @@ protected Control createContents(Composite parent) {
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
 	
-	return pageComponent;
+	return mainComposite;
 }
 /**
  * The preference page is going to be disposed. So deallocate all allocated
@@ -477,7 +481,6 @@ public void updateEnabledState() {
 	boolean editorSelected = editorTable.getSelectionIndex() != -1;
 
 	removeResourceTypeButton.setEnabled(resourceTypeSelected);
-	editorLabel.setEnabled(resourceTypeSelected);
 	addEditorButton.setEnabled(resourceTypeSelected);
 	removeEditorButton.setEnabled(editorSelected);
 	defaultEditorButton.setEnabled(editorSelected);
