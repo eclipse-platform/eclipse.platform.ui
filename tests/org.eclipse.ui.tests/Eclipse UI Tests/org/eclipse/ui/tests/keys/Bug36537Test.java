@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.csm.commands.KeySequenceBindingDefinition;
+import org.eclipse.ui.internal.commands.KeySequenceBindingDefinition;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -50,7 +50,7 @@ public class Bug36537Test extends UITestCase {
 		Workbench workbench = (Workbench) window.getWorkbench();
 		CommandManager commandManager = (CommandManager) workbench.getCommandManager();
 
-		List keySequenceBindings = commandManager.getExtensionCommandRegistry().getKeySequenceBindingDefinitions();
+		List keySequenceBindings = commandManager.getCommandRegistry().getKeySequenceBindingDefinitions();
 		Iterator keySequenceBindingItr = keySequenceBindings.iterator();
 		Map keySequenceBindingsByKeySequence = new HashMap();
 

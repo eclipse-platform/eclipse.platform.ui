@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IPatternBinding;
+import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {

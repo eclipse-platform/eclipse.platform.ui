@@ -17,18 +17,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.SortedSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -96,11 +96,11 @@ public class Bug36420Test extends UITestCase {
 
 		// Check to see that the key binding for the given command matches.
 		ICommandManager manager = ((Workbench) fWorkbench).getCommandManager();
-		SortedSet keyBindings = manager.getCommand(commandId).getKeyBindings();
+		List keyBindings = manager.getCommand(commandId).getKeySequenceBindings();
 		Iterator keyBindingItr = keyBindings.iterator();
 		boolean found = false;
 		while (keyBindingItr.hasNext()) {
-			IKeyBinding keyBinding = (IKeyBinding) keyBindingItr.next();
+			IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindingItr.next();
 			String currentText = keyBinding.getKeySequence().toString();
 			if (keySequenceText.equals(currentText)) {
 				found = true;

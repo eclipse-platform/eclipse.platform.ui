@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICategoryEvent;
@@ -41,6 +40,7 @@ import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationEvent;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles.ui;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.LabelProvider;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.roles.IRole;
