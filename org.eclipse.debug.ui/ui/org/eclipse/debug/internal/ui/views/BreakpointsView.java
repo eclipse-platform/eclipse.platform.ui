@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -22,7 +21,6 @@ import org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction;
 import org.eclipse.debug.internal.ui.actions.ShowBreakpointsForModelAction;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -37,10 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -181,7 +176,7 @@ public class BreakpointsView extends AbstractDebugView {
 	}
 
 	/**
-	 * Initializes the actions of this view
+	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
 		IAction action; 
@@ -221,36 +216,10 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-
-	/**
-	 * Returns an editor part that is open on this breakpoint's
-	 * resource.
-	 * 
-	 * @param marker The marker to use to find the correct editor
-	 * @param page The page to check for the current editors
-	 * @return The editor part that is open on the resource associated
-	 * 		with the marker or <code>null</code> if no editor is open
-	 * 		on this resource.
-	 */
-	protected IEditorPart getOpenEditor(IMarker marker, IWorkbenchPage page) {
-		//attempt to find the editor for the input
-		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint breakpoint= manager.getBreakpoint(marker);
-		String id= breakpoint.getModelIdentifier();
-		IDebugModelPresentation presentation= getPresentation(id);
-		IEditorInput editorElement = presentation.getEditorInput(marker);
-		IEditorPart[] editors= page.getEditors();
-		for (int i= 0; i < editors.length; i++) {
-			IEditorPart part= editors[i];
-			if (part.getEditorInput().equals(editorElement)) {
-				page.bringToTop(part);
-				return part;
-			}
-		}
-		//did not find an open editor
-		return null;
-	}
 	
+	/**
+	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
+	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		tbm.add(getAction(REMOVE_ACTION));
