@@ -43,12 +43,20 @@ public class BrowserApp implements IPlatformRunnable {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object args) throws Exception {
 		Display display = PlatformUI.createDisplay();
-		int code = PlatformUI.createAndRunWorkbench(display, new BrowserAdvisor());
-		return new Integer(code);
+		try {
+			int code = PlatformUI.createAndRunWorkbench(display,
+					new BrowserAdvisor());
+			return new Integer(code);
+		} finally {
+			if (display != null)
+				display.dispose();
+		}
 	}
 }
