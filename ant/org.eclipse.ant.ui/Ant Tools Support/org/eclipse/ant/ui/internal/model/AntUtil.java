@@ -291,17 +291,17 @@ public final class AntUtil {
 	/**
 	 * Returns the list of Strings that were delimiter separated.
 	 * 
-	 * @param extraAttibuteValue the external tool's extra attribute value
+	 * @param delimString the String to be tokenized based on the delimiter
 	 * @return a list of Strings
 	 */
-	public static String[] parseString(String attibuteValue, String delim) {
-		if (attibuteValue == null) {
+	public static String[] parseString(String delimString, String delim) {
+		if (delimString == null) {
 			return new String[0];
 		}
 		
 		// Need to handle case where separator character is
 		// actually part of the target name!
-		StringTokenizer tokenizer = new StringTokenizer(attibuteValue, delim);
+		StringTokenizer tokenizer = new StringTokenizer(delimString, delim);
 		String[] results = new String[tokenizer.countTokens()];
 		for (int i = 0; i < results.length; i++) {
 			results[i] = tokenizer.nextToken();
