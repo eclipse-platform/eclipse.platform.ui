@@ -113,6 +113,7 @@ public class SWTUtil {
 	 */
 	public static Button createPushButton(Composite parent, String label, Image image) {
 		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
 		if (image != null) {
 			button.setImage(image);
 		}
@@ -136,6 +137,7 @@ public class SWTUtil {
 	 */
 	public static Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO);
+		button.setFont(parent.getFont());
 		if (label != null) {
 			button.setText(label);
 		}
