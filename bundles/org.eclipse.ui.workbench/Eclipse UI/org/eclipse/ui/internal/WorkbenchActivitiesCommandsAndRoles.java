@@ -276,11 +276,11 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 	final Listener modeCleaner = new Listener() {
 		public void handleEvent(Event event) {
-			workbench.commandManager.setMode(KeySequence.getInstance()); // clear
+			workbench.commandManagerOlder.setMode(KeySequence.getInstance()); // clear
 			// the
 			// mode
 			// TODO Remove this when mode listener updating becomes available.
-			updateModeLines(workbench.commandManager.getMode());
+			updateModeLines(workbench.commandManagerOlder.getMode());
 		}
 	};
 	/**
@@ -442,7 +442,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		String name = null;
 
 		if (commandId != null) {
-			final ICommand command = workbench.commandManager.getCommand(commandId);
+			final ICommand command = workbench.commandManagerOlder.getCommand(commandId);
 
 			if (command != null)
 				try {
@@ -476,13 +476,13 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		// Check every potential key stroke until one matches.
 		Iterator keyStrokeItr = potentialKeyStrokes.iterator();
 		while (keyStrokeItr.hasNext()) {
-			KeySequence modeBeforeKeyStroke = workbench.commandManager.getMode();
+			KeySequence modeBeforeKeyStroke = workbench.commandManagerOlder.getMode();
 			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
 			keyStrokes.add(keyStrokeItr.next());
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
-			Map matchesByKeySequenceForModeBeforeKeyStroke = workbench.commandManager.getMatchesByKeySequenceForMode();
-			workbench.commandManager.setMode(modeAfterKeyStroke);
-			Map matchesByKeySequenceForModeAfterKeyStroke = workbench.commandManager.getMatchesByKeySequenceForMode();
+			Map matchesByKeySequenceForModeBeforeKeyStroke = workbench.commandManagerOlder.getMatchesByKeySequenceForMode();
+			workbench.commandManagerOlder.setMode(modeAfterKeyStroke);
+			Map matchesByKeySequenceForModeAfterKeyStroke = workbench.commandManagerOlder.getMatchesByKeySequenceForMode();
 			boolean consumeKeyStroke = false;
 			boolean matchingSequence = false;
 
@@ -500,7 +500,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 				if (match != null) {
 					// a completion was found.
 					String commandId = match.getCommandId();
-					Map actionsById = workbench.commandManager.getActionsById();
+					Map actionsById = workbench.commandManagerOlder.getActionsById();
 					org.eclipse.ui.internal.commands.api.IAction action = (org.eclipse.ui.internal.commands.api.IAction) actionsById.get(commandId);
 
 					if (action != null) {
@@ -530,7 +530,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					consumeKeyStroke = true;
 
 				// clear mode
-				workbench.commandManager.setMode(KeySequence.getInstance());
+				workbench.commandManagerOlder.setMode(KeySequence.getInstance());
 				updateModeLines(KeySequence.getInstance());
 			}
 
@@ -549,7 +549,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					break;
 				} else {
 					// Restore the mode, so we can try again.
-					workbench.commandManager.setMode(modeBeforeKeyStroke);
+					workbench.commandManagerOlder.setMode(modeBeforeKeyStroke);
 				}
 			}
 		}
@@ -589,7 +589,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 	public void updateActiveActivityIds() {
 		// TODO eliminate set to list
-		workbench.commandManager.setActiveContextIds(new ArrayList(workbench.getActivityManager().getActiveActivityIds()));
+		workbench.commandManagerOlder.setActiveContextIds(new ArrayList(workbench.getActivityManager().getActiveActivityIds()));
 	}
 
 	void updateActiveCommandIdsAndActiveActivityIds() {
@@ -686,7 +686,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		if (this.activeWorkbenchPartActionService != null)
 			actionsById.putAll(this.activeWorkbenchPartActionService.getActionsById());
 
-		workbench.commandManager.setActionsById(actionsById);
+		workbench.commandManagerOlder.setActionsById(actionsById);
 
 		/*
 		 * if (activeWorkbenchWindowContextActivationService !=

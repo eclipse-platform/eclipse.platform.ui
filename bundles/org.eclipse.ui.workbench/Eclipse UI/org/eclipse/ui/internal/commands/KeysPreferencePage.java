@@ -191,9 +191,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		// TODO remove blind cast
+		// TODO remove blind casts
 		activityManager = ((Workbench) workbench).getActivityManager();
-		commandManager = CommandManager.getInstance();
+		commandManager = (CommandManager) ((Workbench) workbench).getCommandManager();
 		commandAssignments = new TreeSet();
 		keySequenceAssignments = new TreeSet();
 	}

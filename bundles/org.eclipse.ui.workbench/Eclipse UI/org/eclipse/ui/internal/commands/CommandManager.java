@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
@@ -446,14 +448,14 @@ public final class CommandManager implements ICommandManager {
 			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();					
 			String activityId = activityBindingDefinition.getActivityId();			
 			String commandId = activityBindingDefinition.getCommandId();
-			Set set = (Set) activityBindingsByCommandId.get(commandId);
+			SortedSet sortedSet = (SortedSet) activityBindingsByCommandId.get(commandId);
 						
-			if (set == null) {
-				set = new HashSet();
-				activityBindingsByCommandId.put(commandId, set);						
+			if (sortedSet == null) {
+				sortedSet = new TreeSet();
+				activityBindingsByCommandId.put(commandId, sortedSet);						
 			}
 						
-			set.add(new ActivityBinding(activityId));
+			sortedSet.add(new ActivityBinding(activityId));
 		}
 		
 		this.activityBindingsByCommandId = activityBindingsByCommandId;		
@@ -754,17 +756,20 @@ public final class CommandManager implements ICommandManager {
 	
 	private ICommandEvent updateCommand(Command command) {
 		boolean activeChanged = command.setActive(activeCommandIds.contains(command.getId()));		
-		List activityBindings = (List) activityBindingsByCommandId.get(command.getId());
-		boolean activityBindingsChanged = command.setActivityBindings(activityBindings != null ? activityBindings : Collections.EMPTY_LIST);		
+		SortedSet activityBindings = (SortedSet) activityBindingsByCommandId.get(command.getId());
+		// TODO list to sortedset in api?
+		boolean activityBindingsChanged = command.setActivityBindings(activityBindings != null ? new ArrayList(activityBindings) : Collections.EMPTY_LIST);		
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		boolean categoryIdChanged = command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);				
 		boolean definedChanged = command.setDefined(commandDefinition != null);
 		boolean descriptionChanged = command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);		
 		boolean enabledChanged = command.setEnabled(enabledCommandIds.contains(command.getId()));
-		List imageBindings = (List) imageBindingsByCommandId.get(command.getId());
-		boolean imageBindingsChanged = command.setImageBindings(imageBindings != null ? imageBindings : Collections.EMPTY_LIST);		
-		List keySequenceBindings = (List) keySequenceBindingsByCommandId.get(command.getId());
-		boolean keySequenceBindingsChanged = command.setKeySequenceBindings(keySequenceBindings != null ? keySequenceBindings : Collections.EMPTY_LIST);		
+		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
+		// TODO list to sortedset in api?
+		boolean imageBindingsChanged = command.setImageBindings(imageBindings != null ? new ArrayList(imageBindings) : Collections.EMPTY_LIST);		
+		SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId.get(command.getId());
+		// TODO list to sortedset in api?
+		boolean keySequenceBindingsChanged = command.setKeySequenceBindings(keySequenceBindings != null ? new ArrayList(keySequenceBindings) : Collections.EMPTY_LIST);		
 		boolean nameChanged = command.setName(commandDefinition != null ? commandDefinition.getName() : null);
 
 		if (activeChanged || activityBindingsChanged || categoryIdChanged || definedChanged || descriptionChanged || enabledChanged || imageBindingsChanged || keySequenceBindingsChanged || nameChanged)

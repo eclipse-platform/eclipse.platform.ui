@@ -107,9 +107,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.activities.ObjectActivityManager;
+import org.eclipse.ui.internal.commands.api.CommandManagerFactory;
 import org.eclipse.ui.internal.commands.api.older.ICommand;
 import org.eclipse.ui.internal.commands.api.older.ICommandManager;
-import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.commands.older.CommandManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
@@ -172,9 +173,10 @@ public class Workbench
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);
 
 	// TODO reduce visibility
-	CommandManager commandManager;
+	CommandManager commandManagerOlder;
 
 	private IActivityManager activityManager;
+	private org.eclipse.ui.internal.commands.api.ICommandManager commandManager;
 	private IRoleManager roleManager;
 	private WorkbenchActivityHelper activityHelper;
 	
@@ -184,9 +186,13 @@ public class Workbench
 	public IActivityManager getActivityManager() {
 		return activityManager;
 	}
+
+	public org.eclipse.ui.internal.commands.api.ICommandManager getNewCommandManager() {
+		return commandManager;
+	}	
 	
 	public ICommandManager getCommandManager() {
-		return commandManager;
+		return commandManagerOlder;
 	}
 
 	public IRoleManager getRoleManager() {
@@ -901,26 +907,28 @@ public class Workbench
         roleManager = RoleManagerFactory.getRoleManager();       
 
 		// create a command manager
-		commandManager = CommandManager.getInstance();
-		commandManager.addCommandManagerListener(workbenchActivitiesCommandsAndRoles.commandManagerListener);
+		commandManager = CommandManagerFactory.getCommandManager(); 
+        
+        commandManagerOlder = CommandManager.getInstance();
+		commandManagerOlder.addCommandManagerListener(workbenchActivitiesCommandsAndRoles.commandManagerListener);
 		
         // establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
 			public String guessCommandIdFromActionId(String actionId) {
-				return commandManager.guessCommandIdFromActionId(actionId);		
+				return commandManagerOlder.guessCommandIdFromActionId(actionId);		
 			}
 
 			public Integer getAccelerator(String commandId) {
-				return commandManager.getAccelerator(commandId);		
+				return commandManagerOlder.getAccelerator(commandId);		
 			}
 	
 			public String getAcceleratorText(String commandId) {
-				return commandManager.getAcceleratorText(commandId);		
+				return commandManagerOlder.getAcceleratorText(commandId);		
 			}	
 
 			public final boolean inContext(final String commandId) {
 				if (commandId != null) {
-					final ICommand command = commandManager.getCommand(commandId);
+					final ICommand command = commandManagerOlder.getCommand(commandId);
 	
 					if (command != null)
 						return command.isDefined() && command.isActive();
