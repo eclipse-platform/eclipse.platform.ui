@@ -241,6 +241,8 @@ public void updateAll(boolean force) {
  * Wraps a menu manager in a sub menu manager, and returns the new wrapper.
  */
 protected SubMenuManager wrapMenu(IMenuManager menu) {
-	return new SubMenuManager(menu);
+	SubMenuManager mgr = new SubMenuManager(menu);
+	mgr.setVisible(isVisible());
+	return mgr;
 }
 }
