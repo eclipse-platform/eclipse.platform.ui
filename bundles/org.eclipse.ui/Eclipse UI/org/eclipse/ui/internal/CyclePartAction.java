@@ -109,7 +109,7 @@ public void run() {
  */
 private void openDialog(WorkbenchPage page) {
 	selection = null;
-	final Shell dialog = new Shell(getWorkbenchWindow().getShell(),SWT.APPLICATION_MODAL);
+	final Shell dialog = new Shell(getWorkbenchWindow().getShell(),SWT.MODELESS);
 	Display display = dialog.getDisplay();
 	dialog.setLayout(new FillLayout());
 	
