@@ -219,7 +219,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 		flags = target.getFlags(resourceInfo);
 		if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.OK, Policy.bind("ok"), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("resources.deleteProblem"), null);
 			((Resource) resource).deleteResource(false, status);
 			if (!status.isOK())
 				throw new ResourceException(status);
