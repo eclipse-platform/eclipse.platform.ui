@@ -36,8 +36,9 @@ public class CVSSyncSet extends SyncSet {
 	
 	public ITeamNode[] getNonAddedNodes() throws CVSException {
 		List result = new ArrayList();
-		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
-			ITeamNode node = (ITeamNode)it.next();
+		ITeamNode[] changedNodes = getChangedNodes();
+		for (int i = 0; i < changedNodes.length; i++) {
+			ITeamNode node = changedNodes[i];
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
 			if (cvsResource.isFolder()) {
 				if (!((ICVSFolder)cvsResource).isCVSFolder()) {
@@ -51,8 +52,9 @@ public class CVSSyncSet extends SyncSet {
 	}
 	
 	public boolean hasNonAddedChanges() throws CVSException {
-		for (Iterator it = getSyncSet().iterator(); it.hasNext();) {
-			ITeamNode node = (ITeamNode)it.next();
+		ITeamNode[] changedNodes = getChangedNodes();
+		for (int i = 0; i < changedNodes.length; i++) {
+			ITeamNode node = changedNodes[i];
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(node.getResource());
 			if (cvsResource.exists()) {
 				if (cvsResource.isFolder()) {
