@@ -61,13 +61,13 @@ Natures also have the ability to disallow the creation of linked resources on pr
 
    <element name="extension">
       <complexType>
-         <all>
+         <group>
             <element ref="runtime"/>
             <element ref="one-of-nature" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="requires-nature" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="options" minOccurs="0" maxOccurs="1"/>
-         </all>
+         </group>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
