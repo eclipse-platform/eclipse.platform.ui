@@ -1204,7 +1204,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			IViewReference ref = refs[i];
 
 			//If the part is no longer reference then dispose it.
-			boolean exists = viewFactory.hasView(ref.getId());
+			boolean exists = viewFactory.hasView(ref);
 			if (!exists) {
 				firePartClosed(ref);
 				activationList.remove(ref);
@@ -1768,7 +1768,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		persp.hideView(ref);
 
 		// If the part is no longer reference then dispose it.
-		boolean exists = viewFactory.hasView(ref.getId());
+		boolean exists = viewFactory.hasView(ref);
 		if (!exists) {
 			firePartClosed(ref);
 			disposePart(ref);

@@ -378,12 +378,27 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	public WorkbenchPage getWorkbenchPage() {
 		return page;
 	}
+
+	/**
+	 * Returns whether a view with the same id(s) as the
+     * given view reference exists.
+	 */
+	public boolean hasView(IViewReference viewRef) {
+	    return hasView(viewRef.getId(), viewRef.getSecondaryId());
+	}
 	
 	/**
 	 * Returns whether a view with the given id exists.
 	 */
 	public boolean hasView(String id) {
-	    return getView(id) != null;
+	    return hasView(id, null);
+	}
+	
+	/**
+	 * Returns whether a view with the given ids exists.
+	 */
+	public boolean hasView(String id, String secondaryId) {
+	    return getView(id, secondaryId) != null;
 	}
 	
 	/**
