@@ -14,7 +14,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.core.runtime.*;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)
@@ -91,7 +90,32 @@ public abstract class Window {
 	 * @see #setDefaultImage
 	 */
 	private static Image defaultImage;
-
+	/**
+	 * This interface defines a Exception Handler which 
+	 * can be set as a global handler and will be called
+	 * if an exception happens in the event loop.
+	 */
+	public static interface IExceptionHandler {
+		public void handleException(Throwable t);
+	}
+	/**
+	 * Defines a default exception handler.
+	 */
+	private static class DefaultExceptionHandler implements IExceptionHandler {
+		public void handleException(Throwable t) {
+			if(t instanceof ThreadDeath)
+				// Don't catch ThreadDeath as this is a normal occurrence when the thread dies
+				throw (ThreadDeath)t;
+			else
+				// Try to keep running.
+				t.printStackTrace();
+		}
+	}
+	/**
+	 * The exception handler for this application.
+	 */
+	private static IExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+	
 	/**
 	 * The parent shell.
 	 */
@@ -157,6 +181,7 @@ public abstract class Window {
 	 */
 	private boolean resizeHasOccurred = false;
 	private Listener resizeListener;
+	
 /**
  * Creates a window instance, whose shell will be created under the
  * given parent shell.
@@ -413,38 +438,6 @@ public WindowManager getWindowManager() {
 	return windowManager;
 }
 /**
- * Handles a runtime exception or error which was caught in runEventLoop().
- */
-private void handleExceptionInEventLoop(Throwable e) {
-	// For the status object, use the exception's message, or 
-	// the exception name if no message.
-	ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
-	
-	String msg = JFaceResources.getString("Unhandled_exception"); //$NON-NLS-1$
-	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
-	msg = e.getMessage() == null ? e.toString() : e.getMessage();
-	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, e));
-
-	// special case for SWTException to handle workaround for bug 6312
-	if (e instanceof SWTException) {
-		Throwable nested = ((SWTException) e).throwable;
-		if (nested != null) {
-			msg = "*** Stack trace of contained exception ***";
-			log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
-			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
-			log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, nested)); //$NON-NLS-1$
-		}
-	}
-	
-	// Open an error dialog, but don't reveal the internal exception name.
-	if (e.getMessage() == null) {
-		msg = JFaceResources.getString("InternalErrorNoArg"); //$NON-NLS-1$
-	} else {
-		msg = JFaceResources.format("InternalErrorOneArg",  new Object[] {e.getMessage()}); //$NON-NLS-1$
-	}
-	MessageDialog.openError(null, JFaceResources.getString("Internal_error"), msg); //$NON-NLS-1$
-}
-/**
  * Notifies of a font property change.
  * <p>
  * The default implementation of this framework method
@@ -544,20 +537,8 @@ private void runEventLoop(Shell shell) {
 		try {
 			if (!display.readAndDispatch())
 				display.sleep();
-		} catch (RuntimeException e) {
-			handleExceptionInEventLoop(e);
-		} catch (VirtualMachineError e) {
-			// Can't recover. Throw the exception and let it shutdonw.
-			throw e;
-		} catch (SWTError e) {
-			// Can't recover. Throw the exception and let it shutdonw.
-			throw e;
-		} catch (ThreadDeath e) {
-			// Don't catch ThreadDeath as this is a normal occurrence when the thread dies
-			throw e;
-		} catch (Error e) {
-			// Try to keep running.
-			handleExceptionInEventLoop(e);
+		} catch (Throwable e) {
+			exceptionHandler.handleException(e);
 		}
 	}
 	display.update();
@@ -632,4 +613,16 @@ public void setWindowManager(WindowManager manager) {
 		manager.add(this);
 	}
 }
+/**
+ * Sets the exception handler for this application.
+ * <p>
+ * Note that only one handler may be set. Other calls to this method will be ignored.
+ * <p>
+ * @param the exception handler for the application.
+ */
+public static void setExceptionHandler(IExceptionHandler handler) {
+	if(exceptionHandler instanceof DefaultExceptionHandler)
+		exceptionHandler = handler;
+}
+
 }

@@ -166,7 +166,7 @@ public IWorkbenchPage clonePage(IWorkbenchPage page)
  * Closes the workbench.
  */
 public boolean close() {
-	final boolean [] ret = new boolean[1];;
+	final boolean [] ret = new boolean[1];
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
 			ret[0] = busyClose();
@@ -372,34 +372,6 @@ public IWorkbenchWindow [] getWorkbenchWindows() {
 	IWorkbenchWindow [] dwindows = new IWorkbenchWindow[windows.length];
 	System.arraycopy(windows, 0, dwindows, 0, windows.length);
 	return dwindows;
-}
-/**
- * Handles a runtime exception or error which was caught in runEventLoop().
- */
-private void handleExceptionInEventLoop(Throwable e) {
-	// For the status object, use the exception's message, or the exception name if no message.
-	String msg = e.getMessage() == null ? e.toString() : e.getMessage();
-	WorkbenchPlugin.log(WorkbenchMessages.getString("Unhandled_exception"), new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, e)); //$NON-NLS-1$
-
-	// special case for SWTException to handle workaround for bug 6312
-	if (e instanceof SWTException) {
-		Throwable nested = ((SWTException) e).throwable;
-		if (nested != null) {
-			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
-			WorkbenchPlugin.log("*** Stack trace of contained exception ***", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
-		}
-	}
-	
-	if (WorkbenchPlugin.DEBUG) {
-		e.printStackTrace();
-	}
-	// Open an error dialog, but don't reveal the internal exception name.
-	if (e.getMessage() == null) {
-		msg = WorkbenchMessages.getString("InternalErrorNoArg");  //$NON-NLS-1$
-	} else {
-		msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {e.getMessage()}); //$NON-NLS-1$
-	} 
-	MessageDialog.openError(null, WorkbenchMessages.getString("Internal_error"), msg); //$NON-NLS-1$
 }
 /**
  * Initializes the workbench.
@@ -828,11 +800,13 @@ public Object run(Object arg) {
 	//Workaround for 1GEZ9UR and 1GF07HN
 	display.setWarnings(false);
 	try {
+		Window.IExceptionHandler handler = new ExceptionHandler(this);
+		Window.setExceptionHandler(handler);
 		boolean initOK = init(commandLineArgs);
 		Platform.endSplash();
 		checkInstallErrors();
 		if (initOK) {
-			runEventLoop();
+			runEventLoop(handler);
 		}
 		shutdown();
 	} finally {
@@ -844,27 +818,15 @@ public Object run(Object arg) {
 /**
  * run an event loop for the workbench.
  */
-protected void runEventLoop() {
+protected void runEventLoop(Window.IExceptionHandler handler) {
 	Display display = Display.getCurrent();
 	runEventLoop = true;
 	while (runEventLoop) {
 		try {
 			if (!display.readAndDispatch())
 				display.sleep();
-		} catch (RuntimeException e) {
-			handleExceptionInEventLoop(e);
-		} catch (VirtualMachineError e) {
-			// Can't recover. Throw the exception and let the core handle it and shutdonw.
-			throw e;
-		} catch (SWTError e) {
-			// Can't recover. Throw the exception and let the core handle it and shutdonw.
-			throw e;
-		} catch (ThreadDeath e) {
-			// Don't catch ThreadDeath as this is a normal occurrence when the thread dies
-			throw e;
-		} catch (Error e) {
-			// For instance: it may be a LinkageError in a plugin. Try to keep running.
-			handleExceptionInEventLoop(e);
+		} catch (Throwable t) {
+			handler.handleException(t);
 		}
 	}
 }
@@ -1044,14 +1006,14 @@ private boolean asyncRestoreSnapshot(final File stateFile) {
 	}
 }
 
-	/**
-	 * Creates the action delegate for each action extension contributed by
-	 * a particular plugin.  The delegates are only created if the
-	 * plugin itself has been activated.
-	 * 
-	 * @param pluginId the plugin id.
-	 */
-	public void refreshPluginActions(String pluginId) {
-		WWinPluginAction.refreshActionList();
-	}
+/**
+ * Creates the action delegate for each action extension contributed by
+ * a particular plugin.  The delegates are only created if the
+ * plugin itself has been activated.
+ * 
+ * @param pluginId the plugin id.
+ */
+public void refreshPluginActions(String pluginId) {
+	WWinPluginAction.refreshActionList();
+}
 }
