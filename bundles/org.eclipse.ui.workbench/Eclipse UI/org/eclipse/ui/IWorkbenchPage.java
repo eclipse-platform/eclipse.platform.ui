@@ -219,6 +219,15 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 */
 	public IViewPart findView(String viewId);
 	/**
+	 * Returns the view reference with the specified id. 
+	 * 
+	 * @param viewId
+	 *            the id of the view extension to use
+	 * @return the view reference, or <code>null</code> if none is found
+	 * @since 3.0
+	 */	
+	public IViewReference findViewReference(String viewId);
+	/**
 	 * Returns the active editor open in this page.
 	 * <p>
 	 * This is the visible editor on the page, or, if there is more than one
@@ -339,6 +348,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 *            the view to hide
 	 */
 	public void hideView(IViewPart view);
+	/**
+	 * Hides the given view that belongs to the reference, if any.
+	 * 
+	 * @param view
+	 *            the references whos view is to be hidden
+	 * @since 3.0
+	 */
+	public void hideView(IViewReference view);	
 	/**
 	 * Returns whether the specified part is visible.
 	 * 

@@ -518,6 +518,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.hideView(view);
 		assertNull(fActivePage.findView(id));
 	}
+	
+	public void testFindViewReference() throws Throwable {
+		fActivePage.getWorkbenchWindow().getWorkbench().showPerspective(SessionPerspective.ID, fActivePage.getWorkbenchWindow());
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		
+		fActivePage.showView(MockViewPart.ID4);
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID4));
+	}
 
 	public void testGetViews() throws Throwable {
 		int totalBefore = fActivePage.getViewReferences().length;
@@ -531,12 +539,38 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.getViewReferences().length, totalBefore);
 	}
 
-	public void testHideView() throws Throwable {
+	public void testHideViewWithPart() throws Throwable {
+		// test that nothing bad happens with a null parameter
+		try {
+			fActivePage.hideView((IViewPart)null);
+		}
+		catch (RuntimeException e) {
+			fail(e.getMessage());
+		}		
+		
 		IViewPart view = fActivePage.showView(MockViewPart.ID3);
 
 		fActivePage.hideView(view);
 		CallHistory callTrace = ((MockViewPart) view).getCallHistory();
+		assertTrue(callTrace.contains("dispose"));		
+	}
+	
+	public void testHideViewWithReference() throws Throwable {
+		// test that nothing bad happens with a null parameter
+		try {
+			fActivePage.hideView((IViewReference)null);
+		}
+		catch (RuntimeException e) {
+			fail(e.getMessage());
+		}		
+		
+		IViewPart view = fActivePage.showView(MockViewPart.ID4);
+		IViewReference ref = fActivePage.findViewReference(MockViewPart.ID4);
+		fActivePage.hideView(ref);
+		CallHistory callTrace = ((MockViewPart) view).getCallHistory();
 		assertTrue(callTrace.contains("dispose"));
+		
+		
 	}
 
 	public void testClose() throws Throwable {

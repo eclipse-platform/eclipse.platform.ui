@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-//for dynamic UI - add import HashMap
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +26,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -41,14 +50,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -77,14 +79,15 @@ import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.part.MultiEditor;
+
 import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.part.MultiEditor;
 
 /**
  * A collection of views and editors in a workbench.
@@ -1230,10 +1233,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * See IWorkbenchPage@findView.
 	 */
 	public IViewPart findView(String id) {
-		Perspective persp = getActivePerspective();
-		if (persp == null)
-			return null;
-		IViewReference ref = persp.findView(id);
+		IViewReference ref = findViewReference(id);
 		if (ref == null)
 			return null;
 
@@ -1244,6 +1244,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (ctrl == null)
 			pane.createControl(getClientComposite());
 		return view;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
+	 */
+	public IViewReference findViewReference(String viewId) {
+		Perspective persp = getActivePerspective();
+		if (persp == null)
+			return null;
+		return persp.findView(viewId);
 	}
 	/**
 	 * Fire part activation out.
@@ -1666,13 +1676,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
+	 */
 	public void hideView(IViewReference ref) {
+		if (ref == null)
+			return;
 		IWorkbenchPart part = ref.getPart(false);
 		if (part != null) {
 			hideView((IViewPart) part);
-		} else if (isFastView(ref)) {
+		} else {
 			hideView(getActivePerspective(), ref);
-		}
+		}		
 	}
 	/**
 	 * See IPerspective

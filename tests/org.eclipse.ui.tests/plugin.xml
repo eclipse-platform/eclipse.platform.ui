@@ -74,6 +74,12 @@
             id="org.eclipse.ui.tests.api.MockViewPart3">
       </view>
       <view
+            name="Mock View 4"
+            icon="icons\view.gif"
+            class="org.eclipse.ui.tests.api.MockViewPart"
+            id="org.eclipse.ui.tests.api.MockViewPart4">
+      </view>      
+      <view
             name="Session Test View"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.SessionView"
