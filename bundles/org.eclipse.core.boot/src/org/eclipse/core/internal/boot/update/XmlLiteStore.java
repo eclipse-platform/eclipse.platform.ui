@@ -4,7 +4,8 @@ package org.eclipse.core.internal.boot.update;
  * All Rights Reserved.
  */
 
-import java.io.File;import java.io.FileWriter;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;import java.io.OutputStream;import java.net.URL;import java.net.URLConnection;import org.eclipse.core.internal.boot.Policy;
+import java.io.File;import java.io.FileWriter;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;import java.io.OutputStream;
+import java.net.HttpURLConnection;import java.net.URL;import java.net.URLConnection;import org.eclipse.core.internal.boot.Policy;
 /**
  * This class manages the loading, storing, parsing and creation of
  * the element tree.
@@ -668,7 +669,9 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 	Object objContent = null;
 
 	try {
-		inputStream = BaseURLHandler.open(url).getInputStream();
+		BaseURLHandler.Response response = BaseURLHandler.open(url);
+		if( response.getResponseCode() == HttpURLConnection.HTTP_OK )
+			inputStream = response.getInputStream();
 	}
 	catch (IOException ex) {
 
