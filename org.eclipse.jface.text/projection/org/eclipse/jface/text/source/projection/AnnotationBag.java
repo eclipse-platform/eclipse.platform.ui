@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.source.projection;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.text.source.Annotation;
@@ -66,5 +67,18 @@ public class AnnotationBag extends Annotation {
 	 */
 	public boolean isEmpty() {
 		return fAnnotations == null;
+	}
+	
+	/**
+	 * Returns an iterator for all annotation inside this
+	 * annotation bag or <code>null</code> if the bag is empty.
+	 * 
+	 * @return an iterator for all annotations in the bag or <code>null</code>
+	 * @since 3.1
+	 */
+	public Iterator iterator() {
+		if (!isEmpty())
+			return fAnnotations.iterator();
+		return null;
 	}
 }

@@ -646,6 +646,27 @@
             includeOnPreferencePage="false">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"
+            colorPreferenceValue="0,0,0"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isUnchangedGoToPreviousNavigationTarget"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isUnchangedGoToNextNavigationTarget"
+            colorPreferenceKey="unchangedIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showUnchangedInNextPrevDropdownToolbarAction"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="0"
+            label=""
+            textPreferenceValue="false"
+            textPreferenceKey="unchangedIndication"
+            overviewRulerPreferenceKey="unchangedIndicationInOverviewRuler"
+            verticalRulerPreferenceKey="unchangedIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            includeOnPreferencePage="false">
+      </specification>
+      <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
             label="%spelling.label"
             symbolicIcon="warning"
