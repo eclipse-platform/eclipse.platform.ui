@@ -3,11 +3,6 @@
 	<name>org.eclipse.help.base</name>
 	<comment></comment>
 	<projects>
-		<project>org.apache.lucene</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.help</project>
-		<project>org.eclipse.help.appserver</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
