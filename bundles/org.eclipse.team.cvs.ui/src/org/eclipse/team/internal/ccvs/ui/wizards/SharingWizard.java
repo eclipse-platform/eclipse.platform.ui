@@ -48,7 +48,7 @@ import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * This wizard helps the user to import a new project in their workspace
@@ -268,16 +268,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			});
 			if (doSync[0]) {
 				// Sync of the project
-				SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-				if (view == null) {
-					view = SyncView.findInActivePerspective();
-				}
+				IWorkbenchPage activePage = null; /* not sure how to get the active page */
+				SyncView view = SyncView.findViewInActivePage(activePage);
 				if (view != null) {
-					try {
-						CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-					} catch (PartInitException e) {
-						CVSUIPlugin.log(e.getStatus());
-					}
 					CVSSyncCompareInput input;
 					if (projectExists[0]) {
 						try {
@@ -306,7 +299,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					} else {
 						input = new CVSSyncCompareInput(new IResource[] {project});
 					}
-					view.showSync(input);
+					view.showSync(input, activePage);
 				}
 			}
 		} catch (InterruptedException e) {

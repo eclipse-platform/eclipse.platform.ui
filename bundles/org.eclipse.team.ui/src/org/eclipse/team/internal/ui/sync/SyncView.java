@@ -37,6 +37,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -113,6 +114,8 @@ public class SyncView extends ViewPart {
 	
 	private IPartListener partListener;
 	
+	private boolean initialized = false;
+	
 	/**
 	 * Creates a new view.
 	 */
@@ -145,6 +148,7 @@ public class SyncView extends ViewPart {
 		partListener = new PartListener();
 		getViewSite().getWorkbenchWindow().getPartService().addPartListener(partListener);
 		WorkbenchHelp.setHelp(top, IHelpContextIds.SYNC_VIEW);
+		initialized = true;
 	}
 	
 	public void dispose() {
@@ -155,18 +159,21 @@ public class SyncView extends ViewPart {
 		}
 		super.dispose();
 	}
-
+	
 	/**
-	 * Makes the sync view visible in the active perspective. If there
-	 * isn't a sync view registered <code>null</code> is returned.
-	 * Otherwise the opened view part is returned.
+	 * Makes the sync view visible in the active page. If there isn't a sync
+	 * view registered <code>null</code> is returned. Otherwise the opened view
+	 * part is returned.
 	 */
-	public static SyncView findInActivePerspective() {
+	public static SyncView findViewInActivePage(IWorkbenchPage activePage) {
 		try {
-			IViewPart part = TeamUIPlugin.getActivePage().findView(VIEW_ID);
-			if (part == null) {
-				part = TeamUIPlugin.getActivePage().showView(VIEW_ID);
+			if (activePage == null) {
+				activePage = TeamUIPlugin.getActivePage();
+				if (activePage == null) return null;
 			}
+			IViewPart part = activePage.findView(VIEW_ID);
+			if (part == null || !((SyncView)part).initialized)
+				part = activePage.showView(VIEW_ID);
 			return (SyncView)part;
 		} catch (PartInitException pe) {
 			return null;
@@ -316,8 +323,19 @@ public class SyncView extends ViewPart {
 	
 	/**
 	 * Shows synchronization information for the given resources in the sync view.
+	 * @deprecated
 	 */
 	public void showSync(SyncCompareInput input) {
+		showSync(input, null);
+	}
+	
+	/**
+	 * Shows synchronization information for the given resources in the sync
+	 * view.
+	 * @param input the diff tree to be displayed
+	 * @param page the page on which to open the sync view
+	 */
+	public void showSync(SyncCompareInput input, IWorkbenchPage page) {
 		next.setCompareEditorInput(input);
 		previous.setCompareEditorInput(input);
 		IActionBars actionBars = getViewSite().getActionBars();
@@ -394,7 +412,8 @@ public class SyncView extends ViewPart {
 		}
 		// Reveal if fast view
 		try {
-			TeamUIPlugin.getActivePage().showView(VIEW_ID);
+			if (page == null) page = TeamUIPlugin.getActivePage();
+			if (page != null) page.showView(VIEW_ID);
 		} catch (PartInitException e) {
 			TeamUIPlugin.log(e.getStatus());
 		}

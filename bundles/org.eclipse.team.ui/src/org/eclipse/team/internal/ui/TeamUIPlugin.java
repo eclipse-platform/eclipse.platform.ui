@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -83,14 +84,21 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 				return ret[0];
 		}	
 	}
+	
 	/**
-	 * Convenience method to get the currently active workbench page
+	 * Convenience method to get the currently active workbench page. Note that
+	 * the active page may not be the one that the usr perceives as active in
+	 * some situations so this method of obtaining the activae page should only
+	 * be used if no other method is available.
 	 * 
 	 * @return the active workbench page
 	 */
 	public static IWorkbenchPage getActivePage() {
-		return getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow window = getPlugin().getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) return null;
+		return window.getActivePage();
 	}
+	
 	/**
 	 * Return the default instance of the receiver. This represents the runtime plugin.
 	 * 

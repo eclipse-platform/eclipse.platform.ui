@@ -11,11 +11,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
-import org.eclipse.ui.PartInitException;
 
 /**
  * Action for catchup/release in popup menus.
@@ -24,17 +22,9 @@ public class SyncAction extends TeamAction {
 	
 	public void run(IAction action) {
 		IResource[] resources = getSelectedResources();
-		SyncView view = (SyncView)TeamUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-		if (view == null) {
-			view = SyncView.findInActivePerspective();
-		}
+		SyncView view = SyncView.findViewInActivePage(getTargetPage());
 		if (view != null) {
-			try {
-				TeamUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-			} catch (PartInitException e) {
-				TeamUIPlugin.log(e.getStatus());
-			}
-			view.showSync(getCompareInput(resources));
+			view.showSync(getCompareInput(resources), getTargetPage());
 		}
 	}
 	

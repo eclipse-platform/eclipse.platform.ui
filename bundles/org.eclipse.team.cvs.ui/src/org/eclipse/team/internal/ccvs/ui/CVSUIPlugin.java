@@ -119,14 +119,15 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 	
 	/**
-	 * Returns the active workbench page.
+	 * Returns the active workbench page. Note that the active page may not be
+	 * the one that the usr perceives as active in some situations so this
+	 * method of obtaining the activae page should only be used if no other
+	 * method is available.
 	 * 
 	 * @return the active workbench page
 	 */
 	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window = getPlugin().getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) return null;
-		return window.getActivePage();
+		return TeamUIPlugin.getActivePage();
 	}
 	
 	/**

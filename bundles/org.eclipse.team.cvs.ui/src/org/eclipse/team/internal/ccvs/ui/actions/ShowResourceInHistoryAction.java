@@ -30,7 +30,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				HistoryView view = HistoryView.openInActivePerspective();
+				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
 					view.showHistory(resources[0]);
 				}

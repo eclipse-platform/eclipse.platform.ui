@@ -29,19 +29,16 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 public class ShowEditorsAction extends WorkspaceAction {
 	
-	protected void execute(IAction action)
-		throws InvocationTargetException, InterruptedException {
+	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final EditorsAction editorsAction = new EditorsAction();
 		run(new WorkspaceModifyOperation() {
-
 			public void execute(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				executeProviderAction(editorsAction, monitor);
 			}
-		}, true /* cancelable */
-		, PROGRESS_DIALOG);
+		}, true /* cancelable */ , PROGRESS_DIALOG);
 		EditorsInfo[] infos = editorsAction.getEditorsInfo();
-		EditorsView view = EditorsView.openInActivePerspective();
+		EditorsView view = (EditorsView)showView(EditorsView.VIEW_ID);
 		if (view != null) {
 			view.setInput(infos);
 		}

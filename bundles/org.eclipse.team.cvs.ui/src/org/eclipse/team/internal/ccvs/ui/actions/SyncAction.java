@@ -14,11 +14,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
-import org.eclipse.ui.PartInitException;
 
 /**
  * Action for catchup/release in popup menus.
@@ -28,17 +26,9 @@ public class SyncAction extends WorkspaceAction {
 	public void execute(IAction action) {
 		IResource[] resources = getResourcesToSync();
 		if (resources == null || resources.length == 0) return;
-		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-		if (view == null) {
-			view = SyncView.findInActivePerspective();
-		}
+		SyncView view = SyncView.findViewInActivePage(getTargetPage());
 		if (view != null) {
-			try {
-				CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-			} catch (PartInitException e) {
-				CVSUIPlugin.log(e.getStatus());
-			}
-			view.showSync(getCompareInput(resources));
+			view.showSync(getCompareInput(resources), getTargetPage());
 		}
 	}
 	

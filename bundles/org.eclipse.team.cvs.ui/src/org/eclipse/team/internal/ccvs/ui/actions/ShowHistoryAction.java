@@ -63,7 +63,7 @@ public class ShowHistoryAction extends CVSAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				HistoryView view = HistoryView.openInActivePerspective();
+				HistoryView view = (HistoryView)showView(HistoryView.VIEW_ID);
 				if (view != null) {
 					view.showHistory(files[0], null /* no current revision */);
 				}

@@ -56,7 +56,6 @@ import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
@@ -317,17 +316,7 @@ public class CVSUITestCase extends LoggingTestCase {
 	 * Gets an instance of the Synchronize view
 	 */
 	protected SyncView getSyncView() {
-		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
-		if (view == null) {
-			view = SyncView.findInActivePerspective();
-		}
-		if (view != null) {
-			try {
-				CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-			} catch (PartInitException e) {
-				CVSUIPlugin.log(e.getStatus());
-			}
-		}
+		SyncView view = SyncView.findViewInActivePage(null);
 		assertNotNull("Could not obtain a Sync View.", view);
 		return view;
 	}

@@ -26,8 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -42,24 +40,6 @@ public class EditorsView extends ViewPart {
 
 	private Table table;
 	private TableViewer tableViewer;
-	
-	/**
-	 * Makes the editors view visible in the active perspective. If there isn't
-	 * a editors view registered <code>null</code> is returned. Otherwise the
-	 * opened view part is returned.
-	 */
-	public static EditorsView openInActivePerspective() {
-		try {
-
-			IWorkbenchPage page = CVSUIPlugin.getActivePage();
-			if (page == null)
-				return null;
-			return (EditorsView)page.showView(VIEW_ID);
-		} catch (PartInitException pe) {
-			return null;
-		}
-	}
-
 
 	class EditorsContentProvider implements IStructuredContentProvider {
 

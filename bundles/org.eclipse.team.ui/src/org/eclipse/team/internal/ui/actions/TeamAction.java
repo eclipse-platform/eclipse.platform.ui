@@ -36,7 +36,10 @@ import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -59,6 +62,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	// pass one of these values to the run method.
 	public final static int PROGRESS_DIALOG = 1;
 	public final static int PROGRESS_BUSYCURSOR = 2;
+
+	private IWorkbenchPart targetPart;
 
 	/**
 	 * Returns the selected projects.
@@ -220,6 +225,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		this.shell = targetPart.getSite().getShell();
+		this.targetPart = targetPart;
 	}
 	/**
 	 * Shows the given errors to the user.
@@ -347,5 +353,35 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			list.add(resources[i]);
 		}
 		return result;
+	}
+	
+	/**
+	 * @return IWorkbenchPart
+	 */
+	protected IWorkbenchPart getTargetPart() {
+		return targetPart;
+	}
+
+	/**
+	 * Return the path that was active when the menu item was selected.
+	 * @return IWorkbenchPage
+	 */
+	protected IWorkbenchPage getTargetPage() {
+		return getTargetPart().getSite().getPage();
+	}
+	
+	/**
+	 * Show the view with the given ID in the perspective from which the action
+	 * was executed. Returns null if the view is not registered.
+	 * 
+	 * @param viewId
+	 * @return IViewPart
+	 */
+	protected IViewPart showView(String viewId) {
+		try {
+			return getTargetPage().showView(viewId);
+		} catch (PartInitException pe) {
+			return null;
+		}
 	}
 }
