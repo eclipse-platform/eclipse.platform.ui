@@ -26,11 +26,11 @@ public final class PluginClassLoader extends DelegatingURLClassLoader {
 	private PluginDescriptor descriptor;
 	private boolean pluginActivationInProgress = false;
 	private boolean loadInProgress = false;
-public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, PlatformClassLoader parent, PluginDescriptor descriptor) {
-	// create a class loader with the given classpath and filters.  Also, set the parent
-	// to be the parent of the platform class loader.  This allows us to decouple standard
+public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent, PluginDescriptor descriptor) {
+	// create a class loader with the given classpath and filters.  Also, the parent
+	// should be the parent of the platform class loader.  This allows us to decouple standard
 	// parent loading from platform loading.
-	super(codePath, codeFilters, resourcePath, resourceFilters, parent.getParent());
+	super(codePath, codeFilters, resourcePath, resourceFilters, parent);
 	this.descriptor = descriptor;
 	base = descriptor.getInstallURL();
 	debugConstruction(); // must have initialized loader

@@ -261,7 +261,9 @@ public ClassLoader getPluginClassLoader(boolean eclipseURLs) {
 	URLContentFilter[] codeFilters = (URLContentFilter[]) path[1];
 	URL[] resourcePath = (URL[]) path[2];
 	URLContentFilter[] resourceFilters = (URLContentFilter[]) path[3];
-	loader = new PluginClassLoader(codePath, codeFilters, resourcePath, resourceFilters, PlatformClassLoader.getDefault(), this);
+	// Create the classloader.  The parent should be the parent of the platform class loader.  
+	// This allows us to decouple standard parent loading from platform loading.
+	loader = new PluginClassLoader(codePath, codeFilters, resourcePath, resourceFilters, PlatformClassLoader.getDefault().getParent(), this);
 	loader.initializeImportedLoaders();
 	// Note: need to be able to give out a loader reference before
 	// its prereqs are initialized. Otherwise loops in prereq
