@@ -23,18 +23,19 @@ public class AntAntNode extends AntTaskNode {
     public AntAntNode(Task task, Attributes attributes) {
         super(task);
         StringBuffer label= new StringBuffer("ant "); //$NON-NLS-1$
-        String more = attributes.getValue(IAntModelConstants.ATTR_DIR);
-        if (more != null) {
-            label.append(more);
+        fFile= attributes.getValue(IAntModelConstants.ATTR_DIR);
+        if (fFile != null) {
+            label.append(fFile);
             label.append(File.separatorChar);
         }
-        fFile = attributes.getValue(IAntModelConstants.ATTR_ANT_FILE);
-        if (fFile == null) {
-            fFile= "build.xml"; //$NON-NLS-1$
+        String fileName = attributes.getValue(IAntModelConstants.ATTR_ANT_FILE);
+        if (fileName == null) {
+            fileName= "build.xml"; //$NON-NLS-1$
         }
-        label.append(fFile);
+        label.append(fileName);
+        fFile+=File.separatorChar + fileName;
         
-        more = attributes.getValue(IAntModelConstants.ATTR_TARGET);
+        String more = attributes.getValue(IAntModelConstants.ATTR_TARGET);
         if(more != null) {
             label.append(' ');
             label.append(more);
