@@ -853,8 +853,10 @@ public class SourceViewerDecorationSupport {
 	private boolean areAnnotationsShown(Object annotationType) {
 		if (fPreferenceStore != null) {
 			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
-			if (info != null)
-				return fPreferenceStore.getBoolean(info.getTextPreferenceKey());
+			if (info != null) {
+				String key= info.getTextPreferenceKey();
+				return key != null && fPreferenceStore.getBoolean(key);
+			}
 		}
 		return false;
 	}
