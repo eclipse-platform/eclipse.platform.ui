@@ -77,16 +77,15 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
+
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
-
-import org.eclipse.ui.part.EditorInputTransfer;
-import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.part.ResourceTransfer;
 
 import org.eclipse.update.core.SiteManager;
 
@@ -613,7 +612,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		};
 		try {
-			new ProgressMonitorJobsDialog(null).run(false, false, runnable);
+			new ProgressMonitorDialog(null).run(false, false, runnable);
 		} catch (InvocationTargetException e) {
 			status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {

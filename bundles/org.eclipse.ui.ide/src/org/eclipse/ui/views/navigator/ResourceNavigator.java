@@ -910,7 +910,9 @@ public class ResourceNavigator
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++) {
 					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-					elements.add(element);
+					if (element != null) {
+						elements.add(element);
+					}
 				}
 				viewer.setExpandedElements(elements.toArray());
 			}
@@ -920,7 +922,9 @@ public class ResourceNavigator
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++) {
 					Object element = container.findMember(elementMem[i].getString(TAG_PATH));
-					list.add(element);
+					if (element != null) {
+						list.add(element);
+					}
 				}
 				viewer.setSelection(new StructuredSelection(list));
 			}
