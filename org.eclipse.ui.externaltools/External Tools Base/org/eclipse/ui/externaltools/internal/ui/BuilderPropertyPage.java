@@ -46,6 +46,8 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -86,19 +88,54 @@ public final class BuilderPropertyPage extends PropertyPage {
 
 	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 	
+	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
 	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
+	
+	private static String fEnableText=ExternalToolsUIMessages.getString("BuilderPropertyPage.36"); //$NON-NLS-1$
+	private static String fDisableText= ExternalToolsUIMessages.getString("BuilderPropertyPage.37"); //$NON-NLS-1$
 
 	private Table builderTable;
-	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
+	private Button upButton, downButton, newButton, copyButton, editButton, removeButton, toggleEnabledButton;
 	private List imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
-	private IDebugModelPresentation debugModelPresentation;
 	
 	private boolean userHasMadeChanges= false;
 	
 	private List configsToBeDeleted= null;
+	
+	private ILabelProvider labelProvider;
+	
+	private class BuilderPageLabelProvider extends LabelProvider {
+		
+		private IDebugModelPresentation debugModelPresentation;
+		
+		public BuilderPageLabelProvider() {
+			debugModelPresentation= DebugUITools.newDebugModelPresentation();			
+		}
+
+		public Image getImage(Object element) {
+			return debugModelPresentation.getImage(element);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			StringBuffer buffer= new StringBuffer(debugModelPresentation.getText(element));
+			if (element instanceof ILaunchConfiguration) {
+				try {
+					if (!ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) element)) {
+						buffer.append(ExternalToolsUIMessages.getString("BuilderPropertyPage.38")); //$NON-NLS-1$
+					}
+				} catch (CoreException e) {
+				}
+			}
+			return buffer.toString();
+		}
+		
+	}
 	
 	/**
 	 * Error configs are objects representing entries pointing to
@@ -268,8 +305,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	}
 
 	private void updateConfigItem(TableItem item, ILaunchConfiguration config) {
-		item.setText(config.getName());
-		Image configImage = debugModelPresentation.getImage(config);
+		item.setText(labelProvider.getText(config));
+		Image configImage = labelProvider.getImage(config);
 		if (configImage == null) {
 			configImage= builderImage;
 		}
@@ -284,8 +321,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */
 	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
 		Map args= null;
+		ILaunchConfigurationWorkingCopy workingCopy= null;
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
-			if (((ILaunchConfigurationWorkingCopy) config).getLocation() == null) {
+			workingCopy= ((ILaunchConfigurationWorkingCopy) config);
+			if (workingCopy.getLocation() == null) {
 				// This config represents an old external tool builder that hasn't
 				// been edited. Try to find the old ICommand and reuse the arguments.
 				// The goal here is to not change the storage format of old, unedited builders.
@@ -302,6 +341,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 		} 
 		if (args == null) {
 			// Launch configuration builders are stored by storing their handle
+			if (workingCopy != null) {
+				if (workingCopy.getOriginal() != null) {
+					config= workingCopy.getOriginal();
+				}
+			}
 			args= new HashMap();
 			args.put(LAUNCH_CONFIG_HANDLE, config.getMemento());
 		}
@@ -335,7 +379,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		
 		Font font = parent.getFont();
 		
-		debugModelPresentation = DebugUITools.newDebugModelPresentation();
+		labelProvider = new BuilderPageLabelProvider();
 		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();
 		invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_INVALID_BUILD_TOOL).createImage();
 
@@ -392,6 +436,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
+		toggleEnabledButton = createButton(buttonArea, fDisableText);
 		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
@@ -462,9 +507,51 @@ public final class BuilderPropertyPage extends PropertyPage {
 			moveSelectionUp();
 		} else if (button == downButton) {
 			moveSelectionDown();
+		} else if (button == toggleEnabledButton) {
+			handleToggleEnabledButtonPressed();
 		}
 		handleTableSelectionChanged();
 		builderTable.setFocus();
+	}
+
+	/**
+	 * 
+	 */
+	private void handleToggleEnabledButtonPressed() {
+		boolean enable= fEnableText.equals(toggleEnabledButton.getText());
+		TableItem[] selection = builderTable.getSelection();
+		boolean enableToggled= false;
+		TableItem item;
+		for (int i = 0; i < selection.length; i++) {
+			item= selection[i];
+			Object data= item.getData();
+			if (data instanceof ILaunchConfiguration) {
+				ILaunchConfiguration configuration= (ILaunchConfiguration) data;
+				ILaunchConfigurationWorkingCopy workingCopy;
+				try {
+					if (configuration instanceof ILaunchConfigurationWorkingCopy) {
+						workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
+					} else {
+						// Replace the config with a working copy
+						workingCopy = configuration.getWorkingCopy();
+						item.setData(workingCopy);
+					}
+					workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, enable);
+				} catch (CoreException e) {
+					continue;
+				}
+				enableToggled= true;
+				userHasMadeChanges= true;
+				updateConfigItem(item, workingCopy);
+			}
+		}
+		if (enableToggled) {
+			if (enable) {
+				toggleEnabledButton.setText(fDisableText);
+			} else {
+				toggleEnabledButton.setText(fEnableText);
+			}
+		}
 	}
 
 	/**
@@ -485,7 +572,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			} catch (CoreException e) {
 			}
 		}
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), debugModelPresentation);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Copy_configuration_4")); //$NON-NLS-1$
 		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.&Choose_a_configuration_to_copy__5")); //$NON-NLS-1$
 		dialog.setElements(configurations.toArray());
@@ -653,7 +740,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ILaunchConfigurationType promptForConfigurationType() {
 		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
 
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), debugModelPresentation);
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(externalToolTypes.toArray());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Choose_configuration_type_8")); //$NON-NLS-1$
@@ -817,10 +904,21 @@ public final class BuilderPropertyPage extends PropertyPage {
 		removeButton.setEnabled(false);
 		upButton.setEnabled(false);
 		downButton.setEnabled(false);
+		toggleEnabledButton.setEnabled(false);
 		if (items != null && items.length == 1) {
 			TableItem item = items[0];
 			Object data = item.getData();
 			if (data instanceof ILaunchConfiguration) {
+				toggleEnabledButton.setEnabled(true);
+				try {
+					if (ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) data)) {
+						toggleEnabledButton.setText(fDisableText);
+					} else {
+						toggleEnabledButton.setText(fEnableText);
+					}
+				} catch (CoreException e) {
+					toggleEnabledButton.setEnabled(false);
+				}
 				editButton.setEnabled(true);
 				removeButton.setEnabled(true);
 				int selection = builderTable.getSelectionIndex();
@@ -893,6 +991,17 @@ public final class BuilderPropertyPage extends PropertyPage {
 			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
 			} else if (data instanceof ILaunchConfiguration) {
+				if (data instanceof ILaunchConfigurationWorkingCopy) {
+					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) data);
+					// Save any changes to the config (such as enable/disable)
+					if (workingCopy.isDirty()) {
+						try {
+							workingCopy.doSave();
+						} catch (CoreException e) {
+							MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.39"), MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.40"), new String[] {workingCopy.getName()})); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					}
+				}
 				// Translate launch configs to ICommands for storage
 				ICommand newCommand = null;
 				try {
@@ -999,7 +1108,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				return;
 			}
 			item.setText(config.getName());
-			Image configImage = debugModelPresentation.getImage(config);
+			Image configImage = labelProvider.getImage(config);
 			if (configImage != null) {
 				imagesToDispose.add(configImage);
 				item.setImage(configImage);

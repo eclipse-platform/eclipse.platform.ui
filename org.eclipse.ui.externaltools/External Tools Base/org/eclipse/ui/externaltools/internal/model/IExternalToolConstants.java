@@ -182,5 +182,12 @@ public interface IExternalToolConstants {
 	 * Default value is <code>null</code>, which indicates a default working
 	 * directory, which is tool specific.
 	 */
-	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$	
+	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$
+	
+	/**
+	 * String attribute identifying whether an external tool builder configuration
+	 * is enabled. The default value is <code>true</code>, which indicates
+	 * that the configuration will be executed as appropriate by the builder.
+	 */
+	public static final String ATTR_BUILDER_ENABLED = PLUGIN_ID + ".ATTR_BUILDER_ENABLED"; //$NON-NLS-1$	
 }

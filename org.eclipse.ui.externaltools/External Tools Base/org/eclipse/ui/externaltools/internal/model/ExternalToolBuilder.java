@@ -65,7 +65,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {				
 		if (kind == FULL_BUILD) {
 			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(args);
-			if (config != null && buildKindCompatible(kind, config)) {
+			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 				launchBuild(kind, config, monitor);
 			}
 			return getProjectsWithinScope();
@@ -78,12 +78,27 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
-				if (config != null && buildKindCompatible(kind, config)) {
+				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 					doBuild(kind, config, monitor);
 				}
 			}
 		}
 		return getProjectsWithinScope();
+	}
+
+	/**
+	 * Returns whether the given builder config is enabled or not.
+	 * 
+	 * @param config the config to examine
+	 * @return whether the config is enabled
+	 */
+	private boolean configEnabled(ILaunchConfiguration config) {
+		try {
+			return ExternalToolsUtil.isBuilderEnabled(config);
+		} catch (CoreException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
+		return true;
 	}
 
 	private IProject[] getProjectsWithinScope() {

@@ -195,6 +195,21 @@ public class ExternalToolsUtil {
 		}
 		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, defaultValue);
 	}
+
+	/**
+	 * Returns whether the given launch configuration is enabled. This property
+	 * is intended only to apply to external tool builder configurations and
+	 * determines whether the project builder will launch the configuration
+	 * when it builds.
+	 *  
+	 * @param configuration the configuration for which the enabled state should
+	 * 		be determined.
+	 * @return whether the given configuration is enabled to be run when a build occurs.
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static boolean isBuilderEnabled(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, true);
+	}
 	
 	/**
 	 * Returns the collection of resources for the build scope as specified by the given launch configuration.
