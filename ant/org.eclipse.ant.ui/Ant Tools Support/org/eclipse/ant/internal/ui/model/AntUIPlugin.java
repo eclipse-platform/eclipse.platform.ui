@@ -14,17 +14,13 @@ package org.eclipse.ant.internal.ui.model;
 
 import java.util.Locale;
 
-import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -75,7 +71,6 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		ColorManager.getDefault().dispose();
 		AntUIImages.disposeImageDescriptorRegistry();
 	}
 
@@ -149,20 +144,6 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS, false);
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES, false);
 		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL, false);
-
-		// Ant Editor color preferences
-		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);
-		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_PROC_INSTR, IAntEditorColorConstants.PROC_INSTR);
-		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_STRING, IAntEditorColorConstants.STRING);
-		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_TAG, IAntEditorColorConstants.TAG);
-		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_XML_COMMENT, IAntEditorColorConstants.XML_COMMENT);
-		
-		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
-		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
-		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue
-		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125)); // green
-		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0)); // black
-				
 		
 		AntEditorPreferenceConstants.initializeDefaultValues(prefs);
 	}
@@ -186,13 +167,6 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	protected ImageRegistry createImageRegistry() {
 		return AntUIImages.initializeImageRegistry();
 	}
-	
-	/**
-	 * Returns the preference color, identified by the given preference.
-	 */
-	public static Color getPreferenceColor(String pref) {
-		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), pref));
-	}	
 	
 	/**
 	* Returns the active workbench page or <code>null</code> if none.

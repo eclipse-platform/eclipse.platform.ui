@@ -34,6 +34,8 @@ import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
@@ -47,6 +49,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -75,6 +78,14 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class AntEditor extends TextEditor {
 
+	//TODO the framework does not currently support/listen to the color registry
+	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
+	private IPropertyChangeListener fColorChangeListener= new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			handlePreferenceStoreChanged(event);
+		}
+	};
+	
 	static class TabConverter {
 		
 		private int fTabRatio;
@@ -226,13 +237,17 @@ public class AntEditor extends TextEditor {
     /** The editor's tab to spaces converter */
 	private TabConverter fTabConverter;
   
-    /**
-     * Constructor for AntEditor.
-     */
     public AntEditor() {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
+		JFaceResources.getColorRegistry().addListener(fColorChangeListener);
+		
+		//TODO the framework does not currently support/listen to the color registry
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
+		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
+		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
+		PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
     }
 
 
@@ -381,7 +396,7 @@ public class AntEditor extends TextEditor {
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		String property= event.getProperty();
-		if (property == AntEditorPreferenceConstants.VALIDATE_BUILDFILES) {
+		if (property.equals(AntEditorPreferenceConstants.VALIDATE_BUILDFILES)) {
 			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
 			return;
 		}
@@ -412,6 +427,19 @@ public class AntEditor extends TextEditor {
 		}
 		
 		sourceViewerConfiguration.changeConfiguration(event);
+		
+		//TODO the framework does not currently support/listen to the color registry
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
+		if (property.equals(AntEditorPreferenceConstants.CURRENT_LINE_COLOR)) {
+			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
+			return;
+		} else if (property.equals(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR)) {
+			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
+			return;
+		} else if (property.equals(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR)) {
+			PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
+			return;
+		}
 							
 		super.handlePreferenceStoreChanged(event);
 	}
@@ -584,5 +612,12 @@ public class AntEditor extends TextEditor {
 	private boolean isTabConversionEnabled() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		JFaceResources.getColorRegistry().removeListener(fColorChangeListener);
 	}
 }

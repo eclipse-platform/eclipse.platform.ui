@@ -23,11 +23,15 @@ public interface IAntUIPreferenceConstants {
 	
 	public static final String ANT_FIND_BUILD_FILE_NAMES = "ant.findBuildFileNames"; //$NON-NLS-1$
 	
-	public static final String CONSOLE_ERROR_RGB = "console.errorColor"; //$NON-NLS-1$
-	public static final String CONSOLE_WARNING_RGB = "console.warningColor"; //$NON-NLS-1$
-	public static final String CONSOLE_INFO_RGB = "console.infoColor"; //$NON-NLS-1$
-	public static final String CONSOLE_VERBOSE_RGB = "console.verboseColor"; //$NON-NLS-1$
-	public static final String CONSOLE_DEBUG_RGB = "console.debugColor"; //$NON-NLS-1$	
+	/**
+	 * The symbolic names for colors for displaying the content in the Console
+	 * @see org.eclipse.jface.resource.ColorRegistry
+	 */
+	public static final String CONSOLE_ERROR_COLOR = "org.eclipse.ant.ui.errorColor"; //$NON-NLS-1$
+	public static final String CONSOLE_WARNING_COLOR = "org.eclipse.ant.ui.warningColor"; //$NON-NLS-1$
+	public static final String CONSOLE_INFO_COLOR = "org.eclipse.ant.ui.informationColor"; //$NON-NLS-1$
+	public static final String CONSOLE_VERBOSE_COLOR = "org.eclipse.ant.ui.verboseColor"; //$NON-NLS-1$
+	public static final String CONSOLE_DEBUG_COLOR = "org.eclipse.ant.ui.debugColor"; //$NON-NLS-1$	
 	
 	public static final String ANT_TOOLS_JAR_WARNING= "toolsJAR"; //$NON-NLS-1$
 	

@@ -30,10 +30,9 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.ColorManager;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -53,7 +52,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
@@ -102,14 +100,13 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
-
-		ColorManager manager= ColorManager.getDefault();	
-		Color background= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
+	
+		Color background= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);			
 		contentAssistant.setContextInformationPopupBackground(background);
 		contentAssistant.setContextSelectorBackground(background);
 		contentAssistant.setProposalSelectorBackground(background);
 
-		Color foreground= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+		Color foreground= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
 		contentAssistant.setContextInformationPopupForeground(foreground);
 		contentAssistant.setContextSelectorForeground(foreground);
 		contentAssistant.setProposalSelectorForeground(foreground);
@@ -173,7 +170,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
         reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 
 		damageRepairer= new MultilineDamagerRepairer(null,
-                new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));
+                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_XML_COMMENT)));
         reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
         reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 
@@ -189,7 +186,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		tagScanner.adaptToColorChange();
 		instructionScanner.adaptToColorChange();
 				   
-		damageRepairer.setDefaultTextAttribute(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
+		damageRepairer.setDefaultTextAttribute(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_XML_COMMENT)));				  
 	}
 
     /*
@@ -224,17 +221,11 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		}
 		return fTextHover;
 	}
-
-	private Color getColor(IPreferenceStore store, String key, ColorManager manager) {
-		RGB rgb= PreferenceConverter.getColor(store, key);
-		return manager.getColor(rgb);
-	}
 	
 	protected void changeConfiguration(PropertyChangeEvent event) {
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		String p= event.getProperty();
 
-		ColorManager manager= ColorManager.getDefault();
 		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			contentAssistant.enableAutoActivation(enabled);
@@ -242,10 +233,10 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 			int delay= store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			contentAssistant.setAutoActivationDelay(delay);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p)) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
 			contentAssistant.setProposalSelectorForeground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p)) {
-			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
+			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);
 			contentAssistant.setProposalSelectorBackground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);

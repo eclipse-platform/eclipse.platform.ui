@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -14,7 +14,7 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.MultiLineRule;
@@ -32,8 +32,7 @@ public class AntEditorTagScanner extends RuleBasedScanner {
 	
     public AntEditorTagScanner() {
     	fStringToken= new Token(
-                			new TextAttribute(
-                				AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
+                			new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_STRING)));
                     
 		IRule[] rules= new IRule[3];
 
@@ -47,14 +46,14 @@ public class AntEditorTagScanner extends RuleBasedScanner {
         setRules(rules);
         
         setDefaultReturnToken(
-        		new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
+        		new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_TAG))));
     }
     
     /**
      * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
      */
     public void adaptToColorChange() {
-    	((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG)));
-    	fStringToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
+    	((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_TAG)));
+    	fStringToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_STRING)));
     }
 }

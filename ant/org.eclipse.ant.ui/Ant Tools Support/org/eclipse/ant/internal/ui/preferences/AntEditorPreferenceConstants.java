@@ -12,8 +12,6 @@ package org.eclipse.ant.internal.ui.preferences;
 
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 /**
@@ -59,28 +57,15 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_AUTOACTIVATION_TRIGGERS= "content_assist_autoactivation_triggers_java"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that holds the background color used in the code assist selection dialog.
-	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * The symbolic names for colors for displaying code assist proposals
+	 * @see org.eclipse.jface.resource.ColorRegistry
 	 */
-	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "content_assist_proposals_background"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that holds the foreground color used in the code assist selection dialog.
-	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 */
-	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
+	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "org.eclipse.ant.ui.codeAssistProposalsBackgroundColor"; //$NON-NLS-1$
+	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "org.eclipse.ant.ui.codeAssistProposalsForegroundColor"; //$NON-NLS-1$		
+	public static final String CURRENT_LINE_COLOR = "org.eclipse.ant.ui.currentLineHightlightColor"; //$NON-NLS-1$
+	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.ant.ui.lineNumberForegroundColor"; //$NON-NLS-1$
+	public static final String PRINT_MARGIN_COLOR = "org.eclipse.ant.ui.printMarginColor"; //$NON-NLS-1$	
+	
 	
 	/**
 	 * A named preference that specifies if the editor uses spaces for tabs.
@@ -167,8 +152,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 500);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
 		store.setDefault(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);

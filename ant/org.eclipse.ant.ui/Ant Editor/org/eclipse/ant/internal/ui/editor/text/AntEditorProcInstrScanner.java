@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -9,12 +9,12 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 24108, bug 47139
+ * 	   IBM Corporation - bug fixes
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
@@ -33,8 +33,7 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 		IRule[] rules =new IRule[2];
         fProcInstructionToken =
             new Token(
-                new TextAttribute(
-                    AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
+                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_PROC_INSTR)));
 
         //Add rule for processing instructions
         rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
@@ -44,15 +43,14 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
         setRules(rules);
         
-        setDefaultReturnToken(new Token(
-        						new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
+        setDefaultReturnToken(new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_DEFAULT))));
     }
 
 	/**
 	 * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
 	 */
 	public void adaptToColorChange() {
-		((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT)));
-		fProcInstructionToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
+		((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_DEFAULT)));
+		fProcInstructionToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_PROC_INSTR)));
 	}
 }

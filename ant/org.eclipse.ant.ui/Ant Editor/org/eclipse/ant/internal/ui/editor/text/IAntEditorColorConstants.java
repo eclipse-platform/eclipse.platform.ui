@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -14,22 +14,14 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.swt.graphics.RGB;
-
 /**
  * The color constants used by the Ant Editor.
  */
 public interface IAntEditorColorConstants {
-	RGB XML_COMMENT =       new RGB(128,   0,   0);
-	RGB PROC_INSTR =        new RGB(128, 128, 128);
-	RGB STRING=             new RGB(  0, 128,   0);
-	RGB DEFAULT=            new RGB(  0,   0,   0);
-	RGB TAG=                new RGB(  0,   0, 128);
 	
-	
-	String P_XML_COMMENT = "antEditor.color.xml_comment"; //$NON-NLS-1$
-	String P_PROC_INSTR = "antEditor.color.instr"; //$NON-NLS-1$
-	String P_STRING = "antEditor.color.string"; //$NON-NLS-1$
-	String P_DEFAULT = "antEditor.color.default"; //$NON-NLS-1$
-	String P_TAG = "antEditor.color.tag"; //$NON-NLS-1$
+	public static final String P_XML_COMMENT = "org.eclipse.ant.ui.commentsColor"; //$NON-NLS-1$
+	public static final String P_PROC_INSTR = "org.eclipse.ant.ui.processingInstructionsColor"; //$NON-NLS-1$
+	public static final String P_STRING = "org.eclipse.ant.ui.constantStringsColor"; //$NON-NLS-1$
+	public static final String P_DEFAULT = "org.eclipse.ant.ui.textColor"; //$NON-NLS-1$
+	public static final String P_TAG = "org.eclipse.ant.ui.tagsColor"; //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.launchConfigurations;
+package org.eclipse.ant.internal.ui.console;
 
+import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
+import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsole;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
@@ -36,19 +39,19 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
-			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB);
+			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR);
 		}
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
-			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_ERROR_RGB);
+			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR);
 		}				
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_DEBUG_STREAM)) {
-			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB);
+			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR);
 		}
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_VERBOSE_STREAM)) {
-			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB);
+			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR);
 		}
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_WARNING_STREAM)) {
-			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB);
+			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR);
 		}
 		return super.getColor(streamIdentifer);
 	}
@@ -70,7 +73,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
 		}
 		
-		AntUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		JFaceResources.getColorRegistry().addListener(this);
 		super.connect(process, console);
 	}
 	
@@ -107,15 +110,15 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	}
 
 	private boolean affectsAntConsole(String property) {
-		if (IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB.equals(property)) {
+		if (IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR.equals(property)) {
 			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_ERROR_RGB.equals(property)) {
+		} else if (IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR.equals(property)) {
 			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_INFO_RGB.equals(property)) {
+		} else if (IAntUIPreferenceConstants.CONSOLE_INFO_COLOR.equals(property)) {
 			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB.equals(property)) {
+		} else if (IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR.equals(property)) {
 			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_WARNING_RGB.equals(property)) {
+		} else if (IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR.equals(property)) {
 			return true;
 		}
 		return false;
@@ -125,7 +128,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
 	public void disconnect() {
-		AntUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		JFaceResources.getColorRegistry().removeListener(this);
 		super.disconnect();
 	}
 }
