@@ -125,11 +125,11 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 				|| referenceExists(newReferences, oldReferences[i]))
 				continue;
 
+			InputStream input = null;
 			try {
-				File sourceFile = oldReferences[i].asFile();
+				input = oldReferences[i].getInputStream();
 				File targetFile =
 					new File(pluginPath, oldReferences[i].getIdentifier());
-				InputStream input = new FileInputStream(sourceFile);
 				UpdateManagerUtils.copyToLocal(
 					input,
 					targetFile.getAbsolutePath(),
@@ -140,6 +140,13 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 				// 20305
 			} catch (IOException e) {
 				continue;
+			} finally {
+				if(input != null){
+					try{
+						input.close();
+					} catch (IOException ioe) {
+					}
+				}
 			}
 		}
 	}
