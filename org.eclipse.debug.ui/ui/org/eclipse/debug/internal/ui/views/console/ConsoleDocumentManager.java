@@ -364,7 +364,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 					if (tracker instanceof IConsoleLineTracker) {
 						lineNotifier.addConsoleListener((IConsoleLineTracker)tracker);
 					} else {
-						DebugUIPlugin.logErrorMessage(MessageFormat.format("Invalid extension {0} - class must be an instance of IConsoleLineTracker",new String[]{extension.getDeclaringExtension().getUniqueIdentifier()}));
+						DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
 					DebugUIPlugin.log(e);
