@@ -119,7 +119,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public String getLabel() {
-		return getId(); //TODO Need to be fixed to do the real thing, ie getting the string from the translation of the manifest.nf
+		return getResourceString((String) bundleOsgi.getHeaders().get(Constants.BUNDLE_NAME));
 	}
 
 	/**
@@ -168,15 +168,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public String getProviderName() {
-		String providerName = (String) bundleOsgi.getHeaders().get("Bundle-Vendor"); //TODO To fix to do the real thing, ie getting the string from the translation of the manifest.nf
-		return providerName == null ? "" : providerName;
-		//	String s = super.getProviderName();
-		//	if (s == null)
-		//		return ""; //$NON-NLS-1$
-		//	 String localized = getResourceString(s);
-		//	 if (localized != s)
-		//		setLocalizedProviderName(localized);
-		//	 return localized;
+		String providerName = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VENDOR);
+		if (providerName == null)
+			return ""; //$NON-NLS-1$
+		 return getResourceString(providerName);
 	}
 	/**
 	 * @see IPluginDescriptor

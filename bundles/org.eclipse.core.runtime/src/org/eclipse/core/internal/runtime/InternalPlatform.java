@@ -1205,13 +1205,16 @@ public final class InternalPlatform implements IPlatform {
 		return getStateLocation(bundle, true);
 	}
 	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
-		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceBundle();
+		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		return model != null ? model.getResourceBundle() : null ;
 	}
 	public String getResourceString(Bundle bundle, String value) {
-		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceString(value);
+		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		return model != null ? model.getResourceString(value) : value;
 	}
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
-		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceString(value, resourceBundle);
+		BundleModel model =  (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		return model != null ? model.getResourceString(value, resourceBundle) : value;
 	}
 	public String getOSArch() {
 		return getEnvironmentInfoService().getOSArch();
