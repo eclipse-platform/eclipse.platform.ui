@@ -15,81 +15,184 @@ import org.eclipse.help.internal.util.*;
  * Builder for the contribution hierarchy using the insert contributions.
  */
 public class InfosetBuilder {
-	// Contributions data
+	// Contributions data, before indexing by id
 	private Iterator infosets;
 	private Iterator topics;
 	private Iterator actions;
 
-	// Topics data indexed by ID
-	private Map topicNodeMap = new HashMap(/* of <topic> Node */);
-	private Map topicSetNodeMap = new HashMap(/* of <topics> Node */);
-
-	// Infosets
-	private Map infoSetMap = new HashMap(/* of InfoSet */);
-
-	// Views data indexed by ID
-	private Map viewNodeMap = new HashMap(/* of <view> Node */);
-	// Actions data indexed by view ID
-	private Map actionNodeMap = new HashMap(/* of Vector of <action> Node */);
-	// Solo (default) actions data indexed by view ID
-	private Map soloActionNodeMap = new HashMap(/* of Vector of <action> Node */);
-
-	// Keep track of plugins with inserted topics
+	// Contributions indexed by id for fast lookup
+	
+	// <topic> by id
+	private Map topicNodeMap = new HashMap();
+	// <topics> by id
+	private Map topicSetNodeMap = new HashMap();
+	// <infoset> by id
+	private Map infoSetMap = new HashMap();
+	// <infoview> by id
+	private Map viewNodeMap = new HashMap();
+	// <actions> by infoview
+	private Map actionNodeMap = new HashMap();
+	// <actions standalone=true> by infoview
+	private Map standaloneActionNodeMap = new HashMap();
+	
+	// plugins that contributed integrated topics, by plugin id
 	private Set integratedPlugins = new HashSet(/* of String */);
+	
+	// current view being built
+	private HelpInfoView view = null;
+	// collection of topics that were insert sources in current view
+	private Map sources = new HashMap();
+	// collection of topics that were insert targets in current view
+	private Map targets = new HashMap();
 
 	/*******************************************************/
-	/*****  InsertAction ***********************************/
+	/*****  Inserter ***********************************/
 	/*******************************************************/
 	// Action command to execute the insert scripts
-	class InsertAction //extends HelpContribution
+	class Inserter
 	{
-		private InfoView view;
-		private Insert insertNode;
+		private String from;
+		private String to;
+		private String label;
+		private int    mode;
 
-		public InsertAction(InfoView view, Insert insertNode) {
-			//super(node);
-			this.view = view;
-			HelpTopicFactory.setView(this.view);
-			this.insertNode = insertNode;
+		public Inserter(String from, String to, String label, int mode) {
+			this.from = from;
+			this.to = to;
+			this.label = label;
+			this.mode = mode;
+		}
+		
+		public Inserter(Insert insertNode) {
+			this.from = insertNode.getSource();
+			this.to = insertNode.getTarget();
+			this.label = insertNode.getRawLabel();
+			this.mode = insertNode.getMode();
 		}
 
-		/**
-		  * Execute the insert action. May need to execute nested action if not successful.
-		  */
-		public boolean execute() {
-			String fromID = insertNode.getSource();
-			String toID = insertNode.getTarget();
-   
-			String newLabel = insertNode.getRawLabel();
-			// check conditions
-			if (isKnownView(fromID))
-				return false;
-			if ((isKnownTopic(fromID) || isKnownTopicSet(fromID))
-				&& (isKnownView(toID) || isKnownTopic(toID))) 
-			{
-				if (insertTopic(fromID, toID, view, insertNode.getMode(), newLabel))
-					return true;
-			}
-			return executeNested();
+		public boolean hasValidData()
+		{
+			return (isValidTopic(from) || isValidTopicSet(from)) &&
+				   (isValidView(to) || isValidTopic(to)); 
 		}
+		
 		/**
-		 *  Writes this action to the log
+		 * Inserts the topic and creates the HelpTopic objects
 		 */
-		public void fail() {
-			String fromID = insertNode.getSource();
-			String toID = insertNode.getTarget();
-			Logger.logWarning(Resources.getString("WS03", "from=\""+fromID+"\" to=\""+toID+"\""));
+		public boolean insert() {
+			if ((mode == Contribution.PREV) || (mode == Contribution.NEXT))
+				return insertAsSibling();
+			else
+				return insertAsChild();
 		}
+		
+		/**
+	     * Inserts the topic and creates the HelpTopic objects
+	     */
+		private boolean insertAsChild() {
+			// do a simple insert
+			if (isValidTopic(from)) {
+				Contribution parent = getTargetTopic(to,true);
+				Contribution child = getSourceTopic(from);
+				if (child == null)
+					return false;//topic already inserted
+					
+				if(label != null && (child instanceof HelpTopicRef))
+					((HelpTopicRef) child).setRawLabel(label);
+			
+				((HelpContribution) parent).insertChild(child, mode);
 
-		private boolean executeNested() {
-			// execute each action in part
-			for (Iterator nested = insertNode.getChildren(); nested.hasNext();) {
-				InsertAction action = new InsertAction(view, (HelpInsert) nested.next());
-				return action.execute();
+				// keep track of this insertion for handling standalone actions
+				trackTopic(from);
+
+				// now recursively insert all the children
+				insertChildrenTopics(child);
+			} else	if (isValidTopicSet(from)) {
+				// insert all the child topics nodes
+				Contribution topicSet = (Contribution) topicSetNodeMap.get(from);
+				for (Iterator topics = topicSet.getChildren(); topics.hasNext();) {
+					Contribution topic = (Contribution) topics.next();
+					Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
+					newInserter.insert();
+				}
 			}
-			return false;
+			return true; //success
+		}
+		
+		/**
+	     * Inserts the topic and creates the HelpTopic objects
+	     */
+		private boolean insertAsSibling() 
+		{
+			// do a simple insert
+			if (isValidTopic(from)) {
+				Contribution refSib = getTargetTopic(to, false);
+				if (refSib == null)
+					return false; //sibling must already be inserted
+				Contribution parent = refSib.getParent();
+				if (parent == null)
+					return false; //parent must exist for proper insertion
+				Contribution newSib = getSourceTopic(from);
+				if (newSib == null)
+					return false;//topic already inserted	
+					
+				if(label != null && (newSib instanceof HelpTopicRef))
+					((HelpTopicRef) newSib).setRawLabel(label);
+		
+				((HelpContribution) parent).insertNeighbouringChild(refSib,	newSib,	mode);
+
+				// keep track of this insertion for handling stanalone actions
+				trackTopic(from);
+
+				// now recursively insert all the children
+				insertChildrenTopics(newSib);
+			} else if (isValidTopicSet(from)) {
+				Contribution refSib = getTargetTopic(to, false);
+				if (refSib == null)
+					return false; //sibling must exist
+				Contribution parent = refSib.getParent();
+				if (parent == null)
+					return false; //parent must exist for proper insertion
+				// insert all the child topics nodes
+				Contribution topicSet = (Contribution) topicSetNodeMap.get(from);
+				List topics = topicSet.getChildrenList();
+				if (mode == Contribution.NEXT) {
+					for (int i = topics.size() - 1; i >= 0; i--) {
+						Contribution topic = (Contribution) topics.get(i);
+						Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
+						newInserter.insert();
+					}
+				} else {
+					for (int i = 0; i < topics.size(); i++) {
+						Contribution topic = (Contribution) topics.get(i);
+						Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
+						newInserter.insert();
+					}
+				}
+			}
+			return true; //success
+		}
+		
+		/**
+		 * parent is a ref/clone node
+		 */
+		private void insertChildrenTopics(Contribution parent)
+		{
+			// now recursively insert all the children
+			Contribution topicNode = parent;
+			if (parent instanceof TopicRef)
+				topicNode = ((TopicRef) parent).getTopic();
+
+			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
+				Contribution childNode = (Contribution) childTopics.next();
+				Inserter newInserter = new Inserter(childNode.getID(), parent.getID(), null, Contribution.NORMAL);					
+				newInserter.insert();
+			}
 		}
 	}
+	
+	
+	
 	/**
 	 * HelpViewManager constructor comment.
 	 */
@@ -119,7 +222,7 @@ public class InfosetBuilder {
 			buildViews(infoset);
 		}
 
-		// run the solo actions to build stand-alone navigation
+		// run the standalone actions to build stand-alone navigation
 		buildStandaloneNavigation();
 
 		// do not keep empty infosets that were tagged as standalone
@@ -136,27 +239,24 @@ public class InfosetBuilder {
 			InfoSet infoset = (InfoSet) infosets.next();
 			InfoView[] infoviews = infoset.getViews();
 			for (int i = 0; i < infoviews.length; i++) {
-				// get list of solo actions for this view
-				List actions = (List) soloActionNodeMap.get(infoviews[i].getID());
-				List validSoloActions = getValidSoloActions(actions);
-				executeActions(infoviews[i], validSoloActions);
+				// get list of standalone actions for this view
+				setCurrentView(infoviews[i]);
+				List actions = (List) standaloneActionNodeMap.get(infoviews[i].getID());
+				List validStandaloneActions = getValidStandaloneActions(actions);
+				executeActions(infoviews[i], validStandaloneActions);
 			}
 		}
 	}
 	/**
-		 * Builds the view object by wiring up the topics
-		 * as specified in the insert actions.
-		 * @return 
-		 * @param viewName java.lang.String
-		 */
+	 * Builds the view object by wiring up the topics
+	 * as specified in the insert actions.
+	 * @return 
+	 * @param viewName java.lang.String
+	 */
 	private void buildView(InfoView view) {
-		String viewID = view.getID();
-		// Registers the view as a topic, so <insert from=topic to=view> work
-		 ((HelpInfoView) view).registerTopic(view);
-		topicNodeMap.put(viewID, view);
-
+		setCurrentView(view);
 		// Get build actions for this view
-		List actions = (List) actionNodeMap.get(viewID);
+		List actions = (List) actionNodeMap.get(view.getID());
 		executeActions(view, actions);
 	}
 	/**
@@ -199,51 +299,78 @@ public class InfosetBuilder {
 	private void executeActions(InfoView view, List actions) {
 		if (actions == null)
 			return;
-		List unexecutedActions = new ArrayList();
-		for (Iterator e = actions.iterator(); e.hasNext();) {
+		// keep track of inserts that did not succeed at first
+		List deferredInserts = new ArrayList();
+		
+		for (Iterator e = actions.iterator(); e.hasNext();)
+		 {
 			Action actionsNode = (Action) e.next();
-
-			// execute each action in part
-			for (Iterator actionsList = actionsNode.getChildren();
-				actionsList.hasNext();
-				) {
+			// execute each action in part.
+			// assume they all inserts
+			for (Iterator actionsList=actionsNode.getChildren();actionsList.hasNext();) 
+			{
 				Insert insertNode = (Insert) actionsList.next();
-				InsertAction action = new InsertAction(view, insertNode);
-				if (!action.execute())
-					unexecutedActions.add(action);
+				if (!execute(insertNode))
+					deferredInserts.add(insertNode);			
 			}
 		}
-		// executing delayed actions
+		// executing delayed inserts
 		int noDelayed = 0;
-		while (unexecutedActions.size() != noDelayed) {
-			noDelayed = unexecutedActions.size();
-			for (int i = 0; i < unexecutedActions.size(); i++) {
-				InsertAction action = (InsertAction) unexecutedActions.get(i);
-				if (action.execute())
-					unexecutedActions.remove(i--);
+		while (deferredInserts.size() != noDelayed) {
+			noDelayed = deferredInserts.size();
+			for (int i=0; i<deferredInserts.size(); i++) {
+				if (execute((Insert) deferredInserts.get(i)))
+					deferredInserts.remove(i--);
 			}
 		}
 		// report unexecuted actions
-		for( int i=0; i<unexecutedActions.size(); i++){
-			((InsertAction)unexecutedActions.get(i)).fail();
+		for( int i=0; i<deferredInserts.size(); i++){
+			Insert insertNode = (Insert)deferredInserts.get(i);
+			String from = insertNode.getSource();
+			String to = insertNode.getTarget();
+			Logger.logWarning(Resources.getString("WS03", "from=\""+from+"\" to=\""+to+"\""));
 		}
 	}
+	
+	
+	/**
+	  * Execute the insert action. May need to execute nested action if not successful.
+	  */
+	private boolean execute(Insert insertNode) {  				
+		// check conditions
+		Inserter inserter = new Inserter(insertNode);
+		if (inserter.hasValidData()) 
+			return inserter.insert();
+		else
+			return executeAlternateActions(insertNode);
+	}
+
+
+	private boolean executeAlternateActions(Insert insertNode) {
+		// execute each action in part
+		Iterator nested = insertNode.getChildren();
+		if (nested.hasNext())
+			return execute((Insert)nested.next());
+		else
+			return false;
+	}
+		
 	/**
 	 * Returns the actions are valid as standalone actions.
 	 * Valid actions are those whose "from" topics are from non-integrated plugins.
 	 */
-	private List getValidSoloActions(List actions) {
+	private List getValidStandaloneActions(List actions) {
 		if (actions == null)
 			return null;
-		List validSoloActions = new ArrayList(actions.size());
+		List validStandaloneActions = new ArrayList(actions.size());
 		for (Iterator e = actions.iterator(); e.hasNext();) {
 			Action actionsNode = (Action) e.next();
 
 			// check each action in part
-			boolean isSoloAction = true;
+			boolean isStandaloneAction = true;
 			for (Iterator actionsList = actionsNode.getChildren();
-				isSoloAction && actionsList.hasNext();
-				) {
+				isStandaloneAction && actionsList.hasNext(); ) 
+			{
 				Insert insertNode = (Insert) actionsList.next();
 				String from = insertNode.getSource();
 				int index = from.lastIndexOf('.');
@@ -251,176 +378,42 @@ public class InfosetBuilder {
 					continue;
 				String plugin = from.substring(0, index);
 				if (integratedPlugins.contains(plugin))
-					isSoloAction = false;
+					isStandaloneAction = false;
 			}
-			if (isSoloAction)
-				validSoloActions.add(actionsNode);
+			if (isStandaloneAction)
+				validStandaloneActions.add(actionsNode);
 		}
 
-		return validSoloActions;
+		return validStandaloneActions;
 	}
-	/**
-	 * Inserts the topic and creates the HelpTopic objects
-	 */
-	private boolean insertTopic(
-		String fromTopic,
-		String toTopic,
-		InfoView view,
-		int positionPreference,
-		String newLabel) {
-		if ((positionPreference == HelpContribution.PREV)
-			|| (positionPreference == HelpContribution.NEXT))
-			return insertTopicAsSib(fromTopic, toTopic, view, positionPreference, newLabel);
-		else
-			return insertTopicAsChild(fromTopic, toTopic, view, positionPreference, newLabel);
-	}
-	/**
-	 * Inserts the topic and creates the HelpTopic objects
-	 */
-	private boolean insertTopicAsChild(
-		String fromTopic,
-		String toTopic,
-		InfoView view,
-		int positionPreference,
-		String newLabel) {
-		// do a simple insert
-		if (isKnownTopic(fromTopic)) {
-			Contribution parent = ((HelpInfoView) view).getContribution(toTopic);
-			if (parent == null)
-				parent = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(toTopic));
-			Contribution child = ((HelpInfoView) view).getContribution(fromTopic);
-			if (child == null)
-				child = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
-			else
-				return false;//topic already inserted
-			if(newLabel!=null){
-				if(child instanceof HelpTopicRef)
-					((HelpTopicRef) child).setRawLabel(newLabel);
-			}
-			((HelpContribution) parent).insertChild(child, positionPreference);
 
-			// keep track of this insertion for handling solo actions
-			trackTopic(fromTopic);
-
-			// now recursively insert all the children
-			Contribution topicNode = child;
-			if (child instanceof TopicRef)
-				topicNode = ((TopicRef) child).getTopic();
-
-			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
-				Contribution childNode = (Contribution) childTopics.next();
-				String newFromTopic = childNode.getID();
-				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL, null);
-			}
-		} else
-			if (isKnownTopicSet(fromTopic)) {
-				// insert all the child topics nodes
-				Contribution topicSet = (Contribution) topicSetNodeMap.get(fromTopic);
-				for (Iterator topics = topicSet.getChildren(); topics.hasNext();) {
-					Contribution topic = (Contribution) topics.next();
-					insertTopic(topic.getID(), toTopic, view, positionPreference, null);
-				}
-			}
-		return true; //success
-	}
-	/**
-	 * Inserts the topic and creates the HelpTopic objects
-	 */
-	private boolean insertTopicAsSib(
-		String fromTopic,
-		String nearTopic,
-		InfoView view,
-		int positionPreference,
-		String newLabel) {
-		// do a simple insert
-		if (isKnownTopic(fromTopic)) {
-			Contribution refSib = ((HelpInfoView) view).getContribution(nearTopic);
-			if (refSib == null)
-				return false; //sibling must already be inserted
-			Contribution parent = refSib.getParent();
-			if (parent == null)
-				return false; //parent must exist for proper insertion
-			Contribution newSib = ((HelpInfoView) view).getContribution(fromTopic);
-			if (newSib == null)
-				newSib = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
-			else
-				return false;//topic already inserted	
-			if(newLabel!=null){
-				if(newSib instanceof HelpTopicRef)
-					((HelpTopicRef) newSib).setRawLabel(newLabel);
-			}
-			((HelpContribution) parent).insertNeighbouringChild(
-				refSib,
-				newSib,
-				positionPreference);
-
-			// keep track of this insertion for handling stanalone actions
-			trackTopic(fromTopic);
-
-			// now recursively insert all the children
-			Contribution topicNode = newSib;
-			if (newSib instanceof TopicRef)
-				topicNode = ((TopicRef) newSib).getTopic();
-
-			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
-				Contribution childNode = (Contribution) childTopics.next();
-				String newFromTopic = childNode.getID();
-				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL, null);
-			}
-		} else
-			if (isKnownTopicSet(fromTopic)) {
-				Contribution refSib = ((HelpInfoView) view).getContribution(nearTopic);
-				if (refSib == null)
-					return false; //sibling must exist
-				Contribution parent = refSib.getParent();
-				if (parent == null)
-					return false; //parent must exist for proper insertion
-				// insert all the child topics nodes
-				Contribution topicSet = (Contribution) topicSetNodeMap.get(fromTopic);
-				List topics = topicSet.getChildrenList();
-				if (positionPreference == HelpContribution.NEXT) {
-					for (int i = topics.size() - 1; i >= 0; i--) {
-						Contribution topic = (Contribution) topics.get(i);
-						insertTopic(topic.getID(), nearTopic, view, positionPreference, null);
-					}
-				} else {
-					for (int i = 0; i < topics.size(); i++) {
-						Contribution topic = (Contribution) topics.get(i);
-						insertTopic(topic.getID(), nearTopic, view, positionPreference, null);
-					}
-				}
-			}
-		return true; //success
-	}
-	public boolean isKnownTopic(String topicID) {
+	private boolean isValidTopic(String topicID) {
 		return topicNodeMap.get(topicID) != null;
 	}
-	public boolean isKnownTopicSet(String topicSetID) {
+	private boolean isValidTopicSet(String topicSetID) {
 		return topicSetNodeMap.get(topicSetID) != null;
 	}
-	private boolean isKnownView(String viewName) {
+	private boolean isValidView(String viewName) {
 		return (viewNodeMap.get(viewName) != null);
 	}
 	/**
 	 * Indexes actions by view id
-	 * @return java.util.Vector
-	 * @param viewName java.lang.String
 	 */
 	private void sortActions() {
 		while (actions.hasNext()) {
 			Action actionNode = (Action) actions.next();
 			String viewID = actionNode.getView();
 			if (viewID.equals("")) {
-				// XXX EXCEPTION!!!
+				// *** EXCEPTION!!!
 			} else {
 				// do a CASE SENSITIVE match on the view name.
 				// We store a vector of actions under one id
 				if (actionNode.isStandalone()) {
-					List actions = (List) soloActionNodeMap.get(viewID);
+					List actions = (List) standaloneActionNodeMap.get(viewID);
 					if (actions == null)
 						actions = new ArrayList();
 					actions.add(actionNode);
-					soloActionNodeMap.put(viewID, actions);
+					standaloneActionNodeMap.put(viewID, actions);
 				} else {
 					List actions = (List) actionNodeMap.get(viewID);
 					if (actions == null)
@@ -454,6 +447,21 @@ public class InfosetBuilder {
 			}
 		}
 	}
+	
+	/**
+	 * Prepares to insert to this view
+	 */
+	private void setCurrentView (InfoView view)
+	{
+		this.view = (HelpInfoView)view;
+		sources.clear();
+		targets.clear();
+		// add the view as a possible target
+		// so <insert from=topic to=view> works
+		targets.put(view.getID(), view);
+		// this can likely be removed, as it seems obsolete
+		///topicNodeMap.put(view.getID(), view);
+	}
 	/**
 	 * Tracks the topics by its plugin.
 	 * All the integrated plugins will be remembered, so the standalone actions
@@ -465,5 +473,45 @@ public class InfosetBuilder {
 			return;
 		String pluginId = topicId.substring(0, i);
 		integratedPlugins.add(pluginId);
+	}
+	
+	/**
+	 * Returns a clone/reference topic that can be used as 
+	 * an insertion source. Create one if necessary.
+	 * Returns null if this topic has already been inserted into this infoview.
+	 */
+	private Contribution getSourceTopic(String id)
+	{
+		Object topic = sources.get(id);
+		// we don't insert the same topic twice in a view
+		if (topic != null)	return null; 
+			
+		// see if this was already a target, so it has a clone
+		topic = targets.get(id);
+		// need to create the topic clone/ref
+		if (topic == null)
+		{
+			topic = new HelpTopicRef((Topic)topicNodeMap.get(id));
+			sources.put(id, topic);
+		}
+		return (Contribution)topic;
+	}
+	
+	/**
+	 * Returns a clone/reference topic that can be used as
+	 * an insertion target. Create one if asked for.
+	 * Returns null if the id refers to a topic that cannot be an insert target.
+	 */
+	private Contribution getTargetTopic(String id, boolean create)
+	{
+		// check if already a source or target
+		Object topic = targets.get(id);
+		if (topic == null) topic = sources.get(id);
+		if (topic == null && create)
+		{
+			topic = new HelpTopicRef((Topic)topicNodeMap.get(id));
+			targets.put(id, topic);
+		}
+		return (Contribution)topic;
 	}
 }
