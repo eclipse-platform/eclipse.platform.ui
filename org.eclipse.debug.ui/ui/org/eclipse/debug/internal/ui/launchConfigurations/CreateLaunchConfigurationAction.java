@@ -27,7 +27,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * Action identifier for IDebugView#getAction(String)
 	 */
-	public static final String ID_CREATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_CREATE_ACTION";
+	public static final String ID_CREATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_CREATE_ACTION"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs an action to create a launch configuration 

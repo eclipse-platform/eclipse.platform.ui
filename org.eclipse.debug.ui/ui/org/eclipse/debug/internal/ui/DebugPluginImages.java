@@ -147,7 +147,7 @@ public class DebugPluginImages {
 			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);
 			if (configTypeID == null) {
 				// bug 12652
-				configTypeID = configElement.getAttribute("type");
+				configTypeID = configElement.getAttribute("type"); //$NON-NLS-1$
 			}			
 			imageRegistry.put(configTypeID, imageDescriptor);				
 			imageDescriptors.put(configTypeID, imageDescriptor);
