@@ -82,7 +82,11 @@ public class ProjectHelper extends org.apache.tools.ant.ProjectHelper {
      * @author Alf Schiefelbein
      */
     public static void configureProject(Project project, File aFile, String aWholeDocumentString) throws BuildException {
-        ProjectHelperImpl helper = (ProjectHelperImpl)ProjectHelper.getProjectHelper();
+        ProjectHelperImpl helper = (ProjectHelperImpl)getProjectHelper();
         helper.parse(project, aFile, aWholeDocumentString);
     }
+    
+	public static org.apache.tools.ant.ProjectHelper getProjectHelper() throws BuildException {
+		return new ProjectHelperImpl();
+	}
 }
