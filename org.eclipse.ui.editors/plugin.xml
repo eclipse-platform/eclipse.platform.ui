@@ -108,7 +108,7 @@
       <command
             name="%command.folding.toggle.name"
             description="%command.folding.toggle.description"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.toggle">
       </command>
       <keyBinding
@@ -120,7 +120,7 @@
       <command
             name="%command.folding.expandAll.name"
             description="%command.folding.expandAll.description"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.expand_all">
       </command>
       <keyBinding
@@ -132,7 +132,7 @@
       <command
             name="%command.folding.expand.name"
             description="%command.folding.expand.description"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.expand">
       </command>
       <keyBinding
@@ -144,7 +144,7 @@
       <command
             name="%command.folding.collapse.name"
             description="%command.folding.collapse.description"
-            categoryId="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.collapse">
       </command>
       <keyBinding
