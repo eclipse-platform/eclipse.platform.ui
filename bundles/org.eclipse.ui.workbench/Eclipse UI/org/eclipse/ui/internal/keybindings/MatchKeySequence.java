@@ -10,8 +10,8 @@ package org.eclipse.ui.internal.keybindings;
 
 public final class MatchKeySequence implements Comparable {
 
-	private final static int HASH_INITIAL = 57;
-	private final static int HASH_FACTOR = 67;
+	private final static int HASH_INITIAL = 77;
+	private final static int HASH_FACTOR = 87;
 
 	static MatchKeySequence create(Match match, KeySequence keySequence)
 		throws IllegalArgumentException {

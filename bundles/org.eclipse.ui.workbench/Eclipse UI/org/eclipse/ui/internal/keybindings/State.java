@@ -15,9 +15,9 @@ import java.util.List;
 
 public final class State implements Comparable {
 
-	public final static int MAXIMUM_PATHS = 8;
-	private final static int HASH_INITIAL = 77;
-	private final static int HASH_FACTOR = 87;
+	final static int MAXIMUM_PATHS = 8;
+	private final static int HASH_INITIAL = 107;
+	private final static int HASH_FACTOR = 117;
 
 	static State create(List paths)
 		throws IllegalArgumentException {

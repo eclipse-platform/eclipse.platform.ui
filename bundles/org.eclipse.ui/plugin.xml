@@ -77,220 +77,292 @@
    <extension
          point="org.eclipse.ui.actionDefinitions">
       <actionDefinition
-            id="org.eclipse.ui.file.close">
+            id="org.eclipse.ui.file.close"
+            label="Close">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.closeAll">
+            id="org.eclipse.ui.file.closeAll"
+            label="Close All">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.save">
+            id="org.eclipse.ui.file.save"
+            label="Save">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.saveAll">
+            id="org.eclipse.ui.file.saveAll"
+            label="Save All">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.print">
+            id="org.eclipse.ui.file.print"
+            label="Print">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.revert">
+            id="org.eclipse.ui.file.revert"
+            label="Revert">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.refresh">
+            id="org.eclipse.ui.file.refresh"
+            label="Refresh">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.file.properties">
+            id="org.eclipse.ui.file.properties"
+            label="Properties">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.undo">
+            id="org.eclipse.ui.edit.undo"
+            label="Undo">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.redo">
+            id="org.eclipse.ui.edit.redo"
+            label="Redo">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.cut">
+            id="org.eclipse.ui.edit.cut"
+            label="Cut">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.copy">
+            id="org.eclipse.ui.edit.copy"
+            label="Copy">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.paste">
+            id="org.eclipse.ui.edit.paste"
+            label="Paste">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.delete">
+            id="org.eclipse.ui.edit.delete"
+            label="Delete">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.delete.line">
+            id="org.eclipse.ui.edit.text.delete.line"
+            label="Delete Line">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+            id="org.eclipse.ui.edit.text.delete.line.to.beginning"
+            label="Delete to Beginning of Line">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.delete.line.to.end">
+            id="org.eclipse.ui.edit.text.delete.line.to.end"
+            label="Delete to End of Line">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.move">
+            id="org.eclipse.ui.edit.move"
+            label="Move">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.rename">
+            id="org.eclipse.ui.edit.rename"
+            label="Rename">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.selectAll">
+            id="org.eclipse.ui.edit.selectAll"
+            label="Select All">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.set.mark">
+            id="org.eclipse.ui.edit.text.set.mark"
+            label="Set Mark">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.clear.mark">
+            id="org.eclipse.ui.edit.text.clear.mark"
+            label="Clear Mark">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.swap.mark">
+            id="org.eclipse.ui.edit.text.swap.mark"
+            label="Swap Mark">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.findReplace">
+            id="org.eclipse.ui.edit.findReplace"
+            label="Find and Replace">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.addBookmark">
+            id="org.eclipse.ui.edit.addBookmark"
+            label="Add Bookmark">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.goInto">
+            id="org.eclipse.ui.navigate.goInto"
+            label="Go Into">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.back">
+            id="org.eclipse.ui.navigate.back"
+            label="Back">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.forward">
+            id="org.eclipse.ui.navigate.forward"
+            label="Forward">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.up">
+            id="org.eclipse.ui.navigate.up"
+            label="Up">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.next">
+            id="org.eclipse.ui.navigate.next"
+            label="Next">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.backwardHistory">
+            id="org.eclipse.ui.navigate.backwardHistory"
+            label="Backward History">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.forwardHistory">
+            id="org.eclipse.ui.navigate.forwardHistory"
+            label="Forward History">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.navigate.previous">
+            id="org.eclipse.ui.navigate.previous"
+            label="Previous">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.project.openProject">
+            id="org.eclipse.ui.project.openProject"
+            label="Open Project">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.project.closeProject">
+            id="org.eclipse.ui.project.closeProject"
+            label="Close Project">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.project.buildProject">
+            id="org.eclipse.ui.project.buildProject"
+            label="Build">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.project.rebuildProject">
+            id="org.eclipse.ui.project.rebuildProject"
+            label="Rebuild">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.switchToEditor">
+            id="org.eclipse.ui.window.switchToEditor"
+            label="Switch to Editor">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.showSystemMenu">
+            id="org.eclipse.ui.window.showSystemMenu"
+            label="Show System Menu">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.showViewMenu">
+            id="org.eclipse.ui.window.showViewMenu"
+            label="Show View Menu">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.activateEditor">
+            id="org.eclipse.ui.window.activateEditor"
+            label="Activate Editor">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.nextEditor">
+            id="org.eclipse.ui.window.nextEditor"
+            label="Next Editor">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.previousEditor">
+            id="org.eclipse.ui.window.previousEditor"
+            label="Previous Editor">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.nextView">
+            id="org.eclipse.ui.window.nextView"
+            label="Next View">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.previousView">
+            id="org.eclipse.ui.window.previousView"
+            label="Previous View">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.nextPerspective">
+            id="org.eclipse.ui.window.nextPerspective"
+            label="Next Perspective">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.previousPerspective">
+            id="org.eclipse.ui.window.previousPerspective"
+            label="Previous Perspective">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.findNext">
+            id="org.eclipse.ui.edit.findNext"
+            label="Find Next">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.findPrevious">
+            id="org.eclipse.ui.edit.findPrevious"
+            label="Find Previous">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.findIncremental">
+            id="org.eclipse.ui.edit.findIncremental"
+            label="Find Incremental">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.findIncrementalReverse">
+            id="org.eclipse.ui.edit.findIncrementalReverse"
+            label="Find Reverse">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.revertToSaved">
+            id="org.eclipse.ui.edit.revertToSaved"
+            label="Revert to Saved">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.addTask">
+            id="org.eclipse.ui.edit.addTask"
+            label="Add Task">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.lineUp">
+            id="org.eclipse.ui.edit.text.goto.lineUp"
+            label="Line Up">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.lineDown">
+            id="org.eclipse.ui.edit.text.goto.lineDown"
+            label="Line Down">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.lineStart">
+            id="org.eclipse.ui.edit.text.goto.lineStart"
+            label="Line Start">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.lineEnd">
+            id="org.eclipse.ui.edit.text.goto.lineEnd"
+            label="Line End">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.line">
+            id="org.eclipse.ui.edit.text.goto.line"
+            label="Goto Line">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.columnPrevious">
+            id="org.eclipse.ui.edit.text.goto.columnPrevious"
+            label="Previous Column">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.columnNext">
+            id="org.eclipse.ui.edit.text.goto.columnNext"
+            label="Next Column">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.pageUp">
+            id="org.eclipse.ui.edit.text.goto.pageUp"
+            label="Page Up">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.pageDown">
+            id="org.eclipse.ui.edit.text.goto.pageDown"
+            label="Page Down">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.wordPrevious">
+            id="org.eclipse.ui.edit.text.goto.wordPrevious"
+            label="Previous Word">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.wordNext">
+            id="org.eclipse.ui.edit.text.goto.wordNext"
+            label="Next Word">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.textStart">
+            id="org.eclipse.ui.edit.text.goto.textStart"
+            label="Text Start">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.textEnd">
+            id="org.eclipse.ui.edit.text.goto.textEnd"
+            label="Text End">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.windowStart">
+            id="org.eclipse.ui.edit.text.goto.windowStart"
+            label="Window Start">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.goto.windowEnd">
+            id="org.eclipse.ui.edit.text.goto.windowEnd"
+            label="Window End">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.scroll.lineUp">
+            id="org.eclipse.ui.edit.text.scroll.lineUp"
+            label="Scroll Line Up">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.scroll.lineDown">
+            id="org.eclipse.ui.edit.text.scroll.lineDown"
+            label="Scroll Line Down">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.select.lineUp">
+            id="org.eclipse.ui.edit.text.select.lineUp"
+            label="Select Line Up">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.edit.text.select.lineDown">
+            id="org.eclipse.ui.edit.text.select.lineDown"
+            label="Select Line Down">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.select.lineStart">
@@ -380,6 +452,7 @@
       </acceleratorConfiguration>
       <acceleratorConfiguration
             name="%EmacsAcceleratorConfiguration.name"
+            parentConfiguration="org.eclipse.ui.defaultAcceleratorConfiguration"
             description="%EmacsAcceleratorConfiguration.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </acceleratorConfiguration>
@@ -402,390 +475,6 @@
          point="org.eclipse.ui.acceleratorSets">
       <acceleratorSet
             scopeId="org.eclipse.ui.globalScope"
-            configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-         <accelerator
-               key="Ctrl+F4||Ctrl+X Ctrl+K"
-               id="org.eclipse.ui.file.close">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F4||Ctrl+X Ctrl+C"
-               id="org.eclipse.ui.file.closeAll">
-         </accelerator>
-         <accelerator
-               key="Ctrl+X Ctrl+S"
-               id="org.eclipse.ui.file.save">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+S||Ctrl+X S"
-               id="org.eclipse.ui.file.saveAll">
-         </accelerator>
-         <accelerator
-               key="Alt+F9 || Esc F9"
-               id="org.eclipse.ui.file.print">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.file.revert">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.file.refresh">
-         </accelerator>
-         <accelerator
-               key="Alt+ENTER"
-               id="org.eclipse.ui.file.properties">
-         </accelerator>
-         <accelerator
-               key="F9||Ctrl+X U||Ctrl+Shift+-"
-               id="org.eclipse.ui.edit.undo">
-         </accelerator>
-         <accelerator
-               key="F10"
-               id="org.eclipse.ui.edit.redo">
-         </accelerator>
-         <accelerator
-               key="Ctrl+W||Shift+DELETE"
-               id="org.eclipse.ui.edit.cut">
-         </accelerator>
-         <accelerator
-               key="Alt+W||Esc W||Ctrl+INSERT"
-               id="org.eclipse.ui.edit.copy">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Y||Shift+INSERT"
-               id="org.eclipse.ui.edit.paste">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.delete">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.delete.line">
-         </accelerator>
-         <accelerator
-               key="Alt+0 Ctrl+K||Esc 0 Ctrl+K"
-               id="org.eclipse.ui.edit.text.delete.line.to.beginning">
-         </accelerator>
-         <accelerator
-               key="Ctrl+K"
-               id="org.eclipse.ui.edit.text.delete.line.to.end">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.move">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.rename">
-         </accelerator>
-         <accelerator
-               key="Ctrl+X H"
-               id="org.eclipse.ui.edit.selectAll">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Space || Ctrl+2"
-               id="org.eclipse.ui.edit.text.set.mark">
-         </accelerator>
-         <accelerator
-               key="Ctrl+G"
-               id="org.eclipse.ui.edit.text.clear.mark">
-         </accelerator>
-         <accelerator
-               key="Ctrl+X Ctrl+X"
-               id="org.eclipse.ui.edit.text.swap.mark">
-         </accelerator>
-         <accelerator
-               key="Alt+R || Esc R"
-               id="org.eclipse.ui.edit.findReplace">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.goInto">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.back">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.forward">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.up">
-         </accelerator>
-         <accelerator
-               key="Ctrl+."
-               id="org.eclipse.ui.navigate.next">
-         </accelerator>
-         <accelerator
-               key="Ctrl+,"
-               id="org.eclipse.ui.navigate.previous">
-         </accelerator>
-         <accelerator
-               key="Alt+ARROW_LEFT"
-               id="org.eclipse.ui.navigate.backwardHistory">
-         </accelerator>
-         <accelerator
-               key="Alt+ARROW_RIGHT"
-               id="org.eclipse.ui.navigate.forwardHistory">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.openProject">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.closeProject">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.buildProject">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.rebuildProject">
-         </accelerator>
-         <accelerator
-               key="Ctrl+X Ctrl+B"
-               id="org.eclipse.ui.window.switchToEditor">
-         </accelerator>
-         <accelerator
-               key="Alt+-"
-               id="org.eclipse.ui.window.showSystemMenu">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F10"
-               id="org.eclipse.ui.window.showViewMenu">
-         </accelerator>
-         <accelerator
-               key="F12"
-               id="org.eclipse.ui.window.activateEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F6"
-               id="org.eclipse.ui.window.nextEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F6"
-               id="org.eclipse.ui.window.previousEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F7"
-               id="org.eclipse.ui.window.nextView">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F7"
-               id="org.eclipse.ui.window.previousView">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F8"
-               id="org.eclipse.ui.window.nextPerspective">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F8"
-               id="org.eclipse.ui.window.previousPerspective">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.findNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.findPrevious">
-         </accelerator>
-         <accelerator
-               key="Ctrl+S"
-               id="org.eclipse.ui.edit.findIncremental">
-         </accelerator>
-         <accelerator
-               key="Ctrl+R"
-               id="org.eclipse.ui.edit.findIncrementalReverse">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.revertToSaved">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.addTask">
-         </accelerator>
-         <accelerator
-               key="Ctrl+P"
-               id="org.eclipse.ui.edit.text.goto.lineUp">
-         </accelerator>
-         <accelerator
-               key="Ctrl+N"
-               id="org.eclipse.ui.edit.text.goto.lineDown">
-         </accelerator>
-         <accelerator
-               key="Ctrl+A"
-               id="org.eclipse.ui.edit.text.goto.lineStart">
-         </accelerator>
-         <accelerator
-               key="Ctrl+E"
-               id="org.eclipse.ui.edit.text.goto.lineEnd">
-         </accelerator>
-         <accelerator
-               key="Ctrl+X G"
-               id="org.eclipse.ui.edit.text.goto.line">
-         </accelerator>
-         <accelerator
-               key="Ctrl+B"
-               id="org.eclipse.ui.edit.text.goto.columnPrevious">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F"
-               id="org.eclipse.ui.edit.text.goto.columnNext">
-         </accelerator>
-         <accelerator
-               key="Alt+V || Esc V"
-               id="org.eclipse.ui.edit.text.goto.pageUp">
-         </accelerator>
-         <accelerator
-               key="Ctrl+V"
-               id="org.eclipse.ui.edit.text.goto.pageDown">
-         </accelerator>
-         <accelerator
-               key="Alt+B || Esc B"
-               id="org.eclipse.ui.edit.text.goto.wordPrevious">
-         </accelerator>
-         <accelerator
-               key="Alt+F||Esc F"
-               id="org.eclipse.ui.edit.text.goto.wordNext">
-         </accelerator>
-         <accelerator
-               key="Alt+&lt; || Alt+, || Esc , || Esc &lt; || Ctrl+X ["
-               id="org.eclipse.ui.edit.text.goto.textStart">
-         </accelerator>
-         <accelerator
-               key="Alt+&gt; || Alt+. || Esc . || Esc &gt; || Ctrl+X ]"
-               id="org.eclipse.ui.edit.text.goto.textEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.windowStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.windowEnd">
-         </accelerator>
-         <accelerator
-               key="Alt+Z || Esc Z"
-               id="org.eclipse.ui.edit.text.scroll.lineUp">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Z"
-               id="org.eclipse.ui.edit.text.scroll.lineDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.columnPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.columnNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.pageUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.pageDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.wordPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.wordNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.textStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.textEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.deletePrevious">
-         </accelerator>
-         <accelerator
-               key="Ctrl+D"
-               id="org.eclipse.ui.edit.text.deleteNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.shiftRight">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.shiftLeft">
-         </accelerator>
-         <accelerator
-               key="INSERT"
-               id="org.eclipse.ui.edit.text.toggleOverwrite">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.showRulerContextMenu">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.us-ascii">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-8">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16be">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16le">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.system">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.custom">
-         </accelerator>
-      </acceleratorSet>
-      <acceleratorSet
-            scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
          <accelerator
                key="Ctrl+F4"
@@ -806,14 +495,6 @@
          <accelerator
                key="Ctrl+P"
                id="org.eclipse.ui.file.print">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.file.revert">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.file.refresh">
          </accelerator>
          <accelerator
                key="Alt+ENTER"
@@ -840,64 +521,20 @@
                id="org.eclipse.ui.edit.paste">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.edit.delete">
-         </accelerator>
-         <accelerator
                key="Ctrl+E"
                id="org.eclipse.ui.edit.text.delete.line">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.delete.line.to.beginning">
          </accelerator>
          <accelerator
                key="Ctrl+Shift+E"
                id="org.eclipse.ui.edit.text.delete.line.to.end">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.edit.move">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.rename">
-         </accelerator>
-         <accelerator
                key="Ctrl+A"
                id="org.eclipse.ui.edit.selectAll">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.set.mark">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.clear.mark">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.swap.mark">
-         </accelerator>
-         <accelerator
                key="Ctrl+F"
                id="org.eclipse.ui.edit.findReplace">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.goInto">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.back">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.forward">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.navigate.up">
          </accelerator>
          <accelerator
                key="Ctrl+."
@@ -916,20 +553,8 @@
                id="org.eclipse.ui.navigate.forwardHistory">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.project.openProject">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.closeProject">
-         </accelerator>
-         <accelerator
                key="Ctrl+B"
                id="org.eclipse.ui.project.buildProject">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.project.rebuildProject">
          </accelerator>
          <accelerator
                key="Ctrl+Shift+W"
@@ -988,72 +613,8 @@
                id="org.eclipse.ui.edit.findIncrementalReverse">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.edit.revertToSaved">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.addTask">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.lineUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.lineDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.lineStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.lineEnd">
-         </accelerator>
-         <accelerator
                key="Ctrl+L"
                id="org.eclipse.ui.edit.text.goto.line">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.columnPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.columnNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.pageUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.pageDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.wordPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.wordNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.textStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.textEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.windowStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.goto.windowEnd">
          </accelerator>
          <accelerator
                key="Ctrl+ARROW_UP"
@@ -1064,70 +625,6 @@
                id="org.eclipse.ui.edit.text.scroll.lineDown">
          </accelerator>
          <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.lineEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.columnPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.columnNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.pageUp">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.pageDown">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.wordPrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.wordNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.textStart">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.select.textEnd">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.deletePrevious">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.deleteNext">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.shiftRight">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.shiftLeft">
-         </accelerator>
-         <accelerator
                key="INSERT"
                id="org.eclipse.ui.edit.text.toggleOverwrite">
          </accelerator>
@@ -1135,42 +632,6 @@
                key="Ctrl+W"
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
          </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.us-ascii">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-8">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16be">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16le">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.utf-16">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.system">
-         </accelerator>
-         <accelerator
-               key=""
-               id="org.eclipse.ui.edit.text.encoding.custom">
-         </accelerator>
-      </acceleratorSet>
-      <acceleratorSet
-            scopeId="org.eclipse.ui.globalScope"
-            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
          <accelerator
                platform="carbon"
                key="Command+W"
@@ -1337,6 +798,214 @@
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
          </accelerator>
       </acceleratorSet>
+      <acceleratorSet
+            scopeId="org.eclipse.ui.globalScope"
+            configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+         <accelerator
+               key="Ctrl+F4||Ctrl+X Ctrl+K"
+               id="org.eclipse.ui.file.close">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F4||Ctrl+X Ctrl+C"
+               id="org.eclipse.ui.file.closeAll">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X Ctrl+S"
+               id="org.eclipse.ui.file.save">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+S||Ctrl+X S"
+               id="org.eclipse.ui.file.saveAll">
+         </accelerator>
+         <accelerator
+               key="Alt+F9 || Esc F9"
+               id="org.eclipse.ui.file.print">
+         </accelerator>
+         <accelerator
+               key="Alt+ENTER"
+               id="org.eclipse.ui.file.properties">
+         </accelerator>
+         <accelerator
+               key="F9||Ctrl+X U||Ctrl+Shift+-"
+               id="org.eclipse.ui.edit.undo">
+         </accelerator>
+         <accelerator
+               key="F10"
+               id="org.eclipse.ui.edit.redo">
+         </accelerator>
+         <accelerator
+               key="Ctrl+W||Shift+DELETE"
+               id="org.eclipse.ui.edit.cut">
+         </accelerator>
+         <accelerator
+               key="Alt+W||Esc W||Ctrl+INSERT"
+               id="org.eclipse.ui.edit.copy">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Y||Shift+INSERT"
+               id="org.eclipse.ui.edit.paste">
+         </accelerator>
+         <accelerator
+               key="Alt+0 Ctrl+K||Esc 0 Ctrl+K"
+               id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+         </accelerator>
+         <accelerator
+               key="Ctrl+K"
+               id="org.eclipse.ui.edit.text.delete.line.to.end">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X H"
+               id="org.eclipse.ui.edit.selectAll">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Space || Ctrl+2"
+               id="org.eclipse.ui.edit.text.set.mark">
+         </accelerator>
+         <accelerator
+               key="Ctrl+G"
+               id="org.eclipse.ui.edit.text.clear.mark">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X Ctrl+X"
+               id="org.eclipse.ui.edit.text.swap.mark">
+         </accelerator>
+         <accelerator
+               key="Alt+R || Esc R"
+               id="org.eclipse.ui.edit.findReplace">
+         </accelerator>
+         <accelerator
+               key="Ctrl+."
+               id="org.eclipse.ui.navigate.next">
+         </accelerator>
+         <accelerator
+               key="Ctrl+,"
+               id="org.eclipse.ui.navigate.previous">
+         </accelerator>
+         <accelerator
+               key="Alt+ARROW_LEFT"
+               id="org.eclipse.ui.navigate.backwardHistory">
+         </accelerator>
+         <accelerator
+               key="Alt+ARROW_RIGHT"
+               id="org.eclipse.ui.navigate.forwardHistory">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X Ctrl+B"
+               id="org.eclipse.ui.window.switchToEditor">
+         </accelerator>
+         <accelerator
+               key="Alt+-"
+               id="org.eclipse.ui.window.showSystemMenu">
+         </accelerator>
+         <accelerator
+               key="Ctrl+F10"
+               id="org.eclipse.ui.window.showViewMenu">
+         </accelerator>
+         <accelerator
+               key="F12"
+               id="org.eclipse.ui.window.activateEditor">
+         </accelerator>
+         <accelerator
+               key="Ctrl+F6"
+               id="org.eclipse.ui.window.nextEditor">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F6"
+               id="org.eclipse.ui.window.previousEditor">
+         </accelerator>
+         <accelerator
+               key="Ctrl+F7"
+               id="org.eclipse.ui.window.nextView">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F7"
+               id="org.eclipse.ui.window.previousView">
+         </accelerator>
+         <accelerator
+               key="Ctrl+F8"
+               id="org.eclipse.ui.window.nextPerspective">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Shift+F8"
+               id="org.eclipse.ui.window.previousPerspective">
+         </accelerator>
+         <accelerator
+               key="Ctrl+S"
+               id="org.eclipse.ui.edit.findIncremental">
+         </accelerator>
+         <accelerator
+               key="Ctrl+R"
+               id="org.eclipse.ui.edit.findIncrementalReverse">
+         </accelerator>
+         <accelerator
+               key="Ctrl+P"
+               id="org.eclipse.ui.edit.text.goto.lineUp">
+         </accelerator>
+         <accelerator
+               key="Ctrl+N"
+               id="org.eclipse.ui.edit.text.goto.lineDown">
+         </accelerator>
+         <accelerator
+               key="Ctrl+A"
+               id="org.eclipse.ui.edit.text.goto.lineStart">
+         </accelerator>
+         <accelerator
+               key="Ctrl+E"
+               id="org.eclipse.ui.edit.text.goto.lineEnd">
+         </accelerator>
+         <accelerator
+               key="Ctrl+X G"
+               id="org.eclipse.ui.edit.text.goto.line">
+         </accelerator>
+         <accelerator
+               key="Ctrl+B"
+               id="org.eclipse.ui.edit.text.goto.columnPrevious">
+         </accelerator>
+         <accelerator
+               key="Ctrl+F"
+               id="org.eclipse.ui.edit.text.goto.columnNext">
+         </accelerator>
+         <accelerator
+               key="Alt+V || Esc V"
+               id="org.eclipse.ui.edit.text.goto.pageUp">
+         </accelerator>
+         <accelerator
+               key="Ctrl+V"
+               id="org.eclipse.ui.edit.text.goto.pageDown">
+         </accelerator>
+         <accelerator
+               key="Alt+B || Esc B"
+               id="org.eclipse.ui.edit.text.goto.wordPrevious">
+         </accelerator>
+         <accelerator
+               key="Alt+F||Esc F"
+               id="org.eclipse.ui.edit.text.goto.wordNext">
+         </accelerator>
+         <accelerator
+               key="Alt+&lt; || Alt+, || Esc , || Esc &lt; || Ctrl+X ["
+               id="org.eclipse.ui.edit.text.goto.textStart">
+         </accelerator>
+         <accelerator
+               key="Alt+&gt; || Alt+. || Esc . || Esc &gt; || Ctrl+X ]"
+               id="org.eclipse.ui.edit.text.goto.textEnd">
+         </accelerator>
+         <accelerator
+               key="Alt+Z || Esc Z"
+               id="org.eclipse.ui.edit.text.scroll.lineUp">
+         </accelerator>
+         <accelerator
+               key="Ctrl+Z"
+               id="org.eclipse.ui.edit.text.scroll.lineDown">
+         </accelerator>
+         <accelerator
+               key="Ctrl+D"
+               id="org.eclipse.ui.edit.text.deleteNext">
+         </accelerator>
+         <accelerator
+               key="INSERT"
+               id="org.eclipse.ui.edit.text.toggleOverwrite">
+         </accelerator>
+      </acceleratorSet>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -1450,6 +1119,13 @@
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.tasklist.TaskList"
             id="org.eclipse.ui.views.TaskList">
+      </view>
+      <view
+            name="%Views.KeyBindings"
+            icon="icons/full/cview16/keybindings.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.keybindings.View"
+            id="org.eclipse.ui.internal.keybindings.View">
       </view>
    </extension>
    <extension
@@ -1576,10 +1252,10 @@
             id="org.eclipse.ui.preferencePages.WorkInProgressPreferencePage">
       </page>
       <page
-            name="%PreferencePages.KeyBinding"
+            name="%PreferencePages.KeyBindings"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.keybindings.KeyBindingPreferencePage"
-            id="org.eclipse.ui.preferencePages.KeyBinding">
+            class="org.eclipse.ui.internal.keybindings.PreferencePage"
+            id="org.eclipse.ui.preferencePages.KeyBindings">
       </page>
    </extension>
    <extension

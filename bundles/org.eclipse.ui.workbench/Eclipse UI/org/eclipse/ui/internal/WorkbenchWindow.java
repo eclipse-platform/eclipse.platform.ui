@@ -73,7 +73,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keybindings.KeyBindingManager;
+import org.eclipse.ui.internal.keybindings.KeyManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
 import org.eclipse.ui.internal.keybindings.MatchAction;
@@ -566,7 +566,8 @@ protected MenuManager createMenuManager() {
 				
 				if (accelerator != 0) {				
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
-					SortedMap keySequenceMapForMode = KeyBindingManager.getInstance().getKeySequenceMapForMode();
+					KeyManager keyManager = KeyManager.getInstance();
+					SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
 					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 
 					if (matchAction == null)
@@ -594,7 +595,8 @@ protected MenuManager createMenuManager() {
 				
 				if (accelerator != 0) {				
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
-					SortedMap keySequenceMapForMode = KeyBindingManager.getInstance().getKeySequenceMapForMode();
+					KeyManager keyManager = KeyManager.getInstance();
+					SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
 					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 					
 					if (matchAction == null)
@@ -604,7 +606,7 @@ protected MenuManager createMenuManager() {
 				return "";
 			} 
 
-			String acceleratorText = KeyBindingManager.getInstance().getTextForAction(defId);			
+			String acceleratorText = KeyManager.getInstance().getTextForAction(defId);			
 			return (acceleratorText != null ? acceleratorText : "");			
 		}
 		

@@ -19,8 +19,8 @@ import org.eclipse.ui.IMemento;
 public final class KeySequence implements Comparable {
 
 	public final static String ELEMENT = "keysequence"; //$NON-NLS-1$
-	private final static int HASH_INITIAL = 27;
-	private final static int HASH_FACTOR = 37;
+	private final static int HASH_INITIAL = 47;
+	private final static int HASH_FACTOR = 57;
 
 	public static KeySequence create() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -80,27 +80,6 @@ public final class KeySequence implements Comparable {
 		return keyStrokes;
 	}
 
-	public int compareTo(Object object) {
-		if (!(object instanceof KeySequence))
-			throw new ClassCastException();
-
-		return Util.compare(keyStrokes.iterator(), ((KeySequence) object).keyStrokes.iterator());
-	}
-	
-	public boolean equals(Object object) {
-		return object instanceof KeySequence && keyStrokes.equals(((KeySequence) object).keyStrokes);
-	}
-
-	public int hashCode() {
-		int result = HASH_INITIAL;
-		Iterator iterator = keyStrokes.iterator();
-		
-		while (iterator.hasNext())
-			result = result * HASH_FACTOR + ((KeyStroke) iterator.next()).hashCode();
-
-		return result;
-	}
-
 	public boolean equalsOrIsChildOf(KeySequence keySequence) {
 		return keyStrokes.size() >= keySequence.keyStrokes.size() && 
 			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(keySequence.keyStrokes);
@@ -120,5 +99,26 @@ public final class KeySequence implements Comparable {
 		
 		while (iterator.hasNext())
 			((KeyStroke) iterator.next()).write(memento.createChild(KeyStroke.ELEMENT));
+	}
+
+	public int compareTo(Object object) {
+		if (!(object instanceof KeySequence))
+			throw new ClassCastException();
+
+		return Util.compare(keyStrokes.iterator(), ((KeySequence) object).keyStrokes.iterator());
+	}
+	
+	public boolean equals(Object object) {
+		return object instanceof KeySequence && keyStrokes.equals(((KeySequence) object).keyStrokes);
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		Iterator iterator = keyStrokes.iterator();
+		
+		while (iterator.hasNext())
+			result = result * HASH_FACTOR + ((KeyStroke) iterator.next()).hashCode();
+
+		return result;
 	}
 }

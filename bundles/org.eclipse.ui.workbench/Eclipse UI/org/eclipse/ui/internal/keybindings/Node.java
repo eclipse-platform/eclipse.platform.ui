@@ -155,20 +155,8 @@ final class Node {
 		return null;
 	}
 	
-	static void addToTree(SortedMap tree, KeyBinding keyBinding, SortedMap configurationMap, SortedMap scopeMap) {
-		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
-		Path configuration = (Path) configurationMap.get(keyBinding.getConfiguration());
-		
-		if (configuration == null)
-			return;
-
-		Path locale = KeyBindingManager.pathForLocale(keyBinding.getLocale());
-		Path platform = KeyBindingManager.pathForPlatform(keyBinding.getPlatform());
-		Path scope = (Path) scopeMap.get(keyBinding.getScope());
-		
-		if (scope == null)
-			return;
-		
+	static void addToTree(SortedMap tree, Binding binding) {
+		List keyStrokes = binding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
 		Node node = null;
 	
@@ -187,10 +175,10 @@ final class Node {
 		if (node != null) {
 			SortedMap stateMap = node.stateMap;	
 			List paths = new ArrayList();
-			paths.add(scope);			
-			paths.add(configuration);
-			paths.add(platform);
-			paths.add(locale);					
+			paths.add(binding.getScope());			
+			paths.add(binding.getConfiguration());
+			paths.add(binding.getPlatform());
+			paths.add(binding.getLocale());					
 			State state = State.create(paths);			
 			Map pluginMap = (Map) stateMap.get(state);
 			
@@ -199,11 +187,11 @@ final class Node {
 				stateMap.put(state, pluginMap);
 			}
 			
-			add(pluginMap, keyBinding.getPlugin(), keyBinding.getAction());			
+			add(pluginMap, binding.getPlugin(), binding.getAction());			
 		}
 	}
 
-	static boolean removeFromTree(SortedMap tree, KeyBinding keyBinding) {
+	static boolean removeFromTree(SortedMap tree, Binding binding) {
 		// TBD
 		return false;
 	}
@@ -244,12 +232,12 @@ final class Node {
 	}
 
 	static List toKeyBindings(SortedMap tree) {
-		List keyBindings = new ArrayList();
-		toKeyBindings(tree, KeySequence.create(), keyBindings);
-		return keyBindings;
+		List bindings = new ArrayList();
+		toKeyBindings(tree, KeySequence.create(), bindings);
+		return bindings;
 	}
 	
-	private static void toKeyBindings(SortedMap tree, KeySequence prefix, List keyBindings) {
+	private static void toKeyBindings(SortedMap tree, KeySequence prefix, List bindings) {
 		Iterator iterator = tree.entrySet().iterator();	
 			
 		while (iterator.hasNext()) {
@@ -263,7 +251,12 @@ final class Node {
 			
 			while (iterator2.hasNext()) {
 				Map.Entry entry2 = (Map.Entry) iterator2.next();
-				State state = (State) entry2.getKey();	
+				State state = (State) entry2.getKey();
+				List paths = state.getPaths();
+				Path scope = (Path) paths.get(0);
+				Path configuration = (Path) paths.get(1);
+				Path platform = (Path) paths.get(2);
+				Path locale = (Path) paths.get(3);
 				Map pluginMap = (Map) entry2.getValue();			
 				Iterator iterator3 = pluginMap.entrySet().iterator();
 				
@@ -274,13 +267,13 @@ final class Node {
 					Iterator iterator4 = actionSet.iterator();
 					
 					while (iterator4.hasNext()) {
-						String action = (String) iterator4.next();						
-						// TBD: keyBindings.add(KeyBinding.create(keySequence, ...));
+						String action = (String) iterator4.next();				
+						bindings.add(Binding.create(keySequence, configuration, locale, platform, scope, action, plugin));
 					}				
 				}			
 			}
 			
-			toKeyBindings(node.childMap, keySequence, keyBindings);
+			toKeyBindings(node.childMap, keySequence, bindings);
 		}	
 	}
 
@@ -313,5 +306,9 @@ final class Node {
 	MatchAction bestChildMatchAction = null;
 	MatchAction bestMatchAction = null;
 	SortedMap childMap = new TreeMap();	
-	SortedMap stateMap = new TreeMap();	
+	SortedMap stateMap = new TreeMap();
+	
+	private Node() {
+		super();
+	}
 }

@@ -55,6 +55,14 @@ public final class KeyStroke implements Comparable {
 	public int getAccelerator() {
 		return accelerator;
 	}
+
+	public void write(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();
+			
+		memento.putInteger(ATTRIBUTE_ACCELERATOR, accelerator);
+	}
 	
 	public int compareTo(Object object) {
 		if (!(object instanceof KeyStroke))
@@ -69,13 +77,5 @@ public final class KeyStroke implements Comparable {
 
 	public int hashCode() {
 		return accelerator;	
-	}
-
-	public void write(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-			
-		memento.putInteger(ATTRIBUTE_ACCELERATOR, accelerator);
 	}
 }

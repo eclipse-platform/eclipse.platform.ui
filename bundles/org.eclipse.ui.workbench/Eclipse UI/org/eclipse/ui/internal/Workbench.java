@@ -90,11 +90,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
-import org.eclipse.ui.internal.keybindings.KeyBindingManager;
-import org.eclipse.ui.internal.keybindings.Path;
+import org.eclipse.ui.internal.keybindings.Configuration;
+import org.eclipse.ui.internal.keybindings.KeyManager;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
-import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -131,7 +130,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private AboutInfo[] newFeaturesInfo;
 	private String[] commandLineArgs;
 	private Window.IExceptionHandler handler;
-	private AcceleratorConfiguration acceleratorConfiguration;
+	private Configuration acceleratorConfiguration;
 	private Object returnCode;
 	private ListenerList windowListeners = new ListenerList();
 	
@@ -565,7 +564,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Returns the active AcceleratorConfiguration
 	 */
-	public AcceleratorConfiguration getActiveAcceleratorConfiguration() {
+	public Configuration getActiveAcceleratorConfiguration() {
 		return acceleratorConfiguration;
 	}
 	/**
@@ -608,7 +607,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs) {
-		KeyBindingManager.getInstance();
+		KeyManager.getInstance();
 		
 		isStarting = true;
 
@@ -748,13 +747,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (id == null)
 			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 
-		Path configuration = 
-			KeyBindingManager.getInstance().getConfigurationForId(id);
-		
-		if (configuration == null)
-			configuration = Path.create();
-		
-		KeyBindingManager.getInstance().setConfiguration(configuration);
+		KeyManager.getInstance().setConfiguration(id);
 	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
@@ -1470,16 +1463,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Sets the active accelerator configuration to be the configuration
 	 * with the given id.
 	 */
-	public void setActiveAcceleratorConfiguration(AcceleratorConfiguration config) {
-		if (config != null) {
-			acceleratorConfiguration = config; 
- 			String id = config.getId();			
-			Path configuration = KeyBindingManager.getInstance().getConfigurationForId(id);
-		
-			if (configuration == null)
-				configuration = Path.create();
-	
-			KeyBindingManager.getInstance().setConfiguration(configuration);
+	public void setActiveAcceleratorConfiguration(Configuration configuration) {
+		if (configuration != null) {
+			acceleratorConfiguration = configuration; 
+ 			String id = configuration.getId();						
+			KeyManager.getInstance().setConfiguration(id);
 		}	
 	}
 

@@ -16,25 +16,25 @@ import java.util.List;
 
 public final class Path implements Comparable {
 
-	public final static int MAXIMUM_PATH_ITEMS = 16;
-	private final static int HASH_INITIAL = 67;
-	private final static int HASH_FACTOR = 77;
+	final static int MAXIMUM_PATH_ITEMS = 16;
+	private final static int HASH_INITIAL = 87;
+	private final static int HASH_FACTOR = 97;
 	
-	public static Path create() {
+	static Path create() {
 		return new Path(Collections.EMPTY_LIST);
 	}
 
-	public static Path create(PathItem pathItem)
+	static Path create(PathItem pathItem)
 		throws IllegalArgumentException {
 		return new Path(Collections.singletonList(pathItem));
 	}
 
-	public static Path create(PathItem[] pathItems)
+	static Path create(PathItem[] pathItems)
 		throws IllegalArgumentException {
 		return new Path(Arrays.asList(pathItems));
 	}
 
-	public static Path create(List pathItems)
+	static Path create(List pathItems)
 		throws IllegalArgumentException {
 		return new Path(pathItems);
 	}
@@ -62,6 +62,14 @@ public final class Path implements Comparable {
 
 	public List getPathItems() {
 		return pathItems;
+	}
+
+	public boolean equalsOrIsChildOf(Path path) {
+		return pathItems.size() >= path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+	}
+			
+	public boolean isChildOf(Path path) {
+		return pathItems.size() > path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
 	}
 
 	public int match(Path path)
@@ -96,11 +104,7 @@ public final class Path implements Comparable {
 		return result;
 	}
 
-	public boolean equalsOrIsChildOf(Path path) {
-		return pathItems.size() >= path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
-	}
-			
-	public boolean isChildOf(Path path) {
-		return pathItems.size() > path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+	public String toString() {
+		return pathItems.toString();	
 	}
 }

@@ -10,7 +10,7 @@ package org.eclipse.ui.internal.keybindings;
 
 public final class PathItem implements Comparable {
 	
-	public static PathItem create(String value)
+	static PathItem create(String value)
 		throws IllegalArgumentException {
 		return new PathItem(value);
 	}
@@ -47,5 +47,9 @@ public final class PathItem implements Comparable {
 
 	public int hashCode() {
 		return value.hashCode();
+	}
+
+	public String toString() {
+		return value;	
 	}
 }

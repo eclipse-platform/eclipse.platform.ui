@@ -4,23 +4,58 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
+import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
+import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
+import org.eclipse.ui.internal.registry.ProjectImageRegistry;
+import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.internal.registry.ViewRegistryReader;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -77,8 +112,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
-	private ActionDefinitionRegistry actionDefinitionRegistry;
-	private AcceleratorRegistry acceleratorRegistry;
+	private org.eclipse.ui.internal.actions.Registry actionRegistry;
+	private org.eclipse.ui.internal.keybindings.Registry keyBindingRegistry;
 	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
@@ -140,30 +175,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	protected ImageRegistry createImageRegistry() {
 		return WorkbenchImages.getImageRegistry();
 	}
-	/**
-	 *Returns the action definition registry.
-	 * 
-	 * @return the action definition registry
-	 */
-	public ActionDefinitionRegistry getActionDefinitionRegistry() {
-		if (actionDefinitionRegistry == null) {
-			actionDefinitionRegistry = new ActionDefinitionRegistry();
-			actionDefinitionRegistry.load();
-		}
-		return actionDefinitionRegistry;
-	}
-	/**
-	 *Returns the accelerator registry.
-	 * 
-	 * @return the accelerator registry
-	 */
-	public AcceleratorRegistry getAcceleratorRegistry() {
-		if (acceleratorRegistry == null) {
-			acceleratorRegistry = new AcceleratorRegistry();
-			acceleratorRegistry.load();
-		}
-		return acceleratorRegistry;
-	}
+	
 	/**
 	 * Returns the action set registry for the workbench.
 	 *

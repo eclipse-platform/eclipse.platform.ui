@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -33,10 +32,8 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 
-public class KeyBindingPreferencePage extends PreferencePage
+public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 
 	private Combo accelConfigCombo;
@@ -93,16 +90,16 @@ public class KeyBindingPreferencePage extends PreferencePage
 	
 	public void init(IWorkbench workbench) {
 		namesToConfiguration = new Hashtable();
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		Collection acceleratorConfigurations = registry.getAcceleratorConfigurations().values();
-		Iterator iterator = acceleratorConfigurations.iterator();
+		Registry registry = Registry.getInstance();
+		Collection configurations = registry.getConfigurationMap().values();
+		Iterator iterator = configurations.iterator();
 
 		while (iterator.hasNext()) {
-			AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) iterator.next();
+			Configuration acceleratorConfiguration = (Configuration) iterator.next();
 			namesToConfiguration.put(acceleratorConfiguration.getName(), acceleratorConfiguration);	
 		}
 		
-		AcceleratorConfiguration acceleratorConfiguration = ((Workbench)workbench).getActiveAcceleratorConfiguration();
+		Configuration acceleratorConfiguration = ((Workbench)workbench).getActiveAcceleratorConfiguration();
 		
 		if (acceleratorConfiguration != null)
 			activeAcceleratorConfigurationName = acceleratorConfiguration.getName();
@@ -112,13 +109,13 @@ public class KeyBindingPreferencePage extends PreferencePage
 		IPreferenceStore preferenceStore = getPreferenceStore();	
 		String id = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
 
-		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		Map acceleratorConfigurations = acceleratorRegistry.getAcceleratorConfigurations();
-		AcceleratorConfiguration acceleratorConfiguration = (AcceleratorConfiguration) acceleratorConfigurations.get(id);
+		Registry acceleratorRegistry = Registry.getInstance();
+		Map acceleratorConfigurations = acceleratorRegistry.getConfigurationMap();
+		Configuration acceleratorConfiguration = (Configuration) acceleratorConfigurations.get(id);
 		
 		if (acceleratorConfiguration == null)
 			acceleratorConfiguration = 
-				(AcceleratorConfiguration) acceleratorConfigurations.get(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID); 
+				(Configuration) acceleratorConfigurations.get(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID); 
 
 		if (acceleratorConfiguration != null) { 
 			String name = acceleratorConfiguration.getName();
@@ -133,7 +130,7 @@ public class KeyBindingPreferencePage extends PreferencePage
 			// store the active accelerator configuration id
 		if(accelConfigCombo != null) {
 			String configName = accelConfigCombo.getText();
-			AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
+			Configuration config = (Configuration)namesToConfiguration.get(configName);
 			if(config != null) {
 				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 				workbench.setActiveAcceleratorConfiguration(config);

@@ -28,11 +28,10 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.keybindings.KeyBindingManager;
+import org.eclipse.ui.internal.keybindings.KeyManager;
 import org.eclipse.ui.internal.keybindings.KeySequence;
 import org.eclipse.ui.internal.keybindings.KeyStroke;
 import org.eclipse.ui.internal.keybindings.MatchAction;
-import org.eclipse.ui.internal.keybindings.Path;
 import org.eclipse.ui.internal.keybindings.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -92,7 +91,7 @@ public class WWinKeyBindingService {
 	}
 
 	public void clear() {
-		KeyBindingManager.getInstance().setMode(KeySequence.create());
+		KeyManager.getInstance().setMode(KeySequence.create());
 		setStatusLineMessage(null);			
 		updateAccelerators();
 	}
@@ -100,19 +99,19 @@ public class WWinKeyBindingService {
 	public void pressed(KeyStroke keyStroke, Event event) { 
 		//System.out.println("pressed(" + stroke.getAccelerator() + ")");
 		KeySequence keySequence = KeySequence.create(keyStroke);
-		KeyBindingManager keyBindingManager = KeyBindingManager.getInstance();			
-		SortedMap keySequenceMapForMode = keyBindingManager.getKeySequenceMapForMode();
+		KeyManager keyManager = KeyManager.getInstance();			
+		SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
 		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 		
 		if (matchAction != null) {
 			clear();				
 			invoke(matchAction.getAction(), event);					
 		} else {
-			KeySequence mode = keyBindingManager.getMode();
+			KeySequence mode = keyManager.getMode();
 			List keyStrokes = new ArrayList(mode.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			mode = KeySequence.create(keyStrokes);
-			keyBindingManager.setMode(mode);
+			keyManager.setMode(mode);
 			setStatusLineMessage(mode);
 			
 			if (keySequenceMapForMode.isEmpty())
@@ -256,12 +255,7 @@ public class WWinKeyBindingService {
    			newScopeIds = activeService.getScopeIds();
 
     	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-	    	Path[] scopes = new Path[newScopeIds.length];
-	    	
-	    	for (int i = 0; i < newScopeIds.length; i++)
-	    		scopes[i] = KeyBindingManager.getInstance().getScopeForId(newScopeIds[i]);
-	    	
-	    	KeyBindingManager.getInstance().setScopes(scopes);	    	
+	    	KeyManager.getInstance().setScopes(newScopeIds);	    	   	
 	    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
    	 		MenuManager menuManager = w.getMenuManager();
  			menuManager.update(IAction.TEXT);
@@ -276,8 +270,8 @@ public class WWinKeyBindingService {
         
     	KeyStroke[] keyStrokes = KeyStroke.create(accelerators);   
     	KeySequence keySequence = KeySequence.create(keyStrokes);    		
-		KeyBindingManager keyBindingManager = KeyBindingManager.getInstance();			
-		SortedMap keySequenceMapForMode = keyBindingManager.getKeySequenceMapForMode();
+		KeyManager keyManager = KeyManager.getInstance();			
+		SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
 		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
 		
 		if (matchAction == null)
@@ -290,7 +284,7 @@ public class WWinKeyBindingService {
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
 	public void updateAccelerators() {
-	   	SortedSet keyStrokeSetForMode = (SortedSet) KeyBindingManager.getInstance().getKeyStrokeSetForMode();
+	   	SortedSet keyStrokeSetForMode = (SortedSet) KeyManager.getInstance().getKeyMachine().getKeyStrokeSetForMode();
 	   	Iterator iterator = keyStrokeSetForMode.iterator();
 	   	int[] accelerators = new int[keyStrokeSetForMode.size()];
 		int i = 0;
@@ -332,7 +326,7 @@ public class WWinKeyBindingService {
 			}
 		});
 
-		KeySequence keySequence = KeyBindingManager.getInstance().getMode();
+		KeySequence keySequence = KeyManager.getInstance().getMode();
 
 		if (keySequence.getKeyStrokes().size() == 0)
 			accMenu.removeVerifyListener(verifyListener);
