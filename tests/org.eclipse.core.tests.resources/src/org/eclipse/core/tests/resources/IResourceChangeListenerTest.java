@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
 
 import org.eclipse.core.resources.*;
@@ -401,6 +411,24 @@ public void testDeleteInPostBuildListener() {
 		fail("2.0", e);
 	} finally {
 		// cleanup: ensure that the listener is removed
+		getWorkspace().removeResourceChangeListener(listener);
+	}
+}
+public void testDeleteProject() throws CoreException {
+	//test that marker deltas are fired when projects are deleted
+	final IMarker marker = project1.createMarker(IMarker.TASK);
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			IMarkerDelta[] deltas = event.findMarkerDeltas(IMarker.TASK, false);
+			assertEquals("1.0", 1, deltas.length);
+			assertEquals("1.1", marker.getId(), deltas[0].getId());
+			assertEquals("1.2", IResourceDelta.REMOVED, deltas[0].getKind());
+		}
+	};
+	try {
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		project1.delete(true, false, getMonitor());
+	} finally {
 		getWorkspace().removeResourceChangeListener(listener);
 	}
 }
