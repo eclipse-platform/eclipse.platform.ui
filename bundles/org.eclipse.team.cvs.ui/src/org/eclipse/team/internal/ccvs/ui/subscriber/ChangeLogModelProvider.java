@@ -134,10 +134,12 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * Action group for this layout. It is added and removed for this layout only.
 	 */
 	public class ChangeLogActionGroup extends SynchronizePageActionGroup {
+		private MenuManager sortByComment;
+		private MenuManager sortByResource;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			MenuManager sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
-			MenuManager sortByResource = new MenuManager(Policy.bind("ChangeLogModelProvider.6"));	 //$NON-NLS-1$
+			sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
+			sortByResource = new MenuManager(Policy.bind("ChangeLogModelProvider.6"));	 //$NON-NLS-1$
 			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -157,6 +159,17 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			sortByResource.add( new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PATH, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
 			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
 			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.9"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#dispose()
+		 */
+		public void dispose() {
+			sortByComment.dispose();
+			sortByResource.dispose();
+			sortByComment.removeAll();
+			sortByResource.removeAll();
+			super.dispose();
 		}
 	}
 	
@@ -543,7 +556,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		if(fetchLogEntriesJob != null && fetchLogEntriesJob.getState() != Job.NONE) {
 			fetchLogEntriesJob.cancel();
 		}
-		getConfiguration().removeActionContribution(sortGroup);
+		sortGroup.dispose();
 		super.dispose();
 	}
 
