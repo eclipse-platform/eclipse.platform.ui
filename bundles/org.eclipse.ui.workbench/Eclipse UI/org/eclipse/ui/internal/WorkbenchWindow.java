@@ -47,9 +47,8 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -619,27 +618,42 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    
 	    // Create a parent of the Toolbar, CBanner and perspective switcher bar
 	    topBarParent = new Composite(shell, SWT.NONE);
-	    topBarParent.setLayout(new FormLayout());
+	    topBarParent.setLayout(new GridLayout());
 	    
 		topBar = new CBanner(topBarParent, SWT.NONE);
 		
-		Control coolBar = createCoolBarControl(topBar);
+		final Control coolBar = createCoolBarControl(topBar);
 		// need to resize the shell, not just the coolbar's immediate
 		// parent, if the coolbar wants to grow or shrink
+		
+		// TODO the code below is a workaround to keep both the coolbar and perspective switcher
+		// visible... it should however be changed such that the perspective bar can have a 
+		// chevron and does not need to grow the height
         coolBar.addListener(SWT.Resize, new Listener() {
             public void handleEvent(Event event) {
+            	Point cbSize = coolBar.getSize();
+            	Point temp = coolBar.computeSize (100, SWT.DEFAULT);
+            	int trimX = temp.x - 100;
+            	
+            	Point desiredSize = coolBar.computeSize(cbSize.x - trimX, SWT.DEFAULT);
+            	
+            	if (topBar.getRight() != null) {
+            		Control right = topBar.getRight();
+            		Point rightSize = right.computeSize (topBar.getRightWidth(), SWT.DEFAULT);
+	            	desiredSize.y = Math.max(rightSize.y, desiredSize.y);
+            	}          	
+            	GridData data = (GridData)topBar.getLayoutData();
+            	data.heightHint = desiredSize.y;
+
                 shell.layout();
             }
         });
+		GridData topBarData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
+		topBar.setLayoutData(topBarData);
+
 		if (getWindowConfigurer().getShowCoolBar()) {
 			topBar.setLeft(getCoolBarControl());
 		}
-		
-		FormData topBarData = new FormData();
-		topBarData.right = new FormAttachment(100, 0);
-		topBarData.left = new FormAttachment(0,0);
-		topBarData.top = new FormAttachment(0,0);
-		topBar.setLayoutData(topBarData);
 		
 		addPerspectiveBar(perspectiveBarStyle());
 		createPerspectiveBar();	
@@ -732,12 +746,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			topBar.setRightWidth(0);
 			
 			perspectiveBar.createControl(topBarParent);
-
-			FormData perspectiveData = new FormData();
-			perspectiveData.right = new FormAttachment(100, 0);
-			perspectiveData.left = new FormAttachment(0,0);
-			perspectiveData.top = new FormAttachment(topBar,0);
-			perspectiveBar.getControl().setLayoutData(perspectiveData);	
 			perspectiveBar.update(true);
 		} else {
 			topBar.setRightWidth(SWT.DEFAULT);
