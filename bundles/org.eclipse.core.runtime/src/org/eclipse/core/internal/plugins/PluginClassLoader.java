@@ -102,7 +102,6 @@ static String arrayToString(String[] array) {
 }
 protected void activatePlugin(String name) {
 	try {
-		// pluginActivationInProgress = true;
 		// the in-progress flag is set when we detect that activation will be required.
 		// be sure to unset it here.
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
@@ -115,8 +114,11 @@ protected void activatePlugin(String name) {
 	} finally {
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
 			debug("Exit activation for " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
-		pluginActivationInProgress = false;
+		clearPluginActivationInProgress();
 	}
+}
+private void clearPluginActivationInProgress()  {
+	pluginActivationInProgress = false;
 }
 public String debugId() {
 	return descriptor.toString();
@@ -169,12 +171,11 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 		}
 		// Check to see if we would find the class if we looked.  If so,
 		// activation is required.  If not, don't bother, just return null
-		if (shouldLookForClass(name))
-			// leave a dropping to discourage others from trying to do activation.
-			// This flag will be cleared once activation is complete.
-			pluginActivationInProgress = true;
-		else
+		if (!shouldLookForClass(name))
 			return null;
+		// leave a dropping to discourage others from trying to do activation.
+		// This flag will be cleared once activation is complete.
+		setPluginActivationInProgress();
 	}
 
 	// If we will find the class and the plugin is not yet activated, go ahead and do it now.
@@ -202,6 +203,13 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 			return null;
 		}
 	}
+}
+/**
+ * Refactored into synchronized method to defeat Sun VM or JIT optimization bug
+ * that cause deadlock in test suites.
+ */
+private synchronized void setPluginActivationInProgress()  {
+	pluginActivationInProgress = true;
 }
 public PluginDescriptor getPluginDescriptor() {
 	return descriptor;
