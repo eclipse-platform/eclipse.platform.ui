@@ -270,15 +270,24 @@ public class ContextHelpDialog implements Runnable {
 	}
 	
 	protected Control createLink(Composite parent, IHelpTopic topic) {
+		Label image = new Label(parent, SWT.NONE);
+		image.setImage(ElementLabelProvider.getDefault().getImage(topic));
+		image.setBackground(backgroundColour);
+
+		GridData data = new GridData();
+		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
+		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
+		//data.horizontalIndent = 4;
+		image.setLayoutData(data);
+		
 		Label link = new Label(parent, SWT.NONE);
 		link.setText(topic.getLabel());
 		link.setBackground(backgroundColour);
 		link.setForeground(linkColour);
 
-		GridData data = new GridData();
+		data = new GridData();
 		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
-		data.horizontalIndent = 4;
 		link.setLayoutData(data);
 
 		linkManager.registerHyperlink(link, new LinkListener(topic));
@@ -300,6 +309,8 @@ public class ContextHelpDialog implements Runnable {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 3;
+		layout.horizontalSpacing = 2;
+		layout.numColumns = 2;
 		composite.setLayout(layout);
 
 		GridData data =
@@ -319,7 +330,7 @@ public class ContextHelpDialog implements Runnable {
 				GridData.HORIZONTAL_ALIGN_BEGINNING
 					| GridData.VERTICAL_ALIGN_BEGINNING
 					| GridData.FILL_HORIZONTAL);
-
+		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
 		// Create related links
@@ -368,6 +379,11 @@ public class ContextHelpDialog implements Runnable {
 			}
 		}
 
+		// now close the infopop
+		close();
+		if (Logger.DEBUG)
+			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
+		
 		// group related topics, and far related topics together
 		IHelpTopic allTopics[] =
 			new IHelpTopic[relatedTopics.length + farRelatedTopics.length];
@@ -381,11 +397,6 @@ public class ContextHelpDialog implements Runnable {
 
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(allTopics, selectedTopic);
-
-		// now close the infopop
-		close();
-		if (Logger.DEBUG)
-			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
 	}
 	public synchronized void open() {
 		try {
