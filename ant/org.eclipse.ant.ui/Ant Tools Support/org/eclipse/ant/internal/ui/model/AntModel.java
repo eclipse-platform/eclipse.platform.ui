@@ -768,24 +768,7 @@ public class AntModel implements IAntModel {
             }
             newNode= new AntTaskNode(newTask, label);        
 		} else if(taskName.equalsIgnoreCase("ant")) { //$NON-NLS-1$
-        	StringBuffer label= new StringBuffer("ant "); //$NON-NLS-1$
-        	String more = attributes.getValue(IAntModelConstants.ATTR_DIR);
-            if (more != null) {
-            	label.append(more);
-            	label.append(File.separatorChar);
-            }
-            more = attributes.getValue(IAntModelConstants.ATTR_ANT_FILE);
-            if (more == null) {
-            	more= "build.xml"; //$NON-NLS-1$
-            }
-            label.append(more);
-            
-            more = attributes.getValue(IAntModelConstants.ATTR_TARGET);
-            if(more != null) {
-            	label.append(' ');
-            	label.append(more);
-            }
-            newNode= new AntTaskNode(newTask, label.toString());
+            newNode= new AntAntNode(newTask, attributes);
 		} else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
         	String label = "delete "; //$NON-NLS-1$
             String file = attributes.getValue(IAntModelConstants.ATTR_FILE);
