@@ -57,7 +57,7 @@ public class WordRule implements IRule {
 	}
 
 	/**
-	 * Creates a rule which, with the help of an word detector, will return the token
+	 * Creates a rule which, with the help of a word detector, will return the token
 	 * associated with the detected word. If no token has been associated, the
 	 * specified default token will be returned.
 	 *

@@ -185,7 +185,7 @@ public class PatternRule implements IPredicateRule {
 	/**
 	 * Returns whether the end sequence was detected. As the pattern can be considered 
 	 * ended by a line delimiter, the result of this method is <code>true</code> if the 
-	 * rule breaks on the end  of the line, or if the EOF character is read.
+	 * rule breaks on the end of the line, or if the EOF character is read.
 	 *
 	 * @param scanner the character scanner to be used
 	 * @return <code>true</code> if the end sequence has been detected
