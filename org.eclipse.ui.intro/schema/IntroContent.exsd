@@ -87,6 +87,14 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="content" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When defined all attributes in this page element are honored, but all children are ignored. This is because the content of this page is now assumed to reside in the xml files pointed to by the content file. It is also assumed that this new file has only one page deifned, and so when resolving to content of this file, the first page is loaded.
+This seperation out of pages can be used when performance is an issue, as the content of a page is now only loaded when really needed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

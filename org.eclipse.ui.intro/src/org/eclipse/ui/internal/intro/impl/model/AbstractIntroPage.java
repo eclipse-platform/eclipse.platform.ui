@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.*;
 
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
@@ -23,10 +25,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected static final String TAG_PAGE = "page"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
+    private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
     private String style;
     private String altStyle;
     private IntroPageTitle title;
+    private String content;
 
     /**
      * The vectors to hold all inhertied styles and alt styles from included
@@ -61,9 +65,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         super(element, bundle);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
+        content = getAttribute(element, ATT_CONTENT);
         // Resolve.
         style = IntroModelRoot.getPluginLocation(style, bundle);
         altStyle = IntroModelRoot.getPluginLocation(altStyle, bundle);
+        content = IntroModelRoot.getPluginLocation(content, bundle);
     }
 
     /**
@@ -225,4 +231,41 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
 
+    /**
+     * load the children of this container. Override parent behavior because we
+     * want to support laoding content from other xml files.
+     * 
+     * @return Returns all the children of this container.
+     */
+    protected void loadChildren() {
+        if (content == null) {
+            // no content. do regular loading.
+            super.loadChildren();
+            return;
+        }
+
+        // load the first page from content xml file.
+        Document dom = new IntroContentParser(content).getDocument();
+        if (dom == null)
+            // return empty array. Parser would have logged fact.
+            return;
+
+        Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
+                IntroPage.TAG_PAGE);
+        if (pages.length != 1) {
+            String message = StringUtil.concat("Content file for page: ",
+                    getId(), " has ", String.valueOf(pages.length), " pages")
+                    .toString();
+            Log.warning(message);
+            // return empty array.
+            return;
+        }
+        // point the element of this page to the new element.
+        this.element = pages[0];
+        // now do children loading as usual.
+        super.loadChildren();
+    }
 }
+
+
+

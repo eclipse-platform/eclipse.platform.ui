@@ -70,45 +70,6 @@ public class IntroHomePage extends AbstractIntroPage {
         return AbstractIntroElement.HOME_PAGE;
     }
 
-    // THESE METHODS WILL BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
-    /**
-     * This method is a customized method for root page to return the root page
-     * links. Try to get the real links in the page. If there are non, return
-     * the links in the first no-empty div.
-     */
-    public IntroLink[] getLinks() {
-        // DONOW:
-        IntroLink[] links = (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
-        if (links.length != 0)
-            return links;
-
-        // root page does not have any links, append all links off non-filtered
-        // divs.
-        IntroGroup[] rootPageDivs = (IntroGroup[]) getChildrenOfType(AbstractIntroElement.GROUP);
-        Vector linkVector = new Vector();
-
-        for (int i = 0; i < rootPageDivs.length; i++)
-            addLinks(rootPageDivs[i], linkVector);
-
-        links = new IntroLink[linkVector.size()];
-        linkVector.copyInto(links);
-
-        return links;
-    }
-
-    private void addLinks(IntroGroup div, Vector linksVector) {
-        linksVector.addAll(Arrays.asList(getLinks(div)));
-        IntroGroup[] divs = (IntroGroup[]) div
-                .getChildrenOfType(AbstractIntroElement.GROUP);
-        for (int i = 0; i < divs.length; i++)
-            addLinks(divs[i], linksVector);
-    }
-
-
-    public IntroLink[] getLinks(IntroGroup div) {
-        return (IntroLink[]) div.getChildrenOfType(AbstractIntroElement.LINK);
-    }
-
 
     /**
      * @return Returns the isStandbyPage.
@@ -124,5 +85,43 @@ public class IntroHomePage extends AbstractIntroPage {
     public void setStandbyPage(boolean isStandbyPage) {
         this.isStandbyPage = isStandbyPage;
     }
+
+
+    // THESE METHODS WILL BE REMOVED!
+    /**
+     * This method is a customized method for root page to return the root page
+     * links. Try to get the real links in the page, and all links in all divs.
+     */
+    public IntroLink[] getLinks() {
+        Vector linkVector = new Vector();
+
+        AbstractIntroElement[] children = getChildren();
+        for (int i = 0; i < children.length; i++) {
+            AbstractIntroElement child = children[i];
+            if (child.isOfType(AbstractIntroElement.LINK))
+                linkVector.add(child);
+            else if (child.isOfType(AbstractIntroElement.GROUP)) {
+                addLinks((IntroGroup) child, linkVector);
+            }
+        }
+
+        IntroLink[] links = new IntroLink[linkVector.size()];
+        linkVector.copyInto(links);
+        return links;
+    }
+
+    private void addLinks(IntroGroup group, Vector linkVector) {
+        AbstractIntroElement[] children = group.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            AbstractIntroElement child = children[i];
+            if (child.isOfType(AbstractIntroElement.LINK))
+                linkVector.add(child);
+            else if (child.isOfType(AbstractIntroElement.GROUP)) {
+                addLinks((IntroGroup) child, linkVector);
+            }
+        }
+    }
+
+
 }
 

@@ -76,9 +76,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // org.eclipse.ui.into.config extension point. Start off with true, and set
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
-
     private boolean isdynamicIntro;
-
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;

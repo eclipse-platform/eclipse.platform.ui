@@ -43,13 +43,15 @@ public class PageStyleManager extends SharedStyleManager {
         // AltStyles Hashtable has alt-styles as keys, the bundles as
         // values.
         Hashtable altStyles = page.getAltStyles();
-        Enumeration styles = altStyles.keys();
-        while (styles.hasMoreElements()) {
-            String style = (String) styles.nextElement();
-            Properties inheritedProperties = new Properties();
-            Bundle bundle = (Bundle) altStyles.get(style);
-            load(inheritedProperties, style);
-            altStyleProperties.put(inheritedProperties, bundle);
+        if (altStyles != null) {
+            Enumeration styles = altStyles.keys();
+            while (styles.hasMoreElements()) {
+                String style = (String) styles.nextElement();
+                Properties inheritedProperties = new Properties();
+                Bundle bundle = (Bundle) altStyles.get(style);
+                load(inheritedProperties, style);
+                altStyleProperties.put(inheritedProperties, bundle);
+            }
         }
 
         // cache root

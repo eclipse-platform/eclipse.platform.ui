@@ -216,17 +216,22 @@ public class BrowserIntroPartImplementation extends
 
         // presentation is shown here. toggle standby page. No need to update
         // history here.
+        IntroHomePage homePage = getModel().getHomePage();
+        IntroHomePage standbyPage = getModel().getStandbyPage();
+        if (standbyPage == null)
+            standbyPage = homePage;
 
+        // TODO: revisit. do we really need to set current page?
         if (standby)
-            getModel().setCurrentPageId(getModel().getStandbyPage().getId());
-        else
-            getModel().setCurrentPageId(getModel().getCurrentPageId());
-
-
+            getModel().setCurrentPageId(standbyPage.getId());
+        else {
+            // trick model into firing event, outside thread.
+            String currentPageId = getModel().getCurrentPageId();
+            getModel().setCurrentPageId("", false);
+            getModel().setCurrentPageId(currentPageId);
+        }
 
     }
-
-
 
     /**
      * Handle model property changes. Property listeners are only added in the

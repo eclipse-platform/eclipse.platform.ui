@@ -253,7 +253,10 @@ public class FormIntroPartImplementation extends
 
         if (standby) {
             // we are in standby. Show standby page, in PageForm.
-            String standbyPageId = getModel().getStandbyPage().getId();
+            String standbyPageId = getModel().getCurrentPageId();
+            AbstractIntroPage standbyPage = getModel().getStandbyPage();
+            if (standbyPage != null)
+                standbyPageId = standbyPage.getId();
             pageForm.showPage(standbyPageId);
             mainPageBook.showPage(PageForm.PAGE_FORM_ID);
         } else {

@@ -28,7 +28,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected boolean loaded = false;
     protected boolean resolved = false;
 
-    private Element element;
+    protected Element element;
 
     /**
      * @param element
