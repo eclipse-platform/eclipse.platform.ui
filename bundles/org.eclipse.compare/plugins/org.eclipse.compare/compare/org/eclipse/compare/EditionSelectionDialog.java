@@ -232,12 +232,12 @@ public class EditionSelectionDialog extends ResizableDialog {
 	}
 	
 	/**
-	 * Select the previous edition.
+	 * Select the previous edition (presenting a UI).
 	 *
 	 * @param target the input object against which the editions are compared; must not be <code>null</code>
 	 * @param editions the list of editions (element type: <code>ITypedElement</code>s)
 	 * @param path If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
-	 * @return returns the selected edition or <code>null</code> if dialog was cancelled.
+	 * @return returns the selected edition or <code>null</code> if error occurred.
 	 * The returned <code>ITypedElement</code> is one of the original editions
 	 * if <code>path</code> was <code>null</code>; otherwise
 	 * it is an <code>ITypedElement</code> returned from <code>IStructureCreator.locate(path, item)</code>
@@ -289,6 +289,9 @@ public class EditionSelectionDialog extends ResizableDialog {
 				pair= new Pair(null, edition);
 			}
 			
+			if (pair != null && pair.fHasError)
+				return null;
+				
 			if (pair != null && !fTargetPair.equals(pair)) {
 				return pair.fItem;
 			}
