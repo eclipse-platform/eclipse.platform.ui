@@ -174,7 +174,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 
 		openPerspNameField = new Combo(comp, (SWT.DROP_DOWN | SWT.READ_ONLY));
 		openPerspNameField.setItems(getOpenPerspectiveNames());
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		openPerspNameField.setLayoutData(data);
 	}
 	

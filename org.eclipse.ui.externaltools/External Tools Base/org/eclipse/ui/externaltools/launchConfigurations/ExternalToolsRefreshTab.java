@@ -61,7 +61,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	protected void createRecursiveComponent(Composite parent) {
 		recursiveField = new Button(parent, SWT.CHECK);
-		recursiveField.setText("Recurseively include sub-folders");
+		recursiveField.setText("Recursively include sub-folders");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		recursiveField.setLayoutData(data);
 	}
