@@ -262,7 +262,13 @@ public interface IDebugUIConstants {
 	
 	/** Change variable value action image identifier.*/
 	public static final String IMG_LCL_CHANGE_VARIABLE_VALUE= "IMG_LCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
-
+	
+	/**
+	 * Content assist action image identifier.
+	 */
+	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
+	public static final String IMG_ELCL_CONTENT_ASSIST= "IMG_ELCL_CONTENT_ASSIST"; //$NON-NLS-1$
+	public static final String IMG_DLCL_CONTENT_ASSIST= "IMG_DLCL_CONTENT_ASSIST"; //$NON-NLS-1$
 	
 	// Debug element images
 	
