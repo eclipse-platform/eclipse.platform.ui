@@ -97,6 +97,21 @@
       </view>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%ViewCommand.antView.name"
+            description="%ViewCommand.antView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ant.ui.views.AntView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ant.ui.views.AntView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
