@@ -3789,13 +3789,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 				Position pos= markerModel.getMarkerPosition(marker);
-				if (pos == null || pos.isDeleted()) {
+				if (pos != null && !pos.isDeleted()) {
+					// use position instead of marker values
+					start= pos.getOffset();
+					end= pos.getOffset() + pos.getLength();
+				}
+					
+				if (pos != null && pos.isDeleted()) {
 					// do nothing if position has been deleted
 					return;
 				}
-				
-				start= pos.getOffset();
-				end= pos.getOffset() + pos.getLength();
 			}
 			
 			IDocument document= getDocumentProvider().getDocument(getEditorInput());
