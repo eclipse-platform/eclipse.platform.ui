@@ -1,0 +1,51 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>README Launch Configuration Type Images</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Launch Configuration Type Images</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.core.launchConfigurationTypeImages </p>
+
+<p><b><i>Description: </i></b>This extension point provides a way to associate an image with
+a launch configuration type.</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT launchConfigurationTypeImage</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST launchConfigurationTypeImage</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; configTypeID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+</pre>
+
+<ul>
+ <li><code>id</code> specifies a unique identifier for this launch configuration type image.</li>
+ <li><code>configTypeID</code> specifies the fully qualified ID of a launch configuration type.</li>
+ <li><code>icon</code> specifies the plugin-relative path of an image file.</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a launch configuration type image extension point: </p>
+
+<pre>
+&lt;extension point="org.eclipse.debug.core.launchConfigurationTypeImages"&gt;
+   &lt;launchConfigurationTypeImage 
+      id="com.example.FirstLaunchConfigurationTypeImage"
+      configTypeID="com.example.FirstLaunchConfigurationType"
+      icon="icons/FirstLaunchConfigurationType.gif"&gt;
+   &lt;/launchConfigurationTypeImage&gt;
+&lt;/extension&gt;
+</pre>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+border="0" width="195" height="12"></a></p>
+</body>
+</html>
