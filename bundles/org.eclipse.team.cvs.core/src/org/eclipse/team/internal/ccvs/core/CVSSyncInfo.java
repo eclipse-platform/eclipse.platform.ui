@@ -146,7 +146,7 @@ public class CVSSyncInfo extends SyncInfo {
 	 * If the resource has a delete/delete conflict then ensure that the local is unmanaged so that the 
 	 * sync info can be properly flushed.
 	 */
-	private int handleDeletionConflicts(int kind) {
+	protected int handleDeletionConflicts(int kind) {
 		if(kind == (SyncInfo.CONFLICTING | SyncInfo.DELETION | SyncInfo.PSEUDO_CONFLICT)) {
 			try {				
 				IResource local = getLocal();

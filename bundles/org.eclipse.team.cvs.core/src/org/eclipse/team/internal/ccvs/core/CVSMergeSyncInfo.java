@@ -9,8 +9,10 @@ package org.eclipse.team.internal.ccvs.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
  * @author JLemieux
@@ -19,6 +21,17 @@ import org.eclipse.team.core.sync.IRemoteResource;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class CVSMergeSyncInfo extends CVSSyncInfo {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncInfo#handleDeletionConflicts(int)
+	 */
+	protected int handleDeletionConflicts(int kind) {
+		// (see bug 40053).
+		if(kind == (SyncInfo.CONFLICTING | SyncInfo.DELETION | SyncInfo.PSEUDO_CONFLICT)) {
+			return SyncInfo.IN_SYNC;
+		}
+		return kind;
+	}
 
 	protected int calculateKind(IProgressMonitor progress) throws TeamException {
 		// Report merged resources as in-sync
