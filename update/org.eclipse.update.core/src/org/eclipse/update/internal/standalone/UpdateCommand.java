@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.standalone;
+package org.eclipse.update.internal.standalone;
 import java.net.*;
 import java.util.*;
 
@@ -20,26 +20,19 @@ import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
-public class InstallCommand extends ScriptedCommand {
+public class UpdateCommand extends ScriptedCommand {
 
 	private IConfiguredSite targetSite;
 	private UpdateSearchRequest searchRequest;
 	private UpdateSearchResultCollector collector;
-	private URL remoteSiteURL;
 	private String featureId;
-	private String version;
 
-	public InstallCommand(
+	public UpdateCommand(
 		String featureId,
-		String version,
-		String fromSite,
 		String toSite) {
 		try {
 			this.featureId = featureId;
-			this.version = version;
-
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
-
+			
 			// Get site to install to
 			IConfiguredSite[] sites = config.getConfiguredSites();
 			if (toSite != null) {
@@ -62,21 +55,12 @@ public class InstallCommand extends ScriptedCommand {
 					}
 				}
 			}
+			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
-			searchScope.addSearchSite(
-				"remoteSite",
-				remoteSiteURL,
-				new String[0]);
-
-			searchRequest =
-				new UpdateSearchRequest(
-					new UnifiedSiteSearchCategory(),
-					searchScope);
-			VersionedIdentifier vid = new VersionedIdentifier(featureId, version);
-			searchRequest.addFilter(new VersionedIdentifiersFilter(new VersionedIdentifier[]{vid}));
+			searchScope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
+			UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
+			searchRequest = new UpdateSearchRequest(category, searchScope);
 			searchRequest.addFilter(new EnvironmentFilter());
-			searchRequest.addFilter(new BackLevelFilter());
-
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {
@@ -93,7 +77,7 @@ public class InstallCommand extends ScriptedCommand {
 			searchRequest.performSearch(collector, new NullProgressMonitor());
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
-				System.out.println("Feature " + featureId + " " + version + " cannot be found on " + remoteSiteURL + "\nor a newer version is already installed.");
+				System.out.println("Feature " + featureId + " cannot be updated.");
 				return false;
 			}
 			JobTargetSite[] jobTargetSites = new JobTargetSite[operations.length];
@@ -118,10 +102,10 @@ public class InstallCommand extends ScriptedCommand {
 				installOperation.execute(
 					new NullProgressMonitor(),
 					this);
-				System.out.println("Feature " + featureId + " " + version + " has successfully been installed");
+				System.out.println("Feature " + featureId + " has successfully been updated");
 				return true;
 			} catch (Exception e) {
-				System.out.println("Cannot install feature " + featureId + " " + version);
+				System.out.println("Cannot update feature " + featureId);
 				e.printStackTrace();
 				return false;
 			} 
@@ -151,7 +135,6 @@ public class InstallCommand extends ScriptedCommand {
 		return true;
 	}
 
-
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		private ArrayList operations = new ArrayList();
 
@@ -159,9 +142,7 @@ public class InstallCommand extends ScriptedCommand {
 			if (feature
 				.getVersionedIdentifier()
 				.getIdentifier()
-				.equals(featureId)
-				&& feature.getVersionedIdentifier().getVersion().toString().equals(
-					version)) {
+				.equals(featureId)) {
 				operations.add(
 					OperationsManager
 						.getOperationFactory()

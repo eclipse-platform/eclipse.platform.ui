@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.standalone;
+package org.eclipse.update.internal.standalone;
 import java.util.*;
 
 public class CmdLineArgs {

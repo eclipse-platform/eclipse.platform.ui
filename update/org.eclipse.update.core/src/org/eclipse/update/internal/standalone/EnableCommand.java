@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.standalone;
+package org.eclipse.update.internal.standalone;
 import java.lang.reflect.*;
 import java.net.*;
 
@@ -18,13 +18,13 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
-public  class DisableCommand extends ScriptedCommand {
+public  class EnableCommand extends ScriptedCommand {
 
 	private IConfiguredSite targetSite;
 	private IFeature feature;
 	private int installCount = 0;
 
-	public DisableCommand(
+	public EnableCommand(
 		String featureId,
 		String version,
 		String toSite) {
@@ -54,7 +54,7 @@ public  class DisableCommand extends ScriptedCommand {
 				}
 			}
 			
-			IFeature[] features = UpdateUtils.searchSite(featureId, targetSite, true);
+			IFeature[] features = UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
 				System.out.println("There are no configured features with id:" + featureId);
 				return;
@@ -63,13 +63,13 @@ public  class DisableCommand extends ScriptedCommand {
 				feature = features[0]; // pick the first feature
 			else 
 				for (int i=0; features!= null && i<features.length; i++) {
-					if (features[i].getVersionedIdentifier().getVersion().toString().equals(version)) {
+					if (features[i].getVersionedIdentifier().getVersion().toString().equals(version)  && !targetSite.isConfigured(features[i])) {
 						feature = features[i];
 						break;
 					}
 				}
 			if (feature == null) {
-				System.out.println("Cannot find configured feature " + featureId + " with version " + version);
+				System.out.println("Cannot find unconfigured feature " + featureId + " with version " + version);
 				return;
 			}
 			
@@ -84,8 +84,8 @@ public  class DisableCommand extends ScriptedCommand {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean run() {
-		final IUnconfigFeatureOperation configOperation =
-			OperationsManager.getOperationFactory().createUnconfigOperation(config, targetSite,feature);
+		final IConfigFeatureOperation configOperation =
+			OperationsManager.getOperationFactory().createConfigOperation(config, targetSite,feature);
 
 		try {
 			return configOperation.execute(null, null);

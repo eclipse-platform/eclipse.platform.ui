@@ -1,7 +1,7 @@
 /*
  * Created on May 28, 2003
  */
-package org.eclipse.update.standalone;
+package org.eclipse.update.internal.standalone;
 
 import java.util.*;
 
