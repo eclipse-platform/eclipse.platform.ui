@@ -84,14 +84,19 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 	}
 
 	private void appendTaskPath(AntTaskNode node, StringBuffer buffer) {
-		String taskPart= getTaskTypePart(node);
-		if (taskPart == null) {
-			return;
-		}
+	    String taskName= node.getTask().getTaskName();
+	    String taskPart= null;
+	    if (taskName.equalsIgnoreCase("path")) {  //$NON-NLS-1$
+	        buffer.append("using.html#path"); //$NON-NLS-1$
+	        return;
+	    } 
+	    taskPart= getTaskTypePart(node);
+        if (taskPart == null) {
+            return;
+        }
 		buffer.append(taskPart);
 		buffer.append('/');
-		String typePath= node.getTask().getTaskName();
-		buffer.append(typePath);
+		buffer.append(taskName);
 		buffer.append(".html"); //$NON-NLS-1$	
 	}
 
@@ -148,10 +153,16 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
     			return null;
     		}
     		String className= definition.getClassName();
-    		if (className.indexOf("optional") != -1) { //$NON-NLS-1$
-    			return "OptionalTasks"; //$NON-NLS-1$
-    		} 
-    		return "CoreTasks"; //$NON-NLS-1$
+    		if (className.indexOf("taskdef") != -1) { //$NON-NLS-1$
+    		    if (className.indexOf("optional") != -1) { //$NON-NLS-1$
+    		        return "OptionalTasks"; //$NON-NLS-1$
+    		    } 
+    		    return "CoreTasks"; //$NON-NLS-1$
+    		} else if (className.indexOf("optional") != -1) { //$NON-NLS-1$
+    		    return "OptionalTypes"; //$NON-NLS-1$
+    		} else {
+    		    return "CoreTypes"; //$NON-NLS-1$
+    		}
     	}
     	
         return null;
