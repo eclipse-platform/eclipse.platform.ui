@@ -64,7 +64,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * The streams proxy for this process
 	 */
-	private StreamsProxy fStreamsProxy;
+	private IStreamsProxy fStreamsProxy;
 
 	/**
 	 * The name of the process
@@ -177,7 +177,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
 			fProcess.destroy();
-			fStreamsProxy.kill();
+			if (fStreamsProxy instanceof StreamsProxy) {
+				((StreamsProxy)fStreamsProxy).kill();
+			}
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
@@ -205,7 +207,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * has terminated.
 	 */
 	protected void terminated() {
-		fStreamsProxy.close();
+		if (fStreamsProxy instanceof StreamsProxy) {
+			((StreamsProxy)fStreamsProxy).close();
+		}
 		fTerminated= true;
 		try {
 			fExitValue = fProcess.exitValue();
@@ -220,6 +224,17 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 */
 	public IStreamsProxy getStreamsProxy() {
 		return fStreamsProxy;
+	}
+	
+	/**
+	 * Sets the underlying streams proxy for this process.
+	 * Used by the Ant launching in separate VM.
+	 */
+	public void setStreamsProxy(IStreamsProxy streamsProxy) {
+		if (fStreamsProxy instanceof StreamsProxy) {
+			((StreamsProxy)fStreamsProxy).kill();
+		}
+		fStreamsProxy= streamsProxy;
 	}
 	
 	/**
@@ -295,5 +310,4 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.Exit_value_not_available_until_process_terminates._1"), null)); //$NON-NLS-1$
 		}
 	}
-
 }
