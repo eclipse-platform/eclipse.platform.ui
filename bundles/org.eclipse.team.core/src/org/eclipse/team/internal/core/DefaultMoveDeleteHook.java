@@ -20,9 +20,7 @@ import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A class which provides the default behavior for resource deletions and moves.
- * This class can be overridden by providers to change some or all of the behavior
- * related to resources deletions or moves.
+ * Internal class which provides the default behavior for resource deletions and moves.
  * 
  * @see org.eclipse.team.core.ResourceProvider#getMoveDeleteHook()
  */
