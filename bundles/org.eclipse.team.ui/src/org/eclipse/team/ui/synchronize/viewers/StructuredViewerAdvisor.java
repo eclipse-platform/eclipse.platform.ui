@@ -25,7 +25,8 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElementLabelProvider;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -77,7 +78,7 @@ public abstract class StructuredViewerAdvisor {
 	// in the viewer.
 	private SyncInfoSet set;
 	private StructuredViewer viewer;
-	private SynchronizeModelProvider modelProvider;
+	private ISynchronizeModelProvider modelProvider;
 	
 	// Listeners for model changes
 	private ListenerList listeners;
@@ -271,7 +272,16 @@ public abstract class StructuredViewerAdvisor {
 	 * @param viewer the viewer in which the context menu is being shown.
 	 * @param manager the menu manager to which actions can be added.
 	 */
-	protected void fillContextMenu(final StructuredViewer viewer, IMenuManager manager) {
+	protected void fillContextMenu(StructuredViewer viewer, IMenuManager manager) {
+	}
+	
+	/**
+	 * Allows the advisor to make contributions to the given action bars. Note that some of the 
+	 * items in the action bar may not be accessible.
+	 * 
+	 * @param actionBars the toolbar manager to which to add actions.
+	 */
+	public void setActionBars(IActionBars actionBars) {	
 	}
 	
 	/**
@@ -303,7 +313,7 @@ public abstract class StructuredViewerAdvisor {
 	 * for the adviser's viewer.
 	 * @return the model provider
 	 */
-	protected abstract SynchronizeModelProvider getModelProvider();
+	protected abstract ISynchronizeModelProvider getModelProvider();
 	
 	
 	/**
@@ -442,12 +452,14 @@ public abstract class StructuredViewerAdvisor {
 	protected final void setInput(StructuredViewer viewer) {
 		modelProvider.setViewer(viewer);
 		viewer.setSorter(modelProvider.getViewerSorter());
-		DiffNode input = modelProvider.getModelRoot();
-		input.addCompareInputChangeListener(new ICompareInputChangeListener() {
-			public void compareInputChanged(ICompareInput source) {
-				fireChanges();
-			}
-		});
+		ISynchronizeModelElement input = modelProvider.getModelRoot();
+		if (input instanceof DiffNode) {
+			((DiffNode) input).addCompareInputChangeListener(new ICompareInputChangeListener() {
+				public void compareInputChanged(ICompareInput source) {
+					fireChanges();
+				}
+			});
+		}
 		viewer.setInput(modelProvider.getModelRoot());
 	}
 	

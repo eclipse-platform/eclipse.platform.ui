@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IResource;
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.viewers.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -24,11 +24,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  *  
  * @since 3.0
  */
-public abstract class SynchronizeModelElement extends DiffNode implements IAdaptable {
+public abstract class SynchronizeModelElement extends DiffNode implements IAdaptable, ISynchronizeModelElement {
 
-	public static final String BUSY_PROPERTY = TeamUIPlugin.ID + ".busy"; //$NON-NLS-1$
-	public static final String PROPAGATED_CONFLICT_PROPERTY = TeamUIPlugin.ID + ".conflict"; //$NON-NLS-1$
-	
 	/*
 	 * Internal flags bits for stroing properties in the flags variable
 	 */

@@ -19,8 +19,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -29,8 +28,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -182,6 +183,8 @@ public class SynchronizeCompareInput extends CompareEditorInput implements ICont
 			tbm.removeAll();
 			tbm.add(new Separator("navigation")); //$NON-NLS-1$
 			contributeToToolBar(tbm);
+			IActionBars bars = getActionBars(tbm);
+			getViewerConfiguration().setActionBars(bars);
 			tbm.update(true);
 		}
 	}
@@ -216,10 +219,10 @@ public class SynchronizeCompareInput extends CompareEditorInput implements ICont
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		super.saveChanges(pm);
-		SynchronizeModelElement root = (SynchronizeModelElement)diffViewerConfiguration.getViewer().getInput();
-		if (root != null) {
+		ISynchronizeModelElement root = (ISynchronizeModelElement)diffViewerConfiguration.getViewer().getInput();
+		if (root != null && root instanceof DiffNode) {
 			try {
-				commit(pm, root);
+				commit(pm, (DiffNode)root);
 			} finally {
 				setDirty(false);
 			}
@@ -272,5 +275,28 @@ public class SynchronizeCompareInput extends CompareEditorInput implements ICont
 	 */
 	public boolean isBuffered() {
 		return buffered;
+	}
+	
+	private IActionBars getActionBars(final IToolBarManager toolbar) {
+		return new IActionBars() {
+			public void clearGlobalActionHandlers() {
+			}
+			public IAction getGlobalActionHandler(String actionId) {
+				return null;
+			}
+			public IMenuManager getMenuManager() {
+				return null;
+			}
+			public IStatusLineManager getStatusLineManager() {
+				return null;
+			}
+			public IToolBarManager getToolBarManager() {
+				return toolbar;
+			}
+			public void setGlobalActionHandler(String actionId, IAction handler) {
+			}
+			public void updateActionBars() {
+			}
+		};
 	}
 }

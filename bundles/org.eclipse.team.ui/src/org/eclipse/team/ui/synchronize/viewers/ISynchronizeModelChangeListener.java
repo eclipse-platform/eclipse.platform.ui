@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.viewers;
 
+
 /**
  * Listener that gets informed when the model created by the model provider is created or updated.
  * <p>
@@ -23,5 +24,5 @@ public interface ISynchronizeModelChangeListener {
 	 *
 	 * @param input the root <code>DiffNode</code> of the model.
 	 */
-	public void modelChanged(SynchronizeModelElement root);
+	public void modelChanged(ISynchronizeModelElement root);
 }

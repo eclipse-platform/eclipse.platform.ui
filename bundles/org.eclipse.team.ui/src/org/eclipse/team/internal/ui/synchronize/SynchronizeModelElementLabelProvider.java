@@ -8,25 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.viewers;
+package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A label provider that decorates viewers showing 
- * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement}.
+ * {@link ISynchronizeModelElement}.
  * 
  * @since 3.0
  */
@@ -42,40 +44,6 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	// the workbench adapter.
 	private WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
 
-	/**
-	 * Decorating label provider that also support color providers
-	 */
-	public static class DecoratingColorLabelProvider extends DecoratingLabelProvider implements IColorProvider {
-
-		public DecoratingColorLabelProvider(ILabelProvider provider, ILabelDecorator decorator) {
-			super(provider, decorator);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-		 */
-		public Color getForeground(Object element) {
-			ILabelProvider p = getLabelProvider();
-			if (p instanceof IColorProvider) {
-				return ((IColorProvider) p).getForeground(element);
-			}
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-		 */
-		public Color getBackground(Object element) {
-			ILabelProvider p = getLabelProvider();
-			if (p instanceof IColorProvider) {
-				return ((IColorProvider) p).getBackground(element);
-			}
-			return null;
-		}
-	}
-
 	public SynchronizeModelElementLabelProvider() {
 	}
 
@@ -84,9 +52,9 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		if (element instanceof SynchronizeModelElement) {
-			SynchronizeModelElement node = (SynchronizeModelElement)element;
-			if(node.getProperty(SynchronizeModelElement.BUSY_PROPERTY)) {
+		if (element instanceof ISynchronizeModelElement) {
+			ISynchronizeModelElement node = (ISynchronizeModelElement)element;
+			if(node.getProperty(ISynchronizeModelElement.BUSY_PROPERTY)) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 		}
@@ -184,8 +152,8 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @return whether the node has descendant conflicts
 	 */
 	private boolean hasDecendantConflicts(DiffNode node) {
-		if(node instanceof SynchronizeModelElement) {
-			return ((SynchronizeModelElement)node).getProperty(SynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
+		if(node instanceof ISynchronizeModelElement) {
+			return ((ISynchronizeModelElement)node).getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
 		}
 		return false;
 	}

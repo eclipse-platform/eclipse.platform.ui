@@ -19,10 +19,12 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
 import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicyInModalDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -111,7 +113,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	protected SubscriberParticipantPage doCreatePage(ISynchronizeView view) {
-		return new SubscriberParticipantPage(this, view);
+		return new SubscriberParticipantPage(this, view,  createSynchronizeViewerAdvisor(view));
 	}
 	
 	/* (non-Javadoc)
@@ -232,6 +234,14 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 			setWorkingSet(workingSet);
 		}
 		updateMode(getMode());
+	}
+	
+	/**
+	 * Returns the viewer advisor which will be used to configure the display of the participant.
+	 * @return
+	 */
+	protected StructuredViewerAdvisor createSynchronizeViewerAdvisor(ISynchronizeView view) {
+		return new SynchronizeViewerAdvisor(view, this);
 	}
 	
 	/**

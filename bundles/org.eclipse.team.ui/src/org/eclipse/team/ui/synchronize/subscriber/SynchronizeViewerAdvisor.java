@@ -16,10 +16,10 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenWithActionGroup;
 import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.viewers.TreeViewerAdvisor;
 
 /**
@@ -33,7 +33,6 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
 	private Action refreshSelectionAction;
-	private IToolBarManager toolbarMgr;
 
 	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(participant.getId(), view.getViewSite(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
@@ -62,16 +61,16 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 		Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$
 	}
 
+	protected ISynchronizeView getSynchronizeView() {
+		return view;
+	}
+	
 	protected void fillContextMenu(StructuredViewer viewer, IMenuManager manager) {
 		openWithActions.fillContextMenu(manager);
 		refactorActions.fillContextMenu(manager);
 		manager.add(refreshSelectionAction);
 		manager.add(new Separator());
 		super.fillContextMenu(viewer, manager);
-	}
-
-	public void updateToolbar(IToolBarManager mgr) {
-		
 	}
 	
 	/*

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.viewers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +17,22 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.ui.*;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A subscriber operation provides access to a {@link SyncInfoSet} containing
- * the selection from a {@link SubscriberAction}.
- * When used in conjuntion with a {@link SubscriberAction}, the selected
+ * the selection from a {@link SynchronizeModelAction}.
+ * When used in conjuntion with a {@link SynchronizeModelAction}, the selected
  * elements in the view will show busy indication if this 
  * operation is run as a job.
  * 
  * @see SyncInfoSet
- * @see SubscriberAction
+ * @see SynchronizeModelAction
  * @since 3.0
  */
-public abstract class SubscriberOperation extends TeamOperation {
+public abstract class SynchronizeModelOperation extends TeamOperation {
 	
 	private IDiffElement[] elements;
 	
@@ -43,7 +42,7 @@ public abstract class SubscriberOperation extends TeamOperation {
 	 * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
 	 * @param elements
 	 */
-	protected SubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
+	protected SynchronizeModelOperation(IWorkbenchPart part, IDiffElement[] elements) {
 		super(part);
 		this.elements = elements;
 	}
@@ -75,8 +74,8 @@ public abstract class SubscriberOperation extends TeamOperation {
 	private void markBusy(IDiffElement[] elements, boolean isBusy) {
 		for (int i = 0; i < elements.length; i++) {
 			IDiffElement element = elements[i];
-			if (element instanceof SynchronizeModelElement) {
-				((SynchronizeModelElement)element).setPropertyToRoot(SynchronizeModelElement.BUSY_PROPERTY, isBusy);
+			if (element instanceof ISynchronizeModelElement) {
+				((ISynchronizeModelElement)element).setPropertyToRoot(ISynchronizeModelElement.BUSY_PROPERTY, isBusy);
 			}
 		}
 	}

@@ -19,7 +19,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.CompressedFoldersModelProvider;
+import org.eclipse.team.internal.ui.synchronize.HierarchicalModelProvider;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -164,7 +165,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#getDiffNodeController()
 	 */
-	protected SynchronizeModelProvider getModelProvider() {
+	protected ISynchronizeModelProvider getModelProvider() {
 		if(getShowCompressedFolders()) {
 			return new CompressedFoldersModelProvider((SyncInfoTree)getSyncInfoSet());
 		}

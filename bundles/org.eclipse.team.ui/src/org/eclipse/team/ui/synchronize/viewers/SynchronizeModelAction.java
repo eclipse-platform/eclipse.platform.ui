@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize.subscriber;
+package org.eclipse.team.ui.synchronize.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -20,24 +20,24 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.ui.*;
 
 /**
  * This action provides utilities for performing operations on selections that
  * are obtained from a view populated by a 
  * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
- * The {@link org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage} is an example of such a view.
+ * The {@link org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage} is an example of such a view.
  * Subclasses can use this support to filter the selection in order to 
- * determine action enablement and generate the input for a {@link SubscriberOperation}.
+ * determine action enablement and generate the input for a {@link SynchronizeModelOperation}.
  * @see SyncInfo
  * @see SyncInfoSet
  * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider
- * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage
- * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberOperation
+ * @see org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage
+ * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelOperation
  * @since 3.0
  */
-public abstract class SubscriberAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
+public abstract class SynchronizeModelAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
 	
 	private IStructuredSelection selection;
 	private IWorkbenchPart part;
@@ -61,11 +61,11 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	 * Return the subscriber operation associated with this action. This operation
 	 * will be run when the action is run. Subclass may implement this method and provide 
 	 * an operation subclass or may override the <code>run(IAction)</code> method directly
-	 * if they choose not to implement a <code>SubscriberOperation</code>.
+	 * if they choose not to implement a <code>SynchronizeModelOperation</code>.
 	 * @param elements the selected diff element for which this action is enabled.
 	 * @return the subscriber operation to be run by this action.
 	 */
-	protected abstract SubscriberOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements);
+	protected abstract SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements);
 	
 	/** 
 	 * Generic error handling code that uses an error dialog to show the error to the 

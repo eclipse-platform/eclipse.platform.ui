@@ -37,7 +37,7 @@ public interface ISynchronizeModelProvider {
 	/**
 	 * Builds the viewer model based on the contents of the sync set.
 	 */
-	public abstract SynchronizeModelElement prepareInput(IProgressMonitor monitor);
+	public abstract ISynchronizeModelElement prepareInput(IProgressMonitor monitor);
 
 	/**
 	 * The provider can try and return a mapping for the provided object. Providers often use mappings
@@ -61,7 +61,7 @@ public interface ISynchronizeModelProvider {
 	 * {@link #prepareInput(IProgressMonitor)} hasn't been called on this object yet.
 	 * @return
 	 */
-	public abstract SynchronizeModelElement getModelRoot();
+	public abstract ISynchronizeModelElement getModelRoot();
 
 	public abstract ViewerSorter getViewerSorter();
 }

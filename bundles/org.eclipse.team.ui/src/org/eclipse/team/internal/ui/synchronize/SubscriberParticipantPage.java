@@ -256,7 +256,7 @@ public final class SubscriberParticipantPage implements IPageBookViewPage, IProp
 			statusLine.fillActionBars(actionBars);
 			
 			// allow the advisor to contribute
-			getViewerConfiguration().setActionBars(actionBars);
+			getViewerAdvisor().setActionBars(actionBars);
 		}		
 	}
 
@@ -322,7 +322,7 @@ public final class SubscriberParticipantPage implements IPageBookViewPage, IProp
 		return viewer;
 	}
 	
-	public StructuredViewerAdvisor getViewerConfiguration() {
+	public StructuredViewerAdvisor getViewerAdvisor() {
 		return viewerAdvisor;
 	}
 	
@@ -331,6 +331,6 @@ public final class SubscriberParticipantPage implements IPageBookViewPage, IProp
 	}
 
 	public void setSelection(Object[] objects, boolean reveal) {
-		getViewerConfiguration().setSelection(objects, reveal);
+		getViewerAdvisor().setSelection(objects, reveal);
 	}
 }

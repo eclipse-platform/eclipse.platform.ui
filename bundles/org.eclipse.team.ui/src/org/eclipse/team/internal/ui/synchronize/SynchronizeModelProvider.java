@@ -27,7 +27,8 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.viewers.*;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelProvider;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -154,7 +155,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		/**
 	 * Builds the viewer model based on the contents of the sync set.
 	 */
-	public SynchronizeModelElement prepareInput(IProgressMonitor monitor) {
+	public ISynchronizeModelElement prepareInput(IProgressMonitor monitor) {
 		// Connect to the sync set which will register us as a listener and give us a reset event
 		// in a background thread
 		getSyncInfoSet().connect(this, monitor);
@@ -188,7 +189,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * {@link #prepareInput(IProgressMonitor)} hasn't been called on this object yet.
 	 * @return
 	 */
-	public SynchronizeModelElement getModelRoot() {
+	public ISynchronizeModelElement getModelRoot() {
 		return root;
 	}
 
@@ -201,8 +202,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 *            the resource
 	 * @return the <code>SyncInfoModelElement</code> for the given resource
 	 */
-	protected SynchronizeModelElement getModelObject(IResource resource) {
-		return (SynchronizeModelElement) resourceMap.get(resource);
+	protected ISynchronizeModelElement getModelObject(IResource resource) {
+		return (ISynchronizeModelElement) resourceMap.get(resource);
 	}
 
 	public void syncInfoChanged(final ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
@@ -217,7 +218,9 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 							BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
 								public void run() {
 									handleChanges((ISyncInfoTreeChangeEvent)event);
-									getModelRoot().fireChanges();
+									ISynchronizeModelElement root = getModelRoot();
+									if(root instanceof SynchronizeModelElement)
+										((SynchronizeModelElement)root).fireChanges();
 								}
 							});
 						}
@@ -232,13 +235,13 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param node
 	 * @return
 	 */
-	protected abstract IDiffElement[] buildModelObjects(SynchronizeModelElement node);
+	protected abstract IDiffElement[] buildModelObjects(ISynchronizeModelElement node);
 
-	protected abstract void doAdd(SynchronizeModelElement parent, SynchronizeModelElement element);
+	protected abstract void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element);
 	
-	protected abstract void doRemove(SynchronizeModelElement element);
+	protected abstract void doRemove(ISynchronizeModelElement element);
 	
-	protected void associateDiffNode(SynchronizeModelElement node) {
+	protected void associateDiffNode(ISynchronizeModelElement node) {
 		IResource resource = node.getResource();
 		if(resource != null) {
 			resourceMap.put(resource, node);
@@ -286,7 +289,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	protected abstract void handleResourceChanges(ISyncInfoTreeChangeEvent event);
 
-	protected boolean isConflicting(SynchronizeModelElement diffNode) {
+	protected boolean isConflicting(ISynchronizeModelElement diffNode) {
 		return (diffNode.getKind() & SyncInfo.DIRECTION_MASK) == SyncInfo.CONFLICTING;
 	}
 
@@ -308,7 +311,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			// remove all from tree viewer
 			IDiffElement[] elements = getModelRoot().getChildren();
 			for (int i = 0; i < elements.length; i++) {
-				doRemove((SynchronizeModelElement)elements[i]);
+				doRemove((ISynchronizeModelElement)elements[i]);
 			}
 			
 			// Rebuild the model
@@ -316,7 +319,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			buildModelObjects(getModelRoot());
 			
 			// Notify listeners that model has changed
-			getModelRoot().fireChanges();
+			ISynchronizeModelElement root = getModelRoot();
+			if(root instanceof SynchronizeModelElement) {
+				((SynchronizeModelElement)root).fireChanges();
+			}
 		} finally {
 			refreshViewer = true;
 		}
@@ -337,7 +343,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param resource
 	 */
 	protected void removeFromViewer(IResource resource) {
-		SynchronizeModelElement node = getModelObject(resource);
+		ISynchronizeModelElement node = getModelObject(resource);
 		if (node == null) return;
 		if (isConflicting(node)) {
 			setParentConflict(node, false);
@@ -356,12 +362,12 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param node
 	 *            the root node
 	 */
-	protected void clearModelObjects(SynchronizeModelElement node) {
+	protected void clearModelObjects(ISynchronizeModelElement node) {
 		IDiffElement[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IDiffElement element = children[i];
-			if (element instanceof SynchronizeModelElement) {
-				clearModelObjects((SynchronizeModelElement) element);
+			if (element instanceof ISynchronizeModelElement) {
+				clearModelObjects((ISynchronizeModelElement) element);
 			}
 		}
 		IResource resource = node.getResource();
@@ -374,7 +380,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		}
 	}
 	
-	protected void addToViewer(SynchronizeModelElement node) {
+	protected void addToViewer(ISynchronizeModelElement node) {
 		associateDiffNode(node);
 		node.addPropertyChangeListener(listener);
 		if (isConflicting(node)) {
@@ -406,7 +412,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * are accumulated and updated in a single call.
 	 * @param diffNode the diff node to be updated
 	 */
-	protected void updateLabel(SynchronizeModelElement diffNode) {
+	protected void updateLabel(ISynchronizeModelElement diffNode) {
 		pendingLabelUpdates.add(diffNode);
 	}
 	
@@ -433,15 +439,15 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		}
 	}
 
-	protected void setParentConflict(SynchronizeModelElement diffNode, boolean value) {
-		diffNode.setPropertyToRoot(SynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, value);
+	protected void setParentConflict(ISynchronizeModelElement diffNode, boolean value) {
+		diffNode.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, value);
 		updateParentLabels(diffNode);
 	}
 
-	private void updateParentLabels(SynchronizeModelElement diffNode) {
+	private void updateParentLabels(ISynchronizeModelElement diffNode) {
 		updateLabel(diffNode);
 		while (diffNode.getParent() != null) {
-			diffNode = (SynchronizeModelElement)diffNode.getParent();
+			diffNode = (ISynchronizeModelElement)diffNode.getParent();
 			updateLabel(diffNode);
 		}
 	}

@@ -153,7 +153,7 @@ public class ChangesSection extends Composite {
 	public void setViewer(Viewer viewer) {
 		this.changesViewer = viewer;
 		calculateDescription();
-		page.getViewerAdviser().addInputChangedListener(changedListener);
+		page.getViewerAdvisor().addInputChangedListener(changedListener);
 		participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().addSyncSetChangedListener(subscriberListener);
 		participant.getSubscriberSyncInfoCollector().getSyncInfoTree().addSyncSetChangedListener(outputSetListener);
 	}
@@ -288,7 +288,7 @@ public class ChangesSection extends Composite {
 	
 	public void dispose() {
 		super.dispose();
-		page.getViewerAdviser().removeInputChangedListener(changedListener);
+		page.getViewerAdvisor().removeInputChangedListener(changedListener);
 		participant.getSubscriberSyncInfoCollector().getSubscriberSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
 	}
 	
