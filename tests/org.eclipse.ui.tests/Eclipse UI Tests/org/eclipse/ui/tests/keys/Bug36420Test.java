@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
@@ -94,7 +95,7 @@ public class Bug36420Test extends UITestCase {
 		 */
 
 		// Check to see that the key binding for the given command matches.
-		ICommandManager manager = fWorkbench.getCommandManager();
+		ICommandManager manager = ((Workbench) fWorkbench).getCommandManager();
 		List keyBindings = manager.getCommand(commandId).getKeySequenceBindings();
 		Iterator keyBindingItr = keyBindings.iterator();
 		boolean found = false;

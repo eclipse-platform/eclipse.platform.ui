@@ -167,11 +167,6 @@ public class UIPreferencesAuto extends TestCase {
 			getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
-	public void testCompareViewersPref() {
-		Dialog dialog =
-			getPreferenceDialog("org.eclipse.compare.internal.ComparePreferencePage");
-		DialogCheck.assertDialogTexts(dialog, this);
-	}
 	public void testDefaultTextEditorPref() {
 		Dialog dialog =
 			getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");

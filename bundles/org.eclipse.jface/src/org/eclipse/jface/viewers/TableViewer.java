@@ -108,6 +108,7 @@ public TableViewer(Table table) {
  * @param elements the elements to add
  */
 public void add(Object[] elements) {
+	assertElementsNotNull(elements);	
 	Object[] filtered = filter(elements);
 	for (int i = 0; i < filtered.length; i++){
 		Object element = filtered[i];
@@ -557,6 +558,7 @@ public boolean isCellEditorActive() {
  * @param elements the elements to remove
  */
 public void remove(final Object[] elements) {
+	assertElementsNotNull(elements);
 	preservingSelection(new Runnable() {
 		public void run() {
 			internalRemove(elements);
@@ -584,6 +586,7 @@ public void remove(Object element) {
  * Method defined on StructuredViewer.
  */
 public void reveal(Object element) {
+	Assert.isNotNull(element);
 	Widget w = findItem(element);
 	if (w instanceof TableItem)
 		getTable().showItem((TableItem) w);

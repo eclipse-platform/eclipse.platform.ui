@@ -143,10 +143,7 @@ public class DeprecatedUIPreferences extends TestCase {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
 		DialogCheck.assertDialog(dialog, this);
 	}
-	public void testCompareViewersPref() {
-		Dialog dialog = getPreferenceDialog("org.eclipse.compare.internal.ComparePreferencePage");
-		DialogCheck.assertDialog(dialog, this);
-	}
+	
 	public void testDefaultTextEditorPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
 		DialogCheck.assertDialog(dialog, this);

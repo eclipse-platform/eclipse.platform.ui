@@ -206,6 +206,20 @@ public void addFilter(ViewerFilter filter) {
 	filters.add(filter);
 	refresh();
 }
+
+/**
+ * Asserts that the given array of elements is itself non-<code>null</code> 
+ * and contains no <code>null</code> elements.
+ * 
+ * @param elements the array to check
+ */
+protected void assertElementsNotNull(Object[] elements) {
+	Assert.isNotNull(elements);
+	for (int i = 0, n = elements.length; i < n; ++i) {
+		Assert.isNotNull(elements[i]);
+	}
+}
+
 /**
  * Associates the given element with the given widget.
  * Sets the given item's data to be the element, and maps
@@ -500,7 +514,7 @@ protected Object[] getRawChildren(Object parent) {
 		IStructuredContentProvider cp = (IStructuredContentProvider) getContentProvider();
 		if (cp != null) {
 			result = cp.getElements(parent);
-			Assert.isNotNull(result);
+			assertElementsNotNull(result);
 		}
 	}
 	return (result != null) ? result : new Object[0];

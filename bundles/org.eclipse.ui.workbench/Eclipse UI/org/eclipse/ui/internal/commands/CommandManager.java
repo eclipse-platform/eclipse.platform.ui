@@ -39,12 +39,9 @@ import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationEvent;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
 
 public final class CommandManager implements ICommandManager {
 
@@ -135,20 +132,10 @@ public final class CommandManager implements ICommandManager {
 	private Map keySequenceBindingsByCommandId = new HashMap();
 	private IMutableCommandRegistry mutableCommandRegistry;		
 	
-	// TODO review begin
-	
+	// TODO review begin	
 	private Map actionsById = new HashMap();	
 	private Map commandIdsByActionIds = new HashMap();
-	private KeySequenceBindingMachine keySequenceBindingMachine = new KeySequenceBindingMachine();
-
-	private List commandRegistryActivityBindingDefinitions = Collections.EMPTY_LIST;
-	private List commandRegistryImageBindingDefinitions = Collections.EMPTY_LIST;
-	private List commandRegistryKeySequenceBindingDefinitions = Collections.EMPTY_LIST;
-
-	private List mutableCommandRegistryActivityBindingDefinitions = Collections.EMPTY_LIST;
-	private List mutableCommandRegistryImageBindingDefinitions = Collections.EMPTY_LIST;
-	private List mutableCommandRegistryKeySequenceBindingDefinitions = Collections.EMPTY_LIST;
-	
+	private KeySequenceBindingMachine keySequenceBindingMachine = new KeySequenceBindingMachine();	
 	// TODO review end
 	
 	public CommandManager() {
@@ -267,6 +254,34 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		return keyConfiguration;
+	}
+	
+	public Map getPartialMatches(KeySequence keySequence) {
+		Map map = new HashMap();
+		
+		for (Iterator iterator = keySequenceBindingMachine.getMatchesByKeySequence().entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry entry	= (Map.Entry) iterator.next();
+			KeySequence keySequence2 = (KeySequence) entry.getKey();
+			Match match = (Match) entry.getValue();
+
+			if (keySequence2.startsWith(keySequence, false))
+				map.put(keySequence2, match.getCommandId());
+		}		
+		
+		return Collections.unmodifiableMap(map);
+	}
+	
+	public String getPerfectMatch(KeySequence keySequence) {
+		Match match = (Match) keySequenceBindingMachine.getMatchesByKeySequence().get(keySequence);
+		return match != null ? match.getCommandId() : null;
+	}
+
+	public boolean isPartialMatch(KeySequence keySequence) {
+		return !getPartialMatches(keySequence).isEmpty();
+	}
+	
+	public boolean isPerfectMatch(KeySequence keySequence) {
+		return getPerfectMatch(keySequence) != null;
 	}	
 	
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
@@ -290,7 +305,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false, false, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
@@ -310,7 +325,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);		
@@ -332,7 +347,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, true, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);		
@@ -351,7 +366,7 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, true, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, true, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);		
@@ -384,36 +399,12 @@ public final class CommandManager implements ICommandManager {
 			// TODO end temporary
 		}
 	}
-
-	// TODO private?
-	public static String[] extend(String[] strings) {
+	
+	static String[] extend(String[] strings) {
 		String[] strings2 = new String[strings.length + 1];
 		System.arraycopy(strings, 0, strings2, 0, strings.length);		
 		return strings2;
-	}	
-		
-	private void calculateActivityBindings() {
-		List activityBindingDefinitions = new ArrayList();		
-		activityBindingDefinitions.addAll(commandRegistryActivityBindingDefinitions);
-		activityBindingDefinitions.addAll(mutableCommandRegistryActivityBindingDefinitions);
-		Map activityBindingsByCommandId = new HashMap();
-		
-		for (Iterator iterator = activityBindingDefinitions.iterator(); iterator.hasNext();) {
-			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();					
-			String activityId = activityBindingDefinition.getActivityId();			
-			String commandId = activityBindingDefinition.getCommandId();
-			SortedSet sortedSet = (SortedSet) activityBindingsByCommandId.get(commandId);
-						
-			if (sortedSet == null) {
-				sortedSet = new TreeSet();
-				activityBindingsByCommandId.put(commandId, sortedSet);						
-			}
-						
-			sortedSet.add(new ActivityBinding(activityId));
-		}
-		
-		this.activityBindingsByCommandId = activityBindingsByCommandId;		
-	}
+	}		
 
 	private void calculateImageBindings() {
 		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
@@ -423,7 +414,7 @@ public final class CommandManager implements ICommandManager {
 	
 	private void calculateKeySequenceBindings() {
 		List list = new ArrayList(this.activeActivityIds);
-	
+		
 		// TODO high priority. temporary fix for M3 for automatic inheritance of activities for the specific case of the java editor scope. 
 		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") && !list.contains("org.eclipse.ui.textEditorScope"))
 			list.add("org.eclipse.ui.textEditorScope");
@@ -436,22 +427,10 @@ public final class CommandManager implements ICommandManager {
 		keySequenceBindingMachine.setActiveKeyConfigurationIds(activeKeyConfigurationIds);
 		keySequenceBindingMachine.setActiveLocales(activeLocales);
 		keySequenceBindingMachine.setActivePlatforms(activePlatforms);
-		keySequenceBindingMachine.setKeySequenceBindings0(commandRegistryKeySequenceBindingDefinitions);
-		keySequenceBindingMachine.setKeySequenceBindings1(mutableCommandRegistryKeySequenceBindingDefinitions);		
 		keySequenceBindingsByCommandId = keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
-		
-		// TODO remove
-		//System.out.println("activeActivityIds: " + Arrays.asList(activeActivityIds));
-		//System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
-		//System.out.println("activeLocales: " + Arrays.asList(activeLocales));
-		//System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
-		//System.out.println("keySequenceBindings0: " + preferenceKeySequenceBindingDefinitions);
-		//System.out.println("keySequenceBindings1: " + pluginKeySequenceBindingDefinitions);
-		//System.out.println(keySequenceBindingMachine.getMatchesByKeySequence());		
-		//System.out.println(keySequenceBindingsByCommandId);
 	}		
 	
-	public static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+	static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
 		List strings = new ArrayList();
 
 		while (keyConfigurationDefinitionId != null) {	
@@ -470,7 +449,7 @@ public final class CommandManager implements ICommandManager {
 		return (String[]) strings.toArray(new String[strings.size()]);
 	}
 
-	public static String[] getPath(String string, String separator) {
+	static String[] getPath(String string, String separator) {
 		if (string == null || separator == null)
 			return new String[0];
 
@@ -504,6 +483,22 @@ public final class CommandManager implements ICommandManager {
 				((ICommandManagerListener) commandManagerListeners.get(i)).commandManagerChanged(commandManagerEvent);
 	}
 
+	private boolean isActive(Collection activityBindings) {
+		if (activityBindings.isEmpty())
+			return true;
+		
+		Iterator iterator = activeActivityIds.iterator();
+		
+		while (iterator.hasNext()) {
+			String activeActivityId = (String) iterator.next();
+			
+			if (activityBindings.contains(new ActivityBinding(activeActivityId)));
+			return true;			
+		}
+		
+		return false;
+	}
+	
 	private void notifyCategories(Map categoryEventsByCategoryId) {	
 		for (Iterator iterator = categoryEventsByCategoryId.entrySet().iterator(); iterator.hasNext();) {	
 			Map.Entry entry = (Map.Entry) iterator.next();			
@@ -639,34 +634,47 @@ public final class CommandManager implements ICommandManager {
 			this.definedKeyConfigurationIds = definedKeyConfigurationIds;
 			definedKeyConfigurationIdsChanged = true;	
 		}
-
-		List commandRegistryActivityBindingDefinitions = new ArrayList(commandRegistry.getActivityBindingDefinitions());
-		validateActivityBindingDefinitions(commandRegistryActivityBindingDefinitions);		
-		this.commandRegistryActivityBindingDefinitions = commandRegistryActivityBindingDefinitions;
-		List mutableCommandRegistryActivityBindingDefinitions = new ArrayList(mutableCommandRegistry.getActivityBindingDefinitions());
-		validateActivityBindingDefinitions(mutableCommandRegistryActivityBindingDefinitions);
-		this.mutableCommandRegistryActivityBindingDefinitions = mutableCommandRegistryActivityBindingDefinitions;
+		
+		List activityBindingDefinitions = new ArrayList();
+		activityBindingDefinitions.addAll(commandRegistry.getActivityBindingDefinitions());
+		activityBindingDefinitions.addAll(mutableCommandRegistry.getActivityBindingDefinitions());
+		validateActivityBindingDefinitions(activityBindingDefinitions);
+		Map activityBindingsByCommandId = new HashMap();
+		
+		for (Iterator iterator = activityBindingDefinitions.iterator(); iterator.hasNext();) {
+			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();					
+			String activityId = activityBindingDefinition.getActivityId();			
+			String commandId = activityBindingDefinition.getCommandId();
+			SortedSet sortedSet = (SortedSet) activityBindingsByCommandId.get(commandId);
+			
+			if (sortedSet == null) {
+				sortedSet = new TreeSet();
+				activityBindingsByCommandId.put(commandId, sortedSet);						
+			}
+			
+			sortedSet.add(new ActivityBinding(activityId));
+		}
+		
+		this.activityBindingsByCommandId = activityBindingsByCommandId;				
 		List commandRegistryImageBindingDefinitions = new ArrayList(commandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(commandRegistryImageBindingDefinitions);		
-		this.commandRegistryImageBindingDefinitions = commandRegistryImageBindingDefinitions;		
 		List mutableCommandRegistryImageBindingDefinitions = new ArrayList(mutableCommandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(mutableCommandRegistryImageBindingDefinitions);
-		this.mutableCommandRegistryImageBindingDefinitions = mutableCommandRegistryImageBindingDefinitions;
+		// TODO prepare imageBindingMachine with ImageBindingDefinitions
+		calculateImageBindings();		
 		List commandRegistryKeySequenceBindingDefinitions = new ArrayList(commandRegistry.getKeySequenceBindingDefinitions());
 		validateKeySequenceBindingDefinitions(commandRegistryKeySequenceBindingDefinitions);		
-		this.commandRegistryKeySequenceBindingDefinitions = commandRegistryKeySequenceBindingDefinitions;		
 		List mutableCommandRegistryKeySequenceBindingDefinitions = new ArrayList(mutableCommandRegistry.getKeySequenceBindingDefinitions());
-		validateKeySequenceBindingDefinitions(mutableCommandRegistryKeySequenceBindingDefinitions);
-		this.mutableCommandRegistryKeySequenceBindingDefinitions = mutableCommandRegistryKeySequenceBindingDefinitions;
-		calculateActivityBindings();
-		calculateImageBindings();
+		validateKeySequenceBindingDefinitions(mutableCommandRegistryKeySequenceBindingDefinitions);		
+		keySequenceBindingMachine.setKeySequenceBindings0(commandRegistryKeySequenceBindingDefinitions);
+		keySequenceBindingMachine.setKeySequenceBindings1(mutableCommandRegistryKeySequenceBindingDefinitions);		
 		calculateKeySequenceBindings();
 		Map categoryEventsByCategoryId = updateCategories(categoriesById.keySet());	
 		Map commandEventsByCommandId = updateCommands(commandsById.keySet());	
 		Map keyConfigurationEventsByKeyConfigurationId = updateKeyConfigurations(keyConfigurationsById.keySet());	
 		
 		if (activeKeyConfigurationIdChanged || definedCategoryIdsChanged || definedCommandIdsChanged || definedKeyConfigurationIdsChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, activeKeyConfigurationIdChanged, false, false, definedCategoryIdsChanged, definedCommandIdsChanged, definedKeyConfigurationIdsChanged, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, activeKeyConfigurationIdChanged, false, false, definedCategoryIdsChanged, definedCommandIdsChanged, definedKeyConfigurationIdsChanged, false));
 
 		if (categoryEventsByCategoryId != null)
 			notifyCategories(categoryEventsByCategoryId);		
@@ -780,108 +788,22 @@ public final class CommandManager implements ICommandManager {
 		
 		return keyConfigurationEventsByKeyConfigurationId;			
 	}
-
-
-
-
-	// TODO move to workbench?
-	public Integer getAccelerator(String commandId) {
-		Integer accelerator = null;
-		ICommand command = getCommand(commandId);
-		
-		if (command.isDefined()) {
-			List keySequenceBindings = command.getKeySequenceBindings();	
-
-			if (!keySequenceBindings.isEmpty()) {
-				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-		
-				if (keySequenceBinding != null) {
-					KeySequence keySequence = keySequenceBinding.getKeySequence();
-					List keyStrokes = keySequence.getKeyStrokes();
 	
-					if (keyStrokes.size() == 1) {
-						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-						accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
-					}				
-				}
-			}
-		}
-
-		return accelerator;
-	}	
 	
-	// TODO move to workbench?
-	public String getAcceleratorText(String commandId) {
-		String acceleratorText = null;
-		ICommand command = getCommand(commandId);
-		
-		if (command.isDefined()) {
-			List keySequenceBindings = command.getKeySequenceBindings();	
-
-			if (!keySequenceBindings.isEmpty()) {
-				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
-		
-				if (keySequenceBinding != null)
-					acceleratorText = keySequenceBinding.getKeySequence().format();
-			}
-		}
-
-		return acceleratorText;
-	}
-	 
-	public Map getKeySequenceBindingsByCommandId() {
-		return keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
-	}
 	
-	public Map getKeySequenceBindingsByCommandIdForMode() {
-		return keySequenceBindingMachine.getKeySequenceBindingsByCommandIdForMode();
-	}
 
-	public Map getMatchesByKeySequence() {
-		return keySequenceBindingMachine.getMatchesByKeySequence();
-	}
-
-	public Map getMatchesByKeySequenceForMode() {
-		return keySequenceBindingMachine.getMatchesByKeySequenceForMode();
-	}
-
-	public KeySequence getMode() {
-		return keySequenceBindingMachine.getMode();	
-	}
-	
-	public boolean setMode(KeySequence mode) {
-		return keySequenceBindingMachine.setMode(mode);
-	}	 
-
-	// TODO necessary?
 	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
 	}
 
-	// TODO necessary?
-	public IMutableCommandRegistry getMutableCommandRegistry() {
+	IMutableCommandRegistry getMutableCommandRegistry() {
 		return mutableCommandRegistry;
 	}
 	
-	private boolean isActive(Collection activityBindings) {
-		if (activityBindings.isEmpty())
-			return true;
-		
-		Iterator iterator = activeActivityIds.iterator();
-		
-		while (iterator.hasNext()) {
-			String activeActivityId = (String) iterator.next();
-			
-			if (activityBindings.contains(new ActivityBinding(activeActivityId)));
-				return true;			
-		}
-		
-		return false;
-	}
-	
-	/* TODO			
 
-	
+
+
+	/* TODO			
 		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
 
 		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {

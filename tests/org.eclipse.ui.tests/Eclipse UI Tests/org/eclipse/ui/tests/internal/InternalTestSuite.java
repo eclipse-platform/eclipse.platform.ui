@@ -33,5 +33,6 @@ public class InternalTestSuite extends TestSuite {
 		addTest(new TestSuite(EditorActionBarsTest.class));
 		addTest(new TestSuite(ActionSetExpressionTest.class));
 		addTest(new TestSuite(PopupMenuExpressionTest.class));
+		addTest(new TestSuite(Bug41931Test.class));
 	}
 }

@@ -11,7 +11,10 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
@@ -139,6 +142,26 @@ public interface ICommandManager {
 	 * @return          	     a handle to a key configuration.
 	 */	
 	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);	
+		
+	/**
+	 * TODO javadoc
+	 */
+	Map getPartialMatches(KeySequence keySequence);
+	
+	/**
+	 * TODO javadoc
+	 */
+	String getPerfectMatch(KeySequence keySequence);
+
+	/**
+	 * TODO javadoc
+	 */
+	boolean isPartialMatch(KeySequence keySequence);
+	
+	/**
+	 * TODO javadoc
+	 */
+	boolean isPerfectMatch(KeySequence keySequence);	
 	
 	/**
 	 * Unregisters an instance of <code>ICommandManagerListener</code> 
@@ -179,5 +202,5 @@ public interface ICommandManager {
 	/**
 	 * TODO javadoc
 	 */
-	void setActivePlatform(String activePlatform);	
+	void setActivePlatform(String activePlatform);
 }

@@ -214,7 +214,7 @@ private void movePart(LayoutPart part, int position, EditorWorkbook relativePart
 		((EditorWorkbook)part).becomeActiveWorkbook(true);
 	}
 	else {
-		EditorWorkbook newWorkbook = new EditorWorkbook(editorArea);
+		EditorWorkbook newWorkbook = EditorWorkbook.newEditorWorkbook(editorArea);
 		sashContainer.add(newWorkbook, relativePosition, (float) 0.5, relativePart);
 		newWorkbook.add(part);
 		newWorkbook.becomeActiveWorkbook(true);
@@ -454,10 +454,5 @@ private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
 public ArrayList getWorkbooks() {
 	return editorArea.getEditorWorkbooks();
 }
-/**
- * Open the list of editors
- */
-public void openEditorList() {
-		editorArea.getActiveWorkbook().openEditorList();
-}
+
 }

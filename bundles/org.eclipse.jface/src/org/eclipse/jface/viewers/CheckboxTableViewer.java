@@ -10,14 +10,24 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.SWT;
-import java.util.*;
-import java.util.List;
 
 /**
  * A concrete viewer based on an SWT <code>Table</code>
@@ -324,6 +334,7 @@ public void setAllGrayed(boolean state) {
  * Method declared on ICheckable.
  */
 public boolean setChecked(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = findItem(element);
 	if (widget instanceof TableItem) {
 		((TableItem) widget).setChecked(state);
@@ -344,6 +355,7 @@ public boolean setChecked(Object element, boolean state) {
  * @see #getCheckedElements
  */
 public void setCheckedElements(Object[] elements) {
+	assertElementsNotNull(elements);
 	Set set = new HashSet(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
 		set.add(elements[i]);
@@ -371,6 +383,7 @@ public void setCheckedElements(Object[] elements) {
  *  state could be set, and <code>false</code> otherwise
  */
 public boolean setGrayed(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = findItem(element);
 	if (widget instanceof TableItem) {
 		((TableItem) widget).setGrayed(state);
@@ -392,6 +405,7 @@ public boolean setGrayed(Object element, boolean state) {
  * @see #getGrayedElements
  */
 public void setGrayedElements(Object[] elements) {
+	assertElementsNotNull(elements);
 	Set set = new HashSet(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
 		set.add(elements[i]);

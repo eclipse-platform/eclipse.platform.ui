@@ -2,7 +2,6 @@
 <classpath>
     <classpathentry kind="src" path="Eclipse UI"/>
     <classpathentry kind="src" path="Eclipse UI Editor Support"/>
-    <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.help"/>
     <classpathentry kind="src" path="/org.eclipse.jface"/>
     <classpathentry exported="true" kind="src" path="/org.eclipse.swt"/>

@@ -73,7 +73,7 @@ public class ZoomTestCase extends UITestCase {
 	protected void differentWorkbookSetUp() {
 		EditorPane pane = (EditorPane)((PartSite)editor1.getSite()).getPane();
 		EditorArea area = pane.getWorkbook().getEditorArea();
-		EditorWorkbook workbook = new EditorWorkbook(area);
+		EditorWorkbook workbook = EditorWorkbook.newEditorWorkbook(area);
 
 		area.add(workbook, IPageLayout.BOTTOM, (float) 0.5, pane.getWorkbook());
 		workbook.add(pane);
@@ -109,7 +109,7 @@ public class ZoomTestCase extends UITestCase {
 				page.removeFastView(ref);
 			return view;
 		} catch(PartInitException e) {
-		}	;	
+		}
 		return null;
 	}
 	// show the given view
@@ -120,7 +120,7 @@ public class ZoomTestCase extends UITestCase {
 			Assert.assertTrue(page.isFastView(ref));
 			return view;
 		} catch(PartInitException e) {
-		}	;	
+		}
 		return null;
 	}
 	// returns whether this part is zoomed

@@ -538,13 +538,8 @@ private void handleWidgetSelection(Event e, boolean selection) {
 			long ms = System.currentTimeMillis();
 			if(trace)
 				System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
-			
-			/* TODO this may be necessary. check after M4.
-			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
-						
-			if (callback == null || callback.isKeyFilterEnabled())
-			*/
-				action.runWithEvent(e);
+
+			action.runWithEvent(e);
 			
 			if(trace)
 				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: "  + action.getText()); //$NON-NLS-1$
@@ -683,33 +678,21 @@ public void update(String propertyName) {
 							accelerator = callback.getAccelerator(commandId);
 							acceleratorText = callback.getAcceleratorText(commandId);
 						} 
-						/*
-						else
-							System.out.println("command is null for action: " + action + ", " + action.getId() + ", " + action.getText());
-						*/
 					} 
 				} 
-				
+											
 				IContributionManagerOverrides overrides = null;
 					
 				if (getParent() != null)
 					overrides = getParent().getOverrides();
 					
-				if (overrides != null) {
+				if (overrides != null)
 					text = getParent().getOverrides().getText(this);
-
-					if (acceleratorText == null)
-						acceleratorText = overrides.getAcceleratorText(this); // TODO remove
-
-					if (accelerator == null)
-						accelerator = overrides.getAccelerator(this); // TODO remove
-				}
 				
 				if (accelerator == null)
 					accelerator = new Integer(action.getAccelerator());
-
-				if (accelerator != null)
-					mi.setAccelerator(accelerator.intValue());		
+								
+				mi.setAccelerator(accelerator.intValue());
 
 				if (text == null)
 					text = action.getText();

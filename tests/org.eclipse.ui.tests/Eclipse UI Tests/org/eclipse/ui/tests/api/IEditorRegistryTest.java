@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.FileUtil;
@@ -33,30 +34,26 @@ public class IEditorRegistryTest extends TestCase {
 	private IEditorRegistry fReg;
 	private IProject proj;	
 
-	public IEditorRegistryTest( String testName )
-	{
+	public IEditorRegistryTest(String testName) {
 		super( testName );		
 	}
 	
-	public void setUp()
-	{                                                              
+	public void setUp() {
 		fReg = PlatformUI.getWorkbench().getEditorRegistry();		
 	}
 	
-	public void tearDown()
-	{
+	public void tearDown() {
 		if( proj != null ){
 			try{
 				FileUtil.deleteProject( proj );
-			}catch( CoreException e )
-			{
+			} catch (CoreException e) {
+				TestPlugin.getDefault().getLog().log(e.getStatus());
 				fail();
 			}
 		}
 	}
 
-	public void testGetFileEditorMappings()
-	{
+	public void testGetFileEditorMappings() {
 		assertTrue( ArrayUtil.checkNotNull( fReg.getFileEditorMappings() ) );
 	}
 	
@@ -65,8 +62,7 @@ public class IEditorRegistryTest extends TestCase {
 	 *	IEditorDescriptor[] getEditors(IFile file) 
 	 *	IEditorDescriptor[] getEditors(String filename)  
 	 */
-	public void testGetEditors() throws Throwable
-	{		
+	public void testGetEditors() throws Throwable {
 		IEditorDescriptor[] editors, editors2;
 		String[][] maps = {
 			{"a.mock1", MockEditorPart.ID1 },
@@ -79,7 +75,7 @@ public class IEditorRegistryTest extends TestCase {
 			editors = fReg.getEditors( maps[i][0] );
 			assertEquals( editors.length, 1 );
 			assertEquals( editors[ 0 ].getId(), maps[i][1] );
-			editors2 = fReg.getEditors( FileUtil.createFile( maps[i][0], proj ).getName() );
+			editors2 = fReg.getEditors(FileUtil.createFile(maps[i][0], proj).getName());
 			assertEquals( ArrayUtil.equals( editors, editors2 ), true );
 		}
 
@@ -87,12 +83,11 @@ public class IEditorRegistryTest extends TestCase {
 		String fileName = IConstants.UnknownFileName[0];
 		editors = fReg.getEditors( fileName );
 		assertEquals( editors.length, 0 );
-		editors = fReg.getEditors( FileUtil.createFile( fileName, proj ).getName());
+		editors = fReg.getEditors(FileUtil.createFile(fileName, proj).getName());
 		assertEquals( editors.length, 0 );
 	}
 
-	public void testFindEditor() 
-	{
+	public void testFindEditor() {
 		String id = MockEditorPart.ID1;	
 		IEditorDescriptor editor = fReg.findEditor( id );		
 		assertEquals( editor.getId(), id );		
@@ -106,16 +101,14 @@ public class IEditorRegistryTest extends TestCase {
 	/**
 	 * getDefaultEditor()
 	 */	
-	public void testGetDefaultEditor()
-	{		
+	public void testGetDefaultEditor() {
 		assertNotNull( fReg.getDefaultEditor() );	
 	}	
 
 	/**
 	 * getDefaultEditor(String fileName)
 	 */
-	public void testGetDefaultEditor2()
-	{
+	public void testGetDefaultEditor2() {
 		IEditorDescriptor editor = fReg.getDefaultEditor( "a.mock1" );
 		assertEquals( editor.getId(), MockEditorPart.ID1 );
 		
@@ -130,14 +123,13 @@ public class IEditorRegistryTest extends TestCase {
 	/**
 	 * getDefaultEditor(IFile file)	
 	 */
-	public void testGetDefaultEditor3() throws Throwable
-	{
+	public void testGetDefaultEditor3() throws Throwable {
 		proj = FileUtil.createProject("testProject");
 		
 		IFile file = FileUtil.createFile("Whats up.bro", proj);
 		String id = MockEditorPart.ID1;
-		IDE.setDefaultEditor( file, id );
-		IEditorDescriptor editor = IDE.getDefaultEditor( file );
+		IDE.setDefaultEditor(file, id);
+		IEditorDescriptor editor = IDE.getDefaultEditor(file);
 		assertEquals( editor.getId(), id );
 		
 		//attach an IFile object with a registered extension to a different editor
@@ -159,8 +151,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertNull( IDE.getDefaultEditor( file ) );
 	}
 	
-	public void testSetDefaultEditor() throws Throwable
-	{
+	public void testSetDefaultEditor() throws Throwable {
 		proj = FileUtil.createProject("testProject");		
 		IFile file = FileUtil.createFile("good.file", proj);
 
@@ -185,8 +176,7 @@ public class IEditorRegistryTest extends TestCase {
 	 *	getImageDescriptor(IFile file)    
 	 * 	getImageDescriptor(String filename)  
 	 */
-	public void testGetImageDescriptor() throws Throwable
-	{
+	public void testGetImageDescriptor() throws Throwable {
 		proj = FileUtil.createProject("testProject");		
 		
 		
@@ -217,8 +207,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals( image2, fReg.getImageDescriptor( file.getName() ) );
 	}
 	
-	public void testAddPropertyListener() throws Throwable
-	{
+	public void testAddPropertyListener() throws Throwable {
 		final String METHOD = "propertyChanged";
 		
 		//take out mappings from the registry and put them back right away
@@ -227,12 +216,14 @@ public class IEditorRegistryTest extends TestCase {
 		FileEditorMapping[] maps = new FileEditorMapping[src.length];
 		System.arraycopy( src, 0, maps, 0, src.length);
 
-		MockPropertyListener listener = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
+		MockPropertyListener listener =
+			new MockPropertyListener(fReg, IEditorRegistry.PROP_CONTENTS);
 		fReg.addPropertyListener( listener );
 		CallHistory callTrace = listener.getCallHistory();
 
 		//multiple listener
-		MockPropertyListener listener2 = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
+		MockPropertyListener listener2 =
+			new MockPropertyListener(fReg, IEditorRegistry.PROP_CONTENTS);
 		fReg.addPropertyListener( listener2 );
 		CallHistory callTrace2 = listener2.getCallHistory();
 
@@ -250,20 +241,19 @@ public class IEditorRegistryTest extends TestCase {
 		callTrace.clear();
 		((EditorRegistry)fReg).setFileEditorMappings( maps );				
 		//make sure the method was called only once
-		assertEquals( callTrace.verifyOrder( 
-			new String[] { METHOD } ), true);
+		assertEquals(callTrace.verifyOrder(new String[] { METHOD }), true);
 		
 		fReg.removePropertyListener( listener );
 		fReg.removePropertyListener( listener2 );
 	}
 	
-	public void testRemovePropertyListener()
-	{
+	public void testRemovePropertyListener() {
 		IFileEditorMapping[] src = fReg.getFileEditorMappings();
 		FileEditorMapping[] maps = new FileEditorMapping[src.length];
 		System.arraycopy( src, 0, maps, 0, src.length);
 	
-		MockPropertyListener listener = new MockPropertyListener( fReg, IEditorRegistry.PROP_CONTENTS );
+		MockPropertyListener listener =
+			new MockPropertyListener(fReg, IEditorRegistry.PROP_CONTENTS);
 		fReg.addPropertyListener( listener );
 		//remove the listener immediately after adding it
 		fReg.removePropertyListener( listener );
@@ -277,8 +267,7 @@ public class IEditorRegistryTest extends TestCase {
 		//removing the listener that is not registered yet should have no effect
 		try{
 			fReg.removePropertyListener( listener );	
-		}catch( Throwable e )
-		{
+		} catch (Throwable e) {
 			fail();
 		}
 	}

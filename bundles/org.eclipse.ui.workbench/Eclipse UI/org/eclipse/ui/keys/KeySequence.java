@@ -134,6 +134,25 @@ public final class KeySequence implements Comparable {
 	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
 	}
+	
+	/**
+	 * Gets an instance of <code>KeySequence</code> given a key sequence and 
+	 * a key stroke.
+	 * 
+	 * @param  KeySequence a key sequence. Must not be <code>null</code>.
+	 * @param  keyStroke   a key stroke. Must not be <code>null</code>.
+	 * @return             a key sequence that is equal to the given key 
+	 * 					   sequence with the given key stroke appended to the 
+	 * 					   end. Guaranteed not to be <code>null</code>.
+	 */	
+	public static KeySequence getInstance(KeySequence keySequence, KeyStroke keyStroke) {
+		if (keySequence == null || keyStroke == null)
+			throw new NullPointerException();
+		
+		List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
+		keyStrokes.add(keyStroke);		
+		return new KeySequence(keyStrokes);
+	}	
 
 	/**
 	 * Gets an instance of <code>KeySequence</code> by parsing a given a formal
@@ -284,25 +303,6 @@ public final class KeySequence implements Comparable {
 	}
 
 	/**
-	 * Returns whether or not the given key sequence is a child of this key 
-	 * sequence. A given key sequence is a child of this key sequence if the 
-	 * list of key strokes of the given key sequence start with the list of key 
-	 * strokes of this key sequence.
-	 * 
-	 * @param  keySequence a key sequence. Must not be <code>null</code>.
-	 * @param  equals 	   whether or not an identical key sequence should be 
-	 *                     considered a child.
-	 * @return 			   <code>true</code>, iff the given key sequence is a 
-	 * 					   child of this key sequence.
-	 */
-	public boolean isChildOf(KeySequence keySequence, boolean equals) {
-		if (keySequence == null)
-			throw new NullPointerException();
-		
-		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
-	}
-
-	/**
 	 * Returns whether or not this key sequence is complete. Key sequences are 
 	 * complete iff all of their key strokes are complete.
 	 * 
@@ -311,7 +311,34 @@ public final class KeySequence implements Comparable {
 	public boolean isComplete() {
 		return keyStrokes.isEmpty() || ((KeyStroke) keyStrokes.get(keyStrokes.size() - 1)).isComplete();
 	}	
+
+	/**
+	 * Returns whether or not this key sequence is empty. Key sequences are 
+	 * complete iff they have no key strokes.
+	 * 
+	 * @return <code>true</code>, iff the key sequence is empty.
+	 */
+	public boolean isEmpty() {
+		return keyStrokes.isEmpty();
+	}	
 	
+	/**
+	 * Returns whether or not this key sequence starts with the given key 
+	 * sequence.
+	 * 
+	 * @param  keySequence a key sequence. Must not be <code>null</code>.
+	 * @param  equals 	   whether or not an identical key sequence should be 
+	 *                     considered as a possible match.
+	 * @return 			   <code>true</code>, iff the given key sequence starts 
+	 * 					   with this key sequence.
+	 */
+	public boolean startsWith(KeySequence keySequence, boolean equals) {
+		if (keySequence == null)
+			throw new NullPointerException();
+		
+		return Util.startsWith(keyStrokes, keySequence.keyStrokes, equals);
+	}
+
 	/**
 	 * Returns the formal string representation for this key sequence.
 	 * 

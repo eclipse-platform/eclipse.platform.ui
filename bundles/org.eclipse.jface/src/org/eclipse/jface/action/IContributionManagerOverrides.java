@@ -41,7 +41,12 @@ public interface IContributionManagerOverrides {
 	 */
 	public Boolean getEnabled(IContributionItem item);
 	
+	// TODO deprecate before 3.0
 	public Integer getAccelerator(IContributionItem item);
+	
+	// TODO deprecate before 3.0
 	public String getAcceleratorText(IContributionItem item);
+	
+	// TODO deprecate before 3.0 (?)
 	public String getText(IContributionItem item);
 }

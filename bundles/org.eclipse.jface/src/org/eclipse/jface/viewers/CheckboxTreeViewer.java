@@ -10,14 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.SWT;
-import java.util.*;
-import java.util.List;
 
 /**
  * A concrete tree-structured viewer based on an SWT <code>Tree</code>
@@ -352,6 +363,7 @@ public void removeCheckStateListener(ICheckStateListener listener) {
  * Method declared on ICheckable.
  */
 public boolean setChecked(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = internalExpand(element, false);
 	if (widget instanceof TreeItem) {
 		((TreeItem) widget).setChecked(state);
@@ -393,6 +405,7 @@ private void setCheckedChildren(Item item, boolean state) {
  * @see #getCheckedElements
  */
 public void setCheckedElements(Object[] elements) {
+	assertElementsNotNull(elements);
 	Set checkedElements = new HashSet(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
 		// Ensure item exists for element
@@ -414,6 +427,7 @@ public void setCheckedElements(Object[] elements) {
  *  and <code>false</code> otherwise
  */
 public boolean setGrayed(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = internalExpand(element, false);
 	if (widget instanceof TreeItem) {
 		((TreeItem) widget).setGrayed(state);
@@ -430,6 +444,7 @@ public boolean setGrayed(Object element, boolean state) {
  * @return boolean indicating success or failure.
  */
 public boolean setGrayChecked(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = internalExpand(element, false);
 	if (widget instanceof TreeItem) {
 		TreeItem item = (TreeItem) widget;
@@ -454,6 +469,7 @@ public boolean setGrayChecked(Object element, boolean state) {
  * @see #getGrayedElements
  */
 public void setGrayedElements(Object[] elements) {
+	assertElementsNotNull(elements);
 	Set grayedElements = new HashSet(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
 		// Ensure item exists for element
@@ -477,6 +493,7 @@ public void setGrayedElements(Object[] elements) {
  * @see #setGrayed
  */
 public boolean setParentsGrayed(Object element, boolean state) {
+	Assert.isNotNull(element);
 	Widget widget = internalExpand(element, false);
 	if (widget instanceof TreeItem) {
 		TreeItem item = (TreeItem) widget;

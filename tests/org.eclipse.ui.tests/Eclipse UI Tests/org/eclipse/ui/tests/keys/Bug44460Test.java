@@ -29,6 +29,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchActivitiesCommandsAndRoles;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -78,7 +79,7 @@ public class Bug44460Test extends UITestCase {
 		String classContents = "public class Main { public static main(String[] args) { ; } }"; //$NON-NLS-1$
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(classContents.getBytes());
 		javaFile.create(inputStream, true, null);
-		window.getActivePage().openEditor(javaFile);
+		IDE.openEditor(window.getActivePage(), javaFile, true);
 
 		// Switch to the team synchronizing perspective.
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
