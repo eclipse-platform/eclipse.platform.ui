@@ -57,7 +57,7 @@ public void run() {
 	Shell parent = workbench.getActiveWorkbenchWindow().getShell();
 	WizardDialog dialog = new WizardDialog(parent, wizard);
 	dialog.create();
-	dialog.getShell().setSize(SIZING_WIZARD_WIDTH,SIZING_WIZARD_HEIGHT);
+	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
 	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.EXPORT_WIZARD});
 	dialog.open();
 }
