@@ -23,6 +23,11 @@
 <extension-point id="configurationWizards" name="Configuration Wizards"/>
 <extension-point id="targetConfigWizards" name="Target Site Addition Wizards"/>
 
+<!-- *************** Help **************** -->
+   <extension point="org.eclipse.help.contexts"> 
+       <contexts file="help_contexts.xml" plugin="org.eclipse.team.ui"/> 
+   </extension>
+
 <!-- **************** PREFERENCES ******************* -->
    <extension
       point = "org.eclipse.ui.preferencePages">

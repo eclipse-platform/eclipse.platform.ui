@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+
+ 	<!-- ********************************** -->
+ 	<!-- Preference Pages 					-->
+ 	<!-- ********************************** -->
+ 	<context  id="ignore_preference_page_context" >
+      <description>You may wish to exclude certain resources from version control. Resources whose names match any enabled pattern will not be released. The wildcard characters '*' and '?' are permitted. These settings will not affect resources already under version control. Use this page to specify a list of resource name patterns to ignore.
+      </description>
+      <!-- Old reference fom 1.0 -->
+      <topic label="More info" href="reference/ref20.html"/>
+   	</context>
+</contexts>
