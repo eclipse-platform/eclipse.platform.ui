@@ -12,7 +12,7 @@ package org.eclipse.core.boot;
 
 import java.io.IOException;
 import java.net.URL;
-import org.eclipse.core.internal.boot.OldPlatformConfiguration;
+import org.eclipse.core.internal.boot.PlatformConfiguration;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
@@ -101,7 +101,7 @@ public final class BootLoader implements Constants {
 		// get the configuration using the factory
 		IPlatformConfiguration currentConfig = configFactory.getCurrentPlatformConfiguration();
 		context.ungetService(configFactorySR);
-		return new OldPlatformConfiguration(currentConfig);
+		return new PlatformConfiguration(currentConfig);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public final class BootLoader implements Constants {
 		// get the configuration using the factory
 		IPlatformConfiguration config = configFactory.getPlatformConfiguration(url);
 		context.ungetService(configFactorySR);
-		return new OldPlatformConfiguration(config);
+		return new PlatformConfiguration(config);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003-2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,10 @@ import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.boot.IPlatformConfiguration;
 
-//TODO: any good reason for the name? other classes in the package have the same purpose (adapting legacy to new APIs) but don't have "Old" in their names
-public class OldPlatformConfiguration implements IPlatformConfiguration {
+public class PlatformConfiguration implements IPlatformConfiguration {
 	private org.eclipse.update.configurator.IPlatformConfiguration newConfig;
 
-	public OldPlatformConfiguration(org.eclipse.update.configurator.IPlatformConfiguration config) {
+	public PlatformConfiguration(org.eclipse.update.configurator.IPlatformConfiguration config) {
 		newConfig = config;
 	}
 
@@ -142,8 +141,8 @@ public class OldPlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	public boolean equals(Object o) {
-		if (o instanceof OldPlatformConfiguration)
-			return newConfig.equals(((OldPlatformConfiguration) o).newConfig);
+		if (o instanceof PlatformConfiguration)
+			return newConfig.equals(((PlatformConfiguration) o).newConfig);
 		return false;
 	}
 
