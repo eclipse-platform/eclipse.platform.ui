@@ -243,7 +243,7 @@ public class UpdateSearchRequest {
  */
 	private IUpdateSiteAdapter getMappedSite(UpdateMap map, IQueryUpdateSiteAdapter qsite) {
 		if (map!=null && map.isLoaded()) {
-			IUpdateSiteAdapter mappedSite = map.getMappedUpdateURL(qsite.getMappingId());
+			IUpdateSiteAdapter mappedSite = map.getMappedSite(qsite.getMappingId());
 			if (mappedSite!=null) return mappedSite;
 		}
 		// no match - use original site

@@ -132,7 +132,7 @@ public class UpdateMap {
 	 * the update URL encoded in the feature itself during the
 	 * new update search.
 	 */
-	public IUpdateSiteAdapter getMappedUpdateURL(String id) {
+	public IUpdateSiteAdapter getMappedSite(String id) {
 		for (int i = 0; i < entries.size(); i++) {
 			UpdateMapEntry entry = (UpdateMapEntry) entries.get(i);
 			if (entry.matches(id))
