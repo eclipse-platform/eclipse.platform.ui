@@ -362,19 +362,35 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				}
 			}
 		});
-		//if the job is done at this point, we don't need the dialog
-		if (job.getState() == Job.NONE)
-			return;
-		//now open the progress dialog
-		open();
-		// add a listener that will close the dialog when the job completes.
-		IJobChangeListener listener = createCloseListener();
-		job.addJobChangeListener(listener);
-		if (job.getState() == Job.NONE) {
-			//if the job completed before we had a chance to add
-			//the listener, just remove the listener and return
-			job.removeJobChangeListener(listener);
-			close();
-		}
+		
+		WorkbenchJob openJob = new WorkbenchJob("Open user dialog"){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				//if the job is done at this point, we don't need the dialog
+				if (job.getState() == Job.NONE)
+					return Status.CANCEL_STATUS;
+				
+				//now open the progress dialog if nothing else is
+				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+					return Status.CANCEL_STATUS;
+				
+				open();
+				// add a listener that will close the dialog when the job completes.
+				IJobChangeListener listener = createCloseListener();
+				job.addJobChangeListener(listener);
+				if (job.getState() == Job.NONE) {
+					//if the job completed before we had a chance to add
+					//the listener, just remove the listener and return
+					job.removeJobChangeListener(listener);
+					close();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		openJob.schedule();
+		
 	}
 }
