@@ -921,4 +921,14 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 	public void partInputChanged(IWorkbenchPartReference ref) {
 	}
+
+	/**
+	 * The launch view associated with this context listener has
+	 * been disposed. Remove as a context listener.
+	 *
+	 */
+	public void dispose() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getContextSupport().getContextManager().removeContextManagerListener(this);
+	}
 }

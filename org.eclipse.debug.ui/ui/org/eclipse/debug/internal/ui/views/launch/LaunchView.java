@@ -438,7 +438,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (getViewer() != null) {
 			getViewer().removeSelectionChangedListener(this);
 		}
-		if (fContextListener != null {
+		if (fContextListener != null) {
 			fContextListener.dispose();
 		}
 		getSite().getPage().removePartListener(this);
