@@ -32,11 +32,11 @@ public interface IExtension {
 	 * @return the configuration elements declared by this extension 
 	 */
 	public IConfigurationElement[] getConfigurationElements();
-	/** 
+	/**
 	 * Returns the descriptor of the plug-in that declares this extension.
-	 *
+	 * 
 	 * @return the plug-in that declares this extension
-	 * @deprecated use {@link #getParentIdentifier() getParentIdentifier()}
+	 *  
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 

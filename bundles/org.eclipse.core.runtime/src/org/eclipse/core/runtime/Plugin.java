@@ -245,10 +245,6 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor
-	 * @deprecated The new runtime no longer uses <code>IPluginDescriptor</code>s or manages the instances
-	 * of the plug-in runtime classes.  Legacy plug-ins using the compatibility layer can continue to implement 
-	 * this method but new runtime plug-ins need not implement it as it will never be called.  Instead they should 
-	 * implement one of @link #Plugin() Plugin() or @link #Plugin(BundleContext) Plugin(BundleContext).
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
@@ -298,7 +294,6 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns the plug-in descriptor for this plug-in runtime object.
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
-	 * @deprecated
 	 */
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor!=null)
@@ -363,7 +358,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue
 	 * @see Preferences#setToDefault
 	 * @since 2.0
-	 * @deprecated TODO 
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
@@ -468,7 +462,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#store
 	 * @see Preferences#needsSaving
 	 * @since 2.0
-	 * @deprecated TODO
 	 */
 	public final void savePluginPreferences() {
 		if (preferences == null || !preferences.needsSaving()) {
@@ -714,10 +707,6 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
-	 * @deprecated Legacy plug-ins using the compatibility 
-	 * layer will continue to be stopped using this method however the new runtime 
-	 * no longer uses it.  As such, new runtime plug-ins need not implement it rather they should 
-	 * implement @link #stop() stop().
 	 */
 	public void shutdown() throws CoreException {
 		Method m;
@@ -777,10 +766,6 @@ public abstract class Plugin implements BundleActivator {
 	 * <b>Clients must never explicitly call this method.</b>
 	 *
 	 * @exception CoreException if this plug-in did not start up properly
-	 * @deprecated Legacy plug-ins using the compatibility 
-	 * layer will continue to be started using this method however the new runtime 
-	 * no longer uses it.  As such, new runtime plug-ins need not implement it rather they should 
-	 * implement @link #start() start().
 	 */
 	public void startup() throws CoreException {
 	}

@@ -343,7 +343,6 @@ public final class Platform {
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
 	 * @return the plug-in runtime object, or <code>null</code>
-	 * @deprecated TODO
 	 */
 	public static Plugin getPlugin(String id) {
 		try {
@@ -361,7 +360,6 @@ public final class Platform {
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
-	 * @deprecated Use @link #getExtensionRegistry() getExtensionRegistry
 	 */
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);

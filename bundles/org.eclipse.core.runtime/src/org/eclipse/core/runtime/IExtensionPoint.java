@@ -36,11 +36,9 @@ public interface IExtensionPoint {
 	 * Returns the descriptor of the plug-in that declares this extension point.
 	 *
 	 * @return the plug-in that declares this extension point
-	 * @deprecated {@link #getParentIdentifier() IExtensionPoint#getParentIdentifier()}
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 
-	//TODO Add a method returning the long ?
 	/**
 	 * Returns the identifier of the parent of this extension point.  This value can be used
 	 * in various global facilities to discover the actual parent.

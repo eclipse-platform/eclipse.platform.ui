@@ -50,7 +50,6 @@ import org.eclipse.core.internal.runtime.*;
  * </p>
  * @see IPluginDescriptor#getVersionIdentifier
  * @see java.lang.String#compareTo 
- * @deprecated TODO
  */
 public final class PluginVersionIdentifier {
 

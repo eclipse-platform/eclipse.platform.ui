@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.boot;
 
-/** @deprecated Use org.eclipse.core.runtime.IPlatformRunnable instead. */
 public interface IPlatformRunnable extends  org.eclipse.core.runtime.IPlatformRunnable {
 
 }

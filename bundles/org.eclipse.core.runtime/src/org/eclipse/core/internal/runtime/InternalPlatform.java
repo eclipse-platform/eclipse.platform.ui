@@ -1094,9 +1094,7 @@ public final class InternalPlatform implements IPlatform {
 	public EnvironmentInfo getEnvironmentInfoService() {
 		return infoService;
 	}
-	/**
-	 * @deprecated either look for the IPlatform service or see if the runtime bundle is started.
-	 */
+	
 	public boolean isRunning() {
 		int state = context.getBundle(PI_RUNTIME).getState();
 		return state == Bundle.ACTIVE;

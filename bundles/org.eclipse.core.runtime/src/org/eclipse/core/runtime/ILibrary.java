@@ -24,9 +24,6 @@ package org.eclipse.core.runtime;
 * </p>
 *
 * @see IPluginDescriptor#getRuntimeLibraries 
-* @deprecated: No replacement class is being provided. Equivalent information are available 
-* from the bundle headers.
-* {@link org.osgi.framework.Bundle#getHeaders() Bundle.getHeaders().get(org.osgi.framework.Constants#BUNDLE_CLASSPATH)}
 */
 public interface ILibrary {
 	/**

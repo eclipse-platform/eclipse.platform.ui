@@ -20,7 +20,7 @@ import java.net.URL;
  * platform
  * 
  * @since 2.0
- * @deprecated: Because of the refactoring operated around the concept of configuration
+
  * the class now moved into the update component. See {@link org.eclipse.update.configurator.IPlatformConfiguration org.eclipse.update.configurator.IPlatformConfiguration}.
  * Note that now the platform exposes a concept of configuration area and also makes available the last modification time.
  */
@@ -30,7 +30,6 @@ public interface IPlatformConfiguration {
 	 * Configuration entry representing an install site.
 	 * 
 	 * @since 2.0 
-	 * @deprecated: Should use the interface in the update
 	 */
 	public interface ISiteEntry {
 
@@ -150,7 +149,6 @@ public interface IPlatformConfiguration {
 	 * </ul>
 	 * 
 	 * @since 2.0
-	 * @deprecated: Should use the interface in the update 
 	 */
 	public interface ISitePolicy extends org.eclipse.update.configurator.IPlatformConfiguration.ISitePolicy {
 
@@ -212,7 +210,6 @@ public interface IPlatformConfiguration {
 	 * specified command line arguments or computed defaults.
 	 * 
 	 * @since 2.0
-	 * @deprecated: Should use the interface in the update
 	 */
 	public interface IFeatureEntry {
 
@@ -438,7 +435,6 @@ public interface IPlatformConfiguration {
 	 * @return configuration location URL, or <code>null</code> if the
 	 * configuration location could not be determined.
 	 * @since 2.0
-	 * @deprecated Use {@link org.eclipse.core.runtime.IPlatform#getConfigurationMetadataLocation() IPlatform#getConfigurationMetadataLocation()}
 	 */
 	public URL getConfigurationLocation();
 
@@ -449,7 +445,6 @@ public interface IPlatformConfiguration {
 	 * 
 	 * @return configuration change stamp
 	 * @since 2.0
-	 * @deprecated Use the {@link org.eclipse.osgi.service.resolver.State#getTimeStamp() State#getTimeStamp()} instead.
 	 */
 	public long getChangeStamp();
 
