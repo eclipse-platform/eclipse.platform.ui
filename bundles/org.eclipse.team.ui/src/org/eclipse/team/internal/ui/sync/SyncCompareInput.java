@@ -210,7 +210,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			if (trees.length == 0) {
 				return null;
 			}
-			final InterruptedException[] exceptions = new InterruptedException[1];
+			final TeamException[] exceptions = new TeamException[1];
 			
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -218,7 +218,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 					diffRoot = new DiffNode(0);
 					try {						
 						doServerDelta(monitor);
-					} catch (InterruptedException e) {
+					} catch (TeamException e) {
 						exceptions[0] = e;
 					}
 				}
@@ -247,7 +247,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	void doServerDelta(IProgressMonitor pm) throws InterruptedException {
+	void doServerDelta(IProgressMonitor pm) throws TeamException {
 		pm.beginTask(null, trees.length * 1000);
 		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle")); //$NON-NLS-1$
 		for (int i = 0; i < trees.length; i++) {
@@ -265,19 +265,15 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	 * and has enough ticks to allow 1 unit of work per resource in the tree and an additional
 	 * unit for each folder.
 	 */
-	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
+	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) throws TeamException {
 		int type = tree.getSyncKind(getSyncGranularity(), Policy.subMonitorFor(pm, 1));
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
 			IDiffContainer element = new ChangedTeamContainer(parent, mergeResource, type);
-			try {				
-				ILocalSyncElement[] children = tree.members(Policy.subMonitorFor(pm, 1));
-				for (int i = 0; i < children.length; i++) {
-					collectResourceChanges(element, (IRemoteSyncElement)children[i], pm);
-				}
-			} catch (TeamException e) {
-				TeamUIPlugin.log(e.getStatus());
+			ILocalSyncElement[] children = tree.members(Policy.subMonitorFor(pm, 1));
+			for (int i = 0; i < children.length; i++) {
+				collectResourceChanges(element, (IRemoteSyncElement)children[i], pm);
 			}
 			return element;
 		} else {

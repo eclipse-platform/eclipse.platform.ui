@@ -77,7 +77,7 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	/*
 	 * Override collectResourceChanges to only determine the true sync state for incomming changes
 	 */
-	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
+	protected IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) throws TeamException {
 		if ( ! tree.isContainer()) {
 			CVSRemoteSyncElement cvsTree = (CVSRemoteSyncElement)tree;
 			RemoteFile base = (RemoteFile)cvsTree.getBase();

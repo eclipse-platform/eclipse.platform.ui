@@ -82,19 +82,15 @@ public class TargetSyncCompareInput extends SyncCompareInput {
 	protected IDiffElement collectResourceChanges(
 		final IDiffContainer parent,
 		final IRemoteSyncElement tree,
-		IProgressMonitor pm) {
+		IProgressMonitor pm) throws TeamException {
 		
 		final IDiffElement[] result = new IDiffElement[] {null};
-		try {
-			TargetProvider provider = TargetManager.getProvider(tree.getLocal().getProject());
-			provider.run(new ITargetRunnable() {
-				public void run(IProgressMonitor monitor) throws TeamException {
-					result[0] = TargetSyncCompareInput.super.collectResourceChanges(parent, tree, monitor);
-				}
-			}, pm);
-		} catch (TeamException e) {
-			TeamUIPlugin.log(e.getStatus());
-		}
+		TargetProvider provider = TargetManager.getProvider(tree.getLocal().getProject());
+		provider.run(new ITargetRunnable() {
+			public void run(IProgressMonitor monitor) throws TeamException {
+				result[0] = TargetSyncCompareInput.super.collectResourceChanges(parent, tree, monitor);
+			}
+		}, pm);
 		return result[0];
 	}
 }
