@@ -11,6 +11,7 @@
 package org.eclipse.ui.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -71,6 +72,14 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchA
 	 * returns <code>null</code>. Subclasses may override.
 	 */
     public RGB getForeground(Object element) {
+        return null;
+    }
+    
+    /**
+	 * The default implementation of this <code>IWorkbenchAdapter2</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+    public FontData getFont(Object element) {
         return null;
     }
 }

@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * Helper class for converting various data types to and from
@@ -66,6 +71,7 @@ public class StringConverter {
 	 * Declare a private constructor to block instantiation.
 	 */
 	private StringConverter() {
+	    //no-op
 	}
 	/**
 	 * Breaks out space-separated words into an array of words.
@@ -490,7 +496,68 @@ public class StringConverter {
 			return dflt;
 		}
 	}
-	/**
+    /**
+	 * Converts the given value into a GradientData.
+	 * Returns the given default value if the 
+	 * value does not represent a GradientData.
+	 *
+	 * @param value the value to be converted
+	 * @param dflt the default value
+	 * @return the value as a GradientData, or the default value
+	 * @since 3.0
+	 */
+    public static GradientData asGradientData(String value, GradientData dflt) {
+        try {
+			return asGradient(value);
+		} catch (DataFormatException e) {
+			return dflt;
+		}
+    }	
+    /**
+	 * Converts the given value into a GradientData.
+	 * This method fails if the value does not represent a GradientData.
+	 * <p>
+	 * A valid GradientData value representation is a string of the form
+	 * <code>direction|R,G,B|percent/R,G,B|percent/R,G,B...</code>.  All values 
+	 * except the first must be positive integers.</p>
+	 *
+	 * @param value the value to be converted
+	 * @return the value as a GradientData
+	 * @exception DataFormatException if the given value does not represent
+	 *	a GradientData
+	 * @since 3.0
+	 */
+    public static GradientData asGradient(String value) {
+		if (value == null)
+			throw new DataFormatException("Null doesn't represent a valid GradientData"); //$NON-NLS-1$
+		
+		StringTokenizer stok = new StringTokenizer(value, "|"); //$NON-NLS-1$
+						
+		int segmentCount = stok.countTokens();
+        RGB [] rgbs = new RGB[segmentCount - 1];
+		int [] percents = new int[segmentCount - 2];
+		int direction = 0;
+		try {
+			direction = Integer.parseInt(stok.nextToken());
+			String initial = stok.nextToken();
+			rgbs[0] = asRGB(initial);
+			int i = 0;
+			while(stok.hasMoreTokens()) {
+			    StringTokenizer segTok = new StringTokenizer(stok.nextToken(), "/"); //$NON-NLS-1$
+			    if (segTok.countTokens() != 2)
+			        throw new DataFormatException("Not enough tokens for gradient segment."); //$NON-NLS-1$
+			    
+		        percents [i++] = Integer.parseInt(segTok.nextToken());		        		    
+			    rgbs[i] = asRGB(segTok.nextToken());
+			}
+	    }
+	    catch (NumberFormatException e) {
+	        throw new DataFormatException(e.getMessage());
+	    }
+		
+		return new GradientData(rgbs, percents, direction);
+	}
+    /**
 	 * Converts the given double value to a string.
 	 * Equivalent to <code>String.valueOf(value)</code>.
 	 *
@@ -680,6 +747,31 @@ public class StringConverter {
 		buffer.append(value.blue);
 		return buffer.toString();
 	}
+	
+	/**
+	 * Converts the given GradientData  object to a string.
+	 * <p>
+	 * The string representation of an RGB color value has the form
+	 * <code>direction|R,G,B|percent/R,G,B|percent/R,G,B...</code> All values 
+	 * except the first must be positive integers.
+	 * </p>
+	 *
+	 * @param value the GradientData object
+	 * @return the string representing the given GradientData
+	 */   
+	public static String asString(GradientData value) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(value.direction);
+        buffer.append('|');
+        buffer.append(asString(value.colors[0]));
+        for (int i = 1; i < value.colors.length; i++) {
+            buffer.append('|');
+            buffer.append(value.percents[i - 1]);
+            buffer.append('/');
+            buffer.append(asString(value.colors[i]));
+        }
+        return buffer.toString();
+    }	
 	/**
 	 * Converts the given boolean value to a string.
 	 * Equivalent to <code>String.valueOf(value)</code>.
@@ -753,5 +845,4 @@ public class StringConverter {
 		return buffer.toString();
 
 	}
-
 }

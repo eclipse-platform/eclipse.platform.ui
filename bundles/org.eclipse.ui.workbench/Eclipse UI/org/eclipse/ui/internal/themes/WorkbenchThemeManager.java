@@ -294,4 +294,22 @@ public class WorkbenchThemeManager {
 		}
 		return tabtd;
 	}
+	
+	// kims prototype
+	public ITheme getTheme(String id) {
+	    IThemeDescriptor td = id == null ? null : getThemeRegistry().find(id);
+	    return getTheme(td);
+	}
+
+    // kims prototype
+    private ITheme getTheme(IThemeDescriptor td) {        
+        ITheme theme = (ITheme) themes.get(td);
+        if (theme == null) {
+            theme = new Theme(td);
+            themes.put(td, theme);
+        }
+        return theme;
+    }
+    
+    private Map themes = new HashMap(7);
 }

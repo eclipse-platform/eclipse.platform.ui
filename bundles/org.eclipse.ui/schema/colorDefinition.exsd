@@ -13,7 +13,8 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="colorDefinition" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="colorDefinition" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="colorGradient"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -40,6 +41,11 @@
    </element>
 
    <element name="colorDefinition">
+      <annotation>
+         <documentation>
+            a symbolic color definition.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -47,7 +53,7 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  a unique name that can be used to identify this color definition.
+                  a unique id that can be used to identify this color definition.
                </documentation>
             </annotation>
          </attribute>
@@ -76,6 +82,13 @@ Only one of defaultsTo or value may be defined.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="categoryId" type="string">
+            <annotation>
+               <documentation>
+                  The optional id of the presentation category this color belongs to.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -87,12 +100,68 @@ Only one of defaultsTo or value may be defined.
       </annotation>
    </element>
 
+   <element name="colorGradient">
+      <complexType>
+         <sequence>
+            <element ref="gradientPart" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="direction" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="initialValue" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="gradientPart">
+      <complexType>
+         <attribute name="percentage" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 

@@ -48,6 +48,8 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.themes.ITheme;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -1491,5 +1493,9 @@ public void setOldPartID(String oldPartID) {
 			break;
 		}
 	}
+	
+}
+public ITheme getTheme() {
+    return WorkbenchThemeManager.getInstance().getTheme(getDesc().getTheme());
 }
 }

@@ -12,10 +12,12 @@ package org.eclipse.ui.internal.colors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
@@ -27,11 +29,18 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * @since 3.0
  */
 public class ColorDefinitionReader extends RegistryReader {
-	private static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
-	private static String ATT_ID = "id"; //$NON-NLS-1$
-	private static String ATT_LABEL = "label"; //$NON-NLS-1$
-	private static String ATT_VALUE = "value"; //$NON-NLS-1$
-	private static String CHILD_DESCRIPTION = "description"; //$NON-NLS-1$
+	public static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
+	public static String ATT_ID = "id"; //$NON-NLS-1$
+	public static String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
+	public static String ATT_DIRECTION = "direction"; //$NON-NLS-1$
+	public static String ATT_LABEL = "label"; //$NON-NLS-1$
+	public static String ATT_VALUE = "value"; //$NON-NLS-1$
+	public static String ATT_PERCENTAGE = "percentage"; //$NON-NLS-1$
+	public static String ATT_INITIALVALUE = "initialValue"; //$NON-NLS-1$
+	public static String TAG_COLORDEFINITION = "colorDefinition"; //$NON-NLS-1$
+	public static String TAG_GRADIENTDEFINITION = "gradientDefinition"; //$NON-NLS-1$
+	public static String TAG_GRADIENTPART = "gradientPart"; //$NON-NLS-1$
+	public static String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$
 
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -39,48 +48,127 @@ public class ColorDefinitionReader extends RegistryReader {
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(ColorDefinitionReader.class.getName());
 
-	private Collection values = new ArrayList();
+	private Collection colorDefinitions = new ArrayList();
+	private Collection gradientDefinitions = new ArrayList();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	public boolean readElement(IConfigurationElement element) {
 
-		String name = element.getAttribute(ATT_LABEL);
-
-		String id = element.getAttribute(ATT_ID);
-
-		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
-
-		String value = element.getAttribute(ATT_VALUE);
-
-		if ((value == null && defaultMapping == null)
-			|| (value != null && defaultMapping != null)) {
-			logError(element, RESOURCE_BUNDLE.getString("ColorDefinitionReader.badDefault")); //$NON-NLS-1$
+	    if (element.getName().equals(TAG_COLORDEFINITION) 
+	            || element.getName().equals(TAG_COLOROVERRIDE)) {
+			String name = element.getAttribute(ATT_LABEL);
+	
+			String id = element.getAttribute(ATT_ID);
+	
+			String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
+	
+			String value = element.getAttribute(ATT_VALUE);
+	
+			if ((value == null && defaultMapping == null)
+				|| (value != null && defaultMapping != null)) {
+				logError(element, RESOURCE_BUNDLE.getString("badDefault")); //$NON-NLS-1$
+				return true;
+			}
+	
+			String categoryId = element.getAttribute(ATT_CATEGORYID);
+			
+			String description = null;
+	
+			IConfigurationElement[] descriptions =
+				element.getChildren(TAG_DESCRIPTION);
+	
+			if (descriptions.length > 0)
+				description = descriptions[0].getValue();
+	
+			colorDefinitions.add(
+				new ColorDefinition(
+					name,
+					id,
+					defaultMapping,
+					value,
+					categoryId,
+					description,
+					element
+						.getDeclaringExtension()
+						.getDeclaringPluginDescriptor()
+						.getUniqueIdentifier()));
 			return true;
-		}
+	    }
+	    else if (element.getName().equals(TAG_GRADIENTDEFINITION)) {
+			String name = element.getAttribute(ATT_LABEL);
+			
+			String id = element.getAttribute(ATT_ID);
+			
+			int direction = SWT.HORIZONTAL;
+			String directionString = element.getAttribute(ATT_DIRECTION);
 
-		String description = null;
+			if (directionString != null && directionString.equalsIgnoreCase("VERTICAL")) //$NON-NLS-1$ 
+			    direction = SWT.VERTICAL;
+						
+            
+			IConfigurationElement[] children = element.getChildren(TAG_GRADIENTPART);			
+            
+			String values [] = new String[children.length + 1];		
+			
+            values[0] = element.getAttribute(ATT_INITIALVALUE);
+            if (values[0] == null || values[0].equals("")) { //$NON-NLS-1$
+                logError(element, RESOURCE_BUNDLE.getString("badGradientValue")); //$NON-NLS-1$
+                return true;                    
+            }                        
 
-		IConfigurationElement[] descriptions =
-			element.getChildren(CHILD_DESCRIPTION);
-
-		if (descriptions.length > 0)
-			description = descriptions[0].getValue();
-
-		values.add(
-			new ColorDefinition(
-				name,
-				id,
-				defaultMapping,
-				value,
-				description,
-				element
-					.getDeclaringExtension()
-					.getDeclaringPluginDescriptor()
-					.getUniqueIdentifier()));
-
-		return true;
+            int [] percentages = new int[children.length];
+            
+            for (int i = 0; i < children.length; i++) {      
+                String value = children[i].getAttribute(ATT_VALUE);
+                if (value == null || value.equals("")) { //$NON-NLS-1$
+                    logError(element, RESOURCE_BUNDLE.getString("badGradientValue")); //$NON-NLS-1$
+                    return true;                    
+                }
+                values[i + 1] = value;
+                
+                try {
+                    int percentage = Integer.parseInt(children[i].getAttribute(ATT_PERCENTAGE));
+                    if (percentage < 0) {
+	                    logError(element, RESOURCE_BUNDLE.getString("badPercentage")); //$NON-NLS-1$
+	                    return true;
+                    }
+                    percentages[i] = percentage;
+                }
+                catch (NumberFormatException e) {
+                    logError(element, RESOURCE_BUNDLE.getString("badPercentage")); //$NON-NLS-1$
+                    return true;
+                }               
+            }
+	
+			String categoryId = element.getAttribute(ATT_CATEGORYID);
+			
+			String description = null;
+	
+			IConfigurationElement[] descriptions =
+				element.getChildren(TAG_DESCRIPTION);
+	
+			if (descriptions.length > 0)
+				description = descriptions[0].getValue();
+	
+			gradientDefinitions.add(
+				new GradientDefinition(
+					name,
+					id,
+					direction,
+					values,
+					percentages,
+					categoryId,
+					description,
+					element
+						.getDeclaringExtension()
+						.getDeclaringPluginDescriptor()
+						.getUniqueIdentifier()));
+			return true;
+	        
+	    }
+	    return false;
 	}
 
 	/**
@@ -88,13 +176,19 @@ public class ColorDefinitionReader extends RegistryReader {
 	 * 
 	 * @param registry the <code>IPluginRegistry</code> to read from.
 	 */
-	Collection readRegistry(IPluginRegistry in) {
-		values.clear();
+	void readRegistry(IPluginRegistry in) {
 		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COLOR_DEFINITIONS);
-		return values;
 	}
 	
-	public Collection getValues() {
-		return values;
+	public Collection getColorDefinitions() {
+	    ArrayList sorted = new ArrayList(colorDefinitions);
+		Collections.sort(sorted, ColorDefinition.ID_COMPARATOR);	    
+		return sorted;
+	}
+		
+	public Collection getGradientDefinitions() {
+	    ArrayList sorted = new ArrayList(gradientDefinitions);
+		Collections.sort(sorted, GradientDefinition.ID_COMPARATOR);	    
+		return sorted;
 	}
 }

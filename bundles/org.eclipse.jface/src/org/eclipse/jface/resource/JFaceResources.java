@@ -53,6 +53,12 @@ public class JFaceResources {
 	 * lazily initialized or explicitly set.
 	 */
 	private static ColorRegistry colorRegistry;
+	
+	/**
+	 * The JFace gradient registry; <code>null</code> until
+	 * lazily initialized or explicitly set.
+	 */
+	private static GradientRegistry gradientRegistry;	
 
 	/**
 	 * The symbolic font name for the standard font 
@@ -147,9 +153,19 @@ public class JFaceResources {
 	}
 
 	/**
-	 * Returns the color registry for JFace itself. If the value has not been 
-	 * established by an earlier call to <code>setColorRegistry</code>, is it
-	 * initialized to <code>new ColorRegistry()</code>.
+	 * Returns the color registry for JFace itself.
+	 * <p>
+	 * @return the <code>GradientRegistry</code>.
+	 * @since 3.0
+	 */
+	public static GradientRegistry getGradientRegistry() {
+		if (gradientRegistry == null)
+			gradientRegistry = new GradientRegistry();
+		return gradientRegistry;
+	}
+	
+	/**
+	 * Returns the color registry for JFace itself.
 	 * <p>
 	 * @return the <code>ColorRegistry</code>.
 	 * @since 3.0
@@ -332,5 +348,6 @@ public class JFaceResources {
 	 * Declare a private constructor to block instantiation.
 	 */
 	private JFaceResources() {
+		//no-op
 	}
 }

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.internal.colors.ColorDefinition;
+import org.eclipse.ui.internal.colors.ColorDefinitionReader;
 
 /**
  * Concrete implementation of a theme descriptor.
@@ -31,8 +35,14 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	public static final String TAG_TABTHEME="tabTheme";//$NON-NLS-1$	
 	private ITabThemeDescriptor tabThemeDescriptor;
 	/* ViewTheme */
-	public static final String TAG_VIEWTHEME="viewTheme";//$NON-NLS-1$	
+	public static final String TAG_VIEWTHEME="viewTheme";//$NON-NLS-1$
+	/* ColorOverride */
+	public static final String TAG_COLOROVERRIDE="colorOverride";//$NON-NLS-1$
+
 	private IViewThemeDescriptor viewThemeDescriptor;
+	private ColorDefinitionReader colorReader;
+	
+	private ColorDefinition [] colorOverrides = new ColorDefinition[0];	
 	
 	/**
 	 * Create a new ThemeDescriptor for an extension.
@@ -40,6 +50,13 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	public ThemeDescriptor(IConfigurationElement e) throws CoreException {
 		configElement = e;
 		processExtension();
+	}
+	
+	private ColorDefinitionReader getColorDefinitionReader() {
+	    if (colorReader == null) {
+	    	colorReader = new ColorDefinitionReader();
+	    }
+	    return colorReader;
 	}
 	
 	/* (non-Javadoc)
@@ -54,6 +71,13 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
+	 */
+	public ColorDefinition [] getColorOverrides() {
+	    return colorOverrides;
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +112,16 @@ public class ThemeDescriptor implements IThemeDescriptor {
 			/* ViewTheme */
 			else if (type.equals(TAG_VIEWTHEME)) {
 				viewThemeDescriptor = new ViewThemeDescriptor(child);
-			}	
+			}
+			else if (type.equals(TAG_COLOROVERRIDE)) {
+			    getColorDefinitionReader().readElement(child);
+			}
+		}
+		
+		if (colorReader != null) {		    
+		    Collection colorDefinitions = colorReader.getColorDefinitions();
+            colorOverrides = new ColorDefinition[colorDefinitions.size()];
+			colorDefinitions.toArray(colorOverrides);
 		}
 	}	
 	

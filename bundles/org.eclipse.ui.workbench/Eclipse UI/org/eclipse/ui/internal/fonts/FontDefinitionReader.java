@@ -32,6 +32,7 @@ public class FontDefinitionReader extends RegistryReader {
 	private static String ATT_LABEL = "label"; //$NON-NLS-1$
 	private static String ATT_ID = "id"; //$NON-NLS-1$
 	private static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
+	private static String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
 	private static String CHILD_DESCRIPTION = "description"; //$NON-NLS-1$
 	
 	/*
@@ -44,6 +45,8 @@ public class FontDefinitionReader extends RegistryReader {
 
 		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
 
+		String categoryId = element.getAttribute(ATT_CATEGORYID);
+		
 		String description = null;
 
 		IConfigurationElement[] descriptions =
@@ -57,6 +60,7 @@ public class FontDefinitionReader extends RegistryReader {
 				name,
 				id,
 				defaultMapping,
+				categoryId,
 				description));
 
 		return true;

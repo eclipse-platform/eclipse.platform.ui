@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.fonts;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -126,15 +130,80 @@ public class FontDefinition {
 		}
 	}
 	
+	/**
+	 * <code>Comparator</code> used for sorting FontDefinitions based on their 
+	 * dependency depth.
+	 */
+	public static final Comparator HIERARCHY_COMPARATOR = new Comparator() {
+		public int compare(Object arg0, Object arg1) {
+			String def0 = arg0 == null ? null : ((FontDefinition) arg0).getDefaultsTo();
+			String def1 = arg1 == null ? null : ((FontDefinition) arg1).getDefaultsTo();
+
+			if (def0 == null && def1 == null)
+				return 0;
+
+			if (def0 == null)
+				return -1;
+
+			if (def1 == null)
+				return 1;
+
+			return compare(getDef(def0), getDef(def1));
+		}
+
+		/** 
+		 * @param id the identifier to search for.
+		 * @return the <code>ColorDefinition</code> that matches the id.
+		 */
+		private Object getDef(String id) {
+		    FontDefinition[] defs = FontDefinition.getDefinitions();
+            int idx = Arrays.binarySearch(defs, id, ID_COMPARATOR);
+			if (idx >= 0) 
+				return defs[idx];
+			return null;
+		}
+	};
+	
+	/**
+	 * <code>Comparator</code> used in <code>FontDefinition</code> [] 
+	 * searching.  May match against <code>String</code>s.
+	 */
+	public static final Comparator ID_COMPARATOR = new Comparator() {
+
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object arg0, Object arg1) {
+			String str0 = getCompareString(arg0);
+			String str1 = getCompareString(arg1);
+			return str0.compareTo(str1);
+		}
+
+		/**
+		 * @param object
+		 * @return <code>String</code> representation of the object.
+		 */
+		private String getCompareString(Object object) {
+			if (object instanceof String)
+				return (String) object;
+			else if (object instanceof FontDefinition)
+				return ((FontDefinition) object).getId();
+			return ""; //$NON-NLS-1$
+		}
+	};
+	
+	
+	
 	private static FontPreferenceListener fontPreferenceUpdateListener;
 	
 	private String label;
 	private String id;
 	private String defaultsTo;
+	private String categoryId;
 	private String description;
 
 	//The elements for use by the preference page
-	public static FontDefinition[] definitions;
+	private static FontDefinition[] definitions;
 
 	
 	/**
@@ -147,8 +216,12 @@ public class FontDefinition {
 			FontDefinitionReader reader = new FontDefinitionReader();
 			Collection values =
 				reader.readRegistry(Platform.getPluginRegistry());
-			definitions = new FontDefinition[values.size()];
-			values.toArray(definitions);
+			definitions = new FontDefinition[values.size()];			
+			ArrayList sorted = new ArrayList(values);
+			Collections.sort(sorted, ID_COMPARATOR);
+
+			sorted.toArray(definitions);			
+			
 		}
 		return definitions;
 	}
@@ -190,10 +263,12 @@ public class FontDefinition {
 		String fontName,
 		String uniqueId,
 		String defaultsId,
+		String categoryId,
 		String fontDescription) {
 		this.label = fontName;
 		this.id = uniqueId;
 		this.defaultsTo = defaultsId;
+		this.categoryId = categoryId;
 		this.description = fontDescription;
 	}
 
@@ -229,4 +304,12 @@ public class FontDefinition {
 	public String getId() {
 		return id;
 	}
+	
+    /**
+     * Returns the categoryId.
+     * @return String
+     */
+    public String getCategoryId() {
+        return categoryId;
+    }
 }

@@ -213,6 +213,10 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			ti.setForeground(cprov.getForeground(element));
 			ti.setBackground(cprov.getBackground(element));
 		}
+		if (prov instanceof IFontProvider) {
+		    IFontProvider fprov = (IFontProvider) prov;
+		    ti.setFont(fprov.getFont(element));
+		}		
 	}
 }
 /**

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,12 +45,10 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
@@ -62,7 +59,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -100,6 +96,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.colors.ColorDefinition;
+import org.eclipse.ui.internal.colors.GradientDefinition;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -111,6 +108,7 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.intro.IIntroPart;
@@ -932,73 +930,11 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeApplicationColors() {
-		//Iterate through the definitions and initialize thier
-		//defaults in the preference store.
-		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-				
-		initializeApplicationColors(definitions);
-	}
-
-	/**
-	 * For dynamic UI
-	 * 
-	 * @param definitions the color definitions to initialize
-	 * @since 3.0
-	 */
-	public void initializeApplicationColors(ColorDefinition[] definitions) {
-		IPreferenceStore store = getPreferenceStore();
-		ColorRegistry registry = JFaceResources.getColorRegistry();
-	
-		// sort the definitions by dependant ordering so that we process 
-		// ancestors before children.		
-		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
-		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
-		Arrays.sort(copyOfDefinitions, ColorDefinition.HIERARCHY_COMPARATOR);
-
-		for (int i = 0; i < copyOfDefinitions.length; i++) {
-			ColorDefinition definition = copyOfDefinitions[i];
-			installColor(definition, registry, store);
-		}
-	}
-
-	/**
-	 * Installs the given color in the color registry.
-	 * 
-	 * @param definition
-	 *            the color definition
-	 * @param registry
-	 *            the color registry
-	 * @param store
-	 *            the preference store from which to obtain color data
-	 */
-	private void installColor(
-		ColorDefinition definition,
-		ColorRegistry registry,
-		IPreferenceStore store) {
-				
-		String id = definition.getId();
-		RGB prefColor = PreferenceConverter.getColor(store, id);
-		RGB defaultColor = null;
-		if (definition.getValue() != null)
-		    defaultColor = StringConverter.asRGB(definition.getValue(), null);
-		else 
-		    defaultColor = PreferenceConverter.getColor(store, definition.getDefaultsTo());
+		ColorDefinition[] colorDefinitions = ColorDefinition.getColorDefinitions();
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getColorRegistry(), colorDefinitions, getPreferenceStore());
 		
-		if (prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-		    prefColor = defaultColor;
-		}
-		
-		if (defaultColor != null) {
-			PreferenceConverter.setDefault(
-					store, 
-					id, 
-					defaultColor);
-		}
-
-		
-		if (prefColor != null) {		    
-			registry.put(id, prefColor);
-		}
+		GradientDefinition [] gradientDefinitions = ColorDefinition.getGradientDefinitions();
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefinitions, getPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {

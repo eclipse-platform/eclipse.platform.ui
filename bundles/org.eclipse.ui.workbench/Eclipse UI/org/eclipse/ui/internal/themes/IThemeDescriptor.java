@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import org.eclipse.ui.internal.colors.ColorDefinition;
+
 /**
  * Interface for the Theme descriptors
  *
@@ -47,6 +49,12 @@ public interface IThemeDescriptor {
 	 */
 	public String getName();
 
+	/**
+	 * Returns the color overrides for this theme.
+	 * @return ColorDefinition []
+	 */
+	public ColorDefinition [] getColorOverrides();
+	
 	/**
 	 * Returns the descriptor of the tab theme.
 	 * @return ITabThemeDescriptor

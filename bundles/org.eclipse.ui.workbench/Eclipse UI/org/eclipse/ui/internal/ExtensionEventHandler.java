@@ -31,6 +31,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -57,6 +58,7 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.fonts.FontDefinitionReader;
+import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.ActionSetRegistryReader;
@@ -271,9 +273,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 			reader.readElement(elements[i]);	
 		}
 		
-		Collection colors = reader.getValues();
+		Collection colors = reader.getColorDefinitions();
 		ColorDefinition [] colorDefs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
-		workbench.initializeApplicationColors(colorDefs);		
+		PresentationRegistryPopulator.populateRegistry(JFaceResources.getColorRegistry(), colorDefs, workbench.getPreferenceStore());
 	}
 
 	private void loadFontDefinitions(IExtension ext) {

@@ -68,6 +68,15 @@ public class FontRegistry {
 	 * @see List
 	 */
 	private List staleFonts = new ArrayList();
+	
+	/**
+	 * Runnable that cleans up the manager on disposal of the display.
+	 */	
+	protected Runnable displayRunnable = new Runnable() {
+		public void run() {
+			handleDisplayDispose();
+		}
+	};
 
 	/**
 	 * Creates an empty font registry.
@@ -308,15 +317,15 @@ public class FontRegistry {
 	 */
 	private void fireFontMappingChanged(String name, FontData[] oldValue, FontData[] newValue) {
 		final String finalName = name;
-		final Object[] listeners = this.listeners.getListeners();
-		if (listeners.length > 0) {
+		final Object[] myListeners = this.listeners.getListeners();
+		if (myListeners.length > 0) {
 			//	FIXME: need to do this without dependency on org.eclipse.core.runtime
 			//		Platform.run(new SafeRunnable(JFaceResources.getString("FontRegistry.changeError")) { //$NON-NLS-1$
 			//			public void run() {
 			PropertyChangeEvent event =
 				new PropertyChangeEvent(this, finalName, oldValue, newValue);
-			for (int i = 0; i < listeners.length; ++i) {
-				((IPropertyChangeListener) listeners[i]).propertyChange(event);
+			for (int i = 0; i < myListeners.length; ++i) {
+				((IPropertyChangeListener) myListeners[i]).propertyChange(event);
 			}
 			//			}	
 			//		});
@@ -373,6 +382,14 @@ public class FontRegistry {
 
 		return font;
 	}
+
+	/** 
+	 * @return the set of keys this manager knows about.
+	 * @since 3.0
+	 */
+	public Set getKeySet() {
+	    return Collections.unmodifiableSet(stringToFontData.keySet());
+	}
 	
 	/**
 	 * Return whether or not the receiver has a value
@@ -412,11 +429,7 @@ public class FontRegistry {
 	 * Hook a dispose listener on the SWT display.
 	 */
 	private void hookDisplayDispose(Display display) {
-		display.disposeExec(new Runnable() {
-			public void run() {
-				handleDisplayDispose();
-			}
-		});
+		display.disposeExec(displayRunnable);
 	}
 	/**
 	 * Checks whether the given font is in the list of fixed fonts.

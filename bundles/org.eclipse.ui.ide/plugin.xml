@@ -315,16 +315,10 @@
             id="org.eclipse.ui.preferencePages.Views">
       </page>
       <page
-            name="%PreferencePages.Fonts"
+            name="%PreferencePages.ColorsAndFonts"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.FontPreferencePage"
-            id="org.eclipse.ui.preferencePages.Fonts">
-      </page>
-      <page
-            name="%PreferencePages.Colors"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.colors.ColorsPreferencePage"
-            id="org.eclipse.ui.preferencePages.Colors">
+            class="org.eclipse.ui.internal.presentation.ColorsAndFontsPreferencePage"
+            id="org.eclipse.ui.preferencePages.ColorsAndFonts">
       </page>
       <page
             name="%PreferencePages.Decorators"
@@ -423,6 +417,7 @@
          point="org.eclipse.ui.colorDefinitions">
       <colorDefinition
             label="%Colors.highlight"
+            categoryId="org.eclipse.ui.workbenchMisc"
             value="COLOR_WIDGET_LIGHT_SHADOW"
             id="org.eclipse.ui.highlight">
          <description>
@@ -430,5 +425,4 @@
          </description>
       </colorDefinition>
    </extension>
-
 </plugin>

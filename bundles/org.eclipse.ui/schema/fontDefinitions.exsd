@@ -65,6 +65,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="categoryId" type="string">
+            <annotation>
+               <documentation>
+                  The optional id of the presentation category this font belongs to.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

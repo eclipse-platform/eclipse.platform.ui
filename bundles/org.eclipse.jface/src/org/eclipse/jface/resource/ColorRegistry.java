@@ -11,10 +11,12 @@
 package org.eclipse.jface.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -50,7 +52,7 @@ public class ColorRegistry {
 	 * This registries <code>Display</code>. All colors will be allocated using 
 	 * it.
 	 */
-	private Display display;
+	protected Display display;
 
 	/**
 	 * List of property change listeners (element type: <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
@@ -74,6 +76,15 @@ public class ColorRegistry {
 	 * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
 	 */
 	private Map stringToRGB = new HashMap(7);
+	
+	/**
+	 * Runnable that cleans up the manager on disposal of the display.
+	 */
+	protected Runnable displayRunnable = new Runnable() {
+		public void run() {
+			clearCaches();
+		}
+	};
 
 	/**
 	 * Create a new instance of the receiver that is hooked to the current 
@@ -93,7 +104,7 @@ public class ColorRegistry {
 	public ColorRegistry(Display display) {
 		Assert.isNotNull(display);
 		this.display = display;
-		hookDisplayDispose(display);
+		hookDisplayDispose();
 	}
 
 	/**
@@ -139,14 +150,13 @@ public class ColorRegistry {
 		String name,
 		RGB oldValue,
 		RGB newValue) {
-		final String finalName = name;
-		final Object[] listeners = this.listeners.getListeners();
-		if (listeners.length > 0) {
+		final Object[] myListeners = this.listeners.getListeners();
+		if (myListeners.length > 0) {
 			PropertyChangeEvent event =
-				new PropertyChangeEvent(this, finalName, oldValue, newValue);
-			for (int i = 0; i < listeners.length; ++i) {
+				new PropertyChangeEvent(this, name, oldValue, newValue);
+			for (int i = 0; i < myListeners.length; ++i) {
 				try {
-					((IPropertyChangeListener) listeners[i]).propertyChange(
+					((IPropertyChangeListener) myListeners[i]).propertyChange(
 						event);
 				} catch (Exception e) {
 					// TODO: how to log?
@@ -182,6 +192,13 @@ public class ColorRegistry {
 
 		return color;
 	}
+	
+	/** 
+	 * @return the set of keys this manager knows about.
+	 */
+	public Set getKeySet() {	    
+	    return Collections.unmodifiableSet(stringToRGB.keySet());
+	}
 
 	/**
 	 * Returns the color data associated with the given symbolic color name.
@@ -195,14 +212,14 @@ public class ColorRegistry {
 	}
 
 	/**
-	 * Shut downs this resource registry and disposes of all registered colors.
+	 * Disposes all currently allocated colours.
 	 */
-	private void handleDisplayDispose() {
+	private void clearCaches() {
 		disposeColors(stringToColor.values().iterator());
 		disposeColors(staleColors.iterator());
 		stringToColor.clear();
 		staleColors.clear();
-		listeners.clear();
+		listeners.clear();						
 	}
 
 	/**
@@ -219,12 +236,8 @@ public class ColorRegistry {
 	/**
 	 * Hook a dispose listener on the SWT display.
 	 */
-	private void hookDisplayDispose(Display display) {
-		display.disposeExec(new Runnable() {
-			public void run() {
-				handleDisplayDispose();
-			}
-		});
+	private void hookDisplayDispose() {
+		display.disposeExec(displayRunnable);
 	}
 
 	/**

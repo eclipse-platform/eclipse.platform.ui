@@ -23,7 +23,14 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -42,23 +49,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
-
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -69,6 +65,8 @@ import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.TabThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.progress.UIJob;
+
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IPropertyListener, IWorkbenchDragSource {
 	
@@ -1273,12 +1271,15 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		Color[] bgColors;
 		int[] bgPercents;
 
-		if (activeState){
-			fgColor = WorkbenchColors.getActiveViewForeground();
+		ColorRegistry colorRegistry = page.getTheme().getColorRegistry();
+        if (activeState){
+	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
+//	        fgColor = WorkbenchColors.getActiveViewForeground();
 			bgColors = WorkbenchColors.getActiveViewGradient();
 			bgPercents = WorkbenchColors.getActiveViewGradientPercents();
 		} else {
-			fgColor = WorkbenchColors.getActiveViewForeground();
+	        fgColor = colorRegistry.get(IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);		    
+//			fgColor = WorkbenchColors.getActiveViewForeground();
 			bgColors = WorkbenchColors.getActiveNoFocusViewGradient();
 			bgPercents = WorkbenchColors.getActiveNoFocusViewGradientPercents();
 		}		
