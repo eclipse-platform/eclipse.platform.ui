@@ -353,77 +353,180 @@ public void testFragmentPrefs() {
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 	
 	//-----------------------------------------------------------	
-	// No preferences for this plugin
-//	IPluginDescriptor resPlugin = registry.getPluginDescriptor("noPreferencesPlugin");
-//	Preferences prefs = null;
-//	try {
-//		prefs = resPlugin.getPlugin().getPluginPreferences();
-//	} catch (CoreException ce) {
-//		fail("1.0 core exception from getPlugin");
-//	}
-//	String[] defaultNames = prefs.defaultPropertyNames();
-//	String[] prefNames = prefs.propertyNames();
-//	assertTrue("1.1 No default preferences", defaultNames.length == 0);
-//	assertTrue("1.2 No explicit preferences", prefNames.length == 0);
-
-	//-----------------------------------------------------------	
-	// Preferences in the plugin state area
-//	resPlugin = registry.getPluginDescriptor("defaultLocalPreferences");
-//	// Move the preferences file into position
-//	Plugin runtimePlugin = null;
-//	try {
-//		runtimePlugin = resPlugin.getPlugin();
-//	} catch (CoreException ce) {
-//		fail("2.0 core exception from getPlugin");
-//	}
-//	String destString = runtimePlugin.getStateLocation().append("pref_store.ini").toOSString();
-//	// get rid of the protocol
-//	String sourceName = ((PluginDescriptor)resPlugin).getLocation() + "/originalpref_store.ini";
-//	sourceName = sourceName.substring(sourceName.indexOf(':') + 1);
-//	copyFile(sourceName, destString);
-//	prefs = runtimePlugin.getPluginPreferences();
-//	defaultNames = prefs.defaultPropertyNames();
-//	prefNames = prefs.propertyNames();
-//	assertTrue("2.1 No default preferences", defaultNames.length == 0);
-//	assertTrue("2.2 One explicit preference", prefNames.length == 1);
-//	assertTrue("2.3 Preference name", prefNames[0].equals("DefaultLocalPreference"));
-//	assertTrue("2.4 Preference value",
-//		prefs.getString("DefaultLocalPreference").equals("From the plugin state area"));
-
-	//-----------------------------------------------------------	
-	// Preferences in the local plugin area for a fragment of this 
+	// Preferences in the local area for a fragment of this 
 	// plugin
-//	resPlugin = registry.getPluginDescriptor("pluginLocalPreferences");
-//	prefs = null;
-//	try {
-//		prefs = resPlugin.getPlugin().getPluginPreferences();
-//	} catch (CoreException ce) {
-//		fail("0.3 core exception from getPlugin");
-//	}
-//	defaultNames = prefs.defaultPropertyNames();
-//	prefNames = prefs.propertyNames();
-//	assertTrue("3.0 One default preferences", defaultNames.length == 1);
-//	assertTrue("3.1 No explicit preferences", prefNames.length == 0);
-//	assertTrue("3.2 Default preference name", defaultNames[0].equals("PluginLocalPreference"));
-//	assertTrue("3.3 Default preference value",
-//		prefs.getString("PluginLocalPreference").equals("From the local plugin directory"));
+	IPluginDescriptor resPlugin = registry.getPluginDescriptor("fragmentLocalPreferencesPlugin");
+	Preferences prefs = null;
+	try {
+		prefs = resPlugin.getPlugin().getPluginPreferences();
+	} catch (CoreException ce) {
+		fail("0.1 core exception from getPlugin");
+	}
+	String[] defaultNames = prefs.defaultPropertyNames();
+	String[] prefNames = prefs.propertyNames();
+	assertTrue("1.0 One default preferences", defaultNames.length == 1);
+	assertTrue("1.1 No explicit preferences", prefNames.length == 0);
+	assertTrue("1.2 Default preference name", defaultNames[0].equals("FragmentLocalPreference"));
+	assertTrue("1.3 Default preference value",
+		prefs.getString("FragmentLocalPreference").equals("From the local fragment directory"));
 	
 		
 	//-----------------------------------------------------------	
 	// Preferences in the plugin state area and in the local
-	// plugin area
+	// area for a fragment of this plugin
+	resPlugin = registry.getPluginDescriptor("stateAndFragmentLocalPlugin");
+	Plugin runtimePlugin = null;
+	try {
+		runtimePlugin = resPlugin.getPlugin();
+	} catch (CoreException ce) {
+		fail("0.2 core exception from getPlugin");
+	}
+	String destString = runtimePlugin.getStateLocation().append("pref_store.ini").toOSString();
+	// get rid of the protocol
+	String sourceName = ((PluginDescriptor)resPlugin).getFragments()[0].getLocation() + "originalpref_store.ini";
+	sourceName = sourceName.substring(sourceName.indexOf(':') + 1);
+	copyFile(sourceName, destString);
+	prefs = null;
+	prefs = runtimePlugin.getPluginPreferences();
+	defaultNames = prefs.defaultPropertyNames();
+	prefNames = prefs.propertyNames();
+	assertTrue("2.0 Two default preferences", defaultNames.length == 2);
+	assertTrue("2.1 Two explicit preferences", prefNames.length == 2);
+	// Do we have the right names for the explicit preferences?
+	boolean foundStateLocalPreference = false;
+	boolean foundCommonPreference = false;
+	for (int i = 0; i < prefNames.length; i++) {
+		if (prefNames[i].equals("StateLocalPreference"))
+			foundStateLocalPreference = true;
+		else if (prefNames[i].equals("commonStateAndFragmentLocalPreference"))
+			foundCommonPreference = true;
+	}
+	assertTrue("2.2 Got right default preference names",
+		foundStateLocalPreference && foundCommonPreference);
+	// Do we have the right names for the default preferences?
+	boolean foundPluginLocalPreference = false;
+	foundCommonPreference = false;
+	for (int i = 0; i < defaultNames.length; i++) {
+		if (defaultNames[i].equals("FragmentLocalPreference"))
+			foundPluginLocalPreference = true;
+		else if (defaultNames[i].equals("commonStateAndFragmentLocalPreference"))
+			foundCommonPreference = true;
+	}
+	assertTrue("2.3 Got right explicit preference names",
+		foundPluginLocalPreference && foundCommonPreference);
+	// Check preference values
+	assertTrue("2.4 StateLocalPreference value",
+		prefs.getString("StateLocalPreference").equals("From the plugin state area of the fragment for stateAndFragmentLocal"));
+	assertTrue("2.5 FragmentLocalPreference value",
+		prefs.getString("FragmentLocalPreference").equals("From the local fragment directory of stateAndFragmentLocal"));
+	assertTrue("2.6 commonStateAndFragmentLocalPreference value",
+		prefs.getString("commonStateAndFragmentLocalPreference").equals("Common preference from the plugin state area for stateAndFragmentLocal"));
 
-	//-----------------------------------------------------------
-	// Preferences in the plugin state area and the primary 
-	// feature plugin
-		
 	//-----------------------------------------------------------	
-	// Preferences in the local plugin area and the primary feature
-	// plugin
+	// Preferences in the local area for a fragment of this plugin
+	// and the primary feature
+	resPlugin = registry.getPluginDescriptor("fragmentLocalAndPrimaryFeaturePlugin");
+	sourceName = ((PluginDescriptor)resPlugin).getFragments()[0].getLocation() + "/originalplugin_customization.ini";
+	sourceName = sourceName.substring(sourceName.indexOf(':') + 1);
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	IPluginDescriptor primaryFeatureDescriptor = registry.getPluginDescriptor(primaryFeaturePluginId);
+	destString = ((PluginDescriptor)primaryFeatureDescriptor).getLocation() +
+		"plugin_customization.ini";
+	destString = destString.substring(destString.indexOf(':') + 1);
+	copyFile(sourceName, destString);
+	prefs = null;
+	try {
+		prefs = resPlugin.getPlugin().getPluginPreferences();
+	} catch (CoreException ce) {
+		fail("0.3 core exception from getPlugin");
+	}
+	defaultNames = prefs.defaultPropertyNames();
+	prefNames = prefs.propertyNames();
+	assertTrue("3.0 Three default preferences", defaultNames.length == 3);
+	assertTrue("3.1 No explicit preferences", prefNames.length == 0);
+	// Do we have the right names for the default preferences?
+	foundPluginLocalPreference = false;
+	foundCommonPreference = false;
+	boolean foundPrimaryFeaturePreference = false;
+	for (int i = 0; i < defaultNames.length; i++) {
+		if (defaultNames[i].equals("FragmentLocalPreference"))
+			foundPluginLocalPreference = true;
+		else if (defaultNames[i].equals("commonFragmentLocalAndPrimaryFeaturePreference"))
+			foundCommonPreference = true;
+		else if (defaultNames[i].equals("PrimaryFeaturePreference"))
+			foundPrimaryFeaturePreference = true;
+	}
+	assertTrue("3.2 Got right default preference names",
+		foundPluginLocalPreference && foundCommonPreference && foundPrimaryFeaturePreference);
+	// Check preference values
+	assertTrue("3.3 FragmentLocalPreference value",
+		prefs.getString("FragmentLocalPreference").equals("From the local fragment directory of the plugin fragmentLocalAndPrimaryFeaturePlugin"));
+	assertTrue("3.4 PrimaryFeaturePreference value",
+		prefs.getString("PrimaryFeaturePreference").equals("From the primary feature plugin directory via the plugin fragmentLocalAndPrimaryFeaturePlugin"));
+	assertTrue("3.5 commonFragmentLocalAndPrimaryFeaturePreference value",
+		prefs.getString("commonFragmentLocalAndPrimaryFeaturePreference").equals("Common preference from the primary feature of plugin fragmentLocalAndPrimaryFeaturePlugin"));
 	
 	//-----------------------------------------------------------	
-	// Preferences in the plugin state area, the local plugin area
-	// and the primary feature plugin
+	// Preferences in the plugin state area, the local area for a
+	// fragment of this plugin and the primary feature 
+	resPlugin = registry.getPluginDescriptor("stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin");
+	runtimePlugin = null;
+	try {
+		runtimePlugin = resPlugin.getPlugin();
+	} catch (CoreException ce) {
+		fail("0.4 core exception from getPlugin");
+	}
+	destString = runtimePlugin.getStateLocation().append("pref_store.ini").toOSString();
+	// get rid of the protocol
+	sourceName = ((PluginDescriptor)resPlugin).getFragments()[0].getLocation() + "/originalpref_store.ini";
+	sourceName = sourceName.substring(sourceName.indexOf(':') + 1);
+	copyFile(sourceName, destString);
+	sourceName = ((PluginDescriptor)resPlugin).getFragments()[0].getLocation() + "/originalplugin_customization.ini";
+	sourceName = sourceName.substring(sourceName.indexOf(':') + 1);
+	destString = ((PluginDescriptor)primaryFeatureDescriptor).getLocation() +
+		"plugin_customization.ini";
+	destString = destString.substring(destString.indexOf(':') + 1);
+	copyFile(sourceName, destString);
+	prefs = null;
+	prefs = runtimePlugin.getPluginPreferences();
+	defaultNames = prefs.defaultPropertyNames();
+	prefNames = prefs.propertyNames();
+	assertTrue("4.0 Three default preferences", defaultNames.length == 3);
+	assertTrue("4.1 Two explicit preferences", prefNames.length == 2);
+	// Do we have the right names for the explicit preferences?
+	foundStateLocalPreference = false;
+	foundCommonPreference = false;
+	for (int i = 0; i < prefNames.length; i++) {
+		if (prefNames[i].equals("StateLocalPreference"))
+			foundStateLocalPreference = true;
+		else if (prefNames[i].equals("commonStateAndFragmentLocalAndPrimaryFeaturePreference"))
+			foundCommonPreference = true;
+	}
+	assertTrue("4.2 Got right default preference names",
+		foundStateLocalPreference && foundCommonPreference);
+	// Do we have the right names for the default preferences?
+	foundPluginLocalPreference = false;
+	foundCommonPreference = false;
+	foundPrimaryFeaturePreference = false;
+	for (int i = 0; i < defaultNames.length; i++) {
+		if (defaultNames[i].equals("FragmentLocalPreference"))
+			foundPluginLocalPreference = true;
+		else if (defaultNames[i].equals("commonStateAndFragmentLocalAndPrimaryFeaturePreference"))
+			foundCommonPreference = true;
+		else if (defaultNames[i].equals("PrimaryFeaturePreference"))
+			foundPrimaryFeaturePreference = true;
+	}
+	assertTrue("4.3 Got right default preference names",
+		foundPluginLocalPreference && foundCommonPreference && foundPrimaryFeaturePreference);
+	// Check preference values
+	assertTrue("4.3 StateLocalPreference value",
+		prefs.getString("StateLocalPreference").equals("From the plugin state area of plugin stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin"));
+	assertTrue("4.4 FragmentLocalPreference value",
+		prefs.getString("FragmentLocalPreference").equals("From the local fragment directory of plugin stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin"));
+	assertTrue("4.5 PrimaryFeaturePreference value",
+		prefs.getString("PrimaryFeaturePreference").equals("From the primary feature plugin directory via the plugin stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin"));
+	assertTrue("4.6 commonStateAndFragmentLocalAndPrimaryFeaturePreference value",
+		prefs.getString("commonStateAndFragmentLocalAndPrimaryFeaturePreference").equals("Common preference from the plugin state area of plugin stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin"));
 }
 	
 }

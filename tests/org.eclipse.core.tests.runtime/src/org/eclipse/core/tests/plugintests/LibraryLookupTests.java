@@ -10,10 +10,17 @@
  ******************************************************************************/
 package org.eclipse.core.tests.plugintests;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Locale;
 
+import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.SafeFileInputStream;
+import org.eclipse.core.internal.runtime.SafeFileOutputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.runtimetests.*;
@@ -270,6 +277,46 @@ public void testCode() {
 	codeHelper(registry, "codePluginO", "O", classNamePrefix + "SampleOPB");
 }
 
+public static void copyFile (String sourceName, String destName) {
+	// A crude mechanism for creating a preference file
+	SafeFileInputStream sourceIn = null;
+	SafeFileOutputStream destOut = null;
+	try {
+		sourceIn = new SafeFileInputStream(sourceName);
+		destOut = new SafeFileOutputStream(destName);
+		int buffer = sourceIn.read();
+		while (buffer != -1) {
+			destOut.write(buffer);
+			buffer = sourceIn.read();
+		}
+	} catch (IOException ioe) {
+		fail("0.0 Trouble creating file " + destName + " from original file " + sourceName + ".");
+	} finally {
+		try {
+			sourceIn.close();
+			destOut.close();
+		} catch (IOException e) {
+			fail("0.1 Trouble closing file " + destName + " or " + sourceName + ".");
+		}
+	}
+}
+
+private void deleteDirectory (File directory) {
+	String[] files = directory.list();
+	if (files == null) {
+		directory.delete();
+		return;
+	}
+	for (int i = 0; i < files.length; i++) {
+		File newFile = new File(directory, files[i]);
+		if (newFile.isFile())
+			newFile.delete();
+		else if (newFile.isDirectory())
+			deleteDirectory(newFile);
+	}
+	directory.delete();
+}
+
 public void test3093 () {
 	/* A plugin/fragment entry like 
 	 * 		library name="$nl$/"
@@ -279,19 +326,46 @@ public void test3093 () {
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 	IPluginDescriptor plugin = registry.getPluginDescriptor("test3093PluginA");
 	assertNotNull("1.0", plugin);
-	// Activate this plugin
-	Plugin active = null;
+	// build the right nl related directory and put the jar file there.
+	String nl = InternalBootLoader.getNL();
+	nl = nl.replace('_', '/');
+	URL pluginRoot = plugin.find(new Path("./"));
+	String fullNLDirectory = pluginRoot.getFile() + "nl/" + nl;
+	File file = new File(fullNLDirectory);
 	try {
-		active = plugin.getPlugin();
-	} catch (CoreException ce) {
-		fail("1.1 Core exception encountered.",ce);
+		file.mkdirs();
+		// Now copy the jar file to the right spot
+		String jarSource = null;
+		String jarDest = null;
+		try {
+			jarSource = new URL(pluginRoot, "../../").getFile() + "codePluginA.jar";
+			jarDest = new URL(new URL(pluginRoot, "nl/" + nl + "/"), "codePluginA.jar").getFile();
+		} catch (MalformedURLException badURL) {
+			// just ignore the exception
+		}
+		copyFile(jarSource, jarDest);
+		// Activate this plugin
+		Plugin active = null;
+		try {
+			active = plugin.getPlugin();
+		} catch (CoreException ce) {
+			fail("1.1 Core exception encountered.",ce);
+		}
+		URL[] cp = ((URLClassLoader)plugin.getPluginClassLoader()).getURLs();
+		assertTrue("1.2 One URL on class path", cp.length == 1);
+		String urlString = cp[0].toString();
+		// Make sure we have the right protocol (not jar: but file:)
+		assertEquals("1.3 Right protocol", cp[0].getProtocol(), "file");
+		// Make sure we really picked up the right directory.
+		assertEquals("1.4 Contains nl directory", fullNLDirectory + "/", cp[0].getFile());
+	} finally {	
+		// cleanup
+		try {
+			URL deleteURL = new URL(pluginRoot, "nl");
+			deleteDirectory(new File(deleteURL.getFile()));
+		} catch (MalformedURLException badURL) {
+			// just ignore the bad URL - means we won't cleanup
+		}
 	}
-	URL[] cp = ((URLClassLoader)plugin.getPluginClassLoader()).getURLs();
-	assertTrue("1.2 One URL on class path", cp.length == 1);
-	String urlString = cp[0].toString();
-	// Make sure we have the right protocol (not jar: but file:)
-	assertTrue("1.3 Right protocol", urlString.indexOf("file:") != -1);
-	// Make sure we really picked up the right directory
-	assertTrue("1.4 Contains nl directory", urlString.endsWith("org.eclipse.core.tests.runtime/Plugintests_Testing/Bug3093/plugins/pluginA/nl/en/CA/"));
 }
 }

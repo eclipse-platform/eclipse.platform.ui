@@ -10,13 +10,19 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
@@ -400,6 +406,43 @@ public String getResourceStringFromURL(String id, URL url, String key, boolean s
 	return result;
 
 }
+private void buildPropertyFile(String fileName, String fileData, URL fileLocation) {
+	String fullFileName = fileLocation.getFile() + fileName;
+	try {
+		FileOutputStream fs = new FileOutputStream(fullFileName);
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			w.println(fileData);
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (FileNotFoundException ioe) {
+		fail ("Unable to create test file " + fullFileName);
+	}
+
+}
+private void buildResourceEnv(IPluginDescriptor pluginB, IPluginDescriptor pluginC, String nl, String smallnl) {
+	buildPropertyFile("plugin_" + nl + ".properties", "key = Test String from " + nl, 
+		pluginC.find(new Path("./")));
+	if (!smallnl.equals(nl))
+		buildPropertyFile("plugin_" + smallnl + ".properties", "key = Test String from " + smallnl, 
+			pluginC.find(new Path("./")));
+	buildPropertyFile("plugin_" + smallnl + ".properties", "key = Test String from " + smallnl, 
+		pluginB.find(new Path("./")));
+}
+
+private void cleanupResourceEnv(IPluginDescriptor pluginB, IPluginDescriptor pluginC, String nl, String smallnl) {
+	File file = new File(pluginB.find(new Path("./")).getFile() + "plugin_" + smallnl + ".properties");
+	file.delete();
+	file = new File(pluginC.find(new Path("./")).getFile() + "plugin_" + nl + ".properties");
+	file.delete();
+	if (!smallnl.equals(nl)) {
+		file = new File(pluginC.find(new Path("./")).getFile() + "plugin_" + smallnl + ".properties");
+		file.delete();
+	}
+}
+
 public void testGetResourceString() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
@@ -414,40 +457,51 @@ public void testGetResourceString() {
 	assertNotNull("0.2", pluginC);
 	assertNotNull("0.3", pluginD);
 
-	// check locale (test files setup for en_US)
-	assertTrue(Locale.getDefault().toString().equals("en_CA"));
-
+	// We are making the assumption here that nl will have at 
+	// most 2 segments
+	String nl = InternalBootLoader.getNL();
+	String smallnl = nl;
+	int i = nl.lastIndexOf('_');
+	if (i != -1) {
+		smallnl = nl.substring(0, i);
+	}
+	
 	// resource strings - no lookup
 	String s1 = "Hello World";
 	String s2 = "%%" + s1;
-
-	assertTrue("2.0", pluginA.getResourceString(s1).equals(s1));
-	assertTrue("2.1", pluginA.getResourceString(s2).equals(s2.substring(1)));
-
 	// resource strings - default bundle lookup
 	String s3 = "Test String";
 	String key = "%key";
 	String bad = "%bad";
-
-	assertTrue("3.0", pluginA.getResourceString(key).equals(s3));
-	assertTrue("3.1", pluginB.getResourceString(key).equals(s3 + " en"));
-	assertTrue("3.2", pluginC.getResourceString(key).equals(s3 + " en_CA"));
-	assertTrue("3.3", pluginD.getResourceString(key).equals(key));
-
-	assertTrue("4.0", pluginA.getResourceString(bad).equals(bad));
-	assertTrue("4.1", pluginB.getResourceString(bad).equals(bad));
-	assertTrue("4.2", pluginC.getResourceString(bad).equals(bad));
-	assertTrue("4.3", pluginD.getResourceString(bad).equals(bad));
-
-	assertTrue("5.0", pluginA.getResourceString(bad + " " + s1).equals(s1));
-	assertTrue("5.1", pluginB.getResourceString(bad + " " + s1).equals(s1));
-	assertTrue("5.2", pluginC.getResourceString(bad + " " + s1).equals(s1));
-	assertTrue("5.3", pluginD.getResourceString(bad + " " + s1).equals(s1));
-
-	assertTrue("6.0", pluginA.getResourceString(key + " " + s1).equals(s3));
-	assertTrue("6.1", pluginB.getResourceString(key + " " + s1).equals(s3 + " en"));
-	assertTrue("6.2", pluginC.getResourceString(key + " " + s1).equals(s3 + " en_CA"));
-	assertTrue("6.3", pluginD.getResourceString(key + " " + s1).equals(s1));
+	
+	try {
+		buildResourceEnv(pluginB, pluginC, nl, smallnl);
+	
+		assertEquals("2.0", s1, pluginA.getResourceString(s1));
+		assertEquals("2.1", s2.substring(1), pluginA.getResourceString(s2));
+	
+		assertEquals("3.0", s3, pluginA.getResourceString(key));
+		assertEquals("3.1", s3 + " from " + smallnl, pluginB.getResourceString(key));
+		assertEquals("3.2", s3 + " from " + nl, pluginC.getResourceString(key));
+		assertEquals("3.3", key, pluginD.getResourceString(key));
+	
+		assertEquals("4.0", bad, pluginA.getResourceString(bad));
+		assertEquals("4.1", bad, pluginB.getResourceString(bad));
+		assertEquals("4.2", bad, pluginC.getResourceString(bad));
+		assertEquals("4.3", bad, pluginD.getResourceString(bad));
+	
+		assertEquals("5.0", s1, pluginA.getResourceString(bad + " " + s1));
+		assertEquals("5.1", s1, pluginB.getResourceString(bad + " " + s1));
+		assertEquals("5.2", s1, pluginC.getResourceString(bad + " " + s1));
+		assertEquals("5.3", s1, pluginD.getResourceString(bad + " " + s1));
+	
+		assertEquals("6.0", s3, pluginA.getResourceString(key + " " + s1));
+		assertEquals("6.1", s3 + " from " + smallnl, pluginB.getResourceString(key + " " + s1));
+		assertEquals("6.2", s3 + " from " + nl, pluginC.getResourceString(key + " " + s1));
+		assertEquals("6.3", s1, pluginD.getResourceString(key + " " + s1));
+	} finally {
+		cleanupResourceEnv(pluginB, pluginC, nl, smallnl);
+	}
 
 	// resource strings - specified bundle
 	ClassLoader loader = new URLClassLoader(new URL[] { pluginD.getInstallURL()}, null);
@@ -455,37 +509,39 @@ public void testGetResourceString() {
 	try {
 		bundle = ResourceBundle.getBundle("resource", Locale.getDefault(), loader);
 	} catch (MissingResourceException e) {
+		// We don't need to worry about the locale here.  We should always find
+		// resource.properties
 		fail("7.0.1");
 	};
-	assertTrue("7.0.2", bundle != null);
+	assertNotNull("7.0.2", bundle);
 
-	assertTrue("7.1", pluginA.getResourceString(s1, bundle).equals(s1));
-	assertTrue("7.2", pluginA.getResourceString(s2, bundle).equals(s2.substring(1)));
-	assertTrue("7.3", pluginA.getResourceString(key, bundle).equals("resource.properties " + s3));
-	assertTrue("7.4", pluginA.getResourceString(bad, bundle).equals(bad));
-	assertTrue("7.5", pluginA.getResourceString(bad + " " + s1, bundle).equals(s1));
-	assertTrue("7.6", pluginA.getResourceString(key + " " + s1, bundle).equals("resource.properties " + s3));
+	assertEquals("7.1", s1, pluginA.getResourceString(s1, bundle));
+	assertEquals("7.2", s2.substring(1), pluginA.getResourceString(s2, bundle));
+	assertEquals("7.3", "resource.properties " + s3, pluginA.getResourceString(key, bundle));
+	assertEquals("7.4", bad, pluginA.getResourceString(bad, bundle));
+	assertEquals("7.5", s1, pluginA.getResourceString(bad + " " + s1, bundle));
+	assertEquals("7.6", "resource.properties " + s3, pluginA.getResourceString(key + " " + s1, bundle));
 
-	assertTrue("8.1", pluginB.getResourceString(s1, bundle).equals(s1));
-	assertTrue("8.2", pluginB.getResourceString(s2, bundle).equals(s2.substring(1)));
-	assertTrue("8.3", pluginB.getResourceString(key, bundle).equals("resource.properties " + s3));
-	assertTrue("8.4", pluginB.getResourceString(bad, bundle).equals(bad));
-	assertTrue("8.5", pluginB.getResourceString(bad + " " + s1, bundle).equals(s1));
-	assertTrue("8.6", pluginB.getResourceString(key + " " + s1, bundle).equals("resource.properties " + s3));
+	assertEquals("8.1", s1, pluginB.getResourceString(s1, bundle));
+	assertEquals("8.2", s2.substring(1), pluginB.getResourceString(s2, bundle));
+	assertEquals("8.3", "resource.properties " + s3, pluginB.getResourceString(key, bundle));
+	assertEquals("8.4", bad, pluginB.getResourceString(bad, bundle));
+	assertEquals("8.5", s1, pluginB.getResourceString(bad + " " + s1, bundle));
+	assertEquals("8.6", "resource.properties " + s3, pluginB.getResourceString(key + " " + s1, bundle));
 
-	assertTrue("9.1", pluginC.getResourceString(s1, bundle).equals(s1));
-	assertTrue("9.2", pluginC.getResourceString(s2, bundle).equals(s2.substring(1)));
-	assertTrue("9.3", pluginC.getResourceString(key, bundle).equals("resource.properties " + s3));
-	assertTrue("9.4", pluginC.getResourceString(bad, bundle).equals(bad));
-	assertTrue("9.5", pluginC.getResourceString(bad + " " + s1, bundle).equals(s1));
-	assertTrue("9.6", pluginC.getResourceString(key + " " + s1, bundle).equals("resource.properties " + s3));
+	assertEquals("9.1", s1, pluginC.getResourceString(s1, bundle));
+	assertEquals("9.2", s2.substring(1), pluginC.getResourceString(s2, bundle));
+	assertEquals("9.3", "resource.properties " + s3, pluginC.getResourceString(key, bundle));
+	assertEquals("9.4", bad, pluginC.getResourceString(bad, bundle));
+	assertEquals("9.5", s1, pluginC.getResourceString(bad + " " + s1, bundle));
+	assertEquals("9.6", "resource.properties " + s3, pluginC.getResourceString(key + " " + s1, bundle));
 
-	assertTrue("10.1", pluginD.getResourceString(s1, bundle).equals(s1));
-	assertTrue("10.2", pluginD.getResourceString(s2, bundle).equals(s2.substring(1)));
-	assertTrue("10.3", pluginD.getResourceString(key, bundle).equals("resource.properties " + s3));
-	assertTrue("10.4", pluginD.getResourceString(bad, bundle).equals(bad));
-	assertTrue("10.5", pluginD.getResourceString(bad + " " + s1, bundle).equals(s1));
-	assertTrue("10.6", pluginD.getResourceString(key + " " + s1, bundle).equals("resource.properties " + s3));
+	assertEquals("10.1", s1, pluginD.getResourceString(s1, bundle));
+	assertEquals("10.2", s2.substring(1), pluginD.getResourceString(s2, bundle));
+	assertEquals("10.3", "resource.properties " + s3, pluginD.getResourceString(key, bundle));
+	assertEquals("10.4", bad, pluginD.getResourceString(bad, bundle));
+	assertEquals("10.5", s1, pluginD.getResourceString(bad + " " + s1, bundle));
+	assertEquals("10.6", "resource.properties " + s3, pluginD.getResourceString(key + " " + s1, bundle));
 
 }
 }
