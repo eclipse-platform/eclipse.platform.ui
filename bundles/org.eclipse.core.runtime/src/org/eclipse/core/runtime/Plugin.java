@@ -391,7 +391,8 @@ public abstract class Plugin implements BundleActivator {
 	 *				super();
 	 *			}
 	 *			public void initializeDefaultPreferences() {
-	 *				MyPlugin.getPlugin().getPluginPreferences().setDefault(key, value);
+	 *				Preferences node = new DefaultScope().getNode("my.plugin.id");
+	 *				node.put(key, value);
 	 *			}
 	 *		}
 	 * </pre>

@@ -28,7 +28,15 @@ public abstract class AbstractPreferenceInitializer {
 	}
 
 	/**
-	 * TODO
+	 * This method is called by the preference initializer to initialize default
+	 * preference values. Clients should get the correct node for their 
+	 * bundle and then set the default values on it. For example:
+	 * <pre>
+	 *			public void initializeDefaultPreferences() {
+	 *				Preferences node = new DefaultScope().getNode("my.bundle.id");
+	 *				node.put(key, value);
+	 *			}
+	 * </pre>
 	 */
 	public abstract void initializeDefaultPreferences();
 
