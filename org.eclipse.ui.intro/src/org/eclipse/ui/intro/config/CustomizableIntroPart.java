@@ -307,12 +307,15 @@ public final class CustomizableIntroPart extends IntroPart implements
         Display.getDefault().syncExec(new Runnable() {
 
             public void run() {
+                String currentPageId = model.getCurrentPageId();
                 // clear model
                 ExtensionPointManager.getInst().clear();
                 // refresh to new model.
                 model = ExtensionPointManager.getInst().getCurrentModel();
                 // reuse existing presentation, since we just nulled it.
                 model.setPresentation(getPresentation());
+                // keep same page on refresh. No need for notification here.
+                model.setCurrentPageId(currentPageId, false);
                 if (presentation != null)
                     presentation.registryChanged(event);
 
