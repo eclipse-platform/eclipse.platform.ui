@@ -77,46 +77,48 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public Object[] findSourceElements(String name) throws CoreException {
 		name = name.replace('\\', '/');
 		ZipFile file = getArchive();
-		boolean isQualfied = name.indexOf('/') > 0;
-		if (fDetectRoots && isQualfied) {
-			String root = getRoot(file, name);
-			if (root != null) {
-				if (root.length() > 0) {
-					name = root + name;
+		synchronized (file) {
+			boolean isQualfied = name.indexOf('/') > 0;
+			if (fDetectRoots && isQualfied) {
+				String root = getRoot(file, name);
+				if (root != null) {
+					if (root.length() > 0) {
+						name = root + name;
+					}
+					ZipEntry entry = file.getEntry(name);
+					if (entry != null) {
+						return new Object[]{new ZipEntryStorage(file, entry)};
+					}
 				}
+			} else {
+				// try exact match
 				ZipEntry entry = file.getEntry(name);
 				if (entry != null) {
+					// can't be any dups if there is an exact match
 					return new Object[]{new ZipEntryStorage(file, entry)};
 				}
-			}
-		} else {
-			// try exact match
-			ZipEntry entry = file.getEntry(name);
-			if (entry != null) {
-				// can't be any dups if there is an exact match
-				return new Object[]{new ZipEntryStorage(file, entry)};
-			}
-			// search
-			Enumeration entries = file.entries();
-			List matches = null;
-			while (entries.hasMoreElements()) {
-				entry = (ZipEntry)entries.nextElement();
-				String entryName = entry.getName();
-				if (entryName.endsWith(name)) {
-					if (isQualfied || entryName.length() == name.length() || entryName.charAt(entryName.length() - name.length() - 1) == '/') {
-						if (isFindDuplicates()) {
-							if (matches == null) {
-								matches = new ArrayList();
+				// search
+				Enumeration entries = file.entries();
+				List matches = null;
+				while (entries.hasMoreElements()) {
+					entry = (ZipEntry)entries.nextElement();
+					String entryName = entry.getName();
+					if (entryName.endsWith(name)) {
+						if (isQualfied || entryName.length() == name.length() || entryName.charAt(entryName.length() - name.length() - 1) == '/') {
+							if (isFindDuplicates()) {
+								if (matches == null) {
+									matches = new ArrayList();
+								}
+								matches.add(new ZipEntryStorage(file, entry));
+							} else {
+								return new Object[]{new ZipEntryStorage(file, entry)};
 							}
-							matches.add(new ZipEntryStorage(file, entry));
-						} else {
-							return new Object[]{new ZipEntryStorage(file, entry)};
 						}
 					}
 				}
-			}
-			if (matches != null) {
-				return matches.toArray();
+				if (matches != null) {
+					return matches.toArray();
+				}
 			}
 		}
 		return EMPTY;
