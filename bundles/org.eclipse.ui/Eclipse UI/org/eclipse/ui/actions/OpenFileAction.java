@@ -102,19 +102,4 @@ void openFile(IFile file) {
 	}
 }
 
-	/**
-	 * Handle a double click.
-	 * 
-	 * @deprecated this class should not assume it's the default action;
-	 *   just use selectionChanged and run() if so
-	 */
-	public void handleDoubleClick(IStructuredSelection selection) {
-		
-		Object element = selection.getFirstElement();
-		if (element instanceof IFile) {
-			selectionChanged(selection);
-			run();
-		}
-	}
-
 }
