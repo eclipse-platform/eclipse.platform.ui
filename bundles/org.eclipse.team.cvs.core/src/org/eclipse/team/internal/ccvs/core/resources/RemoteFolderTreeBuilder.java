@@ -267,7 +267,9 @@ public class RemoteFolderTreeBuilder {
 			RemoteFile remoteFile;
 			Map deltas = (Map)fileDeltas.get(Path.EMPTY);
 			if (deltas == null || deltas.isEmpty()) {
-				if (file.isManaged() && file.getSyncInfo().isAdded()) {
+				// If the file is an addition, return null as the remote
+				// Note: If there was a conflicting addition, the delta would not be empty
+				if ( ! file.isManaged() || file.getSyncInfo().isAdded()) {
 					return null;
 				}
 				remoteFile = new RemoteFile(remoteRoot, file.getSyncInfo());
