@@ -233,67 +233,6 @@ public final class R21PaneFolder {
 			topRightCache.flush();
 			topCenterCache.flush();
 		}
-//				
-//		// HACK: Force the tab folder to do a layout, since it doesn't always
-//		// resize its title area each time setBounds is called.
-//		tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
-//		// END OF HACK
-//		
-//		Rectangle titleArea = DragUtil.getDisplayBounds(titleAreaProxy);
-//
-//		
-//		Point topRightSize = topRightCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		Point topCenterSize = topCenterCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		
-//		// Determine if there is enough room for the trim in the title area
-//		int requiredWidth = topRightSize.x + topCenterSize.x;
-//		int requiredHeight = Math.max(topRightSize.y, topCenterSize.y);
-//		
-//		boolean lastTrimOnTop = putTrimOnTop;
-//		putTrimOnTop = (titleArea.width >= requiredWidth && titleArea.height >= requiredHeight);
-//		
-//		Control topRight = topRightCache.getControl();
-//		Control topCenter = topCenterCache.getControl();
-//		
-//		if (putTrimOnTop) {
-//			// Try to avoid calling setTop* whenever possible, since this will trigger a layout
-//			// of the viewForm.
-//			if (!lastTrimOnTop) {
-//				//	Arrange controls in the title bar
-//				viewFormTopCenterProxy.setTarget(null);
-//				viewFormTopRightProxy.setTarget(null);
-//				viewForm.setTopCenter(null);
-//				viewForm.setTopRight(null);
-//			}
-//
-//			Rectangle topRightArea = new Rectangle (titleArea.x + titleArea.width - topRightSize.x, 
-//					titleArea.y + (titleArea.height - topRightSize.y) / 2, topRightSize.x, topRightSize.y); 
-//			
-//			if (topRight != null) {
-//				topRight.setBounds(Geometry.toControl(topRight.getParent(), topRightArea));
-//			}
-//			
-//			if (topCenter != null) {
-//				Rectangle topCenterArea = new Rectangle(topRightArea.x - topCenterSize.x,
-//						titleArea.y + (titleArea.height - topCenterSize.y) / 2, topCenterSize.x, topCenterSize.y);
-//				
-//				Rectangle localCoords = Geometry.toControl(topCenter.getParent(), topCenterArea); 
-//				
-//				topCenter.setBounds(localCoords);
-//			}	
-//		} else {
-//			if (lastTrimOnTop) {
-//				if (topCenter != null) {
-//					viewFormTopCenterProxy.setTarget(topCenterCache);
-//					viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
-//				}
-//				
-//				if (topRight != null) {
-//					viewFormTopRightProxy.setTarget(topRightCache);
-//					viewForm.setTopRight(viewFormTopRightProxy.getControl());
-//				}
-//			}
-//		}
 
 		Rectangle tabFolderClientArea = tabFolder.getClientArea();
 		
