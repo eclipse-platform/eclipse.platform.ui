@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -235,8 +236,10 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		
 		List statusList= getStatusList();
 		if (statusList != null) {
-		    statusList.add(status);
-		    status= getMostSevere(statusList);
+		    List temp= new ArrayList(statusList.size() + 1);
+		    temp.add(status);
+		    temp.addAll(statusList);
+		    status= getMostSevere(temp);
 		}
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
