@@ -25,6 +25,9 @@ import java.util.*;
 	private Item tableItem;
 	private int columnNumber;
 	private ICellEditorListener cellEditorListener;
+	private FocusListener focusListener;
+	
+	
 TableViewerImpl() {
 	initCellEditorListener();
 }
@@ -52,6 +55,14 @@ private void activateCellEditor() {
 		 		setLayoutData(cellEditor.getLayoutData());
 				setEditor(control, tableItem, columnNumber);		
 				cellEditor.setFocus();
+				if(focusListener == null) {
+					focusListener = new FocusAdapter() {
+						public void focusLost(FocusEvent e) {
+							applyEditorValue();
+						}
+					};
+				}
+				control.addFocusListener(focusListener);
 			}
 		}
 	}
@@ -116,8 +127,9 @@ public void cancelEditing() {
 	if (cellEditor != null) {
 		setEditor(null, null, 0);
 		cellEditor.removeListener(cellEditorListener);
-		cellEditor.deactivate();
+		CellEditor oldEditor = cellEditor;
 		cellEditor = null;
+		oldEditor.deactivate();
 	}
 }
 /**
