@@ -14,7 +14,6 @@ package org.eclipse.search.internal.ui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Caret;
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -70,69 +69,30 @@ public class SWTUtil {
 							
 		return null;	
 	}
-	
-	private static double fgHorizontalDialogUnitSize= 0.0;
-	private static double fgVerticalDialogUnitSize= 0.0;
-	
-	private static void initializeDialogUnits(Control control) {
-		GC gc= new GC(control);
-		gc.setFont(control.getFont());
-		int averageWidth= gc.getFontMetrics().getAverageCharWidth();
-		int height = gc.getFontMetrics().getHeight();
-		gc.dispose();
-	
-		fgHorizontalDialogUnitSize = averageWidth * 0.25;
-		fgVerticalDialogUnitSize = height * 0.125;
-	}
-	
-	/**
-	 * @see DialogPage#convertHorizontalDLUsToPixels
-	 */
-	private static int convertHorizontalDLUsToPixels(int dlus) {
-		return (int)Math.round(dlus * fgHorizontalDialogUnitSize);
-	}
 
-	/**
-	 * @see DialogPage#convertVerticalDLUsToPixels
-	 */
-	private static int convertVerticalDLUsToPixels(int dlus) {
-		return (int)Math.round(dlus * fgVerticalDialogUnitSize);
-	}
-	
-	/**
-	 * @see DialogPage#convertWidthInCharsToPixels
-	 */
-	public static int convertWidthInCharsToPixels(int chars, Text text) {
-		if (fgHorizontalDialogUnitSize == 0.0)
-			initializeDialogUnits(text);
-		return convertHorizontalDLUsToPixels(chars * 4);
-	}
-	
+
 	/**
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
 			button.setFont(JFaceResources.getDialogFont());
-		if (fgHorizontalDialogUnitSize == 0.0) {
-			initializeDialogUnits(button);
-		}
-		int widthHint= convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		PixelConverter converter= new PixelConverter(button);
+		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
 	/**
 	 * Returns a height hint for a button control.
 	 */		
-	public static int getButtonHeigthHint(Button button) {
+	public static int getButtonHeightHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
 			button.setFont(JFaceResources.getDialogFont());
-		if (fgHorizontalDialogUnitSize == 0.0) {
-			initializeDialogUnits(button);
-		}
-		return convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	}		
+		PixelConverter converter= new PixelConverter(button);
+		return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	}	
 
+	
 	/**
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
@@ -144,8 +104,19 @@ public class SWTUtil {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).heightHint= SWTUtil.getButtonHeigthHint(button);
-			((GridData)gd).widthHint= SWTUtil.getButtonWidthHint(button);		 
+			((GridData)gd).heightHint= getButtonHeightHint(button);
+			((GridData)gd).widthHint= getButtonWidthHint(button);		 
 		}
 	}
+	
+	public static int getTableHeightHint(Table table, int rows) {
+		if (table.getFont().equals(JFaceResources.getDefaultFont()))
+			table.setFont(JFaceResources.getDialogFont());
+		int result= table.getItemHeight() * rows + table.getHeaderHeight();
+		if (table.getLinesVisible())
+			result+= table.getGridLineWidth() * (rows - 1);
+		return result;		
+	}
+	
+
 }

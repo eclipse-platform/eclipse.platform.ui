@@ -40,6 +40,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.SearchUI;
 
+import org.eclipse.search.internal.ui.util.PixelConverter;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class ScopePart {
@@ -312,7 +313,7 @@ public class ScopePart {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= 8;
 		gd.horizontalSpan= 2;
-		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
+		gd.widthHint= new PixelConverter(fWorkingSetText).convertWidthInCharsToPixels(30);
 		fWorkingSetText.setLayoutData(gd);
 
 		// Add scope change listeners
