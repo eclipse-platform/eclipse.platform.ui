@@ -120,8 +120,8 @@ public class JobTargetSites extends HashMap {
 
 
 	public JobTargetSite findPatchedFeature(IFeature patch) {
-		for (Iterator enum = this.entrySet().iterator(); enum.hasNext();) {
-			JobTargetSite jobSite = (JobTargetSite) enum.next();
+		for (Iterator enum = this.keySet().iterator(); enum.hasNext();) {
+			JobTargetSite jobSite = (JobTargetSite)get(enum.next());
 			IFeature target = jobSite.job.getFeature();
 			if (!target.equals(patch) && UpdateManager.isPatch(target, patch))
 				return jobSite;
