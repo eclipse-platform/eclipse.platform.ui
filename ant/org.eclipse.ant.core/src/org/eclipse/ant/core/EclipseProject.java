@@ -110,5 +110,6 @@ public void init() throws BuildException {
 	addTaskDefinition("ant", EclipseAnt.class);
 	addTaskDefinition("javac", EclipseJavac.class);
 	addDataTypeDefinition("commapatternset", CommaPatternSet.class);
+	System.setProperty("ant.regexp.matcherimpl", "org.eclipse.ant.core.XercesRegexpMatcher");
 }
 }
