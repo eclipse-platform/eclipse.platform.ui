@@ -150,7 +150,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			if (e.toString().indexOf("invalid server's version string") == -1) { //$NON-NLS-1$
 			    String message = e.getMessage();
 			    if (message.equals("Auth fail")) { //$NON-NLS-1$
-			        message = "An undetermined authentication failure has occurred";
+			        message = Policy.bind("CVSSSH2ServerConnection.0"); //$NON-NLS-1$
 			        // Could possibly retry below but wont just in case
 			    }
 				throw new CVSAuthenticationException(message, CVSAuthenticationException.NO_RETRY);
