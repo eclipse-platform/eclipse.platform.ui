@@ -1,10 +1,13 @@
-/*
- * Licensed Materials - Property of IBM
- * (c) Copyright IBM Corporation 2000, 2003.
- * All Rights Reserved. 
- * Note to U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP  schedule Contract with IBM Corp. 
-*/
-
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
 import org.eclipse.help.ILiveHelpAction;
@@ -15,6 +18,8 @@ import org.eclipse.swt.widgets.Display;
  * using a live help link.  To use this action, the initialization string must correspond to the id of a 
  * cheat sheet that has been declared using the cheatsheetContent extension point.
  * See ILiveHelpAction for further details on how to run an action from eclipse help pages. </p>
+ * 
+ * @since 3.0
  */
 public class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
 	private String cheatsheetID;

@@ -1,10 +1,13 @@
-/*
- * Licensed Materials - Property of IBM
- * (c) Copyright IBM Corporation 2000, 2003.
- * All Rights Reserved. 
- * Note to U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP  schedule Contract with IBM Corp. 
-*/
-
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
 /**
@@ -16,6 +19,8 @@ package org.eclipse.ui.cheatsheets;
  * and retrieved from the implementation of ICheatSheetManager during the lifetime of a cheat sheet.
  * The lifetime of a cheat sheet is from the moment the introductory item is kicked off until the cheat sheet
  * is either completed or re-started.</p>
+ * 
+ * @since 3.0
  */
 public interface ICheatSheetManager {
 
