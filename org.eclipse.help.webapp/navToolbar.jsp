@@ -20,6 +20,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<title><%=WebappResources.getString("Toolbar", request)%></title>
+
 <style type="text/css">
 /* need this one for Mozilla */
 HTML { 

@@ -14,6 +14,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
+<title><%=WebappResources.getString("Search", request)%></title>
 	<!--
 	<base target="NavFrame.document.all.search">
 	-->

@@ -221,7 +221,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-				<div class="book"><input class="checkbox" type="checkbox" name="<%=id%>" ><%=label%></div>
+				<div class="book"><input class="checkbox" type="checkbox" name="<%=id%>" alt="<%=label%>"><%=label%></div>
 <%
 }		
 %>
@@ -231,10 +231,10 @@ for (int i=0; i<tocs.getLength(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid black; padding:0px; margin:0px;">
-						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" >
+						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" alt='<%=WebappResources.getString("Search", request)%>'>
 					</td>
 					<td style="border:1px solid black; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel">
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

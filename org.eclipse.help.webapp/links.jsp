@@ -16,6 +16,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
+
+<title><%=WebappResources.getString("Links", request)%></title>
+
 <base target="MainFrame">
 <script language="JavaScript" src="list.js"></script>
 
