@@ -55,12 +55,12 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 		if (element == null) {
 			return;
 		}
-		if (getViewer().getControl().isDisposed()) {
+		if (getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
 			return;
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				if (getViewer().getControl().isDisposed()) {
+				if (getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
 					return;
 				}
 				doHandleDebugEvent(event);
