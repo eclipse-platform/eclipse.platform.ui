@@ -51,6 +51,8 @@ public class TypeFilteringDialog extends SelectionDialog {
 /**
  * Creates a type selection dialog using the supplied entries. Set the initial selections to those
  * whose extensions match the preselections.
+ * @param Shell
+ * @param Collection of String - a Collection of String to define the preselected types
  */
 public TypeFilteringDialog(Shell parentShell, Collection preselections) {
 	super(parentShell);
@@ -62,6 +64,9 @@ public TypeFilteringDialog(Shell parentShell, Collection preselections) {
 /**
  * Creates a type selection dialog using the supplied entries. Set the initial selections to those
  * whose extensions match the preselections.
+ * @param Shell
+ * @param Collection of String - a Collection of String to define the preselected types
+ * @param String - the title of the text entry field for other extensions.
  */
 public TypeFilteringDialog(Shell parentShell, Collection preselections, String filterText) {
 	this(parentShell,preselections);
