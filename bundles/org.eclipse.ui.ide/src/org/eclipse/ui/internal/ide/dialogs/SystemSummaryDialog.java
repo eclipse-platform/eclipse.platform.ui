@@ -29,12 +29,12 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.IFeatureEntry;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.PreferenceExporter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 
 import org.eclipse.swt.SWT;
@@ -231,7 +231,7 @@ public final class SystemSummaryDialog extends Dialog {
 		file.delete();
 		
 		try {
-			PreferenceExporter.exportPreferences(path);
+			Preferences.exportPreferences(path);
 		} catch (CoreException e) {
 			writer.println("Error exporting user preferences " + e.toString()); //$NON-NLS-1$
 		}				
