@@ -281,7 +281,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				} else if (next.toLowerCase().equals(TRIGGER_CLEAN)) {
 					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
 				} else if (next.toLowerCase().equals(TRIGGER_FULL)) {
-					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+					command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
 				} else if (next.toLowerCase().equals(TRIGGER_INCREMENTAL)) {
 					command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 				}
