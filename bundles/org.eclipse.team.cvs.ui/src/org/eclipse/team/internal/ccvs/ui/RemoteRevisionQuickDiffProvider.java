@@ -19,8 +19,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.IEditorInput;
@@ -124,17 +125,12 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	/*
 	 * @see org.eclipse.test.quickdiff.DocumentLineDiffer.IQuickDiffReferenceProvider#getReference()
 	 */
-	public IDocument getReference(IProgressMonitor monitor) {
-		try {
-			if(! fReferenceInitialized) return null;
-			if (fReference == null) {
-				readDocument(monitor);
-			}
-			return fReference;
-		} catch(CoreException e) {
-			CVSUIPlugin.log(e);
-			return null;
+	public IDocument getReference(IProgressMonitor monitor) throws CoreException {
+		if(! fReferenceInitialized) return null;
+		if (fReference == null) {
+			readDocument(monitor);
 		}
+		return fReference;
 	}
 
 	/* (non-Javadoc)
@@ -158,7 +154,11 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	public boolean isEnabled() {
 		if (! fReferenceInitialized)
 			return false;
-		return getManagedCVSFile() != null;
+		try {
+			return getManagedCVSFile() != null;
+		} catch (CVSException e) {
+			return false;
+		}
 	}
 
 	/*
@@ -307,16 +307,12 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 * if the provider doesn't not have access to a CVS managed file.
 	 * @return the handle to a CVS file
 	 */
-	private ICVSFile getManagedCVSFile() {
+	private ICVSFile getManagedCVSFile() throws CVSException {
 		if(fEditor != null) {
 			IFile file = getFileFromEditor();
-			try {
 				if(file != null && CVSWorkspaceRoot.isSharedWithCVS(file)) {
 					return CVSWorkspaceRoot.getCVSFileFor(file);
 				}
-			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
-			}
 		}
 		return null;
 	}
@@ -345,7 +341,9 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				try {
 					readDocument(monitor);
 				} catch (CoreException e) {
-					return e.getStatus();
+					// continue and return ok for now. The error will be reported
+					// when the quick diff supports calls getReference() again.
+					// continue
 				}
 				return Status.OK_STATUS;
 			}
