@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -35,7 +34,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.misc.WorkInProgressMessages;
 
 /**
  * The IDE workbench main preference page.
@@ -251,24 +249,4 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         this.autoRefreshButton.setSelection(autoRefresh);
     }
 
-    /**
-     * Check the state of the text
-     * @param text The widget to check
-     * @return <code>true</code> if the text has a valid number entered.
-     */
-    protected boolean checkState(Text text) {
-
-        if (text == null)
-            return false;
-        try {
-            Integer.valueOf(text.getText()).intValue();
-            setErrorMessage(null);
-            return true;
-        } catch (NumberFormatException e1) {
-            setErrorMessage(WorkInProgressMessages
-                    .getString("WorkInProgressPreferencePage.InvalidMessage")); //$NON-NLS-1$
-        }
-
-        return false;
-    }
 }
