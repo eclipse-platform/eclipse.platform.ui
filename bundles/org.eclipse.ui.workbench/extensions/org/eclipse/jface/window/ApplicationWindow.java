@@ -461,7 +461,7 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 			if (toolbarControl != null && !toolbarControl.isDisposed())
 				toolbarControl.setEnabled(toolbarWasEnabled);
 			mgr.setCancelEnabled(cancelWasEnabled);
-			if (currentFocus != null) currentFocus.setFocus();
+			if (currentFocus != null && !currentFocus.isDisposed()) currentFocus.setFocus();
 		}
 	} finally {
 		operationInProgress = false;
