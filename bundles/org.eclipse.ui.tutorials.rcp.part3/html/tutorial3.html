@@ -34,7 +34,7 @@ Part 3 discusses how to add
 functionality such as menus, views, and help files.
 </p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 23, 2004</font></p>
+<font size="-1">June 25, 2004</font></p>
 <hr width="100%">
 
 <h2>Introduction</h2>
@@ -210,6 +210,14 @@ the equivalent menu path is in your application).
 <tr valign="top"><td><img src="images/tag_5.gif" height="13" width="24" align="center" alt="#5">
 <td>Same thing, only for views.
 </table>
+<p>
+<img src="images/tip.gif" alt="Tip: " width="62" height="13">
+To remember the user's layout and window sizes
+for the next time they start your application, add
+<code>configurer.setSaveAndRestore(true);</code>
+to the <code>initialize</code> method of <code>WorkbenchAdvisor</code>.
+An example of this can be found in the sample project.
+</p>
 
 <h3>Fixed views</h3>
 <p>
