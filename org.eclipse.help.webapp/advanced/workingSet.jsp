@@ -12,7 +12,7 @@
 
 <html>
 <head>
-<title><%=ServletResources.getString("NewWorkingSet", request)%></title>
+<title><%=ServletResources.getString(data.isEditMode()?"EditWorkingSet":"NewWorkingSet", request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
