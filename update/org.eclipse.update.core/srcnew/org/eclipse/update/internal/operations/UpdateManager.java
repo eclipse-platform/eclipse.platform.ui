@@ -34,6 +34,9 @@ public class UpdateManager {
 	private static ResourceBundle bundle;
 	private static UpdateManagerAuthenticator authenticator;
 	private static IOperationValidator validator;
+	
+	private static final String PREFIX = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
+	public static final String P_MAPPINGS_FILE = PREFIX + ".mappingsFile";
 
 	static {
 		bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
