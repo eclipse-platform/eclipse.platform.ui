@@ -72,7 +72,6 @@ public class KeyBindingService implements IKeyBindingService {
 		parentUpdateNumber = parent.getUpdateNumber() - 1;
 		service.getWindow().getPartService().addPartListener(partListener);
 		service.getWindow().getShell().addShellListener(shellListener);
-		ActionDescriptor actionDescriptors[] = null;
 		
 		if(site instanceof EditorSite) {
 			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor)((EditorSite)site).getExtensionActionBarContributor();

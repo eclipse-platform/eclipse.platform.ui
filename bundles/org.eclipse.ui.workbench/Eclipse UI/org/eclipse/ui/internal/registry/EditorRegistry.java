@@ -691,8 +691,6 @@ public void removePropertyListener(IPropertyListener l) {
  * the current resource associations.
  */
 public void saveAssociations () {
-	//Get the workbench plugin's working directory
-	IPath workbenchStatePath = WorkbenchPlugin.getDefault().getStateLocation();
 	//Save the resource type descriptions
 	List editors = new ArrayList();
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();

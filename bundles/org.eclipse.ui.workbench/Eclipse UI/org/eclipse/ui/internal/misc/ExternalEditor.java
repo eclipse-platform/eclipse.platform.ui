@@ -89,7 +89,7 @@ public void openWithUserDefinedProgram() throws CoreException {
 	// thrown, it was not caught in time, and no feedback was given to user
 	
 	try {
-		Process p = Runtime.getRuntime().exec(new String[]{programFileName, path});
+		Runtime.getRuntime().exec(new String[]{programFileName, path});
 	} catch (Exception e) {
 		throw new CoreException(new Status(
 			Status.ERROR, 

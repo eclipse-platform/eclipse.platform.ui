@@ -88,8 +88,6 @@ public class DecoratorManager
 		Object element,
 		DecoratorDefinition[] enabledDefinitions) {
 
-		String className = element.getClass().getName();
-
 		ArrayList decorators = new ArrayList();
 
 		for (int i = 0; i < enabledDefinitions.length; i++) {

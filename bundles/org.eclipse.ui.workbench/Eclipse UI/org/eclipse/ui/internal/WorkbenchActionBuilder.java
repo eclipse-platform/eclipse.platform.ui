@@ -474,7 +474,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);			
 		}
-		IContributionManager manager = window.getCoolBarManager();
 		if (usingMenuReorg) {
 			menu.add(hideShowEditorAction);
 			menu.add(lockToolBarAction);	

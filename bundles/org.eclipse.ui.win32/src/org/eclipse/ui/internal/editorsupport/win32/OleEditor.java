@@ -379,7 +379,7 @@ public class OleEditor extends EditorPart {
 				int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"});
 				if (dispid != null) {
 					Variant rgvarg = new Variant(true);
-					boolean result = application.setProperty(dispid[0], rgvarg);
+					application.setProperty(dispid[0], rgvarg);
 				}
 				application.dispose();
 			}

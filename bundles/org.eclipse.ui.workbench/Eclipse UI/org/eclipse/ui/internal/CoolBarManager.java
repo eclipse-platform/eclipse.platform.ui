@@ -1147,8 +1147,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
         CoolItem[] items = coolBar.getItems();
         Control[] children = new Control[items.length];
         for (int i = 0; i < children.length; i++) {
-        	CoolItem item = items[i];
-			children[i] = items[i].getControl();
+        	children[i] = items[i].getControl();
 		}
 		coolBar.setTabList(children);
 	}
