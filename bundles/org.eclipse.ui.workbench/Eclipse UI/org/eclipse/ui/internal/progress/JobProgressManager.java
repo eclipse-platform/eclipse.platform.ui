@@ -202,7 +202,7 @@ public class JobProgressManager
 	public void done(IJobChangeEvent event) {
 
 		JobInfo info = getJobInfo(event.getJob());
-		if (event.getResult().getCode() == IStatus.ERROR) {
+		if (event.getResult().getSeverity() == IStatus.ERROR) {
 			info.setError(event.getResult());
 		} else
 			jobs.remove(event.getJob());
