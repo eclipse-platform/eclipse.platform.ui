@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="decorators" name="Decorators"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to add decorators to views that subscribe to a decorator manager. As of 2.1 there will be the concept of a lightweight decorator that will handle the image management for the decorator. It is also possible to declare a lightweight decorator that simply overlays an icon when enabled that requires no implementation from the plug-in.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="decorators" name="Decorators"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add decorators to views that subscribe to a decorator manager. As of 2.1 there will be the concept of a lightweight decorator that will handle the image management for the decorator. It is also possible to declare a lightweight decorator that simply overlays an icon when enabled that requires no implementation from the plug-in.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -210,16 +210,16 @@ declarative or implements
 A full decorator. The plug-in developer must handle their own image support.
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.decorators"&gt; 
+	&lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
         &lt;decorator
-            id="com.xyz.decorator" 
-            label="XYZ Decorator" 
-            state="true" 
-            class="com.xyz.DecoratorContributor" 
+            id=&quot;com.xyz.decorator&quot; 
+            label=&quot;XYZ Decorator&quot; 
+            state=&quot;true&quot; 
+            class=&quot;com.xyz.DecoratorContributor&quot;&gt;
             &lt;enablement&gt;
-                &lt;objectClass="org.eclipse.core.resources.IResource"/&gt; 
-            &lt;/enablement&gt; 
-        &lt;/decorator 
+                &lt;objectClass name=&quot;org.eclipse.core.resources.IResource&quot;/&gt; 
+            &lt;/enablement&gt;
+        &lt;/decorator&gt;
     &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;p&gt;
@@ -227,16 +227,17 @@ A lightweight decorator. There is a concrete class but as it is an
 ILightweightLabelDecorator it only needs to supply text and an ImageDescriptor and therefore needs no resource handling.
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.decorators"&gt; 
+	&lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
         &lt;decorator
-            id="com.xyz.lightweight.decorator" 
-            label="XYZ Lightweight Decorator"              state="false" 
-            class="com.xyz.LightweightDecoratorContributor" 
-            lightweight="true" 
+            id=&quot;com.xyz.lightweight.decorator&quot; 
+            label=&quot;XYZ Lightweight Decorator&quot;              			
+            state=&quot;false&quot; 
+            class=&quot;com.xyz.LightweightDecoratorContributor&quot; 
+            lightweight=&quot;true&quot; &gt;
             &lt;enablement&gt;
-                &lt;objectClass="org.eclipse.core.resources.IResource"/&gt; 
-            &lt;/enablement&gt; 
-        &lt;/decorator 
+                &lt;objectClass name=&quot;org.eclipse.core.resources.IResource&quot;/&gt; 
+            &lt;/enablement&gt;
+        &lt;/decorator&gt;
     &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -244,19 +245,19 @@ ILightweightLabelDecorator it only needs to supply text and an ImageDescriptor a
 supplies an icon and a quadrant to apply that icon.
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.decorators"&gt; 
+	&lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
         &lt;decorator
-            id="com.xyz.lightweight.declarative.decorator" 
-            label="XYZ Lightweight Declarative Decorator" 
-            state="false" 
-            lightweight="true" 
-            icon="icons/full/declarative.gif" 
-            location="TOP_LEFT" 
+            id=&quot;com.xyz.lightweight.declarative.decorator&quot; 
+            label=&quot;XYZ Lightweight Declarative Decorator&quot; 
+            state=&quot;false&quot; 
+            lightweight=&quot;true&quot; 
+            icon=&quot;icons/full/declarative.gif&quot; 
+            location=&quot;TOP_LEFT&quot;&gt; 
             &lt;enablement&gt;
-                &lt;objectClass="org.eclipse.core.resources.IResource"/&gt; 
-            &lt;/enablement&gt; 
-        &lt;/decorator 
-    &lt;/extension&gt; 
+                &lt;objectClass name=&quot;org.eclipse.core.resources.IResource&quot;/&gt; 
+            &lt;/enablement&gt;
+        &lt;/decorator&gt;
+    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
