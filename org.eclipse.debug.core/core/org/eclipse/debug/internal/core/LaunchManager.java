@@ -206,7 +206,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @throws TransformerException if an unrecoverable error occurs during the serialization
 	 * @throws IOException if the encoding attempted to be used is not supported
 	 */
-	protected static String serializeDocument(Document doc) throws TransformerException, IOException {
+	public static String serializeDocument(Document doc) throws TransformerException, IOException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
 		
 		TransformerFactory factory= TransformerFactory.newInstance();
@@ -227,7 +227,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @throws ParserConfigurationException if an exception occurs creating the document builder
 	 * @since 3.0
 	 */
-	protected static Document getDocument() throws ParserConfigurationException {
+	public static Document getDocument() throws ParserConfigurationException {
 		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
 		Document doc= docBuilder.newDocument();
