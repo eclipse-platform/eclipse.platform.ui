@@ -54,14 +54,20 @@ Preferences</h1>
 The following preferences settings can be used with the help system:
 <ul>
 <li>
-log_level: denotes what kind of information gets written to 
+<b>log_level</b>: denotes what kind of information gets written to 
 the help log. Use one of the following tree values.
 	<ul><li>0: log errors only </li>
 		<li>1: log errors and warnings </li>
 		<li>2: log errors, warnings and information (debug) messages</li>
 	</ul>
 	
-	</li>
+</li>
+<li><b>banner</b>: the help view allows application branding. If you want to show a company logo or any other things
+on top of the help view, specify your html page as <em>/pluginId/path/to/banner.html</em>. Currently, the default
+banner is /org.eclipse.help.webapp/banner.html. If you set this name to empty string then no banner is shown at all.
+</li>
+<li><b>banner_height</b>: the height of the banner area. Currently the default is 45. </li>
+	
 </ul>
 
 
