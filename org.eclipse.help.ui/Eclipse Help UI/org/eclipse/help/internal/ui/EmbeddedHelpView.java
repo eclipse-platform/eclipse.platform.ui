@@ -313,11 +313,12 @@ public class EmbeddedHelpView extends ViewPart {
 			return;
 
 		showHideAction = new Actions.ShowHideAction(this);
+		showHideAction.setChecked(false);
 		backAction = new Actions.BackAction(browser);
 		forwardAction = new Actions.ForwardAction(browser);
 
 		synchronizeAction =
-			new Actions.SynchronizeAction(browser, this.getNavigationViewer());
+			new Actions.SynchronizeAction(browser, this.getNavigationViewer(), (Actions.ShowHideAction)showHideAction);
 		copyAction = new Actions.CopyAction(browser);
 		printAction = new Actions.PrintAction(browser);
 
