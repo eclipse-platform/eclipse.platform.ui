@@ -12,24 +12,26 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.subscriber.SubscriberPageDiffTreeViewerConfiguration;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.subscriber.SynchronizeViewerAdvisor;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElementLabelProvider;
 
-public class CVSSynchronizeViewCompareConfiguration extends SubscriberPageDiffTreeViewerConfiguration {
+public class CVSSynchronizeViewerAdvisor extends SynchronizeViewerAdvisor {
 
 	private boolean isGroupIncomingByComment = false;
 
 	private static class CVSLabelDecorator extends LabelProvider implements ILabelDecorator  {
 		public String decorateText(String input, Object element) {
 			String text = input;
-			if (element instanceof SyncInfoModelElement) {
-				IResource resource =  ((SyncInfoModelElement)element).getResource();
+			if (element instanceof SynchronizeModelElement) {
+				IResource resource =  ((SynchronizeModelElement)element).getResource();
 				if(resource != null && resource.getType() != IResource.ROOT) {
 					CVSLightweightDecorator.Decoration decoration = new CVSLightweightDecorator.Decoration();
 					CVSLightweightDecorator.decorateTextLabel(resource, decoration, false, true);
@@ -51,7 +53,7 @@ public class CVSSynchronizeViewCompareConfiguration extends SubscriberPageDiffTr
 		}
 	}
 	
-	public CVSSynchronizeViewCompareConfiguration(ISynchronizeView view, SubscriberParticipant participant) {
+	public CVSSynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(view, participant);
 		participant.addPropertyChangeListener(this);
 	}

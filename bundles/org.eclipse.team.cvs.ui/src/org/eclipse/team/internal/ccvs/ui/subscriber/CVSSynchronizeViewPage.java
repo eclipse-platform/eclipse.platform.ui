@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements ISynchronizeModelChangeListener {
 	
 	private List delegates = new ArrayList(2);
-	private CVSSynchronizeViewCompareConfiguration config;
+	private CVSSynchronizeViewerAdvisor config;
 	private Action groupByComment;
 
 	protected class CVSActionDelegate extends Action {
@@ -133,12 +133,14 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 		return getParticipant().getSubscriberSyncInfoCollector().getSyncInfoTree();
 	}
 	
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipantPage#createSyncInfoSetCompareConfiguration()
 	 */
-	protected SubscriberPageDiffTreeViewerConfiguration createSyncInfoSetCompareConfiguration() {
+	protected SynchronizeViewerAdvisor createSynchronizeViewerAdvisor() {
 		if(config == null) {
-			config = new CVSSynchronizeViewCompareConfiguration(getSynchronizeView(), getParticipant());
+			config = new CVSSynchronizeViewerAdvisor(getSynchronizeView(), getParticipant());
 		}
 		return config;
 	}

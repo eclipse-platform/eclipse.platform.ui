@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.viewers;
 
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Control;
@@ -28,12 +37,11 @@ import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 
 /**
- * A <code>TreeViewerAdvisor</code> object controls various UI
- * aspects of sync info viewers like the context menu, toolbar, content
- * provider, and label provider. A configuration is created to display
- * {@link SyncInfo} objects contained in the provided {@link SyncInfoSet}.
+ * A <code>StructuredViewerAdvisor</code> object controls various UI
+ * aspects of viewers that show {@link SyncInfoSet} like the context menu, toolbar, content
+ * provider, label provider, and model provider.
  * <p>
- * This configuration allows viewer contributions made in a plug-in manifest to
+ * This advisor allows viewer contributions made in a plug-in manifest to
  * be scoped to a particular unique id. As a result the context menu for the
  * viewer can be configured to show object contributions for random id schemes.
  * To enable declarative action contributions for a configuration there are two
@@ -60,22 +68,22 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
  * @since 3.0
  */
 public abstract class StructuredViewerAdvisor {
+	private SynchronizeModelProvider modelProvider;
+	private ListenerList listeners;
+	private String menuId;
 
 	private SyncInfoSet set;
-	private String menuId;
 	private StructuredViewer viewer;
-	private SynchronizeModelProvider diffNodeController;
-	private ListenerList listeners;
-
-	public StructuredViewerAdvisor(SyncInfoSet set) {
-		this(null, set);
-	}
 	
 	public StructuredViewerAdvisor(String menuId, SyncInfoSet set) {
 		this.set = set;
 		this.menuId = menuId;
 	}
-	
+
+	public StructuredViewerAdvisor(SyncInfoSet set) {
+		this(null, set);
+	}
+		
 	/**
 	 * Initialize the viewer with the elements of this configuration, including
 	 * content and label providers, sorter, input and menus. This method is
@@ -97,17 +105,61 @@ public abstract class StructuredViewerAdvisor {
 		
 		// The input may of been set already. In that case, don't change it and
 		// simply assign it to the view.
-		if(diffNodeController == null) {
-			diffNodeController = getDiffNodeController();
-			diffNodeController.prepareInput(null);
+		if(modelProvider == null) {
+			modelProvider = getModelProvider();
+			modelProvider.prepareInput(null);
 		}
 		setInput(viewer);
 	}
-		
+	
 	public void addInputChangedListener(ISynchronizeModelChangeListener listener) {
 		if (listeners == null)
 			listeners= new ListenerList();
 		listeners.add(listener);
+	}
+
+	/**
+	 * Cleanup listeners
+	 */
+	public void dispose() {
+		if(modelProvider != null) {
+			modelProvider.dispose();
+		}
+	}
+
+	/**
+	 * Return the menu id that is used to obtain context menu items from the
+	 * workbench.
+	 * @return the menuId.
+	 */
+	public String getMenuId() {
+		return menuId;
+	}
+
+	/**
+	 * Return the <code>SyncInfoSet</code> being shown by the viewer
+	 * associated with this configuration.
+	 * @return a <code>SyncInfoSet</code>
+	 */
+	public SyncInfoSet getSyncInfoSet() {
+		return set;
+	}
+	
+	public abstract boolean navigate(boolean next);
+
+	/**
+	 * Creates the input for this view and initializes it. At the time this method
+	 * is called the viewer may not of been created yet. 
+	 * 
+	 * @param monitor shows progress while preparing the input
+	 * @return the input that can be shown in a viewer
+	 */
+	public Object prepareInput(IProgressMonitor monitor) throws TeamException {
+		if(modelProvider != null) {
+			modelProvider.dispose();
+		}
+		modelProvider = getModelProvider();		
+		return modelProvider.prepareInput(monitor);
 	}
 
 	public void removeInputChangedListener(ISynchronizeModelChangeListener listener) {
@@ -118,36 +170,84 @@ public abstract class StructuredViewerAdvisor {
 		}
 	}
 
-	protected void fireChanges() {
-		if (listeners != null) {
-			Object[] l= listeners.getListeners();
-			for (int i= 0; i < l.length; i++)
-				((ISynchronizeModelChangeListener) l[i]).modelChanged(diffNodeController.getInput());
-		}
-	}
-
-
 	/**
-	 * Creates the input for this view and initializes it. At the time this method
-	 * is called the viewer may not of been created yet. 
-	 * 
-	 * @param monitor shows progress while preparing the input
-	 * @return the input that can be shown in a viewer
+	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>
+	 * in order to initialize any listeners for the viewer.
+	 * @param viewer
+	 *            the viewer being initialize
 	 */
-	public Object prepareInput(IProgressMonitor monitor) throws TeamException {
-		if(diffNodeController != null) {
-			diffNodeController.dispose();
-		}
-		diffNodeController = getDiffNodeController();		
-		return diffNodeController.prepareInput(monitor);
-	}
-
+	protected abstract void initializeListeners(final StructuredViewer viewer);
+	
 	/**
 	 * Get the input that will be assigned to the viewer initialized by this
 	 * configuration. Subclass may override.
 	 * @return the viewer input
 	 */
-	protected abstract SynchronizeModelProvider getDiffNodeController();
+	protected abstract SynchronizeModelProvider getModelProvider();
+	
+	/**
+	 * Callback that is invoked when a context menu is about to be shown in the
+	 * viewer. Subsclasses must implement to contribute menus. Also, menus can
+	 * contributed by creating a viewer contribution with a <code>targetID</code> 
+	 * that groups sets of actions that are related.
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @param manager
+	 *            the menu manager
+	 */
+	protected void fillContextMenu(final StructuredViewer viewer, IMenuManager manager) {
+		// subclasses will add actions
+	}
+	
+	/**
+	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>
+	 * in order to initialize any actions for the viewer. It is invoked before
+	 * the input is set on the viewer in order to allow actions to be
+	 * initialized before there is any reaction to the input being set (e.g.
+	 * selecting and opening the first element).
+	 * <p>
+	 * The default behavior is to add the up and down navigation nuttons to the
+	 * toolbar. Subclasses can override.
+	 * @param viewer
+	 *            the viewer being initialize
+	 */
+	protected void initializeActions(StructuredViewer viewer) {
+	}
+	
+	/**
+	 * Returns whether workbench menu items whould be included in the context
+	 * menu. By default, this returns <code>true</code> if there is a menu id
+	 * and <code>false</code> otherwise
+	 * @return whether to include workbench context menu items
+	 */
+	protected boolean allowParticipantMenuContributions() {
+		return getMenuId() != null;
+	}
+
+	/**
+	 * Run the runnable in the UI thread.
+	 * @param r the runnable to run in the UI thread.
+	 */
+	protected void aSyncExec(Runnable r) {
+		final Control ctrl = viewer.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().asyncExec(r);
+		}
+	}
+
+	protected void fireChanges() {
+		if (listeners != null) {
+			Object[] l= listeners.getListeners();
+			for (int i= 0; i < l.length; i++)
+				((ISynchronizeModelChangeListener) l[i]).modelChanged(modelProvider.getInput());
+		}
+	}
+
+	protected IStructuredContentProvider getContentProvider() {
+		return new BaseWorkbenchContentProvider();
+	}
+
 
 	/**
 	 * Get the label provider that will be assigned to the viewer initialized
@@ -164,106 +264,8 @@ public abstract class StructuredViewerAdvisor {
 		return new SynchronizeModelElementLabelProvider();
 	}
 
-	protected IStructuredContentProvider getContentProvider() {
-		return new BaseWorkbenchContentProvider();
-	}
-
-	/**
-	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>
-	 * in order to initialize any listeners for the viewer.
-	 * @param viewer
-	 *            the viewer being initialize
-	 */
-	protected abstract void initializeListeners(final StructuredViewer viewer);
-
-	/**
-	 * Return the <code>SyncInfoSet</code> being shown by the viewer
-	 * associated with this configuration.
-	 * @return a <code>SyncInfoSet</code>
-	 */
-	public SyncInfoSet getSyncInfoSet() {
-		return set;
-	}
-
-	/**
-	 * Callback that is invoked when a context menu is about to be shown in the
-	 * diff viewer.
-	 * @param viewer
-	 *            the viewer
-	 * @param manager
-	 *            the menu manager
-	 */
-	protected void fillContextMenu(final StructuredViewer viewer, IMenuManager manager) {
-		// subclasses will add actions
-	}
-
 	protected StructuredViewer getViewer() {
 		return viewer;
-	}
-
-	/**
-	 * Cleanup listeners
-	 */
-	public void dispose() {
-		if(diffNodeController != null) {
-			diffNodeController.dispose();
-		}
-	}
-
-	/**
-	 * Return the menu id that is used to obtain context menu items from the
-	 * workbench.
-	 * @return the menuId.
-	 */
-	public String getMenuId() {
-		return menuId;
-	}
-
-	/**
-	 * Returns whether workbench menu items whould be included in the context
-	 * menu. By default, this returns <code>true</code> if there is a menu id
-	 * and <code>false</code> otherwise
-	 * @return whether to include workbench context menu items
-	 */
-	protected boolean allowParticipantMenuContributions() {
-		return getMenuId() != null;
-	}
-
-	protected void aSyncExec(Runnable r) {
-		final Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			ctrl.getDisplay().asyncExec(r);
-		}
-	}
-
-	/**
-	 * @param viewer
-	 */
-	protected void setInput(StructuredViewer viewer) {
-		diffNodeController.setViewer(viewer);
-		viewer.setSorter(diffNodeController.getViewerSorter());
-		DiffNode input = diffNodeController.getInput();
-		input.addCompareInputChangeListener(new ICompareInputChangeListener() {
-			public void compareInputChanged(ICompareInput source) {
-				fireChanges();
-			}
-		});
-		viewer.setInput(diffNodeController.getInput());
-	}
-
-	/**
-	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>
-	 * in order to initialize any actions for the viewer. It is invoked before
-	 * the input is set on the viewer in order to allow actions to be
-	 * initialized before there is any reaction to the input being set (e.g.
-	 * selecting and opening the first element).
-	 * <p>
-	 * The default behavior is to add the up and down navigation nuttons to the
-	 * toolbar. Subclasses can override.
-	 * @param viewer
-	 *            the viewer being initialize
-	 */
-	protected void initializeActions(StructuredViewer viewer) {
 	}
 
 	/**
@@ -274,7 +276,7 @@ public abstract class StructuredViewerAdvisor {
 	 *            the viewer being initialized
 	 * @see fillContextMenu(StructuredViewer, IMenuManager)
 	 */
-	protected void hookContextMenu(final StructuredViewer viewer) {
+	protected final void hookContextMenu(final StructuredViewer viewer) {
 		final MenuManager menuMgr = new MenuManager(getMenuId()); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
@@ -317,6 +319,19 @@ public abstract class StructuredViewerAdvisor {
 			}
 		}
 	}
-	
-	public abstract boolean navigate(boolean next);
+
+	/**
+	 * @param viewer
+	 */
+	protected final void setInput(StructuredViewer viewer) {
+		modelProvider.setViewer(viewer);
+		viewer.setSorter(modelProvider.getViewerSorter());
+		DiffNode input = modelProvider.getInput();
+		input.addCompareInputChangeListener(new ICompareInputChangeListener() {
+			public void compareInputChanged(ICompareInput source) {
+				fireChanges();
+			}
+		});
+		viewer.setInput(modelProvider.getInput());
+	}
 }

@@ -85,8 +85,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * is displayed to the user.
 	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
 	 */
-	public SyncInfoCompareInput(String description, SyncInfo sync) {
-		super(new CompareConfiguration());
+	public SyncInfoCompareInput(CompareConfiguration cc, String description, SyncInfo sync) {
+		super(cc);
 		Assert.isNotNull(sync);
 		Assert.isNotNull(description);
 		this.description = description;

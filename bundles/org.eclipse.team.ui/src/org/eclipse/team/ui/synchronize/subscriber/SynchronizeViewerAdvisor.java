@@ -24,7 +24,7 @@ import org.eclipse.team.ui.synchronize.viewers.*;
  * Overrides the SyncInfoDiffViewerConfiguration to configure the diff viewer
  * for the synchroniza view
  */
-public class SubscriberPageDiffTreeViewerConfiguration extends TreeViewerAdvisor {
+public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 
 	private ISynchronizeView view;
 	private SubscriberParticipant participant;
@@ -32,7 +32,7 @@ public class SubscriberPageDiffTreeViewerConfiguration extends TreeViewerAdvisor
 	private RefactorActionGroup refactorActions;
 	private TeamParticipantRefreshAction refreshSelectionAction;
 
-	public SubscriberPageDiffTreeViewerConfiguration(ISynchronizeView view, SubscriberParticipant participant) {
+	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
 		super(participant.getId(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
 		this.view = view;
 		this.participant = participant;

@@ -182,7 +182,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#getDiffNodeController()
 	 */
-	protected SynchronizeModelProvider getDiffNodeController() {
+	protected SynchronizeModelProvider getModelProvider() {
 		if(getShowCompressedFolders()) {
 			return new CompressedFoldersModelProvider((SyncInfoTree)getSyncInfoSet());
 		}

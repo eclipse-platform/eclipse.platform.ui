@@ -62,7 +62,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	private Action collapseAll;
 	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
-	private SubscriberPageDiffTreeViewerConfiguration configuration;
+	private SynchronizeViewerAdvisor viewerAdvisor;
 		
 	/**
 	 * Constructs a new SynchronizeView.
@@ -96,7 +96,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		// toolbar
 		INavigatable nav = new INavigatable() {
 			public boolean gotoDifference(boolean next) {
-				return configuration.navigate(next);
+				return viewerAdvisor.navigate(next);
 			}
 		};
 		gotoNext = new NavigateAction(view, nav, true /*next*/);		
@@ -157,7 +157,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	public void dispose() {
 		statusLine.dispose();
 		changesSection.dispose();
-		configuration.dispose();
+		viewerAdvisor.dispose();
 		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
 		participant.removePropertyChangeListener(this);
 	}
@@ -289,24 +289,24 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	}
 	
 	private Viewer createChangesViewer(Composite parent) {
-		configuration = createSyncInfoSetCompareConfiguration();
+		viewerAdvisor = createSynchronizeViewerAdvisor();
 		TreeViewer viewer = new TreeViewerAdvisor.NavigableTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(data);
-		configuration.initializeViewer(viewer);
+		viewerAdvisor.initializeViewer(viewer);
 		getSite().setSelectionProvider(viewer);		
 		return viewer;
 	}
 
 	public TreeViewerAdvisor getViewerConfiguration() {
-		return configuration;
+		return viewerAdvisor;
 	}
 	
 	public Viewer getViewer() {
 		return changesViewer;
 	}
 	
-	protected SubscriberPageDiffTreeViewerConfiguration createSyncInfoSetCompareConfiguration() {
-		return new SubscriberPageDiffTreeViewerConfiguration(getSynchronizeView(), getParticipant());
+	protected SynchronizeViewerAdvisor createSynchronizeViewerAdvisor() {
+		return new SynchronizeViewerAdvisor(getSynchronizeView(), getParticipant());
 	}
 }
