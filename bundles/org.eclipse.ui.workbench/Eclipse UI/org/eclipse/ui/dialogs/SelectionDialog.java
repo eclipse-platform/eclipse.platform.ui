@@ -37,7 +37,7 @@ public abstract class SelectionDialog extends Dialog {
 	private String title;
 	
 	// message to show user
-	private String message;
+	private String message = ""; //$NON-NLS-1$
 
 	static String SELECT_ALL_TITLE = WorkbenchMessages.getString("SelectionDialog.selectLabel"); //$NON-NLS-1$
 	static String DESELECT_ALL_TITLE = WorkbenchMessages.getString("SelectionDialog.deselectLabel"); //$NON-NLS-1$
