@@ -533,9 +533,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				// 2:	get the reference document 
 				IQuickDiffReferenceProvider provider= fReferenceProvider;
-				final IDocument reference;
+				final IDocument left;
 				try {
-					reference= provider == null ? null : provider.getReference(monitor);
+					left= provider == null ? null : provider.getReference(monitor);
 				} catch (CoreException e) {
 					synchronized (DocumentLineDiffer.this) {
 						if (isCanceled(monitor))
@@ -566,14 +566,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// copying and before removing the change listener, but that will be rare and not
 				// so bad after all (same for modification that occur before we start copying).
 				
-				IDocument actualDoc= null; // the copy of the actual (right) document
-				IDocument refDoc= null; // the copy of the reference (left) document
+				IDocument right= fRightDocument; // fRightDocument, but not subject to change
+				IDocument actual= null; // the copy of the actual (right) document
+				IDocument reference= null; // the copy of the reference (left) document
 				ChangeListener unsynchronizedListener= new ChangeListener();
 				
 				do {
 					synchronized (DocumentLineDiffer.this) {
 						// 4: take an early exit if the documents are not valid
-						if (reference == null || fRightDocument == null) {
+						if (left == null || right == null) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
 							else {
@@ -585,17 +586,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						}
 						
 						// set the reference document
-						fLeftDocument= reference;
+						fLeftDocument= left;
+						
 						
 						unsynchronizedListener.hasChanged= false;
-						fLeftDocument.addDocumentListener(unsynchronizedListener);
-						fRightDocument.addDocumentListener(unsynchronizedListener);
+						left.addDocumentListener(unsynchronizedListener);
+						right.addDocumentListener(unsynchronizedListener);
 						
 						// get an exclusive copy of the actual document, which is not synchronized, and will give us
 						// not interleaving updates.
 						// no deadlock possible as we only register as listener after getting the content.
-						refDoc= new Document(fLeftDocument.get());
-						actualDoc= new Document(fRightDocument.get());
+						reference= new Document(left.get());
+						actual= new Document(right.get());
 	
 						// clear any stored events received in between, we're starting over
 						fStoredEvents.clear();
@@ -603,21 +605,21 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					}
 					
 					// non synchronized
-					fRightDocument.addDocumentListener(DocumentLineDiffer.this);
-					fLeftDocument.addDocumentListener(DocumentLineDiffer.this);
-					fRightDocument.removeDocumentListener(unsynchronizedListener);
-					fLeftDocument.removeDocumentListener(unsynchronizedListener);
+					right.addDocumentListener(DocumentLineDiffer.this);
+					left.addDocumentListener(DocumentLineDiffer.this);
+					right.removeDocumentListener(unsynchronizedListener);
+					left.removeDocumentListener(unsynchronizedListener);
 					
 					if (unsynchronizedListener.hasChanged) {
-						fRightDocument.removeDocumentListener(DocumentLineDiffer.this);
-						fLeftDocument.removeDocumentListener(DocumentLineDiffer.this);
+						right.removeDocumentListener(DocumentLineDiffer.this);
+						left.removeDocumentListener(DocumentLineDiffer.this);
 					}
 					
 				} while (unsynchronizedListener.hasChanged);
 				
 				// 6:	Do Da Diffing
-				DocLineComparator ref= new DocLineComparator(refDoc, null, false);
-				DocLineComparator act= new DocLineComparator(actualDoc, null, false);
+				DocLineComparator ref= new DocLineComparator(reference, null, false);
+				DocLineComparator act= new DocLineComparator(actual, null, false);
 				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				
 				// 7:	Reset the model to the just gotten differences
