@@ -79,7 +79,7 @@ public abstract class CVSOperation extends TeamOperation {
 		startOperation();
 		try {
 			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(getTaskName(), 100);
+			monitor.beginTask(null, 100);
 			monitor.setTaskName(getTaskName());
 			execute(Policy.subMonitorFor(monitor, 100));
 			endOperation();
