@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -393,6 +394,14 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 			CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("internal"), e)); //$NON-NLS-1$
 		}
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		super.performDefaults();
+		encoding.loadDefault();
 	}
 	
 	private Label createWrappingLabel(Composite parent, String text, int horizontalSpan) {
