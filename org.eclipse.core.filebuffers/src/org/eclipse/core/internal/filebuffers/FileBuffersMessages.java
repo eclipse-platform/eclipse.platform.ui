@@ -33,7 +33,7 @@ class FileBuffersMessages {
 	/**
 	 * Gets a string from the resource bundle.
 	 * 
-	 * @param key the string used to get the bundle value, must not be null
+	 * @param key the string used to get the bundle value, must not be <code>null</code>
 	 * @return the string from the resource bundle
 	 */
 	public static String getString(String key) {
@@ -47,7 +47,7 @@ class FileBuffersMessages {
 	/**
 	 * Gets a string from the resource bundle and formats it with the given arguments.
 	 * 
-	 * @param key the string used to get the bundle value, must not be null
+	 * @param key the string used to get the bundle value, must not be <code>null</code>
 	 * @param args the arguments used to format the string
 	 * @return the formatted string
 	 */
@@ -64,7 +64,7 @@ class FileBuffersMessages {
 	/**
 	 * Gets a string from the resource bundle and formats it with the given argument.
 	 * 
-	 * @param key the string used to get the bundle value, must not be null
+	 * @param key the string used to get the bundle value, must not be <code>null</code>
 	 * @param arg the argument used to format the string
 	 * @return the formatted string
 	 */
