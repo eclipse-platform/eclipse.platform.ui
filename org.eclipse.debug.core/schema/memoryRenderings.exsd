@@ -96,6 +96,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="renderingId" type="string">
+            <annotation>
+               <documentation>
+                  The rendering this property is associated with
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
