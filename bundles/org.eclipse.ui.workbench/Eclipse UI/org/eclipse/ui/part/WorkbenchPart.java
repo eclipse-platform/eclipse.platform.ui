@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -249,7 +250,7 @@ protected void setSite(IWorkbenchPartSite site) {
 protected void setTitle(String newTitle) {
 	
 	//Do not send changes if they are the same
-	if(newTitle.equals(title))
+	if(Util.equals(newTitle, title))
 		return;
 	
 	this.title = newTitle;
