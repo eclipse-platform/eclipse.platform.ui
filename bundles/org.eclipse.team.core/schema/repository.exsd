@@ -14,7 +14,10 @@ Repositories that extend this extension point can provide implementations for co
 A Repository type can also be specified in order to provide non-project specific funtionality such as a &lt;samp&gt;org.eclipse.team.core.ProjectSetCapability&lt;/samp&gt;.
 &lt;/p&gt;
 &lt;p&gt;
-Optionaly, a repository provider type can designate that it can import projects from second provider, in the case where the second provider&apos;s plugin is not available in the current install. This is provided as a means to support the migration from one provider implementation to another where the resuse of the same id for the two providers was not possible.
+Optionally, a repository provider type can designate that it can import projects from second provider, in the case where the second provider&apos;s plugin is not available in the current install. This is provided as a means to support the migration from one provider implementation to another where the resuse of the same id for the two providers was not possible.
+&lt;/p&gt;
+&lt;p&gt;
+A repository provider type can also specify one or more meta-file paths (delimited by comas) that are relative to a parent container. If an unsghared project or folder contains files that match all the meta-file paths associated with a repository definition, the method &lt;code&gt;RepositoryProviderType#metaFilesDetected&lt;/code&gt; will be invoked with the parent container as an argument. This is done to give the repository type a chance to mark the files team-private and potentially share the project as well. see the javadoc of the above mentioned method for more details.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -72,6 +75,13 @@ Optionaly, a repository provider type can designate that it can import projects 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="metaFilePaths" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -95,7 +105,8 @@ Optionaly, a repository provider type can designate that it can import projects 
     class=&quot;org.eclipse.myprovider.MyRepositoryProvider&quot;
     typeClass=&quot;org.eclipse.myprovider.MyRepositoryProvider&quot;
     id=&quot;org.eclipse.myprovider.myProviderID&quot;
-    canImportId=&quot;org.eclipse.myprovider.myOldProviderID&quot;&gt;
+    canImportId=&quot;org.eclipse.myprovider.myOldProviderID&quot;
+    metaFilePaths=&quot;.meta/files,.meta/version&quot;&gt;
   &lt;/repository&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;

@@ -12,6 +12,9 @@ package org.eclipse.team.internal.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -155,6 +158,36 @@ final public class TeamPlugin extends Plugin {
 			}
 		}		
 		return null;
+	}
+	
+	public static IPath[] getMetaFilePaths(String id) {
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.REPOSITORY_EXTENSION);
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+				    String metaFilePaths = configElements[j].getAttribute("metaFilePaths"); //$NON-NLS-1$
+				    if (extensionId != null && extensionId.equals(id) && metaFilePaths != null) {
+						return getPaths(metaFilePaths);
+						
+				    }
+				}
+			}
+		}		
+		return null;
+	}
+
+	private static IPath[] getPaths(String metaFilePaths) {
+		List result = new ArrayList();
+		StringTokenizer t = new StringTokenizer(metaFilePaths, ","); //$NON-NLS-1$
+		while (t.hasMoreTokens()) {
+			String next = t.nextToken();
+			IPath path = new Path(null, next);
+			result.add(path);
+		}
+		return (IPath[]) result.toArray(new IPath[result.size()]);
 	}
 
 }

@@ -57,6 +57,7 @@
       <repository
             typeClass="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
             class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
+            metaFilePaths="CVS/Root,CVS/Repository"
             id="org.eclipse.team.cvs.core.cvsnature">
       </repository>
    </extension>

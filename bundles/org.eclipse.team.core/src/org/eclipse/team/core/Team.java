@@ -356,27 +356,8 @@ public final class Team {
 	 * This method is called by the plug-in upon startup, clients should not call this method
 	 */
 	public static void startup() {
-		// Register a delta listener that will tell the provider about a project move
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				IResourceDelta[] projectDeltas = event.getDelta().getAffectedChildren();
-				for (int i = 0; i < projectDeltas.length; i++) {							
-					IResourceDelta delta = projectDeltas[i];
-					IResource resource = delta.getResource();
-					// Only consider project additions that are moves
-					if (delta.getKind() != IResourceDelta.ADDED) continue;
-					if ((delta.getFlags() & IResourceDelta.MOVED_FROM) == 0) continue;
-					// Only consider projects that have a provider
-					if (!RepositoryProvider.isShared(resource.getProject())) continue;
-					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-					if (provider == null) continue;
-					// Only consider providers whose project is not mapped properly already
-					if (provider.getProject().equals(resource.getProject())) continue;
-					// Tell the provider about it's new project
-					provider.setProject(resource.getProject());
-				}
-			}
-		}, IResourceChangeEvent.POST_CHANGE);
+		// Register a delta listener that will tell the provider about a project move and meta-file creation
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new TeamResourceChangeListener(), IResourceChangeEvent.POST_CHANGE);
 	}
 	
 	/**

@@ -13,15 +13,10 @@ package org.eclipse.team.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.team.internal.core.DefaultProjectSetCapability;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.core.*;
 
 /**
  * This class represents provisional API. A provider is not required to implement this API.
@@ -170,5 +165,23 @@ public abstract class RepositoryProviderType {
 			return capability;
 		}
 		return null;
+	}
+	
+	/**
+	 * Callback from team when the meta-files for a repository type are detected in an
+	 * unshared project. The meta-file paths ae provided as part of the <code>repository</code>
+	 * entry in the plugin manifets file.
+	 * <p>
+	 * By default, nothing is done (except that the repository type's
+	 * plugin will have been loaded. Subclass may wish to mark the met-data as team-private.
+	 * This method is called from a resource delta so sublcasses may not obtain scheduling rules
+	 * or in any way modify workspace resources (including auto-sharing the project). However,
+	 * auto-sharing (or other modification) could be performed by a background job scheduled from
+	 * this callback.
+	 * @param project the project that contains the detected meta-files.
+	 * @param containers the folders (possibly including the project folder) in which meta-files were found
+	 */
+	public void metaFilesDetected(IProject project, IContainer[] containers) {
+		// Do nothing by default
 	}
 }
