@@ -177,4 +177,17 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			}
 		});
 	}
+	/**
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
+			String key= fAppearanceColorListModel[i][1];
+			PreferenceConverter.setValue(getPreferenceStore(), key, PreferenceConverter.getDefaultColor(getPreferenceStore(), key));
+		}
+		handleAppearanceColorListSelection();
+		
+		super.performDefaults();
+	}
+
 }
