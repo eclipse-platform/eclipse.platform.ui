@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
  *   &lt;debugModelPresentation 
  *      id="com.example.debugModelIdentifier"
  *      class="com.example.ExamplePresentation"
- *      detailsViewerConfiguration="com.example.ExampleSourceViewerConfiguration"
+ *      detailsViewerConfiguration="com.example.ExampleSourceViewerConfiguration"&gt;
  *   &lt;/debugModelPresentation&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -58,7 +58,7 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  * <p>
  * Clients may define new presentation attributes. For example, a client may wish
- * to define a "hexidecimal" property to display numeric values in hexidecimal. Implementations
+ * to define a "hexadecimal" property to display numeric values in hexadecimal. Implementations
  * should honor the presentation attributes defined by this interface where possible,
  * but do not need to honor presentation attributes defined by other clients.
  * To access the debug model presentation for a debug view, clients should use
@@ -75,9 +75,9 @@ import org.eclipse.swt.graphics.Image;
 public interface IDebugModelPresentation extends ILabelProvider, ISourcePresentation {
 	/** 
 	 * Variable type names presentation property (value <code>"org.eclipse.debug.ui.displayVariableTypeNames"</code>).
-	 * When <code>DISPLAY_VARIABLE_TYPE_NAMES</code> is set to <code>True</code>,
+	 * When <code>DISPLAY_VARIABLE_TYPE_NAMES</code> is set to <code>true</code>,
 	 * this label provider should include the reference type of a variable  when rendering
-	 * variables. When set to <code>False</code>, this label provider 
+	 * variables. When set to <code>false</code>, this label provider 
 	 * should not include the reference type of a variable when rendering
 	 * variables.
 	 * @see #setAttribute(String, Object)
