@@ -73,7 +73,7 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 				String[] devpaths = DevClassPathHelper
 						.getDevClassPath(pluginId);
 				for (int i = 0; i < devpaths.length; i++) {
-					URL url = b.getEntry("/");
+					URL url = b.getEntry(devpaths[i]);
 					if (url != null)
 						try {
 							urls.add(Platform.asLocalURL(url));
