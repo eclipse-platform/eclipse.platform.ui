@@ -1229,7 +1229,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		try {
 			boolean isRoot = getType() == ROOT;
 			String message = isRoot ? Policy.bind("resources.refreshingRoot") : Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			monitor.beginTask(message, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+			monitor.subTask(message);
 			boolean build = false;
 			final ISchedulingRule rule = workspace.getRuleFactory().refreshRule(this);
 			try {
