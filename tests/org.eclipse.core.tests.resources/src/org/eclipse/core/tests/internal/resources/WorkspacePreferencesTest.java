@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.*;
 
@@ -23,8 +22,6 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	private IWorkspace workspace;
 	private Preferences preferences;
-	private IWorkspaceDescription initialDescription;
-
 	/**
 	 * Constructor for WorkspacePreferencesTest.
 	 * @param name
@@ -113,6 +110,54 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		assertEquals("3.2", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
 		assertEquals("Description not synchronized", workspace.getDescription(), preferences);
 
+	}
+	/**
+	 * Ensures property change events are properly fired when setting workspace description.
+	 */
+	public void testEvents() {
+		IWorkspaceDescription original = workspace.getDescription();
+
+		IWorkspaceDescription modified = workspace.getDescription();
+		// 1 - PREF_AUTO_BUILDING
+		modified.setAutoBuilding(!original.isAutoBuilding());
+		// 2 - PREF_DEFAULT_BUILD_ORDER and 3 - PREF_BUILD_ORDER
+		modified.setBuildOrder(new String[] { "a", "b", "c" });
+		// 4 - PREF_FILE_STATE_LONGEVITY
+		modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
+		// 5 - PREF_MAX_BUILD_ITERATIONS
+		modified.setMaxBuildIterations((original.getMaxBuildIterations() + 1) * 2);
+		// 6 - PREF_MAX_FILE_STATES
+		modified.setMaxFileStates((original.getMaxFileStates() + 1) * 2);
+		// 7 - PREF_MAX_FILE_STATE_SIZE
+		modified.setMaxFileStateSize((original.getMaxFileStateSize() + 1) * 2);
+		// 8 - PREF_SNAPSHOT_INTERVAL
+		modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
+
+		final List changedProperties = new LinkedList();
+		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
+			public void propertyChange(Preferences.PropertyChangeEvent event) { 
+				changedProperties.add(event.getProperty());
+			}
+		};
+		try {
+			preferences.addPropertyChangeListener(listener);
+			try {
+				workspace.setDescription(original);
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			// no events should have been fired
+			assertEquals("1.1 - wrong number of properties changed ", 0, changedProperties.size());
+			try {
+				workspace.setDescription(modified);
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			// the right number of events should have been fired			
+			assertEquals("2.1 - wrong number of properties changed ", 8, changedProperties.size());
+		} finally {
+			preferences.removePropertyChangeListener(listener);
+		}
 	}
 
 	/**
