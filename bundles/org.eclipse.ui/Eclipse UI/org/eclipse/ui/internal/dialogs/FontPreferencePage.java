@@ -383,8 +383,6 @@ public class FontPreferencePage
 	public boolean performOk() {
 
 		Enumeration fontSettingsEnumerator = idsToFontData.keys();
-		String currentSelection = getSelectedFontId();
-
 		while (fontSettingsEnumerator.hasMoreElements()) {
 			String preferenceName = (String) fontSettingsEnumerator.nextElement();
 			PreferenceConverter.setValue(
