@@ -76,10 +76,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <li><code>postWindowRestore</code> - called after a window has been
  * recreated from a previously saved state; use to adjust the restored
  * window</li>
- * <li><code>preWindowClose</code> - called as each window is being closed; 
- *  use to pre-screen window closings</li>
- * <li><code>postWindowClose</code> - called as each window is being closed; 
- *  use to unhook listeners, etc.</li>
+ * <li><code>postWindowOpen</code> - called after a window has been
+ * opened; use to hook window listeners, etc.</li>
+ * <li><code>preWindowShellClose</code> - called when a window's shell
+ * is closed by the user; use to pre-screen window closings</li>
  * <li><code>eventLoopException</code> - called to handle the case where the
  * event loop has crashed; use to inform the user that things are not well</li>
  * <li><code>eventLoopIdle</code> - called when there are currently no more
@@ -331,8 +331,6 @@ public abstract class WorkbenchAdviser {
 	 * 
 	 * @param configurer an object for configuring the particular workbench
 	 * window being opened
-	 * 
-	 * @issue no postWindowOpen call
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
@@ -403,32 +401,46 @@ public abstract class WorkbenchAdviser {
 	}
 
 	/**
-	 * Performs arbitrary actions as the given workbench window is being closed,
-	 * and possibly veto the close.
+	 * Performs arbitrary actions after the given workbench window has been
+	 * opened (possibly after being restored).
 	 * <p>
-	 * This method is called from the implementation of
-	 * {@link org.eclipse.ui.IWorkbenchWindow#close IWorkbenchWindow.close}.
+	 * This method is called after a window have been opened. This method is 
+	 * called after a new window has been created from scratch, or when
+	 * a previously-saved window has been restored.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the particular workbench
+	 * window just opened
+	 */
+	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+		// do nothing
+	}
+	
+	/**
+	 * Performs arbitrary actions as the given workbench window's shell is being
+	 * closed directly, and possibly veto the close.
+	 * <p>
+	 * This method is called from a ShellListener associated with the workbench
+	 * window. It is not called when the window is being closed for other reasons.
 	 * Clients must not call this method directly (although super calls are okay).
 	 * The default implementation does nothing. Subclasses may override.
 	 * Typical clients may use the configurer passed in to access the
 	 * workbench window being closed. If this method
-	 * returns <code>false</code>, then <code>IWorkbenchWindow.close</code>
-	 * returns <code>false</code> immediately. This gives the workbench adviser
-	 * an opportunity to query the user and/or veto the closing of a window
-	 * under some circumstances. Implementations of this method need to be
-	 * written carefully so as to not interfere with emergency workbench
-	 * shutdown.
+	 * returns <code>false</code>, then the user's request to close the shell is
+	 * ignored. This gives the workbench adviser an opportunity to query the user
+	 * and/or veto the closing of a window under some circumstances.
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench
-	 * window being closed
+	 * window whose shell is being closed
 	 * @return <code>true</code> to allow the window to close, 
 	 * and <code>false</code> to prevent the window from closing
 	 * @see org.eclipse.ui.IWorkbenchWindow#close
-	 * @see IWorkbenchConfigurer#emergencyClosing
 	 */
-	public boolean preWindowClose(IWorkbenchWindowConfigurer configurer) {
-		// do nothing, but allow the close(0 to proceed
+	public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
+		// do nothing, but allow the close() to proceed
 		return true;
 	}
 	

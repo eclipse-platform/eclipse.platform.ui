@@ -86,9 +86,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		exitPromptButton = new Button(composite, SWT.CHECK);
 		exitPromptButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.exitPromptButton")); //$NON-NLS-1$
 		exitPromptButton.setFont(composite.getFont());
-		// @issue temporarily disabled
-		exitPromptButton.setEnabled(false);
-//		exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		
 	}
 
@@ -169,13 +167,10 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		IPreferenceStore store = getIDEPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
-		// @issue temporarily disabled
-//		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 		showTasks.setSelection(store.getBoolean(IDEInternalPreferences.SHOW_TASKS_ON_BUILD));
 		saveInterval.loadDefault();
 
-//		projectSwitchField.loadDefault();
-		
 		super.performDefaults();
 	}
 
@@ -203,8 +198,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
 		// store the exit prompt on last window close setting
-		// @issue temporarily disabled
-//		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
+		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
 
 		// store the preference for bringing task view to front on build
 		store.setValue(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, showTasks.getSelection());
@@ -222,9 +216,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 				IDEWorkbenchPlugin.log("Error changing save interval preference", e.getStatus()); //$NON-NLS-1$
 			}
 		}
-
-		// store the open new project perspective settings
-//		projectSwitchField.store();
 
 		return super.performOk();
 	}

@@ -79,6 +79,7 @@ import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.part.EditorInputTransfer;
@@ -288,29 +289,21 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowClose
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowShellClose
 	 */
-	public boolean preWindowClose(IWorkbenchWindowConfigurer windowConfigurer) {
-		if (!super.preWindowClose(windowConfigurer)) {
-			return false;
-		}
-		
-		// if emergency close, then don't prompt at all
-		if (configurer.emergencyClosing()) {
+	public boolean preWindowShellClose(IWorkbenchWindowConfigurer windowConfigurer) {
+		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1) {
 			return true;
 		}
-
-		// when closing the last window, prompt for confirmation
-		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1)
-			return true;
-
-/*		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		// the user has asked to close the last window, while will cause the
+		// workbench to close in due course - prompt the user for confirmation
+ 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean promptOnExit =	store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 		if (promptOnExit) {
 			String message;
 			String productName = null;
-			AboutInfo about = IDEApplication.getPrimaryInfo();
+			AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 			if (about != null) {
 				productName = about.getProductName();
 			}
@@ -337,7 +330,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			}
 		}
 
-*/		return true;
+		return true;
 	}
 	
 	
