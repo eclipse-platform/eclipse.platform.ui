@@ -350,12 +350,26 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 	}
 	final Control contents = getContents();
 	final Display display = contents.getDisplay();
+	Shell shell = getShell();
 	boolean contentsWasEnabled = contents.isEnabled();
 	Menu menuBar = getMenuBarManager().getMenu();
 	boolean menuBarWasEnabled = menuBar.isEnabled();
 	boolean cancelWasEnabled = mgr.isCancelEnabled();
 	Control toolbarControl = getToolBarControl();
 	boolean toolbarWasEnabled = false;
+
+	// Disable the rest of the shells on the current display
+	Shell[] shells = display.getShells();
+	boolean[] enabled = new boolean[shells.length];
+	for (int i = 0; i < shells.length; i++) {
+		Shell current = shells[i];
+		if (current == shell) continue;
+		if (current != null && !current.isDisposed()) {
+			enabled[i] = current.isEnabled();
+			current.setEnabled(false);
+		}
+	}
+
 	if (toolbarControl != null) toolbarWasEnabled = toolbarControl.isEnabled();
 	Control currentFocus = display.getFocusControl();
 	try {
@@ -383,6 +397,14 @@ public void run(final boolean fork, boolean cancelable, final IRunnableWithProgr
 			}
 		}
 	} finally {
+		// Enable the rest of the shells on the current display
+		for (int i = 0; i < shells.length; i++) {
+			Shell current = shells[i];
+			if (current == shell) continue;
+			if (current != null && !current.isDisposed()) {
+				current.setEnabled(enabled[i]);
+			}
+		}
 		if (!contents.isDisposed())
 			contents.setEnabled(contentsWasEnabled);
 		if (!menuBar.isDisposed())
