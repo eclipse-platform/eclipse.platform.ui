@@ -18,20 +18,21 @@ public class ObjectPluginAction extends PluginAction {
 public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute) {
 	super(actionElement, runAttribute);
 }
-/**
- * Creates an instance of the delegate class.
- * At this point in time the delegate class must implement
- * IActionDelegate or IObjectActionDelegate.  We allow the flexibility
- * for backwards compatability.
+
+/** 
+ * Initialize an action delegate.
+ * Subclasses may override this.
  */
-protected IActionDelegate createDelegate() {
-	IActionDelegate delegate = super.createDelegate();
-	if (delegate != null) {
-		if (delegate instanceof IObjectActionDelegate && activePart != null)
-			((IObjectActionDelegate)delegate).setActivePart(this, activePart);
+protected IActionDelegate initDelegate(Object obj) 
+	throws WorkbenchException
+{
+	IActionDelegate result = super.initDelegate(obj);
+	if (obj instanceof IObjectActionDelegate && activePart != null) {
+		((IObjectActionDelegate)obj).setActivePart(this, activePart);
 	}
-	return delegate;
+	return result;
 }
+	
 /**
  * Sets the active part for the delegate.
  * <p>

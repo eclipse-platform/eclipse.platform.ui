@@ -168,8 +168,21 @@ private void internalComputeInterfaceOrder(Class[] interfaces, List result, Map 
  *
  */
 public boolean isApplicableTo(IStructuredSelection selection, IObjectContributor contributor) {
-	for (Iterator elements=selection.iterator(); elements.hasNext();) {
-		if (contributor.isApplicableTo(elements.next())==false) return false;
+	Iterator elements = selection.iterator();
+	while (elements.hasNext()) {
+		if (contributor.isApplicableTo(elements.next())==false) 
+			return false;
+	}
+	return true;
+}
+/**
+ *
+ */
+public boolean isApplicableTo(List list, IObjectContributor contributor) {
+	Iterator elements = list.iterator();
+	while (elements.hasNext()) {
+		if (contributor.isApplicableTo(elements.next())==false) 
+			return false;
 	}
 	return true;
 }

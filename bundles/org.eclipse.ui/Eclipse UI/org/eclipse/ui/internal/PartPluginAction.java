@@ -23,31 +23,14 @@ public PartPluginAction(IConfigurationElement actionElement, String runAttribute
 	super(actionElement, runAttribute);
 }
 /**
- * Handles the provided selection. We are interested
- * only in structured selections.
- */
-protected void handleSelection(ISelection selection) {
-	if (selection instanceof IStructuredSelection)
-	   selectionChanged((IStructuredSelection)selection);
-	else
-	   selectionChanged(new StructuredSelection());
-}
-/**
  * Registers this action as a listener of the workbench part.
  */
 protected void registerSelectionListener(IWorkbenchPart aPart) {
 	ISelectionProvider selectionProvider = aPart.getSite().getSelectionProvider();
 	if (selectionProvider != null) {
 		selectionProvider.addSelectionChangedListener(this);
-		handleSelection(selectionProvider.getSelection());
+		selectionChanged(selectionProvider.getSelection());
 	}
-}
-/**
- * Handles selection change event as a selection listener.
- */
-public void selectionChanged(SelectionChangedEvent event) {
-	ISelection selection = event.getSelection();
-	handleSelection(selection);
 }
 /**
  * Unregisters this action as a listener of the workbench part.
@@ -64,7 +47,7 @@ protected void unregisterSelectionListener(IWorkbenchPart aPart) {
 protected void refreshSelection(IWorkbenchPart aPart) {
 	ISelectionProvider selectionProvider = aPart.getSite().getSelectionProvider();
 	if (selectionProvider != null)
-		handleSelection(selectionProvider.getSelection());
+		selectionChanged(selectionProvider.getSelection());
 }
 
 }

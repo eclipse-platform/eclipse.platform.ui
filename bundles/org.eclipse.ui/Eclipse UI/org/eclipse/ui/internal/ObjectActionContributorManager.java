@@ -49,56 +49,62 @@ private List computeCombinedOrder(Class inputClass) {
  * provided viewer into the provided popup menu.
  */
 public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMenu, 
-	ISelectionProvider selProv) {
-	// Get a structured selection.	
+	ISelectionProvider selProv) 
+{
+	// Get a selection.	
 	ISelection selection = selProv.getSelection();
-	if ((selection == null) || !(selection instanceof IStructuredSelection))
+	if (selection == null) 
 		return false;
-	IStructuredSelection ssel = (IStructuredSelection) selection;
 		
 	// Convert the selection into an element vector.
+	// According to the dictionary, a selection is "one that
+	// is selected", or "a collection of selected things".  
+	// In reflection of this, we deal with one or a collection.
 	List elements = new ArrayList();
-	Iterator enum = ssel.iterator();
-	while (enum.hasNext()) {
-		Object obj = enum.next();
-		elements.add(obj);
+	if (selection instanceof IStructuredSelection) {
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		Iterator enum = ssel.iterator();
+		while (enum.hasNext()) {
+			Object obj = enum.next();
+			elements.add(obj);
+		}
+	} else {
+		elements.add(selection);
 	}
-
+	
 	// Calculate the common class.
 	Class commonClass = getCommonClass(elements);
-	
 	if (commonClass == null)
 		return false;
 	
-	
-	//Get the resource class. It will be null if any of the
-	//elements are resources themselves or do not adapt to
-	//IResource.
-	
+	// Get the resource class. It will be null if any of the
+	// elements are resources themselves or do not adapt to
+	// IResource.
 	Class resourceClass = getCommonResourceClass(elements);
+
+	// Get the contributors.	
+	// If there is a resource class add it in
 	List contributors = null;
-	
-	//If there is a resource class add it in
-	if(resourceClass == null)
+	if (resourceClass == null)
 		contributors = getContributors(commonClass);
 	else
-		contributors = getContributors(commonClass,resourceClass);
-		
-	if(contributors == null)
+		contributors = getContributors(commonClass, resourceClass);
+	if (contributors == null)
 		return false;
 		
-
 	// Do the contributions.  Add menus first, then actions
 	boolean actualContributions = false;
 	for (int i = 0; i < contributors.size(); i++) {
 		IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
-		if (!isApplicableTo(ssel, contributor)) continue;
+		if (!isApplicableTo(elements, contributor)) 
+			continue;
 		if (contributor.contributeObjectMenus(popupMenu, selProv))
 			actualContributions = true;
 	}
 	for (int i = 0; i < contributors.size(); i++) {
 		IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
-		if (!isApplicableTo(ssel, contributor)) continue;
+		if (!isApplicableTo(elements, contributor)) 
+			continue;
 		if (contributor.contributeObjectActions(part, popupMenu, selProv))
 			actualContributions = true;
 	}

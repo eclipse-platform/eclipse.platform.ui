@@ -28,29 +28,26 @@ public EditorPluginAction(IConfigurationElement actionElement, String runAttribu
 	if (part != null) 
 		editorChanged(part);
 }
-/**
- * Creates an instance of the delegate class as defined on
- * the configuration element. It will also initialize
- * it with the editor part.
+
+/** 
+ * Initialize an action delegate.
+ * Subclasses may override this.
  */
-protected IActionDelegate createDelegate() {
-	IActionDelegate delegate = super.createDelegate();
-	if (delegate == null)
-		return null;
-	if (delegate instanceof IEditorActionDelegate) {
-		IEditorActionDelegate editorDelegate = (IEditorActionDelegate) delegate;
-		editorDelegate.setActiveEditor(this, currentEditor);
-	} else {
-		WorkbenchPlugin.log("Action should implement IEditorActionDelegate: " + getText());//$NON-NLS-1$
-		return null;
-	}
-	return delegate;
+protected IActionDelegate initDelegate(Object obj) 
+	throws WorkbenchException
+{
+	if (obj instanceof IEditorActionDelegate) {
+		IEditorActionDelegate ead = (IEditorActionDelegate)obj;
+		ead.setActiveEditor(this, currentEditor);
+		return ead;
+	} else
+		throw new WorkbenchException("Action must implement IEditorActionDelegate"); //$NON-NLS-1$
 }
+
 /**
  * Handles editor change by re-registering for selection
  * changes and updating IEditorActionDelegate.
  */
-
 public void editorChanged(IEditorPart part) {
 	if (currentEditor!=null) {
 		unregisterSelectionListener(currentEditor);
@@ -58,7 +55,7 @@ public void editorChanged(IEditorPart part) {
 	currentEditor = part;
 	if (getDelegate() == null) {
 		if (isOkToCreateDelegate())
-		   setDelegate(createDelegate());
+		   createDelegate();
 	}
 	if (getDelegate() != null) {
 		IEditorActionDelegate editorDelegate = (IEditorActionDelegate)getDelegate();

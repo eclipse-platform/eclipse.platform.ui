@@ -186,16 +186,20 @@ public class ActionExpression {
 		}
 		private boolean preciselyMatches(Object object) {
 			// Get the action filter.
-			IActionFilter filter = null;
-			if (object instanceof IActionFilter)
-				filter = (IActionFilter)object;
-			else if (object instanceof IAdaptable)
-				filter = (IActionFilter)((IAdaptable)object).getAdapter(IActionFilter.class);
+			IActionFilter filter = getActionFilter(object);
 			if (filter == null)
 				return false;
 				
 			// Run the action filter.
 			return filter.testAttribute(object, name, value);
+		}
+		private IActionFilter getActionFilter(Object object) {
+			IActionFilter filter = null;
+			if (object instanceof IActionFilter)
+				filter = (IActionFilter)object;
+			else if (object instanceof IAdaptable)
+				filter = (IActionFilter)((IAdaptable)object).getAdapter(IActionFilter.class);
+			return filter;
 		}
 	}
 
