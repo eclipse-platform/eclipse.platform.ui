@@ -5,13 +5,13 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.io.*;
+
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class File extends Resource implements IFile {
 protected File(IPath path, Workspace container) {
@@ -124,6 +124,20 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 		}
 	} finally {
 		monitor.done();
+		ensureClosed(content);
+	}
+}
+/**
+ * IFile API methods require that the stream be closed regardless
+ * of the success of the method.  This method makes a best effort
+ * at closing the stream, and ignores any resulting IOException.
+ */
+protected void ensureClosed(InputStream stream) {
+	if (stream != null) {
+		try {
+			stream.close();
+		} catch (IOException e) {
+		}
 	}
 }
 /**
@@ -183,6 +197,7 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 		}
 	} finally {
 		monitor.done();
+		ensureClosed(content);
 	}
 }
 /**
