@@ -54,18 +54,17 @@ public class SearchQueryData implements ISearchQuery {
 		//		fieldNames.add("role");
 		//		fieldNames.add("solution");
 		//		fieldNames.add("technology");
-		selectedBooks = new ArrayList(0);
-
-		IToc tocs[] = HelpSystem.getTocManager().getTocs(locale);
-		for (int i = 0; i < tocs.length; i++)
-			selectedBooks.add(tocs[i]);
-
+		selectedBooks = null;
 	}
 	/**
-	 * Returns the list of books to be included in search.
+	 * Returns the list of books to be included in search,
+	 * or null (if bookFiltering is off).
 	 */
 	public List getSelectedBooks() {
-		return selectedBooks;
+		if (bookFiltering) {
+			return selectedBooks;
+		}
+		return null;
 	}
 	/**
 	 * Returns the locale in which the search will be performed.
@@ -91,6 +90,12 @@ public class SearchQueryData implements ISearchQuery {
 	 */
 	public void setBookFiltering(boolean enable) {
 		this.bookFiltering = enable;
+		if (enable && selectedBooks == null) {
+			selectedBooks = new ArrayList();
+			IToc tocs[] = HelpSystem.getTocManager().getTocs(locale);
+			for (int i = 0; i < tocs.length; i++)
+				selectedBooks.add(tocs[i]);
+		}
 	}
 	/**
 	 * Sets the list of books to be included in search.
@@ -122,7 +127,9 @@ public class SearchQueryData implements ISearchQuery {
 				+ "&lang="
 				+ (locale != null ? locale : Locale.getDefault().toString());
 		if (fieldNames != null && !fieldNames.isEmpty())
-			for (Iterator iterator = fieldNames.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = fieldNames.iterator();
+				iterator.hasNext();
+				) {
 				String field = (String) iterator.next();
 				q += "&field=" + URLEncoder.encode(field);
 			}
@@ -140,7 +147,8 @@ public class SearchQueryData implements ISearchQuery {
 					q += "&scope=" + URLEncoder.encode(toc.getHref());
 				}
 			}
-		}		return q;
+		}
+		return q;
 	}
 	/**
 	 * Gets the searchWord

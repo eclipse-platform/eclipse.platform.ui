@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.help.IToc;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -204,17 +206,33 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		}
 		super.setVisible(visible);
 	}
+	/**
+	 * Lists selected books in the selection field.
+	 * If filtering dissabled or all books are selected,
+	 * it will display "All"
+	 */
 	private void displaySelectedBooks() {
 		String tocLabels = "";
-		for (Iterator booksIt = searchQueryData.getSelectedBooks().iterator();
-			booksIt.hasNext();
-			) {
-			String bookLabel = ((IToc) booksIt.next()).getLabel();
-			if (tocLabels.length() <= 0)
-				tocLabels = bookLabel;
-			else
-				tocLabels += WorkbenchResources.getString("HelpSearchPage.bookLabelSeparator")
-					+ bookLabel;
+		if (searchQueryData.isBookFiltering()
+			&& searchQueryData.getSelectedBooks().size()
+				!= HelpSystem.getTocManager().getTocs(
+					searchQueryData.getLocale()).length) {
+			for (Iterator booksIt =
+				searchQueryData.getSelectedBooks().iterator();
+				booksIt.hasNext();
+				) {
+				String bookLabel = ((IToc) booksIt.next()).getLabel();
+				if (tocLabels.length() <= 0)
+					tocLabels = bookLabel;
+				else
+					tocLabels
+						+= WorkbenchResources.getString(
+							"HelpSearchPage.bookLabelSeparator")
+						+ bookLabel;
+			}
+		} else {
+			tocLabels =
+				WorkbenchResources.getString("HelpSearchPage.allBooksText");
 		}
 		selectedBooksText.setText(tocLabels);
 	}

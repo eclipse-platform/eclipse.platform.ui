@@ -26,16 +26,22 @@ public class SearchFilteringOptions extends Dialog {
 	/**
 	 * Constructor
 	 */
-	public SearchFilteringOptions(Shell parentShell, SearchQueryData queryData) {
+	public SearchFilteringOptions(
+		Shell parentShell,
+		SearchQueryData queryData) {
 		super(parentShell);
 		this.queryData = queryData;
 		IToc tocs[] = HelpSystem.getTocManager().getTocs(queryData.getLocale());
 		allBooks = new ArrayList(tocs.length);
-		for (int i = 0; i < tocs.length; i++)
+		for (int i = 0; i < tocs.length; i++) {
 			allBooks.add(tocs[i]);
-
-		selectedBooks = new ArrayList(queryData.getSelectedBooks().size());
-		selectedBooks.addAll(queryData.getSelectedBooks());
+		}
+		selectedBooks = new ArrayList();
+		if (queryData.isBookFiltering()) {
+			selectedBooks.addAll(queryData.getSelectedBooks());
+		} else {
+			selectedBooks.addAll(allBooks);
+		}
 	}
 	/**
 	 * Fills in the dialog area with text and checkboxes
