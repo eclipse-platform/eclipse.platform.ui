@@ -41,6 +41,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 	private Shell fDialog;
 	private FontMetrics fFontMetrics;
 	protected InputRequest fRequest;
+    private boolean fFirstValidation= true;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
@@ -75,12 +76,13 @@ public class SWTInputHandler extends DefaultInputHandler {
 	
 	protected void open(String title, String prompt, boolean[] result) {
 		createDialog(title, prompt, result);
+		validateInput();
 		fDialog.open();
 
 		while (!fDialog.isDisposed()) {
 			if (!fDialog.getDisplay().readAndDispatch()) fDialog.getDisplay().sleep();
 		}
-		fDialog.getDisplay().dispose();
+		Display.getDefault().dispose();
 	}
 
     private void createDialog(String title, String prompt, boolean[] result) {
@@ -127,7 +129,12 @@ public class SWTInputHandler extends DefaultInputHandler {
         String errorMessage = null;
         fRequest.setInput(fText.getText());
         if (!fRequest.isInputValid()) {
-        	errorMessage= RemoteAntMessages.getString("SWTInputHandler.3"); //$NON-NLS-1$
+            if (fFirstValidation) {
+                errorMessage= ""; //$NON-NLS-1$
+                fFirstValidation= false;
+            } else {
+                errorMessage= RemoteAntMessages.getString("SWTInputHandler.3"); //$NON-NLS-1$
+            } 
        }
        
         setErrorMessage(errorMessage); 
@@ -150,7 +157,6 @@ public class SWTInputHandler extends DefaultInputHandler {
     protected void createButtonsForButtonBar(Composite parent, final boolean[] result) {
     	fOkButton = new Button(parent, SWT.PUSH);
 		fOkButton.setText(RemoteAntMessages.getString("SWTInputHandler.4")); //$NON-NLS-1$
-		fOkButton.setEnabled(false);
 		setButtonLayoutData(fOkButton);
 		
 		Button cancel = new Button(parent, SWT.PUSH);
