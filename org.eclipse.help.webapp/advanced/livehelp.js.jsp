@@ -17,12 +17,18 @@ function liveActionInternal(topHelpWindow, pluginId, className, argument)
 {
 <%
 	RequestData data = new RequestData(application,request, response);
+	WebappPreferences prefs = data.getPrefs();
 	if(data.getMode() == RequestData.MODE_INFOCENTER){
 %>
 	alert("<%=UrlUtil.JavaScriptEncode(ServletResources.getString("noLiveHelpInInfocenter", request))%>");
 	return;
 <%
-	}else{
+	}else if(!prefs.isActiveHelp()){
+%>
+	alert("<%=UrlUtil.JavaScriptEncode(ServletResources.getString("noLiveHelp", request))%>");
+	return;
+<%
+	}else {
 %>
 	// construct the proper url for communicating with the server	
 	var url= window.location.href;

@@ -18,6 +18,7 @@ import javax.servlet.http.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.webapp.data.*;
 import org.osgi.framework.*;
 
 /**
@@ -39,6 +40,9 @@ public class LiveHelpServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
+			return;
+		}
+		if (!new WebappPreferences().isActiveHelp()) {
 			return;
 		}
 		req.setCharacterEncoding("UTF-8");

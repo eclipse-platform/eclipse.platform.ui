@@ -105,5 +105,8 @@ public class WebappPreferences {
 	public void setDontConfirmShowAll(boolean dontconfirm) {
 		prefs.setValue("dontConfirmShowAll", dontconfirm);
 	}
+	public boolean isActiveHelp() {
+		return "true".equalsIgnoreCase(prefs.getString("activeHelp"));
+	}
 
 }
