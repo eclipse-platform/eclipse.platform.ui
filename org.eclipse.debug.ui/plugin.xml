@@ -22,7 +22,7 @@
 </runtime>
 
 <!-- Extension points -->
-<extension-point id="debugModelPresentations" name="Debug Model Presentation"/>
+<extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName"/>
 
 <!-- Extensions -->
 <extension
