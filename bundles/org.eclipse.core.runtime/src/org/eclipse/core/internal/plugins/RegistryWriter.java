@@ -105,6 +105,10 @@ public void writeLibrary(LibraryModel library, PrintWriter w, int indent) {
 	w.print(gap1 + "<" + IModel.LIBRARY);
 	if (library.getName() != null)
 		w.print(" " + IModel.LIBRARY_NAME + "=\"" + PluginParser.xmlSafe(library.getName()) + "\"");
+	if (library.getType() != null)
+		w.print(" " + IModel.LIBRARY_TYPE + "=\"" + PluginParser.xmlSafe(library.getType()) + "\"");
+	if (library.getSource() != null)
+		w.print(" " + IModel.LIBRARY_SOURCE + "=\"" + PluginParser.xmlSafe(library.getSource()) + "\"");
 	if (!library.isExported())
 		w.println("/>");
 	else {
@@ -175,8 +179,81 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, PrintWriter w, i
 			writeExtension(extensions[i], w, indent + IModel.INDENT);
 		}
 	}
+	
+	PluginFragmentModel[] fragments = plugin.getFragments();
+	int fragmentSize = (fragments == null) ? 0 : fragments.length;
+	if (fragmentSize != 0) {
+		for (int i = 0; i < fragmentSize; i++) {
+			w.println("");
+			writePluginFragment(fragments[i], w, indent + IModel.INDENT);
+		}
+	}
 
 	w.println(gap1 + "</" + IModel.PLUGIN + ">");
+}
+public void writePluginFragment(PluginFragmentModel fragment, PrintWriter w, int indent) {
+
+	String gap1 = "";
+	for (int i = 0; i < indent; i++)
+		gap1 += " ";
+	String gap2 = gap1;
+	for (int i = 0; i < IModel.INDENT; i++)
+		gap2 += " ";
+
+	w.println("");
+	w.print(gap1 + "<" + IModel.FRAGMENT);
+	if (fragment.getId() != null)
+		w.print(" " + IModel.FRAGMENT_ID + "=\"" + PluginParser.xmlSafe(fragment.getId()) + "\"");
+	if (fragment.getName() != null)
+		w.print(" " + IModel.FRAGMENT_NAME + "=\"" + PluginParser.xmlSafe(fragment.getName()) + "\"");
+	if (fragment.getProviderName() != null)
+		w.print(" " + IModel.FRAGMENT_PROVIDER + "=\"" + PluginParser.xmlSafe(fragment.getProviderName()) + "\"");
+	if (fragment.getVersion() != null)
+		w.print(" " + IModel.FRAGMENT_VERSION + "=\"" + PluginParser.xmlSafe(fragment.getVersion()) + "\"");
+	if (fragment.getPluginId() != null)
+		w.print(" " + IModel.FRAGMENT_PLUGIN_ID + "=\"" + PluginParser.xmlSafe(fragment.getPluginId()) + "\"");
+	if (fragment.getPluginVersion() != null)
+		w.print(" " + IModel.FRAGMENT_PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(fragment.getPluginVersion()) + "\"");
+	w.println(">");
+
+	PluginPrerequisiteModel[] requires = fragment.getRequires();
+	int reqSize = (requires == null) ? 0 : requires.length;
+	if (reqSize != 0) {
+		w.print(gap2 + "<" + IModel.PLUGIN_REQUIRES);
+		w.println(">");
+		for (int i = 0; i < reqSize; i++) 
+			writePluginPrerequisite(requires[i], w, indent + 2 * IModel.INDENT);
+		w.println(gap2 + "</" + IModel.PLUGIN_REQUIRES + ">");
+	}
+
+	LibraryModel[] runtime = fragment.getRuntime();
+	int runtimeSize = (runtime == null) ? 0 : runtime.length;
+	if (runtimeSize != 0) {
+		w.println(gap2 + "<" + IModel.RUNTIME + ">");
+		for (int i = 0; i < runtimeSize; i++) {
+			writeLibrary(runtime[i], w, indent + 2 * IModel.INDENT);
+		}
+		w.println(gap2 + "</" + IModel.RUNTIME + ">");
+	}
+
+	ExtensionPointModel[] extensionPoints = fragment.getDeclaredExtensionPoints();
+	int extPointsSize = (extensionPoints == null) ? 0 : extensionPoints.length;
+	if (extPointsSize != 0) {
+		w.println("");
+		for (int i = 0; i < extPointsSize; i++)
+			writeExtensionPoint(extensionPoints[i], w, indent + IModel.INDENT);
+	}
+
+	ExtensionModel[] extensions = fragment.getDeclaredExtensions();
+	int extSize = (extensions == null) ? 0 : extensions.length;
+	if (extSize != 0) {
+		for (int i = 0; i < extSize; i++) {
+			w.println("");
+			writeExtension(extensions[i], w, indent + IModel.INDENT);
+		}
+	}
+
+	w.println(gap1 + "</" + IModel.FRAGMENT + ">");
 }
 public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, int indent) {
 	String gap1 = "";
@@ -189,6 +266,8 @@ public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, 
 		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(req.getVersion()) + "\"");
 	if (req.getExport())
 		w.print(" " + IModel.PLUGIN_REQUIRES_EXPORT + "=\"" + IModel.TRUE + "\"");
+	if (req.getOptional())
+		w.print(" " + IModel.PLUGIN_REQUIRES_OPTIONAL + "=\"" + IModel.TRUE + "\"");
 	if (req.getMatch())
 		w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_EXACT + "\"");
 	else
@@ -204,5 +283,9 @@ public void writePluginRegistry(PluginRegistryModel registry, PrintWriter w, int
 	for (int i = 0; i < pluginList.length; i++)
 		writePluginDescriptor(pluginList[i], w, indent + IModel.INDENT);
 	w.println(gap1 + "</" + IModel.REGISTRY + ">");
+	
+	// XXX: We don't print out the fragments.  They are printed out
+	// as part of the plugin descriptor.  But what if this is a
+	// fragment that doesn't have an associated plugin?
 }
 }

@@ -161,17 +161,25 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 			}
 		}
 
-		// Now worry about the parent plugin descriptor
-		PluginDescriptorModel parentPlugin = extension.getParentPluginDescriptor();
-		int pluginIndex = objectTable.indexOf(parentPlugin);
+		// Now worry about the parent plugin descriptor or plugin fragment
+		PluginModel parent = extension.getParent();
+		int parentIndex = objectTable.indexOf(parent);
 		out.writeByte(RegistryCacheReader.EXTENSION_PARENT_LABEL);
-		if (pluginIndex != -1) {
-			// We have already written this plugin.  Just use the index.
-			out.writeByte(RegistryCacheReader.PLUGIN_INDEX_LABEL);
-			out.writeInt(pluginIndex);
+		if (parentIndex != -1) {
+			// We have already written this plugin or fragment.  Just use the index.
+			if (parent instanceof PluginDescriptorModel) {
+				out.writeByte(RegistryCacheReader.PLUGIN_INDEX_LABEL);
+			} else /* must be a fragment */ {
+				out.writeByte(RegistryCacheReader.FRAGMENT_INDEX_LABEL);
+			}
+			out.writeInt(parentIndex);
 		} else {
-			// We haven't visited this plugin yet, so write it explicitly
-			writePluginDescriptor(parentPlugin, out);
+			// We haven't visited this plugin or fragment yet, so write it explicitly
+			if (parent instanceof PluginDescriptorModel) {
+				writePluginDescriptor((PluginDescriptorModel)parent, out);
+			} else /* must be a fragment */ {
+				writePluginFragment((PluginFragmentModel)parent, out);
+			}
 		}
 
 		out.writeByte(RegistryCacheReader.EXTENSION_END_LABEL);
@@ -204,14 +212,14 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 			out.writeUTF(outString);
 		}
 
-		// Write out the parent plugin descriptor's index.  We know we have
-		// already written this plugin to the cache
-		PluginDescriptorModel plugin = extPoint.getParentPluginDescriptor();
-		if (plugin != null) {
-			int pluginIndex = objectTable.indexOf(plugin);
-			if (pluginIndex != -1) {
+		// Write out the parent's index.  We know we have
+		// already written this plugin or fragment to the cache
+		PluginModel parent = extPoint.getParent();
+		if (parent != null) {
+			int parentIndex = objectTable.indexOf(parent);
+			if (parentIndex != -1) {
 				out.writeByte(RegistryCacheReader.EXTENSION_POINT_PARENT_LABEL);
-				out.writeInt(pluginIndex);
+				out.writeInt(parentIndex);
 			}
 		}
 
@@ -261,6 +269,14 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 
 		if ((outString = library.getName()) != null) {
 			out.writeByte(RegistryCacheReader.NAME_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = library.getType()) != null) {
+			out.writeByte(RegistryCacheReader.TYPE_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = library.getSource()) != null) {
+			out.writeByte(RegistryCacheReader.SOURCE_LABEL);
 			out.writeUTF(outString);
 		}
 
@@ -363,6 +379,15 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 			}
 		}
 
+		// and then fragments
+		PluginFragmentModel[] fragments = plugin.getFragments();
+		int fragmentSize = (fragments == null) ? 0 : fragments.length;
+		if (fragmentSize != 0) {
+			for (int i = 0; i < fragmentSize; i++) {
+				writePluginFragment(fragments[i], out);
+			}
+		}
+
 		// Add the index to the registry object for this plugin
 		PluginRegistryModel parentRegistry = plugin.getRegistry();
 		out.writeByte(RegistryCacheReader.PLUGIN_PARENT_LABEL);
@@ -370,6 +395,100 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 		out.writeInt(objectTable.indexOf(parentRegistry));
 
 		out.writeByte(RegistryCacheReader.PLUGIN_END_LABEL);
+	} catch (IOException ioe) {
+	}
+}
+public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream out) {
+
+	try {
+		// Check to see if this fragment already exists in the objectTable.  If it is there,
+		// it has already been written to the cache so just write out the index.
+		int fragmentIndex = objectTable.indexOf(fragment);
+		if (fragmentIndex != -1) {
+			// this fragment is already there
+			out.writeByte(RegistryCacheReader.FRAGMENT_INDEX_LABEL);
+			out.writeInt(fragmentIndex);
+			return;
+		}
+
+		// add this object to the object table first
+		addToObjectTable(fragment);
+		String outString;
+
+		out.writeByte(RegistryCacheReader.FRAGMENT_LABEL);
+		out.writeByte(RegistryCacheReader.READONLY_LABEL);
+		out.writeBoolean(fragment.isReadOnly());
+		if ((outString = fragment.getName()) != null) {
+			out.writeByte(RegistryCacheReader.NAME_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getId()) != null) {
+			out.writeByte(RegistryCacheReader.ID_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getProviderName()) != null) {
+			out.writeByte(RegistryCacheReader.PLUGIN_PROVIDER_NAME_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getVersion()) != null) {
+			out.writeByte(RegistryCacheReader.VERSION_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getLocation()) != null) {
+			out.writeByte(RegistryCacheReader.PLUGIN_LOCATION_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getPlugin()) != null) {
+			out.writeByte(RegistryCacheReader.FRAGMENT_PLUGIN_LABEL);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getPluginVersion()) != null) {
+			out.writeByte(RegistryCacheReader.FRAGMENT_PLUGIN_VERSION_LABEL);
+			out.writeUTF(outString);
+		}
+
+		// write out prerequisites
+		PluginPrerequisiteModel[] requires = fragment.getRequires();
+		int reqSize = (requires == null) ? 0 : requires.length;
+		if (reqSize != 0) {
+			for (int i = 0; i < reqSize; i++)
+				writePluginPrerequisite(requires[i], out);
+		}
+
+		// write out library entries
+		LibraryModel[] runtime = fragment.getRuntime();
+		int runtimeSize = (runtime == null) ? 0 : runtime.length;
+		if (runtimeSize != 0) {
+			for (int i = 0; i < runtimeSize; i++) {
+				writeLibrary(runtime[i], out);
+			}
+		}
+
+		// need to worry about cross links here
+		// now do extension points
+		ExtensionPointModel[] extensionPoints = fragment.getDeclaredExtensionPoints();
+		int extPointsSize = (extensionPoints == null) ? 0 : extensionPoints.length;
+		if (extPointsSize != 0) {
+			for (int i = 0; i < extPointsSize; i++)
+				writeExtensionPoint(extensionPoints[i], out);
+		}
+
+		// and then extensions
+		ExtensionModel[] extensions = fragment.getDeclaredExtensions();
+		int extSize = (extensions == null) ? 0 : extensions.length;
+		if (extSize != 0) {
+			for (int i = 0; i < extSize; i++) {
+				writeExtension(extensions[i], out);
+			}
+		}
+
+		// Add the index to the registry object for this plugin
+		PluginRegistryModel parentRegistry = fragment.getRegistry();
+		out.writeByte(RegistryCacheReader.PLUGIN_PARENT_LABEL);
+		// We can assume that the parent registry is already written out.
+		out.writeInt(objectTable.indexOf(parentRegistry));
+
+		out.writeByte(RegistryCacheReader.FRAGMENT_END_LABEL);
 	} catch (IOException ioe) {
 	}
 }
@@ -397,6 +516,9 @@ public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutput
 
 		out.writeByte(RegistryCacheReader.REQUIRES_EXPORT_LABEL);
 		out.writeBoolean(requires.getExport());
+
+		out.writeByte(RegistryCacheReader.REQUIRES_OPTIONAL_LABEL);
+		out.writeBoolean(requires.getOptional());
 
 		if ((outString = requires.getResolvedVersion()) != null) {
 			out.writeByte(RegistryCacheReader.REQUIRES_RESOLVED_VERSION_LABEL);
@@ -441,6 +563,10 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 		PluginDescriptorModel[] pluginList = registry.getPlugins();
 		for (int i = 0; i < pluginList.length; i++)
 			writePluginDescriptor(pluginList[i], out);
+		PluginFragmentModel[] fragmentList = registry.getFragments();
+		int fragmentLength = (fragmentList == null) ? 0 : fragmentList.length;
+		for (int i = 0; i < fragmentLength; i++)
+			writePluginFragment(fragmentList[i], out);
 		out.writeByte(RegistryCacheReader.REGISTRY_END_LABEL);
 	} catch (IOException ioe) {
 	}

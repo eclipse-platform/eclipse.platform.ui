@@ -43,6 +43,12 @@ public class RegistryCacheReader {
 	public static final byte EXTENSION_POINT_EXTENSIONS_LABEL = 12;
 	public static final byte EXTENSION_POINT_PARENT_LABEL = 13;
 	public static final byte EXTENSION_POINT_SCHEMA_LABEL = 14;
+	
+	public static final byte FRAGMENT_INDEX_LABEL = 47;
+	public static final byte FRAGMENT_LABEL = 48;
+	public static final byte FRAGMENT_END_LABEL = 49;
+	public static final byte FRAGMENT_PLUGIN_LABEL = 50;
+	public static final byte FRAGMENT_PLUGIN_VERSION_LABEL = 51;
 
 	public static final byte ID_LABEL = 15;
 	public static final byte LIBRARY_END_LABEL = 16;
@@ -72,9 +78,12 @@ public class RegistryCacheReader {
 	public static final byte REQUIRES_END_LABEL = 37;
 	public static final byte REQUIRES_EXPORT_LABEL = 38;
 	public static final byte REQUIRES_MATCH_LABEL = 39;
+	public static final byte REQUIRES_OPTIONAL_LABEL = 52;
 	public static final byte REQUIRES_PLUGIN_NAME_LABEL = 40;
 	public static final byte REQUIRES_RESOLVED_VERSION_LABEL = 41;
+	public static final byte SOURCE_LABEL = 53;
 	public static final byte SUBELEMENTS_LENGTH_LABEL = 42;
+	public static final byte TYPE_LABEL = 54;
 	public static final byte VALUE_LABEL = 43;
 	public static final byte VERSION_LABEL = 44;
 public RegistryCacheReader(Factory factory) {
@@ -410,10 +419,16 @@ public ExtensionModel readExtension(DataInputStream in) {
 					// objectTable
 					switch (in.readByte()) {
 						case PLUGIN_LABEL :
-							extension.setParentPluginDescriptor(readPluginDescriptor(in));
+							extension.setParent((PluginModel)readPluginDescriptor(in));
 							break;
 						case PLUGIN_INDEX_LABEL :
-							extension.setParentPluginDescriptor((PluginDescriptorModel) objectTable.get(in.readInt()));
+							extension.setParent((PluginModel)objectTable.get(in.readInt()));
+							break;
+						case FRAGMENT_LABEL :
+							extension.setParent((PluginModel)readPluginFragment(in));
+							break;
+						case FRAGMENT_INDEX_LABEL :
+							extension.setParent((PluginModel)objectTable.get(in.readInt()));
 							break;
 					}
 					break;
@@ -480,8 +495,8 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in) {
 					extPoint.setDeclaredExtensions(extensions);
 					break;
 				case EXTENSION_POINT_PARENT_LABEL :
-					// We know this plugin is already in the objectTable
-					extPoint.setParentPluginDescriptor((PluginDescriptorModel) objectTable.get(in.readInt()));
+					// We know this plugin or fragment is already in the objectTable
+					extPoint.setParent((PluginModel) objectTable.get(in.readInt()));
 					break;
 				case EXTENSION_POINT_END_LABEL :
 					done = true;
@@ -520,6 +535,12 @@ public LibraryModel readLibrary(DataInputStream in) {
 					break;
 				case LIBRARY_EXPORTS_LENGTH_LABEL :
 					exportsLength = in.readInt();
+					break;
+				case SOURCE_LABEL :
+					library.setSource(in.readUTF());
+					break;
+				case TYPE_LABEL :
+					library.setType(in.readUTF());
 					break;
 				case LIBRARY_EXPORTS_LABEL :
 					String[] exports = new String[exportsLength];
@@ -665,6 +686,39 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 					extensionPoint = null;
 					extPointList = newExtPointValues = null;
 					break;
+				case FRAGMENT_LABEL :
+					PluginFragmentModel fragment = readPluginFragment(in);
+					// Add this fragment to the end of the fragment list
+					PluginFragmentModel[] fragmentList = plugin.getFragments();
+					PluginFragmentModel[] newFragmentValues = null;
+					if (fragmentList == null) {
+						newFragmentValues = new PluginFragmentModel[1];
+						newFragmentValues[0] = fragment;
+					} else {
+						newFragmentValues = new PluginFragmentModel[fragmentList.length + 1];
+						System.arraycopy(fragmentList, 0, newFragmentValues, 0, fragmentList.length);
+						newFragmentValues[fragmentList.length] = fragment;
+					}
+					plugin.setFragments(newFragmentValues);
+					fragment = null;
+					fragmentList = newFragmentValues = null;
+					break;
+				case FRAGMENT_INDEX_LABEL :
+					fragment = (PluginFragmentModel) objectTable.get(in.readInt());
+					fragmentList = plugin.getFragments();
+					newFragmentValues = null;
+					if (fragmentList == null) {
+						newFragmentValues = new PluginFragmentModel[1];
+						newFragmentValues[0] = fragment;
+					} else {
+						newFragmentValues = new PluginFragmentModel[fragmentList.length + 1];
+						System.arraycopy(fragmentList, 0, newFragmentValues, 0, fragmentList.length);
+						newFragmentValues[fragmentList.length] = fragment;
+					}
+					plugin.setFragments(newFragmentValues);
+					fragment = null;
+					fragmentList = newFragmentValues = null;
+					break;
 				case PLUGIN_PARENT_LABEL :
 					plugin.setRegistry((PluginRegistryModel) objectTable.get(in.readInt()));
 					break;
@@ -676,6 +730,145 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in) {
 		return null;
 	}
 	return plugin;
+}
+public PluginFragmentModel readPluginFragment(DataInputStream in) {
+	PluginFragmentModel fragment = cacheFactory.createPluginFragment();
+	addToObjectTable(fragment);
+	// Use this flag to determine if the read-only flag should be set.  You
+	// can't set it now or you won't be able to add anything more to this
+	// plugin.
+	boolean setReadOnlyFlag = false;
+	try {
+		byte inByte = 0;
+		boolean done = false;
+		while (!done) {
+			try {
+				inByte = in.readByte();
+			} catch (EOFException eofe) {
+				done = true;
+				break;
+			}
+			switch (inByte) {
+				case READONLY_LABEL :
+					if (in.readBoolean()) {
+						setReadOnlyFlag = true;
+					}
+					break;
+				case NAME_LABEL :
+					fragment.setName(in.readUTF());
+					break;
+				case ID_LABEL :
+					fragment.setId(in.readUTF());
+					break;
+				case PLUGIN_PROVIDER_NAME_LABEL :
+					fragment.setProviderName(in.readUTF());
+					break;
+				case VERSION_LABEL :
+					fragment.setVersion(in.readUTF());
+					break;
+				case PLUGIN_LOCATION_LABEL :
+					fragment.setLocation(in.readUTF());
+					break;
+				case FRAGMENT_PLUGIN_LABEL :
+					fragment.setPlugin(in.readUTF());
+					break;
+				case FRAGMENT_PLUGIN_VERSION_LABEL :
+					fragment.setPluginVersion(in.readUTF());
+					break;
+				case PLUGIN_REQUIRES_LABEL :
+					PluginPrerequisiteModel requires = readPluginPrerequisite(in);
+					// Add this prerequisite to the end of the requires list
+					PluginPrerequisiteModel[] requiresList = fragment.getRequires();
+					PluginPrerequisiteModel[] newRequiresValues = null;
+					if (requiresList == null) {
+						newRequiresValues = new PluginPrerequisiteModel[1];
+						newRequiresValues[0] = requires;
+					} else {
+						newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
+						System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
+						newRequiresValues[requiresList.length] = requires;
+					}
+					fragment.setRequires(newRequiresValues);
+					requires = null;
+					requiresList = newRequiresValues = null;
+					break;
+				case PLUGIN_LIBRARY_LABEL :
+					LibraryModel library = readLibrary(in);
+					// Add this library to the end of the runtime list
+					LibraryModel[] libraryList = fragment.getRuntime();
+					LibraryModel[] newLibraryValues = null;
+					if (libraryList == null) {
+						newLibraryValues = new LibraryModel[1];
+						newLibraryValues[0] = library;
+					} else {
+						newLibraryValues = new LibraryModel[libraryList.length + 1];
+						System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
+						newLibraryValues[libraryList.length] = library;
+					}
+					fragment.setRuntime(newLibraryValues);
+					library = null;
+					libraryList = newLibraryValues = null;
+					break;
+				case PLUGIN_EXTENSION_LABEL :
+					ExtensionModel extension = readExtension(in);
+					ExtensionModel[] extList = fragment.getDeclaredExtensions();
+					ExtensionModel[] newExtValues = null;
+					if (extList == null) {
+						newExtValues = new ExtensionModel[1];
+						newExtValues[0] = extension;
+					} else {
+						newExtValues = new ExtensionModel[extList.length + 1];
+						System.arraycopy(extList, 0, newExtValues, 0, extList.length);
+						newExtValues[extList.length] = extension;
+					}
+					fragment.setDeclaredExtensions(newExtValues);
+					extension = null;
+					extList = newExtValues = null;
+					break;
+				case EXTENSION_INDEX_LABEL :
+					extension = (ExtensionModel) objectTable.get(in.readInt());
+					extList = fragment.getDeclaredExtensions();
+					newExtValues = null;
+					if (extList == null) {
+						newExtValues = new ExtensionModel[1];
+						newExtValues[0] = extension;
+					} else {
+						newExtValues = new ExtensionModel[extList.length + 1];
+						System.arraycopy(extList, 0, newExtValues, 0, extList.length);
+						newExtValues[extList.length] = extension;
+					}
+					fragment.setDeclaredExtensions(newExtValues);
+					extension = null;
+					extList = newExtValues = null;
+					break;
+				case PLUGIN_EXTENSION_POINT_LABEL :
+					ExtensionPointModel extensionPoint = readExtensionPoint(in);
+					// Add this extension point to the end of the extension point list
+					ExtensionPointModel[] extPointList = fragment.getDeclaredExtensionPoints();
+					ExtensionPointModel[] newExtPointValues = null;
+					if (extPointList == null) {
+						newExtPointValues = new ExtensionPointModel[1];
+						newExtPointValues[0] = extensionPoint;
+					} else {
+						newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
+						System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
+						newExtPointValues[extPointList.length] = extensionPoint;
+					}
+					fragment.setDeclaredExtensionPoints(newExtPointValues);
+					extensionPoint = null;
+					extPointList = newExtPointValues = null;
+					break;
+				case PLUGIN_PARENT_LABEL :
+					fragment.setRegistry((PluginRegistryModel) objectTable.get(in.readInt()));
+					break;
+				case FRAGMENT_END_LABEL :
+					done = true;
+			}
+		}
+	} catch (IOException ioe) {
+		return null;
+	}
+	return fragment;
 }
 public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 	PluginPrerequisiteModel requires = cacheFactory.createPluginPrerequisite();
@@ -710,6 +903,9 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 					break;
 				case REQUIRES_EXPORT_LABEL :
 					requires.setExport(in.readBoolean());
+					break;
+				case REQUIRES_OPTIONAL_LABEL :
+					requires.setOptional(in.readBoolean());
 					break;
 				case REQUIRES_RESOLVED_VERSION_LABEL :
 					requires.setResolvedVersion(in.readUTF());
@@ -764,6 +960,16 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in) {
 				case PLUGIN_INDEX_LABEL :
 					plugin = (PluginDescriptorModel) objectTable.get(in.readInt());
 					cachedRegistry.addPlugin(plugin);
+					break;
+				case FRAGMENT_LABEL :
+					PluginFragmentModel fragment = null;
+					if ((fragment = readPluginFragment(in)) != null) {
+						cachedRegistry.addFragment(fragment);
+					}
+					break;
+				case FRAGMENT_INDEX_LABEL :
+					fragment = (PluginFragmentModel) objectTable.get(in.readInt());
+					cachedRegistry.addFragment(fragment);
 					break;
 				case REGISTRY_END_LABEL :
 					done = true;
