@@ -22,6 +22,8 @@ public class Log extends AbstractMessageCommand {
 	}
 	public static final LocalOption RCS_FILE_NAMES_ONLY = new LocalOption("-R"); //$NON-NLS-1$
 	
+	public static final LocalOption NO_TAGS = new LocalOption("-N"); //$NON-NLS-1$
+	
 	protected Log() { }
 	protected String getRequestId() {
 		return "log"; //$NON-NLS-1$
