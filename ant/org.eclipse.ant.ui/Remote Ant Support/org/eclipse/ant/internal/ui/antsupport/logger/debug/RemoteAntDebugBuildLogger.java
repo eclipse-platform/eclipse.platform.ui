@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.DebugMessageIds;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
@@ -46,33 +45,17 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	private BufferedReader fRequestReader;
 	
     private boolean fBuildStartedSuspend= true;
-	private boolean fStepIntoSuspend= false;
-	private boolean fClientSuspend= false;
-	private boolean fShouldSuspend= false;
-	private boolean fConsiderTargetBreakpoints= false;
 	
-	private Stack fTasks= new Stack();
-	private Task fCurrentTask;
-	private Task fStepOverTask;
 	private Task fStepOverTaskInterrupted;
-	private Task fStepIntoTask;
-	private Task fLastTaskFinished;
 	
 	private List fBreakpoints= null;
-    
-     private Map fTargetToBuildSequence= null;
-     private Target fTargetToExecute= null;
-     private Target fTargetExecuting= null;
-	
-	//properties set before execution
-	private Map fInitialProperties= null;
-	private Map fProperties= null;
 	
 	/**
 	 * Request port to connect to.
 	 * Used for debug connections
 	 */
 	private int fRequestPort= -1;
+	private AntDebugState fDebugState;
 
 	/**
 	 * Reader thread that processes requests from the debug client.
@@ -91,25 +74,25 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 						
 						if (message.startsWith(DebugMessageIds.STEP_INTO)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-							    fStepIntoSuspend= true;
-							    fStepIntoTask= fCurrentTask;
+								fDebugState.setStepIntoSuspend(true);
+								fDebugState.setStepIntoTask(fDebugState.getCurrentTask());
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								AntDebugUtil.stepOver(RemoteAntDebugBuildLogger.this);
+								AntDebugUtil.stepOver(RemoteAntDebugBuildLogger.this.fDebugState);
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								fStepIntoTask= null;
-								fStepOverTask= null;
+								fDebugState.setStepIntoTask(null);
+								fDebugState.setStepOverTask(null);
 								fStepOverTaskInterrupted= null;
-								fClientSuspend= true;
+								fDebugState.setClientSuspend(true);
 							}
 						} else if (message.startsWith(DebugMessageIds.RESUME)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								fStepIntoTask= null;
-								fStepOverTask= null;
+								fDebugState.setStepIntoTask(null);
+								fDebugState.setStepOverTask(null);
 								fStepOverTaskInterrupted= null;
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
@@ -186,6 +169,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public synchronized void buildStarted(BuildEvent event) {
+		fDebugState= new AntDebugState(this);
 		super.buildStarted(event);
 		marshalMessage(-1, DebugMessageIds.BUILD_STARTED);
 		if (fRequestPort != -1) {
@@ -199,7 +183,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		} else {
 			shutDown();
 		}
-		setShouldSuspend(true);
+		fDebugState.setShouldSuspend(true);
 		waitIfSuspended();
 	}
 
@@ -208,7 +192,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 */
 	public void taskStarted(BuildEvent event) {
         super.taskStarted(event);
-		AntDebugUtil.taskStarted(event, this);
+		AntDebugUtil.taskStarted(event, fDebugState);
 	}
 	
 	/* (non-Javadoc)
@@ -216,7 +200,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 */
 	public synchronized void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
-		AntDebugUtil.taskFinished(this);
+		AntDebugUtil.taskFinished(fDebugState);
 	}
 	
 	public synchronized void waitIfSuspended() {
@@ -225,37 +209,37 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
 		if (breakpoint != null) {
 			detail= breakpoint.toMarshallString();
-			setShouldSuspend(false);
-			if (fStepOverTask != null) {
-				fStepOverTaskInterrupted= fStepOverTask;
-				fStepOverTask= null;
+			fDebugState.setShouldSuspend(false);
+			if (fDebugState.getStepOverTask() != null) {
+				fStepOverTaskInterrupted= fDebugState.getStepOverTask();
+				fDebugState.setStepOverTask(null);
 			}
-		} else if (fCurrentTask != null) {
-	        if (fStepIntoSuspend) {
+		} else if (fDebugState.getCurrentTask() != null) {
+	        if (fDebugState.isStepIntoSuspend()) {
 	            detail= DebugMessageIds.STEP;
-	            fStepIntoSuspend= false;
-	        } else if ((fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) || shouldSuspend()) {
+				fDebugState.setStepIntoSuspend(false);
+	        } else if ((fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepOverTask()) || fDebugState.shouldSuspend()) {
 	        	//suspend as a step over has finished
 	        	detail= DebugMessageIds.STEP;
-	        	fStepOverTask= null;
-				setShouldSuspend(false);
-	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepIntoTask) {
+				fDebugState.setStepOverTask(null);
+				fDebugState.setShouldSuspend(false);
+	        } else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fDebugState.getStepIntoTask()) {
 	        	//suspend as a task that was stepped into has finally completed
 	        	 detail= DebugMessageIds.STEP;
-	        	 fStepIntoTask= null;
-	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepOverTaskInterrupted) {
+	        	 fDebugState.setStepIntoTask(null);
+	        } else if (fDebugState.getLastTaskFinished() != null && fDebugState.getLastTaskFinished() == fStepOverTaskInterrupted) {
 	        	//suspend as a task that was stepped over but hit a breakpoint has finally completed
 	        	 detail= DebugMessageIds.STEP;
 	        	 fStepOverTaskInterrupted= null;
-	        } else if (fClientSuspend) {
+	        } else if (fDebugState.isClientSuspend()) {
 	            detail= DebugMessageIds.CLIENT_REQUEST;
-	            fClientSuspend= false;
+				fDebugState.setClientSuspend(false);
 	        } else {
 	            shouldSuspend= false;
 	        }
-	    } else if (shouldSuspend() && fBuildStartedSuspend) {
+	    } else if (fDebugState.shouldSuspend() && fBuildStartedSuspend) {
             fBuildStartedSuspend= false;
-			setShouldSuspend(false);
+			fDebugState.setShouldSuspend(false);
 	    } else {
 			shouldSuspend= false;
 	    }
@@ -299,15 +283,15 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	
 	protected void marshallStack() {
 	    StringBuffer stackRepresentation= new StringBuffer();
-	    AntDebugUtil.marshalStack(stackRepresentation, getTasks(), getTargetToExecute(), getTargetExecuting(), getTargetToBuildSequence());
+	    AntDebugUtil.marshalStack(stackRepresentation, fDebugState);
 	    sendRequestResponse(stackRepresentation.toString());
 	}
 	
 	protected void marshallProperties() {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-        if (!getTasks().isEmpty()) {
-            AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)getTasks().peek()).getProject(), fInitialProperties, fProperties, false);
-            fProperties= ((Task)getTasks().peek()).getProject().getProperties();
+        if (!fDebugState.getTasks().isEmpty()) {
+            AntDebugUtil.marshallProperties(propertiesRepresentation, fDebugState, false);
+            fDebugState.updateProperties();
         }
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
@@ -340,7 +324,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-		AntDebugUtil.targetStarted(event, this);
+		AntDebugUtil.targetStarted(event, fDebugState);
 		if (!fSentProcessId) {
 			establishConnection();
 		}
@@ -353,7 +337,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
      */
     public void targetFinished(BuildEvent event) {
         super.targetFinished(event);
-        setTargetExecuting(null);
+		fDebugState.setTargetExecuting(null);
     }   
     
     public void configure(Map userProperties) {
@@ -365,92 +349,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     } 
 	
 	private Location getBreakpointLocation() {
-		if (fCurrentTask != null) {
-			return fCurrentTask.getLocation();
+		if (fDebugState.getCurrentTask() != null) {
+			return fDebugState.getCurrentTask().getLocation();
 		}
-		if (fConsiderTargetBreakpoints && getTargetExecuting() != null) {
-			return AntDebugUtil.getLocation(getTargetExecuting());
+		if (fDebugState.considerTargetBreakpoints() && fDebugState.getTargetExecuting() != null) {
+			return AntDebugUtil.getLocation(fDebugState.getTargetExecuting());
 		}
 		return null;
 	}
-
-    public Task getLastTaskFinished() {
-        return fLastTaskFinished;
-    }
-
-    public void setLastTaskFinished(Task lastTaskFinished) {
-        fLastTaskFinished = lastTaskFinished;
-    }
-
-    public Task getCurrentTask() {
-        return fCurrentTask;
-    }
-
-    public void setCurrentTask(Task currentTask) {
-        fCurrentTask = currentTask;
-    }
-
-    public Map getInitialProperties() {
-        return fInitialProperties;
-    }
-
-    public void setInitialProperties(Map initialProperties) {
-        fInitialProperties = initialProperties;
-    }
-
-    public Task getStepOverTask() {
-        return fStepOverTask;
-    }
-
-    public void setStepOverTask(Task stepOverTask) {
-        fStepOverTask = stepOverTask;
-    }
-
-    public boolean considerTargetBreakpoints() {
-        return fConsiderTargetBreakpoints;
-    }
-
-    public void setConsiderTargetBreakpoints(boolean considerTargetBreakpoints) {
-        fConsiderTargetBreakpoints = considerTargetBreakpoints;
-    }
-
-    public void setTasks(Stack tasks) {
-        fTasks = tasks;
-    }
-
-    public Stack getTasks() {
-        return fTasks;
-    }
-
-    public void setShouldSuspend(boolean shouldSuspend) {
-        fShouldSuspend = shouldSuspend;
-    }
-
-    public boolean shouldSuspend() {
-        return fShouldSuspend;
-    }
-
-    public void setTargetToBuildSequence(Map targetToBuildSequence) {
-        fTargetToBuildSequence = targetToBuildSequence;
-    }
-
-    public Map getTargetToBuildSequence() {
-        return fTargetToBuildSequence;
-    }
-
-    public void setTargetToExecute(Target targetToExecute) {
-        fTargetToExecute = targetToExecute;
-    }
-
-    public Target getTargetToExecute() {
-        return fTargetToExecute;
-    }
-
-    public void setTargetExecuting(Target targetExecuting) {
-        fTargetExecuting = targetExecuting;
-    }
-
-    public Target getTargetExecuting() {
-        return fTargetExecuting;
-    }
 }

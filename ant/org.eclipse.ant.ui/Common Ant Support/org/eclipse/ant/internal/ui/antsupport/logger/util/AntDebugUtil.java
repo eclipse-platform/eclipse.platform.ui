@@ -98,10 +98,14 @@ public final class AntDebugUtil {
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
     }
     
-    public static void marshalStack(StringBuffer stackRepresentation, Stack tasks, Target targetToExecute, Target targetExecuting, Map targetToBuildSequence) {
+    public static void marshalStack(StringBuffer stackRepresentation, AntDebugState debugState) {
+		Stack tasks= debugState.getTasks();
+		
         stackRepresentation.append(DebugMessageIds.STACK);
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
         
+		Target targetToExecute= debugState.getTargetToExecute();
+		Target targetExecuting= debugState.getTargetExecuting();
 		if (tasks.isEmpty()) {
 			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
 		} else {
@@ -112,7 +116,7 @@ public final class AntDebugUtil {
 		}
         //target dependancy stack 
          if (targetToExecute != null) {
-         	Vector buildSequence= (Vector) targetToBuildSequence.get(targetToExecute);
+         	Vector buildSequence= (Vector) debugState.getTargetToBuildSequence().get(targetToExecute);
          	int startIndex= buildSequence.indexOf(targetExecuting) + 1;
          	int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
          	
@@ -126,15 +130,21 @@ public final class AntDebugUtil {
          }
     }
     
-    public static void marshallProperties(StringBuffer propertiesRepresentation, Project project, Map initialProperties, Map lastProperties, boolean marshallLineSep) {
+    public static void marshallProperties(StringBuffer propertiesRepresentation, AntDebugState debugState, boolean marshallLineSep) {
+		
         propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
         propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+		
+		Project project= ((Task)debugState.getTasks().peek()).getProject();
+		Map lastProperties= debugState.getProperties(); 
+		
         Map currentProperties= currentProperties= project.getProperties();
         if (lastProperties != null && currentProperties.size() == lastProperties.size()) {
             //no new properties
             return;
         }
         
+		Map initialProperties= debugState.getInitialProperties();
         Map currentUserProperties= project.getUserProperties();
         Iterator iter= currentProperties.keySet().iterator();
         String propertyName;
@@ -188,56 +198,56 @@ public final class AntDebugUtil {
         return (Target) allTargets.get(targets.remove(0));
     }
 
-    public static void taskStarted(BuildEvent event, IDebugBuildLogger logger) {
-        if (logger.getInitialProperties() == null) {//implicit or top level target does not fire targetStarted()
-            logger.setInitialProperties(event.getProject().getProperties());
+    public static void taskStarted(BuildEvent event, AntDebugState debugState) {
+        if (debugState.getInitialProperties() == null) {//implicit or top level target does not fire targetStarted()
+            debugState.setInitialProperties(event.getProject().getProperties());
         }
         
-        logger.setCurrentTask(event.getTask());
-        logger.setConsiderTargetBreakpoints(false);
-        logger.getTasks().push(logger.getCurrentTask());
-        logger.waitIfSuspended();
+        debugState.setCurrentTask(event.getTask());
+        debugState.setConsiderTargetBreakpoints(false);
+        debugState.getTasks().push(debugState.getCurrentTask());
+        debugState.waitIfSuspended();
     }
 
-    public static void taskFinished(IDebugBuildLogger logger) {
-        logger.setLastTaskFinished((Task)logger.getTasks().pop());
-        logger.setCurrentTask(null);
-        String taskName= logger.getLastTaskFinished().getTaskName();
-        if (logger.getStepOverTask() != null && ("antcall".equals(taskName) || "ant".equals(taskName))) { //$NON-NLS-1$ //$NON-NLS-2$
-            logger.setShouldSuspend(true);
+    public static void taskFinished(AntDebugState debugState) {
+        debugState.setLastTaskFinished((Task)debugState.getTasks().pop());
+        debugState.setCurrentTask(null);
+        String taskName= debugState.getLastTaskFinished().getTaskName();
+        if (debugState.getStepOverTask() != null && ("antcall".equals(taskName) || "ant".equals(taskName))) { //$NON-NLS-1$ //$NON-NLS-2$
+            debugState.setShouldSuspend(true);
         }
-        logger.waitIfSuspended();
+        debugState.waitIfSuspended();
     }
 
-    public static void stepOver(IDebugBuildLogger logger) {
-        logger.setStepOverTask(logger.getCurrentTask());
-        if (logger.getCurrentTask() == null) {
+    public static void stepOver(AntDebugState debugState) {
+        debugState.setStepOverTask(debugState.getCurrentTask());
+        if (debugState.getCurrentTask() == null) {
             //stepping over target breakpoint
-            logger.setShouldSuspend(true);
+            debugState.setShouldSuspend(true);
         }
-        logger.notifyAll();
+        debugState.resume();
     }
 
-    public static void targetStarted(BuildEvent event, IDebugBuildLogger logger) {
-        if (logger.getInitialProperties() == null) {
-            logger.setInitialProperties(event.getProject().getProperties());
+    public static void targetStarted(BuildEvent event, AntDebugState debugState) {
+        if (debugState.getInitialProperties() == null) {
+            debugState.setInitialProperties(event.getProject().getProperties());
         }
-        if (logger.getTargetToBuildSequence() == null) {
-            logger.setTargetToBuildSequence(new HashMap());
-            logger.setTargetToExecute(AntDebugUtil.initializeBuildSequenceInformation(event, logger.getTargetToBuildSequence()));
+        if (debugState.getTargetToBuildSequence() == null) {
+            debugState.setTargetToBuildSequence(new HashMap());
+            debugState.setTargetToExecute(AntDebugUtil.initializeBuildSequenceInformation(event, debugState.getTargetToBuildSequence()));
         }
         
-        logger.setTargetExecuting(event.getTarget());
-        if (event.getTarget().equals(logger.getTargetToExecute())) {
+        debugState.setTargetExecuting(event.getTarget());
+        if (event.getTarget().equals(debugState.getTargetToExecute())) {
             //the dependancies of the target to execute have been met
             //prepare for the next target
             Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
             if (!targets.isEmpty()) {
-                logger.setTargetToExecute((Target) event.getProject().getTargets().get(targets.remove(0)));
+                debugState.setTargetToExecute((Target) event.getProject().getTargets().get(targets.remove(0)));
             } else {
-                logger.setTargetToExecute(null);
+                debugState.setTargetToExecute(null);
             }
         }
-        logger.setConsiderTargetBreakpoints(true);
+        debugState.setConsiderTargetBreakpoints(true);
     }
 }
