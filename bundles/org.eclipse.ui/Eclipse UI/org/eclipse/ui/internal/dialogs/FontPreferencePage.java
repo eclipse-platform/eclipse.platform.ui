@@ -32,6 +32,8 @@ public class FontPreferencePage
 	Hashtable namesToIds;
 	Hashtable idsToFontData;
 	List fontList;
+	Button changeFontButton;
+	Button useDefaultsButton;
 
 	/**
 	 * The label that displays the selected font, or <code>null</code> if none.
@@ -145,8 +147,15 @@ public class FontPreferencePage
 		fontList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
-				if (selectedFontId != null)
+				if (selectedFontId == null){
+					changeFontButton.setEnabled(false);
+					useDefaultsButton.setEnabled(false);
+				}
+				else{
+					changeFontButton.setEnabled(true);
+					useDefaultsButton.setEnabled(true);
 					updateForFont((FontData) idsToFontData.get(selectedFontId));
+				}
 			}
 		});
 
@@ -187,7 +196,7 @@ public class FontPreferencePage
 	 * Creates the change button for this field editor.=
 	 */
 	private void createChangeControl(Composite parent, String changeButtonLabel) {
-		final Button changeFontButton = new Button(parent, SWT.PUSH);
+		changeFontButton = new Button(parent, SWT.PUSH);
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
@@ -206,6 +215,8 @@ public class FontPreferencePage
 
 			}
 		});
+		
+		changeFontButton.setEnabled(false);
 	}
 
 	/**
@@ -215,10 +226,10 @@ public class FontPreferencePage
 		Composite parent,
 		String useSystemLabel) {
 
-		final Button changeFontButton = new Button(parent, SWT.PUSH | SWT.CENTER);
+		useDefaultsButton = new Button(parent, SWT.PUSH | SWT.CENTER);
 
-		changeFontButton.setText(useSystemLabel); //$NON-NLS-1$
-		changeFontButton.addSelectionListener(new SelectionAdapter() {
+		useDefaultsButton.setText(useSystemLabel); //$NON-NLS-1$
+		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
 				if (selectedFontId != null) {
@@ -228,6 +239,8 @@ public class FontPreferencePage
 				}
 			}
 		});
+		
+		useDefaultsButton.setEnabled(false);
 	}
 
 	/**
