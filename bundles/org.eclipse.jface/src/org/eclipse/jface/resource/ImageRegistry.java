@@ -14,6 +14,7 @@
 package org.eclipse.jface.resource;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -97,8 +98,8 @@ public class ImageRegistry {
         public ImageData getImageData() {
             return original.getImageData();
         }
-    };
-    
+    }
+        
     /**
      * Creates an empty image registry.
      * <p>
@@ -110,6 +111,13 @@ public class ImageRegistry {
         this(Display.getCurrent());
     }
 
+    /**
+     * Creates an empty image registry using the given resource manager to allocate images.
+     * 
+     * @param manager the resource manager used to allocate images
+     * 
+     * @since 3.1
+     */
     public ImageRegistry(ResourceManager manager) {
         Assert.isNotNull(manager);
         Device dev = manager.getDevice();
@@ -117,6 +125,11 @@ public class ImageRegistry {
             this.display = (Display)dev;
         }
         this.manager = manager;
+        manager.disposeExec(new Runnable() {
+            public void run() {
+                dispose();
+            }
+        });
     }
     
     /**
@@ -129,7 +142,7 @@ public class ImageRegistry {
     public ImageRegistry(Display display) {
         this(JFaceResources.getResources(display));
     }
-
+    
     /**
      * Returns the image associated with the given key in this registry, 
      * or <code>null</code> if none.
@@ -257,9 +270,10 @@ public class ImageRegistry {
         
         if (entry == null) {
             entry = new Entry();
+            putEntry(key, entry);
         }
         
-        if (entry.image != null) {
+        if (entry.image != null || entry.descriptor != null) {
             throw new IllegalArgumentException(
                     "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
         }
@@ -300,5 +314,24 @@ public class ImageRegistry {
             table = new HashMap(10);
         }
         return table;
+    }
+    
+    /**
+     * Disposes this image registry, disposing any images
+     * that were allocated for it, and clearing its entries.
+     * 
+     * @since 3.1
+     */
+    public void dispose() {
+        if (table != null) {
+            for (Iterator i = table.values().iterator(); i.hasNext();) {
+                Entry entry = (Entry) i.next();
+                if (entry.image != null) {
+                    manager.destroyImage(entry.descriptor);
+                }
+            }
+            table = null;
+        }
+        display = null;
     }
 }

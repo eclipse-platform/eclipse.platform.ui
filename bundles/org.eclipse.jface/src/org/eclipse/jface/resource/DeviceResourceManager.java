@@ -81,6 +81,7 @@ public final class DeviceResourceManager extends AbstractResourceManager {
         super.dispose();
         if (missingImage != null) {
             missingImage.dispose();
+            missingImage = null;
         }
     }
 }

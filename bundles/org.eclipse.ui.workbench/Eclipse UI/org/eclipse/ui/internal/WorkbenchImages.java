@@ -61,13 +61,13 @@ import org.eclipse.ui.internal.util.BundleUtility;
  */
 public/*final*/class WorkbenchImages {
 
-    private static Map descriptors = new HashMap();
+    private static Map descriptors;
 
-    private static ImageRegistry imageRegistry = null;
+    private static ImageRegistry imageRegistry;
 
     //Key: ImageDescriptor
     //Value: Image
-    private static ReferenceCounter imageCache = new ReferenceCounter();
+    private static ReferenceCounter imageCache;
 
     /* Declare Common paths */
 
@@ -93,10 +93,6 @@ public/*final*/class WorkbenchImages {
     //private final static String PATH_STAT = ICONS_PATH+"stat/";
     //private final static String PATH_MISC = ICONS_PATH+"misc/";
     //private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
-
-    static {
-        initializeImageRegistry();
-    }
 
     /**
      * Returns the image cache used internally by the workbench.
@@ -383,7 +379,7 @@ public/*final*/class WorkbenchImages {
         }
         descriptors.put(symbolicName, descriptor);
         if (shared) {
-            imageRegistry.put(symbolicName, descriptor);
+            getImageRegistry().put(symbolicName, descriptor);
         }
     }
 
@@ -447,6 +443,9 @@ public/*final*/class WorkbenchImages {
      * Returns the ImageRegistry.
      */
     public static ImageRegistry getImageRegistry() {
+        if (imageRegistry == null) {
+            initializeImageRegistry();
+        }
         return imageRegistry;
     }
 
@@ -475,11 +474,27 @@ public/*final*/class WorkbenchImages {
      *      This may mean the same package directory as the package holding this class.
      *      The images are declared using this.getClass() to ensure they are looked up via
      *      this plugin class.
-     *  @see JFace's ImageRegistry
+     *  @see ImageRegistry
      */
-    public static ImageRegistry initializeImageRegistry() {
+    private static void initializeImageRegistry() {
         imageRegistry = new ImageRegistry();
+        descriptors = new HashMap();
+        imageCache =  new ReferenceCounter();
         declareImages();
-        return imageRegistry;
+    }
+    
+    /**
+     * Disposes and clears the workbench images.
+     * Called when the workbench is shutting down.
+     *
+     * @since 3.1
+     */
+    public static void dispose() {
+        if (imageRegistry != null) {
+            imageRegistry.dispose();
+            imageRegistry = null;
+            descriptors = null;
+            imageCache = null;
+        }
     }
 }

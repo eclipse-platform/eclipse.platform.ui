@@ -54,6 +54,28 @@ public class PlatformUITest extends TestCase {
         display.dispose();
         assertTrue(display.isDisposed());
     }
+    
+    /**
+     * Tests that, if an exception occurs on startup, the workbench returns RETURN_UNSTARTABLE 
+     * and PlatformUI.isWorkbenchRunning() returns false. 
+     * Regression test for bug 82286.
+     */
+    public void testCreateAndRunWorkbenchWithExceptionOnStartup() {
+        final Display display = PlatformUI.createDisplay();
+        assertNotNull(display);
+
+        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+            public void preStartup() {
+                throw new IllegalArgumentException("Thrown deliberately by PlatformUITest");
+            }
+        };
+
+        int code = PlatformUI.createAndRunWorkbench(display, wa);
+        assertEquals(PlatformUI.RETURN_UNSTARTABLE, code);
+        assertFalse(PlatformUI.isWorkbenchRunning());
+        display.dispose();
+        assertTrue(display.isDisposed());
+    }
 }
 
 class CheckForWorkbench extends WorkbenchAdvisorObserver {

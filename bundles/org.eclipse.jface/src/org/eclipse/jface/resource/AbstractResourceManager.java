@@ -126,6 +126,8 @@ abstract class AbstractResourceManager extends ResourceManager {
      * @since 3.1 
      */
     public void dispose() {
+        super.dispose();
+        
         if (map == null) {
             return;
         }

@@ -169,7 +169,7 @@ public final class Workbench implements IWorkbench {
     /**
      * PlatformUI return code (as opposed to IPlatformRunnable return code).
      */
-    private int returnCode;
+    private int returnCode = PlatformUI.RETURN_UNSTARTABLE;
 
     private ListenerList windowListeners = new ListenerList();
 
@@ -1083,6 +1083,7 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     private void uninitializeImages() {
+        WorkbenchImages.dispose();
         Window.setDefaultImage(null);
     }
 
@@ -1514,7 +1515,7 @@ public final class Workbench implements IWorkbench {
 
             // initialize workbench and restore or open one window
             boolean initOK = init(display);
-
+            
             // drop the splash screen now that a workbench window is up
             Platform.endSplash();
 
@@ -1550,6 +1551,11 @@ public final class Workbench implements IWorkbench {
             }
         } finally {
             // mandatory clean up
+            
+            // The runEventLoop flag may not have been cleared if an exception occurred
+            // Needs to be false to ensure PlatformUI.isWorkbenchRunning() returns false.
+            runEventLoop = false;
+            
             if (!display.isDisposed()) {
                 display.removeListener(SWT.Close, closeListener);
             }

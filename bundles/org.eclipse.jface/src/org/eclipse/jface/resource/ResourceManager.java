@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -32,6 +37,8 @@ import org.eclipse.swt.graphics.RGB;
  * @since 3.1
  */
 public abstract class ResourceManager {
+    
+    private List disposeExecs = null;
     
     /**
      * Returns the Device for which this ResourceManager will create resources 
@@ -106,7 +113,8 @@ public abstract class ResourceManager {
      * 
      * @since 3.1
      *
-     * @return
+     * @return a default image that will be returned in the event that the intended
+     * image is missing.
      */
     protected abstract Image getDefaultImage();
 
@@ -200,11 +208,36 @@ public abstract class ResourceManager {
     }
     
     /**
-     * Disposes any remaining resources allocated by this manager
-     * 
-     * @since 3.1
+     * Disposes any remaining resources allocated by this manager. 
      */
-    public abstract void dispose();
+    public void dispose() {
+        if (disposeExecs == null) {
+            return;
+        }
+        
+        // If one of the runnables throws an exception, we need to propogate it.
+        // However, this should not prevent the remaining runnables from being 
+        // notified. If any runnables throw an exception, we remember one of them
+        // here and throw it at the end of the method.
+        RuntimeException foundException = null;
+        
+        for (Iterator iter = disposeExecs.iterator(); iter.hasNext();) {
+            Runnable exec = (Runnable) iter.next();
+            
+            try {
+                exec.run();
+            } catch (RuntimeException e) {
+                // Ensure that we propogate an exception, but don't stop notifying
+                // the remaining runnables.
+                foundException = e;
+            }
+        }
+        
+        if (foundException != null) {
+            // If any runnables threw an exception, propogate one of them.
+            throw foundException;
+        }
+    }
     
     /**
      * Returns a previously allocated resource associated with the given descriptor, or
@@ -216,4 +249,42 @@ public abstract class ResourceManager {
      * @return a previously allocated resource for the given descriptor or null if none.
      */
     public abstract Object find(DeviceResourceDescriptor descriptor);
+    
+    /**
+     * Causes the <code>run()</code> method of the runnable to
+     * be invoked just before the receiver is disposed. The runnable
+     * can be subsequently cancelled by a call to <code>cancelDisposeExec</code>.
+     * 
+     * @param r runnable to execute.
+     */
+    public void disposeExec(Runnable r) {
+        Assert.isNotNull(r);
+        
+        if (disposeExecs == null) {
+            disposeExecs = new ArrayList();
+        }
+        
+        disposeExecs.add(r);
+    }
+    
+    /**
+     * Cancels a runnable that was previously scheduled with <code>disposeExec</code>.
+     * Has no effect if the given runnable was not previously registered with
+     * disposeExec.
+     * 
+     * @param r runnable to cancel
+     */
+    public void cancelDisposeExec(Runnable r) {
+        Assert.isNotNull(r);
+        
+        if (disposeExecs == null) {
+            return;
+        }
+        
+        disposeExecs.remove(r);
+        
+        if (disposeExecs.isEmpty()) {
+            disposeExecs = null;
+        }
+    }
 }
