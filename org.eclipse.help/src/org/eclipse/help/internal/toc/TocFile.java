@@ -22,7 +22,7 @@ public class TocFile {
 	protected Map anchors;
 
 	/**
-	 * Toc File Contstructor
+	 * Toc File Constructor
 	 */
 	protected TocFile(String plugin, String href, boolean primary) {
 		this.plugin = plugin;

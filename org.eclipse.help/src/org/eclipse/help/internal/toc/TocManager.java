@@ -7,8 +7,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.util.*;
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
@@ -16,6 +15,7 @@ import org.eclipse.help.internal.util.*;
 public class TocManager {
 	
 	private IToc[] tocs;
+	private Collection contributingPlugins;
 
 	/**
 	 * HelpNavigationManager constructor.
@@ -49,6 +49,14 @@ public class TocManager {
 		return null;
 	}
 
+	/**
+	 * Returns the list of contributing plugins
+	 */
+	public Collection getContributingPlugins()
+	{
+		return contributingPlugins;
+	}
+	
 	
 	/**
 	 * Builds the toc from the contribution files
@@ -149,6 +157,7 @@ public class TocManager {
 	* Returns a collection of TocFile that were not processed.
 	*/
 	protected Collection getContributedTocFiles() {
+		contributingPlugins = new HashSet();
 		Collection contributedTocFiles = new ArrayList();
 		// find extension point
 		IExtensionPoint xpt =
@@ -158,6 +167,7 @@ public class TocManager {
 		// get all extensions
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
+			contributingPlugins.add(extensions[i].getDeclaringPluginDescriptor());
 			// add to TopicFiles declared in this extension
 			IConfigurationElement[] configElements =
 				extensions[i].getConfigurationElements();

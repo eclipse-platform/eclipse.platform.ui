@@ -20,19 +20,18 @@ public class Toc extends TocNode implements IToc {
 	private String label;
 	private TocFile tocFile;
 	private ITopic[] topicArray;
-	
+
 	/**
-	 * Contstructor.  Used when parsing help contributions.
+	 * Constructor.  Used when parsing help contributions.
 	 */
-	protected Toc(TocFile tocFile, Attributes attrs)
-	{
+	protected Toc(TocFile tocFile, Attributes attrs) {
 		if (attrs == null)
 			return;
 		this.tocFile = tocFile;
 		this.label = attrs.getValue("label");
 		this.link_to = attrs.getValue("link_to");
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
-		this.href=HrefUtil.normalizeHref(tocFile.getPluginID(),tocFile.getHref());
+		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
 	}
 
 	/**
@@ -67,7 +66,7 @@ public class Toc extends TocNode implements IToc {
 	public String getLabel() {
 		return label;
 	}
-	
+
 	/**
 	 * Returns a topic with the specified href.
 	 * <br> It is possible that multiple tocs have 
@@ -75,44 +74,47 @@ public class Toc extends TocNode implements IToc {
 	 * which one is returned.
 	 * @param href The topic's href value.
 	 */
-	public ITopic getTopic(String href)
-	{
+	public ITopic getTopic(String href) {
 		// At some point we may want to cache the topics
 		// by href, but for now let's just traverse the
 		// tree and find the topic.
 		Stack stack = new Stack();
 		ITopic[] topics = getTopics();
-		for (int i=0; i<topics.length; i++)
+		for (int i = 0; i < topics.length; i++)
 			stack.push(topics[i]);
-		
-		while(!stack.isEmpty())
-		{
-			ITopic topic = (ITopic)stack.pop();
-			if (topic.getHref().equals(href))
+
+		while (!stack.isEmpty()) {
+			ITopic topic = (ITopic) stack.pop();
+			if (topic != null && topic.getHref() != null && topic.getHref().equals(href))
 				return topic;
+			else
+			{
+				ITopic[] subtopics = topic.getSubtopics();
+				for (int i = 0; i < subtopics.length; i++)
+					stack.push(subtopics[i]);
+			}
 		}
 		return null;
 	}
-			
+
 	/**
 	 * Note: assumes the toc has been built....
 	 * @return ITopic list
 	 */
 	public ITopic[] getTopics() {
-		if (topicArray == null)
-		{
+		if (topicArray == null) {
 			List topics = getChildTopics();
 			topicArray = new ITopic[topics.size()];
 			topics.toArray(topicArray);
 		}
 		return topicArray;
 	}
-	
+
 	/**
 	 * Used by debugger
 	 */
 	public String toString() {
-		return href != null ? href: super.toString();
+		return href != null ? href : super.toString();
 	}
 
 }

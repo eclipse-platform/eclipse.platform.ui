@@ -18,5 +18,14 @@ public interface IToc extends IHelpResource {
 	 * @return Array of ITopic
 	 */
 	public ITopic[] getTopics();
+	
+	/**
+	 * Returns a topic with the specified href.
+	 * <br> It is possible that a TOC can contain multiple 
+	 * topics with the same href, in which case there is no
+	 * guarantee on which topic is returned.
+	 * @param href The topic's href value.
+	 */
+	public ITopic getTopic(String href);
 }
 
