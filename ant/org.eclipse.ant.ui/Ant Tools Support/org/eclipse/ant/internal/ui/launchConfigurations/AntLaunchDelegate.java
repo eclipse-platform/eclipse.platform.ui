@@ -496,7 +496,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
         }
         
         //set the ANT_HOME environment variable
-		Map vars= new HashMap(1);
+        Map vars = copy.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap(1));
 		vars.put("ANT_HOME", antHome); //$NON-NLS-1$
 		copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
 
