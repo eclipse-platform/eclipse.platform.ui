@@ -104,7 +104,7 @@ public final class KeySequenceText {
 					} else if (hasSelection()) {
 						// There is a selection that needs to be replaced.
 						index = deleteSelection(keyStrokes, stroke.isComplete());
-						if ((stroke.isComplete()) || (!hasSelection()) || (index >= keyStrokes.size())) {
+						if ((stroke.isComplete()) || (index >= keyStrokes.size())) {
 							insertStrokeAt(keyStrokes, stroke, index);
 							index = -1;
 						}
