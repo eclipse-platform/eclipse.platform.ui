@@ -23,6 +23,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -68,10 +69,19 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						fView.getCheckboxViewer().refresh();
+						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
+						viewer.refresh();
 						if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
                         	fView.updateViewerBackground();
                         }
+						viewer.getControl().setRedraw(false);
+						try {
+							for (int i = 0; i < breakpoints.length; i++) {
+								viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
+							}
+						} finally {
+							viewer.getControl().setRedraw(true);
+						}
 						fView.updateObjects();
 					}
 				}
