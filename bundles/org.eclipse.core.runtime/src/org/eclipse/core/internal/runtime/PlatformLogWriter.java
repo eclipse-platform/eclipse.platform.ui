@@ -40,8 +40,7 @@ public class PlatformLogWriter implements ILogListener {
 		LINE_SEPARATOR = s == null ? "\n" : s; //$NON-NLS-1$
 	}
 
-	public PlatformLogWriter(File file) {
-		this.logFile = file;
+	public PlatformLogWriter() {
 	}
 	/**
 	 * This constructor should only be used to pass System.out .
@@ -64,8 +63,8 @@ public class PlatformLogWriter implements ILogListener {
 	 */
 	public synchronized void logging(IStatus status, String plugin) {
 		// thread safety: (Concurrency003)
-		if (logFile != null)
-			openLogFile();
+		setLogFileLocation();
+		openLogFile();
 		if (log == null)
 			log = logForStream(System.err);
 		try {
@@ -92,7 +91,11 @@ public class PlatformLogWriter implements ILogListener {
 			}
 		} finally {
 			log = null;
+			logFile = null;
 		}
+	}
+	protected void setLogFileLocation() {
+		logFile = InternalPlatform.getDefault().getMetaArea().getLogLocation().toFile();
 	}
 	protected void openLogFile() {
 		try {
