@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,7 +49,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		topComp.setLayout(topLayout);
 		
 		setSelectLabel(new Label(topComp, SWT.NONE));
-		getSelectLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.&Select_default_launch_configuration_type_1")); //$NON-NLS-1$
+		getSelectLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationTypePropertyPage.&Select_default_launch_configuration_type_1")); //$NON-NLS-1$
 		
 		setConfigTypeCombo(new Combo(topComp, SWT.NONE));
 		initializeConfigComboItems();
@@ -72,7 +71,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		setConfigTypes(configTypes);
 		
 		String[] configTypeNames = new String[configTypes.length];
-		configTypeNames[0] = DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.none_2"); //$NON-NLS-1$
+		configTypeNames[0] = LaunchConfigurationsMessages.getString("LaunchConfigurationTypePropertyPage.none_2"); //$NON-NLS-1$
 		for (int i = 1; i < configTypes.length; i++) {
 			configTypeNames[i] = configTypes[i].getName();			
 		}
@@ -120,7 +119,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 			try {
 				getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configTypeID);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Error_3"), DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Unable_to_set_default_launch_configuration_type_4"), e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationTypePropertyPage.Error_3"), LaunchConfigurationsMessages.getString("LaunchConfigurationTypePropertyPage.Unable_to_set_default_launch_configuration_type_4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return true;
@@ -173,7 +172,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	private Control createForInaccessibleResource(Composite parent) {
 		noDefaultAndApplyButton();
 		Label label= new Label(parent, SWT.LEFT);
-		label.setText(DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Launcher_configuration_type_information_is_not_available_for_an_inaccessible_resource_5")); //$NON-NLS-1$
+		label.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationTypePropertyPage.Launcher_configuration_type_information_is_not_available_for_an_inaccessible_resource_5")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		return label;
 	}

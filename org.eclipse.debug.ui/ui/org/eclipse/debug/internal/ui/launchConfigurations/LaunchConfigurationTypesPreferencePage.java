@@ -12,7 +12,6 @@ import java.util.Map;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -216,7 +215,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 			String selectedFileType = getFileTypeSelection();
 			ILaunchConfigurationType defaultConfigType = (ILaunchConfigurationType)getDefaultConfigsMap().get(selectedFileType);
 			if ((defaultConfigType != null) && (defaultConfigType.equals(configType))) {
-				buffer.append(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage._(default)_1")); //$NON-NLS-1$
+				buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage._(default)_1")); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}
@@ -234,7 +233,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		GridData gd;
 	
 		setFileTypeLabel(new Label(topComp, SWT.LEFT));
-		getFileTypeLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.File_types_2")); //$NON-NLS-1$
+		getFileTypeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.File_types_2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getFileTypeLabel().setLayoutData(gd);
@@ -256,7 +255,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		createSpacer(topComp, 2);
 	
 		setConfigTypeLabel(new Label(topComp, SWT.LEFT));
-		getConfigTypeLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.Configuration_types_3")); //$NON-NLS-1$
+		getConfigTypeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.Configuration_types_3")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getConfigTypeLabel().setLayoutData(gd);
@@ -273,7 +272,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		getConfigTypeTableViewer().getTable().setLayoutData(gd);
 		
 		setDefaultButton(new Button(topComp, SWT.PUSH));
-		getDefaultButton().setText(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.Set_as_default_4")); //$NON-NLS-1$
+		getDefaultButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.Set_as_default_4")); //$NON-NLS-1$
 		getDefaultButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
@@ -409,7 +408,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	public void init(IWorkbench aWorkbench){
 		readDefaultLaunchConfigs();
 		noDefaultAndApplyButton();
-		setDescription(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage.description"));
+		setDescription(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.description"));
 	}
 
 	/**
