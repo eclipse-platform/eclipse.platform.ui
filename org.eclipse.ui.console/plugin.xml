@@ -33,13 +33,14 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.console.ConsoleView">
       </command>
-      <keyBinding
-            keySequence="M3+M2+Q C"
+   </extension>
+    <extension point="org.eclipse.ui.bindings">
+     <key 
+  	    	sequence="M3+M2+Q C"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.ui.console.ConsoleView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-   </extension>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+  	</extension>
     <extension
           point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
