@@ -159,6 +159,10 @@ public class DeferredTreeContentManager {
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
+				//Cancel the job if the tree viewer got closed
+				if(treeViewer.getControl().isDisposed())
+					return Status.CANCEL_STATUS;
+					
 				monitor.beginTask(ProgressMessages.getString("DeferredTreeContentManager.AddingChildren"), 100); //$NON-NLS-1$
 				if (placeholder != null) {
 					monitor.subTask(ProgressMessages.getString("DeferredTreeContentManager.RemovingProgress")); //$NON-NLS-1$
