@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * side is the local file, the right side is the remote file,
  * and the ancestor is the common file.
  */
-class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
+public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	private MergeResource mergeResource;
 	private Shell shell;
 	private ListenerList listeners;
