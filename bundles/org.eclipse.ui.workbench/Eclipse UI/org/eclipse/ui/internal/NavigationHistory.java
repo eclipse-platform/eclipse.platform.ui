@@ -22,9 +22,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
-import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * Implementation of the back and forward actions.
@@ -53,22 +53,36 @@ public class NavigationHistory implements INavigationHistory {
      */
     public NavigationHistory(WorkbenchPage page) {
         this.page = page;
-        page.addPartListener(new IPartListener() {
-            public void partActivated(IWorkbenchPart part) {
+        page.addPartListener(new IPartListener2() {
+            public void partActivated(IWorkbenchPartReference partRef) {
             }
 
-            public void partBroughtToTop(IWorkbenchPart part) {
+            public void partBroughtToTop(IWorkbenchPartReference partRef) {
             }
 
-            public void partDeactivated(IWorkbenchPart part) {
+            public void partDeactivated(IWorkbenchPartReference partRef) {
             }
 
-            public void partOpened(IWorkbenchPart part) {
+            public void partOpened(IWorkbenchPartReference partRef) {
+            }
+			
+            public void partHidden(IWorkbenchPartReference partRef) {
+            }
+			
+            public void partVisible(IWorkbenchPartReference partRef) {
             }
 
-            public void partClosed(IWorkbenchPart part) {
-                if (part instanceof IEditorPart) {
-                    IEditorPart editor = (IEditorPart) part;
+            public void partClosed(IWorkbenchPartReference partRef) {
+				updateNavigationHistory(partRef, true);
+            }
+			
+			public void partInputChanged(IWorkbenchPartReference partRef) {
+				updateNavigationHistory(partRef, false);
+			}
+			
+			private void updateNavigationHistory(IWorkbenchPartReference partRef, boolean partClosed) {
+                if (partRef != null && partRef.getPart(false) instanceof IEditorPart) {
+                    IEditorPart editor = (IEditorPart) partRef.getPart(false);
                     IEditorInput input = editor.getEditorInput();
                     String id = editor.getSite().getId();
                     Iterator e = editors.iterator();
@@ -81,7 +95,7 @@ public class NavigationHistory implements INavigationHistory {
                         info = (NavigationHistoryEditorInfo) e.next();
                         if (id.equals(info.editorID)
                                 && input.equals(info.editorInput)) {
-                            if (info != currentInfo)
+                            if (partClosed && info != currentInfo)
                                 info.handlePartClosed();
                             break;
                         } else {
@@ -382,7 +396,7 @@ public class NavigationHistory implements INavigationHistory {
     }
 
     /*
-     * Perform the backward action by getting the privious location and restoring
+     * Perform the backward action by getting the previous location and restoring
      * its context.
      */
     public void backward() {
@@ -417,7 +431,7 @@ public class NavigationHistory implements INavigationHistory {
      * Save the state of this history into the memento.
      */
     void saveState(IMemento memento) {
-        NavigationHistoryEntry cEntry = (NavigationHistoryEntry) getEntry(activeEntry);
+        NavigationHistoryEntry cEntry = getEntry(activeEntry);
         if (cEntry == null || !cEntry.editorInfo.isPersistable())
             return;
 
