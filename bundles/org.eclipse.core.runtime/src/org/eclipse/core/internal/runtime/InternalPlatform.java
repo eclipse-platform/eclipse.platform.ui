@@ -728,6 +728,9 @@ public final class InternalPlatform {
 		// load the resource bundle
 		long start = System.currentTimeMillis();
 		Properties bundle = MessageResourceBundle.load(bundleName, clazz.getClassLoader());
+		Set unusedKeys = null;
+		if (DEBUG_MESSAGE_BUNDLES)
+			unusedKeys = new HashSet(bundle.keySet());
 
 		// iterate over the fields in the class
 		Field[] fields = clazz.getDeclaredFields();
@@ -741,15 +744,16 @@ public final class InternalPlatform {
 			// check to see if there is an entry in the bundle for this field
 			String value = bundle == null ? "Missing bundle: " + bundleName : bundle.getProperty(key); //$NON-NLS-1$
 
-			// TODO: remove this later
-			// for backwards compatibility old files might have uses a period as a namespace separator
-			if (value == null && key.indexOf('_') != -1)
-				value = bundle.getProperty(key.replace('_', '.'));
-
 			// The key was not found in the bundle. Shouldn't happen but if it does,
 			// then just set the message to be the same as the key.
-			if (value == null)
+			if (value == null) {
 				value = "Missing message: " + key + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
+				if (DEBUG_MESSAGE_BUNDLES)
+					System.out.println(value);
+			}
+
+			if (DEBUG_MESSAGE_BUNDLES)
+				unusedKeys.remove(key);
 
 			// Set the value into the field. We should never get an exception here because
 			// we know we have a public static non-final field. If we do get an exception, silently
@@ -768,8 +772,14 @@ public final class InternalPlatform {
 			}
 
 		}
-		if (DEBUG_MESSAGE_BUNDLES)
+		if (DEBUG_MESSAGE_BUNDLES) {
 			System.out.println("Time to load message bundle: " + bundleName + " was "+ (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			//print out unused keys in the bundle file
+			for (Iterator it = unusedKeys.iterator(); it.hasNext();) {
+				String key = (String) it.next();
+				System.out.println("Unused message: " + key + " in: " + bundleName); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 
 	private void initializeLocationTrackers() {
