@@ -42,6 +42,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 	private int widthHint = SWT.DEFAULT;
 	private int heightHint = SWT.DEFAULT;
 	private Composite control;
+	public boolean compactMode=false;
 
 	/*
 	 * This is a special layout for the section. Both the
@@ -109,6 +110,9 @@ public abstract class FormSection implements IPropertyChangeListener {
 			cwidth = width;
 
 			if (client != null && !client.isDisposed()) {
+				if (toggle != null && toggle.getSelection() && compactMode) {
+				}
+				else {
 				//Point csize = client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
 				Point csize = client.computeSize(wHint, SWT.DEFAULT);
 				if (width == 0) {
@@ -117,6 +121,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 				}
 				if (height == 0)
 					height = csize.y;
+				}
 			}
 
 			Point toggleSize = null;
@@ -198,6 +203,20 @@ public abstract class FormSection implements IPropertyChangeListener {
 				client.setBounds(0, y, width, height - y);
 			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isCompactMode() {
+		return compactMode;
+	}
+
+	/**
+	 * @param compactMode
+	 */
+	public void setCompactMode(boolean compactMode) {
+		this.compactMode = compactMode;
 	}
 
 	public FormSection() {
@@ -500,6 +519,10 @@ public abstract class FormSection implements IPropertyChangeListener {
 
 	public void setCollapsed(boolean collapsed) {
 		this.collapsed = collapsed;
+	}
+	
+	public boolean isCollapsed() {
+		return collapsed;
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
