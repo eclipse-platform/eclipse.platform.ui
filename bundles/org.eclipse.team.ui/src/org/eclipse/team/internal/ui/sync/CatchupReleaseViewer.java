@@ -208,7 +208,27 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 			setEnabled(!getSelection().isEmpty());
 		}
 	}
-
+	class OpenAction extends Action {
+		public OpenAction(String title, ImageDescriptor image) {
+			super(title, image);
+		}
+		public void run() {
+			openSelection();
+		}
+		public void update() {
+			ISelection selection = getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if (ss.size() == 1) {
+					Object element = ss.getFirstElement();
+					setEnabled(element instanceof TeamFile);
+					return;
+				}
+			}
+			setEnabled(false);
+		}
+	}
+	
 	// The current sync mode
 	private int syncMode = SyncView.SYNC_NONE;
 	
@@ -217,6 +237,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 	private FilterAction showOutgoing;
 	private FilterAction showOnlyConflicts;
 	private Action refresh;
+	private OpenAction open;
 	private ExpandAllAction expandAll;
 	private RemoveFromTreeAction removeFromTree;
 	private ShowInNavigatorAction showInNavigator;
@@ -270,6 +291,9 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 	 * Contributes actions to the popup menu.
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
+		open.update();
+		manager.add(open);
+		manager.add(new Separator());
 		expandAll.update();
 		manager.add(expandAll);
 		removeFromTree.update();
@@ -279,6 +303,27 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 		}
 		if (syncMode == SyncView.SYNC_COMPARE) {
 			manager.add(copyAllRightToLeft);
+		}
+	}
+	
+	protected void openSelection() {
+		ISelection selection = getSelection();
+		if (selection instanceof IStructuredSelection) {
+			Iterator elements = ((IStructuredSelection)selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				openSelection(next);
+			}
+		}
+	}
+	
+	/**
+	 * Method openSelection.
+	 * @param next
+	 */
+	private void openSelection(Object next) {
+		if (next instanceof TeamFile) {
+			handleOpen(null);
 		}
 	}
 	
@@ -341,6 +386,10 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction")); //$NON-NLS-1$
 		refresh.setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_DISABLED));
 		refresh.setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH));
+		
+		// Open Action
+		open = new OpenAction(Policy.bind("CatchupReleaseViewer.open"), null);
+		WorkbenchHelp.setHelp(open, IHelpContextIds.OPEN_ACTION);
 		
 		// Expand action
 		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null); //$NON-NLS-1$

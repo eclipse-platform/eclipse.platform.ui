@@ -41,6 +41,7 @@ public interface IHelpContextIds {
 	public static final String NEW_FOLDER_ACTION = PREFIX + "new_folder_action_context"; //$NON-NLS-1$
 
 	// Sync View Actions
+	public static final String OPEN_ACTION = PREFIX + "open_action_context"; //$NON-NLS-1$
 	public static final String EXPANDALL_ACTION = PREFIX + "expandall_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_ACTION = PREFIX + "remove_action_context"; //$NON-NLS-1$
 	public static final String NAVIGATOR_SHOW_ACTION = PREFIX + "navigator_show_action_context"; //$NON-NLS-1$
