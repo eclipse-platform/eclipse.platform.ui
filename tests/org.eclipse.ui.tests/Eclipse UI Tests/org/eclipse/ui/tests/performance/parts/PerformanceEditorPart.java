@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.performance.parts;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -126,4 +127,12 @@ public class PerformanceEditorPart extends EditorPart {
             return object;
         return super.getAdapter(adapter);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#gotoMarker(org.eclipse.core.resources.IMarker)
+	 */
+	public void gotoMarker(IMarker marker) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -11,11 +11,11 @@
 
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.tests.api.MockViewPart;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.tests.api.MockViewPart;
 
 /**
  * @since 3.1

@@ -51,11 +51,11 @@ public abstract class UITestCase extends TestCase
 	/** 
 	 * Open a test window with the empty perspective.
 	 */
-	public IWorkbenchWindow openTestWindow() {
+	public IWorkbenchWindow openTestWindow(String id) {
 		try {
 			IWorkbenchWindow win =
 				fWorkbench.openWorkbenchWindow(
-					EmptyPerspective.PERSP_ID,
+					id,
 					ResourcesPlugin.getWorkspace());
 			testWindows.add(win);
 			return win;
@@ -63,6 +63,15 @@ public abstract class UITestCase extends TestCase
 			fail();
 			return null;
 		}
+	}
+	
+	/**
+	 * Added for performance tests.
+	 * 
+	 * @return
+	 */
+	public IWorkbenchWindow openTestWindow() {
+		return openTestWindow(EmptyPerspective.PERSP_ID);
 	}
 
 

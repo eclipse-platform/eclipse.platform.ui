@@ -21,14 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 
 
 public class FileTool {
@@ -170,16 +165,6 @@ public class FileTool {
 			}
 		} else
 			transferData(src, dst);
-	}
-
-	public static File getFileInPlugin(Plugin plugin, IPath path) {
-		try {
-			URL installURL= plugin.getBundle().getEntry(path.toString());
-			URL localURL= Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException e) {
-			return null;
-		}
 	}
 
 	public static StringBuffer read(String fileName) throws IOException {

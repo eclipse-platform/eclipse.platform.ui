@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.ide.IDE;
 
 /**
  * Test editor switching.

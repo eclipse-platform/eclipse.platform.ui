@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -65,24 +66,21 @@ public abstract class BasicPerformanceTest extends UITestCase {
     	return tagAsSummary;
     }
     
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	 * @see junit.framework.TestCase#setUp()
 	 */
-	protected void doSetUp() throws Exception {
-	    super.doSetUp();
-	    
-	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
-                fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
-                        UIPerformanceTestSetup.PERSPECTIVE1));
+	protected void setUp() throws Exception {	
+		openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 	    
 	    tester = new PerformanceTester(this);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
+	 * @see junit.framework.TestCase#tearDown()
 	 */
-	protected void doTearDown() throws Exception {
-	    super.doTearDown();
+	protected void tearDown() throws Exception {
+		super.tearDown();
 	    tester.dispose();
 	}
 	
@@ -156,7 +154,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            the dimension to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
@@ -172,17 +169,14 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            an array of dimensions to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
-		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension[] dimensions) {
-		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension dimension) {
-		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimension);
 	}
 	
@@ -204,4 +198,14 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 	
+	
+	/**
+	 * Added for test backporting.
+	 */
+    protected void processEvents() {
+        Display display = Display.getCurrent();
+        if (display != null)
+            while (display.readAndDispatch())
+                ;
+    }    
 }

@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="UI Test Utils"/>
-    <classpathentry kind="src" path="Eclipse JFace Tests"/>
-    <classpathentry kind="src" path="Eclipse UI Tests"/>
-    <classpathentry kind="src" path="/org.junit"/>
-    <classpathentry kind="src" path="/org.eclipse.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.swt"/>
-    <classpathentry kind="src" path="/org.eclipse.core.resources"/>
-    <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/startup.jar"/>
-    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
-    <classpathentry kind="src" path="Benchmark Tests"/>
-    <classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="Eclipse JFace Tests/"/>
+	<classpathentry kind="src" path="Eclipse UI Tests/"/>
+	<classpathentry kind="src" path="UI Test Utils/"/>
+	<classpathentry kind="src" path="Benchmark Tests"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

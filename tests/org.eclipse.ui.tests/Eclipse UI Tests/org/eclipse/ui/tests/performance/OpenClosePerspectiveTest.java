@@ -19,6 +19,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
@@ -93,8 +94,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
      */
     private void closePerspective(IWorkbenchPage activePage) {
         // we dont have API to close a perspective so use the close perspective action instead.
-        ClosePerspectiveAction action = new ClosePerspectiveAction(activePage.getWorkbenchWindow());            
+        ClosePerspectiveAction action = new ClosePerspectiveAction((WorkbenchWindow) activePage.getWorkbenchWindow());            
         action.run();
-        action.dispose();
     }
 }

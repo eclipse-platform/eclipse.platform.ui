@@ -17,7 +17,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**

@@ -49,7 +49,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 		IWorkbenchWindow activeWindow= workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage= activeWindow.getActivePage();
 		
-		activePage.hideView(activePage.findViewReference(INTRO_VIEW));
+		activePage.hideView(activePage.findView(INTRO_VIEW));
 		
 		workbench.showPerspective(PERSPECTIVE1, activeWindow);
 		

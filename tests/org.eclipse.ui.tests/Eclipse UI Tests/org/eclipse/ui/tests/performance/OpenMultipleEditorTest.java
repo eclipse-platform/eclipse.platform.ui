@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.ide.IDE;
 
 /**
  * @since 3.1
