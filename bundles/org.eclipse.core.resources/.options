@@ -1,1 +1,3 @@
 org.eclipse.core.resources/debug=true
+org.eclipse.core.resources/debug/build=true
+
