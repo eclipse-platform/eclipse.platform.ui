@@ -516,7 +516,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		if (renderer != null)
 		{	
-			renderer.setRenderingId(fRenderingId);
+			renderer.setRenderingId(getRenderingId());
 			MemoryViewTabLabelProvider labelProvider = new MemoryViewTabLabelProvider(this, renderer);
 			fTableViewer.setLabelProvider(labelProvider);
 			((AbstractTableViewTabLabelProvider)labelProvider).setViewTab(this);
@@ -524,13 +524,13 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		else
 		{	
 			renderer = new EmptyRenderer();
-			renderer.setRenderingId(fRenderingId);
+			renderer.setRenderingId(getRenderingId());
 			renderer.setViewTab(this);
 
 			MemoryViewTabLabelProvider labelProvider = new MemoryViewTabLabelProvider(this, renderer);
 			fTableViewer.setLabelProvider(labelProvider);
 
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Renderer property is not defined for: " + fRenderingId, null)); //$NON-NLS-1$
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Renderer property is not defined for: " + getRenderingId(), null)); //$NON-NLS-1$
 		}
 		
 		contentProvider.setViewer(fTableViewer);
@@ -2052,14 +2052,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			return fTabItem.getText();
 		}
 		return null;	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryViewTab#getRenderingId()
-	 */
-	public String getRenderingId()
-	{
-		return fRenderingId;
 	}
 
 	/**

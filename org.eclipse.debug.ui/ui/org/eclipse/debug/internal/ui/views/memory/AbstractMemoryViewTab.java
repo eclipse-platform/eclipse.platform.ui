@@ -35,7 +35,6 @@ abstract public class AbstractMemoryViewTab implements IMemoryViewTab {
 	protected TabItem fTabItem;
 	protected MenuManager fMenuMgr;
 	protected IMemoryRendering fRendering;
-	protected String fRenderingId;
 	
 	public AbstractMemoryViewTab(IMemoryBlock newMemory, TabItem newTab, MenuManager menuMgr, IMemoryRendering rendering)
 	{
@@ -43,7 +42,6 @@ abstract public class AbstractMemoryViewTab implements IMemoryViewTab {
 		fTabItem = newTab;
 		fMenuMgr = menuMgr;
 		fRendering = rendering;
-		fRenderingId = rendering.getRenderingId();
 		
 		fTabItem.setData(this);
 		
@@ -149,10 +147,7 @@ abstract public class AbstractMemoryViewTab implements IMemoryViewTab {
 		}
 		
 		// remove the reference from the reference counting object
-		if (references.contains(this))
-		{
-			references.remove(this);
-		}
+		references.remove(this);
 		
 		DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer().setSynchronizedProperty(getMemoryBlock(), IMemoryViewConstants.PROPERTY_ENABLED_REFERENCES, references);
 		return references;		
