@@ -9,7 +9,8 @@
   <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
 
   <!-- get the repository.properties which identify the cvs test repository -->
-  <property name="team-home" value="${eclipse-home}/plugins/org.eclipse.team.tests.cvs.core_2.1.0"/>
+  <property name="org.eclipse.team.tests.cvs.core" value="org.eclipse.team.tests.cvs.core"/>
+  <property name="team-home" value="${eclipse-home}/plugins/${org.eclipse.team.tests.cvs.core}"/>
   <property file="${team-home}/repository.properties"/>
 
   <!-- This target holds all initialization code that needs to be done for -->
