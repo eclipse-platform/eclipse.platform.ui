@@ -83,7 +83,7 @@ function showView(view)
 
 </head>
    
-<body>
+<body tabIndex="-1">
 <%
 	for (int i=0; i<views.length; i++) 
 	{
