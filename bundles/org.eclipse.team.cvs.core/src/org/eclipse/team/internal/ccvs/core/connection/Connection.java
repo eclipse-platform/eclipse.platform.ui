@@ -169,7 +169,8 @@ public class Connection {
 	 * Sends the given string to the server.
 	 */
 	public void write(String s) throws CVSException {
-		write(s.getBytes(), 0, s.length(), false);
+		byte[] bytes = s.getBytes();
+		write(bytes, 0, bytes.length, false);
 	}
 	/**
 	 * Sends the given bytes to the server.
