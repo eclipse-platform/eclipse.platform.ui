@@ -31,6 +31,9 @@ public interface IStatusLineManager extends IContributionManager {
  * in the status line.
  *
  * @return the progress monitor
+ * 
+ * @issue There is a delay after a beginTask message before the monitor is shown.
+ *   This may not be appropriate for all apps.
  */
 public IProgressMonitor getProgressMonitor();
 /**
