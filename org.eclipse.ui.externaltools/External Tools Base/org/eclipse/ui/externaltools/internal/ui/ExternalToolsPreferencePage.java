@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -63,6 +64,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		promptForMigrationButton.setFont(font);
 		promptForMigrationButton.setText("Always &prompt before migrating project builders");
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
+		
+		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	

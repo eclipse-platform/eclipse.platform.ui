@@ -19,6 +19,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -83,6 +84,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		classpathPage.initialize();
 		propertiesPage.initialize();
 
+		Dialog.applyDialogFont(folder);
 		return folder;
 	}
 	
