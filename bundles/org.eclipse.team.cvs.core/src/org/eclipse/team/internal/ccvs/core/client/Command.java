@@ -101,16 +101,7 @@ public abstract class Command extends Request {
 	public static final KSubstOption KSUBST_TEXT_KEYWORDS_ONLY = new KSubstOption("-kk"); //$NON-NLS-1$
 
 	/*** Default command output listener ***/
-	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
-		new ICommandOutputListener() {
-			public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
-				return OK;
-			}
-			public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
-			}
-
-		};
+	protected static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new CommandOutputAdapter();
 	
 	/**
 	 * Prevents client code from instantiating us.
