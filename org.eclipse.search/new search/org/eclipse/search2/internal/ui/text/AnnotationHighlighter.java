@@ -60,15 +60,11 @@ public class AnnotationHighlighter extends Highlighter {
 			int offset= matches[i].getOffset();
 			int length= matches[i].getLength();
 			if (offset >= 0 && length >= 0) {
-				try {
-					Position position= createPosition(matches[i]);
-					if (position != null) {
-						Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
-						fMatchesToAnnotations.put(matches[i], annotation);
-						map.put(annotation, position);
-					}
-				} catch (BadLocationException e) {
-					SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("AnnotationHighlighter.error.badLocation"), e)); //$NON-NLS-1$
+				Position position= createPosition(matches[i]);
+				if (position != null) {
+					Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+					fMatchesToAnnotations.put(matches[i], annotation);
+					map.put(annotation, position);
 				}
 			}
 		}
@@ -76,7 +72,7 @@ public class AnnotationHighlighter extends Highlighter {
 		
 	}
 	
-	private Position createPosition(Match match) throws BadLocationException {
+	private Position createPosition(Match match) {
 		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 		if (position == null)
 			position= new Position(match.getOffset(), match.getLength());
@@ -85,7 +81,12 @@ public class AnnotationHighlighter extends Highlighter {
 			position= new Position(position.getOffset(), position.getLength());
 		if (match.getBaseUnit() == Match.UNIT_LINE) {
 			if (fDocument != null) {
-				position= PositionTracker.convertToCharacterPosition(position, fDocument);
+				try {
+					position= PositionTracker.convertToCharacterPosition(position, fDocument);
+				} catch (BadLocationException e) {
+					// ignore, match must be outdated 
+					return null;
+				}
 			} else {
 				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("AnnotationHighlighter.error.noDocument"), null)); //$NON-NLS-1$
 				return null;
