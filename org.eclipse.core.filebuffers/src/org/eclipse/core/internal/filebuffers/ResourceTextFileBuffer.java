@@ -201,13 +201,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 			
 			
-			fDocument= fManager.createEmptyDocument(fFile.getLocation());
+			fDocument= fManager.createEmptyDocument(getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
 			
-			fAnnotationModel= fManager.createAnnotationModel(fFile.getLocation());
+			fAnnotationModel= fManager.createAnnotationModel(getLocation());
 						
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(fFile.getLocation());
+			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
 		}
 	}

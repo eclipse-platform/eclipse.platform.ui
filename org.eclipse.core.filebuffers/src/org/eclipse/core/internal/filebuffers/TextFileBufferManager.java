@@ -113,6 +113,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isTextFileLocation(IPath location) {
+		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IContentType text= manager.getContentType("org.eclipse.core.runtime.text"); //$NON-NLS-1$
 		
