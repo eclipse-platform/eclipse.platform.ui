@@ -255,15 +255,6 @@ public class SyncView extends ViewPart {
 		this.input = input;
 		currentSyncMode = SYNC_NONE;
 		
-		// Run the diff and stop if cancel or error occurred.
-		if (!run(input)) return;
-		
-		// Check for problem message
-		if (input.getMessage() != null) {
-			MessageDialog.openInformation(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), input.getMessage());
-			return;
-		}
-		
 		// Remove old viewer
 		Control[] oldChildren = top.getChildren();
 		if (oldChildren != null) {
@@ -279,14 +270,33 @@ public class SyncView extends ViewPart {
 		bars.getMenuManager().update();
 		bars.updateActionBars();
 		
+		// Display the default contents while running the diff
+		showDefaultContents();
+		top.layout();
+		
+		// Run the diff and stop if cancel or error occurred.
+		if (!run(input)) return;
+		
+		// Check for problem message
+		if (input.getMessage() != null) {
+			MessageDialog.openInformation(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), input.getMessage());
+			return;
+		}
+		
 		// Check for empty comparison
 		if (isEmpty(input.getDiffRoot())) {
 			MessageDialog.openInformation(getSite().getShell(), Policy.bind("nothingToSynchronize"), Policy.bind("SyncView.same"));
-			showDefaultContents();
-			top.layout();
 			return;
 		}
 	
+		// Remove the default contents
+		oldChildren = top.getChildren();
+		if (oldChildren != null) {
+			for (int i = 0; i < oldChildren.length; i++) {
+				oldChildren[i].dispose();
+			}
+		}
+
 		// Show the result
 		Control control = input.createContents(top);
 		control.setLayoutData(new GridData(GridData.FILL_BOTH));
