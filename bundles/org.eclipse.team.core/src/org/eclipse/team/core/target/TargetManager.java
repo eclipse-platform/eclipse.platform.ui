@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.target.LocationMapping;
 

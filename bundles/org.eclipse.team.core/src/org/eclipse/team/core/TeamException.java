@@ -12,6 +12,7 @@ package org.eclipse.team.core;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * This exception is thrown by the team provider API.  It represents a failure in an API call.
