@@ -95,10 +95,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	private RepositoryManager repositoryManager;
 	
-	// constants used by watch/edit as values for string preference
-	public static final String EDIT = "edit"; //$NON-NLS-1$
-	public static final String HIGHJACK = "highjack"; //$NON-NLS-1$
-	
 	/**
 	 * CVSUIPlugin constructor
 	 * 
@@ -643,7 +639,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		// Set the watch/edit preferences defaults and values
 		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
-		store.setDefault(ICVSUIConstants.PREF_EDIT_ACTION, EDIT);
+		store.setDefault(ICVSUIConstants.PREF_EDIT_ACTION, ICVSUIConstants.PREF_EDIT_PROMPT_EDIT);
+		store.setDefault(ICVSUIConstants.PREF_EDIT_PROMPT, ICVSUIConstants.PREF_EDIT_PROMPT_IF_EDITORS);
 		// Ensure that the preference values in UI match Core
 		store.setValue(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getBoolean(CVSProviderPlugin.READ_ONLY));
 		

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -30,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * IFileModificationValidator that is pluged into the CVS Repository Provider
@@ -152,14 +154,22 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 
 	private boolean promptToEditFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
 		if (files.length == 0)
-			return true;
-		
-		EditorsAction editors = new EditorsAction(getProvider(files),files);
-		if (editors.isPerformEdit()) {
-			// determine if there are any editors of the file registered on the server
-			run(shell, editors);
-			// prompt if there are
-			return editors.promptToEdit(shell);
+			return true;		
+
+		if (isPerformEdit() ) {
+			if(isNeverPrompt())	
+				return true;
+
+			// Contact the server to see if anyone else is editing the files
+			EditorsAction editors = fetchEditors(files, shell);
+			if (editors.isEmpty()) {
+				if (isAlwaysPrompt())
+					return (promptEdit(shell));
+				else
+					return true;
+			} else {
+				return (editors.promptToEdit(shell));
+			}
 		} else {
 			// Allow the files to be edited without notifying the server
 			for (int i = 0; i < files.length; i++) {
@@ -171,6 +181,28 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 
 	}
 	
+	private boolean promptEdit(Shell shell) {
+		return MessageDialog.openQuestion(shell,Policy.bind("FileModificationValidator.3"),Policy.bind("FileModificationValidator.4")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean isPerformEdit() {
+		return ICVSUIConstants.PREF_EDIT_PROMPT_EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
+	}
+	
+	private EditorsAction fetchEditors(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
+		EditorsAction editors = new EditorsAction(getProvider(files),files);
+		run(shell, editors);
+		return editors;
+	}
+
+	private boolean isNeverPrompt() {
+		return ICVSUIConstants.PREF_EDIT_PROMPT_NEVER.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_PROMPT));
+	}
+
+	private boolean isAlwaysPrompt() {
+		return ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_PROMPT));
+	}	
+
 	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		final InvocationTargetException[] exception = new InvocationTargetException[] { null };
 		CVSUIPlugin.runWithProgress(shell, false, runnable, CVSUIPlugin.PERFORM_SYNC_EXEC);

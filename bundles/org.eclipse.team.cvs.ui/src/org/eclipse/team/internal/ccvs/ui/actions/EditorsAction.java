@@ -18,15 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.EditorsInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.EditorsDialog;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-
+import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction;
 
 /**
  * This Action gets the <code>EditorsInfo[]</code>
@@ -57,17 +52,9 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 			f_editorsInfo = provider.editors(resources, monitor);
 			return Team.OK_STATUS;
 	}
-
-	public boolean isPerformEdit() {
-		return CVSUIPlugin.EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
-	}
-	
 	
 	public boolean promptToEdit(Shell shell) {
-	
-		if (!isPerformEdit()) return true;
-		
-		if (f_editorsInfo.length > 0) {
+		if (!isEmpty()) {
 			final EditorsDialog view = new EditorsDialog(shell, f_editorsInfo);
 			// Open the dialog using a sync exec (there are no guarentees that we
 			// were called from the UI thread
@@ -79,12 +66,11 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 			return (view.getReturnCode() == EditorsDialog.OK);
 		}
 		return true;
-
-
-		
 	}
 
 	/**
+	 * Contact the server to determine if there are any editors on the associatd files.
+	 * 
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor)
@@ -105,6 +91,16 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	 */
 	public EditorsInfo[] getEditorsInfo() {
 		return f_editorsInfo;
+	}
+
+	/**
+	 * Indicates whether there are editors of any of the associated files.
+	 * The <code>run(IProgressMonitor)</code> must be invoked first to 
+	 * fetch any editors from the server.
+	 * @return boolean
+	 */
+	public boolean isEmpty() {
+		return f_editorsInfo.length == 0;
 	}
 
 }

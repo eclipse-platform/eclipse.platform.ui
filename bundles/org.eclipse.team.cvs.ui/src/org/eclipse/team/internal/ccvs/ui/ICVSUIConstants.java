@@ -12,7 +12,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 public interface ICVSUIConstants {
-	public static final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
+	public final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
 
 	// image path
 	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
@@ -102,6 +102,12 @@ public interface ICVSUIConstants {
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
 	public final String PREF_EDIT_ACTION = "pref_edit_action"; //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT_EDIT = "edit"; //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT_HIGHJACK = "highjack"; //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT = "pref_edit_prompt"; //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT_NEVER = "never"; //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT_ALWAYS = "always";	 //$NON-NLS-1$
+	public final String PREF_EDIT_PROMPT_IF_EDITORS = "only";	 //$NON-NLS-1$
 	
 	// Repositories view preferences
 	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project"; //$NON-NLS-1$
@@ -133,8 +139,8 @@ public interface ICVSUIConstants {
 	public final String PROP_ROOT = "cvs.root"; //$NON-NLS-1$
 	
 	// preference options
-	public final int OPTION_NEVER = 1; //$NON-NLS-1$
-	public final int OPTION_PROMPT = 2; //$NON-NLS-1$
+	public final int OPTION_NEVER = 1;
+	public final int OPTION_PROMPT = 2;
 	public final int OPTION_AUTOMATIC = 3;	
 }
 
