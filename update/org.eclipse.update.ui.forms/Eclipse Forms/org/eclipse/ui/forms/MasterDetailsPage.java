@@ -7,7 +7,6 @@
 package org.eclipse.ui.forms;
 import java.util.Hashtable;
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.*;
