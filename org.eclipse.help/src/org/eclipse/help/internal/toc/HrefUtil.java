@@ -25,11 +25,12 @@ public class HrefUtil {
 	public static String normalizeHref(String pluginID, String href) {
 		if (href == null)
 			return null;
-		
 		if (href.startsWith("/"))
 			// already normalized
 			return href;
-			
+		if(href.startsWith("http://"))
+			// external doc
+			return href;
 		int ddIndex = href.indexOf("../");
 		if (ddIndex == 0) {
 			return href.substring("..".length());
