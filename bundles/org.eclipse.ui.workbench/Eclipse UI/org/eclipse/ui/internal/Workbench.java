@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1657,6 +1659,7 @@ public final class Workbench implements IWorkbench {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
 		activityHelper.shutdown();
+		Platform.getJobManager().shutdown();
 	}
 
 	/* (non-Javadoc)
