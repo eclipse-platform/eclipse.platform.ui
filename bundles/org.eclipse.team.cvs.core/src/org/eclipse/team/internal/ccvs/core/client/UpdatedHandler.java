@@ -11,14 +11,8 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.Date;
-
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -93,17 +87,7 @@ public class UpdatedHandler extends ResponseHandler {
 		// The file may have been set as read-only by a previous checkout/update
 		if (mFile.isReadOnly()) mFile.setReadOnly(false);
 		
-		try {
-			receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
-		} catch (CVSException e) {
-			if (e.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-				// Record that we have a case collision and continue;
-				session.addCaseCollision(new Path(localDir).append(fileName).toString(), Path.EMPTY.toString());
-				return;
-			} else {
-				throw e;
-			}
-		}
+		receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
 	}
 
 	protected ICVSFile getTargetFile(ICVSFolder mParent, String fileName, byte[] entryBytes) throws CVSException {

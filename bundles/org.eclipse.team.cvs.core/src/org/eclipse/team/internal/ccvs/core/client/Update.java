@@ -119,7 +119,6 @@ public class Update extends Command {
 			new PruneFolderVisitor().visit(session, resources);
 			
 		}
-		session.handleCaseCollisions();
 		return status;
 	}
 	

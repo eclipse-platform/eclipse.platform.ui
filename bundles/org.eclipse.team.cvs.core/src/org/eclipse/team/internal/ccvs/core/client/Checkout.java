@@ -132,7 +132,6 @@ public class Checkout extends Command {
 			new PruneFolderVisitor().visit(session, resources);
 		}
 		
-		session.handleCaseCollisions();
 		return status;
 	}
 	

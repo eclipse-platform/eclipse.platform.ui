@@ -14,8 +14,6 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
@@ -25,8 +23,6 @@ import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.*;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.*;
 
 /**
@@ -74,7 +70,6 @@ public class Session {
 	private int compressionLevel = 0;
 	private List expansions;
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
-	private Map caseMappings;
 	
 	// state need to indicate whether 
 	private boolean ignoringLocalChanges = false;
@@ -107,27 +102,6 @@ public class Session {
 		this.outputToConsole = outputToConsole;
 	}
 	
-	/** 
-	 * Register a case collision with the session.
-	 * 
-	 * For folders, the desired path is where the folder should be and the actual path
-	 * is where is was put temporarily. If one of the folders involved is pruned, the
-	 * other can be placed properly (see Session#handleCaseCollisions())
-	 * 
-	 * For files, the desired path is where the file should be and the actual path is 
-	 * the emtpy path indicating that the resource was not loaded.
-	 * 
-	 * This makes sense because the files in a folder are always communicated before the folders
-	 * so a file can only collide with anothe file which can never be pruned so there's no
-	 * point in loading the file in a temporary place.
-	 */
-	protected void addCaseCollision(String desiredLocalPath, String actualLocalPath) {
-		if (caseMappings == null) caseMappings = new HashMap();
-		IPath desiredPath = new Path(desiredLocalPath);
-		IPath actualPath = new Path(actualLocalPath);
-		Assert.isTrue(actualPath.equals(Path.EMPTY) || (desiredPath.segmentCount() == actualPath.segmentCount()));
-		caseMappings.put(desiredPath, actualPath);
-	}
 	/*
 	 * Add a module expansion receivered from the server.
 	 * This is only used by the ModuleExpansionsHandler
@@ -207,11 +181,7 @@ public class Session {
 			opened = true;
 		} finally {
 			if (connection != null && ! opened) {
-				try {
-					close();
-				} catch (CVSException ex) {
-					CVSProviderPlugin.log(ex);
-				}
+				close();
 			}
 			monitor.done();
 		}
@@ -244,7 +214,7 @@ public class Session {
 	 *
 	 * @throws IllegalStateException if the Session is not in the OPEN state
 	 */
-	public void close() throws CVSException {
+	public void close() {
 		if (connection != null) {
 			connection.close();
 			connection = null;
@@ -269,58 +239,6 @@ public class Session {
 		} else {
 			return location.getServerPlatform() == CVSRepositoryLocation.CVSNT_SERVER;
 		}
-	}
-
-	/**
-	 * Return a local path that can be used to uniquely identify a resource
-	 * if the platform does not support case variant names and there is a name collision
-	 */
-	protected String getUniquePathForCaseSensitivePath(String localPath, boolean creatingFolder) {
-		IPath path = new Path(localPath);
-		IPath existingMapping = null;
-		if (caseMappings != null) {
-			// Look for an existing parent path that has already been mapped
-			for (int i = 0; i < path.segmentCount(); i++) {
-				IPath key = path.removeLastSegments(i);
-				existingMapping = (IPath)caseMappings.get(key);
-				if (existingMapping != null) break;
-			}
-		}
-		if (existingMapping != null) {
-			if (existingMapping.segmentCount() == path.segmentCount()) {
-				return existingMapping.toString();
-			}
-			// Convert the path to the mapped path
-			path = existingMapping.append(path.removeFirstSegments(existingMapping.segmentCount()));
-		}
-		if (creatingFolder) {
-			// Change the name of the folder to a case insensitive one
-			String folderName = path.lastSegment();
-			// XXX We should ensure that each permutation of characters is unique
-			folderName = getUniqueNameForCaseVariant(folderName);
-			path = path.removeLastSegments(1).append(folderName);
-		}
-		return path.toString();
-	}
-	
-	/*
-	 * Return a name that is unique for a give case variant.
-	 */
-	private String getUniqueNameForCaseVariant(String name) {
-		char[] buffer = new char[name.length() * 2];
-		int position = 0;
-		for (int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-			buffer[position++] = c;
-			if (Character.isLetter(c)) {
-				if (Character.isUpperCase(c)) {
-					buffer[position++] = '-';
-				} else {
-					buffer[position++] = '_';
-				}
-			}		
-		}
-		return new String(buffer, 0, position);
 	}
 	
 	/**
@@ -367,100 +285,6 @@ public class Session {
 	 */
 	public ICVSRepositoryLocation getCVSRepositoryLocation() {
 		return location;
-	}
-
-	private IContainer getIResourceFor(ICVSFolder cvsFolder) throws CoreException, CVSException {
-		if (cvsFolder.isManaged()) {
-			return getIResourceFor(cvsFolder.getParent()).getFolder(new Path(cvsFolder.getName()));
-		} else {
-			return ResourcesPlugin.getWorkspace().getRoot().getProject(cvsFolder.getName());
-		}
-	}
-	
-	protected void handleCaseCollisions() throws CVSException {
-		// Handle any case variant mappings
-		Map mappings = caseMappings;
-		if (mappings == null || mappings.size() == 0) return;
-		// We need to start at the longest paths and work to the shortest
-		// in case there are nested case collisions
-		List sortedCollisions = new ArrayList();
-		sortedCollisions.addAll(mappings.keySet());
-		Collections.sort(sortedCollisions, new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				int length0 = ((IPath)arg0).segmentCount();
-				int length1 = ((IPath)arg1).segmentCount();
-				if (length0 == length1) {
-					return arg0.toString().compareTo(arg1.toString());
-				}
-				return length0 > length1 ? -1 : 1;
-			}
-		});
-		// For each mapping, we need to see if one of the culprits was pruned
-		List unhandledMappings = new ArrayList();
-		Iterator iterator = sortedCollisions.iterator();
-		while (iterator.hasNext()) {
-			IPath desiredPath = (IPath)iterator.next();
-			IPath actualPath = (IPath)mappings.get(desiredPath);
-			// Check for the empty path (i.e. unloaded file)
-			if (actualPath.equals(Path.EMPTY)) {
-				unhandledMappings.add(desiredPath);
-				continue;
-			}
-			// Check if the actualPath still exists (it may have been pruned)
-			ICVSFolder actualFolder = getLocalRoot().getFolder(actualPath.toString());
-			if ( ! actualFolder.exists()) continue;
-			// Check if the desiredPath exists (we can only do this by trying to create it
-			ICVSFolder desiredFolder = getLocalRoot().getFolder(desiredPath.toString());
-			try {
-				desiredFolder.mkdir();
-				desiredFolder.delete();
-			} catch (CVSException e) {
-				// Must still exists. Delete the collision
-				actualFolder.delete();
-				actualFolder.unmanage(null);
-				unhandledMappings.add(desiredPath);
-				continue;
-			}
-			// The desired location is open (probably due to pruning)
-			try {
-				// We need to get the IResource for the actual and desired locations
-				IResource actualResource = getIResourceFor(actualFolder);
-				IResource desiredResource = actualResource.getParent().getFolder(new Path(desiredFolder.getName()));
-				// Move the actual to the desired location
-				actualResource.move(desiredResource.getFullPath(), false, null);
-				// We need to also move the sync info. Since sync info is a session property
-				// of the object, we can simpy reset the info for each moved resource
-				desiredFolder.accept(new ICVSResourceVisitor() {
-					public void visitFile(ICVSFile file) throws CVSException {
-						file.setSyncBytes(file.getSyncBytes(), ICVSFile.UNKNOWN);
-					}
-					public void visitFolder(ICVSFolder folder) throws CVSException {
-						folder.setFolderSyncInfo(folder.getFolderSyncInfo());
-						folder.acceptChildren(this);
-					}
-				});
-				// Unmanage the old location in order to remove the entry from the parent
-				actualFolder.unmanage(null);
-			} catch (CoreException e) {
-				CVSProviderPlugin.log(e);
-				unhandledMappings.add(desiredPath);
-			}
-		}
-		
-		if (unhandledMappings.size() > 0) {
-			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.CASE_VARIANT_EXISTS, Policy.bind("PruneFolderVisitor.caseVariantsExist"), null);//$NON-NLS-1$
-			Iterator iter = unhandledMappings.iterator();
-			while (iter.hasNext()) {
-				IPath desiredPath = (IPath) iter.next();
-				status.add(new CVSStatus(IStatus.ERROR, CVSStatus.CASE_VARIANT_EXISTS, 
-					Policy.bind("PruneFolderVisitor.caseVariantExists", desiredPath.toString())));//$NON-NLS-1$		
-			}
-			if (status.getChildren().length == 1) {
-				throw new CVSException(status.getChildren()[0]);
-			} else {
-				throw new CVSException(status);
-			}
-		}
 	}
 	
 	/**
@@ -1092,24 +916,6 @@ public class Session {
 	 */
 	protected boolean isIgnoringLocalChanges() {
 		return ignoringLocalChanges;
-	}
-	
-	/**
-	 * Method getUniquePathForInvalidPath.
-	 * @param localDir
-	 * @return String
-	 */
-	public String getUniquePathForInvalidPath(String localDir) {
-		IPath oldPath = new Path(localDir);
-		int count = oldPath.segmentCount();
-		for (int i = 0; i < count; i++) {
-			String segment = oldPath.segment(i);
-			if (segment.endsWith(".")) { //$NON-NLS-1$
-				segment =  segment + Policy.bind("Session.dot_2"); //$NON-NLS-1$
-				oldPath = oldPath.removeLastSegments(count - i).append(segment).append(oldPath.removeFirstSegments(i + 1));
-			}
-		}
-		return oldPath.toString();
 	}
 
 	/*
