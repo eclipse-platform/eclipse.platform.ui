@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -19,14 +24,17 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 
 /**
- * A custom <code>CompareViewerPane</code> which supports viewer switching.
+ * A custom <code>CompareViewerPane</code> that supports dynamic viewer switching.
+ * 
  * <p>
  * Clients must implement the viewer switching strategy by implementing
- * <code>getViewer</code>method.
+ * the <code>getViewer(Viewer, Object)</code> method.
  * <p>
  * If a property with the name <code>CompareUI.COMPARE_VIEWER_TITLE</code> is set
  * on the top level SWT control of a viewer, it is used as a title in the <code>CompareViewerPane</code>'s
  * title bar.
+ * 
+ * @since 2.0
  */
 public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener {
@@ -51,7 +59,17 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	/**
 	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
 	 * specified SWT style bits.
-	 */
+	 *
+	 * @param parent a widget which will be the parent of the new instance (cannot be null)
+	 * @param style the style of widget to construct
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 * </ul>
+	 */		
 	public CompareViewerSwitchingPane(Composite parent, int style) {
 		this(parent, style, false);
 	}
@@ -59,7 +77,18 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	/**
 	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
 	 * specified SWT style bits.
-	 */
+	 *
+	 * @param parent a widget which will be the parent of the new instance (cannot be null)
+	 * @param style the style of widget to construct
+	 * @param visibility the initial visibility of the CompareViewerSwitchingPane
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 * </ul>
+	 */		
 	public CompareViewerSwitchingPane(Composite parent, int style, boolean visibility) {
 		super(parent, style);
 
@@ -87,14 +116,13 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	
 	/**
 	 * Returns the current viewer.
+	 * 
+	 * @return the current viewer
 	 */
 	public Viewer getViewer() {
 		return fViewer;
 	}
 	
-	/**
-	 * Sets the current viewer.
-	 */
 	private void setViewer(Viewer newViewer) {
 		
 		if (newViewer == fViewer)
@@ -155,6 +183,14 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		}
 	}
 
+	/**
+	 * Returns the optional title argument that has been set with <code>setTitelArgument</code>
+	 * or <code>null</code> if no optional title argument has been set.
+	 * <p>
+	 * Note: this method is for internal use only. Clients should not call this method.
+	 * 
+	 * @return the optional title argument or <code>null</code>
+	 */
 	public String getTitleArgument() {
 		return fTitleArgument;
 	}
@@ -162,6 +198,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	/**
 	 * Returns <code>true</code> if no viewer is installed or if the current viewer
 	 * is a <code>NullViewer</code>.
+	 * 
+	 * @return <code>true</code> if no viewer is installed or if the current viewer is a <code>NullViewer</code>
 	 */
 	public boolean isEmpty() {
 		return fViewer == null || fViewer instanceof NullViewer;
@@ -225,8 +263,18 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	}
 		
 	/**
-	 * If the old viewer had focus, new setInput tries to set
-	 * focus on new viewer too.
+	 * Sets the input object of this pane. 
+	 * For this input object a suitable viewer is determined by calling the abstract
+	 * method <code>getViewer(Viewer, Object)</code>.
+	 * If the returned viewer differs from the current one, the old viewer
+	 * is disposed and the new one installed. Then the input object is fed
+	 * into the newly installed viewer by calling its <code>setInput(Object)</code> method.
+	 * If new and old viewer don't differ no new viewer is installed but just
+	 * <code>setInput(Object)</code> is called.
+	 * If the input is <code>null</code> the pane is cleared,
+	 * that is the current viewer is disposed.
+	 * 
+	 * @param input the new input object or <code>null</code>
 	 */ 
 	public void setInput(Object input) {
 
@@ -235,13 +283,6 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			
 		boolean hadFocus= hasFocus2();
 		
-//		try {
-//			if (fViewer != null)
-//				fViewer.setInput(null);	// force save before switching viewer
-//		} catch (ViewerSwitchingCancelled ex) {
-//			return;
-//		}
-
 		fInput= input;
 
 		// viewer switching
@@ -281,6 +322,12 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		updateTitle();
 	}
 	
+	/**
+	 * Sets an additional and optional argument for the pane's title.
+	 * Note: this method is for internal use only. Clients should not call this method.
+	 *  
+	 * @param argument an optional argument for the pane's title
+	 */
 	public void setTitleArgument(String argument) {
 		fTitleArgument= argument;
 		updateTitle();
@@ -299,9 +346,26 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		}
 	}
 
+	/**
+	 * Returns the current input of this pane or null if the pane has no input.
+	 * 
+	 * @return an <code>Object</code> that is the input to this pane or null if the pane has no input.
+	 */
 	public Object getInput() {
 		return fInput;
 	}
 
+	/**
+	 * Returns a viewer which is able to display the given input.
+	 * If no viewer can be found, <code>null</code> is returned.
+	 * The additional argument oldViewer represents the viewer currently installed
+	 * in the pane (or <code>null</code> if no viewer is installed).
+	 * It can be returned from this method if the current viewer can deal with the
+	 * input (and no new viewer must be created).
+	 *
+	 * @param oldViewer the currently installed viewer or <code>null</code>
+	 * @param input the input object for which a viewer must be determined or <code>null</code>
+	 * @return a viewer for the given input, or <code>null</code> if no viewer can be determined
+	 */
 	abstract protected Viewer getViewer(Viewer oldViewer, Object input);
 }

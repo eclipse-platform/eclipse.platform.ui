@@ -1,9 +1,13 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.contentmergeviewer;
-
 
 import java.util.List;
 import java.util.ArrayList;
@@ -171,7 +175,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private int fTopInset;
 	
 	// Colors
-	
 	private RGB fBackground;
 	private RGB fForeground;
 	private boolean fPollSystemForeground= true;
@@ -625,6 +628,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
+	/**
+	 * Sets the viewer's background color to the given RGB value.
+	 * If the value is <code>null</code> the system's default background color is used.
+	 * @param background the background color or <code>null</code> to use the system's default background color
+	 * @since 2.0
+	 */
 	public void setBackgroundColor(RGB background) {
 		fPollSystemBackground= (background == null);
 		fBackground= background;
@@ -639,6 +648,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
 	}
 	
+	/**
+	 * Sets the viewer's foreground color to the given RGB value.
+	 * If the value is <code>null</code> the system's default foreground color is used.
+	 * @param foreground the foreground color or <code>null</code> to use the system's default foreground color
+	 * @since 2.0
+	 */
 	public void setForegroundColor(RGB foreground) {
 		fPollSystemForeground= (foreground == null);
 		fForeground= foreground;
@@ -691,6 +706,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		updateAllDiffBackgrounds(display);
 	}
 	
+	/**
+	 * Invalidates the current presentation by invalidating the three text viewers.
+	 * @since 2.0
+	 */
 	public void invalidateTextPresentation() {
 		if (fAncestor != null)
 			fAncestor.invalidateTextPresentation();
@@ -1167,6 +1186,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	/**
 	 * Overridden to prevent save confirmation if new input is sub document of current input.
+	 * @param newInput the new input of this viewer, or <code>null</code> if there is no new input
+	 * @param oldInput the old input element, or <code>null</code> if there was previously no input
+	 * @return <code>true</code> if saving was successful, or if the user didn't want to save (by pressing 'NO' in the confirmation dialog).
+	 * @since 2.0
 	 */
 	protected boolean doSave(Object newInput, Object oldInput) {
 		
@@ -1346,6 +1369,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;			
 	}
 	
+	/**
+	 * This method is called if a range of text on one side is copied into an empty subdocument
+	 * on the other side. The method returns the position where the subdocument is placed into the base document.
+	 * This default implementation determines the position by using the text range differencer.
+	 * However this position is not always optimal for specific types of text.
+	 * So subclasses (which are awrae of the type of text they are dealing with) 
+	 * may override this method to find a better position where to insert a newly added
+	 * piece of text.
+	 * @param type the side for which the insertion position should be determined: 'A' for ancestor, 'L' for left hand side, 'R' for right hand side.
+	 * @param input the current input object of this viewer
+	 * @since 2.0
+	 */
 	protected int findInsertionPosition(char type, ICompareInput input) {
 			
 		ITypedElement other= null;
@@ -1727,7 +1762,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	//---- the differencing
-	
+
 	private static int maxWork(IRangeComparator a, IRangeComparator l, IRangeComparator r) {
 		int ln= l.getRangeCount();
 		int rn= r.getRangeCount();

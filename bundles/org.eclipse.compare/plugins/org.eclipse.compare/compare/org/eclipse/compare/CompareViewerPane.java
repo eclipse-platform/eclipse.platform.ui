@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -23,12 +28,27 @@ import org.eclipse.compare.internal.Splitter;
  * (if there is one).
  * If more <code>Splitters</code> are nested maximizing walks up and
  * maximizes to the outermost <code>Splitter</code>.
+ * 
+ * @since 2.0
  */
 public class CompareViewerPane extends ViewForm {
 	
 	private ToolBarManager fToolBarManager;
 
-
+	/**
+	 * Constructs a new instance of this class given its parent
+	 * and a style value describing its behavior and appearance.
+	 *
+	 * @param parent a widget which will be the parent of the new instance (cannot be null)
+	 * @param style the style of widget to construct
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 * </ul>
+	 */		
 	public CompareViewerPane(Composite parent, int style) {
 		super(parent, style);
 		
@@ -50,18 +70,38 @@ public class CompareViewerPane extends ViewForm {
 		label.addMouseListener(ml);	
 	}
 	
+	/**
+	 * Sets the receiver's title text.
+	 * The value <code>null</code> clears it.
+	 * 
+	 * @param text the text to be displayed in the CompareViewerPane's title or null
+	 * 
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();
 		cl.setText(label);		
 	}
 	
+	/**
+	 * Return the receiver's title text.
+	 * 
+	 * @return the text of the CompareViewerPane's title or null
+	 */
 	public void setImage(Image image) {
 		CLabel cl= (CLabel) getTopLeft();
 		cl.setImage(image);
 	}
 	
 	/**
-	 * Returns a <code>ToolBarManager</code> if the given parent is a <code>CompareViewerPane</code>.
+	 * Returns a <code>ToolBarManager</code> if the given parent is a
+	 * <code>CompareViewerPane</code> or <code>null</code> otherwise.
+	 * 
+	 * @param parent a <code>Composite</code> or <code>null</code>
+	 * @return a <code>ToolBarManager</code> if the given parent is a <code>CompareViewerPane</code> otherwise <code>null</code>
 	 */
 	public static ToolBarManager getToolBarManager(Composite parent) {
 		if (parent instanceof CompareViewerPane) {
@@ -72,7 +112,9 @@ public class CompareViewerPane extends ViewForm {
 	}
 
 	/**
-	 * Clear tool items in <code>CompareViewerPane</code>'s control bar.
+	 * Clears tool items in the <code>CompareViewerPane</code>'s control bar.
+	 * 
+	 * @param parent a <code>Composite</code> or <code>null</code>
 	 */
 	public static void clearToolBar(Composite parent) {
 		ToolBarManager tbm= getToolBarManager(parent);

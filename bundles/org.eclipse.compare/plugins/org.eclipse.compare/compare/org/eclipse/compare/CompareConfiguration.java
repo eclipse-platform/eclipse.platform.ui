@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -36,11 +41,11 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 public class CompareConfiguration {
 
 	/**
-	 * Name of the ignore whitespace property.
+	 * Name of the ignore whitespace property (value <code>"IGNORE_WHITESPACE"</code>).
 	 */
 	public static final String IGNORE_WHITESPACE= "IGNORE_WHITESPACE"; //$NON-NLS-1$
 	/**
-	 * Name of the show pseudo conflicts property.
+	 * Name of the show pseudo conflicts property (value <code>"SHOW_PSEUDO_CONFLICTS"</code>).
 	 */
 	public static final String SHOW_PSEUDO_CONFLICTS= "SHOW_PSEUDO_CONFLICTS"; //$NON-NLS-1$
 
@@ -80,10 +85,6 @@ public class CompareConfiguration {
 		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confadd_ov.gif"); //$NON-NLS-1$
 		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif"); //$NON-NLS-1$
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif"); //$NON-NLS-1$
-		
-//		ImageDescriptor tmp= fgImages[Differencer.ADDITION];
-//		fgImages[Differencer.ADDITION]= fgImages[Differencer.DELETION];
-//		fgImages[Differencer.DELETION]= tmp;
 	}
 
 	private IPreferenceStore fPreferenceStore;
@@ -102,6 +103,12 @@ public class CompareConfiguration {
 	/**
 	 * Creates a new configuration with editable left and right sides,
 	 * suitable default labels, and no images.
+	 * The given preference store is used to connect this configuration
+	 * with the Compare preference page properties <code>ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE</code>,
+	 * and <code>CompareConfiguration.IGNORE_WHITESPACE</code>.
+	 * 
+	 * @param prefStore the preference store which this configuration holds onto.
+	 * @since 2.0
 	 */
 	public CompareConfiguration(IPreferenceStore prefStore) {
 		
@@ -120,6 +127,8 @@ public class CompareConfiguration {
 	/**
 	 * Creates a new configuration with editable left and right sides,
 	 * suitable default labels, and no images.
+	 * This configuration uses the preference store of the Compare plugin
+	 * (<code>CompareUIPlugin.getDefault().getPreferenceStore()</code>).
 	 */
 	public CompareConfiguration() {
 		this(CompareUIPlugin.getDefault().getPreferenceStore());
@@ -128,6 +137,7 @@ public class CompareConfiguration {
 	/**
 	 * Returns the preference store of this configuration.
 	 * @return the preference store of this configuration.
+	 * @since 2.0
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		return fPreferenceStore;
@@ -142,6 +152,7 @@ public class CompareConfiguration {
 	 * @param kind the kind of change as defined in <code>Differencer</code>.
 	 * @return an modification of the base image reflecting the kind of change.
 	 * @see org.eclipse.compare.structuremergeviewer.Differencer
+	 * @since 2.0
 	 */
 	public Image getImage(int kind) {
 		Image image= fImages[kind & 15];

@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -40,14 +45,36 @@ public final class CompareUI {
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.compare"; //$NON-NLS-1$
 
-	/** Image descriptors for the 'Next' tool bar button. */
+	/**
+	 * Image descriptor for the disabled icon of the 'Next' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_DTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_NEXT);
+	/**
+	 * Image descriptor for the normal icon of the 'Next' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_CTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_NEXT);
+	/**
+	 * Image descriptor for the roll-over icon of the 'Next' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_ETOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_NEXT);
 	
-	/** Image descriptors for the 'Previous' tool bar button. */
+	/**
+	 * Image descriptor for the disabled icon of the 'Previous' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_DTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_PREV);
+	/**
+	 * Image descriptor for the normal icon of the 'Previous' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_CTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_PREV);
+	/**
+	 * Image descriptor for the roll-over icon of the 'Previous' tool bar button.
+	 * @since 2.0
+	 */
 	public static final ImageDescriptor DESC_ETOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_PREV);
 
 	/**
@@ -58,9 +85,6 @@ public final class CompareUI {
  	 */
 	public static final String COMPARE_VIEWER_TITLE= "org.eclipse.compare.CompareUI.CompareViewerTitle"; //$NON-NLS-1$
 	
-	/* (non Javadoc)
-	 * non inatiatiable!
-	 */
 	private CompareUI() {
 	}
 	
@@ -192,10 +216,29 @@ public final class CompareUI {
 		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
 	}
 		
+	/**
+	 * Adds an alias for the given type.
+	 * Subsequent calls to <code>findStructureViewer</code>
+	 * treat alias as a synonym for type and return the same viewer.
+	 * <p>
+	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * @param type a type name for which a viewer has been registered
+	 * @param alias a type name which should be treated as a synonym of type
+	 * @since 2.0
+	 */
 	public static void addStructureViewerAlias(String type, String alias) {
 		CompareUIPlugin.addStructureViewerAlias(type, alias);
 	}
 	
+	/**
+	 * Remove all aliases for the given type. This method does not affect
+	 * the initial binding between type and viewer. If no aliases exist for the
+	 * given type this method does nothing.
+	 * <p>
+	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * @param type the type name for which all synonymes are removed.
+	 * @since 2.0
+	 */
 	public static void removeAllStructureViewerAliases(String type) {
 		CompareUIPlugin.removeAllStructureViewerAliases(type);
 	}

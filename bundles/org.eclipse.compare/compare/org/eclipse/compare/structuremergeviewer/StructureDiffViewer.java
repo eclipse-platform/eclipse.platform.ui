@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.structuremergeviewer;
 
@@ -253,6 +258,16 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		diff();
 	}
 
+	/**
+	 * This method is called from within <code>diff()</code> before the difference
+	 * tree is being built.
+	 * Clients may override this method to perform their own pre-processing.
+	 * This default implementation does nothing.
+	 * @param ancestor the ancestor input to the differencing operation
+	 * @param left the left input to the differencing operation
+	 * @param right the right input to the differencing operation
+	 * @since 2.0
+	 */
 	protected void preDiffHook(IStructureComparator ancestor, IStructureComparator left, IStructureComparator right) {
 		// we do nothing here
 	}
@@ -301,6 +316,15 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		refresh(getRoot());
 	}
 	
+	/**
+	 * This method is called from within <code>diff()</code> after the difference
+	 * tree has been built.
+	 * Clients may override this method to perform their own post-processing.
+	 * This default implementation does nothing.
+	 * @param differencer the differencer used to perform the differencing
+	 * @param root the non-<code>null</code> root node of the difference tree
+	 * @since 2.0
+	 */
 	protected void postDiffHook(Differencer differencer, IDiffContainer root) {
 		// we do nothing here
 	}

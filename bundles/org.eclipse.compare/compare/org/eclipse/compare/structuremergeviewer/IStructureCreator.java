@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.structuremergeviewer;
 
@@ -8,8 +13,8 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * For creating a hierarchical structure of <code>IStructureComparators</code> for a
- * given input object.
+ * Interface used to create a hierarchical structure of
+ * <code>IStructureComparator</code>s for a given input object.
  * In addition, it provides methods for locating a path in the hierarchical structure
  * and to map a node of this structure back to the corresponding input object.
  * <p>
@@ -97,7 +102,6 @@ public interface IStructureCreator {
 	String getContents(Object node, boolean ignoreWhitespace);
 
 	/**
-	 * FIXME: need better name?
 	 * Called whenever a copy operation has been performed on a tree node.
 	 *
 	 * @param node the node for which to save the new content

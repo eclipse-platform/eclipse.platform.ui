@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -21,6 +26,15 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.compare.internal.Utilities;
 
 
+/**
+ * This implementation of the <code>IStructureCreator</code> interface
+ * makes the contents of a zip archive available as a
+ * hierarchical structure of <code>IStructureComparator</code>s.
+ * <p>
+ * It is used when comparing the internal structure of a zip archive.
+ *
+ * @since 2.0
+ */
 public class ZipFileStructureCreator implements IStructureCreator {
 
 	/**
@@ -158,10 +172,18 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	
 	private String fTitle;
 
+	/**
+	 * Create a new ZipFileStructureCreator.
+	 */
 	public ZipFileStructureCreator() {
 		this(Utilities.getString("ZipStructureCreator.name")); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Create a new ZipFileStructureCreator with the given title.
+	 * The title is returned by the method <code>getName()</code>.
+	 * @param title the title of this strcuture creator
+	 */
 	public ZipFileStructureCreator(String title) {
 		fTitle= title;
 	}
@@ -246,13 +268,19 @@ public class ZipFileStructureCreator implements IStructureCreator {
 
 	/**
 	 * Returns <code>false</code> since we cannot update a zip archive.
+	 * @return <code>false</code>
 	 */
 	public boolean canSave() {
 		return false;
 	}
 
 	/**
-	 * Throws <code>AssertionFailedException</code> since we cannot update a zip archive.
+	 * Called whenever a copy operation has been performed on a tree node.
+	 * This implementation throws an <code>AssertionFailedException</code>
+	 * since we cannot update a zip archive.
+	 *
+	 * @param structure the node for which to save the new content
+	 * @param input the object from which the structure tree was created in <code>getStructure</code>
 	 */
 	public void save(IStructureComparator structure, Object input) {
 		Assert.isTrue(false); // Cannot update zip archive
@@ -261,11 +289,26 @@ public class ZipFileStructureCreator implements IStructureCreator {
 	public IStructureComparator locate(Object path, Object source) {
 		return null;
 	}
-	
+		
+	/**
+	 * Returns <code>false</code> since this <code>IStructureCreator</code>
+	 * cannot rewrite the diff tree in order to fold certain combinations of
+	 * additons and deletions.
+	 * <p>
+	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * @return <code>false</code>
+	 */
 	public boolean canRewriteTree() {
 		return false;
 	}
 	
+	/**
+	 * Empty implementation since this <code>IStructureCreator</code>
+	 * cannot rewrite the diff tree in order to fold certain combinations of
+	 * additons and deletions.
+	 * <p>
+	 * Note: this method is for internal use only. Clients should not call this method. 
+	 */
 	public void rewriteTree(Differencer diff, IDiffContainer root) {
 	}
 }

@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.contentmergeviewer;
 
@@ -481,15 +486,11 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * initially set or subsequently changed.
 	 * <p>
 	 * The <code>ContentMergeViewer</code> implementation of this <code>Viewer</code>
-	 * method retrieves the content from the three sides by calling the methods
-	 * <code>getAncestorContent</code>, <code>getLeftContent</code>,
-	 * and <code>getRightContent</code> on the content provider.
-	 * The values returned from these calls are passed to the hook method <code>updateContent</code>.
-	 * </p>
+	 * method tries to save the old input by calling <code>doSave(...)</code> and
+	 * then calls <code>internalRefresh(...)</code>.
 	 *
-	 * @param input the new input of this viewer, or <code>null</code> if none
-	 * @param oldInput the old input element, or <code>null</code> if there
-	 *   was previously no input
+	 * @param input the new input of this viewer, or <code>null</code> if there is no new input
+	 * @param oldInput the old input element, or <code>null</code> if there was previously no input
 	 */
 	protected final void inputChanged(Object input, Object oldInput) {
 		
@@ -512,6 +513,21 @@ public abstract class ContentMergeViewer extends ContentViewer
 			internalRefresh(input);
 	}
 	
+	/**
+	 * This method is called from the <code>Viewer</code> method <code>inputChanged</code>
+	 * to save any unsaved changes of the old input.
+	 * <p>
+	 * The <code>ContentMergeViewer</code> implementation of this
+	 * method calls <code>saveContent(...)</code>. If confirmation has been turned on
+	 * with <code>setConfirmSave(true)</code>, a confirmation alert is posted before saving.
+	 * </p>
+	 * Clients can override this method and are free to decide whether
+	 * they want to call the inherited method.
+	 * @param newInput the new input of this viewer, or <code>null</code> if there is no new input
+	 * @param oldInput the old input element, or <code>null</code> if there was previously no input
+	 * @return <code>true</code> if saving was successful, or if the user didn't want to save (by pressing 'NO' in the confirmation dialog).
+	 * @since 2.0
+	 */
 	protected boolean doSave(Object newInput, Object oldInput) {
 		
 		// before setting the new input we have to save the old
@@ -529,7 +545,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 					new String[] {
 						IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
-//						IDialogConstants.CANCEL_LABEL
 					},
 					0);		// default button index
 									
@@ -551,6 +566,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 		return false;
 	}
 		
+	/**
+	 * Controls whether <code>doSave(...)</code> asks for confirmation before saving
+	 * the old input with <code>saveContent(...)</code>.
+	 * @param enable a value of <code>true</code> enables confirmation
+	 * @since 2.0
+	 */
 	public void setConfirmSave(boolean enable) {
 		fConfirmSave= enable;
 	}
@@ -903,6 +924,11 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
+	/**
+	 * Save the viewers's content.
+	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * @since 2.0
+	 */
 	public void save(IProgressMonitor pm) throws CoreException {
 		saveContent(getInput());
 	}

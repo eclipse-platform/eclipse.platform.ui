@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -223,10 +228,22 @@ public class EditionSelectionDialog extends ResizableDialog {
 			fTimeImage= id.createImage();
 	}
 		
+	/**
+	 * Sets an additional and optional argument for the edition pane's title.
+	 *  
+	 * @param titleArgument an optional argument for the edition pane's title
+	 * @since 2.0
+	 */
 	public void setEditionTitleArgument(String titleArgument) {
 		fTitleArg= titleArgument;
 	}
 	
+	/**
+	 * Sets an optional image for the edition pane's title.
+	 *  
+	 * @param titleImage an optional image for the edition pane's title
+	 * @since 2.0
+	 */
 	public void setEditionTitleImage(Image titleImage) {
 		fTitleImage= titleImage;
 	}
@@ -241,6 +258,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * The returned <code>ITypedElement</code> is one of the original editions
 	 * if <code>path</code> was <code>null</code>; otherwise
 	 * it is an <code>ITypedElement</code> returned from <code>IStructureCreator.locate(path, item)</code>
+	 * @since 2.0
 	 */
 	public ITypedElement selectPreviousEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		Assert.isNotNull(target);
@@ -459,6 +477,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * This method must be called before <code>selectEdition</code>.
 	 *
 	 * @param hide if true identical entries are hidden; otherwise they are shown.
+	 * @since 2.0
 	 */
 	public void setHideIdenticalEntries(boolean hide) {
 		fHideIdentical= hide;
@@ -468,26 +487,29 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * Controls whether workspace target is on the left (the default) or right hand side.
 	 *
 	 * @param isRight if true target is shown on right hand side.
+	 * @since 2.0
 	 */
 	public void setTargetIsRight(boolean isRight) {
 		fTargetIsRight= isRight;
 	}
 		
 	/**
-	 * Controls whether the EditionSelectionDialog is in 'add' mode
+	 * Controls whether the <code>EditionSelectionDialog</code> is in 'add' mode
 	 * or 'replace' mode (the default).
 	 *
 	 * @param addMode if true dialog is in 'add' mode.
+	 * @since 2.0
 	 */
 	public void setAddMode(boolean addMode) {
 		fAddMode= addMode;
 	}
 	
 	/**
-	 * Controls whether the EditionSelectionDialog is in 'compare' mode
+	 * Controls whether the <code>EditionSelectionDialog</code> is in 'compare' mode
 	 * or 'add/replace' (the default) mode. 
 	 *
 	 * @param addMode if true dialog is in 'add' mode.
+	 * @since 2.0
 	 */
 	public void setCompareMode(boolean compareMode) {
 		fCompareMode= compareMode;
@@ -547,7 +569,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 *
 	 * @param selectedEdition the selected edition for which a label must be returned
  	 * @param item if a path has been specified in <code>selectEdition</code> a sub element of the given selectedEdition; otherwise the same as selectedEdition
- 	 * @return a label the edition side of a compare viewer
+ 	 * @return a label for the edition side of a compare viewer
   	 */
 	protected String getEditionLabel(ITypedElement selectedEdition, ITypedElement item) {
 		String format= null;
@@ -570,6 +592,22 @@ public class EditionSelectionDialog extends ResizableDialog {
 		return MessageFormat.format(format, new Object[] { date });
 	}
 	
+ 	/**
+ 	 * Returns a label for identifying a node in the edition tree viewer.
+ 	 * This implementation extracts the value for the key "workspaceTreeFormat" or
+ 	 * "treeFormat" (in that order) from the resource bundle
+ 	 * and passes it as the format argument to <code>MessageFormat.format</code>.
+ 	 * The single format argument for <code>MessageFormat.format</code> ("{0}" in the format string)
+ 	 * is the formatted modification date of the given input element.
+ 	 * <p>
+	 * Subclasses may override to create their own label.
+	 * </p>
+	 *
+	 * @param edition the edition for which a label must be returned
+ 	 * @param item if a path has been specified in <code>edition</code> a sub element of the given edition; otherwise the same as edition
+ 	 * @return a label of a node in the edition tree viewer
+	 * @since 2.0
+	 */
 	protected String getShortEditionLabel(ITypedElement edition, ITypedElement item, Date date) {
 		String format= null;
 		if (edition instanceof ResourceNode)
@@ -596,7 +634,8 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * @param selectedEdition the selected edition for which a label must be returned
  	 * @param item if a path has been specified in <code>selectEdition</code> a sub element of the given selectedEdition; otherwise the same as selectedEdition
  	 * @return a label the edition side of a compare viewer
-  	 */
+  	 * @since 2.0
+ 	 */
 	protected Image getEditionImage(ITypedElement selectedEdition, ITypedElement item) {
 		if (selectedEdition instanceof ResourceNode)
 			return selectedEdition.getImage();
@@ -725,6 +764,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 
 	/**
 	 * Overidden to disable dismiss on double click in compare mode.
+	 * @since 2.0
 	 */
 	protected void okPressed() {
 		if (fCompareMode)
@@ -750,11 +790,6 @@ public class EditionSelectionDialog extends ResizableDialog {
 			);
 		}
 	}
-
-//	private void handleDefaultSelected() {
-//		if (fSelectedItem != null)
-//			okPressed();
-//	}
 	
 	private static void internalSort(IModificationDate[] keys, int left, int right) { 
 	

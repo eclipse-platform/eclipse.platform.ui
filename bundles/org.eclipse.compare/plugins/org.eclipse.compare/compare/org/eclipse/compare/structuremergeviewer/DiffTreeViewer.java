@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000,2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.structuremergeviewer;
 
@@ -138,7 +143,6 @@ public class DiffTreeViewer extends TreeViewer {
 	/* package */ boolean fLeftIsLocal;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
-	//private IPropertyChangeListener fPreferenceChangeListener;
 
 	private Action fCopyLeftToRightAction;
 	private Action fCopyRightToLeftAction;
@@ -206,21 +210,7 @@ public class DiffTreeViewer extends TreeViewer {
 				}
 			};
 			fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
-		}	
-		
-		// register for notification with the Compare plugin's PreferenceStore 
-		/*
-		fPreferenceChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS))
-					syncShowPseudoConflictFilter();			
-			}
-		};
-		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-		if (ps != null)
-			ps.addPropertyChangeListener(fPreferenceChangeListener);
-		*/
-			
+		}				
 	
 		setContentProvider(new DiffViewerContentProvider());
 		setLabelProvider(new DiffViewerLabelProvider());
@@ -232,9 +222,7 @@ public class DiffTreeViewer extends TreeViewer {
 				}
 			}
 		);
-						
-		// syncShowPseudoConflictFilter();			
-				
+										
 		setSorter(new DiffViewerSorter());
 		
 		ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(parent);
@@ -308,15 +296,6 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		/*
-		if (fPreferenceChangeListener != null) {
-			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-			if (ps != null)
-				ps.removePropertyChangeListener(fPreferenceChangeListener);
-			fPreferenceChangeListener= null;
-		}
-		*/
-				
 		if (fCompareConfiguration != null) {
 			if (fPropertyChangeListener != null)
 				fCompareConfiguration.removePropertyChangeListener(fPropertyChangeListener);
@@ -346,10 +325,12 @@ public class DiffTreeViewer extends TreeViewer {
 	/**
 	 * This hook method is called from within <code>inputChanged</code>
 	 * after a new input has been set but before any controls are updated.
-	 * This default implementation calls <code>navigate(true)<code>
+	 * This default implementation calls <code>navigate(true)</code>
 	 * to select and expand the first leaf node.
 	 * Clients can override this method and are free to decide whether
 	 * they want to call the inherited method.
+	 * 
+	 * @since 2.0
 	 */
 	protected void initialSelection() {
 		navigate(true);
@@ -369,6 +350,18 @@ public class DiffTreeViewer extends TreeViewer {
 		super.internalExpandToLevel(node, level);
 	}
 	
+	/**
+	 * This hook method is called from within <code>internalExpandToLevel</code>
+	 * to control whether a given model node should be expanded or not.
+	 * This default implementation checks whether the object is a <code>DiffNode</code> and
+	 * calls <code>dontExpand()</code> on it.
+	 * Clients can override this method and are free to decide whether
+	 * they want to call the inherited method.
+	 * 
+	 * @param o the model object to be expanded
+	 * @return <code>false</code> if a node should be expanded, <code>true</code> to prevent expanding
+	 * @since 2.0
+	 */
 	protected boolean dontExpand(Object o) {
 		return o instanceof DiffNode && ((DiffNode)o).dontExpand();
 	}
@@ -450,6 +443,8 @@ public class DiffTreeViewer extends TreeViewer {
 
 	/**
 	 * Expands to infinity all items in the selection.
+	 * 
+	 * @since 2.0
 	 */
 	protected void expandSelection() {
 		ISelection selection= getSelection();
@@ -656,28 +651,7 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 		}
 	}
-	
-	/*
-	private void syncShowPseudoConflictFilter() {
-		
-		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-		boolean showPseudoConflicts= ps.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
-		
-		Control tree= getControl();
-		if (!tree.isDisposed()) {
-			if (showPseudoConflicts) {
-				if (fViewerFilter != null) {
-					removeFilter(fViewerFilter);
-				}
-			} else {
-				if (fViewerFilter == null)
-					fViewerFilter= new FilterSame();	
-				addFilter(fViewerFilter);
-			}
-		}
-	}
-	*/
-		
+			
 	private final boolean isEditable(Object element, boolean left) {
 		if (element instanceof ICompareInput) {
 			ICompareInput diff= (ICompareInput) element;

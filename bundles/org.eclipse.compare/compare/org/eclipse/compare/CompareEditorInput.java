@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare; 
 
@@ -92,7 +97,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private static final boolean DEBUG= false;
 
 	/**
-	 * The name of the "dirty" property.
+	 * The name of the "dirty" property (value <code>"DIRTY_STATE"</code>).
 	 */
 	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
 		
@@ -790,6 +795,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * calling <code>ISavable.save</code> on them.
 	 *
 	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @since 2.0
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		

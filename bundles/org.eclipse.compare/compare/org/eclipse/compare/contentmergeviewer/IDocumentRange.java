@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.contentmergeviewer;
 
@@ -24,6 +29,11 @@ import org.eclipse.jface.text.IDocument;
  */
 public interface IDocumentRange {
 	
+	/**
+	 * The position category typically used for an <code>IDocumentRange</code> position
+	 * (value <code>"DocumentRangeCategory"</code>).
+	 * @since 2.0
+	 */
 	public static final String RANGE_CATEGORY= "DocumentRangeCategory";	//$NON-NLS-1$
 
 	/**

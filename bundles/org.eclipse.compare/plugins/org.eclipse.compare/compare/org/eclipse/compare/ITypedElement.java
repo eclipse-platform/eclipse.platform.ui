@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare;
 
@@ -18,19 +23,19 @@ import org.eclipse.swt.graphics.Image;
 public interface ITypedElement {
 
 	/**
-	 * Type for a folder input. Folders are comparison
-	 * elements that have no contents, only a name and children.
+	 * Type for a folder input (value <code>"FOLDER"</code>).
+	 * Folders are comparison elements that have no contents, only a name and children.
 	 */
 	public static final String FOLDER_TYPE= "FOLDER"; //$NON-NLS-1$
 
 	/**
-	 * Type for an element whose actual type is text.
+	 * Type for an element whose actual type is text  (value <code>"txt"</code>).
 	 */
 	public static final String TEXT_TYPE= "txt"; //$NON-NLS-1$
 
 	/**
 	 * Type for an element whose actual type could not
-	 * be determined.
+	 * be determined  (value <code>"???"</code>).
 	 */
 	public static final String UNKNOWN_TYPE= "???"; //$NON-NLS-1$
 

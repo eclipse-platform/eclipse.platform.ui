@@ -1,6 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare.rangedifferencer;
 
@@ -63,6 +68,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 
@@ -188,6 +194,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
+	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 
@@ -277,6 +284,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @since 2.0
 	 */
 	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		RangeDifference[] in= findDifferences(pm, left, right);
@@ -335,6 +343,7 @@ public final class RangeDifferencer {
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
+	 * @since 2.0
 	 */
 	public static RangeDifference[] findRanges(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
 
