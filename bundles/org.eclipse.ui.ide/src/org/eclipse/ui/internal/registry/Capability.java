@@ -72,17 +72,14 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		String attr_nature = configElement.getAttribute(ATT_NATURE_ID);
 			
 		if (attr_id == null) {
-			// @issue ref to internal generic workbench method
 			reader.logMissingAttribute(configElement, ATT_ID);
 			missingAttribute = true;
 		}
 		if (attr_nature == null) {
-			// @issue ref to internal generic workbench method
 			reader.logMissingAttribute(configElement, ATT_NATURE_ID);
 			missingAttribute = true;
 		}
 		if (configElement.getAttribute(ATT_INSTALL_WIZARD) == null) {
-			// @issue ref to internal generic workbench method
 			reader.logMissingAttribute(configElement, ATT_INSTALL_WIZARD);
 			missingAttribute = true;
 		}

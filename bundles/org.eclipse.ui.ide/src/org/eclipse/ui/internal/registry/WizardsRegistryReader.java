@@ -15,19 +15,17 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time
  *  in order to determine the contained Wizards
- * 
- * @issue need own copy of RegistryReader
  */
-public class WizardsRegistryReader extends RegistryReader {
+public class WizardsRegistryReader extends IDERegistryReader {
 	private AdaptableList wizards;
 	private String pluginPoint;
 
@@ -72,7 +70,6 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
 	// WizardElements must have a name attribute
 	String nameString = element.getAttribute(ATT_NAME);
 	if (nameString == null) {
-		// @issue ref to internal generic workbench method
 		logMissingAttribute(element, ATT_NAME);
 		return null;
 	}
@@ -133,7 +130,6 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 	}
 	// ensure that a class was specified
 	if (element.getConfigurationElement() == null) {
-		// @issue ref to internal generic workbench method
 		logMissingAttribute(config, ATT_CLASS);
 		return false;
 	}
@@ -157,8 +153,7 @@ protected void readWizards() {
 	if (!areWizardsRead()) {
 		createEmptyWizardCollection();
 		IPluginRegistry pregistry = Platform.getPluginRegistry();
-		// @issue ref to internal generic workbench method
-		readRegistry(pregistry, PlatformUI.PLUGIN_ID, pluginPoint);
+		readRegistry(pregistry, IDEWorkbenchPlugin.IDE_WORKBENCH, pluginPoint);
 	}
 }
 /**

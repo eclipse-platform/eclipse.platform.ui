@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -22,10 +21,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * This class is used to read project capabilities and capability
  * categories from the platform's plugin registry and store the results in
  * a capability registry.
- * 
- * @issue need own copy of RegistryReader
-*/
-public class CapabilityRegistryReader extends RegistryReader{	
+ */
+public class CapabilityRegistryReader extends IDERegistryReader{	
 	private static final String TAG_CAPABILITY = "capability"; //$NON-NLS-1$
 	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String TAG_HANDLE_UI = "handleUI"; //$NON-NLS-1$
@@ -65,7 +62,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 			Capability capability = new Capability(element, this);
 			capabilityRegistry.addCapability(capability);
 			currentCapability = capability;
-			// @issue ref to internal generic workbench method
 			readElementChildren(element);
 			currentCapability = null;
 			return true;
@@ -99,7 +95,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 		String capabilityId = element.getAttribute(ATT_ID);
 		
 		if (capabilityId == null) {
-			// @issue ref to internal generic workbench method
 			logMissingAttribute(element, ATT_ID);
 		}
 		
@@ -116,7 +111,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 		String perspId = element.getAttribute(ATT_ID);
 		
 		if (perspId == null) {
-			// @issue ref to internal generic workbench method
 			logMissingAttribute(element, ATT_ID);
 		}
 		
@@ -131,7 +125,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 	 */
 	public void read(IPluginRegistry registry, CapabilityRegistry out) {
 		capabilityRegistry = out;
-		// @issue move constant to be IDE specific
-		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_CAPABILITIES);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_CAPABILITIES);
 	}
 }

@@ -11,15 +11,21 @@
 package org.eclipse.ui.internal.registry;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IMarkerImageProvider;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.*;
-import java.util.*;
-import java.net.*;
 
 /**
  * Implementation of a marker image registry which maps either
@@ -49,8 +55,7 @@ public class MarkerImageProviderRegistry {
  * Initialize this new MarkerImageProviderRegistry.
  */
 public MarkerImageProviderRegistry() {
-	// @issue need own copy of RegistryReader
-	class MarkerImageReader extends RegistryReader {
+	class MarkerImageReader extends IDERegistryReader {
 		protected boolean readElement(IConfigurationElement element) {
 			if (element.getName().equals(TAG_PROVIDER)) {
 				addProvider(element);
@@ -60,7 +65,7 @@ public MarkerImageProviderRegistry() {
 			return false;
 		}
 		public void readRegistry() {
-		    readRegistry(Platform.getPluginRegistry(), PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_IMAGE_PROVIDER);
+		    readRegistry(Platform.getPluginRegistry(), PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_IMAGE_PROVIDER);
 		}
 	}
 	

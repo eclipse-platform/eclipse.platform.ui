@@ -11,17 +11,20 @@
 package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Sorter;
 
 /**
  *	Instances of this class provide a simple API to the workbench for
@@ -68,6 +71,17 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 			return category;
 		}
 	}
+	
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((CategoryNode)arg0).getPath();
+			String s2 = ((CategoryNode)arg1).getPath();
+			return collator.compare(s2, s1);
+		}
+	}; 
+
 /**
  * Constructs a new reader.  All wizards are read, including projects.
  */
@@ -80,8 +94,7 @@ public NewWizardsRegistryReader() {
  * @param projectsOnly if true, only projects are read.
  */
 public NewWizardsRegistryReader(boolean projectsOnly) {
-	// @issue move constant to be IDE specific
-	super(IWorkbenchConstants.PL_NEW);
+	super(IDEWorkbenchPlugin.PL_NEW);
 	this.projectsOnly = projectsOnly;
 }
 /* (non-Javadoc)
@@ -170,21 +183,11 @@ private void finishCategories() {
 	for (int i=0; i < deferCategories.size(); i++) {
 		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
 	}
-	// @issue replace with Collection sort?
-	Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
-		public boolean compare(Object o1, Object o2) {
-			String s1 = ((CategoryNode)o1).getPath();
-			String s2 = ((CategoryNode)o2).getPath();
-			return collator.compare(s2, s1) > 0;
-		}
-	};
-	Object [] sortedCategories = sorter.sort(flatArray);
+	Collections.sort(Arrays.asList(flatArray), comparer);
 
 	// Add each category.
-	for (int nX = 0; nX < sortedCategories.length; nX ++) {
-		Category cat = ((CategoryNode)sortedCategories[nX]).getCategory();
+	for (int nX = 0; nX < flatArray.length; nX ++) {
+		Category cat = ((CategoryNode)flatArray[nX]).getCategory();
 		finishCategory(cat);
 	}
 

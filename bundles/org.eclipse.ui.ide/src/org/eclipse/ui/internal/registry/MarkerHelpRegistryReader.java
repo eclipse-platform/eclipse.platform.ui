@@ -15,15 +15,13 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class is used to read marker help context ids and 
  * resolutions from the platform registry.
- * 
- * @issue need own copy of RegistryReader
  */
-public class MarkerHelpRegistryReader extends RegistryReader {
+public class MarkerHelpRegistryReader extends IDERegistryReader {
 	private MarkerHelpRegistry markerHelpRegistry;
 	private ArrayList currentAttributeNames;
 	private ArrayList currentAttributeValues;
@@ -49,9 +47,8 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 	public void addHelp(MarkerHelpRegistry registry) {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		markerHelpRegistry = registry;
-		// @issue move constant to be IDE specific
-		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_HELP);
-		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_RESOLUTION);
+		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_HELP);
+		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_RESOLUTION);
 	}
 
 	/**
@@ -83,7 +80,6 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 		// read attributes and values
 		currentAttributeNames = new ArrayList();
 		currentAttributeValues = new ArrayList();
-		// @issue ref to internal generic workbench method
 		readElementChildren(element);
 		String[] attributeNames = (String[])currentAttributeNames.toArray(
 			new String[currentAttributeNames.size()]);
@@ -106,7 +102,6 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 		// read attributes and values
 		currentAttributeNames = new ArrayList();
 		currentAttributeValues = new ArrayList();
-		// @issue ref to internal generic workbench method
 		readElementChildren(element);
 		String[] attributeNames = (String[])currentAttributeNames.toArray(
 			new String[currentAttributeNames.size()]);

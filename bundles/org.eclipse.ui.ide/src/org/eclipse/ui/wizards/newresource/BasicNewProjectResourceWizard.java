@@ -421,7 +421,6 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 	if (!IDEInternalPreferences.PSPM_PROMPT.equals(pspm)) {
 		return true;
 	}
-	// @issue need to clone MessageDialogWithToggle
 	MessageDialogWithToggle dialog = MessageDialogWithToggle.openQuestion(
 		window.getShell(),
 		ResourceMessages.getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$

@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceLock;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.Semaphore;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 public class UIWorkspaceLock extends WorkspaceLock {
@@ -47,7 +46,6 @@ public boolean acquire() throws InterruptedException {
 	}
 	return super.acquire();
 }
-// @issue ref to generic workbench class
 void addPendingWork(Semaphore work) {
 	pendingWork = work;
 }
