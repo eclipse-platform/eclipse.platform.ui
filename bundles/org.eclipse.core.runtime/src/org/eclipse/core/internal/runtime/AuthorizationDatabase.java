@@ -244,10 +244,10 @@ private void load() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage(), null);
+		String message = Policy.bind(e.getMessage());
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	} catch (ClassNotFoundException e) {
-		String message = Policy.bind(e.getMessage(), null);
+		String message = Policy.bind(e.getMessage());
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	}
 }
@@ -269,7 +269,7 @@ public void save() throws CoreException {
 		file.createNewFile();
 		save(new FileOutputStream(file));
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage(), null);
+		String message = Policy.bind(e.getMessage());
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
 	}
 	needsSaving = false;
