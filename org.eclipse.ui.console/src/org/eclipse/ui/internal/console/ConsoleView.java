@@ -125,6 +125,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void showPageRec(PageRec pageRec) {
+        if (fPinned) {
+            return;
+        }
 	    super.showPageRec(pageRec);
 	    fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
 	    IConsole tos = null;
