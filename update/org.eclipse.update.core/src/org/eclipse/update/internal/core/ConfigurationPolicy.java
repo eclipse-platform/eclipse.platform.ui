@@ -109,7 +109,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	}
 
 	/**
-	 * returns true if the pluginDescripto requires one or more pluginEntry
+	 * Returns true if the pluginDescriptor requires one or more pluginEntry
 	 * and the pluginDescriptor is not part of the pluginEntries
 	 */
 	private boolean require(IPluginDescriptor descriptor, IPluginEntry[] entries) {

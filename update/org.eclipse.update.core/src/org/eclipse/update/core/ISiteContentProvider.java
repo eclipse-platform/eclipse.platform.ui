@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.CoreException;
   * Provides 
   * 
   */
- //FIXME: javadoc
  
 public interface ISiteContentProvider {
 	

@@ -252,7 +252,6 @@ public interface IFeature extends IPluginContainer {
 	 * be added to the plugin-path of the workspace.
 	 * @since 2.0 
 	 */
-	// FIXME: javadoc	
 	boolean isExecutable();
 	
 	/**
@@ -260,7 +259,6 @@ public interface IFeature extends IPluginContainer {
 	 * be installed.
 	 * @since 2.0 
 	 */
-	// FIXME: javadoc
 	boolean isInstallable();
 
 	/**
@@ -291,7 +289,6 @@ public interface IFeature extends IPluginContainer {
 	 * @return 
 	 * @since 2.0 
 	 */
-	// FIXME: javadoc	
 	INonPluginEntry[] getNonPluginEntries();
 	
 	/**
@@ -300,7 +297,6 @@ public interface IFeature extends IPluginContainer {
 	 * @param entry the data entry
 	 * @since 2.0 
 	 */
-	
 	void addNonPluginEntry(INonPluginEntry dataEntry);
 	
 	/**

@@ -142,8 +142,8 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
 	public ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException {
-		// VK: ???? should it not return something?
-		return null;
+		// executable feature does not contain archives
+		return new ContentReference[0];
 	}
 
 	/*

@@ -83,9 +83,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				IInstallConfiguration newDefaultConfiguration = localSite.cloneCurrentConfiguration(null, null);
 				localSite.addConfiguration(newDefaultConfiguration);
 
-				//FIXME: the plugin site may not be read-write
-				//the default is USER_EXCLUDE 
-				ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
+				//site policy
+				IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
+				ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site,sitePolicy.getType());
+				
+				//the site may not be read-write
 				configSite.setInstallSite(siteEntries[siteIndex].isUpdateable());
 				localSite.getCurrentConfiguration().addConfigurationSite(configSite);
 

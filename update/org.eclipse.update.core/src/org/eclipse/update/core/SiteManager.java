@@ -49,8 +49,6 @@ public class SiteManager {
 	 * the site will be created in memory. Use <code>ISite.save()</code>
 	 * to persist the site.
 	 * 
-	 * The site is not created in the LocalSite. //FIXME what does it mean ??
-	 * 
 	 * @return the site which maps to this URL
 	 * @since 2.0 
 	 */

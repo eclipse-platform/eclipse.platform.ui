@@ -175,12 +175,6 @@ public class UpdateManagerUtils {
 		if (!file.exists())
 			return;
 			
-			
-		// FIXME debug only
-		if (file.getName().indexOf("org.eclipse.update.plugin1_1.1.1")!=-1){
-			System.out.println("ok");
-		}
-			
 		if (file.isDirectory()) {
 			String[] files = file.list();
 			if (files != null) // be careful since file.list() can return null

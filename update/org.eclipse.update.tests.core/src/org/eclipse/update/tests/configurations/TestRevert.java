@@ -8,6 +8,10 @@ import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.InstallConfigurationModel;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.ConfigurationPolicy;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
@@ -40,6 +44,8 @@ public class TestRevert extends UpdateManagerTestCase {
 		IFeature feature = featureRef.getFeature();
 		
 		IInstallConfiguration old = site.getCurrentConfiguration();
+		ConfigurationPolicy excludepolicy = new ConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
+		((ConfigurationSiteModel)old.getConfigurationSites()[0]).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];

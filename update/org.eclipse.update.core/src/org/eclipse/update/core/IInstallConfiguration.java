@@ -30,7 +30,6 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * 
 	 * @since 2.0 
 	 */
-	//FIXME : javadoc
 	void setCurrent(boolean isCurrent);
 	
 	

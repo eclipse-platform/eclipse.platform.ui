@@ -97,7 +97,10 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
-			// FIXME
+			// no content provider, log status
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			Status status = new Status(IStatus.ERROR,id,IStatus.OK,"The feature does not have a content provider",e);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}
@@ -318,10 +321,11 @@ public class Feature extends FeatureModel implements IFeature {
 				nonPluginConsumer.close();
 				if (monitor!=null) monitor.worked(1);
 			}
+		} catch (CoreException e){
+			// an error occured, abort 
+			consumer.abort();	
+			throw e;		
 		} finally {
-			// an error occured, abort
-			// VK: this is wrong .... would end up ALWAYS backing out !!!!!!!!!!
-			consumer.abort();
 			if (monitor!=null)	monitor.done();
 		}
 		return consumer.close();

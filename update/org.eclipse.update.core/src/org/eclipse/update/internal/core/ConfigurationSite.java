@@ -148,7 +148,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 			throw new CoreException(status);
 		}
 
-		//Start UOW ?
+		//FIXME:Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_REMOVE);
 		activity.setLabel(feature.getVersionIdentifier().toString());
 		activity.setDate(new Date());
@@ -233,7 +233,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 					((ConfigurationPolicy) getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)element);
 				} catch (CoreException e) {
 					// feature does not exist ?
-					// FIXME: shoudl we remove from list ? maybe keep it ? if this is a URL or temporary issue
+					// FIXME: should we remove from list ? maybe keep it ? if this is a URL or temporary issue
 					featureToUnconfigure.remove(element);
 					// log no feature to unconfigure
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -303,7 +303,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 				try {
 					feature = configuredFeatures[i].getFeature();
 				} catch (CoreException e) {
-					//FIXME notify we cannot find the feature
+					// notify we cannot find the feature
 					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 					if (!handler.reportProblem("Cannot find feature " + configuredFeatures[i].getURL().toExternalForm())) {
 						throw new InterruptedException();
@@ -329,7 +329,7 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 						for (int index = 0; index < entries.length; index++) {
 							IPluginEntry entry = entries[index];
 							if (!contains(entry.getVersionIdentifier(),siteIdentifiers)) {
-								// FIXME: the plugin defined by the feature
+								// the plugin defined by the feature
 								// doesn't seem to exist on the site
 								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getVersionIdentifier().toString(), null);
@@ -348,17 +348,20 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	}
 
 	/**
-	 * Method remove.
+	 * Remove an array of feature references
+	 * from a list
 	 * @param feature
 	 * @param list
 	 */
-	// FIXME preventive NullPointerException ?
 	private List remove(IFeatureReference[] featureRefs, List list) {
-		String featureURLString = null; 
-		Iterator iter = list.iterator();
-		List result= new ArrayList(0);
 		
-		// if an element of the list is not found in the array, add it to teh result list
+		List result= new ArrayList(0);
+		String featureURLString = null; 
+				
+		if (list==null) return result;
+		Iterator iter = list.iterator();
+		
+		// if an element of the list is not found in the array, add it to the result list
 		while (iter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) iter.next();
 			boolean found = false;

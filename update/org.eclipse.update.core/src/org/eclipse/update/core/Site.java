@@ -355,8 +355,12 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 			increment += " ";
 
 		w.print(gap + "<site ");
-		// FIXME: site type to implement
-		// 
+		// site type 
+		if (getType() != null) {
+			w.print("type=\"" + Writer.xmlSafe(getType()) + "\"");
+			w.print(" ");
+		}		
+		
 		// Site URL
 		String URLInfoString = null;
 		if (getInfoURL() != null) {
