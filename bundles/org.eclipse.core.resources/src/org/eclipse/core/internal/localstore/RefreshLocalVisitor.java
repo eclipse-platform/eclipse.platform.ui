@@ -79,7 +79,7 @@ protected void deleteResource(UnifiedTreeNode node, Resource target) throws Core
 	ResourceInfo info = target.getResourceInfo(false, false);
 	int flags = target.getFlags(info);
 	//don't delete linked resources
-	if (info.isSet(ICoreConstants.M_LINK))
+	if (ResourceInfo.isSet(flags, ICoreConstants.M_LINK))
 		return;
 	if (target.exists(flags, false))
 		target.deleteResource(true, null);
