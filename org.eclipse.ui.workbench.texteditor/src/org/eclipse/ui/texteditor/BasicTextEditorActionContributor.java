@@ -240,10 +240,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFind);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFindReverse);
+			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFindReverse);
+			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFind);
+			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
+			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
 		}
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
