@@ -7,6 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tools.ant.BuildEvent;
 
 public class AntLoggerChecker {
@@ -17,8 +20,6 @@ public class AntLoggerChecker {
 	
 	private int taskFinishedCount;
 	
-	private int messagesLoggedCount;
-	
 	private int targetsStartedCount;
 	
 	private int targetsFinishedCount;
@@ -27,7 +28,7 @@ public class AntLoggerChecker {
 	
 	private int buildsFinishedCount;
 	
-	private String lastMessageLogged;
+	private List messages= new ArrayList();
 	
 	private AntLoggerChecker()  {
 	}
@@ -64,8 +65,7 @@ public class AntLoggerChecker {
 
 	
 	public void messageLogged(String message) {
-		messagesLoggedCount++;
-		setLastMessageLogged(message);
+		messages.add(message);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class AntLoggerChecker {
 	 * @return int
 	 */
 	public int getMessagesLoggedCount() {
-		return messagesLoggedCount;
+		return messages.size();
 	}
 
 	/**
@@ -155,22 +155,20 @@ public class AntLoggerChecker {
 	protected void resetState() {
 		taskStartedCount= 0;
 		taskFinishedCount= 0;
-		messagesLoggedCount= 0;
 		targetsStartedCount= 0;
 		targetsFinishedCount= 0;
 		buildsStartedCount= 0;
 		buildsFinishedCount= 0;
-		lastMessageLogged= null;
+		messages= new ArrayList();
 	}
 	/**
 	 * Returns the lastMessageLogged.
 	 * @return String
 	 */
 	public String getLastMessageLogged() {
-		return lastMessageLogged;
-	}
-
-	protected void setLastMessageLogged(String lastMessageLogged) {
-		this.lastMessageLogged = lastMessageLogged;
+		if (messages.isEmpty()) {
+			return null;
+		}
+		return (String) messages.get(messages.size() - 1);
 	}
 }

@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.tests.core.testplugin.AntFileRunner;
+import org.eclipse.ant.tests.core.testplugin.AntLoggerChecker;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -21,6 +22,8 @@ import org.eclipse.core.runtime.CoreException;
  * Tests for Ant core
  */
 public abstract class AbstractAntTest extends TestCase {
+	
+	protected static final String BUILD_SUCCEESSFUL= "BUILD SUCCESSFUL";
 	
 	/**
 	 * Returns the 'AntTests' project.
@@ -48,13 +51,22 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	public void run(String buildFileName) throws CoreException {
-		run(buildFileName, null);
+		run(buildFileName, null, true);
 	}
 	
 	public void run(String buildFileName, String[] args) throws CoreException {
+		run(buildFileName, args, true);
+	}
+	
+	public void run(String buildFileName, String[] args, boolean retrieveTargets) throws CoreException {
+		AntLoggerChecker.reset();
 		IFile buildFile= getBuildFile(buildFileName);
 		AntFileRunner runner= new AntFileRunner();
-		runner.run(buildFile, getTargetNames(buildFileName), args, "", true);
+		String[] targets= null;
+		if (retrieveTargets) {
+			targets= getTargetNames(buildFileName);
+		}
+		runner.run(buildFile, targets, args, "", true);
 	}
 	
 	protected TargetInfo[] getTargets(String buildFileName) throws CoreException {
@@ -83,6 +95,14 @@ public abstract class AbstractAntTest extends TestCase {
 			descriptions[i]= info.getDescription();
 		}
 		return descriptions;
+	}
+	
+	protected String getLastMessageLogged() {
+		return AntLoggerChecker.getDefault().getLastMessageLogged();
+	}
+	
+	protected void assertSuccessful() {
+		assertTrue("Should have succeeded", BUILD_SUCCEESSFUL.equals(getLastMessageLogged()));
 	}
 }
 

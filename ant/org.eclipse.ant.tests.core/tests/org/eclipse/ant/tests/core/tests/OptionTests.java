@@ -26,7 +26,7 @@ public class OptionTests extends AbstractAntTest {
 	public void testHelp() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-help"});
 		assertTrue("One message should have been logged", AntLoggerChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertTrue("Help is incorrect", AntLoggerChecker.getDefault().getLastMessageLogged() != null && AntLoggerChecker.getDefault().getLastMessageLogged().startsWith(START_OF_HELP));
+		assertTrue("Help is incorrect", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class OptionTests extends AbstractAntTest {
 	public void testVersion() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-version"});
 		assertTrue("One message should have been logged", AntLoggerChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertTrue("Version is incorrect", VERSION.equals(AntLoggerChecker.getDefault().getLastMessageLogged()));
+		assertTrue("Version is incorrect", VERSION.equals(getLastMessageLogged()));
 	}
 	
 	/**
@@ -60,5 +60,91 @@ public class OptionTests extends AbstractAntTest {
 			return;
 		}
 		assertTrue("A core exception should have occurred wrappering a class cast exception", false);
+	}
+	
+	/**
+	 * Tests passing an unrecognized argument
+	 */
+	public void testUnknownArg() throws CoreException {
+		
+		run("TestForEcho.xml", new String[]{"-listenr"});
+		//unknown arg, print usage
+		assertTrue("Two message should have been logged", AntLoggerChecker.getDefault().getMessagesLoggedCount() == 2);
+		assertTrue("Should have printed the usage", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
+	}
+	
+	/**
+	 * Tests specifying the -logfile with no arg
+	 */
+	public void testLogFileWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-logfile"});
+		} catch (CoreException ce) {
+			String lastMessage= getLastMessageLogged();
+			//You must specify a log file when using the -log argument
+			return;
+		}
+		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+	}
+	
+	/**
+	 * Tests specifying the -logger with no arg
+	 */
+	public void testLoggerWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-logger"});
+		} catch (CoreException ce) {
+			//You must specify a classname when using the -logger argument
+			return;
+		}
+		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+	}
+	
+	/**
+	 * Tests specifying the -listener with no arg
+	 */
+	public void testListenerWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-listener"});
+		} catch (CoreException ce) {
+			
+			return;
+		}
+		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+	}
+	
+	/**
+	 * Tests specifying the -listener with no arg
+	 */
+	public void testBuildFileWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-buildfile"});
+		} catch (CoreException ce) {
+			//You must specify a buildfile when using the -buildfile argument
+			return;
+		}
+		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+	}
+	
+	
+	/**
+	 * Tests specifying a target at the command line
+	 */
+	public void testSpecifyBadTargetAsArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"echo2"}, false);
+		} catch (CoreException ce) {
+			return;
+		}
+		assertTrue("A core exception should have occurred as the target does not exist", false);
+	}
+	
+	/**
+	 * Tests specifying a target at the command line
+	 */
+	public void testSpecifyTargetAsArg() throws CoreException {
+		run("echoing.xml", new String[]{"echo3"}, false);
+		assertTrue("21 messages should have been logged; was " + AntLoggerChecker.getDefault().getMessagesLoggedCount(), AntLoggerChecker.getDefault().getMessagesLoggedCount() == 21);
+		assertSuccessful();
 	}
 }

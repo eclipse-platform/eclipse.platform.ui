@@ -37,7 +37,7 @@ public class AntFileRunner {
 		if (buildFile != null) {
 			runner.setBuildFileLocation(buildFile.getLocation().toFile().toString());
 		}
-		if (targets.length > 0) {
+		if (targets != null && targets.length > 0) {
 			runner.setExecutionTargets(targets);
 		}
 		if (captureOutput) {
@@ -45,5 +45,23 @@ public class AntFileRunner {
 		}
 
 		runner.run(null);
+	}
+	
+	public void run(String[] args, String baseDir) throws Exception {
+	
+		AntRunner runner = new AntRunner();
+
+		String[] runnerArgs = args;
+
+		if (baseDir.length() > 0) {
+			// Ant requires the working directory to be specified
+			// as one of the arguments, so it needs to be appended.
+			runnerArgs = new String[args.length + 1];
+			System.arraycopy(args, 0, runnerArgs, 0, args.length);
+			runnerArgs[args.length] = BASE_DIR_PREFIX + baseDir;
+		}
+		runner.setArguments(runnerArgs);
+
+		runner.run(args);
 	}
 }
