@@ -223,12 +223,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void updatePainting() {
 		disablePainting(true);
 		
-		// Add background to style ranges
+		// remove background from style ranges
 		applyBackground(false); // faster than invalidateTextPresentation();
 		
 		catchupWithModel();							
 		
-		// Remove background from style ranges
+		// add background to style ranges
 		applyBackground(true);
 		
 		enablePainting();
