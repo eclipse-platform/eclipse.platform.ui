@@ -36,10 +36,10 @@ public class ProgramScriptRunner extends ToolScriptRunner {
 	/* (non-Javadoc)
 	 * Method declared in ToolScriptRunner.
 	 */
-	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScript script) throws CoreException {
-		String commandLine = script.getLocation() + " " + script.getArguments(); //$NON-NLS-1$;
+	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
+		String commandLine = scriptContext.getExpandedLocation() + " " + scriptContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
-			startMonitor(monitor, script);
+			startMonitor(monitor, scriptContext);
 			Process p = Runtime.getRuntime().exec(commandLine);
 			boolean[] finished = new boolean[1];
 			if (listener != null) {

@@ -11,11 +11,10 @@ Contributors:
 **********************************************************************/
 
 /**
- * A tool script consist of a user defined name, a path to the location
- * of the script, optional arguments for the script, and the working
- * directory.
+ * Represents the context in which to run the
+ * tool script.
  */
-public interface IToolScript {
+public interface IToolScriptContext {
 	/**
 	 * Returns the name of the script.
 	 */

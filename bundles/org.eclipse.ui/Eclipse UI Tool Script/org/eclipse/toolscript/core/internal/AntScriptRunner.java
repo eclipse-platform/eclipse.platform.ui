@@ -28,6 +28,6 @@ public class AntScriptRunner extends ToolScriptRunner {
 	/* (non-Javadoc)
 	 * Method declared in ToolScriptRunner.
 	 */
-	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScript script) throws CoreException {
+	public void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 	}
 }

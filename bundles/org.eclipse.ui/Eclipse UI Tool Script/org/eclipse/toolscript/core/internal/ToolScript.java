@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.*;
  * and does nothing by default
  * </p>
  */
-public class ToolScript implements IToolScript {
+public class ToolScript {
 	// Internal tags for storing script related information
 	private static final String TAG_SCRIPT_TYPE = "!{script_type}"; //$NON-NLS-1$
 	private static final String TAG_SCRIPT_NAME = "!{script_name}"; //$NON-NLS-1$
@@ -284,7 +284,7 @@ public class ToolScript implements IToolScript {
 		try {
 			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(type);
 			if (runner != null) {
-				if (EMPTY_VALUE.equals(refreshScope)) {
+				if (REFRESH_SCOPE_NONE.equals(refreshScope)) {
 					runner.execute(listener, monitor, this);
 				} else {
 					monitor.beginTask("Running tool script...", 100);

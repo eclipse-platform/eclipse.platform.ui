@@ -32,7 +32,7 @@ public abstract class ToolScriptRunner {
 	/**
 	 * Execute the tool script
 	 */
-	public abstract void execute(BuildListener listener, IProgressMonitor monitor, IToolScript script) throws CoreException;
+	public abstract void execute(BuildListener listener, IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException;
 	
 	/**
 	 * Handles exceptions that may occur while running the script
@@ -47,8 +47,8 @@ public abstract class ToolScriptRunner {
 	/**
 	 * Starts the monitor to show progress while running the script
 	 */
-	protected final void startMonitor(IProgressMonitor monitor, IToolScript script) {
-		String label = ToolScriptMessages.format("ToolScriptRunner.runningScriptLabel", new Object[] {script.getName()}); //$NON-NLS-1$;
+	protected final void startMonitor(IProgressMonitor monitor, IToolScriptContext scriptContext) {
+		String label = ToolScriptMessages.format("ToolScriptRunner.runningScriptLabel", new Object[] {scriptContext.getName()}); //$NON-NLS-1$;
 		monitor.beginTask(label, IProgressMonitor.UNKNOWN);
 	}
 }
