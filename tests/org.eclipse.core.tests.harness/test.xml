@@ -7,7 +7,6 @@
   <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
   <property name="runtime_location" value="${eclipse-home}/core_runtime_sniff_folder"/>
   <property name="resources_location" value="${eclipse-home}/core_resources_sniff_folder"/>
-  <property name="osgi_location" value="${eclipse-home}/osgi_sniff_folder"/>  
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
@@ -21,7 +20,6 @@
   <target name="cleanup">
     <delete dir="${runtime_location}" quiet="true"/>
     <delete dir="${resources_location}" quiet="true"/>
-    <delete dir="${osgi_location}" quiet="true"/>    
   </target>
 
   <!-- This target runs the test suite. Any actions that need to happen after all -->
@@ -33,22 +31,6 @@
     </ant>
   </target>
 
-  <target name="RuntimeTests" depends="init,cleanup">
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${runtime_location}"/>
-      <property name="plugin-name" value="org.eclipse.core.tests.runtime"/>
-      <property name="classname" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
-    </ant>
-  </target>  
-
-  <target name="OSGiTests" depends="init,cleanup">
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${osgi_location}"/>
-      <property name="plugin-name" value="org.eclipse.osgi.tests"/>
-      <property name="classname" value="org.eclipse.osgi.tests.AutomatedTests"/>
-    </ant>
-  </target>  
-
   <target name="ResourcesTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${resources_location}"/>
@@ -56,7 +38,7 @@
       <property name="classname" value="org.eclipse.core.tests.resources.AutomatedTests"/>
     </ant>
   </target>
-  
+
   <target name="PR_1G1N9GZ_SessionTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
@@ -134,8 +116,15 @@
     </ant>
   </target>
 
+  <target name="RuntimeTests" depends="init,cleanup">
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${runtime_location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.runtime"/>
+      <property name="classname" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
+    </ant>
+  </target>
 
   <!-- This target defines the tests that need to be run. -->
-  <target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests"/>
-  <!--target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
+  <target name="suite" depends="ResourcesTests,RuntimeTests"/>
+  <!--target name="suite" depends="ResourcesTests,RuntimeTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
  </project>
