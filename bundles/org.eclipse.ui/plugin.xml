@@ -1158,10 +1158,11 @@
          </description>
       </fontDefinition>
       <fontDefinition
-            label="Tab Font"
+            label="%FontsPreference.TabFont"
             categoryId="org.eclipse.ui.workbenchMisc"
             id="org.eclipse.workbench.tabFont">
          <description>
+            %FontsPreference.TabFontDescription
          </description>
       </fontDefinition>      
    </extension>
