@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-import java.net.URL;
-
 public interface IProduct {
 	
 	/**
@@ -31,22 +29,19 @@ public interface IProduct {
 	 * @return the description of this product or null if none
 	 */
 	public String getDescription();
-	/**
-	 * Returns the URL for this product's image.  The image is used in the about dialog
-	 * and should be either full-sized (no larger than 500x330 pixels) or half-sized 
-	 * (no larger than 250x330 pixels).  
-	 * @return the image for this product or null if none
-	 */
-	public URL getImage();
-	/**
-	 * Returns the id of the welcome extension to use for this product
-	 * @return the id of this product's welcome page or null if none
-	 */
-	public String getDefaultPerspective();
-	
 	/** Returns the unique product id of this product.
 	 * @return the id of this product
 	 */
 	public String getId();
 	
+	/**
+	 * Returns the property of this product with the given key.
+	 * null is returned if there is no such key/value pair.
+	 * @param key the name of the property to return
+	 * @return the value associated with the given key
+	 */
+	public String getProperty(String key);
+	
+
+
 }

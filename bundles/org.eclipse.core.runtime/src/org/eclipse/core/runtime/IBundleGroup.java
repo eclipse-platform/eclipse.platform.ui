@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-import java.net.URL;
 import org.osgi.framework.Bundle;
 
 public interface IBundleGroup {
@@ -38,16 +37,6 @@ public interface IBundleGroup {
 	 */
 	public String getVersion();
 	/**
-	 * Returns the resource path to this bundle group's about image file.
-	 * @return path to this bundle group's about image file or null if none
-	 */
-	public URL getAboutImage();
-	/**
-	 * Returns the resource path to this bundle group's window image file.
-	 * @return path to this bundle group's window image file or null if none
-	 */
-	public URL getWindowImage();
-	/**
 	 * Returns a text description of this bundle group
 	 * @return text description of this bundle group
 	 */
@@ -66,17 +55,11 @@ public interface IBundleGroup {
 	public Bundle getBundles();
 
 	/**
-	 * Returns the URL string of the welcome page to use for this bundle group.  Note 
-	 * that this if for legacy support. Eclipse 3.0 or later systems should use the 
-	 * facilities provided by the org.eclipse.ui.intro extension point.
-	 * @return the URL string of this bundle group's welcome page or null if none
+	 * Returns the property of this bundle group with the given key.
+	 * null is returned if there is no such key/value pair.
+	 * @param key the name of the property to return
+	 * @return the value associated with the given key
 	 */
-	public String getWelcomePage();
+	public String getProperty(String key);
 	
-	/**
-	 * Returns a <code>String</code> for the tips and trick href.
-	 * 
-	 * @return the tips and tricks href, or <code>null</code> if none
-	 */
-	public String getTipsAndTricksHref();
 }
