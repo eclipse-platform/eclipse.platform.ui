@@ -145,9 +145,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @since 3.1
      */
     protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
-		Control tree = getControl();
-
-        // optimization!
+		
+		// optimization!
         // if the widget is not expanded we just invalidate the subtree
         if (widget instanceof Item) {
             Item ti = (Item) widget;
@@ -169,13 +168,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     }
                 }
                 // append a dummy if necessary
-                if (needDummy && !haveDummy) {
+                if (needDummy && !haveDummy) 
                     newItem(ti, SWT.NULL, -1);
-                } else {
-                    // XXX: Workaround (PR missing)
-                    tree.redraw();
-                }
-
                 return;
             }
         }
