@@ -106,7 +106,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 		}
 	}
 
-	private byte[] parseSignature(String data) {
+	private static byte[] parseSignature(String data) {
 		List bytes = new ArrayList();
 		StringTokenizer tokenizer = new StringTokenizer(data, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
