@@ -20,6 +20,8 @@ public interface IWorkbenchConstants {
 
     // Workbench Extension Point Names
     public static final String PL_ACTION_SETS = "actionSets"; //$NON-NLS-1$
+    
+    public static final String PL_BROWSER_SUPPORT = "browserSupport"; //$NON-NLS-1$
 
     public static final String PL_VIEW_ACTIONS = "viewActions"; //$NON-NLS-1$
 

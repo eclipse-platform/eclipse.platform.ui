@@ -24,7 +24,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Implements the support interface and delegates the calls to the active
@@ -34,13 +36,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.1
  */
 public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
-	private static final String BROWSER_SUPPORT_EXTENSION_ID = "org.eclipse.ui.browserSupport"; //$NON-NLS-1$
-
-	private static final String EL_SUPPORT = "support"; //$NON-NLS-1$	
-
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
-	private static final String ATT_DEFAULT = "default"; //$NON-NLS-1$
 
 	private static WorkbenchBrowserSupport instance;
 
@@ -122,7 +117,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			public void run() {
 				// get the help UI extension from the registry
 				IExtensionPoint point = Platform.getExtensionRegistry()
-						.getExtensionPoint(BROWSER_SUPPORT_EXTENSION_ID);
+						.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_BROWSER_SUPPORT);
 				if (point == null) {
 					// our extension point is missing (!) - act like there was
 					// no browser support
@@ -157,8 +152,8 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				// is found, pick it. Otherwise, use default.
 				for (int i = 0; i < elements.length; i++) {
 					IConfigurationElement element = elements[i];
-					if (element.getName().equals(EL_SUPPORT)) {
-						String def = element.getAttribute(ATT_DEFAULT);
+					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SUPPORT)) {
+						String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
 						if (def != null && def.equalsIgnoreCase("true")) { //$NON-NLS-1$
 							if (defaultElement == null)
 								defaultElement = element;
@@ -179,7 +174,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				// Instantiate the browser support
 				try {
 					activeSupport = (AbstractWorkbenchBrowserSupport) WorkbenchPlugin
-							.createExtension(element, ATT_CLASS);
+							.createExtension(element, IWorkbenchRegistryConstants.ATT_CLASS);
 					// start listening for removals
 					PlatformUI.getWorkbench().getExtensionTracker()
 							.registerHandler(handler, null);
