@@ -87,4 +87,8 @@
     </ant>
   </target>
 
+  <!-- This target runs the performance test suites. -->
+  <target name="performance">
+  </target>
+
 </project>
