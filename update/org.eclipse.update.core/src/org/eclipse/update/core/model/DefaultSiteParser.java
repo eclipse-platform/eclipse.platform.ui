@@ -6,7 +6,6 @@ package org.eclipse.update.core.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.Stack;
 
 import org.apache.xerces.parsers.SAXParser;
@@ -20,7 +19,6 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -35,7 +33,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private MultiStatus status;
 
-	private static final int IGNORED_ELEMENT_STATE=-1;
+	private static final int IGNORED_ELEMENT_STATE = -1;
 	private static final int STATE_INITIAL = 0;
 	private static final int STATE_SITE = 1;
 	private static final int STATE_FEATURE = 2;
@@ -45,7 +43,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_DESCRIPTION = 6;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	public static final String SITE = "site";
 	public static final String FEATURE = "feature";
@@ -90,8 +88,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (DEBUG){
-			debug("State: "+(Integer) stateStack.peek());
+		if (DEBUG) {
+			debug("State: " + (Integer) stateStack.peek());
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
 
@@ -100,7 +98,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		int state = ((Integer) stateStack.peek()).intValue();
 		switch (state) {
 			case IGNORED_ELEMENT_STATE :
-				internalErrorUnknownTag("unknown element in ingored state:"+localName);
+				internalErrorUnknownTag("unknown element in ingored state:" + localName);
 				break;
 			case STATE_INITIAL :
 				handleInitialState(localName, attributes);
@@ -148,7 +146,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	public void handleSiteState(String elementName, Attributes attributes) {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
-			processInfo(attributes);			
+			processInfo(attributes);
 		} else if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
 			processFeature(attributes);
@@ -167,23 +165,23 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag("unknown feature element" + elementName);		
+			internalErrorUnknownTag("unknown feature element" + elementName);
 	}
 	public void handleArchiveState(String elementName, Attributes attributes) {
-			internalErrorUnknownTag("unknown archive element" + elementName);						
+		internalErrorUnknownTag("unknown archive element" + elementName);
 	}
 	public void handleCategoryState(String elementName, Attributes attributes) {
-			internalErrorUnknownTag("unknown category element" + elementName);						
+		internalErrorUnknownTag("unknown category element" + elementName);
 	}
 	public void handleCategoryDefState(String elementName, Attributes attributes) {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
 			processInfo(attributes);
 		} else
-			internalErrorUnknownTag("unknown category definition element" + elementName);				
+			internalErrorUnknownTag("unknown category definition element" + elementName);
 	}
 	public void handleDescriptionState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown description element" + elementName);				
+		internalErrorUnknownTag("unknown description element" + elementName);
 	}
 
 	/** 
@@ -231,11 +229,10 @@ public class DefaultSiteParser extends DefaultHandler {
 		String type = attributes.getValue("type");
 		feature.setType(type);
 
-
-		SiteMapModel site = (SiteMapModel)objectStack.peek();
+		SiteMapModel site = (SiteMapModel) objectStack.peek();
 		site.addFeatureReferenceModel(feature);
 		feature.setSiteModel(site);
-		
+
 		objectStack.push(feature);
 
 		if (DEBUG)
@@ -251,8 +248,8 @@ public class DefaultSiteParser extends DefaultHandler {
 		archive.setPath(id);
 		String urlString = UpdateManagerUtils.encode(attributes.getValue("url"));
 		archive.setURLString(urlString);
-		
-		SiteMapModel site = (SiteMapModel)objectStack.peek();
+
+		SiteMapModel site = (SiteMapModel) objectStack.peek();
 		site.addArchiveReferenceModel(archive);
 
 		if (DEBUG)
@@ -280,8 +277,8 @@ public class DefaultSiteParser extends DefaultHandler {
 		String label = attributes.getValue("label");
 		category.setName(name);
 		category.setLabel(label);
-		
-		SiteMapModel site = (SiteMapModel)objectStack.peek();
+
+		SiteMapModel site = (SiteMapModel) objectStack.peek();
 		site.addCategoryModel(category);
 		objectStack.push(category);
 
@@ -314,7 +311,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		switch (state) {
 			case IGNORED_ELEMENT_STATE :
 				stateStack.pop();
-				break;			
+				break;
 			case STATE_INITIAL :
 				internalError("Stack back to Initial State, error parsing file");
 				break;
@@ -340,14 +337,14 @@ public class DefaultSiteParser extends DefaultHandler {
 
 			case STATE_CATEGORY :
 				stateStack.pop();
-				
+
 				break;
 
 			case STATE_CATEGORY_DEF :
 				stateStack.pop();
 				if (objectStack.peek() instanceof String) {
 					String text = (String) objectStack.pop();
-					SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();						
+					SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
 					category.getDescriptionModel().setAnnotation(text);
 				}
 				objectStack.pop();
@@ -390,7 +387,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length) {
 		String text = new String(ch, start, length).trim();
-		if (!text.equals(""))objectStack.push(text);
+		if (!text.equals(""))
+			objectStack.push(text);
 	}
 
 	private void debug(String s) {
@@ -442,8 +440,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void internalErrorUnknownTag(String msg) {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(msg);		
-	}	
+		internalError(msg);
+	}
 	/**
 	 * Returns all of the status objects logged thus far by this factory.
 	 *
