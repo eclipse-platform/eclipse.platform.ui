@@ -103,10 +103,13 @@ private static void activateDefaultPlugins() throws CoreException {
 	// for now, simply do the default activation.  This does not do the right thing
 	// wrt the plugin class loader.
 	PluginDescriptor descriptor = (PluginDescriptor) registry.getPluginDescriptor(Platform.PI_RUNTIME);
-	descriptor.setPluginClassLoader(PlatformClassLoader.getDefault());
+	DelegatingURLClassLoader loader = PlatformClassLoader.getDefault();
+	descriptor.activateDefaultPlugins(loader);
+	descriptor.setPluginClassLoader(loader);
 	descriptor.getPlugin();
 
 	descriptor = (PluginDescriptor) registry.getPluginDescriptor(PI_XML);
+	descriptor.activateDefaultPlugins(xmlClassLoader);
 	descriptor.setPluginClassLoader(xmlClassLoader);
 	xmlClassLoader.setPluginDescriptor(descriptor);
 	descriptor.getPlugin();

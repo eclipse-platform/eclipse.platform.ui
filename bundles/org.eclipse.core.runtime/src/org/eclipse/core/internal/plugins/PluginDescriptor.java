@@ -786,4 +786,8 @@ private void throwException(String message, Throwable exception) throws CoreExce
 public String toString() {
 	return getUniqueIdentifier()+VERSION_SEPARATOR+getVersionIdentifier().toString();
 }
+public void activateDefaultPlugins(DelegatingURLClassLoader loader) {
+	Object[] result = getPluginClassLoaderPath(true);
+	loader.addURLs((URL[]) result[0], (URLContentFilter[]) result[1], (URL[]) result[2], (URLContentFilter[]) result[3]);
+}
 }
