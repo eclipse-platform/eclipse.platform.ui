@@ -1854,8 +1854,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public void close(final boolean save) {
 		
-		Display display= getSite().getShell().getDisplay();
+		enableSanityChecking(false);
 		
+		Display display= getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (fSourceViewer != null) {
@@ -2062,7 +2063,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 				title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
 				msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
-				MessageDialog.openConfirm(shell, title, msg);
+				if (MessageDialog.openConfirm(shell, title, msg))
+					close(false);
 			}
 			
 		} else {
