@@ -329,24 +329,6 @@ private void handleAboutToShow() {
 	update(false,true);
 }
 /**
- * Returns whether this menu manager contains an <code>ActionContributionItem</code>
- * that defines an accelerator (short cut).
- *
- * @return <code>true</code> if there are accelerators, and <code>false</code>
- *  if not
- */
-private boolean hasAccelerator() {
-	IContributionItem[] items = getItems();
-	for (int i = 0; i < items.length; ++i) {
-		if (items[i] instanceof ActionContributionItem) {
-			IAction action = ((ActionContributionItem) items[i]).getAction();
-			if (action.getAccelerator() != 0)
-				return true;
-		}
-	}
-	return false;
-}
-/**
  * Initializes the menu control.
  */
 private void initializeMenu() {

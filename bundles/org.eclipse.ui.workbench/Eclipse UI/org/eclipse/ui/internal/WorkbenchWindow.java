@@ -96,7 +96,6 @@ public class WorkbenchWindow extends ApplicationWindow
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
-	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
 	private Label separator2;

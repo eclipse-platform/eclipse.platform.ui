@@ -25,7 +25,6 @@ public class SelectPerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 {
 	private TableViewer list;
 	private IPerspectiveRegistry perspReg;
-	private IViewDescriptor selection;
 	private IPerspectiveDescriptor perspDesc;
 	private Button okButton;
 	private Button cancelButton;

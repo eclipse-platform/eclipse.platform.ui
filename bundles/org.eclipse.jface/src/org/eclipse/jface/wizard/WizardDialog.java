@@ -61,9 +61,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	// The number of long running operation executed from the dialog.	
 	private long activeRunningOperations = 0;
 	private boolean operationCancelableState;
-	
-	// Do I have a help button or not
-	private boolean isHelpAvailable = true;
+
 
 	// The current page message and description
 	private String pageMessage;
@@ -90,7 +88,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	private int pageWidth = SWT.DEFAULT;
 	private int pageHeight = SWT.DEFAULT;
 
-	private static int PROGRESS_INDICATOR_HEIGHT = 12;
 	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
 
 		

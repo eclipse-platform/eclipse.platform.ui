@@ -191,54 +191,6 @@ public class FontRegistry {
 	}
 
 	/**
-	 * Read the resource bundle at location. Look for a file with the
-	 * extension _os_ws first, then _os then just the name.
-	 * @param location - String - the location of the file.
-	 */
-
-	private void readResourceBundle(String location, ClassLoader loader) {
-		String osname = System.getProperty("os.name").trim(); //$NON-NLS-1$
-		String wsname = SWT.getPlatform();
-		osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
-		wsname = StringConverter.removeWhiteSpaces(wsname).toLowerCase();
-		String OSLocation = location;
-		String WSLocation = location;
-		ResourceBundle bundle = null;
-		if (osname != null) {
-			OSLocation = location + "_" + osname; //$NON-NLS-1$
-			if (wsname != null)
-				WSLocation = OSLocation + "_" + wsname; //$NON-NLS-1$
-		}
-
-		try {
-			bundle =
-				ResourceBundle.getBundle(
-					WSLocation,
-					Locale.getDefault(),
-					loader);
-			readResourceBundle(bundle, WSLocation);
-		} catch (MissingResourceException wsException) {
-			try {
-				bundle =
-					ResourceBundle.getBundle(
-						OSLocation,
-						Locale.getDefault(),
-						loader);
-				readResourceBundle(bundle, WSLocation);
-			} catch (MissingResourceException osException) {
-				if (location != OSLocation) {
-					bundle =
-						ResourceBundle.getBundle(
-							location,
-							Locale.getDefault(),
-							loader);
-					readResourceBundle(bundle, WSLocation);
-				} else
-					throw osException;
-			}
-		}
-	}
-	/**
 	 * Creates an empty font registry.
 	 *
 	 * @param display the Display

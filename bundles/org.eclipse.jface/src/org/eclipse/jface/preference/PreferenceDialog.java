@@ -75,10 +75,6 @@ public class PreferenceDialog
 	 */
 	private PreferenceManager preferenceManager;
 
-	/**
-	 * The main control for this dialog.
-	 */
-	private Composite body;
 
 	/**
 	 * The Composite in which a page is shown.

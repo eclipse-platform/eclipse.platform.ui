@@ -42,7 +42,6 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-	private static final int SIZING_INDENTATION_WIDTH = 10;
 
 	private boolean useDefaults = true;
 
