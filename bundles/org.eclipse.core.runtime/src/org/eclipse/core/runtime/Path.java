@@ -549,7 +549,6 @@ public class Path implements IPath, Cloneable {
 	 * @see IPath#isPrefixOf
 	 */
 	public boolean isPrefixOf(IPath anotherPath) {
-		Assert.isNotNull(anotherPath);
 		if (device == null) {
 			if (anotherPath.getDevice() != null) {
 				return false;
