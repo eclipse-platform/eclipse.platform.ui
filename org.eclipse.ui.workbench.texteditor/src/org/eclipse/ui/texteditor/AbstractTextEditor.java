@@ -3612,7 +3612,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				element= (IConfigurationElement)actions.get(0);
 			
 			String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
-			return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
+			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 		}
 		
 		return null;
