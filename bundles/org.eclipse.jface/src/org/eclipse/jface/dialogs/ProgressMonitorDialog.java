@@ -69,6 +69,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	 */
 	private static int LABEL_DLUS = 21;
 	private static int BAR_DLUS = 9;
+	
 	/**
 	 * The progress indicator control.
 	 */
@@ -221,7 +222,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	 *            IStatus that gives the details
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
-		setMessage(reason.getMessage());
+		setMessage(shortenText(reason.getMessage(),messageLabel));
 		imageLabel.setImage(getImage());
 	}
 	/**
@@ -534,4 +535,6 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 		}
 		return super.open();
 	}
+	
+	
 }

@@ -12,7 +12,10 @@ package org.eclipse.jface.dialogs;
 
 import java.util.Arrays;
 import java.util.HashMap;
-
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,12 +30,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
 
 /**
  * A dialog is a specialized window used for narrow-focused communication
@@ -83,6 +82,8 @@ public abstract class Dialog extends Window {
 	 * @since 2.0
 	 */
 	public static final String DLG_IMG_MESSAGE_ERROR = "dialog_message_error_image"; //$NON-NLS-1$
+	
+	public static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
@@ -232,6 +233,45 @@ public abstract class Dialog extends Window {
 		FontMetrics fontMetrics,
 		int chars) {
 		return fontMetrics.getAverageCharWidth() * chars;
+	}
+	
+	/**
+	 * Shorten the given text <code>textValue</code> so that its length
+	 * doesn't exceed the given width. Override characters in the center of the original string with an
+	 * ellipsis ("..."). 
+	 * @param textValue The original string
+	 * @param control The control the string will be displayed on
+	 * @return String The value to display
+	 */
+	public static String shortenText(String textValue, Control control) {
+		if (textValue == null)
+			return null;
+		Display display = control.getDisplay();
+		GC gc = new GC(display);
+		int maxWidth = control.getBounds().width - 5;
+		if (gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
+			return textValue;
+		}
+		int length = textValue.length();
+		int ellipsisWidth = gc.textExtent(ELLIPSIS).x;
+		int pivot = length / 2;
+		int start = pivot;
+		int end = pivot + 1;
+		while (start >= 0 && end < length) {
+			String s1 = textValue.substring(0, start);
+			String s2 = textValue.substring(end, length);
+			int l1 = gc.textExtent(s1).x;
+			int l2 = gc.textExtent(s2).x;
+			if (l1 + ellipsisWidth + l2 < maxWidth) {
+				gc.dispose();
+				return s1 + ELLIPSIS + s2;
+			}
+			start--;
+			end++;
+		}
+		gc.dispose();
+		return textValue;
 	}
 
 	/**
