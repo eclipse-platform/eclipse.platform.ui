@@ -1085,26 +1085,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return success;
 	}
 
-	private VersionedIdentifier[] collectFeatures() {	
+	private VersionedIdentifier[] collectFeatures() {
 		try {
-		   ArrayList result = new ArrayList();
-		   ILocalSite localSite = SiteManager.getLocalSite();
-		   IInstallConfiguration config = localSite.getCurrentConfiguration();
-		   IConfiguredSite [] csites = config.getConfiguredSites();
-		   for (int i=0; i<csites.length; i++) {
-		      IConfiguredSite csite = csites[i];
-		      // get handles to the configured features in the site
-		      IFeatureReference [] crefs = csite.getConfiguredFeatures();
-		      for (int j=0; j<crefs.length; j++) {
-		         IFeatureReference cref = crefs[j];
-		         try {
-		         	VersionedIdentifier vi = cref.getVersionedIdentifier();
-		         	result.add(vi);
-		         } catch (CoreException ex) {
-		         }
-		      }
-		   }
-		   return (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
+			ArrayList result = new ArrayList();
+			ILocalSite localSite = SiteManager.getLocalSite();
+			IInstallConfiguration config = localSite.getCurrentConfiguration();
+			IConfiguredSite[] csites = config.getConfiguredSites();
+			for (int i = 0; i < csites.length; i++) {
+				IConfiguredSite csite = csites[i];
+				// get handles to the configured features in the site
+				IFeatureReference[] crefs = csite.getConfiguredFeatures();
+				for (int j = 0; j < crefs.length; j++) {
+					IFeatureReference cref = crefs[j];
+					VersionedIdentifier vi = cref.getVersionedIdentifier();
+					result.add(vi);
+				}
+			}
+			return (VersionedIdentifier[]) result.toArray(
+				new VersionedIdentifier[result.size()]);
 		} catch (CoreException e) {
 			return new VersionedIdentifier[0];
 		}
