@@ -21,6 +21,9 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
  * This class does not define any tests, just convenience methods for other builder tests.
  */
 public abstract class AbstractBuilderTest extends EclipseWorkspaceTest {
+	
+	private boolean autoBuilding; 	
+	
 public AbstractBuilderTest(String name) {
 	super(name);
 }
@@ -85,6 +88,21 @@ protected void setBuildOrder(IProject project1, IProject project2) throws CoreEx
 	IWorkspaceDescription desc = workspace.getDescription();
 	desc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
 	workspace.setDescription(desc);
+}
+/**
+ * Saves the current auto-build flag value so it can be restored later.
+ */
+protected void setUp() throws Exception {
+	super.setUp();
+	autoBuilding = getWorkspace().isAutoBuilding();
+	
+}
+/**
+ * Restores the auto-build flag to its original value.
+ */
+protected void tearDown() throws Exception {
+	setAutoBuilding(autoBuilding);
+	super.tearDown();
 }
 }
 

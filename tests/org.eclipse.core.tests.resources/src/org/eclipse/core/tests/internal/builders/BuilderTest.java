@@ -106,11 +106,13 @@ public void testAutoBuildPR() {
 /**
  * Tests installing and running a builder that always fails during instantation.
  */
-public void testBrokenBuilder() {
+public void testBrokenBuilder() {	
+	
 	// Create some resource handles
 	IProject project = getWorkspace().getRoot().getProject("PROJECT");
 	
 	try {
+		setAutoBuilding(false);
 		// Create and open a project
 		project.create(getMonitor());
 		project.open(getMonitor());
