@@ -28,7 +28,9 @@ import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
@@ -43,6 +45,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -59,6 +63,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -325,6 +330,21 @@ public class AntClasspathBlock {
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		
+		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection.length == 0) {
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				}
+				for (int i= 0; i < selection.length; i++) {
+					if (!(selection[i] instanceof IFile)) {
+						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					}					
+				}
+				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+			}			
+		};
+		dialog.setValidator(validator);
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
@@ -365,6 +385,14 @@ public class AntClasspathBlock {
 		data.horizontalSpan = 1;
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
+		
+		table.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (tablesEnabled && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(antTableViewer);
+				}
+			}
+		});	
 
 		antContentProvider = new AntClasspathContentProvider();
 		antTableViewer = new TableViewer(table);
@@ -415,6 +443,14 @@ public class AntClasspathBlock {
 		data.horizontalSpan = 1;
 		table.setLayoutData(data);
 		table.setFont(top.getFont());
+		
+		table.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (tablesEnabled && event.character == SWT.DEL && event.stateMask == 0) {
+					remove(userTableViewer);
+				}
+			}
+		});	
 		userContentProvider = new AntClasspathContentProvider();
 		userTableViewer = new TableViewer(table);
 		userTableViewer.setContentProvider(userContentProvider);
