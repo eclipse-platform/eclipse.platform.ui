@@ -539,9 +539,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		removeProjectFromContentProviders(project);
 		projectViewer.refresh();
 		targetViewer.refresh();
-		if (!projectContentProvider.getRootNode().hasProjects()) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		}
 	}
 
 	/**
@@ -581,6 +578,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		projectContentProvider.getRootNode().removeProject(project);
 		// Clear the file to project mapping for this project
 		buildFilesToProjects.remove(project.getBuildFileName());
+		if (!projectContentProvider.getRootNode().hasProjects()) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		}
 	}
 
 	/**
