@@ -9,17 +9,11 @@ import java.io.InputStream;
 import java.util.Stack;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.URLEntry;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -140,7 +134,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
 		} else
-			internalErrorUnknownTag("unknown initial element" + elementName);
+			internalErrorUnknownTag("unknown root element:" + elementName);
 	}
 
 	public void handleSiteState(String elementName, Attributes attributes) {
@@ -157,7 +151,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
 		} else
-			internalErrorUnknownTag("unknown site element " + elementName);
+			internalErrorUnknownTag("unknown element :" + elementName+" insie site tag.");
 	}
 
 	public void handleFeatureState(String elementName, Attributes attributes) {
@@ -165,23 +159,23 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag("unknown feature element" + elementName);
+			internalErrorUnknownTag("unknown element:" + elementName+" inside feature tag.");
 	}
 	public void handleArchiveState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown archive element" + elementName);
+		internalErrorUnknownTag("unknown element:" + elementName+" inside archive tag.");
 	}
 	public void handleCategoryState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown category element" + elementName);
+		internalErrorUnknownTag("unknown element:" + elementName+" inside category tag.");
 	}
 	public void handleCategoryDefState(String elementName, Attributes attributes) {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
 			processInfo(attributes);
 		} else
-			internalErrorUnknownTag("unknown category definition element" + elementName);
+			internalErrorUnknownTag("unknown element:" + elementName+" inside category definition tag.");
 	}
 	public void handleDescriptionState(String elementName, Attributes attributes) {
-		internalErrorUnknownTag("unknown description element" + elementName);
+		internalErrorUnknownTag("unknown element:" + elementName+" inside description tag.");
 	}
 
 	/** 
