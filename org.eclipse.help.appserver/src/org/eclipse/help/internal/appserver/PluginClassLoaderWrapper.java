@@ -53,33 +53,35 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 			String id = (String) it.next();
 			try {
 				Bundle b = Platform.getBundle(id);
-				// declared classpath
-				String headers = (String) b.getHeaders().get(
-						Constants.BUNDLE_CLASSPATH);
-				ManifestElement[] paths = ManifestElement.parseHeader(
-						Constants.BUNDLE_CLASSPATH, headers);
-				if (paths != null) {
-					for (int i = 0; i < paths.length; i++) {
-						String path = paths[i].getValue();
-						URL url = b.getEntry(path);
-						if (url != null)
-							try {
-								urls.add(Platform.asLocalURL(url));
-							} catch (IOException ioe) {
-							}
+				if (b != null) {
+					// declared classpath
+					String headers = (String) b.getHeaders().get(
+							Constants.BUNDLE_CLASSPATH);
+					ManifestElement[] paths = ManifestElement.parseHeader(
+							Constants.BUNDLE_CLASSPATH, headers);
+					if (paths != null) {
+						for (int i = 0; i < paths.length; i++) {
+							String path = paths[i].getValue();
+							URL url = b.getEntry(path);
+							if (url != null)
+								try {
+									urls.add(Platform.asLocalURL(url));
+								} catch (IOException ioe) {
+								}
+						}
 					}
-				}
-				// dev classpath
-				String[] devpaths = DevClassPathHelper
-						.getDevClassPath(pluginId);
-				if(devpaths !=null){
-					for (int i = 0; i < devpaths.length; i++) {
-						URL url = b.getEntry(devpaths[i]);
-						if (url != null)
-							try {
-								urls.add(Platform.asLocalURL(url));
-							} catch (IOException ioe) {
-							}
+					// dev classpath
+					String[] devpaths = DevClassPathHelper
+							.getDevClassPath(pluginId);
+					if (devpaths != null) {
+						for (int i = 0; i < devpaths.length; i++) {
+							URL url = b.getEntry(devpaths[i]);
+							if (url != null)
+								try {
+									urls.add(Platform.asLocalURL(url));
+								} catch (IOException ioe) {
+								}
+						}
 					}
 				}
 			} catch (BundleException e) {
