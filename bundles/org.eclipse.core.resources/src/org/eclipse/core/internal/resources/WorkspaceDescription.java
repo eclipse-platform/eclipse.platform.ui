@@ -10,32 +10,47 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**
  * @see IWorkspaceDescription
  */
 public class WorkspaceDescription extends ModelObject implements IWorkspaceDescription {
-	protected boolean autoBuilding = Policy.defaultAutoBuild;
-	protected String[] buildOrder = null;
+	protected boolean autoBuilding;
+	protected String[] buildOrder;
 	// thread safety: (Concurrency004)
-	protected volatile long fileStateLongevity = Policy.defaultFileStateLongevity;
-	protected int maxBuildIterations = Policy.defaultMaxBuildIterations;
-	protected int maxFileStates = Policy.defaultMaxFileStates;
+	protected volatile long fileStateLongevity;
+	protected int maxBuildIterations;
+	protected int maxFileStates;
 	// thread safety: (Concurrency004)
-	protected volatile long maxFileStateSize = Policy.defaultMaxFileStateSize;
-	protected long maxNotifyDelay = Policy.defaultMaxNotifyDelay;
+	protected volatile long maxFileStateSize;
 	// thread safety: (Concurrency004)
-	private volatile long snapshotInterval = Policy.defaultSnapshotInterval;
+	private volatile long snapshotInterval;
 	protected Workspace workspace;
+	protected boolean snapshotsEnabled;
+	protected int operationsPerSnapshot;
+	protected long deltaExpiration;
 
 	public WorkspaceDescription(String name) {
 		super(name);
+		// initialize based on the values in the default preferences
+		IEclipsePreferences node = new DefaultScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		autoBuilding = node.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, PreferenceInitializer.PREF_AUTO_BUILDING_DEFAULT);
+		fileStateLongevity = node.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, PreferenceInitializer.PREF_FILE_STATE_LONGEVITY_DEFAULT);
+		maxBuildIterations = node.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, PreferenceInitializer.PREF_MAX_BUILD_ITERATIONS_DEFAULT);
+		maxFileStates = node.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES, PreferenceInitializer.PREF_MAX_FILE_STATES_DEFAULT);
+		maxFileStateSize = node.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, PreferenceInitializer.PREF_MAX_FILE_STATE_SIZE_DEFAULT);
+		snapshotInterval = node.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PreferenceInitializer.PREF_SNAPSHOT_INTERVAL_DEFAULT);
+		snapshotsEnabled = node.getBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED, PreferenceInitializer.PREF_SNAPSHOTS_ENABLED_DEFAULT);
+		operationsPerSnapshot = node.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT);
+		deltaExpiration = node.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION, PreferenceInitializer.PREF_DELTA_EXPIRATION_DEFAULT);
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getBuildOrder()
 	 */
 	public String[] getBuildOrder() {
 		return getBuildOrder(true);
@@ -48,47 +63,47 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	}
 
 	public long getDeltaExpiration() {
-		return Policy.defaultDeltaExpiration;
+		return deltaExpiration;
+	}
+
+	public void setDeltaExpiration(long value) {
+		deltaExpiration = value;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getFileStateLongevity()
 	 */
 	public long getFileStateLongevity() {
 		return fileStateLongevity;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getMaxBuildIterations()
 	 */
 	public int getMaxBuildIterations() {
 		return maxBuildIterations;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getMaxFileStates()
 	 */
 	public int getMaxFileStates() {
 		return maxFileStates;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getMaxFileStateSize()
 	 */
 	public long getMaxFileStateSize() {
 		return maxFileStateSize;
 	}
 
-	public long getMaxNotifyDelay() {
-		return maxNotifyDelay;
-	}
-
 	public int getOperationsPerSnapshot() {
-		return Policy.defaultOperationsPerSnapshot;
+		return operationsPerSnapshot;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#getSnapshotInterval()
 	 */
 	public long getSnapshotInterval() {
 		return snapshotInterval;
@@ -99,64 +114,68 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#isAutoBuilding()
 	 */
 	public boolean isAutoBuilding() {
 		return autoBuilding;
 	}
 
 	public boolean isSnapshotEnabled() {
-		return Policy.defaultSnapshots;
+		return snapshotsEnabled;
+	}
+
+	public void setSnapshotEnabled(boolean value) {
+		snapshotsEnabled = value;
+	}
+
+	public void setOperationsPerSnapshot(int value) {
+		operationsPerSnapshot = value;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
 	public void setAutoBuilding(boolean value) {
 		autoBuilding = value;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setBuildOrder(String[])
 	 */
 	public void setBuildOrder(String[] value) {
 		buildOrder = (value == null) ? null : (String[]) value.clone();
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setFileStateLongevity(long)
 	 */
 	public void setFileStateLongevity(long time) {
 		fileStateLongevity = time;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setMaxBuildIterations(int)
 	 */
 	public void setMaxBuildIterations(int number) {
 		maxBuildIterations = number;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setMaxFileStates(int)
 	 */
 	public void setMaxFileStates(int number) {
 		maxFileStates = number;
 	}
 
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setMaxFileStateSize(long)
 	 */
 	public void setMaxFileStateSize(long size) {
 		maxFileStateSize = size;
 	}
 
-	public void setMaxNotifyDelay(long maxNotifyDelay) {
-		this.maxNotifyDelay = maxNotifyDelay;
-	}
-
 	/**
-	 * @see IWorkspaceDescription
+	 * @see IWorkspaceDescription#setSnapshotInterval(long)
 	 */
 	public void setSnapshotInterval(long snapshotInterval) {
 		this.snapshotInterval = snapshotInterval;

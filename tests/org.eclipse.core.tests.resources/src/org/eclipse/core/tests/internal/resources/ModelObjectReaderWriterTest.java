@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -185,6 +184,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 
 		/* test read */
 		try {
+			Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 			FileInputStream input = null;
 			try {
 				input = new FileInputStream(location.toFile());
@@ -194,13 +194,13 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 			//on reading invalid values the reader should revert to default values
 			WorkspaceDescription desc2 = (WorkspaceDescription) reader.read(input);
 			//assertion "1.1" removed because workspace name can't be invalid
-			assertTrue("1.2", Policy.defaultAutoBuild == desc2.isAutoBuilding());
-			assertTrue("1.3", Policy.defaultDeltaExpiration == desc2.getDeltaExpiration());
-			assertTrue("1.4", Policy.defaultFileStateLongevity == desc2.getFileStateLongevity());
-			assertTrue("1.5", Policy.defaultMaxFileStates == desc2.getMaxFileStates());
-			assertTrue("1.6", Policy.defaultMaxFileStateSize == desc2.getMaxFileStateSize());
-			assertTrue("1.7", Policy.defaultOperationsPerSnapshot == desc2.getOperationsPerSnapshot());
-			assertTrue("1.8", Policy.defaultSnapshots == desc2.isSnapshotEnabled());
+			assertEquals("1.2", prefs.getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING), desc2.isAutoBuilding());
+			assertEquals("1.3", prefs.getDefaultLong(PreferenceInitializer.PREF_DELTA_EXPIRATION), desc2.getDeltaExpiration());
+			assertEquals("1.4", prefs.getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY), desc2.getFileStateLongevity());
+			assertEquals("1.5", prefs.getDefaultInt(ResourcesPlugin.PREF_MAX_FILE_STATES), desc2.getMaxFileStates());
+			assertEquals("1.6", prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE), desc2.getMaxFileStateSize());
+			assertEquals("1.7", prefs.getDefaultInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT), desc2.getOperationsPerSnapshot());
+			assertEquals("1.8", prefs.getDefaultBoolean(PreferenceInitializer.PREF_SNAPSHOTS_ENABLED), desc2.isSnapshotEnabled());
 		} finally {
 			/* remove trash */
 			Workspace.clear(location.toFile());

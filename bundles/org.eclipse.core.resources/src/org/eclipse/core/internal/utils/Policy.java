@@ -26,18 +26,6 @@ public class Policy {
 	public static int endOpWork = 1;
 	public static final int totalWork = 100;
 
-	// default workspace description values
-	public static final boolean defaultAutoBuild = true;
-	public static final boolean defaultSnapshots = true;
-	public static final int defaultOperationsPerSnapshot = 100;
-	public static final long defaultSnapshotInterval = 5 * 60 * 1000l;//5 minutes
-	public static final long defaultDeltaExpiration = 30 * 24 * 3600 * 1000l; // 30 days
-	public static final long defaultFileStateLongevity = 7 * 24 * 3600 * 1000l; // 7 days
-	public static final long defaultMaxFileStateSize = 1024 * 1024l; // 1 Mb
-	public static final int defaultMaxFileStates = 50;
-	public static final int defaultMaxBuildIterations = 10;
-	public static final long defaultMaxNotifyDelay = 10000;// 10 seconds
-
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;
 	public static boolean DEBUG_NEEDS_BUILD = false;

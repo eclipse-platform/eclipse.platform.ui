@@ -1590,7 +1590,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
 		}
 		description = new WorkspacePreferences();
-		description.setDefaults(Workspace.defaultWorkspaceDescription());
 
 		// if we have an old description file, read it (getting rid of it)
 		WorkspaceDescription oldDescription = getMetaArea().readOldWorkspace();
