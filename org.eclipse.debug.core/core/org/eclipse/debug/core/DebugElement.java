@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core;
+package org.eclipse.debug.core;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -26,7 +22,6 @@ import org.eclipse.debug.core.model.IStepFilters;
  * Implementation of common function for debug elements.
  * <p>
  * Clients may subclass this class.
- * TODO: in progress, make API
  * </p>
  * @since 3.1
  */
@@ -45,6 +40,9 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
     }
 
     /* (non-Javadoc)
+     * 
+     * Debug target implementation should override this method.
+     * 
      * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
      */
     public IDebugTarget getDebugTarget() {
