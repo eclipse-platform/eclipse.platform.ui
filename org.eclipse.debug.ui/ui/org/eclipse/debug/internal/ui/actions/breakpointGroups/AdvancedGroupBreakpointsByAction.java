@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 
 /**
  * Action that opens a dialog to select which breakpoint
@@ -34,7 +34,7 @@ public class AdvancedGroupBreakpointsByAction extends Action {
 	 */
 	public void run() {
 	    GroupBreakpointsByDialog dialog = new GroupBreakpointsByDialog(fView);
-		if (dialog.open() == Dialog.OK) {
+		if (dialog.open() == Window.OK) {
 			List selectedContainers = dialog.getSelectedContainers();
 			fView.setBreakpointContainerFactories(selectedContainers);
 		}
