@@ -43,6 +43,8 @@ public class ActionContributionItem extends ContributionItem {
      * Mode bit: Show text on tool items, even if an image is present.
      * If this mode bit is not set, text is only shown on tool items if there is 
      * no image present.
+     * 
+     * @since 3.0
      */
     public static int MODE_FORCE_TEXT = 1;
 
