@@ -1,3 +1,4 @@
 org.eclipse.help.ui/debug=true
 org.eclipse.help.ui/debug/ieadapter = false
 org.eclipse.help.ui/debug/ieadapter/inprocess = false
+org.eclipse.help.ui/debug/infopop = false

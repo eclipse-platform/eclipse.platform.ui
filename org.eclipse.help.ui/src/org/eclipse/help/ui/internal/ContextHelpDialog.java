@@ -4,17 +4,16 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.help.*;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.ui.internal.util.WorkbenchResources;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 /**
  * ContextHelpDialog
@@ -56,41 +55,41 @@ public class ContextHelpDialog {
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
 		shell = new Shell(display.getActiveShell(), SWT.NONE);
-		if (Logger.DEBUG)
-			Logger.logDebugMessage(
-				"ContextHelpDialog",
-				" Constructor: Shell is:" + shell.toString());
+		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+			System.out.println(
+				"ContextHelpDialog.ContextHelpDialog(): Shell is:"
+					+ shell.toString());
+		}
 		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
-		
+
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
-				if (Logger.DEBUG)
-					Logger.logDebugMessage(
-						"ContextHelpDialog",
-						"handleEvent: SWT.Deactivate called. ");
+				if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+					System.out.println(
+						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. ");
+				}
 				close();
 			};
 		});
-		
+
 		shell.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (Logger.DEBUG)
-						Logger.logDebugMessage(
-							"ContextHelpDialog",
-							"handleEvent: SWT.TRAVERSE_ESCAPE called. ");
+					if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+						System.out.println(
+							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. ");
+					}
 					e.doit = true;
 				}
 			}
 		});
 
-		
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
-				if (Logger.DEBUG)
-					Logger.logDebugMessage(
-						"ContextHelpDialog",
-						"controlMoved: called. ");
+				if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+					System.out.println(
+						"ContextHelpDialog: shell control adapter called.");
+				}
 				Rectangle clientArea = shell.getClientArea();
 				shell.redraw(
 					clientArea.x,
@@ -101,11 +100,11 @@ public class ContextHelpDialog {
 				shell.update();
 			}
 		});
-		if (Logger.DEBUG)
-			Logger.logDebugMessage(
-				"ContextHelpDialog",
-				"Constructor: Focus owner is: "
+		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+			System.out.println(
+				"ContextHelpDialog.ContextHelpDialog(): Focus owner is: "
 					+ Display.getCurrent().getFocusControl().toString());
+		}
 		linkManager.setHyperlinkUnderlineMode(
 			HyperlinkHandler.UNDERLINE_ALWAYS);
 		createContents(shell);
@@ -126,8 +125,9 @@ public class ContextHelpDialog {
 	}
 	public synchronized void close() {
 		try {
-			if (Logger.DEBUG)
-				Logger.logDebugMessage("ContextHelpDialog", "close: called. ");
+			if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+				System.out.println("ContextHelpDialog.close()");
+			}
 			if (shell != null) {
 				shell.close();
 				if (!shell.isDisposed())
@@ -163,15 +163,15 @@ public class ContextHelpDialog {
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (Logger.DEBUG)
-						Logger.logDebugMessage(
-							"ContextHelpDialog",
-							"handleEvent: SWT.TRAVERSE_ESCAPE called. ");
+					if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+						System.out.println(
+							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE.");
+					}
 					e.doit = true;
 				}
 			}
 		});
-		
+
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
@@ -179,10 +179,10 @@ public class ContextHelpDialog {
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
-		
+
 		infopopText = text.getText();
 		initAccessible(text);
-		
+
 		return text;
 	}
 	private Control createLink(Composite parent, IHelpResource topic) {
@@ -209,7 +209,7 @@ public class ContextHelpDialog {
 		// Create control
 		Composite composite = new Composite(parent, SWT.NONE);
 		initAccessible(composite);
-		
+
 		composite.setBackground(backgroundColour);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 2;
@@ -248,21 +248,20 @@ public class ContextHelpDialog {
 	 */
 	private void launchLinks(IHelpResource selectedTopic) {
 		close();
-		if (Logger.DEBUG)
-			Logger.logDebugMessage(
-				"ContextHelpDialog",
-				"launchLinks: closes shell");
+		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+			System.out.println("ContextHelpDialog.launchLinks(): closed shell");
+		}
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(context, selectedTopic);
 	}
 	public synchronized void open() {
 		try {
 			shell.open();
-			if (Logger.DEBUG)
-				Logger.logDebugMessage(
-					"ContextHelpDialog",
-					"open: Focus owner after open is: "
+			if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+				System.out.println(
+					"ContextHelpDialog.open(): Focus owner after open is: "
 						+ Display.getCurrent().getFocusControl().toString());
+			}
 		} catch (Throwable e) {
 		}
 	}
@@ -272,7 +271,8 @@ public class ContextHelpDialog {
 			imgRegistry.put(
 				IHelpUIConstants.IMAGE_KEY_F1TOPIC,
 				ImageDescriptor.createFromURL(
-					WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
+					WorkbenchResources.getImagePath(
+						IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
 		}
 		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);
 	}

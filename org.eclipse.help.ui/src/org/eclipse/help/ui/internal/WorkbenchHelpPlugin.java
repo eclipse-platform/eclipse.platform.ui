@@ -20,6 +20,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_IE_ADAPTER = false;
 	public static boolean DEBUG_IE_ADAPTER_IN_PROCESS = false;
+	public static boolean DEBUG_INFOPOP = false;
 
 	private static WorkbenchHelpPlugin plugin;
 	private HelpWorkingSetSynchronizer workingSetListener;
@@ -65,6 +66,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		if (DEBUG) {
 			DEBUG_IE_ADAPTER = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.ui/debug/ieadapter")); //$NON-NLS-1$
 			DEBUG_IE_ADAPTER_IN_PROCESS = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.ui/debug/ieadapter/inprocess")); //$NON-NLS-1$
+			DEBUG_INFOPOP = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.ui/debug/infopop")); //$NON-NLS-1$
 		}
 
 		HelpSystem.setDefaultErrorUtil(new ErrorUtil());
