@@ -144,7 +144,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
     
     public LogEntryCacheUpdateHandler(ISynchronizePageConfiguration configuration) {
-        super(Policy.bind("CVSChangeSetCollector.4"), Policy.bind("LogEntryCacheUpdateHandler.0")); //$NON-NLS-1$ //$NON-NLS-2$
+        super(Policy.bind("LogEntryCacheUpdateHandler.1"), Policy.bind("LogEntryCacheUpdateHandler.0")); //$NON-NLS-1$ //$NON-NLS-2$
         this.configuration = configuration;
         this.subscriber = getSubscriber(configuration);
         cacheReference = new SoftReference(new LogEntryCache());
@@ -369,7 +369,8 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
                 logEntriesCache = new LogEntryCache();
                 cacheReference = new SoftReference(logEntriesCache);
             }
-            monitor.beginTask(null, 100 * projectMapping.size());
+            monitor.beginTask(Policy.bind("CVSChangeSetCollector.4"), 100 * projectMapping.size()); //$NON-NLS-1$
+            monitor.setTaskName(Policy.bind("CVSChangeSetCollector.4")); //$NON-NLS-1$
             for (Iterator iter = projectMapping.values().iterator(); iter.hasNext();) {
                 SyncInfoSet set = (SyncInfoSet) iter.next();
                 fetchLogEntries(logEntriesCache, set, Policy.subMonitorFor(monitor, 90));
