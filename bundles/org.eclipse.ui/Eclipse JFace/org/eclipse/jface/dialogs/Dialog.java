@@ -460,6 +460,7 @@ protected Control createContents(Composite parent) {
  * <pre>
  * 	Composite composite = (Composite)super.createDialogArea(parent);
  * 	//add controls to composite as necessary
+ * 	return composite;
  * </pre>
  *
  * @param parent the parent composite to contain the dialog area
