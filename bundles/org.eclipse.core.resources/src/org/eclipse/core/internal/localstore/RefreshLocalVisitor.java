@@ -89,6 +89,8 @@ protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreEx
 }
 protected void resourceChanged(Resource target, long lastModified) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, true);
+	if (info == null)
+		return;
 	target.getLocalManager().updateLocalSync(info, lastModified, target.getType() == IResource.FILE);
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);

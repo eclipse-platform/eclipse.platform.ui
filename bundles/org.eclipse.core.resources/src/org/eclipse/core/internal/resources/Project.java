@@ -253,6 +253,11 @@ protected void copyMetaArea(IProject source, IProject destination, IProgressMoni
 	java.io.File newMetaArea = workspace.getMetaArea().getLocationFor(destination).toFile();
 	getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, monitor);
 }
+protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
+	java.io.File oldMetaArea = workspace.getMetaArea().getLocationFor(source).toFile();
+	java.io.File newMetaArea = workspace.getMetaArea().getLocationFor(destination).toFile();
+	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
+}
 /**
  * @see IProject#create
  */
@@ -1100,6 +1105,13 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 
 			// write out the project info to the meta area
 			getLocalManager().write(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+
+			// rename meta-area
+			renameMetaArea(this, destProject, null);
+			
+			// rename default location
+			if (sourceDesc.getLocation() == null && destDesc.getLocation() == null)
+				getLocation().toFile().renameTo(destProject.getLocation().toFile());
 
 			// fix up the builders for the project (they currently point to the source)
 			workspace.getBuildManager().fixBuildersFor(destProject);

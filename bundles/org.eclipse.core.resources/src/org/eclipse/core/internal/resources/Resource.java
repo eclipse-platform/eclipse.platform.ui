@@ -816,7 +816,6 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 			workspace.move(this, destination);
 			getMarkerManager().moved(this, dest, IResource.DEPTH_INFINITE);
 			monitor.worked(Policy.opWork * 20 / 100);
-			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
