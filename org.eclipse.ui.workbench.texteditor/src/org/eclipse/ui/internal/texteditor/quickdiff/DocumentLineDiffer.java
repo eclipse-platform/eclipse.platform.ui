@@ -499,6 +499,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			public IStatus run(IProgressMonitor monitor) {
 				
+				// 1:	wait for any previous job that was canceled to avoid job flooding
 				if (oldJob != null)
 					try {
 						oldJob.join();
@@ -507,6 +508,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					}
 				
 				
+				// 2:	get the reference document  
 				IQuickDiffReferenceProvider provider= fReferenceProvider;
 				IDocument reference;
 				try {
@@ -524,8 +526,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					}
 				}
 				
+				// 3: get the actual document
 				IDocument actual= fRightDocument;
 				
+				// 4: take an early exit if the documents are not valid
 				if (reference == null || actual == null) {
 					synchronized (DocumentLineDiffer.this) {
 						if (isCanceled(monitor))
@@ -539,6 +543,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					}
 				}
 				
+				// 5:	prepare for diffing: clear the stored events,
+				// 		then add the document listeners (won't dead lock as the listener
+				//		management methods are not synchronized in PartiallySynchronizedDocument
+				// TODO just rechecked: this is bad - we will never know what changes are
+				// in the diff and which are not. We *do* need unmodifieable copies!
 				synchronized (DocumentLineDiffer.this) {
 					if (isCanceled(monitor))
 						return Status.CANCEL_STATUS;
@@ -553,11 +562,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					actual.addDocumentListener(DocumentLineDiffer.this);
 				}
 				
+				// 6:	Do Da Diffing
 				DocLineComparator ref= new DocLineComparator(reference, null, false);
 				DocLineComparator act= new DocLineComparator(actual, null, false);
 				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				
-				// set line table
+				// 7:	Reset the model to the just gotten differences
+				// 		re-inject stored events to get up to date.
 				synchronized (DocumentLineDiffer.this) {
 					if (isCanceled(monitor))
 						return Status.CANCEL_STATUS;
@@ -568,6 +579,16 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					fDifferences= diffs;
 					
 					// reinject events accumulated in the meantime.
+					// TODO: this is dead-lock territory
+					// handleChange will access the documents, which could be partially synched,
+					// and could be waiting themselves in a documentChanged call
+					// 
+					// solutions:
+					// a) sync on the documents as well (reluctant to do this, and will
+					// only work if they really sync on themselves and not a different 
+					// lock
+					// b) modify our documentChanged methods to only synch when no fIsSynchronized
+					// is true, but storing events in fStoredEvents and checking state must be synched :-(
 					try {
 						for (ListIterator iter= fStoredEvents.listIterator(); iter.hasNext();) {
 							DocumentEvent event= (DocumentEvent) iter.next();
@@ -771,6 +792,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		
 		// compare
 		List diffs= RangeDifferencer.findRanges(reference, change);
+		if (diffs.size() == 0) {
+			diffs.add(new RangeDifference(RangeDifference.CHANGE, 0, 0, 0, 0));
+		}
 
 		
 		// shift the partial diffs to the absolute document positions
