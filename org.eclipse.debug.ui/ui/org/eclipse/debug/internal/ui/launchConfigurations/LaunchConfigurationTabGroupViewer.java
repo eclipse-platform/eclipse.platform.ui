@@ -495,6 +495,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		disposeExistingTabs();				
 	}
 	
+    protected void setFocusOnName() {
+        fNameWidget.setFocus();
+        
+    }
+    
 	private void setRedraw(boolean b) {
 		if (fRedraw != b) {
 			fRedraw = b;

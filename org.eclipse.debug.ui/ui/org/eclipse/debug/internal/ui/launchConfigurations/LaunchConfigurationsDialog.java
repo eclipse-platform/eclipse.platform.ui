@@ -1458,6 +1458,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		public void run() {
 			getNewAction().run();
+            getTabViewer().setFocusOnName();
 		}
 	}
 
