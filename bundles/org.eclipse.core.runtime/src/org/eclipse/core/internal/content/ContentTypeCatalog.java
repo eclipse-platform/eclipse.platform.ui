@@ -381,7 +381,7 @@ public class ContentTypeCatalog {
 
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
 		if (!root.isValid() || root.isAlias(this))
-			return false;
+			return true;
 		int result = visitor.visit(root);
 		switch (result) {
 			// stop traversing the tree
