@@ -12,10 +12,9 @@
 package org.eclipse.debug.internal.core.memory;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -104,9 +103,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0, exception.getMessage(), exception); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.log(exception);
 		}
 
 		/**
@@ -155,10 +152,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			return;
 		
 		if (mem == null){
-			Status status = new Status(IStatus.ERROR, 
-					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0, "Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}
 		
@@ -178,10 +172,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 		
 		if (mem == null){
-			Status status = new Status(IStatus.ERROR, 
-					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0, "Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}
 		
@@ -208,10 +199,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			return;
 		
 		if (mem == null){
-			Status status = new Status(IStatus.ERROR, 
-					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0, "Null argument passed into IMemoryBlockManager.removeMemoryBlock", null); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.removeMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}		
 		
@@ -240,10 +228,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			return;
 		
 		if(listener == null){
-			Status status = new Status(IStatus.ERROR, 
-					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				0, "Null argument passed into IMemoryBlockManager.addListener", null); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addListener", null); //$NON-NLS-1$
 			return;
 		}
 		
@@ -260,10 +245,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			return;
 		
 		if(listener == null){
-			Status status = new Status(IStatus.ERROR, 
-					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0, "Null argument passed into IMemoryBlockManager.removeListener", null); //$NON-NLS-1$
-			DebugPlugin.log(status);
+			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.removeListener", null); //$NON-NLS-1$
 			return;
 		}
 		
