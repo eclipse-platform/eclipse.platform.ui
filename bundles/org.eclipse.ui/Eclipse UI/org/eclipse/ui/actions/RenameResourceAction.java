@@ -286,15 +286,20 @@ private void queryNewResourceNameInline(final IResource resource) {
 	});
 	textEditor.addListener(SWT.Traverse, new Listener() {
 		public void handleEvent(Event event) {
+			
+			//Workaround for Bug 20214 due to extra
+			//traverse events
 			switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
 					//Do nothing in this case
 					disposeTextWidget();
-					event.doit = false;
+					event.doit = true;
+					event.detail = SWT.TRAVERSE_NONE;
 					break;
 				case SWT.TRAVERSE_RETURN:
 					saveChangesAndDispose(resource);
-					event.doit = false;
+					event.doit = true;
+					event.detail = SWT.TRAVERSE_NONE;
 					break;
 			}
 		}
