@@ -10,10 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RefreshSubscriberJob;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
@@ -47,7 +55,13 @@ class RefreshAction extends Action {
 				if (refreshAll || resources.length == 0) {
 					// If no resources are selected, refresh all the subscriber roots
 					resources = input.roots();
-				}						
+				}
+				if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
+					RefreshSubscriberJob job = new RefreshSubscriberJob(input.getSubscriber(), resources);
+					job.schedule();
+				} else {
+					runBlocking(input.getSubscriber(), resources);
+				}					
 			}
 		} catch(TeamException e) {
 			Utils.handle(e);
@@ -59,5 +73,20 @@ class RefreshAction extends Action {
 			return new IResource[0];
 		}
 		return (IResource[])TeamAction.getSelectedAdaptables(selection, IResource.class);					
-	}	
+	}
+	
+	private void runBlocking(final TeamSubscriber s, final IResource[] resources) {
+		actions.getSyncView().run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					monitor.beginTask(null, 100);
+					s.refresh(resources, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		});
+	}
 }

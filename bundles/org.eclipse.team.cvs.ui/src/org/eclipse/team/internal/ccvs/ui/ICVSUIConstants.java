@@ -12,6 +12,8 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 public interface ICVSUIConstants {
+	public static final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
+
 	// image path
 	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
@@ -130,6 +132,8 @@ public interface ICVSUIConstants {
 	public final int OPTION_NEVER = 1; //$NON-NLS-1$
 	public final int OPTION_PROMPT = 2; //$NON-NLS-1$
 	public final int OPTION_AUTOMATIC = 3;
-
+	
+	// work in progress preferences
+	public final String BACKGROUND_REPOVIEW = PREFIX + "background_repoview";
 }
 

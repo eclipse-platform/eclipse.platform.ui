@@ -694,7 +694,16 @@
             id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
       </page>
    </extension>
-   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Work In Progress"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.WorkInProgressPreferencePage"
+            id="org.eclipse.team.cvs.ui.WorkInProgress">
+      </page>
+   </extension>
+      
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">

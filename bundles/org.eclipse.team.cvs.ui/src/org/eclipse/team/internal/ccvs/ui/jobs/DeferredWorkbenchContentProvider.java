@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.PendingUpdateAdapter;
@@ -33,8 +35,6 @@ import org.eclipse.ui.progress.UIJob;
  * @see IDeferredWorkbenchAdapter
  */
 public class DeferredWorkbenchContentProvider extends WorkbenchContentProvider {
-
-	final static boolean ENABLE_BACKGROUND_FETCHING = false;
 
 	/** 
 	 * The wrapper is required to ensure that we cancel fetching children jobs for
@@ -198,7 +198,8 @@ public class DeferredWorkbenchContentProvider extends WorkbenchContentProvider {
 	 */
 	public Object[] getChildren(final Object parent) {
 		IWorkbenchAdapter adapter = getAdapter(parent);
-		if (adapter instanceof IDeferredWorkbenchAdapter && ENABLE_BACKGROUND_FETCHING) {
+		if (adapter instanceof IDeferredWorkbenchAdapter && 
+		    CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_REPOVIEW)) {
 			IDeferredWorkbenchAdapter element = (IDeferredWorkbenchAdapter) adapter;
 			return startFetchingDeferredChildren(parent, element);
 		}

@@ -30,7 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.subscribers.RefreshSubscribersJob;
+import org.eclipse.team.core.subscribers.RefreshAllRegisteredSubscribersJob;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -40,7 +40,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * TeamUIPlugin is the plugin for generic, non-provider specific,
  * team UI functionality in the workbench.
  */
-public class TeamUIPlugin extends AbstractUIPlugin {
+public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeListener {
 
 	private static TeamUIPlugin instance;
 	
@@ -60,12 +60,12 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private static Hashtable imageDescriptors = new Hashtable(20);
 	private static List disposeOnShutdownImages= new ArrayList();
 	
-	private RefreshSubscribersJob refreshJob;
+	private RefreshAllRegisteredSubscribersJob refreshJob;
 
 	/**
 	 * Returns the job that refreshes the active subscribers in the background.
 	 */
-	public RefreshSubscribersJob getRefreshJob() {
+	public RefreshAllRegisteredSubscribersJob getRefreshJob() {
 		return refreshJob;
 	}
 
@@ -179,14 +179,15 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		initializePreferences();
 		
+		getPreferenceStore().addPropertyChangeListener(this);
+		
 		// startup auto-refresh job if necessary
-//		refreshJob = new RefreshSubscribersJob();
-//		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
-//			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY));
-//			refreshJob.setRescheduled(true);
-//			// start once the platform has started and stabilized
-//			refreshJob.schedule(20000 /* 20 seconds */);
-//		}
+		refreshJob = new RefreshAllRegisteredSubscribersJob();
+		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY));
+		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+			// start once the platform has started and stabilized
+			refreshJob.schedule(20000 /* 20 seconds */);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -346,6 +347,25 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 					img.dispose();
 			}
 			imageDescriptors= null;
+		}
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {		
+		// update the background sync delay
+		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_DELAY)) {
+			RefreshAllRegisteredSubscribersJob refreshJob = getRefreshJob();
+			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
+		}
+		
+		// enable / disable the background sync job
+		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+			RefreshAllRegisteredSubscribersJob refreshJob = getRefreshJob();
+			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
+			if(((Boolean)event.getNewValue()).booleanValue()) {
+				refreshJob.schedule();				
+			} else {
+				refreshJob.cancel();
+			}
 		}
 	}
 }

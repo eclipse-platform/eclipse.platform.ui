@@ -81,9 +81,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 			}
 		}
 	
-	/**
-	 * Create the console page.
-	 */
 	public SyncViewerPreferencePage() {
 		super(GRID);
 		setTitle("Synchronize view preferences");
@@ -91,16 +88,16 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
-	/**
-	 * @see PreferencePage#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		//WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 	}
 	
-	/**
-	 * Create all field editors for this page
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
 		
@@ -129,6 +126,14 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		}
 		super.propertyChange(event);
 	}
+			
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		TeamUIPlugin.getPlugin().savePluginPreferences();
+		return super.performOk();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#checkState()
@@ -142,5 +147,5 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		boolean enabled = bkgScheduledRefresh.getBooleanValue();
 		scheduledDelay.setEnabled(enabled, getFieldEditorParent());
 		scheduledDelay.refreshValidState();
-	}
+	}	
 }

@@ -555,6 +555,10 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		// Get the plugin preferences for CVS Core
 		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
 		
+		// work in progress START
+		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, false);
+		// work in progress END
+		
 		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
