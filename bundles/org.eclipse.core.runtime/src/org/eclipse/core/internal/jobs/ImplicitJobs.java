@@ -11,6 +11,7 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -102,7 +103,7 @@ class ImplicitJobs {
 					queued = true;
 					schedule();
 					while (!running) {
-						if (monitor.isCanceled()) {
+						if (isCanceled(monitor)) {
 							//cancel the running job
 							running = !cancel();
 							throw new OperationCanceledException();
@@ -122,6 +123,20 @@ class ImplicitJobs {
 			manager.getLockManager().aboutToRelease();
 			running = true;
 			setThread(Thread.currentThread());
+		}
+		/**
+		 * Returns true if the monitor is canceled, and false otherwise.
+		 * Protects the caller from exception in the monitor implementation.
+		 */
+		private boolean isCanceled(IProgressMonitor monitor) {
+			try {
+				return monitor.isCanceled();
+			} catch (RuntimeException e) {
+				String msg = Policy.bind("jobs.internalError"); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e);
+				InternalPlatform.getDefault().log(status);
+			}
+			return false;
 		}
 		/**
 		 * Pops a rule. Returns true if it was the last rule for this thread
@@ -147,7 +162,14 @@ class ImplicitJobs {
 			if (baseRule != null && rule != null && !baseRule.contains(rule))
 				illegalPush(rule, baseRule);
 		}
-		public void recycle() {
+		/**
+		 * Reset all of this job's fields so it can be reused.  Returns false if
+		 * reuse is not possible
+		 */
+		public boolean recycle() {
+			//don't recycle if still running for any reason
+			if (getState() != Job.NONE)
+				return false;
 			//clear and reset all fields
 			running = queued = acquireRule = false;
 			setRule(null);
@@ -157,6 +179,7 @@ class ImplicitJobs {
 			else
 				ruleStack[0] = ruleStack[1] = null;
 			top = -1;
+			return true;
 		}
 		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
 			manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
@@ -176,9 +199,8 @@ class ImplicitJobs {
 				//tell lock manager that this thread gave up waiting
 				manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
 			}
-			if (!(monitor instanceof IProgressMonitorWithBlocking))
-				return;
-			((IProgressMonitorWithBlocking) monitor).clearBlocked();
+			if (monitor instanceof IProgressMonitorWithBlocking)
+				 ((IProgressMonitorWithBlocking) monitor).clearBlocked();
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			synchronized (this) {
@@ -286,9 +308,7 @@ class ImplicitJobs {
 	 * Indicates that a thread job is no longer in use and can be reused. 
 	 */
 	private void recycle(ThreadJob job) {
-		if (jobCache == null) {
-			job.recycle();
+		if (jobCache == null && job.recycle())
 			jobCache = job;
-		}
 	}
 }
