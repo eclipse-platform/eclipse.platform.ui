@@ -23,8 +23,9 @@ public class StatusErrorHandler extends ResponseHandler {
 	private IStatusListener statusListener;
 	private List errors;
 
-	public StatusErrorHandler(IStatusListener statusListener) {
+	public StatusErrorHandler(IStatusListener statusListener, List errors) {
 		this.statusListener = statusListener;
+		this.errors = errors;
 	}
 	public String getName() {
 		return NAME;
@@ -36,6 +37,11 @@ public class StatusErrorHandler extends ResponseHandler {
 		IProgressMonitor monitor)
 			throws CVSException {
 		String line = context.readLine();
+		if (line.startsWith("cvs server: conflict:")) {
+			// We get this because we made up an entry line to send to the server
+			// Just ignore it
+			return;
+		}
 		if (line.startsWith("cvs server: Examining")) {
 			isFolder = true;
 			return;

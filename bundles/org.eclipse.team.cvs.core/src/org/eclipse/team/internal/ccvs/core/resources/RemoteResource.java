@@ -106,21 +106,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public void unmanage() throws CVSException {
 		throw new CVSException(Policy.bind("RemoteManagedResource.invalidOperation"));
 	}
-
-	/*
-	 * @see IManagedResource#accept(IManagedVisitor)
-	 */
-	public void accept(IManagedVisitor visitor) throws CVSException {
-		// We need to do nothing here
-	}
-
-	/*
-	 * @see Comparable#compareTo(Object)
-	 */
-	public int compareTo(Object arg0) {
-		return 0;
-	}
-	
 	
 	protected PrintStream getPrintStream() {
 		return CVSProviderPlugin.getProvider().getPrintStream();
@@ -150,12 +135,5 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see IManagedResource#clearManaged()
 	 */
 	public void clearManaged() throws CVSException {
-	}
-
-	/*
-	 * @see IManagedResource#getRelativePath(IManagedFolder)
-	 */
-	public String getRelativePath(IManagedFolder ancestor) throws CVSException {
-		return null;
 	}
 }

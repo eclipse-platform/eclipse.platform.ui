@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.resources.api.CVSFileNotFoundExceptio
 import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
 
@@ -50,6 +51,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 	public RemoteFile(RemoteFolder parent, String name, String tag) {
 		super(name, tag);
 		this.parent = parent;
+	}
+
+ 	/**
+	 * @see IManagedResource#accept(IManagedVisitor)
+	 */
+	public void accept(IManagedVisitor visitor) throws CVSException {
+		visitor.visitFile(this);
 	}
 
 	/**
@@ -118,15 +126,31 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 	 * @see IManagedFile#getFileInfo()
 	 */
 	public FileProperties getFileInfo() throws CVSException {
+		if (info == null) {
+			FileProperties properties =  new FileProperties();
+			properties.setName(getName());
+			properties.setTimeStamp("dummy");
+			properties.setKeywordMode("-kb");
+			properties.setVersion("0");
+			properties.setPermissions("u=rw,g=rw,o=rw");
+			if ((parent.tag != null) && !(parent.tag.equals("HEAD")))
+				properties.setTag("T" + parent.tag);
+			return properties;
+		}
 		return info;
 	}
 
+	/*
+	 * @see IManagedResource#getParent()
+	 */
+	public IManagedFolder getParent() {
+		return parent;
+ 	}
+ 	
 	/**
 	 * @see IManagedResource#getRelativePath(IManagedFolder)
 	 */
 	public String getRelativePath(IManagedFolder ancestor) throws CVSException {
-		if (ancestor == this)
-			return "";
 		String result = parent.getRelativePath(ancestor);
 		if (result.length() == 0)
 			return getName();
@@ -163,7 +187,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManag
 		info = fileInfo;
 	}
 
-	protected void setRevision(String revision) {
+	public void setRevision(String revision) {
 		tag = revision;
 	}
 		

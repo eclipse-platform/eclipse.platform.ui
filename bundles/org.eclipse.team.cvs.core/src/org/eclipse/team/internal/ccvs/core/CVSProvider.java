@@ -69,13 +69,13 @@ public class CVSProvider implements ICVSProvider {
 		repository.append(":");
 		String user = configuration.getProperty("user");
 		if (user == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noUser"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noUser"), null));
 		else 
 			repository.append(user);
 		repository.append("@");
 		String host = configuration.getProperty("host");
 		if (host == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noHost"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noHost"), null));
 		else 
 			repository.append(host);
 		String port = configuration.getProperty("port");
@@ -86,7 +86,7 @@ public class CVSProvider implements ICVSProvider {
 		repository.append(":");
 		String root = configuration.getProperty("root");
 		if (root == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noRoot"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noRoot"), null));
 		else 
 			repository.append(root);
 		
@@ -334,8 +334,28 @@ public class CVSProvider implements ICVSProvider {
 		throws TeamException {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
-		
 		try {
+			importProject(location, project, configuration, monitor);
+			checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
+		} catch (TeamException e) {
+			// The checkout may have triggered password caching
+			// Therefore, if this is a newly created location, we want to clear its cache
+			if (!isCached(location))
+				location.dispose();
+			throw e;
+		}
+		// We succeeded so we should cache the password and the location
+		location.updateCache();
+		addToCache(location);
+	}
+		
+	public void importProject(
+		ICVSRepositoryLocation location,
+		IProject project,
+		Properties configuration,
+		IProgressMonitor monitor)
+		throws TeamException {
+			
 			// Get the location of the workspace root
 			IManagedFolder root = Client.getManagedFolder(project.getLocation().toFile());
 		
@@ -345,7 +365,7 @@ public class CVSProvider implements ICVSProvider {
 			// Get the message
 			String message = configuration.getProperty("message");
 			if (message == null)
-				message = Policy.bind("CVSTeamProvider.initialImport");
+				message = Policy.bind("CVSProvider.initialImport");
 				
 			// Get the vendor
 			String vendor = configuration.getProperty("vendor");
@@ -356,6 +376,11 @@ public class CVSProvider implements ICVSProvider {
 			String tag = configuration.getProperty("tag");
 			if (tag == null)
 				tag = "start";
+				
+			// Get the module name
+			String module = configuration.getProperty("module");
+			if (module == null)
+				module = project.getName();
 				
 			// Build the local options
 			List localOptions = new ArrayList();
@@ -373,27 +398,14 @@ public class CVSProvider implements ICVSProvider {
 					Client.IMPORT,
 					new String[] {},
 					(String[])localOptions.toArray(new String[localOptions.size()]),
-					new String[]{configuration.getProperty("module"), vendor, tag},
+					new String[]{module, vendor, tag},
 					root,
 					monitor,
 					getPrintStream(),
-					location,
+					(CVSRepositoryLocation)location,
 					null);
 			
 			// NOTE: we should check to see the results of the import
-			
-			// perform the checkout
-			checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
-		} catch (TeamException e) {
-			// The checkout may have triggered password caching
-			// Therefore, if this is a newly created location, we want to clear its cache
-			if (!isCached(location))
-				location.dispose();
-			throw e;
-		}
-		// We succeeded so we should cache the password and the location
-		location.updateCache();
-		addToCache(location);
 	}
 
 	public static void initialize() {

@@ -59,6 +59,10 @@ public class UpdateErrorHandler extends ResponseHandler {
 				IPath path = new Path(line.substring(27, line.indexOf('\'', 27)));
 				updateMessageListener.directoryInformation(path, true);
 			}
+		} else if (line.startsWith("cvs [server aborted]: no such tag")) {
+			// This is reported from CVS when a tag is used on the update there are no files in the directory
+			// To get the folders, the update request should be re-issued for HEAD
+			errors.add(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
 		} else if (!line.startsWith("cvs server: cannot open directory")
 				&& !line.startsWith("cvs server: nothing known about")) {
 			errors.add(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
