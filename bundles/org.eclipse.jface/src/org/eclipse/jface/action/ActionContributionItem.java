@@ -201,7 +201,15 @@ public class ActionContributionItem extends ContributionItem {
                     // Remove the image and dispose it.
                     final Object value = map.remove(reference);
                     if (value instanceof Image) {
-                        ((Image) value).dispose();
+                        Display.getCurrent().syncExec(new Runnable() {
+
+                            public void run() {
+                                final Image image = (Image) value;
+                                if (!image.isDisposed()) {
+                                    image.dispose();
+                                }
+                            }
+                        });
                     }
 
                     // Clear the reference.
