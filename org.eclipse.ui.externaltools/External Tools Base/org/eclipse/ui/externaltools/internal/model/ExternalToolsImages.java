@@ -73,28 +73,19 @@ public class ExternalToolsImages {
 		// Ant Editor images
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY, OBJECT + "property_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TASK, OBJECT + "task_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TARGET, OBJECT + "ant_tsk_arrow.gif"); //$NON-NLS-1$
 		// Ant View Actions
 		declareRegistryImage(IExternalToolsUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_REMOVE_ALL, LOCALTOOL + "removeAll_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ADD, LOCALTOOL + "add_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_RUN, LOCALTOOL + "run_tool.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_SEARCH, LOCALTOOL + "search.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_UP, LOCALTOOL + "moveUp.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_MOVE_DOWN, LOCALTOOL + "moveDown.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ACTIVATE, LOCALTOOL + "activate.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_DEACTIVATE, LOCALTOOL + "deactivate.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_GO_TO_FILE, LOCALTOOL + "gotoobj_tsk.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_TOGGLE, LOCALTOOL + "toggle.gif"); //$NON-NLS-1$
 		// Ant View Labels
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, OBJECT + "ant_project_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "targetpublic_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE, OBJECT + "targetprivate_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "defaulttarget_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, OBJECT + "elements.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT, OBJECT + "element.gif"); //$NON-NLS-1$
 		// Wizards
 		declareRegistryImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS, WIZBAN + "ext_tools_wiz.gif"); //$NON-NLS-1$
 		
@@ -103,7 +94,6 @@ public class ExternalToolsImages {
 		
 		// Objects
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolConstants.IMG_TAB_OPTIONS, OBJECT + "options_tab.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolConstants.IMG_PROPERTY, OBJECT + "prop_ps.gif"); //$NON-NLS-1$
 		//ANT object
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$

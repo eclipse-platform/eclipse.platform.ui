@@ -25,32 +25,20 @@ public interface IExternalToolsUIConstants {
 	 * Icon for task proposal.
 	 */
 	public static final String IMAGE_ID_TASK = IExternalToolConstants.PLUGIN_ID + ".html_tab_obj"; //$NON-NLS-1$
-	/**
-	 * Icon for target in the outline view.
-	 */
-	public static final String IMAGE_ID_TARGET = IExternalToolConstants.PLUGIN_ID + ".ant_tsk_arrow"; //$NON-NLS-1$
 	// Action images
 	public static final String IMG_REMOVE= IExternalToolConstants.PLUGIN_ID + ".remove"; //$NON-NLS-1$
-	public static final String IMG_MOVE_UP = IExternalToolConstants.PLUGIN_ID + ".moveUp"; //$NON-NLS-1$
-	public static final String IMG_MOVE_DOWN = IExternalToolConstants.PLUGIN_ID + ".moveDown"; //$NON-NLS-1$
-	public static final String IMG_ACTIVATE = IExternalToolConstants.PLUGIN_ID + ".activate"; //$NON-NLS-1$
-	public static final String IMG_DEACTIVATE = IExternalToolConstants.PLUGIN_ID + ".deactivate"; //$NON-NLS-1$
 	public static final String IMG_REMOVE_ALL= IExternalToolConstants.PLUGIN_ID + ".removeAll"; //$NON-NLS-1$
 	public static final String IMG_ADD= IExternalToolConstants.PLUGIN_ID + ".add"; //$NON-NLS-1$
 	public static final String IMG_RUN= IExternalToolConstants.PLUGIN_ID + ".run"; //$NON-NLS-1$
 	public static final String IMG_SEARCH= IExternalToolConstants.PLUGIN_ID + ".search"; //$NON-NLS-1$
-	public static final String IMG_GO_TO_FILE= IExternalToolConstants.PLUGIN_ID + ".goToFile"; //$NON-NLS-1$
 	public static final String IMG_TOGGLE= IExternalToolConstants.PLUGIN_ID + ".toggle"; //$NON-NLS-1$
 	
 	// Label images
 	public static final String IMG_ANT_PROJECT= IExternalToolConstants.PLUGIN_ID + ".antProject"; //$NON-NLS-1$
-	public static final String IMG_ANT_PROJECT_ERROR = IExternalToolConstants.PLUGIN_ID + ".antProjectError"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET_PRIVATE = IExternalToolConstants.PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
 	public static final String IMG_ANT_DEFAULT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
 	public static final String IMG_ANT_TARGET_ERROR = IExternalToolConstants.PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
-	public static final String IMG_ANT_TARGET_ELEMENTS= IExternalToolConstants.PLUGIN_ID + ".antTargetElements"; //$NON-NLS-1$
-	public static final String IMG_ANT_TARGET_ELEMENT= IExternalToolConstants.PLUGIN_ID + ".antTargetElement"; //$NON-NLS-1$
 	
 	// Overlays
 	public static final String IMG_OVR_DEFAULT = IExternalToolConstants.PLUGIN_ID + ".ovrDefault";  //$NON-NLS-1$

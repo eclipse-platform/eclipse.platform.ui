@@ -210,11 +210,6 @@ public interface IExternalToolConstants {
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
 
 	/**
-	 * Options tab image.
-	 */
-	public static final String IMG_TAB_OPTIONS = PLUGIN_ID + ".IMG_TAB_OPTIONS"; //$NON-NLS-1$
-
-	/**
 	 * Property image
 	 */
 	public static final String IMG_PROPERTY = PLUGIN_ID + ".IMG_PROPERTY"; //$NON-NLS-1$
