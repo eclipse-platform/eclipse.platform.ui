@@ -538,6 +538,17 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.addTask">
       </command>
+      <command
+            name="%command.correctionAssistProposals.name"
+            description="%command.correctionAssistProposals.description"
+            category="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.commands.correctionAssistProposals">
+      </command>
+      <keyBinding
+            string="M1+1"
+            command="org.eclipse.ui.commands.correctionAssistProposals"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.navigate.openResource"
             keySequence="Ctrl+Shift+R"
