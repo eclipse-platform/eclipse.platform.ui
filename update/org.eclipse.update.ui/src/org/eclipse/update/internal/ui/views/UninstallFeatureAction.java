@@ -82,8 +82,13 @@ public class UninstallFeatureAction extends Action {
 		
 		if (adapter.isConfigured())
 			return false;
-			
+		
 		try {
+			// check for pending changes (e.g. if the feature has just been disabled)
+			IFeatureOperation pendingOperation = OperationsManager.findPendingOperation(adapter.getFeature(null));
+			if (pendingOperation != null)
+				return false;
+
 			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null) //$NON-NLS-1$
 				return false;
 		} catch (CoreException e) {
