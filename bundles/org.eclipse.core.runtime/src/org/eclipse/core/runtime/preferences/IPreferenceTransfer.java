@@ -31,10 +31,10 @@ import java.util.Map;
 public interface IPreferenceTransfer {
 
 	/**
-	 * Return an array of scopes that this preference transfer is applicable for.
+	 * Return an array of scopes that this preference transfer is applicable for. The list
+	 * of scopes must not be <code>null</code>.
 	 * <p>
 	 * For example: 
-	 * <code>new String[] {"instance", "configuration"};</code> or
 	 * <code>new String[] {InstanceScope.SCOPE, ConfigurationScope.SCOPE};</code>
 	 * </p>
 	 * 
@@ -45,6 +45,11 @@ public interface IPreferenceTransfer {
 	/**
 	 * Return a mapping which defines the nodes and keys that this transfer
 	 * applies to. 
+	 * <p>
+	 * If the map is <code>null</code> then this transfer is applicable for all
+	 * nodes within the defined scopes. If it is non-<code>null</code> then the
+	 * mapping applies to each scope.
+	 * </p>
 	 * <p>
 	 * The keys in the table are Strings and describe the node path. The values are 
 	 * an optional String array describing the list of applicable keys in that node. 

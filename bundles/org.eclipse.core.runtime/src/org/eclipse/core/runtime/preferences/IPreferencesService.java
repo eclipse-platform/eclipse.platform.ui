@@ -552,6 +552,7 @@ public interface IPreferencesService {
 	 * stream. Apply the given list of preference transfers as filters, only exporting
 	 * preference node and keys which are applicable to at least one transfer in the list.
 	 * <p>
+	 * The given node and output stream must not be <code>null</code>.
 	 * If the list of transfers is <code>null</code> or empty then do nothing.
 	 * </p>
 	 * <p>
@@ -562,13 +563,19 @@ public interface IPreferencesService {
 	 * final 3.1 release.
 	 * </p>
 	 * 
-	 * @param tree the tree to export
+	 * @param node the tree to export
 	 * @param transfers the list of transfers to export
-	 * @param stream the stream to export to
+	 * @param output the stream to export to
 	 * @throws CoreException
+	 * @see #exportPreferences(IEclipsePreferences, OutputStream, String[])
+	 * @see #importPreferences(InputStream)
+	 * @see #readPreferences(InputStream)
+	 * @see #applyPreferences(IEclipsePreferences, IPreferenceTransfer[])
+	 * @see #applyPreferences(IExportedPreferences)
+	 * @see IPreferenceTransfer
 	 * @since 3.1
 	 */
-	public void exportPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers, OutputStream stream) throws CoreException;
+	public void exportPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers, OutputStream output) throws CoreException;
 
 	/**
 	 * Return a list of transfers which match the given tree. If the specified list of transfers is
@@ -578,13 +585,14 @@ public interface IPreferencesService {
 	 * final 3.1 release.
 	 * </p>
 	 * 
-	 * @param tree the tree to match against
+	 * @param node the tree to match against
 	 * @param transfers the list of transfers to match against
 	 * @return the array of matching transfers
 	 * @throws CoreException
+	 * @see IPreferenceTransfer
 	 * @since 3.1
 	 */
-	public IPreferenceTransfer[] matches(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
+	public IPreferenceTransfer[] matches(IEclipsePreferences node, IPreferenceTransfer[] transfers) throws CoreException;
 
 	/**
 	 * Apply the preference tree rooted at the given node, to the system's preference tree.
@@ -598,10 +606,13 @@ public interface IPreferencesService {
 	 * final 3.1 release.
 	 * </p>
 	 * 
-	 * @param tree the tree to consider applying
+	 * @param node the tree to consider applying
 	 * @param transfers the filters to use
 	 * @throws CoreException
+	 * @see #applyPreferences(IExportedPreferences)
+	 * @see #readPreferences(InputStream)
+	 * @see IPreferenceTransfer
 	 * @since 3.1
 	 */
-	public void applyPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
+	public void applyPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers) throws CoreException;
 }

@@ -761,7 +761,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private IEclipsePreferences trimTree(IEclipsePreferences tree, IPreferenceTransfer transfer) throws BackingStoreException {
 		IEclipsePreferences result = (IEclipsePreferences) ExportedRootPreferences.newRoot().node(tree.absolutePath());
 		String[] scopes = transfer.getScopes();
+		if (scopes == null)
+			throw new IllegalArgumentException();
 		Map mapping = transfer.getMapping();
+		// todo handle mapping==null case
 		String treePath = tree.absolutePath();
 		// see if this node is applicable by going over all our scopes
 		for (int i = 0; i < scopes.length; i++) {
@@ -852,7 +855,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 */
 	private boolean internalMatches(IEclipsePreferences tree, IPreferenceTransfer transfer) throws BackingStoreException {
 		String[] scopes = transfer.getScopes();
+		if (scopes == null)
+			throw new IllegalArgumentException();
 		Map mapping = transfer.getMapping();
+		// TODO handle mapping=null case
 		String treePath = tree.absolutePath();
 		// see if this node is applicable by going over all our scopes
 		for (int i = 0; i < scopes.length; i++) {
