@@ -143,7 +143,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	}
 	
 	/**
-	 * @see IFindReplaceTarget#canPerformFind
+	 * @see IFindReplaceTarget#canPerformFind()
 	 */
 	protected boolean canPerformFind() {
 		return (getTextWidget() != null && getVisibleDocument() != null && getVisibleDocument().getLength() > 0);
@@ -172,8 +172,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		fFont.dispose();
 	}
 	
-	/*
-	 * @see ITextViewer#isEditable
+	/**
+	 * @see ITextViewer#isEditable()
 	 */
 	public boolean isEditable() {
 		StyledText widget= getTextWidget();
@@ -186,7 +186,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	}
 	
 	/**
-	 * @see VerifyListener#verifyText
+	 * @see VerifyListener#verifyText(VerifyEvent)
 	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 		ConsoleDocument doc= (ConsoleDocument) getDocument();
