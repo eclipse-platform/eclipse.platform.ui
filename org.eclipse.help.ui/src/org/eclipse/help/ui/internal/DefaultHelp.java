@@ -269,9 +269,9 @@ public class DefaultHelp implements IHelp {
 
 	private String getBaseURL() {
 		return "http://"
-			+ AppServer.getHost()
+			+ org.eclipse.tomcat.AppServer.getHost()
 			+ ":"
-			+ AppServer.getPort()
+			+ org.eclipse.tomcat.AppServer.getPort()
 			+ "/help/index.jsp";
 	}
 
