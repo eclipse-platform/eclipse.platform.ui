@@ -94,6 +94,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private ProjectionSummary fProjectionSummary;
 	/** Indication that an annotation world change has not yet been processed. */
 	private boolean fPendingAnnotationWorldChange= false;
+	/** Indication whether projection changes in the visible document should be considered. */
+	private boolean fHandleProjectionChanges= true;
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -188,7 +190,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected boolean updateSlaveDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
 		if (slaveDocument instanceof ProjectionDocument) {
 			ProjectionDocument document= (ProjectionDocument) slaveDocument;
-			document.replaceMasterDocumentRanges(modelRangeOffset, modelRangeLength);
+			try {
+				fHandleProjectionChanges= false;
+				document.replaceMasterDocumentRanges(modelRangeOffset, modelRangeLength);
+			} finally {
+				fHandleProjectionChanges= true;
+			}
 			return true;
 		}
 		return false;
@@ -220,6 +227,36 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void enableProjection() {
 		if (!isProjectionMode()) 
 			addProjectionAnnotationModel(getVisualAnnotationModel());
+	}
+	
+	/**
+	 * Remembers whether to listen to projection changes of the visible
+	 * document.
+	 * 
+	 * @see ProjectionDocument#addMasterDocumentRange(int, int)
+	 */
+	private void addMasterDocumentRange(ProjectionDocument projection, int offset, int length) throws BadLocationException {
+		try {
+			fHandleProjectionChanges= false;
+			projection.addMasterDocumentRange(offset, length);
+		} finally {
+			fHandleProjectionChanges= true;
+		}
+	}
+	
+	/**
+	 * Remembers whether to listen to projection changes of the visible
+	 * document.
+	 * 
+	 * @see ProjectionDocument#removeMasterDocumentRange(int, int)
+	 */
+	private void removeMasterDocumentRange(ProjectionDocument projection, int offset, int length) throws BadLocationException {
+		try {
+			fHandleProjectionChanges= false;
+			projection.removeMasterDocumentRange(offset, length);
+		} finally {
+			fHandleProjectionChanges= true;
+		}
 	}
 
 	/*
@@ -297,13 +334,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			IDocument slave= createSlaveDocument(getDocument());
 			if (slave instanceof ProjectionDocument) {
 				projection= (ProjectionDocument) slave;
-				projection.addMasterDocumentRange(0, master.getLength());
+				addMasterDocumentRange(projection, 0, master.getLength());
 				replaceVisibleDocument(projection);
 			}
 		}
 		
 		if (projection != null) {
-			projection.removeMasterDocumentRange(offset, length);
+			removeMasterDocumentRange(projection, offset, length);
 			if (fireRedraw) {
 				// repaint line above
 				IDocument document= getDocument();
@@ -339,13 +376,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					textWidget.setRedraw(false);
 				
 				// expand
-				projection.addMasterDocumentRange(expanded.getOffset(), expanded.getLength());
+				addMasterDocumentRange(projection, expanded.getOffset(), expanded.getLength());
 				
 				// collapse contained regions
 				if (collapsed != null) {
 					for (int i= 0; i < collapsed.length; i++) {
 						IRegion p= computeCollapsedRegion(collapsed[i]);
-						projection.removeMasterDocumentRange(p.getOffset(), p.getLength());
+						removeMasterDocumentRange(projection, p.getOffset(), p.getLength());
 					}
 				}
 			
@@ -544,7 +581,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				IDocument slave= manager.createSlaveDocument(master);
 				if (slave instanceof ProjectionDocument) {
 					projection= (ProjectionDocument) slave;
-					projection.addMasterDocumentRange(0, master.getLength());
+					addMasterDocumentRange(projection, 0, master.getLength());
 				}
 			}
 		}
@@ -557,7 +594,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					IRegion region= computeCollapsedRegion(position);
 					if (region != null)
-						projection.removeMasterDocumentRange(region.getOffset(), region.getLength());
+						removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
 				}
 			}
 			
@@ -613,7 +650,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#handleVisibleDocumentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	protected void handleVisibleDocumentChanged(DocumentEvent event) {
-		if (isProjectionMode() && event instanceof ProjectionDocumentEvent) {
+		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent && isProjectionMode()) {
 			ProjectionDocumentEvent e= (ProjectionDocumentEvent) event;
 			if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType() && e.getLength() == 0 && e.getText().length() != 0)
 				fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
