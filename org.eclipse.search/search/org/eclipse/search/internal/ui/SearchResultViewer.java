@@ -241,6 +241,7 @@ class SearchResultViewer extends TableViewer {
 		tbm.add(fGotoMarkerAction);
 		tbm.add(fRemoveMatchAction);
 		tbm.add(new Separator());
+		tbm.add(new OpenSearchDialogAction());
 		tbm.add(fRemoveAllSearchesAction);
 		tbm.add(fSearchDropDownAction);
 		

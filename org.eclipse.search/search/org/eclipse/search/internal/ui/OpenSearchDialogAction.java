@@ -4,6 +4,7 @@
  */
 package org.eclipse.search.internal.ui;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -14,14 +15,24 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 /**
  * Opens the Search Dialog.
  */
-public class OpenSearchDialogAction implements IWorkbenchWindowActionDelegate {
+public class OpenSearchDialogAction extends Action implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow fWindow;
+
+	public OpenSearchDialogAction() {
+		super(SearchMessages.getString("OpenSearchDialogAction.label")); //$NON-NLS-1$
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
+		setToolTipText(SearchMessages.getString("OpenSearchDialogAction.tooltip")); //$NON-NLS-1$
+	}
 
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
 	public void run(IAction action) {
+		run();
+	}
+
+	public void run() {
 		if (getWindow().getActivePage() == null) {
 			SearchPlugin.beep();
 			return;
