@@ -958,6 +958,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String application = attributes.getValue("application"); //$NON-NLS-1$
 			feature.setApplication(application);
 
+			// affinity
+			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
+			feature.setAffinityFeature(affinity);
+
 			objectStack.push(feature);
 
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

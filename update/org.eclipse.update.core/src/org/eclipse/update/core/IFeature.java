@@ -336,6 +336,14 @@ public interface IFeature extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public String getApplication();
+	
+	/**
+	 * Returns an optional identifier of a colocation affinity feature.
+	 * 
+	 * @return feature identifier, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public String getAffinityFeature();
 
 	/**
 	 * Returns the content provider for this feature. A content provider

@@ -71,7 +71,6 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.Cancel"),
 				true);
 			//$NON-NLS-1$							
-
 		} else {
 			createButton(
 				parent,
@@ -79,6 +78,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.Cancel"),
 				true);
 		}
+		getButton(IDialogConstants.CANCEL_ID).setFocus();
 	}
 	
 	/* (non-Javadoc)
@@ -87,8 +87,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite compositeParent = (Composite)super.createDialogArea(parent);
 		setTitleImage(this.getImage());
-		setTitle("Feature Verification");
-		setMessage("Message from Dialog");
+		setTitle(UpdateUIPlugin.getResourceString("JarVerificationDialog.Title"));
 		
 		_DialogPage.createControl(compositeParent);
 		pageContainer=(Composite)_DialogPage.getControl();
@@ -99,6 +98,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 		// Build the separator line
 		Label separator= new Label(compositeParent, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		return compositeParent;
 	}
 	

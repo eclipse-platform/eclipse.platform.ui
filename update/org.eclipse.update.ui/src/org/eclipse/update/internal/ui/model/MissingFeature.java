@@ -309,5 +309,12 @@ public class MissingFeature implements IFeature {
 		return new IFeatureReference[0];
 	}
 
+	/**
+	 * @see IFeature#getAffinityFeature()
+	 */
+	public String getAffinityFeature() {
+		return null;
+	}
+
 }
 

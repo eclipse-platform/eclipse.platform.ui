@@ -134,7 +134,7 @@ public class JarVerificationPage extends BannerPage {
 						"JarVerificationDialog.CannotVerifyProvider",
 						componentVerified));
 				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
+/*				strb.append("\r\n"); //$NON-NLS-1$
 				if (_VerificationResult.isFeatureVerification()) {
 					strb.append(
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
@@ -144,6 +144,7 @@ public class JarVerificationPage extends BannerPage {
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
 					//$NON-NLS-1$ 					
 				}
+				*/
 				labelInformation.setText(strb.toString());
 				break;
 

@@ -281,14 +281,14 @@ public class SiteFile extends Site {
 		IPluginEntry[] siteEntries = this.getPluginEntries();
 		entriesToInstall =
 			UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+		//[18355]
+		INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
 
 		try {
 			result =
 				feature
 					.getFeatureContentProvider()
-					.getDownloadSizeFor(entriesToInstall,
-			/* non plugin entry []*/
-			null);
+					.getDownloadSizeFor(entriesToInstall,nonPluginEntriesToInstall);
 		} catch (CoreException e) {
 			UpdateManagerPlugin.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
@@ -333,12 +333,13 @@ public class SiteFile extends Site {
 			IPluginEntry[] siteEntries = this.getPluginEntries();
 			entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
+			//[18355]
+			INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
+
 			result =
 				feature
 					.getFeatureContentProvider()
-					.getInstallSizeFor(entriesToInstall,
-			/* non plugin entry []*/
-			null);
+					.getInstallSizeFor(entriesToInstall,nonPluginEntriesToInstall);
 		} catch (CoreException e) {
 			UpdateManagerPlugin.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;

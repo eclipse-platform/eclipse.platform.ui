@@ -137,14 +137,25 @@ public class TargetPage extends BannerPage {
 				return null;
 			}
 		}
+		
+		// check if the affinity feature is installed
+		String affinityID = newFeature.getAffinityFeature();
+		if (affinityID!=null){
+			IConfiguredSite affinitySite = findSameIdFeatureSite(config,affinityID);
+			if (affinitySite!=null)
+				return affinitySite;
+		}
+		
 		// This is a new install. Check if there is 
 		// a disabled feature with the same ID
-		return findSameIdFeatureSite(config, newFeature);
+		String newFeatureID = newFeature.getVersionedIdentifier().getIdentifier();
+		return findSameIdFeatureSite(config, newFeatureID);
 	}
 
 	private static IConfiguredSite findSameIdFeatureSite(
 		IInstallConfiguration config,
-		IFeature newFeature) {
+		String featureID) {
+		if (featureID==null) return null;
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite site = sites[i];
@@ -153,14 +164,11 @@ public class TargetPage extends BannerPage {
 				IFeatureReference ref = refs[j];
 				try {
 					IFeature feature = ref.getFeature();
-					if (feature
-						.getVersionedIdentifier()
-						.getIdentifier()
-						.equals(
-							newFeature
+					if (featureID.equals(
+								feature
 								.getVersionedIdentifier()
 								.getIdentifier())) {
-						// found it
+								// found it
 						return site;
 					}
 				} catch (CoreException e) {

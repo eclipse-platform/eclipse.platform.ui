@@ -328,6 +328,4 @@ public class JarContentReference extends ContentReference {
 		String entryId = selector.defineIdentifier(entry);
 		return new JarEntryContentReference(entryId, this, entry);
 	}
-
-	
 }

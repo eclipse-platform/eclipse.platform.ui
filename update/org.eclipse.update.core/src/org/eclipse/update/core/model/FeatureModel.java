@@ -37,6 +37,7 @@ public class FeatureModel extends ModelObject {
 	private String arch;
 	private boolean isPrimary = false;
 	private String application;
+	private String affinity;
 	private InstallHandlerEntryModel installHandler;
 	private URLEntryModel description;
 	private URLEntryModel copyright;
@@ -234,6 +235,16 @@ public class FeatureModel extends ModelObject {
 	 */
 	public String getApplication() {
 		return application;
+	}
+
+	/**
+	 * Returns an optional identifier for the colocation affinity feature
+	 * 
+	 * @return feature identifier, or <code>null</code>.
+	 * @since 2.0
+	 */
+	public String getAffinityFeature() {
+		return affinity;
 	}
 
 	/**
@@ -496,6 +507,20 @@ public class FeatureModel extends ModelObject {
 		assertIsWriteable();
 		this.application = application;
 	}
+
+	/**
+	 * Sets the identifier of the Feature this feature should be
+	 * installed with.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param affinity the identifier of the Feature
+	 * @since 2.0
+	 */
+	public void setAffinityFeature(String affinity) {
+		assertIsWriteable();
+		this.affinity = affinity;
+	}
+
 
 	/**
 	 * Sets the custom install handler for the feature.
