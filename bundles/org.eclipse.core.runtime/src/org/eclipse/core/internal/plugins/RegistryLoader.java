@@ -28,7 +28,7 @@ private RegistryLoader(Factory factory, boolean debug) {
 	this.factory = factory;
 }
 private void debug(String msg) {
-	long thisTick = (new java.util.Date()).getTime();
+	long thisTick = System.currentTimeMillis();
 	System.out.println("RegistryLoader: " + msg + " [+"+ (thisTick - lastTick) + "ms]");
 	lastTick = thisTick;
 }
@@ -43,15 +43,11 @@ private String[] getPathMembers(URL path) {
 	return list == null ? new String[0] : list;
 }
 private PluginRegistryModel parseRegistry(URL[] pluginPath) {
-	long startTick = 0;
-	if (debug) {
-		startTick = (new java.util.Date()).getTime();
-		debug("Begin");
-	}
+	long startTick = System.currentTimeMillis();
 	PluginRegistryModel result = processManifestFiles(pluginPath);
-	if (debug) {
-		long endTick = (new java.util.Date()).getTime();
-		debug("End" + (startTick != 0 ? ": total " + (endTick - startTick) + "ms" : ""));
+	if (InternalPlatform.DEBUG) {
+		long endTick = System.currentTimeMillis();
+		debug("Parsed Registry: " + (endTick - startTick) + "ms");
 	}
 	return result;
 }

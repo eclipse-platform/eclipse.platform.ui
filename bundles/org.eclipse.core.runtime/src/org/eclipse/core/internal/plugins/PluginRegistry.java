@@ -194,15 +194,17 @@ private void saveRegistry() throws IOException {
 
 	DataOutputStream output = null;
 	try {
-		output = new DataOutputStream(new FileOutputStream(path.toOSString()));
+		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path.toOSString())));
 	} catch (IOException ioe) {
 		String message = Policy.bind("meta.unableToCreateCache");
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
 	}
-
+	long start = System.currentTimeMillis();
 	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
 	cacheWriter.writePluginRegistry(this, output);
+	if (InternalPlatform.DEBUG)
+		System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms");
 }
 public void shutdown(IProgressMonitor progress) {
 	shutdownPlugins();
