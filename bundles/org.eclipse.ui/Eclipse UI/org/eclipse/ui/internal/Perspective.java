@@ -798,9 +798,13 @@ public void restoreState() {
 		}		
 		page.addPart(ref);
 		IViewPart view = (IViewPart)ref.getPart(true);
-		ViewSite site = (ViewSite)view.getSite();
-		ViewPane pane = (ViewPane)site.getPane();			
-		pres.replacePlaceholderWithPart(pane);
+		if(view == null) {
+			WorkbenchPlugin.log("Could not create view part: '" + viewID + "'."); //$NON-NLS-1$			
+		} else {
+			ViewSite site = (ViewSite)view.getSite();
+			ViewPane pane = (ViewPane)site.getPane();			
+			pres.replacePlaceholderWithPart(pane);
+		}
 	}
 
 	// Load the fast views

@@ -232,8 +232,9 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	public IViewPart getView(boolean restore) {
 		return (IViewPart)getPart(restore);
 	}
-	public void setPart(IViewPart part) {
-		this.part = part;
+	public void setPart(IWorkbenchPart part) {
+		super.setPart(part);
+		this.part = (IViewPart)part;
 	}
 	/**
 	 * @see IWorkbenchPartReference#getPart(boolean)
