@@ -46,36 +46,15 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
     }
 
     public void eventLoopIdle(final Display display) {
-        super.eventLoopIdle(display);
+        // bug 73184: On the mac the parent eventLoopIdle will put the display to sleep
+        //            until there are events (e.g., mouse jiggled).
+        if (!"carbon".equals(SWT.getPlatform()))
+            super.eventLoopIdle(display);
 
         if (idleBeforeExit == -1)
             return;
 
         if (--idleBeforeExit <= 0)
             PlatformUI.getWorkbench().close();
-
-        if ("carbon".equals(SWT.getPlatform())) {
-            display.asyncExec(new Runnable() {
-                public void run() {
-                    eventLoopIdle(display);
-                }
-            });
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.WorkbenchAdvisor#postShutdown()
-     */
-    public void postShutdown() {
-        super.postShutdown();
-
-        if ("carbon".equals(SWT.getPlatform())) {
-            final Display display = PlatformUI.getWorkbench().getDisplay();
-            display.asyncExec(new Runnable() {
-                public void run() {
-                    eventLoopIdle(display);
-                }
-            });
-        }
     }
 }

@@ -42,10 +42,6 @@ public class PlatformUITest extends TestCase {
         assertTrue(disp.isDisposed());
     }
 
-    public void test() {
-        // do nothing
-    }
-
     public void testCreateAndRunWorkbench() {
         final Display display = PlatformUI.createDisplay();
         assertNotNull(display);
