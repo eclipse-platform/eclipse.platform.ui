@@ -716,12 +716,12 @@ public class ResourceNavigator
 		uiSettings = uiSettings.getSection(STORE_SECTION);
 		if (uiSettings != null) {
 			String workingSetName = uiSettings.get(STORE_WORKING_SET);
-			if (workingSetName.length() > 0) {
+			if (workingSetName != null && workingSetName.length() > 0) {
 				settings.put(STORE_WORKING_SET, workingSetName);
 				uiSettings.put(STORE_WORKING_SET, "");			//$NON-NLS-1$
 			}
 			String sortType = uiSettings.get(STORE_SORT_TYPE);
-			if (sortType.length() > 0) {
+			if (sortType != null && sortType.length() > 0) {
 				settings.put(STORE_SORT_TYPE, sortType);
 				uiSettings.put(STORE_SORT_TYPE, "");			//$NON-NLS-1$
 			}
