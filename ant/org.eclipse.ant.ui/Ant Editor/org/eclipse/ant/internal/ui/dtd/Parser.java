@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.ant.internal.ui.dtd.schema.SchemaFactory;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -23,6 +26,7 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DeclHandler;
+
 
 /**
  * Simple parser for DTDs. Returns ISchema representing the DTD.
@@ -64,12 +68,12 @@ public class Parser {
 		XMLReader parser = null;
 		SchemaFactory factory = new SchemaFactory();
 		try {
-			parser = new SAXParser();
+			parser = getXMLReader();
 			DeclHandler handler = factory;
-			parser.setProperty("http://xml.org/sax/properties/declaration-handler", //$NON-NLS-1$
-			handler);
-			if (entityResolver != null)
+			parser.setProperty("http://xml.org/sax/properties/declaration-handler", handler); //$NON-NLS-1$
+			if (entityResolver != null) {
 				parser.setEntityResolver(entityResolver);
+			}
 			parser.parse(inputSource);
 		} catch (SAXNotRecognizedException e) {
 			throw new ParseError(NOT_SUPPORTED);
@@ -83,6 +87,18 @@ public class Parser {
 		}
 
 		return factory.getSchema();
+	}
+	
+	private XMLReader getXMLReader() throws ParseError {
+		SAXParser parser = null;
+		try {
+			parser = SAXParserFactory.newInstance().newSAXParser();
+			return parser.getXMLReader();
+		} catch (ParserConfigurationException e) {
+			throw new ParseError(e.getMessage());
+		} catch (SAXException e) {
+			throw new ParseError(e.getMessage());
+		}
 	}
 	
 	/**

@@ -4,7 +4,6 @@
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.junit"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
-    <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.jdt.core"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.ant.core"/>

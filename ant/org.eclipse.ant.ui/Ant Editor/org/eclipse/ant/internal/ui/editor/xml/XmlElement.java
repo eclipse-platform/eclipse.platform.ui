@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.xerces.util.URI;
-import org.apache.xerces.util.URI.MalformedURIException;
+import org.apache.xml.utils.URI;
+import org.apache.xml.utils.URI.MalformedURIException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
@@ -299,9 +299,9 @@ public class XmlElement implements IAdaptable {
 	 */
 	public void setFilePath(String path) {
 		URI uri= null;
-		try {
+		try {		
 			uri= new URI(path);
-		} catch (MalformedURIException e) {
+		} catch (MalformedURIException e) {		
 			filePath= path;
 			return;
 		}

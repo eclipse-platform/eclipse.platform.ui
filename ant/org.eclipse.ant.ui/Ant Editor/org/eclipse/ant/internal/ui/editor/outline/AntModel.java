@@ -14,14 +14,16 @@ package org.eclipse.ant.internal.ui.editor.outline;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -123,7 +125,7 @@ public class AntModel {
 
 	/**
 	 * Gets the content outline for a given input element.
-	 * Returns the root XmlElement, or null if the
+	 * Returns the root XmlElement, or <code>null</code> if the
 	 * outline could not be generated.
 	 */
 	private XmlElement parseDocument(IDocument input) {
@@ -135,26 +137,16 @@ public class AntModel {
 		 */
          
 		// Create the parser
-		SAXParser parser;
-		try {
-			parser = new SAXParser();
-			parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
-		} catch (SAXException e) {
-			AntUIPlugin.log(e);
+		SAXParser parser= getSAXParser();
+		if (parser == null) {
 			return null;
 		}
-
+		
 		// Create the handler
 		OutlinePreparingHandler handler = new OutlinePreparingHandler(fLocationProvider);
 		handler.setProblemRequestor(fProblemRequestor);
 		handler.setDocument(input);
-		
-		parser.setContentHandler(handler);
-		parser.setDTDHandler(handler);
-		parser.setEntityResolver(handler);
-		parser.setErrorHandler(handler);
-//		parser.setLocale(...);
-        
+
 		// Parse!
 		try {
 			handler.begin();
@@ -166,7 +158,7 @@ public class AntModel {
 				inputSource.setSystemId(location.toOSString());
 			}
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
-			parser.parse(inputSource);
+			parser.parse(inputSource, handler);
 		} catch(SAXParseException e) {
 			handler.fixEndLocations(e);
 		} catch (SAXException e) {
@@ -181,6 +173,18 @@ public class AntModel {
         
 		return handler.getRootElement();
 	}
+	
+	private SAXParser getSAXParser() {
+		SAXParser parser = null;
+		try {
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		} catch (ParserConfigurationException e) {
+			AntUIPlugin.log(e);
+		} catch (SAXException e) {
+			AntUIPlugin.log(e);
+		}
+		return parser;
+	}
 
 	private void generateExceptionOutline(XmlElement openElement) {
 		while (openElement != null) {
@@ -189,9 +193,6 @@ public class AntModel {
 		}
 	}
 	
-	/**
-	 * @return ILocationProvider
-	 */
 	public ILocationProvider getLocationProvider() {
 		return fLocationProvider;
 	}

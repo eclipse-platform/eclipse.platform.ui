@@ -19,14 +19,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import junit.framework.TestCase;
 
-import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
-import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -209,11 +212,18 @@ public abstract class AbstractAntUITest extends TestCase {
 		return result;
 	}
 	
-	protected SAXParser getSAXParser() throws SAXException {
-		SAXParser parser = parser = new SAXParser();
-		parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
+	protected SAXParser getSAXParser() {
+		SAXParser parser = null;
+		try {
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		} catch (ParserConfigurationException e) {
+			AntUIPlugin.log(e);
+		} catch (SAXException e) {
+			AntUIPlugin.log(e);
+		}
 		return parser;
 	}
+
 	
 	protected void parse(InputStream stream, SAXParser parser, DefaultHandler handler, File editedFile) {
 		InputSource inputSource= new InputSource(stream);
@@ -222,12 +232,8 @@ public abstract class AbstractAntUITest extends TestCase {
 			inputSource.setSystemId(editedFile.getAbsolutePath());
 		}
 
-		parser.setContentHandler(handler);
-		parser.setDTDHandler(handler);
-		parser.setEntityResolver(handler);
-		parser.setErrorHandler(handler);
 		try {
-			parser.parse(inputSource);
+			parser.parse(inputSource, handler);
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}

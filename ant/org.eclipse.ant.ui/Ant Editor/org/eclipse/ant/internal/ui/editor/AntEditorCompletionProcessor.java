@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -40,7 +42,6 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Sequential;
 import org.apache.tools.ant.taskdefs.UpToDate;
 import org.apache.tools.ant.taskdefs.condition.Condition;
-import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.internal.ui.dtd.IAttribute;
 import org.eclipse.ant.internal.ui.dtd.IDfm;
 import org.eclipse.ant.internal.ui.dtd.IElement;
@@ -857,26 +858,27 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * if parsing couldn't be done because of some error.
      */
     private AntEditorSaxDefaultHandler parseEditedFileSearchingForParent(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
-        SAXParser parser = getSAXParser();
-        if(parser == null){
-        	return null;
-        }
+		SAXParser parser = getSAXParser();
+		if(parser == null){
+			return null;
+		}
         
-        // Set the handler
-        AntEditorSaxDefaultHandler handler = null;
-        File editedFile= getEditedFile();
-        try {
+		//Set the handler
+		AntEditorSaxDefaultHandler handler = null;
+		File editedFile= getEditedFile();
+		try {
 			File parent = null;
 			if(editedFile != null) {
 				parent = editedFile.getParentFile();
 			}
-        	handler = new AntEditorSaxDefaultHandler(parent, aLineNumber, aColumnNumber);
-        } catch (ParserConfigurationException e) {
+			handler = new AntEditorSaxDefaultHandler(parent, aLineNumber, aColumnNumber);
+		} catch (ParserConfigurationException e) {
 			AntUIPlugin.log(e);
-        }
+		}
         
-       	parse(aWholeDocumentString, parser, handler, editedFile);
-        lastDefaultHandler = handler; // bf
+	    parse(aWholeDocumentString, parser, handler, editedFile);
+	    
+        lastDefaultHandler = handler;
         return handler;
     }
 
@@ -887,26 +889,23 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			inputSource.setSystemId(editedFile.getAbsolutePath());
 		}
 		
-		parser.setContentHandler(handler);
-		parser.setDTDHandler(handler);
-		parser.setEntityResolver(handler);
-		parser.setErrorHandler(handler);
-	    try {
-	        parser.parse(inputSource);
-	    } catch(SAXParseException e) {
-	        // Ignore since that happens always if the edited file is not valid. We try to handle that.
-	    } catch (SAXException e) {
-	        AntUIPlugin.log(e);
-	    } catch (IOException e) {
-	        //ignore since can happen when user has incorrect paths / protocols for external entities
-	    }
+		try {
+			parser.parse(inputSource, handler);
+		} catch(SAXParseException e) {
+		   // Ignore since that happens always if the edited file is not valid. We try to handle that.
+		} catch (SAXException e) {
+			AntUIPlugin.log(e);
+		} catch (IOException e) {
+			//ignore since can happen when user has incorrect paths / protocols for external entities
+		}
 	}
 
 	private SAXParser getSAXParser() {
 		SAXParser parser = null;
 		try {
-			parser = new SAXParser();
-			parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		} catch (ParserConfigurationException e) {
+			AntUIPlugin.log(e);
 		} catch (SAXException e) {
 			AntUIPlugin.log(e);
 		}

@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.internal.ui.editor.EnclosingTargetSearchingHandler;
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 

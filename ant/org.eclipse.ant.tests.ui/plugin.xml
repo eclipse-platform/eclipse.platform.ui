@@ -10,7 +10,6 @@
       <import plugin="org.apache.ant"/>
 	  <import plugin="org.junit"/>   
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.ui"/>
