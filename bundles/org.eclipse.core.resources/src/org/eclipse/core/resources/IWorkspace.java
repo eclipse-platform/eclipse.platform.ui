@@ -1111,15 +1111,25 @@ public String[] sortNatureSet(String[] natureIds);
  */
 public IStatus validateEdit(IFile[] files, Object context);
 /**
- * Validates the given path as the location of the given resource on disk.
- * In addition to the restrictions for paths in general (see 
- * <code>IPath.isValidPath</code>), a link location must also obey the 
- * following rules:
+ * Validates the given path as the location of the given resource on disk. The
+ * path must be either an absolute file system path, or a relative path whose
+ * first segment is the name of a defined workspace path variable.  In addition
+ * to the restrictions for paths in general (see <code>IPath.
+ * isValidPath</code>), a link location must also obey the following rules:
  * <ul>
  * <li> must not overlap with the platform's metadata directory</li>
  * <li> must not be the same as or a parent of the root directory of the 
  * project the linked resource is contained in</li>
  * </ul>
+ * <p>
+ * This method also checks that the given resource can legally become a linked
+ * resource.  This includes the following restrictions:
+ * <ul>
+ * <li> must have a project as its immediate parent</li>
+ * <li> project natures and the team hook may disallow linked resources on
+ * projects they are associated with</li>
+ * </ul>
+ * </p>
  * <p>
  * This method will return a status with severity <code>IStatus.ERROR</code>
  * if the location does not obey the above rules. Also, this method will

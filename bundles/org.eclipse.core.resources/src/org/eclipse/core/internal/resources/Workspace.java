@@ -1766,11 +1766,36 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 /* (non-javadoc)
  * Method declared on IWorkspace.
  */
-public IStatus validateLinkLocation(IResource resource, IPath location) {
+public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation) {
+	//check that the resource has a project as its parent
+	String message;
+	IContainer parent = resource.getParent();
+	if (parent == null || parent.getType() != IResource.PROJECT) {
+		message = Policy.bind("links.parentNotProject", resource.getFullPath().toString());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	//check that the location is absolute
+	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
+	if (!location.isAbsolute()) {
+		message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	//check nature veto
+	String[] natureIds = ((Project)parent).internalGetDescription().getNatureIds();
+	IStatus result = getNatureManager().validateLinkCreation(natureIds);
+	if (!result.isOK())
+		return result;
+	//check team provider veto
+	if (resource.getType() == IResource.FILE)
+		result = getTeamHook().validateCreateLink((IFile)resource, IResource.NONE, location);
+	else
+		result = getTeamHook().validateCreateLink((IFolder)resource, IResource.NONE, location);
+	if (!result.isOK())
+		return result;
 	//check the standard path name restrictions
 	int segmentCount = location.segmentCount();
 	for (int i = 0; i < segmentCount; i++) {
-		IStatus result = validateName(location.segment(i), resource.getType());
+		result = validateName(location.segment(i), resource.getType());
 		if (!result.isOK())
 			return result;
 	}
@@ -1779,7 +1804,6 @@ public IStatus validateLinkLocation(IResource resource, IPath location) {
 		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the platform metadata location
 	IPath testLocation = getMetaArea().getLocation();
-	String message;
 	if (isOverlapping(location, testLocation)) {
 		message = Policy.bind("links.invalidLocation", location.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
