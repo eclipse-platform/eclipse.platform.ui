@@ -99,9 +99,11 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 
 		BaseHelpSystem.setDefaultErrorUtil(new ErrorUtil());
 
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench != null) {
-			HelpPlugin.setRoleManager(new HelpRoleManager(workbench));
+		if (PlatformUI.isWorkbenchRunning()) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			if (workbench != null) {
+				HelpPlugin.setRoleManager(new HelpRoleManager(workbench));
+			}
 		}
 	}
 
