@@ -391,7 +391,7 @@ public class RepositoryManager {
 	
 	/**
 	 * Add the given resources to their associated providers.
-	 * This schedules the resources for additin; they still need to be committed.
+	 * This schedules the resources for addition; they still need to be committed.
 	 */
 	public void add(IResource[] resources, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
