@@ -26,48 +26,52 @@ import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
- * Very simple leak tests to determine if any of our heavy objects are not being 
- * disposed properly.  Note that the results of these tests will in no way 
+ * Very simple leak tests to determine if any of our heavy objects are not being
+ * disposed properly. Note that the results of these tests will in no way
  * actually assist you in tracking down the leak.
  * 
  * @since 3.1
  */
 public class LeakTests extends UITestCase {
-	private IWorkbenchPage fActivePage;
+    private IWorkbenchPage fActivePage;
 
-	private IWorkbenchWindow fWin;
-	private IProject proj;
+    private IWorkbenchWindow fWin;
 
-	/**
-	 * @param testName
-	 */
-	public LeakTests(String testName) {
-		super(testName);
-	}
-	
-	public void checkRef(ReferenceQueue queue, Reference ref) throws IllegalArgumentException, InterruptedException {
-		boolean flag = false;
-		for(int i = 0; i < 10; i++) {
-	        System.gc();
-	        System.runFinalization();
-	        Thread.yield();
-	        Reference checkRef = queue.remove(1000);
-	        if (checkRef != null && checkRef.equals(ref))
-	        	flag = true;	
-		}
-		
-		assertTrue("Reference not enqueued", flag);
-	}
-	
-	/**
-	 * @param queue
-	 * @param object
-	 * @return
-	 */
-	private Reference createReference(ReferenceQueue queue, Object object) {
-		return new PhantomReference(object, queue);
-	}
-	
+    private IProject proj;
+
+    /**
+     * @param testName
+     */
+    public LeakTests(String testName) {
+        super(testName);
+    }
+
+    public void checkRef(ReferenceQueue queue, Reference ref)
+            throws IllegalArgumentException, InterruptedException {
+        boolean flag = false;
+        for (int i = 0; i < 10; i++) {
+            System.gc();
+            System.runFinalization();
+            Thread.yield();
+            Reference checkRef = queue.remove(1000);
+            if (checkRef != null && checkRef.equals(ref)) {
+                flag = true;
+                break;
+            }
+        }
+
+        assertTrue("Reference not enqueued", flag);
+    }
+
+    /**
+     * @param queue
+     * @param object
+     * @return
+     */
+    private Reference createReference(ReferenceQueue queue, Object object) {
+        return new PhantomReference(object, queue);
+    }
+
     protected void doSetUp() throws Exception {
         super.doSetUp();
         fWin = openTestWindow();
@@ -76,13 +80,15 @@ public class LeakTests extends UITestCase {
 
     protected void doTearDown() throws Exception {
         super.doTearDown();
+        fWin = null;
+        fActivePage = null;
         if (proj != null) {
             FileUtil.deleteProject(proj);
             proj = null;
         }
     }
-	
-	public void testSimpleEditorLeak() throws Exception {
+
+    public void testSimpleEditorLeak() throws Exception {
         proj = FileUtil.createProject("testEditorLeaks");
 
         IFile file = FileUtil.createFile("test.mock1", proj);
@@ -92,52 +98,49 @@ public class LeakTests extends UITestCase {
         assertNotNull(editor);
         Reference ref = createReference(queue, editor);
         try {
-	        fActivePage.closeEditor(editor, false);
-	        editor = null;
-        	checkRef(queue, ref);        
+            fActivePage.closeEditor(editor, false);
+            editor = null;
+            checkRef(queue, ref);
+        } finally {
+            ref.clear();
         }
-        finally {
-        	ref.clear();
-        }
-	}
+    }
 
-	public void testSimpleViewLeak() throws Exception {
+    public void testSimpleViewLeak() throws Exception {
         ReferenceQueue queue = new ReferenceQueue();
         IViewPart view = fActivePage.showView(MockViewPart.ID);
         assertNotNull(view);
         Reference ref = createReference(queue, view);
-        
+
         try {
-        	fActivePage.hideView(view);
-        	view = null;
-        	checkRef(queue, ref);
+            fActivePage.hideView(view);
+            view = null;
+            checkRef(queue, ref);
+        } finally {
+            ref.clear();
         }
-        finally {
-        	ref.clear();
+    }
+
+    public void testSimpleWindowLeak() throws Exception {
+        //turn off window management so that we dont have a reference to our
+        // new
+        //window in the listener
+        manageWindows(false);
+        try {
+            ReferenceQueue queue = new ReferenceQueue();
+            IWorkbenchWindow newWindow = openTestWindow();
+
+            assertNotNull(newWindow);
+            Reference ref = createReference(queue, newWindow);
+            try {
+                newWindow.close();
+                newWindow = null;
+                checkRef(queue, ref);
+            } finally {
+                ref.clear();
+            }
+        } finally {
+            manageWindows(true);
         }
-	}
-	
-	public void testSimpleWindowLeak() throws Exception {
-		//turn off window management so that we dont have a reference to our new 
-		//window in the listener
-		manageWindows(false);
-		try {
-	        ReferenceQueue queue = new ReferenceQueue();
-			IWorkbenchWindow newWindow = openTestWindow();
-			
-	        assertNotNull(newWindow);
-	        Reference ref = createReference(queue, newWindow);
-	        try {
-	        	newWindow.close();
-	        	newWindow = null;
-	        	checkRef(queue, ref);
-	        }
-	        finally {
-	        	ref.clear();
-	        }
-		}
-		finally {
-        	manageWindows(true);
-		}
-	}
+    }
 }
