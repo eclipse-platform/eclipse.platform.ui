@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<HTML>
+<BODY>
+<H1><CENTER>Extra Ant Classpath Entries</CENTER></H1>
+<b><i>Identifier: </i></b>org.eclispe.ant.core.extraClasspathEntries<p>
+<b><i>Description: </i></b>Allows plug-ins to define arbitrary JARs for use by the Ant infrastructure.
+These JARs are put into the Ant classpath at runtime.  Besides
+the JAR, the plug-in classloader of the plug-in providing the
+JAR is also added to the classpath.<p><b><i>Configuration Markup:</i></b><p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (extraClasspathEntry*)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - </li><li><b>id</b> - </li><li><b>name</b> - </li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extraClasspathEntry EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extraClasspathEntry</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;library&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>library</b> - a path relative to the plug-in install location for the library.</li></ul>
+<b><i>Examples: </i></b>The following is an example of an object declaration:
+
+<p>
+<pre>
+ &lt;extension point="org.eclipse.ant.core.extraClasspathEntries"&gt;
+  &lt;extraClasspathEntry library="myExtraLibrary.jar"/&gt;
+ &lt;/extension&gt;
+</pre>
+</p><p>
+<b><i>Supplied Implementation: </i></b>The platform itself supplies an ant support jar.<p>
+<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+</BODY>
+</HTML>
