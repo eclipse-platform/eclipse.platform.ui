@@ -104,7 +104,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 
 	/**
 	 * Initializes the refresh manager. This does a minimal amount of work
-	 * if autobuild is turned off.
+	 * if auto-refresh is turned off.
 	 */
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
