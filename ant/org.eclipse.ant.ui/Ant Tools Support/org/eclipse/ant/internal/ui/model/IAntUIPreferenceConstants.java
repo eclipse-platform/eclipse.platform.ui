@@ -66,4 +66,10 @@ public interface IAntUIPreferenceConstants {
 	 * sort elements in the Outline.
 	 */
 	public static final String ANTEDITOR_SORT= "anteditor.sort"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant Outline page 
+	 * links its selection to the active Ant editor.
+	 */
+	public static final String OUTLINE_LINK_WITH_EDITOR= "outline.linkWithEditor"; //$NON-NLS-1$
 }

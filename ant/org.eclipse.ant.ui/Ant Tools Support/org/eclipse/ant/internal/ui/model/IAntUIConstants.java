@@ -76,6 +76,7 @@ public interface IAntUIConstants {
 	public static final String IMG_FILTER_PROPERTIES= PLUGIN_ID + ".filterProperties"; //$NON-NLS-1$
 	public static final String IMG_FILTER_TOP_LEVEL= PLUGIN_ID + ".filterTopLevel"; //$NON-NLS-1$
 	public static final String IMG_SORT_OUTLINE= PLUGIN_ID + ".sortOutline"; //$NON-NLS-1$
+	public static final String IMG_LINK_WITH_EDITOR= PLUGIN_ID + ".linkWithEditor"; //$NON-NLS-1$
 	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
 	 
 	//	Overlays
