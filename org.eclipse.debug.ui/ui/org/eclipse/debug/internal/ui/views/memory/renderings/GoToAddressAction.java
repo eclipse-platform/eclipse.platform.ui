@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
@@ -110,11 +110,11 @@ public class GoToAddressAction extends Action
 					// of the memory block
 					if (address.compareTo(mbStart) < 0)
 					{
-						IMemoryBlockExtensionRetrieval retrieval = (IMemoryBlockExtensionRetrieval)mbExt.getAdapter(IMemoryBlockExtensionRetrieval.class);
+						IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
 						IDebugTarget dt = mbExt.getDebugTarget();
 						
-						if (retrieval == null && dt instanceof IMemoryBlockExtensionRetrieval)
-							retrieval = (IMemoryBlockExtensionRetrieval)dt;
+						if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
+							retrieval = (IMemoryBlockRetrievalExtension)dt;
 						
 						// add a new memory block and then the same rendering as fRendering
 						// in the same container.
@@ -131,11 +131,11 @@ public class GoToAddressAction extends Action
 					// of the memory block
 					if (address.compareTo(mbEnd) > 0)
 					{
-						IMemoryBlockExtensionRetrieval retrieval = (IMemoryBlockExtensionRetrieval)mbExt.getAdapter(IMemoryBlockExtensionRetrieval.class);
+						IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
 						IDebugTarget dt = mbExt.getDebugTarget();
 						
-						if (retrieval == null && dt instanceof IMemoryBlockExtensionRetrieval)
-							retrieval = (IMemoryBlockExtensionRetrieval)dt;
+						if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
+							retrieval = (IMemoryBlockRetrievalExtension)dt;
 						
 						// add a new memory block and then the same rendering as fRendering
 						// in the same container.
@@ -164,7 +164,7 @@ public class GoToAddressAction extends Action
 		}
 	}
 	
-	private void addNewMemoryBlock(String expression, IMemoryBlockExtensionRetrieval retrieval)
+	private void addNewMemoryBlock(String expression, IMemoryBlockRetrievalExtension retrieval)
 	{
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		Object elem = ((IStructuredSelection)selection).getFirstElement();
@@ -175,7 +175,7 @@ public class GoToAddressAction extends Action
 		try {
 			if (retrieval != null)
 			{
-				IMemoryBlockExtension mbext = retrieval.getExtendedMemoryBlock(expression, (IDebugElement)elem);
+				IMemoryBlockExtension mbext = retrieval.getExtendedMemoryBlock(expression, elem);
 				if (mbext != null)
 					DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{mbext});
 				

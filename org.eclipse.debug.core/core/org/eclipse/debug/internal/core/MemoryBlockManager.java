@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -159,7 +160,11 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			
 			if (memBlocks[i] instanceof IMemoryBlockExtension)
 			{ 
-				((IMemoryBlockExtension)memBlocks[i]).dispose();
+				try {
+					((IMemoryBlockExtension)memBlocks[i]).dispose();
+				} catch (DebugException e) {
+					DebugPlugin.log(e);
+				}
 			}
 		}
 		

@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -51,7 +52,7 @@ import org.eclipse.swt.widgets.Label;
  * The rendering to allow users to create a rendering.
  * @since 3.1
  */
-public class CreateRendering extends AbstractMemoryRendering {
+public class CreateRendering extends AbstractMemoryRendering implements IMemoryRenderingBindingsListener {
 
 	private ListViewer fViewer;
 	private Label fMemoryBlockLabel;
@@ -214,6 +215,8 @@ public class CreateRendering extends AbstractMemoryRendering {
 		
 		addButton.setFocus();
 		
+		DebugUITools.getMemoryRenderingManager().addListener(this);
+		
 		return fCanvas;		
 	}
 	
@@ -274,6 +277,11 @@ public class CreateRendering extends AbstractMemoryRendering {
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
 	 */
 	public void dispose() {
+		fViewer = null;
+		fCanvas = null;
+		fContainer = null;
+		fMemoryBlockLabel = null;
+		DebugUITools.getMemoryRenderingManager().removeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -290,25 +298,25 @@ public class CreateRendering extends AbstractMemoryRendering {
 		String memoryBlockLabel = " "; //$NON-NLS-1$
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
-			try {
-				
-				if (((IMemoryBlockExtension)getMemoryBlock()).getExpression() != null)
+			if (((IMemoryBlockExtension)getMemoryBlock()).getExpression() != null)
+			{
+				String prefix = ""; //$NON-NLS-1$
+				if (((IMemoryBlockExtension)getMemoryBlock()).getExpression().startsWith("&")) //$NON-NLS-1$
 				{
-					String prefix = ""; //$NON-NLS-1$
-					if (((IMemoryBlockExtension)getMemoryBlock()).getExpression().startsWith("&")) //$NON-NLS-1$
-					{
-						prefix = "&"; //$NON-NLS-1$
-						memoryBlockLabel += prefix;
-					}
-					memoryBlockLabel += ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
+					prefix = "&"; //$NON-NLS-1$
+					memoryBlockLabel += prefix;
 				}
-				
+				memoryBlockLabel += ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
+			}
+			
+			try {
 				if (((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
 				{
 					memoryBlockLabel += " <0x" + ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} catch (DebugException e) {
-				memoryBlockLabel = getMemoryBlock().toString();
+				// return whatever we have for label
+				return memoryBlockLabel;
 			}
 		}
 		else
@@ -319,8 +327,9 @@ public class CreateRendering extends AbstractMemoryRendering {
 		return memoryBlockLabel;
 	}
 
-	public void refresh() {
-		fViewer.refresh();
+	public void memoryRenderingBindingsChanged() {
+		if (fViewer != null)
+			fViewer.refresh();
 	}
 
 }

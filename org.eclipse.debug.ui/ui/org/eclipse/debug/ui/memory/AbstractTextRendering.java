@@ -57,7 +57,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 			boolean invalid = false;
 			for (int i=0; i<data.length; i++)
 			{
-				if (!data[i].isValid())
+				if (!data[i].isReadable())
 				{
 					invalid = true;
 					break;

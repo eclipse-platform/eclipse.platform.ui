@@ -52,4 +52,20 @@ public interface IMemoryRenderingSynchronizationService {
      * @return the property value or <code>null</code>
      */
     public Object getProperty(IMemoryBlock block, String property);
+	
+    /**
+     * Sets the rendering currently providing sychronization information for
+     * this synchronization service, or <code>null</code> if none.
+     * 
+     * @param rendering active rendering providing synchronization information or
+     *  <code>null</code>
+     */
+    public void setSynchronizationProvider(IMemoryRendering rendering);
+    
+    /**
+     * Returns the rendering currengly providing synchronization information for
+     * this synchronization service, or <code>null</code if none.
+     * @return rendering providing synchronization information or <code>null</null>
+     */
+    public IMemoryRendering getSynchronizationProvider(); 
 }

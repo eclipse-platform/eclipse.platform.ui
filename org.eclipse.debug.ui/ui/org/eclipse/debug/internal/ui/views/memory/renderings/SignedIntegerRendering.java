@@ -142,7 +142,7 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.PREF_PADDED_STR);
 		for (int i=0; i<data.length; i++)
 		{
-			if (!data[i].isValid())
+			if (!data[i].isReadable())
 			{
 				invalid = true;
 				break;

@@ -269,7 +269,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					prefillNumBytes = startingAddress.subtract(adjustedStart).intValue();
 					startingAddress = adjustedStart;
 				}
-				reqNumBytes = memory.length + prefillNumBytes;
+				reqNumBytes = fInput.getMemoryBlock().getLength() + prefillNumBytes;
 				
 				// figure out number of dummy bytes to append
 				while (reqNumBytes % fInput.getMemoryRendering().getBytesPerLine() != 0)
@@ -287,8 +287,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				{
 					MemoryByte tmp = new MemoryByte();
 					tmp.setValue((byte)0);
-					tmp.setReadonly(true);
-					tmp.setValid(false);
+					tmp.setWritable(false);
+					tmp.setReadable(false);
 					tmp.setEndianessKnown(false);
 					memoryBuffer[i] = tmp;
 				}
@@ -299,7 +299,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				{
 					MemoryByte tmp = new MemoryByte();
 					tmp.setValue(memory[i]);
-					tmp.setValid(true);
+					tmp.setReadable(true);
+					tmp.setWritable(true);
 					tmp.setEndianessKnown(false);
 					memoryBuffer[j] = tmp;
 					j++;
@@ -310,8 +311,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				{
 					MemoryByte tmp = new MemoryByte();
 					tmp.setValue((byte)0);
-					tmp.setReadonly(true);
-					tmp.setValid(false);
+					tmp.setWritable(false);
+					tmp.setReadable(false);
 					tmp.setEndianessKnown(false);
 					memoryBuffer[i] = tmp;
 				}
@@ -349,7 +350,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			for (int i=memoryBuffer.length; i<reqNumBytes; i++)
 			{
 				MemoryByte mb = new MemoryByte();
-				mb.setReadonly(true);
+				mb.setReadable(false);
+				mb.setWritable(false);
 				mb.setEndianessKnown(false);
 				newBuffer.add(mb);
 			}
@@ -406,8 +408,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					// the change bits returned by debug adapters do not take
 					// any effect
 					
-					changeFlag |= MemoryByte.KNOWN;
-					changeFlag ^= MemoryByte.KNOWN;
+					changeFlag |= MemoryByte.HISTORY_KNOWN;
+					changeFlag ^= MemoryByte.HISTORY_KNOWN;
 					
 					changeFlag |= MemoryByte.CHANGED;
 					changeFlag ^= MemoryByte.CHANGED;
@@ -421,7 +423,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				if (!manageDelta)
 				{
 					// If the byte is marked as unknown, the line is not monitored
-					if (!memoryBuffer[j].isKnown())
+					if (!memoryBuffer[j].isHistoryKnown())
 					{
 						isMonitored = false;
 					}
@@ -507,7 +509,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		for (int i=0; i<memoryBuffer.length; i++){
 			memoryBuffer[i] = new MemoryByte();
 			memoryBuffer[i].setValue((byte)0);
-			memoryBuffer[i].setReadonly(true);
+			memoryBuffer[i].setWritable(false);
+			memoryBuffer[i].setReadable(false);
 			memoryBuffer[i].setEndianessKnown(false);
 		}
 		return memoryBuffer;
@@ -611,7 +614,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 * @param address
 	 * @return size of address from the debuggee
 	 */
-	public int getAddressSize(BigInteger address)
+	public int getAddressSize(BigInteger address) throws DebugException
 	{
 		// calculate address size
 		 String adjustedAddress = address.toString(16);

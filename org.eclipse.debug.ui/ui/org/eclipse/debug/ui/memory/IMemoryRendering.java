@@ -172,12 +172,4 @@ public interface IMemoryRendering {
      * @return a label for this rendering
      */
     public String getLabel();
-    
-    /**
-     * Refresh the content of this rendering.
-     * 
-     * TODO: why is this needed as API? shouldn't refresh be part of the
-     * internal implementation when a rendering becomes visible? 
-     */
-    public void refresh();
 }

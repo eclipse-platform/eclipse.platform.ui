@@ -38,6 +38,7 @@ public class MemoryViewSynchronizationService implements
 	private Hashtable fPropertyListeners;
 	
 	private IMemoryRendering fLastChangedRendering;
+	private IMemoryRendering fSyncServiceProvider;
 	
 	public MemoryViewSynchronizationService()
 	{
@@ -261,7 +262,6 @@ public class MemoryViewSynchronizationService implements
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		
 		if (event == null || !(event.getSource() instanceof IMemoryRendering))
 		{
 			return;
@@ -363,5 +363,27 @@ public class MemoryViewSynchronizationService implements
 	public boolean isEnabled()
 	{
 		return fEnableState == ENABLED;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#setSynchronizationProvider(org.eclipse.debug.ui.memory.IMemoryRendering)
+	 */
+	public void setSynchronizationProvider(IMemoryRendering rendering) {
+		if (fSyncServiceProvider != null)
+			fSyncServiceProvider.removePropertyChangeListener(this);
+		
+		if (rendering != null)
+			rendering.addPropertyChangeListener(this);
+		
+		fSyncServiceProvider = rendering;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#getSynchronizationProvider()
+	 */
+	public IMemoryRendering getSynchronizationProvider() {
+		return fSyncServiceProvider;
 	}
 }

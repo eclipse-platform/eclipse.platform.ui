@@ -12,6 +12,7 @@
 
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -93,7 +94,11 @@ public class CopyTableRenderingToClipboardAction extends Action
 				IMemoryBlock memBlock = fRendering.getMemoryBlock();
 				if (memBlock instanceof IMemoryBlockExtension)
 				{
-					numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
+					try {
+						numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
+					} catch (DebugException e) {
+						numBytes = 0;
+					}
 					
 					// check address size
 					if (numBytes <= 0)

@@ -82,7 +82,7 @@ public class TableRenderingCellModifier implements ICellModifier
 			{
 				MemoryByte oneByte = line.getByte(i);
 
-				if (oneByte.isReadonly())
+				if (!oneByte.isWritable())
 				{
 					canModify = false;
 				}
@@ -162,21 +162,22 @@ public class TableRenderingCellModifier implements ICellModifier
 		{
 			line = (TableRenderingLine)element;
 		}
-			
-		// calculate offset to update	
-		IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
-
-		int lineOffset = Integer.valueOf(property, 16).intValue();
-		
-		// this offset is number of addressable unit from the line address
-		BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
-		
+					
 		// validate data
 		if (!(value instanceof String))
 			return;
 		
 		try
 		{
+			// calculate offset to update	
+			IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
+
+			int lineOffset = Integer.valueOf(property, 16).intValue();
+			
+			// this offset is number of addressable unit from the line address
+			BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
+
+			
 			byte[] bytes = null;
 			
 			String oldValue = (String)getValue(line, property);		
@@ -242,7 +243,7 @@ public class TableRenderingCellModifier implements ICellModifier
 		
 	}
 
-	private BigInteger getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) {
+	private BigInteger getOffset(IMemoryBlock memory, String lineAddress, int lineOffset) throws DebugException {
 		
 		BigInteger lineAddr = new BigInteger(lineAddress, 16);
 		BigInteger memoryAddr;

@@ -20,13 +20,16 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jface.util.ListenerList;
 
 /**
  * The memory rendering manager.
@@ -44,6 +47,9 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
         
     // singleton manager
     private static MemoryRenderingManager fgDefault;
+	
+	// list of binding listeners
+	private ListenerList fListeners;
     
     // elements in the memory renderings extension point
     public static final String ELEMENT_MEMORY_RENDERING_TYPE = "renderingType"; //$NON-NLS-1$
@@ -168,11 +174,57 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
                 try {
                     bindings.validate();
                     fBindings.add(bindings);
+					bindings.addListener(new IMemoryRenderingBindingsListener() {
+						public void memoryRenderingBindingsChanged() {
+							fireBindingChangedEvent();
+						}});
                 } catch (CoreException e) {
                     DebugUIPlugin.log(e);
                 }
             }
         }        
     }
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#addListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
+	 */
+	public void addListener(IMemoryRenderingBindingsListener listener) {
+		if (fListeners == null)
+			fListeners = new ListenerList();
+		
+		fListeners.add(listener);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#removeListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
+	 */
+	public void removeListener(IMemoryRenderingBindingsListener listener) {
+		if (fListeners != null)
+		{
+			fListeners.remove(listener);
+		}
+	}
+	
+	private void fireBindingChangedEvent()
+	{
+		if (fListeners == null)
+			return;
+		
+		Object[] listeners = fListeners.getListeners();
+		
+		for (int i=0; i<listeners.length; i++)
+		{
+			if (listeners[i] instanceof IMemoryRenderingBindingsListener)
+			{
+				final IMemoryRenderingBindingsListener listener = (IMemoryRenderingBindingsListener)listeners[i];
+				ISafeRunnable runnable = new ISafeRunnable () {
+					public void handleException(Throwable exception) {
+						DebugUIPlugin.log(exception);
+					}
+					public void run() throws Exception {
+						listener.memoryRenderingBindingsChanged();
+					}};
+				Platform.run(runnable);
+			}
+		}
+	}
 }

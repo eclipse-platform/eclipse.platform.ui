@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.PropertyChangeNotifier;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IMenuListener;
@@ -87,7 +86,8 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#activated()
 	 */
 	public void activated() {
-		fContainer.getMemoryRenderingSite().setSynchronizationProvider(this);
+		if (fContainer.getMemoryRenderingSite().getSynchronizationService() != null)
+			fContainer.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(this);
 	}
 
 	/* (non-Javadoc)
@@ -176,35 +176,34 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 		
 		StringBuffer label = new StringBuffer(""); //$NON-NLS-1$
 		
-		try {			
-			if (fMemoryBlock instanceof IMemoryBlockExtension)
-			{
-				String expression = ((IMemoryBlockExtension)fMemoryBlock).getExpression();
-				
-				if (expression == null)
-					expression = ""; //$NON-NLS-1$
-				
-				label.append(expression);
-				
-				if (expression.startsWith("&")) //$NON-NLS-1$
-					label.insert(0, "&"); //$NON-NLS-1$		
-				
-				// show full address if the rendering is visible
-				// hide address if the rendering is invisible
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
+		{
+			String expression = ((IMemoryBlockExtension)fMemoryBlock).getExpression();
+			
+			if (expression == null)
+				expression = ""; //$NON-NLS-1$
+			
+			label.append(expression);
+			
+			if (expression.startsWith("&")) //$NON-NLS-1$
+				label.insert(0, "&"); //$NON-NLS-1$		
+			
+			// show full address if the rendering is visible
+			// hide address if the rendering is invisible
+			try {
 				if (fVisible && ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress() != null)
 				{	
 					label.append(" : 0x"); //$NON-NLS-1$
 					label.append(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress().toString(16));
 				}
+			} catch (DebugException e) {
+				// do nothing... the label will not show memory block's address
 			}
-			else
-			{
-				long address = fMemoryBlock.getStartAddress();
-				label.append(Long.toHexString(address));
-			}
-		} catch (DebugException e) {
-			label = new StringBuffer("");					 //$NON-NLS-1$
-			DebugUIPlugin.log(e.getStatus());
+		}
+		else
+		{
+			long address = fMemoryBlock.getStartAddress();
+			label.append(Long.toHexString(address));
 		}
 		
 		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId());
@@ -251,7 +250,7 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 			IMemoryRenderingSite site = fContainer.getMemoryRenderingSite();
 			String menuId = fContainer.getId();
 						
-			ISelectionProvider selProvider = site.getViewSite().getSelectionProvider();
+			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
 			// must add additions seperator before registering the menu
 			// otherwise, we will get an error
@@ -260,7 +259,7 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				}});
 			
-			site.getViewSite().registerContextMenu(menuId, fPopupMenuMgr, selProvider);
+			site.getSite().registerContextMenu(menuId, fPopupMenuMgr, selProvider);
 		}
 		
 		Menu popupMenu = fPopupMenuMgr.createContextMenu(control);

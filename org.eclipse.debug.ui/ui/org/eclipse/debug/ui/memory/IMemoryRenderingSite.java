@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
-import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * A workbench site that hosts memory renderings and provides
@@ -28,15 +28,11 @@ import org.eclipse.ui.IViewSite;
 public interface IMemoryRenderingSite {
 
     /**
-     * Returns the view site hosting memory renderings for this rendering site.
+     * Returns the workbench part site hosting memory renderings for this rendering site.
      * 
      * @return the view site hosting memory renderings for this rendering site
-     * 
-     * TODO: can we relax the restriction on a view being a container so we 
-     * can host in other containers? what do we need from the view? It looks like
-     * we can relax this to a workbench part site?
      */
-    public IViewSite getViewSite();
+    public IWorkbenchPartSite getSite();
         
     /**
      * Returns the syncrhonization serivce for this rendering site
@@ -45,26 +41,6 @@ public interface IMemoryRenderingSite {
      * @return the syncrhonization serivce for this rendering site or <code>null</code>
      */
     public IMemoryRenderingSynchronizationService getSynchronizationService();
-    
-    /**
-     * Sets the rendering currently providing sychronization information for
-     * this rendering site, or <code>null</code> if none.
-     * 
-     * @param rendering active rendering providing synchronization information or
-     *  <code>null</code>
-     *  
-     *  TODO: should this be moved to the service?
-     */
-    public void setSynchronizationProvider(IMemoryRendering rendering);
-    
-    /**
-     * Returns the rendering currengly providing synchronization information for
-     * this rendering site, or <code>null</code if none.
-     * @return rendering providing synchronization information or <code>null</null>
-     * 
-     * TODO: should this be moved to the service?
-     */
-    public IMemoryRendering getSynchronizationProvider();
     
     /**
      * Returns all the memory rendering containers within this rendering site.

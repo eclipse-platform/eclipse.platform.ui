@@ -18,17 +18,17 @@ import org.eclipse.debug.core.DebugException;
  * Extended capabilites for memory block retrieval.
  * @since 3.1
  */
-public interface IMemoryBlockExtensionRetrieval extends IMemoryBlockRetrieval {
+public interface IMemoryBlockRetrievalExtension extends IMemoryBlockRetrieval {
 	
 	/**
 	 * Retrieves a memory block. 
 	 * 
 	 * @param expression - expression to be evalutated to an address, evaluation context can be retrieved
 	 *                     from the selected debug element 
-	 * @param selected - selected debug element from Debug View
+	 * @param context - context for evaluating the expression.  The is typically a debug element.
 	 * @return a memory block based on the given expression and selected debug element
 	 * @throws DebugException
 	 */
 	
-	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, IDebugElement selected) throws DebugException;
+	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException;
 }

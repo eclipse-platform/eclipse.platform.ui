@@ -25,16 +25,16 @@ package org.eclipse.debug.core.model;
 public class MemoryByte {
 	
     /**
-     * Bit mask used to indicate a byte is read-only.
+     * Bit mask used to indicate a byte is writable.
      */
-	public static final byte	READONLY	= 0x01;
+	public static final byte	WRITABLE	= 0x01;
 	
 	/**
-	 * Bit mask used to indicate a byte is valid.
-	 * A memory byte is valid when its value and attributes are retrievable.
-	 * Otherwise, a byte is considered invalid.
+	 * Bit mask used to indicate a byte is readable.
+	 * A memory byte is readable when its value and attributes are retrievable.
+	 * Otherwise, a byte is considered non-readable.
 	 */
-	public static final byte	VALID		= 0x02;
+	public static final byte	READABLE		= 0x02;
 	
 	/**
 	 * Bit mask used to indicate a byte has changed since the last
@@ -49,7 +49,7 @@ public class MemoryByte {
 	 * determine if its value has changed. When a memory byte's
 	 * history is unknown, the change state has no meaning.
 	 */
-	public static final byte 	KNOWN		= 0x08;
+	public static final byte 	HISTORY_KNOWN		= 0x08;
 	
 	/**
 	 * Bit mask used to indicate a this byte of memory
@@ -73,23 +73,23 @@ public class MemoryByte {
 	/**
 	 * Attribute flags.
 	 * <p>
-	 * To specify VALID:  flags |= MemoryByte.VALID;
-	 * To specify READONLY:  flags |= MemoryByte.READONLY;
+	 * To specify READABLE:  flags |= MemoryByte.READABLE;
+	 * To specify WRITABLE:  flags |= MemoryByte.WRITABLE;
 	 * </p>
 	 */
 	protected byte flags;
 	
 	/**
-	 * Constructs a read-write, valid memory byte without a change history,
+	 * Constructs a readable, writable memory byte without a change history,
 	 * and a value of 0.  The byte's endianess is known and is little endian
 	 * by default.
 	 */
 	public MemoryByte() {
-	    this((byte)0, (byte)(VALID | ENDIANESS_KNOWN));
+	    this((byte)0, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
 	}
 	
 	/**
-	 * Constructs a read-write, valid memory byte without a change history,
+	 * Constructs a readable, writable memory byte without a change history,
 	 * with the given value.  The byte's endianess is known and is little endian
 	 * by default.  
 	 * 
@@ -97,7 +97,7 @@ public class MemoryByte {
 	 * 
 	 */
 	public MemoryByte(byte byteValue) {
-	    this(byteValue, (byte)(VALID | ENDIANESS_KNOWN));
+	    this(byteValue, (byte)(WRITABLE | READABLE | ENDIANESS_KNOWN));
 	}
 	
 	/**
@@ -147,47 +147,47 @@ public class MemoryByte {
 	}
 	
 	/**
-	 * Sets whether this memory byte is valid. A memory byte
-	 * is considered valid when its value and attributes are
+	 * Sets whether this memory byte is readable. A memory byte
+	 * is considered readable when its value and attributes are
 	 * retrievable.
 	 * 
-	 * @param valid whether this memory byte is valid
+	 * @param readable whether this memory byte is readable
 	 */
-	public void setValid(boolean valid) {
-		flags |= MemoryByte.VALID;
-		if (!valid)
-			flags ^= MemoryByte.VALID;
+	public void setReadable(boolean readable) {
+		flags |= MemoryByte.READABLE;
+		if (!readable)
+			flags ^= MemoryByte.READABLE;
 	}
 	
 	/**
-	 * Returns whether this memory byte is valid. A memory byte
-	 * is considered valid when its value and attributes are
+	 * Returns whether this memory byte is readable. A memory byte
+	 * is considered readable when its value and attributes are
 	 * retrievable.
 	 * 
-	 * @return whether this memory byte is valid
+	 * @return whether this memory byte is readable
 	 */
-	public boolean isValid() {
-		return ((flags & MemoryByte.VALID) == MemoryByte.VALID);
+	public boolean isReadable() {
+		return ((flags & MemoryByte.READABLE) == MemoryByte.READABLE);
 	}
 	
 	/**
-	 * Sets whether this memory byte is read-only.
+	 * Sets whether this memory byte is writable.
 	 * 
-	 * @param readonly whether this memory byte is read-only.
+	 * @param writable whether this memory byte is writable.
 	 */
-	public void setReadonly(boolean readonly) {
-		flags |= MemoryByte.READONLY;
-		if (!readonly)
-			flags ^= MemoryByte.READONLY;
+	public void setWritable(boolean writable) {
+		flags |= MemoryByte.WRITABLE;
+		if (!writable)
+			flags ^= MemoryByte.WRITABLE;
 	}
 	
 	/**
-	 * Returns whether this memory byte is read-only.
+	 * Returns whether this memory byte is writable.
 	 * 
-	 * @return whether this memory byte is read-only
+	 * @return whether this memory byte is writable
 	 */
-	public boolean isReadonly() {
-		return ((flags & MemoryByte.READONLY) == MemoryByte.READONLY);
+	public boolean isWritable() {
+		return ((flags & MemoryByte.WRITABLE) == MemoryByte.WRITABLE);
 	}
 	
 	/**
@@ -216,10 +216,10 @@ public class MemoryByte {
 	 * 
 	 * @param known whether the change state of this byte is known
 	 */
-	public void setKnown(boolean known) {
-		flags |= MemoryByte.KNOWN;
+	public void setHistoryKnown(boolean known) {
+		flags |= MemoryByte.HISTORY_KNOWN;
 		if (!known)
-			flags ^= MemoryByte.KNOWN;
+			flags ^= MemoryByte.HISTORY_KNOWN;
 	}
 	
 	/**
@@ -228,8 +228,8 @@ public class MemoryByte {
 	 * 
 	 * @return whether the change state of this byte is known
 	 */
-	public boolean isKnown() {
-		return ((flags & MemoryByte.KNOWN) == MemoryByte.KNOWN);
+	public boolean isHistoryKnown() {
+		return ((flags & MemoryByte.HISTORY_KNOWN) == MemoryByte.HISTORY_KNOWN);
 	}
 	
 	/**

@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.Vector;
-import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -55,7 +55,7 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	public MonitorMemoryBlockDialog(Shell parentShell, IMemoryBlockRetrieval memRetrieval) {
 		super(parentShell);
 		
-		if (memRetrieval instanceof IMemoryBlockExtensionRetrieval)
+		if (memRetrieval instanceof IMemoryBlockRetrievalExtension)
 			needLength = false;
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$

@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ErrorRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -22,6 +23,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
@@ -52,11 +54,15 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		// as the new rendering should be in focus and have control 
 		// after it's created
 		
-		container.getMemoryRenderingSite().setSynchronizationProvider(rendering);
+		if (container.getMemoryRenderingSite().getSynchronizationService() != null)
+			container.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(rendering);
 		Control control = createViewTab();
 		
 		control.addListener(SWT.Activate, this);
 		control.addListener(SWT.Deactivate, this);
+		
+		// force the new control to have focus
+		control.setFocus();
 		
 		// activate rendering upon creations
 		fRendering.activated();
@@ -174,37 +180,45 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getSource() == fRendering)
-		{
-			if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT))
-			{
-				Object value = event.getNewValue();
-				if (value != null && value instanceof String)
+	public void propertyChange(final PropertyChangeEvent event) {
+		
+		// make sure this runs on the UI thread, otherwise, it
+		// will get to a swt exception
+		Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+		
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (event.getSource() == fRendering)
 				{
-					String label = (String)value;
-					setTabLabel(label);
+					if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT))
+					{
+						Object value = event.getNewValue();
+						if (value != null && value instanceof String)
+						{
+							String label = (String)value;
+							setTabLabel(label);
+						}
+						else
+						{
+							setTabLabel(fRendering.getLabel());
+						}
+					}
+					
+					if (event.getProperty().equals(IBasicPropertyConstants.P_IMAGE))
+					{
+						Object value = event.getNewValue();
+						if (value != null && value instanceof Image)
+						{
+							Image image = (Image)value;
+							fTabItem.setImage(image);
+						}
+						else
+						{
+							fTabItem.setImage(fRendering.getImage());
+						}
+					}
 				}
-				else
-				{
-					setTabLabel(fRendering.getLabel());
-				}
-			}
-			
-			if (event.getProperty().equals(IBasicPropertyConstants.P_IMAGE))
-			{
-				Object value = event.getNewValue();
-				if (value != null && value instanceof Image)
-				{
-					Image image = (Image)value;
-					fTabItem.setImage(image);
-				}
-				else
-				{
-					fTabItem.setImage(fRendering.getImage());
-				}
-			}
-		}
+			}});
 	}
 	
 	private MemoryViewTab getInstance()

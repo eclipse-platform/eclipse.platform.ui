@@ -57,4 +57,23 @@ public interface IMemoryRenderingBindingsProvider {
      * or <code>null</code> if none
      */
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
+		
+    /**
+     * Adds a listener to this binding provider.  The listener will be notified
+     * when the rendering bindings has changed.
+     * 
+     * Has no affect if an identical listener is already registered.
+     *
+     * @param listener to add
+     */
+	public void addListener(IMemoryRenderingBindingsListener listener);
+	
+    /**
+     * Removes a listener from this binding provider.  
+     * 
+     * Has no affect if an identical listener is not registered.
+     *
+     * @param listener to remove
+     */
+	public void removeListener(IMemoryRenderingBindingsListener listener);
 }

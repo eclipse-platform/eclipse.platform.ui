@@ -38,7 +38,7 @@ public class HexRendering extends AbstractTableRendering {
 		
 		for (int i=0; i<data.length; i++)
 		{
-			if (data[i].isValid())
+			if (data[i].isReadable())
 			{
 				strBuffer.append(new String(convertByteToCharArray(data[i].getValue())));
 			}

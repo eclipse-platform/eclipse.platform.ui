@@ -91,7 +91,7 @@ public class TableRenderingLine extends Object {
 			for (int i=0; i<fBytes.length; i++)
 			{ 
 				// if byte is invalid
-				if (!fBytes[i].isValid())
+				if (!fBytes[i].isReadable())
 				{
 					if (paddedString == null)
 					{
@@ -120,7 +120,7 @@ public class TableRenderingLine extends Object {
 		boolean available = true;
 		for (int i=start; i<end; i++)
 		{	
-			if (!fBytes[i].isValid())
+			if (!fBytes[i].isReadable())
 			{	
 				available = false;
 				break;
@@ -178,15 +178,15 @@ public class TableRenderingLine extends Object {
 		for (int i=0; i<fBytes.length; i++)
 		{
 			// turn on known bit
-			fBytes[i].setKnown(true);
+			fBytes[i].setHistoryKnown(true);
 			
-			if ((fBytes[i].getFlags() & MemoryByte.VALID) != (oldMemory[i].getFlags() & MemoryByte.VALID))
+			if ((fBytes[i].getFlags() & MemoryByte.READABLE) != (oldMemory[i].getFlags() & MemoryByte.READABLE))
 			{
 				fBytes[i].setChanged(true);
 				continue;
 			}
 				
-			if (fBytes[i].isValid() && oldMemory[i].isValid())
+			if (fBytes[i].isReadable() && oldMemory[i].isReadable())
 			{
 				if (fBytes[i].getValue() != oldMemory[i].getValue())
 				{
@@ -246,7 +246,7 @@ public class TableRenderingLine extends Object {
 		
 		for (int i=offset; i<=endOffset; i++)
 		{
-			if (!fBytes[i].isKnown())
+			if (!fBytes[i].isHistoryKnown())
 				allBytesKnown = false;
 			if (fBytes[i].isChanged())
 				allBytesUnchanged = false;

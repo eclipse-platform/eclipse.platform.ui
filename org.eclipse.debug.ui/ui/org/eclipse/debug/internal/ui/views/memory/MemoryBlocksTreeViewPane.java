@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -363,19 +364,19 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			String memoryBlockLabel = " "; //$NON-NLS-1$
 			if (memoryBlock instanceof IMemoryBlockExtension)
 			{
+				if (((IMemoryBlockExtension)memoryBlock).getExpression() != null)
+				{
+					memoryBlockLabel += ((IMemoryBlockExtension)memoryBlock).getExpression();
+				}
+				
 				try {
-					
-					if (((IMemoryBlockExtension)memoryBlock).getExpression() != null)
-					{
-						memoryBlockLabel += ((IMemoryBlockExtension)memoryBlock).getExpression();
-					}
-					
 					if (((IMemoryBlockExtension)memoryBlock).getBigBaseAddress() != null)
 					{
 						memoryBlockLabel += " = 0x" + ((IMemoryBlockExtension)memoryBlock).getBigBaseAddress().toString(16); //$NON-NLS-1$
 					}
 				} catch (DebugException e) {
-					memoryBlockLabel = memoryBlock.toString();
+					// return whatever we have for label
+					return memoryBlockLabel;
 				}
 			}
 			else

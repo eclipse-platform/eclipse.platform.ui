@@ -19,25 +19,6 @@ import org.eclipse.debug.core.DebugException;
  * for bytes to be accessed in a larger address space, and for state information
  * to be provided for each byte. 
  * <p>
- * TODO: notes about the memory view should be moved elsewhere, as this is specific
- * to the memory view, not memory blocks.
- *  - connects when a block is visibile
- *  - disconnects when a block is hidden
- *  - expression used to construct the tab label of the memory view
- *  - manages change state for memory blocks that do not manage their own state
- *  When firing change event, be aware of the following:
- *  - whenever a change event is fired, the content provider for Memory View
- *    view checks to see if memory has actually changed.  
- *  - If memory has actually changed, a refresh will commence.  Changes to the memory block
- *    will be computed and will be shown with the delta icons.
- *  - If memory has not changed, content will not be refreshed.  However, previous delta information 
- * 	  will be erased.  The screen will be refreshed to show that no memory has been changed.  (All
- *    delta icons will be removed.)
- * Please note that these APIs will be called multiple times by the Memory View.
- * To improve performance, debug adapters need to cache the content of its memory block and only
- * retrieve updated data when necessary.
- * </p>
- * <p>
  * Clients may optionally implement this interface when providing implementations of
  * {@link org.eclipse.debug.core.model.IMemoryBlock}.
  * </p>
@@ -52,19 +33,16 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * used to compute a base address for a memory block.
 	 * 
 	 * @return the expression used to create this memory block
-	 * @exception DebugException if unable to retrieve this memory block's expression
-	 * 
-	 * TODO: why should this fail? shouldn't the expression just be a property of the
-	 *  memory block?
 	 */
-	public String getExpression() throws DebugException;	
+	public String getExpression();	
 	
 	/**
 	 * Returns the base address of this memory block as a big integer.
 	 * 
 	 * @return the base address of this memory block
+	 * @throws DebugException if unable to retreive the base address
 	 */
-	public BigInteger getBigBaseAddress();
+	public BigInteger getBigBaseAddress() throws DebugException;
 	
 	/**
 	 * Returns the hard start address of this memory block as a big integer, or 
@@ -73,11 +51,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * address and length.
 	 * 
 	 * @return the hard start address of this memory block or <code>null</code>
-	 * 
-	 * TODO: is this the same as the base address? if so we could delete the method
-	 * and only provide a hard end address?
+	 * @throws DebugException if unable to retrieve the start address of this memory block.
 	 */
-	public BigInteger getMemoryBlockStartAddress();
+	public BigInteger getMemoryBlockStartAddress() throws DebugException;
 	
 	/**
 	 * Returns the hard end address of this memory block as a big integer, or
@@ -86,23 +62,26 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * address and length. 
 	 * 
 	 * @return the hard end address of this memory block or <code>null</code>
+	 * @throws DebugException if unable to retrieve the end address of this memory block.
 	 */
-	public BigInteger getMemoryBlockEndAddress();
+	public BigInteger getMemoryBlockEndAddress() throws DebugException;
 	
 	/**
 	 * Returns the address size of this memory block in number of bytes. The address
 	 * size indicates the number of bytes used to construct an address.
 	 *  
 	 * @return address size in number of bytes
+	 * @throws DebugException if unable to retrieve the address size
 	 */
-	public int getAddressSize();
+	public int getAddressSize() throws DebugException;
 	
 	/**
 	 * Returns whether the base address of this memory block can be modified.
 	 * 
 	 * @return whether the base address of this memory block can be modified
+	 * @throws DebugException is unable to determine if base address modification is supported
 	 */
-	public boolean supportBaseAddressModification();
+	public boolean supportBaseAddressModification() throws DebugException;
 	
 	/**
 	 * Returns whether this memory block manages the change state of its bytes.
@@ -128,10 +107,15 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * Returns bytes from this memory block based on the base address and
 	 * addressable size of this memory block.
 	 * 
+	 * TODO:  please review this statement, this is to tell clients that 
+	 *  the offset can cross memory block boundary. 
+	 *  
+	 *  When asked to return bytes that are beyond the memory block's start
+	 *  or end address and if the memory block is unable to retrieve that memory,
+	 *  return the required memory bytes with their READABLE bit set to 0.
+	 *  
 	 * @param offset zero based offset into this memory block at which to start
-	 *  retrieving bytes
-	 *  TODO: can this offset cross an addressable boundary? os is it in "units" (number
-	 *   of addressible units)
+	 *  retrieving bytes.  Client should retrieve memory starting from "base address + offset".
 	 * @param units the number of addressible units to retrieve
 	 * @return an array of bytes from this memory block based on the given offset
 	 *  and number of units. The size of the array returned must to be equal to 
@@ -139,14 +123,18 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @throws DebugException if unable to retrieve the specified bytes
 	 * @see MemoryByte
 	 */
-	public MemoryByte[] getBytesFromOffset(long offset, long units) throws DebugException;
+	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException;
 	
 	/**
 	 * Returns bytes from this memory block based on the given address and the
 	 * addressable size of this memory block.
+	 * 
+	 *  TODO:  again, please review the following statement:
+	 *  When asked to return bytes that are beyond the memory block's start
+	 *  or end address and if the memory block is unable to retrieve that memory,
+	 *  return the required memory bytes with their READABLE bit set to 0.
 	 *   
 	 * @param address address at which to begin retrieving bytes
-	 *  TODO: can this address cross an addressible boundary?
 	 * @param units is the number of addressible units of memory to retrieve 
 	 * @return an array of bytes from this memory block based on the given address
 	 *  and number of units. The size of the array returned must to be equal to 
@@ -161,9 +149,8 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * the spcified bytes. The offset is zero based. After successfully modifying the
 	 * specified bytes, a debug event should be fired with a kind of <code>CHANGE</code>. 
 	 * 
-	 * @param offset the zero based offset at which to set the new values
-	 *  TODO: is this an absolute offset, or a number of addressible units? can it cross
-	 *   a boundary?
+	 * @param offset the zero based offset at which to set the new value.  Modify
+	 * the memory starting from base address + offset.
 	 * @param bytes replcement bytes
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
@@ -208,8 +195,9 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	
 	/**
 	 * Dispose this memory block. Connected clients are disconnected.
+	 * @throws DebugException if the memory block cannot be disposed.
 	 */
-	public void dispose();
+	public void dispose() throws DebugException;
 	
 	/**
 	 * Returns the origin of this memory block.
@@ -224,6 +212,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * a single unit.
 	 *  
 	 * @return this memory block's addressable size
+	 * @throws DebugException if the addressable size cannot be obtained.
 	 */
-	public int getAddressableSize();
+	public int getAddressableSize() throws DebugException;
 }

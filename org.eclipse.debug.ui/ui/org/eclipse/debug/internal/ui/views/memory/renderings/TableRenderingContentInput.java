@@ -12,8 +12,10 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 
 /**
@@ -43,7 +45,12 @@ public class TableRenderingContentInput {
 		fDefaultBufferSize = defaultBufferSize;
 		fUpdateDelta = updateDelta;
 
-		updateContentBaseAddress();
+		try {
+			updateContentBaseAddress();
+		} catch (DebugException e) {
+			// log error, cannot recover
+			DebugUIPlugin.log(e);
+		}
 	}
 	public int getNumVisibleLines() {
 		return fNumVisibleLines;
@@ -91,7 +98,7 @@ public class TableRenderingContentInput {
 	public BigInteger getContentBaseAddress() {
 		return fMemoryBlockBaseAddress;
 	}
-	public void updateContentBaseAddress() {
+	public void updateContentBaseAddress() throws DebugException {
 		IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
 		if (memoryBlock instanceof IMemoryBlockExtension)
 			fMemoryBlockBaseAddress = ((IMemoryBlockExtension)memoryBlock).getBigBaseAddress();
@@ -103,12 +110,18 @@ public class TableRenderingContentInput {
 	{
 		if (fStartAddress == null)
 		{
-			IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
-			if(memoryBlock instanceof IMemoryBlockExtension)
-			{
-				BigInteger startAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockStartAddress();
-				if (startAddress != null)
-					fStartAddress =  startAddress;
+			try {
+				IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
+				if(memoryBlock instanceof IMemoryBlockExtension)
+				{
+					BigInteger startAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockStartAddress();
+					if (startAddress != null)
+						fStartAddress =  startAddress;
+				}
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e);
+				// default to 0 if we have trouble getting the start address
+				fStartAddress =  BigInteger.valueOf(0);			
 			}
 			
 			if (fStartAddress == null)
@@ -124,20 +137,30 @@ public class TableRenderingContentInput {
 			IMemoryBlock memoryBlock = fRendering.getMemoryBlock();
 			if(memoryBlock instanceof IMemoryBlockExtension)
 			{
-				BigInteger endAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockEndAddress();
-				if (endAddress != null)
-					fEndAddress = endAddress;
+				BigInteger endAddress;
+				try {
+					endAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockEndAddress();
+					if (endAddress != null)
+						fEndAddress = endAddress;
+				} catch (DebugException e) {
+					// log error, default to null
+					DebugUIPlugin.log(e);
+					fEndAddress = null;
+				}
 				
 				if (fEndAddress == null)
 				{
-					int addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
-					
-					endAddress = BigInteger.valueOf(1);
-					for (int i=0; i<addressSize*8; i++)
-					{
-						endAddress = endAddress.multiply(BigInteger.valueOf(2));
+					int addressSize;
+					try {
+						addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
+					} catch (DebugException e) {
+						// log error and default to 4
+						DebugUIPlugin.log(e);
+						addressSize = 4;
 					}
 					
+					endAddress = BigInteger.valueOf(2);
+					endAddress = endAddress.pow(addressSize*8);
 					endAddress = endAddress.subtract(BigInteger.valueOf(1));
 					fEndAddress =  endAddress;
 				}

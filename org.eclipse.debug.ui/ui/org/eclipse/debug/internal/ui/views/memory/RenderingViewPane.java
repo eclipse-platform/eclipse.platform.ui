@@ -299,20 +299,24 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			
 			if (elem instanceof IMemoryBlock)
 			{	
-					// find the folder associated with the given IMemoryBlockRetrieval
-				IMemoryBlock memBlock = (IMemoryBlock)elem;
-				
-				// should never get here... added code for safety
-				if (fTabFolderForMemoryBlock == null)
+				// if the selection event comes from this view
+				if (part == getMemoryRenderingSite())
 				{
-					if (lastViewTab != null)
-						lastViewTab.setEnabled(false);
+					// find the folder associated with the given IMemoryBlockRetrieval
+					IMemoryBlock memBlock = (IMemoryBlock)elem;
 					
-					emptyFolder();
-					return;				
+					// should never get here... added code for safety
+					if (fTabFolderForMemoryBlock == null)
+					{
+						if (lastViewTab != null)
+							lastViewTab.setEnabled(false);
+						
+						emptyFolder();
+						return;				
+					}
+	
+					handleMemoryBlockSelection(lastViewTab, memBlock);
 				}
-
-				handleMemoryBlockSelection(lastViewTab, memBlock);				
 			}
 			else if (elem instanceof IDebugElement)
 			{	

@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
@@ -71,7 +70,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private MemoryBlocksTreeViewPane fMemBlkViewer;
 	
 	private MemoryViewSynchronizationService fSyncService;
-	private IMemoryRendering fSyncServiceProvider;
 	
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -510,27 +508,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	 */
 	public IMemoryRenderingSynchronizationService getSynchronizationService() {
 		return fSyncService;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#setSynchronizationProvider(org.eclipse.debug.ui.memory.IMemoryRendering)
-	 */
-	public void setSynchronizationProvider(IMemoryRendering rendering) {
-		
-		if (fSyncServiceProvider != null)
-			fSyncServiceProvider.removePropertyChangeListener(fSyncService);
-		
-		if (rendering != null)
-			rendering.addPropertyChangeListener(fSyncService);
-		
-		fSyncServiceProvider = rendering;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getSynchronizationProvider()
-	 */
-	public IMemoryRendering getSynchronizationProvider() {
-		return fSyncServiceProvider;
 	}
 
 	/* (non-Javadoc)

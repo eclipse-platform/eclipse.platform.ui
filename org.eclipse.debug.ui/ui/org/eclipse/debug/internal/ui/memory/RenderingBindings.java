@@ -21,15 +21,19 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jface.util.ListenerList;
 
 /**
  * Represents a renderingBindings element of a memoryRenderings
@@ -52,6 +56,9 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
     
     // optional exprssion
     private Expression fExpression;
+	
+	// list of listeners
+	private ListenerList fListeners;
 
     // element attribute
     public static final String ATTR_RENDERING_IDS = "renderingIds"; //$NON-NLS-1$
@@ -148,18 +155,29 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
      * 
      * @return the provider for this binding or <code>null</code> of none
      */
-    private IMemoryRenderingBindingsProvider getProvider() {
-        if (fProvider == null) {
-            String name = fConfigurationElement.getAttribute(ATTR_PROVIDER);
-            if (name != null) {
-                try {
-                    fProvider = (IMemoryRenderingBindingsProvider) fConfigurationElement.createExecutableExtension(ATTR_PROVIDER);
-                } catch (CoreException e) {
-                    DebugUIPlugin.log(e);
-                }
-            }
-        }
-        return fProvider;
+    protected IMemoryRenderingBindingsProvider getProvider(IMemoryBlock memoryBlock) {
+		if (isBound(memoryBlock))
+		{
+	        if (fProvider == null) {
+	            String name = fConfigurationElement.getAttribute(ATTR_PROVIDER);
+	            if (name != null) {
+	                try {
+	                    fProvider = (IMemoryRenderingBindingsProvider) fConfigurationElement.createExecutableExtension(ATTR_PROVIDER);
+	                } catch (CoreException e) {
+	                    DebugUIPlugin.log(e);
+	                }
+	            }
+				
+				if (fProvider != null)
+				{
+					fProvider.addListener(new IMemoryRenderingBindingsListener() {
+						public void memoryRenderingBindingsChanged() {
+							fireBindingChangedEvent();
+						}});
+				}
+	        }
+		}
+		return fProvider;
     }
     
     /**
@@ -224,7 +242,7 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
      */
     public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
         if (isBound(block)) {
-            IMemoryRenderingBindingsProvider provider = getProvider();
+            IMemoryRenderingBindingsProvider provider = getProvider(block);
             if (provider == null) {
                 if (fAllTypes == null) {
                     IMemoryRenderingType[] defaultBindings = getDefaultBindings();
@@ -249,7 +267,7 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
      */
     public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
         if (isBound(block)) {
-            IMemoryRenderingBindingsProvider provider = getProvider();
+            IMemoryRenderingBindingsProvider provider = getProvider(block);
             if (provider == null) {
                 return getDefaultBindings();
             }
@@ -263,7 +281,7 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
      */
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
         if (isBound(block)) {
-            IMemoryRenderingBindingsProvider provider = getProvider();
+            IMemoryRenderingBindingsProvider provider = getProvider(block);
             if (provider == null) {
                 String primaryId = getPrimaryId();
                 if (primaryId != null) {
@@ -279,5 +297,42 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
     private IMemoryRenderingManager getManager() { 
         return DebugUITools.getMemoryRenderingManager();
     }
+
+	public void addListener(IMemoryRenderingBindingsListener listener) {
+		if (fListeners == null)
+			fListeners = new ListenerList();
+		
+		fListeners.add(listener);
+	}
+
+	public void removeListener(IMemoryRenderingBindingsListener listener) {
+		if (fListeners != null){
+			fListeners.remove(listener);
+		}
+	}
+	
+	private void fireBindingChangedEvent()
+	{
+		if (fListeners == null)
+			return;
+		
+		Object[] listeners = fListeners.getListeners();
+		
+		for (int i=0; i<listeners.length; i++)
+		{
+			if (listeners[i] instanceof IMemoryRenderingBindingsListener)
+			{
+				final IMemoryRenderingBindingsListener listener = (IMemoryRenderingBindingsListener)listeners[i];
+				ISafeRunnable runnable = new ISafeRunnable () {
+					public void handleException(Throwable exception) {
+						DebugUIPlugin.log(exception);
+					}
+					public void run() throws Exception {
+						listener.memoryRenderingBindingsChanged();
+					}};
+				Platform.run(runnable);
+			}
+		}
+	}
     
 }

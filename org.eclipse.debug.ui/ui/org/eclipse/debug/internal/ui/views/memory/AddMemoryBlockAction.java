@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -169,10 +169,10 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		String expression = dialog.getExpression();
 
 		try {
-			if (standardMemRetrieval instanceof IMemoryBlockExtensionRetrieval)
+			if (standardMemRetrieval instanceof IMemoryBlockRetrievalExtension)
 			{
 				// if the debug session supports IMemoryBlockExtensionRetrieval
-				IMemoryBlockExtensionRetrieval memRetrieval = (IMemoryBlockExtensionRetrieval)standardMemRetrieval;
+				IMemoryBlockRetrievalExtension memRetrieval = (IMemoryBlockRetrievalExtension)standardMemRetrieval;
 				
 				// get extended memory block with the expression entered
 				IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, ((IDebugElement)elem));
