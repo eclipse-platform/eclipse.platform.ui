@@ -881,15 +881,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		private Image createOverwriteCaretImage(StyledText styledText) {
 			PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
-			ImageData imageData = new ImageData(5, styledText.getLineHeight(), 1, caretPalette);
+			ImageData imageData = new ImageData(100, styledText.getLineHeight(), 1, caretPalette);
 			Display display = styledText.getDisplay();
 			Image blockImage= new Image(display, imageData);
 			GC gc = new GC (blockImage);
 			gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-			gc.drawLine(0, 0, imageData.width -1, 0);
-			gc.drawLine(0, 0, 0, imageData.height -1);
-			gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
+
+//			gc.drawLine(0, 0, imageData.width -1, 0);
+//			gc.drawLine(0, 0, 0, imageData.height -1);
+//			gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
+			
+			gc.setFont(styledText.getFont());
+			Point extent= gc.stringExtent("l");  //$NON-NLS-1$
+			gc.fillRectangle(0, 0,extent.x, imageData.height -1);
 			gc.dispose();
+			
 			return blockImage;
 		}
 	};
