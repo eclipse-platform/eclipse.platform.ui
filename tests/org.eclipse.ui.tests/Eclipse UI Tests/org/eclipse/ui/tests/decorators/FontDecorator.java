@@ -13,12 +13,13 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.swt.graphics.Font;
 
 /**
  * The FontDecorator is for testing the font enablement.
  */
-public class FontDecorator extends AbstractViewerDecorator {
+public class FontDecorator implements ILightweightLabelDecorator {
 
 	public static final String ID = "org.eclipse.ui.tests.fontDecorator";
 
@@ -32,7 +33,6 @@ public class FontDecorator extends AbstractViewerDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 		decoration.setFont(font);
-		testForDecorationHit(element);
 	}
 
 	/*

@@ -12,8 +12,6 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,10 +27,6 @@ import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
  * DecoratorViewerTest is the abstract class of the tests for the viewers.
  */
 public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
-
-	public static boolean tableHit = false;
-
-	public static boolean treeHit = false;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -68,30 +62,24 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
 		BackgroundColorDecorator.setUpColor();
 
-		final IViewPart view = openViewAndClearFlags();
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		Assert.isNotNull(page, "No active page");
+
+		final IViewPart view = openView(page);
+		((DecoratorTestPart) view).setUpForDecorators();
+		
 
 		IDecoratorManager manager = WorkbenchPlugin.getDefault()
 				.getDecoratorManager();
 		manager.setEnabled(BackgroundColorDecorator.ID, true);
-
+		
 		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		backgroundCheck(view);
 		manager.setEnabled(BackgroundColorDecorator.ID, false);
-
-	}
-
-	private IViewPart openViewAndClearFlags() throws PartInitException {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IWorkbenchPage page = window.getActivePage();
-		Assert.isNotNull(page, "No active page");
-		IViewPart view = openView(page);
-		((DecoratorTestPart) view).clearFlags();
-		tableHit = false;
-		treeHit = false;
-		return view;
 
 	}
 
@@ -112,12 +100,20 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	public void testForeground() throws PartInitException, CoreException,
 			InterruptedException {
 
-		final IViewPart view = openViewAndClearFlags();
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		Assert.isNotNull(page, "No active page");
+
+		final IViewPart view = openView(page);
+
+		((DecoratorTestPart) view).setUpForDecorators();
+		
 
 		IDecoratorManager manager = WorkbenchPlugin.getDefault()
 				.getDecoratorManager();
 		manager.setEnabled(ForegroundColorDecorator.ID, true);
-
+		
 		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
 		dispatchDuringUpdates((DecoratorTestPart) view);
 
@@ -131,20 +127,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	 * 
 	 */
 	private void dispatchDuringUpdates(DecoratorTestPart view) {
-
-		long startTime = System.currentTimeMillis();
-		while (!view.updateHappened) {
-			Display.getCurrent().readAndDispatch();
-			if (System.currentTimeMillis() - startTime > 10000) {
-				if (Platform.inDebugMode()) {
-					// After 10 seconds time out
-					Assert.isTrue(false,
-							"Update never arrived after 10 seconds");
-				} else
-					return;
-			}
-
-		}
+		view.readAndDispatchForUpdates();
 
 	}
 
@@ -173,17 +156,25 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	public void testFont() throws PartInitException, CoreException,
 			InterruptedException {
 
-		final IViewPart view = openViewAndClearFlags();
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		Assert.isNotNull(page, "No active page");
+
+		
+		final IViewPart view = openView(page);
+		((DecoratorTestPart) view).setUpForDecorators();
+		
 
 		IDecoratorManager manager = WorkbenchPlugin.getDefault()
 				.getDecoratorManager();
 		manager.setEnabled(FontDecorator.ID, true);
-
+		
 		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		fontCheck(view);
-
+		
 		manager.setEnabled(FontDecorator.ID, false);
 
 	}

@@ -19,8 +19,6 @@ import org.eclipse.jface.viewers.Viewer;
 public class TestTreeContentProvider implements ITreeContentProvider {
 
 
-	public static Object root  = new TreeElement(null, 0);
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
@@ -52,7 +50,7 @@ public class TestTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		
+		TreeElement root = new TreeElement(null, 0);
 		return new Object[] { root };
 	}
 
