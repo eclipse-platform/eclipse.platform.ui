@@ -51,7 +51,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class that implements &lt;codde&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt;.
+                  the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -80,10 +80,10 @@
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point = &quot;org.eclipse.debug.ui.debugViewContentProviders&quot;&gt; 
-       &lt;debugViewContentProviders 
+       &lt;debugViewContentProvider 
            class = &quot;com.example.JavaDebugContentProvider&quot;
            debugModelId = &quot;com.example.JavaDebugId&quot;&gt;
-       &lt;/debugViewContentProviders&gt; 
+       &lt;/debugViewContentProvider&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
