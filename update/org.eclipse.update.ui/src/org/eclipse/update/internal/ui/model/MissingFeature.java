@@ -119,6 +119,13 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
+	 * @see IFeature#getArch()
+	 */
+	public String getArch() {
+		return null;
+	}
+
+	/*
 	 * @see IFeature#getImage()
 	 */
 	public URL getImage() {
