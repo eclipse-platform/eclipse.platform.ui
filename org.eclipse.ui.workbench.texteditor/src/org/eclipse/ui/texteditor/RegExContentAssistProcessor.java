@@ -24,7 +24,7 @@ import org.eclipse.jface.text.contentassist.ContextInformationValidator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessorExtension;
-import org.eclipse.jface.text.contentassist.IContentAssistRequestor;
+import org.eclipse.jface.text.contentassist.IContentAssistSubject;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
@@ -182,14 +182,14 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		return computeCompletionProposals((IContentAssistRequestor)null, documentOffset);
+		return computeCompletionProposals((IContentAssistSubject)null, documentOffset);
 	}
 	
 	/*
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
-		return computeContextInformation((IContentAssistRequestor)null, documentOffset);
+		return computeContextInformation((IContentAssistSubject)null, documentOffset);
 	}
 	
 	/*
@@ -222,38 +222,38 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ICon
 	}
 
 	/*
-	 * @see IContentAssistProcessorExtension#computeCompletionProposals(IContentAssistRequestor, int)
+	 * @see IContentAssistProcessorExtension#computeCompletionProposals(IContentAssistSubject, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(IContentAssistRequestor contentAssistRequestor, int documentOffset) {
+	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubject contentAssistSubject, int documentOffset) {
 		List results= new ArrayList(fgProposalKeys.size());
 		Iterator iter= fgProposalKeys.iterator();
 		while (iter.hasNext())
-			addProposal((String)iter.next(), contentAssistRequestor, documentOffset, results, true);
+			addProposal((String)iter.next(), contentAssistSubject, documentOffset, results, true);
 
 		if (results.isEmpty()) {
 			iter= fgProposalKeys.iterator();
 			while (iter.hasNext())
-				addProposal((String)iter.next(), contentAssistRequestor, documentOffset, results, false);
+				addProposal((String)iter.next(), contentAssistSubject, documentOffset, results, false);
 		}
 
 		return (ICompletionProposal[])results.toArray(new ICompletionProposal[results.size()]);
 	}
 
 	/*
-	 * @see IContentAssistProcessorExtension#computeContextInformation(IContentAssistRequestor, int)
+	 * @see IContentAssistProcessorExtension#computeContextInformation(IContentAssistSubject, int)
 	 */
-	public IContextInformation[] computeContextInformation(IContentAssistRequestor contentAssistRequestor, int documentOffset) {
+	public IContextInformation[] computeContextInformation(IContentAssistSubject contentAssistSubject, int documentOffset) {
 		return null;
 	}
 	
-	private void addProposal(String proposalKey, IContentAssistRequestor contentAssistRequestor, int documentOffset, List results, boolean filter) {
+	private void addProposal(String proposalKey, IContentAssistSubject contentAssistSubject, int documentOffset, List results, boolean filter) {
 		String proposal= (String)fgProposalStrings.get(proposalKey);
 
 		// compute correct replacement
 		if (filter) {
 			String selection= null;
 			try {
-				selection = contentAssistRequestor.getDocument().get(documentOffset - 1, 1);
+				selection = contentAssistSubject.getDocument().get(documentOffset - 1, 1);
 			} catch (BadLocationException e) {
 				return ;
 			}

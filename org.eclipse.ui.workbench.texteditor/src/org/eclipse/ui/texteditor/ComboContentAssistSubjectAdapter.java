@@ -32,16 +32,16 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
-import org.eclipse.jface.text.contentassist.IContentAssistRequestor;
+import org.eclipse.jface.text.contentassist.IContentAssistSubject;
 
 /**
- * Adapts a <code>Combo</code> to an <code>IContentAssistRequestor</code>.
+ * Adapts a <code>Combo</code> to an <code>IContentAssistSubject</code>.
  * 
  * @see org.eclipse.swt.widgets.Combo
- * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor
+ * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
  * @since 3.0
  */
-final class ComboContentAssistRequestorAdapter implements IContentAssistRequestor {
+final class ComboContentAssistSubjectAdapter implements IContentAssistSubject {
 
 	private class InternalDocument extends Document {
 		
@@ -79,39 +79,39 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 
 
 	/**
-	 * Creates a content assist requestor adapter for the given combo.
+	 * Creates a content assist subject adapter for the given combo.
 	 * 
 	 * @param combo the combo to adapt
 	 */
-	public ComboContentAssistRequestorAdapter(Combo combo) {
+	public ComboContentAssistSubjectAdapter(Combo combo) {
 		Assert.isNotNull(combo);
 		fCombo= combo;
 		fModifyListeners= new HashMap();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getControl()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getControl()
 	 */
 	public Control getControl() {
 		return fCombo;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getLineHeight()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineHeight()
 	 */
 	public int getLineHeight() {
 		return fCombo.getTextHeight();
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getCaretOffset()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getCaretOffset()
 	 */
 	public int getCaretOffset() {
 		return fCombo.getSelection().y;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getLocationAtOffset(int)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLocationAtOffset(int)
 	 */
 	public Point getLocationAtOffset(int offset) {
 		String comboString= fCombo.getText();
@@ -128,35 +128,35 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getLineDelimiter()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getLineDelimiter()
 	 */
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener keyListener) {
 		fCombo.addKeyListener(keyListener);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getSelectionRange()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getSelectionRange()
 	 */
 	public Point getWidgetSelectionRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getSelectedRange()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getSelectedRange()
 	 */
 	public Point getSelectedRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#getDocument()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#getDocument()
 	 */
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fCombo.getData("document"); //$NON-NLS-1$
@@ -168,28 +168,28 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#canAddVerifyKeyListener()
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#canAddVerifyKeyListener()
 	 */
 	public boolean supportsVerifyKeyListener() {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 //		if (fVerifyKeyListeners.containsKey(verifyKeyListener)) {
@@ -198,21 +198,21 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
 	 */
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#setSelectedRange(int, int)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#setSelectedRange(int, int)
 	 */
 	public void setSelectedRange(int i, int j) {
 		fCombo.setSelection(new Point(i, i+j));
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#revealRange(int, int)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#revealRange(int, int)
 	 */
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
@@ -220,14 +220,14 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		fCombo.removeKeyListener(keyListener);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
 	 */
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fCombo.removeSelectionListener(selectionListener);
@@ -237,7 +237,7 @@ final class ComboContentAssistRequestorAdapter implements IContentAssistRequesto
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor#addSelectionListener(org.eclipse.swt.events.SelectionListener)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubject#addSelectionListener(org.eclipse.swt.events.SelectionListener)
 	 */
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fCombo.addSelectionListener(selectionListener);

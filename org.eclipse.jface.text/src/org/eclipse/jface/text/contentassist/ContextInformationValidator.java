@@ -31,11 +31,11 @@ public final class ContextInformationValidator implements IContextInformationVal
 	/** The associated text viewer */
 	private ITextViewer fViewer;
 	/**
-	 * The content assist requestor.
+	 * The content assist subject.
 	 * 
 	 * @since 3.0
 	 */
-	private IContentAssistRequestor fContentAssistRequestor;
+	private IContentAssistSubject fContentAssistSubject;
 
 	/**
 	 * Creates a new context information validator which is ready to be installed on
@@ -55,9 +55,9 @@ public final class ContextInformationValidator implements IContextInformationVal
 		fViewer= viewer;
 	}
 
-	public void install(IContextInformation contextInformation, IContentAssistRequestor contentAssistRequestor, int position) {
+	public void install(IContextInformation contextInformation, IContentAssistSubject contentAssistSubject, int position) {
 		fContextInformation= contextInformation;
-		fContentAssistRequestor= contentAssistRequestor;
+		fContentAssistSubject= contentAssistSubject;
 	}
 
 	/*
@@ -65,9 +65,9 @@ public final class ContextInformationValidator implements IContextInformationVal
 	 */
 	public boolean isContextInformationValid(int position) {
 		IContextInformation[] infos= null;
-		if (fContentAssistRequestor != null) {
+		if (fContentAssistSubject != null) {
 			if (fProcessor instanceof IContentAssistProcessorExtension)
-			infos= ((IContentAssistProcessorExtension)fProcessor).computeContextInformation(fContentAssistRequestor, position);
+			infos= ((IContentAssistProcessorExtension)fProcessor).computeContextInformation(fContentAssistSubject, position);
 		} else
 			infos= fProcessor.computeContextInformation(fViewer, position);
 		if (infos != null && infos.length > 0) {

@@ -13,12 +13,12 @@ package org.eclipse.jface.text.contentassist;
 
 /**
  * Extends <code>IContentAssit</code> with the concept of a
- * content assist requestor which provides the context for
+ * content assist subject which provides the context for
  * the content assistant.
  * <p>
  * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
  * </p>
- * @see org.eclipse.jface.text.contentassist.IContentAssistRequestor
+ * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
  * @since 3.0
  */
 public interface IContentAssistProcessorExtension {
@@ -27,26 +27,26 @@ public interface IContentAssistProcessorExtension {
 	 * within the document that corresponds to the current cursor position
 	 * within the text viewer.
 	 * 
-	 * @param contentAssistRequestor the content assist requestor whose
+	 * @param contentAssistSubject the content assist subject whose
 	 *           document is used to compute the proposals
 	 * @param documentPosition an offset within the document for which
 	 *           completions should be computed
 	 * @return an array of completion proposals or <code>null</code> if no
 	 *         proposals are possible
 	 */
-	ICompletionProposal[] computeCompletionProposals(IContentAssistRequestor contentAssistRequestor, int documentOffset);
+	ICompletionProposal[] computeCompletionProposals(IContentAssistSubject contentAssistSubject, int documentOffset);
 	
 	/**
 	 * Returns information about possible contexts based on the specified
 	 * location within the document that corresponds to the current cursor
-	 * position within the content assist requestor.
+	 * position within the content assist subject.
 	 * 
-	 * @param contentAssistRequestor the content assist requestor whose
+	 * @param contentAssistSubject the content assist subject whose
 	 *           document is used to compute the possible contexts
 	 * @param documentPosition an offset within the document for which context
 	 *           information should be computed
 	 * @return an array of context information objects or <code>null</code>
 	 *         if no context could be found
 	 */
-	IContextInformation[] computeContextInformation(IContentAssistRequestor contentAssistRequestor, int documentOffset);
+	IContextInformation[] computeContextInformation(IContentAssistSubject contentAssistSubject, int documentOffset);
 }

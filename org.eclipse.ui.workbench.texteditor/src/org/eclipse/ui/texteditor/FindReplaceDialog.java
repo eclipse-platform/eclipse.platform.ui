@@ -1722,7 +1722,7 @@ class FindReplaceDialog extends Dialog {
 			}
 					
 		}});
-		contentAssistant.install(new ComboContentAssistRequestorAdapter(combo));
+		contentAssistant.install(new ComboContentAssistSubjectAdapter(combo));
 		return contentAssistant;
 	}
 }

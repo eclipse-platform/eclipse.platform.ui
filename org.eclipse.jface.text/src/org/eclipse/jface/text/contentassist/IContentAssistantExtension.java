@@ -26,13 +26,13 @@ public interface IContentAssistantExtension {
 	String getDocumentPartitioning();
 
 	/**
-	 * Installs content assist support on the given requestor.
+	 * Installs content assist support on the given subject.
 	 * <p>
 	 * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
 	 * </p>
 	 * 
-	 * @param contentAssistRequestor the one who requests content assist
+	 * @param contentAssistSubject the one who requests content assist
 	 * @throws UnsupportedOperationException if the content assist does not support this method
 	 */
-	void install(IContentAssistRequestor contentAssistRequestor);
+	void install(IContentAssistSubject contentAssistSubject);
 }

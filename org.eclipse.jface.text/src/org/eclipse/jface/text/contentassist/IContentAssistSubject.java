@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
 
 /**
- * A content assist requestor can request assistance provided by a
+ * A content assist subject can request assistance provided by a
  * {@link org.eclipse.jface.text.contentassist.IContentAssistant content assistant}.
  * <p>
  * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
@@ -29,12 +29,12 @@ import org.eclipse.jface.text.IEventConsumer;
  * 
  * @since 3.0
  */
-public interface IContentAssistRequestor {
+public interface IContentAssistSubject {
 
 	/**
-	 * Returns the control of this content assist requestor.
+	 * Returns the control of this content assist subject.
 	 * 
-	 * @return the control of this content assist requestor
+	 * @return the control of this content assist subject
 	 */
 	Control getControl();
 
@@ -107,7 +107,7 @@ public interface IContentAssistRequestor {
 	String getLineDelimiter();
 
 	/**
-	 * Returns the selected range in the requestor's widget.
+	 * Returns the selected range in the subject's widget.
 	 * 
 	 * @return start and length of the selection, x is the offset of the
 	 * @exception SWTException
@@ -124,34 +124,34 @@ public interface IContentAssistRequestor {
 	 * Returns the selected range.
 	 * 
 	 * @return start and length of the selection, x is the offset and y the
-	 *         length based on the requestor's model (e.g. document)
+	 *         length based on the subject's model (e.g. document)
 	 */
 	Point getSelectedRange();
 
 	/**
-	 * Sets the selected range. Offset and length based on the requestor's
+	 * Sets the selected range. Offset and length based on the subject's
 	 * model (e.g. document).
 	 * 
-	 * @param offset the offset of the selection based on the requestor's model
+	 * @param offset the offset of the selection based on the subject's model
 	 *           (e.g. document)
-	 * @param length the length of the selection based on the requestor's model
+	 * @param length the length of the selection based on the subject's model
 	 *           (e.g. document)
 	 */
 	void setSelectedRange(int offset, int length);
 
 	/**
-	 * Reveals the given region. Offset and length based on the requestor's
+	 * Reveals the given region. Offset and length based on the subject's
 	 * model (e.g. document).
 	 * 
-	 * @param offset the offset of the selection based on the requestor's model
+	 * @param offset the offset of the selection based on the subject's model
 	 *           (e.g. document)
-	 * @param length the length of the selection based on the requestor's model
+	 * @param length the length of the selection based on the subject's model
 	 *           (e.g. document)
 	 */
 	void revealRange(int offset, int length);
 
 	/**
-	 * Returns this content assist requestor's document.
+	 * Returns this content assist subject's document.
 	 * 
 	 * @return the viewer's input document
 	 */
@@ -162,9 +162,9 @@ public interface IContentAssistRequestor {
 	 * listeners. If the listener is already registered with the viewer this
 	 * call moves the listener to the end of the list.
 	 * <p>
-	 * Note: This content assist requestor may not support appending a verify
+	 * Note: This content assist subject may not support appending a verify
 	 * listener, in which case <code>false</code> will be returned. If this
-	 * content assist requestor only supports <code>addVerifyKeyListener</code>
+	 * content assist subject only supports <code>addVerifyKeyListener</code>
 	 * then this method can be used but <code>prependVerifyKeyListener</code>
 	 * must return <code>false</code>.
 	 * </p>
@@ -176,11 +176,11 @@ public interface IContentAssistRequestor {
 
 	/**
 	 * If supported, inserts the verify key listener at the beginning of this content assist
-	 * requestor's list of verify key listeners. If the listener is already
+	 * subject's list of verify key listeners. If the listener is already
 	 * registered with the viewer this call moves the listener to the beginnng
 	 * of the list.
 	 * <p>
-	 * Note: This content assist requestor may not support prepending a verify
+	 * Note: This content assist subject may not support prepending a verify
 	 * listener, in which case <code>false</code> will be returned. However,
 	 * <code>appendVerifyKeyListener</code> might work.
 	 * </p>
@@ -191,7 +191,7 @@ public interface IContentAssistRequestor {
 	boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener);
 
 	/**
-	 * Removes the verify key listener from this content assist requestor's
+	 * Removes the verify key listener from this content assist subject's
 	 * list of verify key listeners. If the listener is not registered, this
 	 * call has no effect.
 	 * 
@@ -256,9 +256,9 @@ public interface IContentAssistRequestor {
 
 	/**
 	 * If supported, registers an event consumer with this content assist
-	 * requestor.
+	 * subject.
 	 * 
-	 * @param consumer the content assist requestor's event consumer. <code>null</code>
+	 * @param consumer the content assist subject's event consumer. <code>null</code>
 	 *           is a valid argument.
 	 */
 	void setEventConsumer(IEventConsumer eventConsumer);
