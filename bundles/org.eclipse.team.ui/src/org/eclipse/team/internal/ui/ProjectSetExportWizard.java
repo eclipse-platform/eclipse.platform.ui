@@ -66,7 +66,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					ProjectSetImportWizard.lastFile = filename;
 					File file = new File(filename);
 					File parentFile = file.getParentFile();
-					if (!parentFile.exists()) {
+					if (parentFile != null && !parentFile.exists()) {
 						boolean r = MessageDialog.openQuestion(getShell(), Policy.bind("ProjectSetExportWizard.Question_4"), Policy.bind("ProjectSetExportWizard.Target_directory_does_not_exist._Would_you_like_to_create_it__5")); //$NON-NLS-1$ //$NON-NLS-2$
 						if (!r) {
 							result[0] = false;
