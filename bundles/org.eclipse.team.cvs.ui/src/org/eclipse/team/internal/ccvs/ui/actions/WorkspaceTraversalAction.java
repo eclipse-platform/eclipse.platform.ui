@@ -18,6 +18,7 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
@@ -50,7 +51,14 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
             Set resources = new HashSet();
             for (int i = 0; i < traversals.length; i++) {
                 ResourceTraversal traversal = traversals[i];
-                resources.addAll(Arrays.asList(traversal.getResources()));
+                IResource[] resourceArray = traversal.getResources();
+                for (int j = 0; j < resourceArray.length; j++) {
+                    IResource resource = resourceArray[j];
+                    // Only include resources in projects that are shared with CVS
+                    if (RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null) {
+                        resources.add(resource);
+                    }
+                }
             }
             return (IResource[]) resources.toArray(new IResource[resources.size()]);
         } catch (TeamException e) {
@@ -77,7 +85,13 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
             ResourceTraversal[] traversals = mapping.getTraversals(context, monitor);
             for (int j = 0; j < traversals.length; j++) {
                 ResourceTraversal traversal = traversals[j];
-                result.addAll(Arrays.asList(traversal.getResources()));
+                IResource[] resources = traversal.getResources();
+                for (int k = 0; k < resources.length; k++) {
+                    IResource resource = resources[k];
+                    if (RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null) {
+                        result.add(resource);
+                    }
+                }
             }
         }
         return (IResource[]) result.toArray(new IResource[result.size()]);
