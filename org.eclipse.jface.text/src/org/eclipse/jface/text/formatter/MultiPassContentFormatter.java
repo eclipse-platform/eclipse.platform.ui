@@ -53,15 +53,14 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		/**
 		 * Creates a new non-deleting position updater.
 		 * 
-		 * @param category
-		 *                   The position category to update its positions
+		 * @param category The position category to update its positions
 		 */
 		public NonDeletingPositionUpdater(final String category) {
 			super(category);
 		}
 
-		/**
-		 * @inheritDoc
+		/*
+		 * @see org.eclipse.jface.text.DefaultPositionUpdater#notDeleted()
 		 */
 		protected final boolean notDeleted() {
 
@@ -98,31 +97,26 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 
 	/** The master formatting strategy */
 	private IFormattingStrategyExtension fMaster= null;
-
 	/** The partitioning of this content formatter */
 	private final String fPartitioning;
-
 	/** The slave formatting strategies */
 	private final Map fSlaves= new HashMap();
-
 	/** The default content type */
 	private final String fType;
 
 	/**
 	 * Creates a new content formatter.
 	 * 
-	 * @param partitioning
-	 *                   The document partitioning for this formatter
-	 * @param default
-	 *                   The default content type
+	 * @param partitioning The document partitioning for this formatter
+	 * @param default The default content type
 	 */
 	public MultiPassContentFormatter(final String partitioning, final String type) {
 		fPartitioning= partitioning;
 		fType= type;
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension2#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.formatter.IFormattingContext)
 	 */
 	public final void format(final IDocument medium, final IFormattingContext context) {
 
@@ -148,8 +142,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		}
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatter#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion)
 	 */
 	public final void format(final IDocument medium, final IRegion region) {
 
@@ -166,19 +160,14 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * formatting strategy.
 	 * <p>
 	 * The master formatting strategy covers all regions of the document. The
-	 * offset of the region to be formatted is aligned on line start
-	 * boundaries, whereas the end index of the region remains the same. For
-	 * this formatting type the document partitioning is not taken into
-	 * account.
+	 * offset of the region to be formatted is aligned on line start boundaries,
+	 * whereas the end index of the region remains the same. For this formatting
+	 * type the document partitioning is not taken into account.
 	 * 
-	 * @param context
-	 *                   The formatting context to use
-	 * @param document
-	 *                   The document to operate on
-	 * @param offset
-	 *                   The offset of the region to format
-	 * @param length
-	 *                   The length of the region to format
+	 * @param context The formatting context to use
+	 * @param document The document to operate on
+	 * @param offset The offset of the region to format
+	 * @param length The length of the region to format
 	 */
 	protected void formatMaster(final IFormattingContext context, final IDocument document, int offset, int length) {
 
@@ -206,21 +195,16 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * Formats the document specified in the formatting context with the
 	 * formatting strategy registered for the content type.
 	 * <p>
-	 * For this formatting type only slave strategies are used. The region to
-	 * be formatted is aligned on partition boundaries of the underlying
-	 * content type. The exact formatting strategy is determined by the
-	 * underlying content type of the document partitioning.
+	 * For this formatting type only slave strategies are used. The region to be
+	 * formatted is aligned on partition boundaries of the underlying content
+	 * type. The exact formatting strategy is determined by the underlying
+	 * content type of the document partitioning.
 	 * 
-	 * @param context
-	 *                   The formatting context to use
-	 * @param document
-	 *                   The document to operate on
-	 * @param offset
-	 *                   The offset of the region to format
-	 * @param length
-	 *                   The length of the region to format
-	 * @param type
-	 *                   The content type of the region to format
+	 * @param context The formatting context to use
+	 * @param document The document to operate on
+	 * @param offset The offset of the region to format
+	 * @param length The length of the region to format
+	 * @param type The content type of the region to format
 	 */
 	protected void formatSlave(final IFormattingContext context, final IDocument document, final int offset, final int length, final String type) {
 
@@ -245,14 +229,10 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * partition boundaries of the underlying content type. If the content type
 	 * is the document's default content type, nothing happens.
 	 * 
-	 * @param context
-	 *                   The formatting context to use
-	 * @param document
-	 *                   The document to operate on
-	 * @param offset
-	 *                   The offset of the region to format
-	 * @param length
-	 *                   The length of the region to format
+	 * @param context The formatting context to use
+	 * @param document The document to operate on
+	 * @param offset The offset of the region to format
+	 * @param length The length of the region to format
 	 */
 	protected void formatSlaves(final IFormattingContext context, final IDocument document, final int offset, final int length) {
 
@@ -291,15 +271,15 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		}
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#getDocumentPartitioning()
 	 */
 	public final String getDocumentPartitioning() {
 		return fPartitioning;
 	}
 
-	/**
-	 * @inheritDoc
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatter#getFormattingStrategy(java.lang.String)
 	 */
 	public final IFormattingStrategy getFormattingStrategy(final String type) {
 		return null;
@@ -309,12 +289,11 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * Registers a master formatting strategy.
 	 * <p>
 	 * The strategy may already be registered with a certain content type as
-	 * slave strategy. The master strategy is registered for the default
-	 * content type of documents. If a master strategy has already been
-	 * registered, it is overridden by the new one.
+	 * slave strategy. The master strategy is registered for the default content
+	 * type of documents. If a master strategy has already been registered, it
+	 * is overridden by the new one.
 	 * 
-	 * @param strategy
-	 *                   The master formatting strategy
+	 * @param strategy The master formatting strategy
 	 */
 	public final void setMasterStrategy(final IFormattingStrategyExtension strategy) {
 		fMaster= strategy;
@@ -329,10 +308,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * several content types. Slave strategies cannot be registered for the
 	 * default content type of documents.
 	 * 
-	 * @param strategy
-	 *                   The slave formatting strategy
-	 * @param type
-	 *                   The content type to register this strategy with
+	 * @param strategy The slave formatting strategy
+	 * @param type The content type to register this strategy with
 	 */
 	public final void setSlaveStrategy(final IFormattingStrategyExtension strategy, final String type) {
 
