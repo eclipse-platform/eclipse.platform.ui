@@ -141,4 +141,7 @@ public class OldPlatformConfiguration implements IPlatformConfiguration {
 			return newConfig.equals(((OldPlatformConfiguration) o).newConfig);
 		return false;
 	}
+	public int hashCode() {
+		return newConfig.hashCode();
+	}
 }
