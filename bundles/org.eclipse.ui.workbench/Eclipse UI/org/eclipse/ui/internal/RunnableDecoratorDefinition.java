@@ -1,5 +1,16 @@
 package org.eclipse.ui.internal;
 
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -8,13 +19,9 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
- * @author tod
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
+ * The RunnableDecoratorDefinition is the definition for 
+ * decorators that have an ILabelDecorator class to instantiate. */
+
 class RunnableDecoratorDefinition extends DecoratorDefinition {
 
 	private IConfigurationElement definingElement;
