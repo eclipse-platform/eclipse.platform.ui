@@ -50,7 +50,7 @@
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
-            <element ref="enablement"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -172,19 +172,6 @@ declarative or implements
             an optional subelement whose body should contain text providing a short description of the decorator. This will be shown in the Decorators preference page so it is recommended that this is included. Default value is an empty String.
          </documentation>
       </annotation>
-   </element>
-
-   <element name="enablement">
-      <annotation>
-         <documentation>
-            the actionExpression used to determine enabled state. See the commonExpression documentation.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice>
-            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
-         </choice>
-      </complexType>
    </element>
 
    <annotation>
