@@ -132,7 +132,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
 
 		if(provider == null)
-			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id));
+			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id)); //$NON-NLS-1$
 			
 		//store provider instance as session property
 		try {
@@ -165,7 +165,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 				// The reason could be that the provider's plugin is no longer available.
 				// Better log it just in case this is unexpected.
 				TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, 
-					Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null)); 
+					Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null));  //$NON-NLS-1$
 			} else {
 				provider.deconfigure();
 			}
@@ -319,7 +319,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 				//If we have the session but not the persistent, we have a problem
 				//because we somehow got only halfway through mapping before
 				if(id == null && provider != null) {
-					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.propertyMismatch", project.getName()), null);
+					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.propertyMismatch", project.getName()), null); //$NON-NLS-1$
 					project.setSessionProperty(PROVIDER_PROP_KEY, null); //clears it
 					return null;
 				}
