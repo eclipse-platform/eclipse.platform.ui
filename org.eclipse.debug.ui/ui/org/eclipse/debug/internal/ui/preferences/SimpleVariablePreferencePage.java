@@ -140,7 +140,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		tableComposite.setLayoutData(gridData);
 		tableComposite.setFont(font);
 		// Create table
-		variableTable = new TableViewer(tableComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+		variableTable = new TableViewer(tableComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = variableTable.getTable();
 		TableLayout tableLayout = new TableLayout();
 		table.setLayout(tableLayout);
