@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 /**
  * The ProgressViewerContentProvider is the content provider progress
