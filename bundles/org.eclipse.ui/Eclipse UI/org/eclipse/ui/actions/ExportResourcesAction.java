@@ -54,8 +54,10 @@ public ExportResourcesAction(IWorkbench aWorkbench) {
  */
 public void run() {
 	ExportWizard wizard = new ExportWizard();
-	IStructuredSelection selectionToPass = getStructuredSelection();
-	if (selectionToPass == null) {
+	IStructuredSelection selectionToPass; 
+	List selectedResources = getSelectedResources();
+	
+	if (selectedResources.isEmpty()) {
 		// get the current workbench selection
 		ISelection workbenchSelection = 
 			workbench.getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -64,6 +66,9 @@ public void run() {
 		else
 			selectionToPass = StructuredSelection.EMPTY;
 	}
+	else
+		selectionToPass = new StructuredSelection(selectedResources);
+		
 	wizard.init(workbench, selectionToPass);
 	IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
 	IDialogSettings wizardSettings = workbenchSettings.getSection("ExportResourcesAction");//$NON-NLS-1$
