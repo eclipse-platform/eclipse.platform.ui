@@ -325,7 +325,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * 	checked state. false=only set checked state of members of this container
 	 */
 	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
-		if (container.isAccessible() == false || tree.getExpandedState(container) == false && checkExpandedState) {
+		// checked state is set lazily on expand, don't set it if container is collapsed
+		if (container.isAccessible() == false || (tree.getExpandedState(container) == false && state)) {
 			return;
 		}
 		IResource[] members = null;
@@ -337,13 +338,18 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		for (int i = members.length - 1; i >= 0; i--) {
 			IResource element = members[i];
+			boolean elementGrayChecked = tree.getGrayed(element) || tree.getChecked(element);
+			 
 			if (state) {
 				tree.setChecked(element, true);
 				tree.setGrayed(element, false);
 			} else {
 				tree.setGrayChecked(element, false);
 			}
-			if (element instanceof IContainer) {
+			// unchecked state only needs to be set when the container is 
+			// checked or grayed
+			if (element instanceof IContainer && checkExpandedState &&
+				(state || elementGrayChecked)) {
 				setSubtreeChecked((IContainer) element, state, true);
 			}
 		}
