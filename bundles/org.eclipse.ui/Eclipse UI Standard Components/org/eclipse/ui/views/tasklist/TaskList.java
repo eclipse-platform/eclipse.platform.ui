@@ -12,6 +12,7 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
@@ -62,6 +63,7 @@ public class TaskList extends ViewPart {
 	private CellEditorActionHandler editorActionHandler;
 	private TaskAction newTaskAction;
 	private TaskAction copyTaskAction;
+	private TaskAction pasteTaskAction;
 	private TaskAction removeTaskAction;
 	private TaskAction purgeCompletedAction;
 	private TaskAction gotoTaskAction;
@@ -271,20 +273,18 @@ void createColumns() {
 /*package*/ static String createMarkerReport(IMarker[] markers) {
 	StringBuffer buf = new StringBuffer();
 	// Create the header
-	buf.append(TaskListMessages.getString("TaskList.reportType")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportCompleted")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportPriority")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportDescription")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportResource")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportFolder")); //$NON-NLS-1$
-	buf.append(","); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportLineNumber")); //$NON-NLS-1$
-	buf.append("\n"); //$NON-NLS-1$
+	buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 	
 	// Create the report for the markers
 	for (int i = 0; i < markers.length; i++) {
@@ -373,6 +373,7 @@ public void createPartControl(Composite parent) {
 	editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 	editorActionHandler.addCellEditor(descriptionEditor);
 	editorActionHandler.setCopyAction(copyTaskAction);
+	editorActionHandler.setPasteAction(pasteTaskAction);
 	editorActionHandler.setDeleteAction(removeTaskAction);
 	editorActionHandler.setSelectAllAction(selectAllAction);
 	
@@ -434,6 +435,7 @@ void fillActionBars() {
 void fillContextMenu(IMenuManager menu) {
 	menu.add(newTaskAction);
 	menu.add(copyTaskAction);
+	menu.add(pasteTaskAction);
 	menu.add(removeTaskAction);
 	menu.add(gotoTaskAction);
 	menu.add(new Separator());
@@ -609,6 +611,12 @@ void makeActions() {
 	copyTaskAction.setToolTipText(TaskListMessages.getString("CopyTask.tooltip")); //$NON-NLS-1$
 	copyTaskAction.setEnabled(false);
 
+	// paste task
+	pasteTaskAction = new PasteTaskAction(this, "paste"); //$NON-NLS-1$
+	pasteTaskAction.setText(TaskListMessages.getString("PasteTask.text")); //$NON-NLS-1$
+	pasteTaskAction.setToolTipText(TaskListMessages.getString("PasteTask.tooltip")); //$NON-NLS-1$
+	pasteTaskAction.setEnabled(false);
+	
 	// remove task
 	removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
 	removeTaskAction.setText(TaskListMessages.getString("RemoveTask.text")); //$NON-NLS-1$
@@ -796,7 +804,9 @@ void selectionChanged(SelectionChangedEvent event) {
 	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 	updateStatusMessage(selection);
 		
-	// If selection is empty, then disable copy, copy as text, remove and goto.	
+	updatePasteEnablement();
+
+	// If selection is empty, then disable copy, remove and goto.	
 	if (selection.isEmpty()) {
 		copyTaskAction.setEnabled(false);
 		removeTaskAction.setEnabled(false);
@@ -1025,6 +1035,26 @@ void updateFocusResource(ISelection selection) {
 	}
 }
 /**
+ * Updates the enablement of the paste action
+ */
+void updatePasteEnablement() {
+	// Paste if clipboard contains tasks
+	Clipboard clipboard = new Clipboard(table.getDisplay());
+	MarkerTransfer transfer = MarkerTransfer.getInstance();
+	IMarker[] markerData = (IMarker[])clipboard.getContents(transfer);
+	boolean canPaste = false;
+	if (markerData != null) {
+		for (int i = 0; i < markerData.length; i++) {
+			if (MarkerUtil.isMarkerType(markerData[i], IMarker.TASK)) {
+				canPaste = true;	
+				break;
+			}
+		}
+	}
+	pasteTaskAction.setEnabled(canPaste);
+}
+
+/**
  * Updates that message displayed in the status line.
  */
 void updateStatusMessage() {
@@ -1050,45 +1080,36 @@ void updateTitle() {
  * Writes a string representation of the given marker to the buffer.
  */
 static void writeMarker(StringBuffer buf, IMarker marker) {
-	try {
-		buf.append(marker.getType());
-		buf.append(","); //$NON-NLS-1$
-		if (MarkerUtil.isComplete(marker)) 
-			buf.append(TaskListMessages.getString("TaskList.reportComplete")); //$NON-NLS-1$
-		else	
-			buf.append(TaskListMessages.getString("TaskList.reportIncomplete")); //$NON-NLS-1$
-		buf.append(","); //$NON-NLS-1$
-		switch (MarkerUtil.getPriority(marker)) {
-			case IMarker.PRIORITY_HIGH:
-				buf.append(TaskListMessages.getString("TaskList.high")); //$NON-NLS-1$
-				buf.append(","); //$NON-NLS-1$
-				break;
-			case IMarker.PRIORITY_LOW:
-				buf.append(TaskListMessages.getString("TaskList.low")); //$NON-NLS-1$
-				buf.append(","); //$NON-NLS-1$
-				break;
-			default:
-				buf.append(TaskListMessages.getString("TaskList.normal")); //$NON-NLS-1$
-				buf.append(","); //$NON-NLS-1$
-				break;
-		}
-		buf.append(MarkerUtil.getMessage(marker));
-		buf.append(","); //$NON-NLS-1$
-		buf.append(marker.getResource().getName());
-		buf.append(","); //$NON-NLS-1$
-		if (marker.getResource().getParent() != null)
-			buf.append(marker.getResource().getParent());
-		buf.append(","); //$NON-NLS-1$
-		int lineNumber = MarkerUtil.getLineNumber(marker);
-		if (lineNumber != -1)
-			buf.append(lineNumber);
-		buf.append("\n"); //$NON-NLS-1$
+	if (MarkerUtil.isComplete(marker)) 
+		buf.append(TaskListMessages.getString("TaskList.reportComplete")); //$NON-NLS-1$
+	else	
+		buf.append(TaskListMessages.getString("TaskList.reportIncomplete")); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
+	switch (MarkerUtil.getPriority(marker)) {
+		case IMarker.PRIORITY_HIGH:
+			buf.append(TaskListMessages.getString("TaskList.high")); //$NON-NLS-1$
+			buf.append("\t"); //$NON-NLS-1$
+			break;
+		case IMarker.PRIORITY_LOW:
+			buf.append(TaskListMessages.getString("TaskList.low")); //$NON-NLS-1$
+			buf.append("\t"); //$NON-NLS-1$
+			break;
+		default:
+			buf.append(TaskListMessages.getString("TaskList.normal")); //$NON-NLS-1$
+			buf.append("\t"); //$NON-NLS-1$
+			break;
 	}
-	catch (CoreException e) {
-		buf.append("  "); //$NON-NLS-1$
-	    buf.append(e.getStatus().toString());
-		buf.append("\n\n"); //$NON-NLS-1$
-	}
+	buf.append(MarkerUtil.getMessage(marker));
+	buf.append("\t"); //$NON-NLS-1$
+	buf.append(marker.getResource().getName());
+	buf.append("\t"); //$NON-NLS-1$
+	if (marker.getResource().getParent() != null)
+		buf.append(marker.getResource().getParent());
+	buf.append("\t"); //$NON-NLS-1$
+	int lineNumber = MarkerUtil.getLineNumber(marker);
+	if (lineNumber != -1)
+		buf.append(lineNumber);
+	buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 }
 
 /**

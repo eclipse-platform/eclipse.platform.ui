@@ -32,15 +32,19 @@ import java.io.*;
  */
 public class MarkerTransfer extends ByteArrayTransfer {
 	
-	private static final String TYPE_NAME = "marker-transfer-format";//$NON-NLS-1$
-	private static final int TYPEID = registerType(TYPE_NAME);
-	private static final String rootString = Path.ROOT.toString();
-	private IWorkspace workspace;
-	
 	/**
 	 * Singleton instance.
 	 */
 	private static final MarkerTransfer instance = new MarkerTransfer();
+
+	// Create a unique ID to make sure that different Eclipse
+	// applications use different "types" of <code>MarkerTransfer</code>
+	private static final String TYPE_NAME = "marker-transfer-format" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
+	private static final int TYPEID = registerType(TYPE_NAME);
+
+	private static final String rootString = Path.ROOT.toString();
+	private IWorkspace workspace;
+	
 /**
  * Creates a new transfer object.
  */
@@ -54,7 +58,7 @@ private MarkerTransfer() {
  *    IResource.getMarker})
  * @return the specified marker
  */
-private IMarker findMarker(String pathString, int id) {
+private IMarker findMarker(String pathString, long id) {
 	IPath path = new Path(pathString);
 	IResource resource = workspace.getRoot().findMember(path);
 	if (resource != null) {
@@ -174,7 +178,7 @@ private IMarker readMarker(DataInputStream dataIn) throws IOException {
 	 * (int) marker ID
 	 */
 	String path = dataIn.readUTF();
-	int id = dataIn.readInt();
+	long id = dataIn.readLong();
 	return findMarker(path, id);
 }
 /**

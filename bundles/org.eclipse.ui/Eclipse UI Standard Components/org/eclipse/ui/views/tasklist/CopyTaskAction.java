@@ -59,6 +59,9 @@ import org.eclipse.ui.part.MarkerTransfer;
 			MarkerTransfer.getInstance(),
 			TextTransfer.getInstance()};
 		clipboard.setContents(data, transferTypes);
+		
+		//Update paste enablement
+		taskList.updatePasteEnablement();
 	}
 }
 
