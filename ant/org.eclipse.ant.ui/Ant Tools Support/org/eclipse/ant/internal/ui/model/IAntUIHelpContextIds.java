@@ -34,14 +34,16 @@ public interface IAntUIHelpContextIds {
 	public static final String REFRESH_BUILDFILE_ACTION = PREFIX + "refresh_buildfile_action_context"; //$NON-NLS-1$
 
 	// Dialogs
-	public static final String FILE_SELECTION_DIALOG = PREFIX + "file_selection_dialog_context"; //$NON-NLS-1$
-	public static final String ADD_CUSTOM_DIALOG = PREFIX + "add_custom_dialog_context"; //$NON-NLS-1$
+	public static final String ADD_TYPE_DIALOG = PREFIX + "add_type_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_TYPE_DIALOG = PREFIX + "edit_type_dialog_context"; //$NON-NLS-1$
+	public static final String ADD_TASK_DIALOG = PREFIX + "add_task_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_TASK_DIALOG = PREFIX + "edit_task_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_PROPERTY_DIALOG = PREFIX + "add_property_dialog_context"; //$NON-NLS-1$
+	public static final String EDIT_PROPERTY_DIALOG = PREFIX + "edit_property_dialog_context"; //$NON-NLS-1$
 	public static final String SEARCH_FOR_BUILDFILES_DIALOG = PREFIX + "search_for_buildfiles_dialog_context"; //$NON-NLS-1$
 	public static final String STATUS_DIALOG = PREFIX + "status_dialog_context"; //$NON-NLS-1$
 	public static final String MESSAGE_WITH_TOGGLE_DIALOG = PREFIX + "message_with_toggle_dialog_context"; //$NON-NLS-1$
 	public static final String TARGET_ORDER_DIALOG = PREFIX + "target_order_dialog_context"; //$NON-NLS-1$
-	public static final String VARIABLE_SELECTION_DIALOG = PREFIX + "variable_selection_dialog_context"; //$NON-NLS-1$
 	
 	// Preference Pages
 	public static final String ANT_PREFERENCE_PAGE = PREFIX + "ant_preference_page_context"; //$NON-NLS-1$
@@ -65,4 +67,5 @@ public interface IAntUIHelpContextIds {
 	public static final String ANT_TARGETS_TAB = PREFIX + "ant_targets_tab_context"; //$NON-NLS-1$
 	public static final String ANT_PROPERTIES_TAB = PREFIX + "ant_properties_tab_context"; //$NON-NLS-1$
 	public static final String ANT_CLASSPATH_TAB = PREFIX + "ant_classpath_tab_context"; //$NON-NLS-1$
+	public static final String ANT_JRE_TAB = "ant_jre_tab_context"; //$NON-NLS-1$
 }

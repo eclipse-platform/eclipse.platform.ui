@@ -65,7 +65,7 @@ public class AntTasksPage extends AntPage {
 	 */
 	private void addTask() {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
-		AddCustomDialog dialog = getCustomDialog(title);
+		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.ADD_TASK_DIALOG);
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
@@ -77,16 +77,14 @@ public class AntTasksPage extends AntPage {
 		addContent(task);
 	}
 	
-	private AddCustomDialog getCustomDialog(String title) {
-		
-
+	private AddCustomDialog getCustomDialog(String title, String helpContext) {
 		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
 		while (tasks.hasNext()) {
 			Task task = (Task) tasks.next();
 			names.add(task.getTaskName());	
 		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, helpContext);
 		dialog.setTitle(title);
 		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTasksPage.8")); //$NON-NLS-1$
 		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTasksPage.9")); //$NON-NLS-1$
@@ -133,7 +131,7 @@ public class AntTasksPage extends AntPage {
 	protected void edit(IStructuredSelection selection) {
 		Task task= (Task)selection.getFirstElement();
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
-		AddCustomDialog dialog = getCustomDialog(title);
+		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TASK_DIALOG);
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
 		dialog.setLibrary(task.getLibrary());

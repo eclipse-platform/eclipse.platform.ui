@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -44,7 +45,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -404,7 +404,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
+		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
 	}
 
 }

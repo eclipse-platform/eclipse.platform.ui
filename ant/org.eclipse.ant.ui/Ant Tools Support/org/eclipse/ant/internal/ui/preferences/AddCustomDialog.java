@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -85,14 +84,17 @@ public class AddCustomDialog extends StatusDialog {
 	private String className=""; //$NON-NLS-1$
 	
 	private boolean editing= false;
+	
+	private String helpContext;
 
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames) {
+	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames, String helpContext) {
 		super(parent);
 		this.libraryUrls = libraryUrls;
 		this.existingNames= existingNames;
+		this.helpContext= helpContext;
 	}
 	
 	/* (non-Javadoc)
@@ -146,7 +148,7 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IExternalToolsHelpContextIds.ADD_CUSTOM_DIALOG);
+		WorkbenchHelp.setHelp(newShell, helpContext);
 	}
 	/**
 	 * Clears the cached structure provider after first finalizing

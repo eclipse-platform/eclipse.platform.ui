@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
@@ -24,7 +25,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -38,7 +38,7 @@ public class SearchForBuildFilesAction extends Action {
 		super(AntViewActionMessages.getString("SearchForBuildFilesAction.Search_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEARCH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("SearchForBuildFilesAction.Add_build_files_with_search_2")); //$NON-NLS-1$
 		this.view= view;
-		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
+		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_ACTION);
 	}
 	
 	/**

@@ -16,18 +16,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.views.AntView;
+import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
+import org.eclipse.ant.internal.ui.views.elements.TargetNode;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
-import org.eclipse.ant.internal.ui.views.AntView;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
-import org.eclipse.ant.internal.ui.views.elements.TargetNode;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -48,7 +48,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ACTION_REFRESH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1")); //$NON-NLS-1$
 		this.view = view;
-		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REFRESH_BUILDFILE_ACTION);
+		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.REFRESH_BUILDFILE_ACTION);
 	}
 
 	/**

@@ -65,7 +65,7 @@ public class AntTypesPage extends AntPage {
 	 */
 	private void addType() {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
-		AddCustomDialog dialog = getCustomDialog(title);
+		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.ADD_TYPE_DIALOG);
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
@@ -117,7 +117,7 @@ public class AntTypesPage extends AntPage {
 	protected void edit(IStructuredSelection selection) {
 		Type type = (Type) selection.getFirstElement();
 		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
-		AddCustomDialog dialog = getCustomDialog(title);
+		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TYPE_DIALOG);
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());
 		dialog.setLibrary(type.getLibrary());
@@ -131,7 +131,7 @@ public class AntTypesPage extends AntPage {
 		updateContent(type);
 	}
 	
-	private AddCustomDialog getCustomDialog(String title) {
+	private AddCustomDialog getCustomDialog(String title, String helpContext) {
 		Iterator types= getContents(true).iterator();
 		List names= new ArrayList();
 		while (types.hasNext()) {
@@ -139,7 +139,7 @@ public class AntTypesPage extends AntPage {
 			names.add(aTask.getTypeName());
 		}
 		
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, helpContext);
 		dialog.setTitle(title);
 		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTypesPage.8")); //$NON-NLS-1$
 		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTypesPage.9")); //$NON-NLS-1$

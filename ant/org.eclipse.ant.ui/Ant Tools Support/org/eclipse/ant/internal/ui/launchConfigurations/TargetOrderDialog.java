@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -26,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -196,6 +196,6 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.TARGET_ORDER_DIALOG);
+		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.TARGET_ORDER_DIALOG);
 	}
 }

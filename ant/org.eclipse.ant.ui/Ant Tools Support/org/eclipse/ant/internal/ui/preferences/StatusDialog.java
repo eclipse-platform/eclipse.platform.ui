@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -84,7 +84,7 @@ public abstract class StatusDialog extends Dialog {
 		if (fTitle != null) {
 			shell.setText(fTitle);
 		}
-		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.STATUS_DIALOG);
+		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.STATUS_DIALOG);
 	}
 
 	/*

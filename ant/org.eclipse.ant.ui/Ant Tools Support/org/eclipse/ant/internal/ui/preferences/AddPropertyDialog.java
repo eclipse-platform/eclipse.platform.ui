@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -23,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AddPropertyDialog extends Dialog {
@@ -118,7 +118,12 @@ public class AddPropertyDialog extends Dialog {
 		if (fTitle != null) {
 			shell.setText(fTitle);
 		}
-		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.ADD_PROPERTY_DIALOG);
+		if (fInitialValues[0].length() == 0) {
+			WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.ADD_PROPERTY_DIALOG);
+		} else {
+			WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.EDIT_PROPERTY_DIALOG);
+		}
+		
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.ant.internal.ui.views.elements.AntNode;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
@@ -26,7 +27,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -42,7 +42,7 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("EditLaunchConfigurationAction.Properties")); //$NON-NLS-1$
 		setDescription(AntViewActionMessages.getString("EditLaunchConfigurationAction.Edit")); //$NON-NLS-1$
 		this.view= view;
-		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
+		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
 	
 	public void run() {

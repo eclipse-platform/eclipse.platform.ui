@@ -18,6 +18,7 @@ import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.ant.internal.ui.views.elements.AntNode;
 import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
@@ -29,7 +30,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -52,7 +52,7 @@ public class RunTargetAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
 		this.view= view;
-		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.RUN_TARGET_ACTION);
+		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
 	}
 
 	/**
