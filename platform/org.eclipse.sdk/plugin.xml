@@ -8,6 +8,7 @@
 
    <requires>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.help.ui"/>
    </requires>
 
 
@@ -193,5 +194,35 @@
             productId="org.eclipse.platform.ide"
             triggerPointAdvisorId="org.eclipse.ui.ide.triggerPointAdvisor"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.help.ui.searchEngine">
+      <engine
+            enabled="true"
+            engineTypeId="org.eclipse.help.ui.web"
+            id="org.eclipse.sdk.Google"
+            label="%search.Google.label">
+      		<description>
+	      		%search.Google.desc
+      		</description>
+      		<param 
+      			name="url" 
+      			value="http://www.google.com/search?hl=en&amp;q={expression}&amp;btnG=Google+Search&amp;meta=">
+      		</param>
+      </engine>
+      <engine
+            enabled="true"
+            engineTypeId="org.eclipse.help.ui.web"
+            id="org.eclipse.sdk.Eclipse"
+            label="%search.Eclipse.label">
+      		<description>
+	      		%search.Eclipse.desc
+      		</description>
+      		<param 
+      			name="url" 
+      			value="http://eclipse.org/search/search.cgi?q={expression}&amp;ul=&amp;ps=20&amp;m=all">
+      		</param>
+      </engine>
+    </extension>
 
 </plugin>
