@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -1437,12 +1437,16 @@ public Resource newResource(IPath path, int type) {
 	String message;
 	switch (type) {
 		case IResource.FOLDER :
-			message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , message);
+			if (path.segmentCount() < ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH) {
+				message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
+				Assert.isLegal(false, message);
+			}
 			return new Folder(path.makeAbsolute(), this);
 		case IResource.FILE :
-			message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, message);
+			if (path.segmentCount() < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
+				message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
+				Assert.isLegal(false, message);
+			}
 			return new File(path.makeAbsolute(), this);
 		case IResource.PROJECT :
 			return (Resource) getRoot().getProject(path.lastSegment());
