@@ -236,6 +236,7 @@ public class GenerateDiffFileWizard extends Wizard {
 			
 			createTreeViewer(composite);		
 			saveToClipboard.setSelection(true);
+			validatePage();
 			updateEnablements();
 		}
 		
