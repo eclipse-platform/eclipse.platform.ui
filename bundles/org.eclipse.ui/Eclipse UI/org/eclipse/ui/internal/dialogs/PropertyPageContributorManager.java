@@ -5,12 +5,12 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IContributorResourceAdapter;
+import org.eclipse.ui.ResourceAdapterUtil;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.misc.Sorter;
@@ -130,12 +130,15 @@ private void loadContributors() {
  * @param IAdaptable the object to adapt.
  */
 
-private Object getAdaptedObject(IAdaptable object){
+private Object getAdaptedObject(IAdaptable adaptable){
 
-	if(object instanceof IResource)
-		return null;
-	else
-		return object.getAdapter(IResource.class);
+	Object resourceAdapter =
+		adaptable.getAdapter(IContributorResourceAdapter.class);
+	if(resourceAdapter == null)
+		resourceAdapter = ResourceAdapterUtil.getResourceAdapter();
+				
+	return((IContributorResourceAdapter) resourceAdapter).
+					getAdaptedResource(adaptable);
 }
 		
 }

@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 
 /**
  * This manager is used to populate a popup menu manager with actions
@@ -183,8 +183,18 @@ private Class getCommonResourceClass(List objects) {
 	for (int i = 0; i < objects.size(); i++) {
 		Object object = objects.get(i);
 		//Leave the resources out of this
-		if(!(object instanceof IResource) && object instanceof IAdaptable){
-			Object resource = ((IAdaptable) object).getAdapter(IResource.class);
+		if(object instanceof IAdaptable){
+			IAdaptable adaptable = (IAdaptable) object;
+			Object resourceAdapter =
+				adaptable.getAdapter(IContributorResourceAdapter.class);
+			if(resourceAdapter == null)
+				resourceAdapter = 
+					ResourceAdapterUtil.getResourceAdapter();
+				
+			IResource resource = 
+				((IContributorResourceAdapter) resourceAdapter).
+					getAdaptedResource(adaptable);
+			
 			if(resource == null)
 				return null;
 			else

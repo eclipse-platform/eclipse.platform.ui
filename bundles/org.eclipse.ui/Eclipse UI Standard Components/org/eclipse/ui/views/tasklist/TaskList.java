@@ -923,17 +923,13 @@ void updateFocusResource(ISelection selection) {
 	if (selection instanceof IStructuredSelection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
-			Object o = ssel.getFirstElement();
-			if (o instanceof IResource) {
-				resource = (IResource) o;
-			}
-			else if (o instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) o;
-				resource = (IResource) adaptable.getAdapter(IResource.class);
-				if (resource == null) {
-					resource = (IFile) adaptable.getAdapter(IFile.class);
-				}
-			}
+			Object object = ssel.getFirstElement();
+			ITaskListResourceAdapter adapter =
+				getTaskListAdapter(object);
+			//Will only return an adapter if the object
+			//is adaptable
+			if(adapter != null)
+				resource = adapter.getAffectedResource((IAdaptable) object);			
 		}
 	}
 	if (resource == null) {
@@ -1023,5 +1019,23 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
 	    buf.append(e.getStatus().toString());
 		buf.append("\n\n"); //$NON-NLS-1$
 	}
+}
+
+/**
+ * Get the adapter that is to be used on object. Return the
+ * default adapter if there is not one registered and the
+ * object is adaptable, else return null.
+ */
+
+private ITaskListResourceAdapter getTaskListAdapter(Object object){
+	if(object instanceof IAdaptable){
+		Object adapter =
+			((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
+		if(adapter == null)
+			return ResourceAdapterUtil.getTaskAdapter();
+		else 
+			return (ITaskListResourceAdapter) adapter;
+	}
+	return null;
 }
 }
