@@ -609,8 +609,6 @@ public class ContentFormatter implements IContentFormatter {
 		if (positions.length == 0)
 			return;
 		
-		Map added= new HashMap(positions.length * 2);
-		
 		for (int i= 0; i < positions.length; i++) {
 			
 			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
@@ -620,10 +618,10 @@ public class ContentFormatter implements IContentFormatter {
 			else
 				r.setLength((offset + positions[i]) - r.getOffset());
 			
-			if (added.get(r.getPosition()) == null) {
+			Position p= r.getPosition();
+			if (!document.containsPosition(r.getCategory(), p.offset, p.length)) {
 				try {
-					document.addPosition(r.getCategory(), r.getPosition());
-					added.put(r.getPosition(), r.getPosition());
+					document.addPosition(r.getCategory(), p);
 				} catch (BadPositionCategoryException x) {
 					// can not happen
 				} catch (BadLocationException x) {

@@ -70,7 +70,7 @@ import org.eclipse.jface.viewers.Viewer;
  * wants to display an overlay window on top of a text viewer should implement the 
  * <code>IWidgetTokenKeeper</code> interface and participate in the widget token negotiation between
  * the text viewer and all its potential widget token keepers.<p>
- * Clients should no subclass this class as it is rather likely that subclasses will be broken by
+ * Clients should not subclass this class as it is rather likely that subclasses will be broken by
  * future releases.
  * 
  * @see ITextViewer
