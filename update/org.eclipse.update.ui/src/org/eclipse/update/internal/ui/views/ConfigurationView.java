@@ -36,6 +36,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 import org.osgi.framework.*;
+import org.eclipse.core.runtime.Path;
 
 
 /**
