@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.SWT;
+
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
@@ -17,16 +18,21 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
+
+import org.eclipse.update.core.IInstallConfiguration;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Insert the type's description here.
  * @see ViewPart
  */
-public class HistoryView extends BaseTreeView {
+public class HistoryView extends BaseTreeView implements ISiteLocalChangedListener{
+private Image configImage;
 private Image featureImage;
 private Image siteImage;
+private Image currentConfigImage;
 
 class HistoryProvider extends DefaultContentProvider 
 						implements ITreeContentProvider {
@@ -107,6 +113,11 @@ class HistoryLabelProvider extends LabelProvider {
 		   return featureImage;
 		if (obj instanceof IConfigurationSite)
 		   return siteImage;
+		if (obj instanceof IInstallConfiguration) {
+			IInstallConfiguration config = (IInstallConfiguration)obj;
+			if (config.isCurrent()) return currentConfigImage;
+			return configImage;
+		}
 		return null;
 	}
 }
@@ -114,13 +125,20 @@ class HistoryLabelProvider extends LabelProvider {
 public HistoryView() {
 	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+	configImage = UpdateUIPluginImages.DESC_CONFIG_OBJ.createImage();
+	ImageDescriptor cdesc = new OverlayIcon(UpdateUIPluginImages.DESC_CONFIG_OBJ,
+					new ImageDescriptor [][] {{UpdateUIPluginImages.DESC_CURRENT_CO}});
+	currentConfigImage = cdesc.createImage();
 }
 
 public void initProviders() {
 	viewer.setContentProvider(new HistoryProvider());
 	viewer.setLabelProvider(new HistoryLabelProvider());
 	try {
-		viewer.setInput(SiteManager.getLocalSite());
+		ILocalSite localSite = SiteManager.getLocalSite();
+		viewer.setInput(localSite);
+		localSite.addLocalSiteChangedListener(this);
+		
 	}
 	catch (CoreException e) {
 		UpdateUIPlugin.logException(e);
@@ -133,8 +151,25 @@ protected void partControlCreated() {
 public void dispose() {
 	featureImage.dispose();
 	siteImage.dispose();
+	configImage.dispose();
+	currentConfigImage.dispose();
+	
+	try {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		localSite.removeLocalSiteChangedListener(this);
+	}
+	catch (CoreException e) {
+		UpdateUIPlugin.logException(e);
+	}
 	
 	super.dispose();
+}
+
+public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {
+	viewer.refresh();
+}
+
+public void installConfigurationRemoved(IInstallConfiguration configuration) {
 }
 
 }

@@ -37,9 +37,11 @@ public class ActivitySection extends UpdateSection {
 		headers[1] = createHeader(container, factory, "Target");
 		headers[2] = createHeader(container, factory, "Action");
 		headers[3] = createHeader(container, factory, "Status");
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		headers[3].setLayoutData(gd);
 		Composite separator = factory.createCompositeSeparator(container);
 		headers[4] = separator;
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 1;
 		gd.horizontalSpan = 4;
 		separator.setLayoutData(gd);
@@ -70,6 +72,13 @@ public class ActivitySection extends UpdateSection {
 			factory.createLabel(container, getActionLabel(activity));
 			factory.createLabel(container, getStatusLabel(activity));
 		}
+		Composite separator = factory.createCompositeSeparator(container);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 1;
+		gd.horizontalSpan = 4;
+		separator.setLayoutData(gd);
+		separator.setBackground(factory.getBorderColor());
+		factory.createLabel(container, null);
 		container.layout();
 		container.getParent().layout();
 	}

@@ -69,12 +69,14 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_UNINSTALL_OBJ = create(PATH_OBJ, "uninstall_obj.gif");
 	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif");
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
+	public static final ImageDescriptor DESC_CONFIG_OBJ = create(PATH_OBJ, "config_obj.gif");
 	
 	/**
 	 * OVR16
 	 */
 	public static final ImageDescriptor DESC_LINKED_CO   = create(PATH_OVR, "linked_co.gif");
 	public static final ImageDescriptor DESC_INSTALLABLE_CO = create(PATH_OVR, "installable_co.gif");
+	public static final ImageDescriptor DESC_CURRENT_CO = create(PATH_OVR, "current_co.gif");
 
 	/**
 	 * TOOL16

@@ -116,8 +116,7 @@ public class InstallWizard extends Wizard {
 	}
 	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
 		IFeature feature = job.getFeature();
-		ISite site = targetSite.getSite();
-	   	site.install(feature, monitor);
+	   	targetSite.install(feature, monitor);
 	}
 }
 

@@ -23,6 +23,7 @@ public class SnapshotForm extends PropertyWebForm {
 	private Label dateLabel;
 	private Label currentLabel;
 	private ActivitySection activitySection;
+	private RevertSection revertSection;
 	
 public SnapshotForm(UpdateFormPage page) {
 	super(page);
@@ -58,16 +59,26 @@ protected void createContents(Composite parent) {
 	Control control = activitySection.createControl(parent, factory);
 	TableData td = new TableData();
 	td.align = TableData.FILL;
+	td.grabHorizontal = true;
 	td.valign = TableData.TOP;
 	//td.colspan = 2;
 	control.setLayoutData(td);
 	
+	revertSection = new RevertSection((UpdateFormPage)getPage());
+	control = revertSection.createControl(parent, factory);
+	td = new TableData();
+	td.align = TableData.FILL;
+	td.grabHorizontal = true;
+	td.valign = TableData.TOP;
+	control.setLayoutData(td);
+	
 	registerSection(activitySection);
+	registerSection(revertSection);
 }
 
 protected Object createPropertyLayoutData() {
 	TableData td = new TableData();
-	td.indent = 10;
+	//td.indent = 10;
 	return td;
 }
 
@@ -85,6 +96,7 @@ private void inputChanged(IInstallConfiguration configuration) {
 	currentLabel.setText(isCurrent);
 
 	activitySection.configurationChanged(configuration);
+	revertSection.configurationChanged(configuration);
 	// reflow
 	dateLabel.getParent().layout();
 	((Composite)getControl()).layout();
