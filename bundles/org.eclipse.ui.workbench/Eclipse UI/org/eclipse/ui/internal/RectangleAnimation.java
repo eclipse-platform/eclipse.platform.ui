@@ -18,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -41,11 +40,6 @@ public class RectangleAnimation extends Job {
 	private Display display;
 	private Region shellRegion;
 	private boolean first = true;
-	
-	/**
-	 * Canvas used to draw the animation, or null if the animation should be skipped.
-	 */
-	private Canvas canvas;
 	
 	private static Rectangle interpolate(Rectangle start, Rectangle end, double amount) {
 		double initialWeight = 1.0 - amount;
