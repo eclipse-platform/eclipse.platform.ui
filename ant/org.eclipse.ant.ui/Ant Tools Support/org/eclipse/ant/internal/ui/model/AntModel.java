@@ -783,6 +783,7 @@ public class AntModel implements IAntModel {
 
 	private void computeLength(AntElementNode element, int line, int column) {
 		if (element.isExternal()) {
+			element.setExternalInfo(line, column);
 			return;
 		}
 		try {
