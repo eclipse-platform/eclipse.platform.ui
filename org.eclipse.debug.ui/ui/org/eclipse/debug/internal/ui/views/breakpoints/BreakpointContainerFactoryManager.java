@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,7 +40,10 @@ public class BreakpointContainerFactoryManager {
 	
 	private static BreakpointContainerFactoryManager fgManager;
 	
-    private Map fOrganizers = new HashMap();    
+	// map for lookup by id
+    private Map fOrganizers = new HashMap();
+    // cached sorted list by label
+    private List fSorted = null;
 
 	/**
 	 * Returns the singleton instance of the breakpoint container
@@ -97,8 +104,23 @@ public class BreakpointContainerFactoryManager {
      * @return all contributed breakpoint organizers
      */
     public IBreakpointOrganizer[] getOrganizers() {
-        Collection collection = fOrganizers.values();
-        return (IBreakpointOrganizer[]) collection.toArray(new IBreakpointOrganizer[collection.size()]);
+    	if (fSorted == null) {
+	        Collection collection = fOrganizers.values();
+	        fSorted = new ArrayList();
+	        fSorted.addAll(collection);
+	        Collections.sort(fSorted, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					IBreakpointOrganizer b1 = (IBreakpointOrganizer)o1;
+					IBreakpointOrganizer b2 = (IBreakpointOrganizer)o2;
+					return b1.getLabel().compareTo(b2.getLabel());
+				}
+
+				public boolean equals(Object obj) {
+					return this == obj;
+				}
+			});
+    	}
+    	return (IBreakpointOrganizer[]) fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
     }
     
     /**
