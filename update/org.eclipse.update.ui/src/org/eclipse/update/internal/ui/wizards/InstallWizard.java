@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
+	private TargetPage targetPage;
 	private ChecklistJob job;
 
 	public InstallWizard(ChecklistJob job) {
@@ -65,6 +66,8 @@ public class InstallWizard extends Wizard {
 		if (hasLicense()) {
 			addPage(new LicensePage(job));
 		}
+		targetPage = new TargetPage();
+		addPage(targetPage);
 	}
 	
 	public boolean canFinish() {

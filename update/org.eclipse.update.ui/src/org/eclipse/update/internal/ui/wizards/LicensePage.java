@@ -34,7 +34,7 @@ public class LicensePage extends WizardPage {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		client.setLayout(layout);
-		Text text = new Text(client, SWT.MULTI | SWT.BORDER);
+		Text text = new Text(client, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		text.setLayoutData(gd);

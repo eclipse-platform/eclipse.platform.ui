@@ -20,7 +20,8 @@ import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.*;
 public class DetailsForm extends UpdateWebForm {
 private Label imageLabel;
 private Label providerLabel;
@@ -38,6 +39,7 @@ private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
 private ModelListener modelListener;
+private Hashtable imageCache = new Hashtable();
 
 class ModelListener implements IUpdateModelChangedListener {
 	/**
@@ -129,6 +131,11 @@ public void dispose() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	model.removeUpdateModelChangedListener(modelListener);
 	providerImage.dispose();
+	for (Enumeration enum=imageCache.elements(); enum.hasMoreElements();) {
+		Image image = (Image)enum.nextElement();
+		image.dispose();
+	}
+	imageCache.clear();
 	super.dispose();
 }
 	
@@ -178,6 +185,13 @@ public void createContents(Composite container) {
 	glayout.numColumns = 4;
 	glayout.horizontalSpacing = 20;
 	glayout.marginWidth = 10;
+	
+	Label l = factory.createSeparator(container, SWT.HORIZONTAL);
+	td = new TableData();
+	td.colspan = 2;
+	td.align = TableData.FILL;
+	l.setLayoutData(td);
+		
 	Composite footer = factory.createComposite(container);
 	td = new TableData();
 	td.colspan = 2;
@@ -264,10 +278,10 @@ private void inputChanged(IFeature feature) {
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
 	sizeLabel.setText("0 KB");
 	descriptionText.setText(feature.getDescription().getText());
-	/* if (imageLabel.getImage()==null ||
-		!imageLabel.getImage().equals(providerImage))
-		*/
-	imageLabel.setImage(providerImage);
+	Image logoImage = loadProviderImage(feature);
+	if (logoImage==null)
+	   logoImage = providerImage;
+	imageLabel.setImage(logoImage);
 	infoLinkURL = feature.getDescription().getURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
 	if (feature.getSite() instanceof ILocalSite) {
@@ -291,6 +305,21 @@ private void inputChanged(IFeature feature) {
 	doButton.setVisible(true);
 
 	currentFeature = feature;
+}
+
+private Image loadProviderImage(IFeature feature) {
+	Image image = null;
+	URL imageURL = feature.getImage();
+	if (imageURL==null) return null;
+	// check table
+	image = (Image)imageCache.get(imageURL);
+	if (image==null) {
+		ImageDescriptor id = ImageDescriptor.createFromURL(imageURL);
+		image = id.createImage();
+		if (image!=null)
+		   imageCache.put(imageURL, image);
+	}
+	return image;
 }
 
 private void reflow() {
