@@ -30,7 +30,7 @@ public class IOConsoleInputStream extends InputStream {
     /**
      * Buffer to hold data from console until it is read.
      */
-    private byte[] input = new byte[1024*2];
+    private byte[] input = new byte[100];
     
     /**
      * Location in the buffer that the next byte of data from the

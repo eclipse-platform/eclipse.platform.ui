@@ -36,7 +36,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
     /**
      * Collection of compiled pattern match listeners
      */
-    private ArrayList patterns = new ArrayList();
+    private ArrayList fPatterns = new ArrayList();
 
     private TextConsole fConsole;
 
@@ -79,11 +79,11 @@ public class ConsolePatternMatcher implements IDocumentListener {
                     // perhaps the buffer was re-set
                     return Status.OK_STATUS;
                 }
-                for (int i = 0; i < patterns.size(); i++) {
+                for (int i = 0; i < fPatterns.size(); i++) {
                     if (monitor.isCanceled()) {
                         break;
                     }
-                    CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
+                    CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) fPatterns.get(i);
                     int baseOffset = notifier.end;
                     int lengthToSearch = endOfSearch - baseOffset;
                     if (lengthToSearch > 0) {
@@ -196,10 +196,10 @@ public class ConsolePatternMatcher implements IDocumentListener {
      *            the pattern match listener to add
      */
     public void addPatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized (patterns) {
+        synchronized (fPatterns) {
             
             // check for dups
-            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+            for (Iterator iter = fPatterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
                 if (element.listener == matchListener) {
                     return;
@@ -217,7 +217,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
                 qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
             }
             CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
-            patterns.add(notifier);
+            fPatterns.add(notifier);
             matchListener.connect(fConsole);
             fMatchJob.schedule();
         }
@@ -231,8 +231,8 @@ public class ConsolePatternMatcher implements IDocumentListener {
      *            the pattern match listener to remove.
      */
     public void removePatternMatchListener(IPatternMatchListener matchListener) {
-        synchronized (patterns) {
-            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
+        synchronized (fPatterns) {
+            for (Iterator iter = fPatterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener element = (CompiledPatternMatchListener) iter.next();
                 if (element.listener == matchListener) {
                     iter.remove();
@@ -244,13 +244,13 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
     public void disconnect() {
         fMatchJob.cancel();
-        synchronized (patterns) {
-            Iterator iterator = patterns.iterator();
+        synchronized (fPatterns) {
+            Iterator iterator = fPatterns.iterator();
             while (iterator.hasNext()) {
                 CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iterator.next();
                 notifier.dispose();
             }
-            patterns.clear();
+            fPatterns.clear();
         }
     }
 
@@ -269,10 +269,10 @@ public class ConsolePatternMatcher implements IDocumentListener {
      */
     public void documentChanged(DocumentEvent event) {
         if (event.fLength > 0) {
-            synchronized (patterns) {
+            synchronized (fPatterns) {
                 if (event.fDocument.getLength() == 0) {
                     // document has been cleared, reset match listeners
-                    Iterator iter = patterns.iterator();
+                    Iterator iter = fPatterns.iterator();
                     while (iter.hasNext()) {
                         CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iter.next();
                         notifier.end = 0;
@@ -280,7 +280,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
                 } else {
                     if (event.fOffset == 0) { 
                         //document was trimmed
-                        Iterator iter = patterns.iterator();
+                        Iterator iter = fPatterns.iterator();
                         while (iter.hasNext()) {
                             CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) iter.next();
                             notifier.end = notifier.end > event.fLength ? notifier.end-event.fLength : 0;

@@ -129,7 +129,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
                 if (c == '\r') {
                     strip = 2;
                 }
-                text = text.substring(0, length - strip);
+                text = new String(text.substring(0, length - strip));
             } else {
                 text = ""; //$NON-NLS-1$
             }

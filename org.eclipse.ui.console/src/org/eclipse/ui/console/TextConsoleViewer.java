@@ -605,7 +605,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     protected void handleDispose() {
         super.handleDispose();
-        IDocument document = getDocument();//
+        IDocument document = getDocument();
         if (document != null) {
             document.removeDocumentListener(documentListener);
         }
@@ -632,5 +632,13 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
 			}
 		}
     	
+    }
+    
+    /*
+     * work around to memory leak in TextViewer$WidgetCommand
+     */
+    protected void updateTextListeners(WidgetCommand cmd) {
+        super.updateTextListeners(cmd);
+        cmd.preservedText = null;
     }
 }
