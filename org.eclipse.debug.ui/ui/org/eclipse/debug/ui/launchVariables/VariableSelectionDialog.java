@@ -52,7 +52,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
 		
-		final Button contextVariables= createRadioButton(composite, "Context variables");
+		final Button contextVariables= createRadioButton(composite, LaunchConfigurationsMessages.getString("VariableSelectionDialog.3")); //$NON-NLS-1$
 		contextVariables.setSelection(true);
 		contextVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -61,7 +61,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 				}
 			}
 		});
-		final Button simpleVariables= createRadioButton(composite, "Simple variables");
+		final Button simpleVariables= createRadioButton(composite, LaunchConfigurationsMessages.getString("VariableSelectionDialog.4")); //$NON-NLS-1$
 		simpleVariables.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (simpleVariables.getSelection()) {

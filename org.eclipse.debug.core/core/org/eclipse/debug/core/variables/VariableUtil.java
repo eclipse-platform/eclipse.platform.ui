@@ -182,7 +182,7 @@ public class VariableUtil {
 			if (varDef.end == -1 || varDef.name == null || varDef.name.length() == 0) {
 				// Invalid variable format
 				if (status != null) {
-					status.merge(newErrorStatus(MessageFormat.format("Invalid variable format: {0}", new String[] {argument.substring(varDef.start)}), null));
+					status.merge(newErrorStatus(MessageFormat.format(VariablesMessages.getString("VariableUtil.4"), new String[] {argument.substring(varDef.start)}), null)); //$NON-NLS-1$
 				}
 				return null;
 			}
@@ -213,7 +213,7 @@ public class VariableUtil {
 				ISimpleLaunchVariable simpleVariable= DebugPlugin.getDefault().getSimpleVariableRegistry().getVariable(varDef.name);
 				if (simpleVariable == null) {
 					if (status != null) {
-						status.merge(newErrorStatus(MessageFormat.format("The variable named \"{0}\" does not exist.", new Object[] {varDef.name}), null));
+						status.merge(newErrorStatus(MessageFormat.format(VariablesMessages.getString("VariableUtil.5"), new Object[] {varDef.name}), null)); //$NON-NLS-1$
 					}
 					return null;
 				}
@@ -389,13 +389,13 @@ public class VariableUtil {
 	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		if (envMap != null) {
-			MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, "Could not resolve environment.", null);
+			MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, VariablesMessages.getString("VariableUtil.6"), null); //$NON-NLS-1$
 			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, status, context);
 			if (status.isOK()) {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
 				} else {
-					String message = MessageFormat.format("Invalid environment specified for the launch configuration named {0}.", new Object[] { configuration.getName()});
+					String message = MessageFormat.format(VariablesMessages.getString("VariableUtil.7"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 					throw new CoreException(newErrorStatus(message, null));
 				}
 			} else {

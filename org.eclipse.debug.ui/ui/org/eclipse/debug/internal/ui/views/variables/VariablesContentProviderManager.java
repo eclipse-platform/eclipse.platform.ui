@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.*;
+import org.eclipse.debug.ui.DefaultVariablesContentProvider;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IVariablesContentProvider;
 
@@ -76,13 +77,13 @@ public class VariablesContentProviderManager {
 			}
 			Object executable = null;
 			try {
-				executable = DebugUIPlugin.createExtension(configElement, "class");
+				executable = DebugUIPlugin.createExtension(configElement, "class"); //$NON-NLS-1$
 			} catch (CoreException ce) {
 				DebugUIPlugin.log(ce);
 				return null;
 			}
 			if (!(executable instanceof IVariablesContentProvider)) {
-				DebugUIPlugin.logErrorMessage("Class " + configElement.getAttribute("class") + " is not an instance of org.eclipse.debug.ui.IVariablesContentProvider");				
+				DebugUIPlugin.logErrorMessage(MessageFormat.format(VariablesViewMessages.getString("VariablesContentProviderManager.2"), new String[]{configElement.getAttribute("class")}));			 //$NON-NLS-1$ //$NON-NLS-2$
 				return null;
 			}	
 			contentProvider = (IVariablesContentProvider) executable;
@@ -102,7 +103,7 @@ public class VariablesContentProviderManager {
 		fConfigElementMap = new HashMap(5);
 		for (int i = 0; i < infos.length; i++) {
 			IConfigurationElement configElement = infos[i];
-			String debugModelId = configElement.getAttribute("debugModelId");
+			String debugModelId = configElement.getAttribute("debugModelId"); //$NON-NLS-1$
 			fConfigElementMap.put(debugModelId, configElement);
 		}				
 	}
