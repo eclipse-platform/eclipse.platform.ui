@@ -20,7 +20,6 @@ import org.apache.tools.ant.types.PatternSet;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
-import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
