@@ -277,7 +277,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		} finally {
 			monitor.done();
-			if (trigger != IncrementalProjectBuilder.AUTO_BUILD)
+			if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD)
 				autoBuildJob.avoidBuild();
 		}
 	}
