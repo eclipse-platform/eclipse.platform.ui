@@ -130,13 +130,11 @@
       <text style-id="page-description" id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
       <anchor id="beginAnchor"/>
       <group label="SWT" id="swt" style-id="samples-group">
-        <text style-id="group-description">Run SWT samples using either standalone SWT launcher or integrated into workbench views.</text>
-        <link label="Stand-alone SWT launcher" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples" id="standalone" style-id="sample-link">
-          <text>A new window will open that will allow you to select standalone samples from the list</text>
+        <text style-id="group-description">Run SWT samples using either the standalone SWT launcher or as an integrated workbench view.</text>
+        <link label="Workbench views and standalone applications" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples" id="swt-examples" style-id="sample-link">
+          <text>The SWT Example launcher will allow you to launch a collection of SWT examples.  Some of the examples can be run independent of the eclipse platform and others will be available as views inside the workbench.</text>
         </link>
-        <link label="Workbench views" url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented." id="views" style-id="sample-link">
-          <text>Samples will be integrated in the workbench views in the current perspective</text>
-        </link>
+        
         <anchor id="swtGroupAnchor"/>
       </group>
       <group label="Workbench" id="workbench" style-id="samples-group">
