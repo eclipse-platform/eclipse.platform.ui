@@ -23,8 +23,25 @@
 
 <html>
 <head>
-    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
-      
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ 
+ <style type="text/css">
+ BODY {
+	background-color: Window;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin:0;
+	padding:0;
+	border:0;
+	cursor:default;
+
+	scrollbar-highlight-color:ThreeDShadow;
+	scrollbar-shadow-color:ThreeDShadow;
+	scrollbar-arrow-color:#000000;
+	scrollbar-darkshadow-color:Window;
+	scrollbar-face-color:ActiveBorder;	
+}  
+</style>
 
 </head>
 

@@ -1,11 +1,15 @@
-<%@ page  errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
-<% 
+<%
+	 String  ContentStr = WebappResources.getString("Content", null);
+	 String  SearchStr = WebappResources.getString("SearchResults", null);
+	 String  LinksStr = WebappResources.getString("Links", null);
+
 	// Paramters allowed:
 	// tab = toc | search | links
 	// toc
@@ -14,7 +18,7 @@
 	// contextId
 	
 	// url of NavFrame
-	String srcNavFrame = "nav.html";
+	String srcNavFrame = "navFrame.jsp";
 	if (request.getQueryString() != null) 
 		srcNavFrame += "?"+request.getQueryString();
 	
@@ -24,20 +28,16 @@
 	{
 		String topic = request.getParameter("topic");
 		if (topic.startsWith("/"))
-		{
-			StringBuffer url = request.getRequestURL();
-			url.setLength(url.length() - "help.jsp".length());
-			url.append("content/help:");
-			url.append(topic);
-			topic = url.toString();
+		{	
+			topic = request.getContextPath() + "/content/help:" + topic;
 		}
 		srcMainFrame=topic;
 	}
 	
-	// url of TabsFrame
-	String srcTabsFrame = "tabs.jsp";
-	if(request.getParameter("tab")!=null)
-		srcTabsFrame=srcTabsFrame+"?tab="+request.getParameter("tab");
+	// url of BannerFrame
+	String srcBannerFrame = "banner.jsp";
+	if (request.getParameter("searchWord") != null)
+		srcBannerFrame += "?"+request.getQueryString();
 %>
 
 
@@ -45,59 +45,32 @@
 <html>
 <head>
 	<title>Help</title>
-	<script language="JavaScript">
-	
-	/**
-	 * Parses the parameters passed to the url
-	 */
-	function parseQueryString (str) 
-	{
-	    str = str ? str : window.location.href;
-	    var longquery = str.split("?");
-	    if (longquery.length <= 1) return "";
-	    var query = longquery[1];
-	    var args = new Object();
-	    if (query) 
-	    {
-	        var fields = query.split('&');
-	        for (var f = 0; f < fields.length; f++) 
-	        {
-	            var field = fields[f].split('=');
-	            args[unescape(field[0].replace(/\+/g, ' '))] = unescape(field[1].replace(/\+/g, ' '));
-	        }
-	    }
-	    return args;
-	}
-
-	</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script language="Javascript">
+		// Global for the nav frame script
+		var titleArray = new Array();
+		titleArray["toc"] = "<%=ContentStr%>";
+		titleArray["search"] = "<%=SearchStr%>";
+		titleArray["links"] = "<%=LinksStr%>";
+		</script>
+	<script language="JavaScript" src="help.js"></script>
 	
 </head>
 
-
-<frameset  rows="23,*,24">
-	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-    <frameset id="contentFrameset" cols="25%,*">
-        <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
-        <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
-    </frameset>
-    <frame name="TabsFrame" src="<%=srcTabsFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-</frameset>
-
-<!--
-
-
-<frameset rows="40,*"  frameborder=0 framespacing=0 border=0>
-	<frame name="BannerFrame" src="banner.html" noresize marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
-	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0" >
-        <frame name="NavFrame" src="navFrame.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
-        <frameset id="contentFrameset" rows="20,*", frameborder=0 framespacing=0 border=0>
+<frameset onload="onloadFrameset()"  rows="45,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+	<frame name="BannerFrame" src="<%=srcBannerFrame%>"  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  framebroder="0" spacing="0">
+		<frameset name="navFrameset" rows="24,*,23" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="NavToolbarFrame" src="navToolbar.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="NavFrame" src="nav.html" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="TabsFrame" src="tabs.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		</frameset>
+        <frameset id="contentFrameset" rows="24,*", frameborder=0 framespacing=0 border=0>
         	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
-             <frame name="MainFrame" src="mainFrame.html" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0">
+             <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
         </frameset>
      </frameset>
  </frameset>
-
--->
 
 </html>
 

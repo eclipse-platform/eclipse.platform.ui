@@ -1,8 +1,8 @@
 <html>
 
 <head>
-	<title> Error </title>
-      	<link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title> Error </title>
 <body>
 
 	<%@ page isErrorPage="true" %>

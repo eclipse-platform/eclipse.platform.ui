@@ -1,151 +1,55 @@
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
-<title>Navigation</title>
 
-<script language="JavaScript">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-var args = parent.parseQueryString();
+<style type="text/css">
 
+/* need this one for Mozilla */
+HTML { 
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+ }
 
-/**
- * Shows the TOC frame, loads appropriate TOC, and selects the topic
- */
-function displayTocFor(topic)
-{
-	// first ensure the TOC frame is loaded
-	// TO DO....
-	
-	parent.TabsFrame.switchTab("toc");
-	// remove the query, if any
-	var i = topic.indexOf('?');
-	if (i != -1)
-		topic = topic.substring(0, i);
-	
-	var selected = window.toc.selectTopic(topic);
-	if (!selected)
-		window.toc.location = "toc.jsp?topic="+topic;
+BODY {
+	margin:0px;
+	padding:0px;
+	border-left:1px black solid;
+	border-right:1px black solid;
+	xborder-bottom:1px black solid;
+	/* Mozilla does not like width:100%, so we set height only */
+	height:100%;
 }
 
-/** 
- * Shows the specified internal frame.
- * To be called by the tabs.html frame.
- */ 
-function turnToFrame(nav)
-{
-	this.currentNavFrame=nav;
- 	var iframe = document.getElementById(nav);
- 	if (!iframe) return;
- 
-  	// show the appropriate frame
- 	var iframes = document.body.getElementsByTagName("IFRAME");
- 	for (var i=0; i<iframes.length; i++)
- 	{			
-  		if (iframes[i] != iframe)
-  		{
-   			iframes[i].style.visibility = "hidden";
-   			iframes[i].style.width = 0;
-   			iframes[i].style.height = 0;
-   			iframes[i].style.border = 0;
-   			iframes[i].style.margin = 0;
-  		}
-  		else
-  		{
-   			iframe.style.visibility = "visible";
-   			iframes[i].style.width = "100%";
-   			iframes[i].style.height = "100%";
-   			if (!iframes[i].src)
-   				iframes[i].src = getFrameInput(nav);
-   		}
- 	}
-
- 	// set title
- 	if (nav == "search")
- 		setToolbarTitle("Search");
- 	else if (nav == "links")
- 		setToolbarTitle("Links");
- 	else if (nav == "toc")
- 		setToolbarTitle(tocTitle);		
-}
- 
-var tocTitle = null;
-var currentNavFrame;
-/**
- * Needs to be called from a subframe
- */
-function setToolbarTitle(title)
-{
-	if (parent.ToolbarFrame && parent.ToolbarFrame.setTitle)
-		parent.ToolbarFrame.setTitle(title);
+IFRAME {
+	width:100%;
+	height:100%;
 }
 
-/**
- * Returns the input source for a frame
- */
-function getFrameInput(nav)
-{
-	switch(nav)
-	{
-	case "toc":
-		if(args && args["toc"])
-			return "toc.jsp" + getQuery();
-		else
-			return "tocs.jsp";		
-		break;
-		
-	case "search":
-		return "search.html" + getQuery();
-		break;
-		
-	case "links":
-			return "links.jsp" + getQuery();
-		break;
-		
-	default:
-		return "about:blank";
-		break;
-	}
+.hidden {
+	visibility:hidden;
+	width:0;
+	height:0;
 }
 
-/**
- * Returns the input source for a frame
- */
-function getQuery()
-{
-    var longquery = window.location.href.split("?");
-    if (longquery.length <= 1) return "";
-    return "?" + longquery[1];
+.visible {
+	visibility:visible;
+	width:100%;
+	height:100%;
 }
 
-function showBookshelf()
-{
-	// load the bookshelf
-	//window.toc.window.location.href = "tocs.jsp";
-	window.toc.window.location.replace("tocs.jsp");
-	// clear the content page
-	parent.MainFrame.location="home.jsp";
-}
-
-
-function onloadHandler()
-{
-	// load all the iframes
-	if (!document.getElementById("toc").src)
-		document.getElementById("toc").src = getFrameInput("toc");
-	if (!document.getElementById("search").src)
-		document.getElementById("search").src = getFrameInput("search");
-	if (document.getElementById("links").src)
-		document.getElementById("links").src = getFrameInput("links");
-}
- 
-</script>
+</style>
 
 </head>
    
-<body onload="onloadHandler()">
-    <iframe style="visibility:hidden" width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
-	<iframe style="visibility:hidden" width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
-	<iframe style="visibility:hidden" width="100%" height="100%"  name="links" id="links" class="nav" title="Links"></iframe>
+<body>
+ <iframe frameborder="0" class="hidden"  name="toc" id="toc" ></iframe> 
+ <iframe frameborder="0"  class="hidden"  name="search" id="search" ></iframe> 
+ <iframe frameborder="0" class="hidden" name="links" id="links"></iframe>
 </body>
 </html>
 
