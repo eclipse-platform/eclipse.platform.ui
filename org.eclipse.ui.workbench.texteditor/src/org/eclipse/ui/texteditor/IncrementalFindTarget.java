@@ -30,11 +30,13 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextEvent;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -683,7 +685,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @since 2.1
 	 */
 	public void selectionChanged(SelectionChangedEvent e) {
-		if (!fSearching)
+		boolean ignore= false;
+		ISelection selection= e.getSelection(); 
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection)selection;
+			Point range= getSelection(); 
+			ignore= textSelection.getOffset() + textSelection.getLength() == range.x + range.y;
+		}
+		if (!fSearching && !ignore)
 			leave();
 	}
 }
