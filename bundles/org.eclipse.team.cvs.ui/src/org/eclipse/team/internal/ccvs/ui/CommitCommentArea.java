@@ -194,4 +194,10 @@ public class CommitCommentArea extends DialogArea {
 			CVSUIPlugin.getPlugin().getRepositoryManager().addComment(comment);
 		}
 	}
+	
+	public void setFocus() {
+		if (text != null) {
+			text.setFocus();
+		}
+	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
@@ -145,5 +146,14 @@ public class ReleaseCommentDialog extends DetailsDialog {
 		settings.put(HEIGHT_KEY, bounds.height);
 		settings.put(WIDTH_KEY, bounds.width);
 		return super.close();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Control c =  super.createContents(parent);
+		commitCommentArea.setFocus();
+		return c;
 	}
 }
