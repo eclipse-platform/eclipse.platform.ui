@@ -157,7 +157,6 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		loadOpenedViews();
 		loadViewsToNotOpen();
 		PlatformUI.getWorkbench().getContextSupport().getContextManager().addContextManagerListener(this);
-		showDebugActionSet();
 	}
 	
 	/**
@@ -850,16 +849,6 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	}
 	
 	/**
-	 * Turns on the debug action set.
-	 */
-	private void showDebugActionSet() {
-		IWorkbenchPage page = getActiveWorkbenchPage();
-		if (page != null) {
-			page.showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
-		}
-	}
-	
-	/**
 	 * Notifies this listener that the given perspective change
 	 * has occurred.
 	 * 
@@ -920,22 +909,8 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		}
 	}
 	
-	/**
-	 * When the launch view becomes visible, turn on the
-	 * debug action set. Note that the workbench will handle the
-	 * case where the user really doesn't want the action set
-	 * enabled - showActionSet(String) will do nothing for an
-	 * action set that's been manually disabled.
-	 */
 	public void partVisible(IWorkbenchPartReference ref) {
-		if (ref instanceof IViewReference) {
-			IViewPart part = ((IViewReference) ref).getView(false);
-			if (part == launchView) {
-				showDebugActionSet();
-			}
-		}
 	}
-	
 	public void partActivated(IWorkbenchPartReference ref) {
 	}
 	public void partBroughtToTop(IWorkbenchPartReference ref) {

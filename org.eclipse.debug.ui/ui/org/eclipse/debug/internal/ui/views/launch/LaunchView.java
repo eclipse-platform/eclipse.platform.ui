@@ -1395,6 +1395,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 // TODO: Workaround for Bug #63332. Reexamine after M9.
 //			updateContextListener();
+			// When the launch view becomes visible, turn on the
+			// debug action set. Note that the workbench will handle the
+			// case where the user really doesn't want the action set
+			// enabled - showActionSet(String) will do nothing for an
+			// action set that's been manually disabled.
+			getSite().getPage().showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 		}
 	}
 
