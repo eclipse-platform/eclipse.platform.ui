@@ -157,7 +157,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 		if (sites.length == 0) {
 			useNewRepo.setSelection(true);	
 		} else {
-			useExistingRepo.setSelection(true);				
+			useExistingRepo.setSelection(true);
 			if(currentProvider != null) {
 				table.setSelection(new StructuredSelection(new SiteElement(currentProvider.getSite())));
 			} else {

@@ -52,6 +52,16 @@
             id="org.eclipse.team.target.ui.propertyPages.AuthenticatedTargetSitePropertiesPage"
             class="org.eclipse.team.internal.ui.target.AuthenticatedTargetSitePropertiesPage">
       </page>
+      <page
+			name="%targetSite"
+			objectClass="org.eclipse.core.resources.IProject"
+			id="org.eclipse.team.internal.ui.target.ProjectTargetMappingPropertiesPage"
+            class="org.eclipse.team.internal.ui.target.ProjectTargetMappingPropertiesPage">
+			<filter
+				name="projectPersistentProperty"
+				value="org.eclipse.team.target=basic">
+			</filter>
+      </page>
    </extension>
 
 <!-- ****************** POPUP ACTIONS *************** -->
@@ -185,6 +195,15 @@
          </description>
          <selection class="org.eclipse.core.resources.IProject"/>
       </wizard>
+      <wizard
+         id="org.eclipse.team.ui.TargetSiteImportWizard"
+         name="%TargetSiteImportWizard.name"
+         class="org.eclipse.team.internal.ui.target.TargetSiteImportWizard">
+         <description>
+            %TargetSiteImportWizard.description
+         </description>
+         <selection class="org.eclipse.team.internal.ui.target.SiteElement"/>
+      </wizard>
    </extension> 
 
 <!-- ****************** Export Wizards ********************* -->
@@ -199,6 +218,15 @@
             %ProjectSetExportWizard.description
          </description>
          <selection class="org.eclipse.core.resources.IProject"/>
+      </wizard>
+      <wizard
+         id="org.eclipse.team.ui.target.TargetSiteExportWizard"
+         name="%TargetSiteExportWizard.name"
+         class="org.eclipse.team.internal.ui.target.TargetSiteExportWizard">
+         <description>
+            %TargetSiteExportWizard.description
+         </description>
+         <selection class="org.eclipse.team.internal.ui.target.SiteElement"/>
       </wizard>
    </extension> 
    

@@ -149,5 +149,7 @@ public abstract class Site {
 	protected void setURL(URL rootUrl) {
 		this.rootUrl = rootUrl;
 	}
+	
+	public abstract Properties getConfiguration();
 
 }

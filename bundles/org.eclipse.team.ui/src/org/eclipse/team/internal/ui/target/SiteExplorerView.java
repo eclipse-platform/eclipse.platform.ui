@@ -551,4 +551,12 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	 */
 	public void setFocus() {
 	}
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		TargetManager.removeSiteListener(this);
+	}
+
 }

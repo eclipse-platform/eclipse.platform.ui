@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.core.target;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +54,7 @@ public abstract class AuthenticatedSite extends Site {
 
 	public void setUsername(String name) throws TeamException {
 		Map authInfo=Platform.getAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (authInfo==null) authInfo=new HashMap(2);
 		authInfo.put("name", username); //$NON-NLS-1$
 		try {
 			Platform.flushAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,6 +67,7 @@ public abstract class AuthenticatedSite extends Site {
 
 	public void setPassword(String password) throws TeamException {
 		Map authInfo=Platform.getAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (authInfo==null) authInfo=new HashMap(2);
 		authInfo.put("password", password); //$NON-NLS-1$
 		try {
 			Platform.flushAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$

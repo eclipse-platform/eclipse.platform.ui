@@ -56,7 +56,7 @@ public class AuthenticatedTargetSitePropertiesPage extends PropertyPage {
 		container.setLayout(new GridLayout(2, false));
 
 		Label serverLabel = new Label(container, SWT.NONE);
-		serverLabel.setText(Policy.bind("AuthenticatedTargetSitePropertiesPage.URL")); //$NON-NLS-1$
+		serverLabel.setText(Policy.bind("AuthenticatedTargetSitePropertiesPage.Server")); //$NON-NLS-1$
 		serverLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		Label serverText = new Label(container, SWT.NONE);
 		serverText.setText(site.getURL().getHost());
