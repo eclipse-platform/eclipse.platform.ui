@@ -51,5 +51,14 @@ public class LaunchViewer extends TreeViewer {
 		}			
 	}
 	
+	/**
+	 * @see Viewer#refresh()
+	 */
+	public void refresh() {
+		//@see bug 7965 - Debyg vuew refresh flicker
+		getControl().setRedraw(false);
+		super.refresh();
+		getControl().setRedraw(true);
+	}
 }
 
