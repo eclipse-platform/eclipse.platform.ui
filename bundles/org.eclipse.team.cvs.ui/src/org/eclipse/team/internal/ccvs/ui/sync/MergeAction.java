@@ -102,7 +102,7 @@ abstract class MergeAction extends Action {
 		final SyncSet[] result = new SyncSet[1];
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				result[0] = run(set, monitor);
+				result[0] = MergeAction.this.run(set, monitor);
 			}
 		};
 		try {
