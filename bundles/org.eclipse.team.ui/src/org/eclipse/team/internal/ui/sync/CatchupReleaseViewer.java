@@ -61,7 +61,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
-import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 
 /**
  * <b>Note:</b> This class/interface is part of an interim API that is still under 
@@ -166,6 +165,39 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		}
 	}
 	
+	class RemoveFromTreeAction extends Action {
+		public RemoveFromTreeAction(String title, ImageDescriptor image) {
+			super(title, image);
+		}
+		public void run() {
+			ISelection s = getSelection();
+			if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
+				return;
+			}
+			// mark all selected nodes as in sync
+			for (Iterator it = ((IStructuredSelection)s).iterator(); it.hasNext();) {
+				Object element = it.next();
+				setAllChildrenInSync((IDiffElement)element);
+			}
+			refresh();
+		}
+		public void update() {
+			// Update action enablement
+			setEnabled(!getSelection().isEmpty());
+		}
+	}
+	class ExpandAllAction extends Action {
+		public ExpandAllAction(String title, ImageDescriptor image) {
+			super(title, image);
+		}
+		public void run() {
+			expandSelection();
+		}
+		public void update() {
+			setEnabled(!getSelection().isEmpty());
+		}
+	}
+
 	// The current sync mode
 	private int syncMode = SyncView.SYNC_NONE;
 	
@@ -174,8 +206,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private FilterAction showOutgoing;
 	private FilterAction showOnlyConflicts;
 	private Action refresh;
-	private Action expandAll;
-	private Action removeFromTree;
+	private ExpandAllAction expandAll;
+	private RemoveFromTreeAction removeFromTree;
 	private ShowInNavigatorAction showInNavigator;
 	private Action ignoreWhiteSpace;
 	private Action toggleGranularity;
@@ -219,12 +251,14 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	 * Contributes actions to the popup menu.
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
+		expandAll.update();
 		manager.add(expandAll);
+		removeFromTree.update();
 		manager.add(removeFromTree); 
 		if (showInNavigator != null) {
 			manager.add(showInNavigator);
 		}
-		if(syncMode == SyncView.SYNC_COMPARE) {
+		if (syncMode == SyncView.SYNC_COMPARE) {
 			manager.add(copyAllRightToLeft);
 		}
 	}
@@ -283,11 +317,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction")); //$NON-NLS-1$
 		
 		// Expand action
-		expandAll = new Action(Policy.bind("CatchupReleaseViewer.expand"), null) { //$NON-NLS-1$
-			public void run() {
-				expandSelection();
-			}
-		};
+		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null);
 		
 		// Toggle granularity
 		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
@@ -298,20 +328,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		};
 		toggleGranularity.setChecked(diffModel.getSyncGranularity() == IRemoteSyncElement.GRANULARITY_CONTENTS);
 		
-		removeFromTree = new Action(Policy.bind("CatchupReleaseViewer.removeFromView"), null) { //$NON-NLS-1$
-			public void run() {
-				ISelection s = getSelection();
-				if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
-					return;
-				}
-				// mark all selected nodes as in sync
-				for (Iterator it = ((IStructuredSelection)s).iterator(); it.hasNext();) {
-					Object element = it.next();
-					setAllChildrenInSync((IDiffElement)element);
-				}
-				refresh();				
-			}
-		};
+		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null);
 		
 		copyAllRightToLeft = new Action(Policy.bind("CatchupReleaseViewer.copyAllRightToLeft"), null) { //$NON-NLS-1$
 			public void run() {
