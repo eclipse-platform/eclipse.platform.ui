@@ -203,6 +203,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		} 
 		return fLaunchConfigurationManager;
 	}
+
+
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -656,11 +658,25 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getConsoleDocumentManager().startup();
 		
-		fPerspectiveManager = new PerspectiveManager();
-		fPerspectiveManager.startup();
-		fPerspectiveManager.launchAdded(launch);
+		if (fPerspectiveManager == null) {
+			PerspectiveManager manager = getPerspectiveManager();
+			manager.launchAdded(launch);
+		}
 		
 		getLaunchConfigurationManager().startup();
+	}
+	
+	/**
+	 * Returns the persepective manager - instantiating it if required.
+	 * 
+	 * @return
+	 */
+	public PerspectiveManager getPerspectiveManager() {
+		if (fPerspectiveManager == null) {
+			fPerspectiveManager = new PerspectiveManager();
+			fPerspectiveManager.startup();			
+		}
+		return fPerspectiveManager;
 	}
 
 	/**

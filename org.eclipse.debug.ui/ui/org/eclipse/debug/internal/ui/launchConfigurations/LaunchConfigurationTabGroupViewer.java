@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
@@ -88,6 +89,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * The composite which is hidden/displayed as tabs are required.
 	 */
 	private Composite fVisibleArea;
+	
+	/**
+	 * Name label widget
+	 */
+	private Label fNameLabel;
 	
 	/**
 	 * Name text widget
@@ -191,11 +197,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		container.setLayoutData(gd);
 		setVisibleArea(container);
 
-		Label nameLabel = new Label(container, SWT.HORIZONTAL | SWT.LEFT);
-		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
+		fNameLabel = new Label(container, SWT.HORIZONTAL | SWT.LEFT);
+		fNameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
-		nameLabel.setLayoutData(gd);
-		nameLabel.setFont(font);
+		fNameLabel.setLayoutData(gd);
+		fNameLabel.setFont(font);
 		
 		Text nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -445,7 +451,16 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			} catch (CoreException e) {
 				errorDialog(e);
 			}
-			displayTabs();
+			displayInstanceTabs();
+		} else if (input instanceof ILaunchConfigurationType) {
+			ILaunchConfiguration configuration = getSharedTypeConfig((ILaunchConfigurationType)input);
+			setOriginal(configuration);
+			try {
+				setWorkingCopy(configuration.getWorkingCopy());
+			} catch (CoreException e) {
+				errorDialog(e);
+			}
+			displaySharedTabs();
 		} else {
 			setOriginal(null);
 			setWorkingCopy(null);
@@ -457,20 +472,23 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Displays tabs for the current working copy
 	 */
-	protected void displayTabs() {
+	protected void displayInstanceTabs() {
 		// Turn on initializing flag to ignore message updates
 		setInitializingTabs(true);
 
 		ILaunchConfigurationType type = null;
 		try {
 			type = getWorkingCopy().getType();
-			showTabsFor(type);
+			showInstanceTabsFor(type);
 		} catch (CoreException e) {
 			errorDialog(e);
 			setInitializingTabs(false);
 			return;
 		}
 
+		// show the name area
+		fNameLabel.setVisible(true);
+		fNameWidget.setVisible(true);
 		// Update the name field before to avoid verify error
 		getNameWidget().setText(getWorkingCopy().getName());
 
@@ -498,20 +516,114 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (!getVisibleArea().isVisible()) {
 			getVisibleArea().setVisible(true);
 		}
-
+		
 		refreshStatus();		
 	}
+	
+	/**
+	 * Displays tabs for the current config type
+	 */
+	protected void displaySharedTabs() {
+		// Turn on initializing flag to ignore message updates
+		setInitializingTabs(true);
+
+		ILaunchConfigurationType type = null;
+		try {
+			type = getWorkingCopy().getType();
+			showSharedTabsFor(type);
+		} catch (CoreException e) {
+			errorDialog(e);
+			setInitializingTabs(false);
+			return;
+		}
+
+		// hide the name area
+		fNameLabel.setVisible(false);
+		fNameWidget.setVisible(false);
+		// Update the name field before to avoid verify error
+		getNameWidget().setText(getWorkingCopy().getName());
+
+		// Retrieve the current tab group.  If there is none, clean up and leave
+		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
+		if (tabGroup == null) {
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationTabGroupViewer.No_tabs_defined_for_launch_configuration_type_{0}_1"), new String[]{type.getName()}), null); //$NON-NLS-1$
+			CoreException e = new CoreException(status);
+			errorDialog(e);
+			setInitializingTabs(false);
+			return;
+		}
+
+		// Update the tabs with the new working copy
+		tabGroup.initializeFrom(getWorkingCopy());
+
+		// Update the name field after in case client changed it
+		getNameWidget().setText(getWorkingCopy().getName());
+		
+		fCurrentTabIndex = getTabFolder().getSelectionIndex();
+
+		// Turn off initializing flag to update message
+		setInitializingTabs(false);
+		
+		if (!getVisibleArea().isVisible()) {
+			getVisibleArea().setVisible(true);
+		}
+				
+		refreshStatus();		
+	}	
 	
 	/**
 	 * Populate the tabs in the configuration edit area to be appropriate to the current
 	 * launch configuration type.
 	 */
-	private void showTabsFor(ILaunchConfigurationType configType) {
+	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 
 		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType)) {
+		if (getTabType() != null && getTabType().equals(configType) && !(getTabGroup() instanceof PerspectiveTabGroup)) {
 			return;
 		}
+
+		// Build the new tabs
+		ILaunchConfigurationTabGroup group = null;
+		try {
+			group = createGroup(configType);
+		} catch (CoreException ce) {
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_creating_launch_configuration_tabs_27"),ce); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+
+		showTabsFor(group);
+		setTabGroup(group);
+		setTabType(configType);
+	}	
+	
+	/**
+	 * Populate the tabs in the configuration edit area for the shared info
+	 * for the given launch config type.
+	 */
+	private void showSharedTabsFor(ILaunchConfigurationType configType) {
+
+		// Don't do any work if the current tabs are for the current config type
+		if (getTabType() != null && getTabType().equals(configType) && (getTabGroup() instanceof PerspectiveTabGroup)) {
+			return;
+		}		
+		
+		// Build the new tabs
+		ILaunchConfigurationTabGroup group = new PerspectiveTabGroup(configType);
+		group.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
+		ILaunchConfigurationTab[] tabs = group.getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		}
+				
+		showTabsFor(group);
+		setTabType(configType);
+		setTabGroup(group);		
+	}		
+
+	/**
+	 * Create the tabs in the configuration edit area for the given tab group.
+	 */
+	private void showTabsFor(ILaunchConfigurationTabGroup tabGroup) {
 
 		// Avoid flicker
 		getControl().setRedraw(false);
@@ -519,18 +631,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Dispose the current tabs
 		disposeExistingTabs();
 
-		// Build the new tabs
-		ILaunchConfigurationTabGroup group = null;
-		try {
-			group = createGroup(configType);
-			setTabGroup(group);
-		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_creating_launch_configuration_tabs_27"),ce); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
+		setTabGroup(tabGroup);
 
 		// Create the Control for each tab
-		ILaunchConfigurationTab[] tabs = group.getTabs();
+		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
 			String name = tabs[i].getName();
@@ -546,9 +650,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				tab.setControl(control);
 			}
 		}
-		
-		setTabGroup(group);
-		setTabType(configType);
+
 		getControl().setRedraw(true);
 	}	
 	
@@ -752,6 +854,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see ILaunchConfigurationDialog#canLaunch()
 	 */
 	public boolean canLaunch() {
+		if (getActiveTab() instanceof PerspectivesTab) {
+			return false;
+		}
+		
 		if (getWorkingCopy() == null) {
 			return false;
 		}
@@ -847,35 +953,37 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Verify that the launch configuration name is valid.
 	 */
 	protected void verifyName() throws CoreException {
-		String currentName = getNameWidget().getText().trim();
-
-		// If there is no name, complain
-		if (currentName.length() < 1) {
-			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getUniqueIdentifier(),
-												 0,
-												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Name_required_for_launch_configuration_11"), //$NON-NLS-1$
-												 null));
-		}
-
-		// See if name contains any 'illegal' characters
-		IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
-		if (status.getCode() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-												 0,
-												 status.getMessage(),
-												 null));
-		}
-
-		// Otherwise, if there's already a config with the same name, complain
-		if (!getOriginal().getName().equals(currentName)) {
-			if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+		if (fNameWidget.isVisible()) {
+			String currentName = getNameWidget().getText().trim();
+	
+			// If there is no name, complain
+			if (currentName.length() < 1) {
+				throw new CoreException(new Status(IStatus.ERROR,
+													 DebugUIPlugin.getUniqueIdentifier(),
+													 0,
+													 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Name_required_for_launch_configuration_11"), //$NON-NLS-1$
+													 null));
+			}
+	
+			// See if name contains any 'illegal' characters
+			IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
+			if (status.getCode() != IStatus.OK) {
 				throw new CoreException(new Status(IStatus.ERROR,
 													 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 													 0,
-													 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
+													 status.getMessage(),
 													 null));
+			}
+	
+			// Otherwise, if there's already a config with the same name, complain
+			if (!getOriginal().getName().equals(currentName)) {
+				if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+					throw new CoreException(new Status(IStatus.ERROR,
+														 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+														 0,
+														 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
+														 null));
+				}
 			}
 		}
 	}
@@ -1022,7 +1130,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification that the 'Revert' button has been pressed
 	 */
 	protected void handleRevertPressed() {
-		inputChanged(getOriginal());
+		if (getActiveTab() instanceof PerspectivesTab) {
+			inputChanged(getTabType());	
+		} else {
+			inputChanged(getOriginal());
+		}
 	}	
 	
 	/**
@@ -1072,5 +1184,46 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			getTabFolder().setSelection(index);
 			handleTabSelected();
 		}
+	}
+	
+	/**
+	 * Returns the private launch configuration used as a placeholder to represent/store
+	 * the information associated with a launch configuration type.
+	 * 
+	 * @param type launch configuration type
+	 * @return launch configuration
+	 */
+	protected ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) {
+		String id = type.getIdentifier();
+		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
+		ILaunchConfiguration shared = null;
+		ILaunchConfiguration[] configurations;
+		try {
+			configurations = getLaunchManager().getLaunchConfigurations(type);
+			for (int i = 0; i < configurations.length; i++) {
+				ILaunchConfiguration configuration = configurations[i];
+				if (configuration.getName().equals(name)) {
+					shared = configuration;
+					break;
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		if (shared == null) {
+			// create a new shared config
+			ILaunchConfigurationWorkingCopy workingCopy;
+			try {
+				workingCopy = type.newInstance(null, name);
+				workingCopy.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
+				// null entries indicate default settings
+				// save
+				shared = workingCopy.doSave();
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		return shared;
+
 	}
 }

@@ -26,10 +26,12 @@ div.dtd-fragment {
 </ul>
 <p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.launchMode">launchMode</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST launchMode</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
 <li><b>mode</b> - specifies a unique identifier for this launch mode. The launch modes contributed by the debug plaform are "run", "debug", and "profile".</li>
+<li><b>label</b> - A human-readable label that describes the launch mode</li>
 </ul>
 <b><i>Examples: </i></b>The following is an example of a launch delegate extension point:
 
@@ -37,7 +39,8 @@ div.dtd-fragment {
 <pre>
  <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.debug.core.launchModes&quot;</font>&gt;</font>
   <font color="#000080">&lt;launchMode
-   mode=<font color="#008000">&quot;profile&quot;</font>&gt;</font>
+   mode=<font color="#008000">&quot;profile&quot;</font>
+   label=<font color="#008000">&quot;Profile&quot;</font>&gt;</font>
   <font color="#000080">&lt;/launchMode&gt;</font>
  <font color="#000080">&lt;/extension&gt;</font>
 </pre>

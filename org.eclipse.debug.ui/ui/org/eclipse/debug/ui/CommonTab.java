@@ -25,11 +25,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -52,13 +51,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -85,45 +82,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Button fSharedLocationButton;
 	
 	/**
-	 * The combo box specifying the run perspective
-	 */
-	private Combo fRunPerspectiveCombo;
-	
-	/**
-	 * Label for the run perspective combo box
-	 */
-	private Label fRunPerspectiveLabel;
-	
-	/**
-	 * The combo box specifying the debug perspective
-	 */
-	private Combo fDebugPerspectiveCombo;
-	
-	/**
-	 * Label for the debug perspective combo box
-	 */
-	private Label fDebugPerspectiveLabel;
-
-	/**
-	 * The label that acts as header for the 'switch to perspective' widgets
-	 */
-	private Label fSwitchToLabel;
-
-	/**
 	 * Check box list for specifying favorites
 	 */
 	private CheckboxTableViewer fFavoritesTable;
-		
-	/**
-	 * Constant for the name of the drop-down choice 'None' for perspectives.
-	 */
-	private static final String PERSPECTIVE_NONE_NAME = LaunchConfigurationsMessages.getString("CommonTab.None"); //$NON-NLS-1$
-	
-	/**
-	 * Constant for the name of the drop-down choice 'Default' for perspectives.
-	 */
-	private static final String PERSPECTIVE_DEFAULT_NAME = LaunchConfigurationsMessages.getString("CommonTab.Default"); //$NON-NLS-1$
-	
+			
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
@@ -202,45 +164,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getLocalRadioButton().setSelection(true);
 		setSharedEnabled(false);
 
-		createVerticalSpacer(comp, 1);
-		
-		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
-		getSwitchToLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Switch_to/Open_perspective_when_launched_in__7")); //$NON-NLS-1$
-		getSwitchToLabel().setFont(font);
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.BEGINNING;
-		gd.horizontalSpan = 3;
-		getSwitchToLabel().setLayoutData(gd);
-		
-		Composite perspComp = new Composite(comp, SWT.NONE);
-		GridLayout perspLayout = new GridLayout();
-		perspLayout.marginHeight = 0;
-		perspLayout.marginWidth = 0;
-		perspLayout.numColumns = 2;
-		perspComp.setLayout(perspLayout);
-		
-		setRunPerspectiveLabel(new Label(perspComp, SWT.NONE));
-		getRunPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Run_mode_8")); //$NON-NLS-1$
-		getRunPerspectiveLabel().setFont(font);
-		
-		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
-		getRunPerspectiveCombo().setLayoutData(gd);
-		getRunPerspectiveCombo().setFont(font);
-		fillWithPerspectives(getRunPerspectiveCombo());
-		getRunPerspectiveCombo().addModifyListener(fBasicModifyListener);
-		
-		setDebugPerspectiveLabel(new Label(perspComp, SWT.NONE));
-		getDebugPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Debug_mode_9")); //$NON-NLS-1$
-		getDebugPerspectiveLabel().setFont(font);
-		
-		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
-		gd = new GridData(GridData.GRAB_HORIZONTAL);
-		getDebugPerspectiveCombo().setLayoutData(gd);
-		getDebugPerspectiveCombo().setFont(font);
-		fillWithPerspectives(getDebugPerspectiveCombo());				
-		getDebugPerspectiveCombo().addModifyListener(fBasicModifyListener);
-		
 		createVerticalSpacer(comp, 1);
 		
 		Composite favComp = new Composite(comp, SWT.NONE);
@@ -328,70 +251,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
  	private Button getSharedRadioButton() {
  		return fSharedRadioButton;
  	} 	
- 	
-	/**
-	 * Returns the perspective combo assoicated with the
-	 * debug perspective button.
-	 * 
-	 * @return a combo box
-	 */
-	private Combo getDebugPerspectiveCombo() {
-		return fDebugPerspectiveCombo;
-	}
-
-	/**
-	 * Sets the perspective combo assoicated with the
-	 * debug perspective button.
-	 * 
-	 * @param combo a combo box
-	 */
-	private void setDebugPerspectiveCombo(Combo combo) {
-		fDebugPerspectiveCombo = combo;
-	}
-
-	/**
-	 * Returns the perspective combo assoicated with the
-	 * run perspective button.
-	 * 
-	 * @return a combo box
-	 */
-	private Combo getRunPerspectiveCombo() {
-		return fRunPerspectiveCombo;
-	}
-
-	/**
-	 * Sets the perspective combo assoicated with the
-	 * run perspective button.
-	 * 
-	 * @param combo a combo box
-	 */
-	private void setRunPerspectiveCombo(Combo combo) {
-		fRunPerspectiveCombo = combo;
-	}
-
-	private void setRunPerspectiveLabel(Label fRunPerspectiveLabel) {
-		this.fRunPerspectiveLabel = fRunPerspectiveLabel;
-	}
-
-	private Label getRunPerspectiveLabel() {
-		return fRunPerspectiveLabel;
-	}
-
-	private void setDebugPerspectiveLabel(Label fDebugPerspectiveLabel) {
-		this.fDebugPerspectiveLabel = fDebugPerspectiveLabel;
-	}
-
-	private Label getDebugPerspectiveLabel() {
-		return fDebugPerspectiveLabel;
-	}
-
-	private void setSwitchToLabel(Label switchToLabel) {
-		fSwitchToLabel = switchToLabel;
-	}
-
-	private Label getSwitchToLabel() {
-		return fSwitchToLabel;
-	}
 
 	private void handleSharedRadioButtonSelected() {
 		setSharedEnabled(isShared());
@@ -456,22 +315,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	private IPerspectiveDescriptor getPerspectiveWithId(String id) {		
 		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
-	}	
-
-	/**
-	 * Fills the given combo box with the labels of all existing
-	 * perspectives and one to indicate 'none'.
-	 * 
-	 * @param combo combo box
-	 */
-	private void fillWithPerspectives(Combo combo) {
-		combo.add(PERSPECTIVE_NONE_NAME);
-		combo.add(PERSPECTIVE_DEFAULT_NAME);
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		IPerspectiveDescriptor[] persps = reg.getPerspectives();
-		for (int i = 0; i < persps.length; i++) {
-			combo.add(persps[i].getLabel());
-		}
 	}
 	
 	/**
@@ -480,8 +323,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {	
 		updateLocalSharedFromConfig(configuration);
 		updateSharedLocationFromConfig(configuration);
-		updateRunPerspectiveFromConfig(configuration);
-		updateDebugPerspectiveFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
 	}
 	
@@ -502,43 +343,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 	}
-	
-	private void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
-		ILaunchConfigurationType type = null;
-		String runPerspID = null;
-		try {
-			runPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-			type = config.getType();
-		} catch (CoreException ce) {
-			updatePerspectiveCombo(getRunPerspectiveCombo(), null);
-			getRunPerspectiveCombo().setEnabled(false);
-			getRunPerspectiveLabel().setEnabled(false);
-			return;
-		}
-		updatePerspectiveCombo(getRunPerspectiveCombo(), runPerspID);
-		boolean enable = type.supportsMode(ILaunchManager.RUN_MODE);
-		getRunPerspectiveCombo().setEnabled(enable);
-		getRunPerspectiveLabel().setEnabled(enable);
-	}
-	
-	private void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
-		ILaunchConfigurationType type = null;
-		String debugPerspID = null;
-		try {			
-			debugPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
-			type = config.getType();
-		} catch (CoreException ce) {
-			updatePerspectiveCombo(getDebugPerspectiveCombo(), null);
-			getDebugPerspectiveCombo().setEnabled(false);
-			getDebugPerspectiveLabel().setEnabled(false);
-			return;
-		}
-		updatePerspectiveCombo(getDebugPerspectiveCombo(), debugPerspID);
-		boolean enable = type.supportsMode(ILaunchManager.DEBUG_MODE);
-		getDebugPerspectiveCombo().setEnabled(enable);
-		getDebugPerspectiveLabel().setEnabled(enable);
-	}
-	
+		
 	private void updateFavoritesFromConfig(ILaunchConfiguration config) {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[]{});
@@ -567,34 +372,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			DebugUIPlugin.log(e);
 		}
 	}
-	
-	/**
-	 * Based on the given perspective identifier, update the settings
-	 * of the button and associated combo box. The check box is selected
-	 * when there is a valid perspective, and the combo box is set to
-	 * display the label of the associated perspective. The check box is
-	 * deselected, and the combo box is set to the default value (debug
-	 * perspective) when the identfier is <code>null</code>.
-	 * 
-	 * @param button check box button
-	 * @param combo combo box with perspective labels
-	 * @param id perspective identifier or <code>null</code>
-	 */
-	private void updatePerspectiveCombo(Combo combo, String id) {
-		if ((id == null) || (id.equals(IDebugUIConstants.PERSPECTIVE_NONE))) {
-			combo.setText(PERSPECTIVE_NONE_NAME);
-		} else if (id.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
-			combo.setText(PERSPECTIVE_DEFAULT_NAME);
-		} else {
-			IPerspectiveDescriptor pd = getPerspectiveWithId(id);
-			if (pd == null) {
-				// perpective does not exist - reset
-				updatePerspectiveCombo(combo, null);
-			} else {
-				combo.setText(pd.getLabel());
-			}
-		}
-	}
 
 	private void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
 		if (isShared()) {
@@ -605,49 +382,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			config.setContainer(null);
 		}
 	}
-	
-	/**
-	 * Update the run perspective attribute based on current
-	 * UI settings.
-	 */
-	private void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
-		String selectedText = getRunPerspectiveCombo().getText();
-		String perspID = null;
-		if (selectedText.equals(PERSPECTIVE_NONE_NAME)) {
-			perspID = IDebugUIConstants.PERSPECTIVE_NONE;
-		}
-		else if (selectedText.equals(PERSPECTIVE_DEFAULT_NAME)) {
-			perspID = IDebugUIConstants.PERSPECTIVE_DEFAULT;
-		} else {
-			IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(selectedText);
-			if (descriptor != null) {
-				perspID = descriptor.getId();
-			}
-		}
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, perspID);
-	}
-	
-	/**
-	 * Update the debug perspective attribute based on current
-	 * UI settings.
-	 */
-	private void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
-		String selectedText = getDebugPerspectiveCombo().getText();
-		String perspID = null;
-		if (selectedText.equals(PERSPECTIVE_NONE_NAME)) {
-			perspID = IDebugUIConstants.PERSPECTIVE_NONE;
-		}
-		else if (selectedText.equals(PERSPECTIVE_DEFAULT_NAME)) {
-			perspID = IDebugUIConstants.PERSPECTIVE_DEFAULT;
-		} else {
-			IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(selectedText);
-			if (descriptor != null) {
-				perspID = descriptor.getId();
-			}
-		}
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, perspID);
-	}
-	
+		
 	/**
 	 * Update the favorite settings.
 	 * 
@@ -742,18 +477,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
-		
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-
-		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 	}
 
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		updateConfigFromDebugPerspective(configuration);
-		updateConfigFromRunPerspective(configuration);
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
 	}
@@ -776,7 +505,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return DebugUITools.getImage(IDebugUIConstants.IMG_PERSPECTIVE_DEBUG);
+		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
 
 	class FavoritesContentProvider implements IStructuredContentProvider {

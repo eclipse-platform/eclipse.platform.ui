@@ -303,7 +303,16 @@ public interface ILaunchManager {
 	 * @return all registered launch modes
 	 * @since 3.0
 	 */
-	public String[] getLaunchModes();	
+	public String[] getLaunchModes();
+	
+	/**
+	 * Returns the label for the given launch mode.
+	 * 
+	 * @param mode mode identifier
+	 * @return a label for the given launch mode
+	 * @since 3.0
+	 */
+	public String getLaunchModeLabel(String mode);	
 }
 
 

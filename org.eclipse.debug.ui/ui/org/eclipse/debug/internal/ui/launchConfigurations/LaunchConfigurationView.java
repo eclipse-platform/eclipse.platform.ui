@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -193,6 +194,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		try {
+			if (configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+				return;
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+			return;
+		}
 		TreeViewer viewer = getTreeViewer();
 		viewer.getControl().setRedraw(false);
 		try {

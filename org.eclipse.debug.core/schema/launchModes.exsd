@@ -55,6 +55,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human-readable label that describes the launch mode
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -69,7 +76,8 @@
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.debug.core.launchModes&quot;&gt;
   &lt;launchMode
-   mode=&quot;profile&quot;&gt;
+   mode=&quot;profile&quot;
+   label=&quot;Profile&quot;&gt;
   &lt;/launchMode&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;

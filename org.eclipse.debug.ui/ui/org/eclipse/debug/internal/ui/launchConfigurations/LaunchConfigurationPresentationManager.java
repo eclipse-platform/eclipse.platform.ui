@@ -145,7 +145,7 @@ public class LaunchConfigurationPresentationManager {
 	 * @param mode launch mode identifier
 	 * @return launch tab group extension or <code>null</code>
 	 */
-	private LaunchConfigurationTabGroupExtension getExtension(String type, String mode) {
+	protected LaunchConfigurationTabGroupExtension getExtension(String type, String mode) {
 		// get the map for the config type
 		Map map = (Map)fTabGroupExtensions.get(type);
 		if (map != null) {

@@ -852,7 +852,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 				boolean canReplace = showSaveChangesDialog();
 	 				if (!canReplace) {
 	 					// restore the original selection
-	 					IStructuredSelection sel = new StructuredSelection(getTabViewer().getOriginal());
+	 					IStructuredSelection sel = new StructuredSelection(input);
 	 					fLaunchConfigurationView.getViewer().setSelection(sel);
 	 					return;
 	 				}
@@ -1085,13 +1085,20 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>false</code> otherwise.
 	 */
 	private boolean showSaveChangesDialog() {
-		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29")); //$NON-NLS-1$
-		buffer.append(getTabViewer().getWorkingCopy().getName());
-		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes.__Do_you_wish_to_save_them__30")); //$NON-NLS-1$
+		String message = null;
+		if (getActiveTab() instanceof PerspectivesTab) {
+			try {
+				message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.45"), new String[]{getTabViewer().getWorkingCopy().getType().getName()}); //$NON-NLS-1$
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		} else {
+			message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29"), new String[]{getTabViewer().getWorkingCopy().getName()}); //$NON-NLS-1$
+		}
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Save_changes__31"), //$NON-NLS-1$
 												 null,
-												 buffer.toString(),
+												 message,
 												 MessageDialog.QUESTION,
 												 new String[] {LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Yes_32"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_33"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_34")}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 0);
@@ -1118,9 +1125,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>false</code> otherwise.
 	 */
 	private boolean showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35")); //$NON-NLS-1$
-		buffer.append(getTabViewer().getWorkingCopy().getName());
-		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.__has_unsaved_changes_that_CANNOT_be_saved_because_of_the_following_error_36")); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35"), new String[]{getTabViewer().getWorkingCopy().getName()})); //$NON-NLS-1$
 		buffer.append(getTabViewer().getErrorMesssage());
 		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_discard_changes_37")); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 

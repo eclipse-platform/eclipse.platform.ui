@@ -11,19 +11,32 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,6 +44,12 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * The perspective manager manages the 'perspective' settings
@@ -43,6 +62,19 @@ import org.eclipse.ui.WorkbenchException;
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
 public class PerspectiveManager implements ILaunchListener, IDebugEventSetListener {
+		
+	/**
+	 * Table of config types to tables of user specified perspective settings (mode ids
+	 * to perspective ids).
+	 */	
+	private Map fPreferenceMap;
+	
+	// XML tags
+	private static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
+	private static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
+	private static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
+	private static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
+	private static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
 		
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -249,21 +281,207 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			return null;
 		}
 		String perspectiveId = null;
-		String mode = launch.getLaunchMode();
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
-			if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
-				perspectiveId = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT);
-			}
-		} else {
-			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-			if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
-				perspectiveId = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT);
-			}
-		}
+		perspectiveId = DebugUITools.getLaunchPerspective(config.getType(), launch.getLaunchMode());
 		if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
 			perspectiveId = null;
 		}
 		return perspectiveId;
 	}
+	
+	/**
+	 * Returns the perspective to switch to when a configuration of the given type
+	 * is launched in the given mode, or <code>null</code> if no switch should take
+	 * place.
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode identifier
+	 * @return perspective identifier or <code>null</code>
+	 * @since 3.0
+	 */
+	public String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
+		String id = getUserSpecifiedLaunchPerspective(type, mode);
+		if (id == null) {
+			// get the default
+			id = getDefaultLaunchPerspective(type, mode);
+		} else if (id.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
+			// translate NONE to null
+			id = null;
+		}
+		return id;
+	}
+	
+	/**
+	 * Sets the perspective to switch to when a configuration of the given type
+	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
+	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
+	 * a default perspective switch should take place, as defined by the associated
+	 * launch tab group extension. Saves plug-in preferences.
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode identifier
+	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
+	 *   <code>PERSPECTIVE_DEFAULT</code>
+	 * @since 3.0
+	 */
+	public void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
+		internalSetLaunchPerspective(type.getIdentifier(), mode, perspective);
+		// update preference
+		String xml;
+		try {
+			xml = generatePerspectiveXML();
+			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);
+			DebugUIPlugin.getDefault().savePluginPreferences();				
+		} catch (IOException e) {
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.getString("PerspectiveManager.9"), e)); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Sets the perspective to switch to when a configuration of the given type
+	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
+	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
+	 * a default perspective switch should take place, as defined by the associated
+	 * launch tab group extension.
+	 * 
+	 * @param type launch configuration type identifier
+	 * @param mode launch mode identifier
+	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
+	 *   <code>PERSPECTIVE_DEFAULT</code>
+	 * @since 3.0
+	 */
+	private void internalSetLaunchPerspective(String type, String mode, String perspective) {
+		Map modeMap = (Map)fPreferenceMap.get(type);
+		if (modeMap == null) {
+			modeMap = new HashMap();
+			fPreferenceMap.put(type, modeMap);
+		}
+		if (perspective.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
+			// remove user preference setting
+			modeMap.remove(mode);
+		} else {
+			// override default setting
+			modeMap.put(mode, perspective);
+		}
+	}
+	
+	/**
+	 * Generates XML for the user specified perspective settings.
+	 *  
+	 * @return XML
+	 * @exception CoreException if unable to generate the XML
+	 */
+	private String generatePerspectiveXML() throws IOException {
+		
+		Document doc = new DocumentImpl();
+		Element configRootElement = doc.createElement(ELEMENT_PERSPECTIVES);
+		doc.appendChild(configRootElement);
+		
+		Iterator configTypes = fPreferenceMap.keySet().iterator();
+		while (configTypes.hasNext()) {
+			String type = (String)configTypes.next();
+			Map modeMap = (Map)fPreferenceMap.get(type);
+			if (modeMap != null && !modeMap.isEmpty()) {
+				Iterator modes = modeMap.keySet().iterator();
+				while (modes.hasNext()) {
+					String mode = (String)modes.next();
+					String perspective = (String)modeMap.get(mode);
+					Element element = doc.createElement(ELEMENT_PERSPECTIVE);
+					element.setAttribute(ATTR_TYPE_ID, type);
+					element.setAttribute(ATTR_MODE_ID, mode);
+					element.setAttribute(ATTR_PERSPECTIVE_ID, perspective);
+					configRootElement.appendChild(element);
+				}
+			}			
+		}
+
+		return DebugUIPlugin.serializeDocument(doc);		
+	}
+
+	/**
+	 * Returns the default perspective to switch to when a configuration of the given
+	 * type is lanuched in the given mode, or <code>null</code> if none.
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode
+	 * @return perspective identifier, or <code>null</code>
+	 */
+	protected String getDefaultLaunchPerspective(ILaunchConfigurationType type, String mode) {
+		LaunchConfigurationTabGroupExtension extension = LaunchConfigurationPresentationManager.getDefault().getExtension(type.getIdentifier(), mode);
+		if (extension != null) {
+			String id = extension.getPerspective(mode);
+			if (id == null) {
+				// revert to hard coded default (for backwards compatibility)
+				// since nothing is specified in XML
+				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+					return IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+				}	
+			} else {
+				return id;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the user specified perspective to switch to when a configuration of the
+	 * given type is lanuched in the given mode, or <code>null</code> if unspecified.
+	 * Returns <code>PERSPECTIVE_NONE</code> to indicate no switch
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode
+	 * @return perspective identifier, <code>PERSPECTIVE_NONE</code>, or <code>null</code>
+	 */
+	protected String getUserSpecifiedLaunchPerspective(ILaunchConfigurationType type, String mode) {
+		String id = null;
+		if (fPreferenceMap == null) {
+			initPerspectives();
+		}
+		Map modeMap = (Map)fPreferenceMap.get(type.getIdentifier());
+		if (modeMap != null) {
+			id = (String)modeMap.get(mode);
+		}
+		return id;
+	}
+
+	/**
+	 * Initialize the preference map with settings from user preference
+	 */
+	private void initPerspectives() {
+		fPreferenceMap = new HashMap();
+		String xml = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
+		if (xml != null && xml.length() > 0) {
+			try {
+				Element root = null;
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();;
+				StringReader reader = new StringReader(xml);
+				InputSource source = new InputSource(reader);
+				root = parser.parse(source).getDocumentElement();
+				
+				NodeList list = root.getChildNodes();
+				int length = list.getLength();
+				for (int i = 0; i < length; ++i) {
+					Node node = list.item(i);
+					short nt = node.getNodeType();
+					if (nt == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						String nodeName = element.getNodeName();
+						if (nodeName.equalsIgnoreCase(ELEMENT_PERSPECTIVE)) {
+							String type = element.getAttribute(ATTR_TYPE_ID);
+							String mode = element.getAttribute(ATTR_MODE_ID);
+							String perpsective = element.getAttribute(ATTR_PERSPECTIVE_ID);
+							internalSetLaunchPerspective(type, mode, perpsective);
+						}
+					}
+				}				
+			} catch (ParserConfigurationException e) {
+				DebugUIPlugin.log(e);			
+			} catch (SAXException e) {
+				DebugUIPlugin.log(e);
+			} catch (IOException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		
+	}
+	
 }

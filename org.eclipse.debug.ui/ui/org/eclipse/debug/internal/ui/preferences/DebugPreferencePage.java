@@ -23,11 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -68,18 +65,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		
 		createSaveBeforeLaunchEditors(getFieldEditorParent());
 		
-		createSpacer(getFieldEditorParent(), 1);
-				
-		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
-		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT,
-									   DebugPreferencesMessages.getString("DebugPreferencePage.Default_perspective_for_Debug_2"), //$NON-NLS-1$
-									   perspectiveNamesAndIds,
-									   getFieldEditorParent()));
-									   
-		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT,
-									   DebugPreferencesMessages.getString("DebugPreferencePage.Default_perspective_for_Run_3"), //$NON-NLS-1$
-									   perspectiveNamesAndIds,
-									   getFieldEditorParent()));
 	}
 
 	/**
@@ -96,26 +81,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 										parent, true);
 		addField(fSaveRadioFieldEditor);			
 	}	
-	
-	/**
-	 * Return a 2-dimensional array of perspective names and ids arranged as follows:
-	 * { {persp1name, persp1id}, {persp2name, persp2id}, ... }
-	 */
-	protected static String[][] getPerspectiveNamesAndIds() {
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		IPerspectiveDescriptor[] persps = reg.getPerspectives();
 		
-		String[][] table = new String[persps.length + 1][2];
-		table[0][0] = PERSPECTIVE_NONE_NAME;
-		table[0][1] = IDebugUIConstants.PERSPECTIVE_NONE;
-		for (int i = 0; i < persps.length; i++) {
-			table[i + 1][0] = persps[i].getLabel();
-			table[i + 1][1] = persps[i].getId();
-		}
-		
-		return table;
-	}
-	
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();

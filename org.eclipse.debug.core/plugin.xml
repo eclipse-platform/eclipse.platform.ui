@@ -76,13 +76,16 @@
    <extension
          point="org.eclipse.debug.core.launchModes">
       <launchMode
-            mode="run">
+            mode="run"
+            label="%run">
       </launchMode>
       <launchMode
-            mode="debug">
+            mode="debug"
+            label="%debug">
       </launchMode>
       <launchMode
-            mode="profile">
+            mode="profile"
+            label="%profile">
       </launchMode>
    </extension>
 

@@ -114,8 +114,8 @@ public class LaunchConfigurationTabGroupExtension {
 	}
 	
 	/**
-	 * Returns the default perspective associated with the given launch
-	 * mode, or <code>null</code> if none.
+	 * Returns the perspective associated with the given launch
+	 * mode, as specified in plug-in XML, or <code>null</code> if none.
 	 * 
 	 * @param mode launch mode
 	 * @return perspective identifier, or <code>null</code>

@@ -630,6 +630,7 @@ public interface IDebugUIConstants {
 	 * or <code>null</code> indicating no perspective change.
 	 * 
 	 * @since 2.0
+	 * @deprecated Since 3.0, this launch configuration attribute is no longer supported.
 	 */
 	public static final String ATTR_TARGET_RUN_PERSPECTIVE = PLUGIN_ID + ".target_run_perspective";	 //$NON-NLS-1$
 	
@@ -641,6 +642,8 @@ public interface IDebugUIConstants {
 	 * or <code>null</code> indicating no perspective change.
 	 * 
 	 * @since 2.0
+	 * @deprecated Since 3.0, this launch configuration attribute is no longer supported.
+	 *
 	 */
 	public static final String ATTR_TARGET_DEBUG_PERSPECTIVE = PLUGIN_ID + ".target_debug_perspective";		 //$NON-NLS-1$
 	

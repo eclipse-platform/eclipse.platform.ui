@@ -119,6 +119,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private String[] fLaunchModes = null;
 	
 	/**
+	 * Map of mode ids to labels
+	 */
+	private HashMap fLaunchModeLabels = null;
+	
+	/**
 	 * List of contributed launch delegates (delegates contributed for existing
 	 * launch configuration types).
 	 */
@@ -1468,17 +1473,35 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fLaunchModes = new String[infos.length];
+		fLaunchModeLabels = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
-			String mode = configurationElement.getAttribute("mode"); //$NON-NLS-1$			
-			if (mode != null) {
+			String mode = configurationElement.getAttribute("mode"); //$NON-NLS-1$
+			String label = configurationElement.getAttribute("label"); //$NON-NLS-1$
+			if (mode != null && label != null) {
 				fLaunchModes[i]= mode;
+				fLaunchModeLabels.put(mode, label);
 			} else {
 				// invalid lauch mode
-				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.27"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
-				DebugPlugin.log(s);
+				if (mode == null) {
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.27"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
+					DebugPlugin.log(s);
+				}
+				if (label == null) {
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.28"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
+					DebugPlugin.log(s);					
+				}
 			}
 		}			
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModeLabel(java.lang.String)
+	 */
+	public String getLaunchModeLabel(String mode) {
+		getLaunchModes();
+		return (String)fLaunchModeLabels.get(mode);
 	}
 }

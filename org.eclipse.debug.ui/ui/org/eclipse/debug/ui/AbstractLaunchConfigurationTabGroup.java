@@ -56,8 +56,10 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 */
 	public void dispose() {
 		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].dispose();
+		if (tabs != null) {
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].dispose();
+			}
 		}
 	}
 

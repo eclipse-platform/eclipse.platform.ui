@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -537,5 +538,36 @@ public class DebugUITools {
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return DebugUIPlugin.buildAndLaunch(configuration, mode, monitor);
 	}
+	
+	/**
+	 * Returns the perspective to switch to when a configuration of the given type
+	 * is launched in the given mode, or <code>null</code> if no switch should take
+	 * place.
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode identifier
+	 * @return perspective identifier or <code>null</code>
+	 * @since 3.0
+	 */
+	public static String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
+		return DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, mode);
+	}
+	
+	/**
+	 * Sets the perspective to switch to when a configuration of the given type
+	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
+	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
+	 * a default perspective switch should take place, as defined by the associated
+	 * launch tab group extension.
+	 * 
+	 * @param type launch configuration type
+	 * @param mode launch mode identifier
+	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
+	 *   <code>PERSPECTIVE_DEFAULT</code>
+	 * @since 3.0
+	 */
+	public static void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
+		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, mode, perspective);
+	}	
 	
 }
