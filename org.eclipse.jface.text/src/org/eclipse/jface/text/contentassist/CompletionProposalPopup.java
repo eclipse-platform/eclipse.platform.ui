@@ -29,22 +29,25 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IEditingSupport;
+import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -115,8 +118,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private int fInvocationOffset;
 	/** The offset for which the computed proposals have been filtered. */
 	private int fFilterOffset;
-	/** The default line delimiter of the viewer's widget, */
-	private String fLineDelimiter;
 	/**
 	 * The most recently selected proposal.
 	 * @since 3.0
@@ -147,6 +148,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.1
 	 */
 	private IEditingSupport fFocusHelper;
+	/**
+	 * Set to true by {@link #computeFilteredProposals(int, DocumentEvent)} if
+	 * the returned proposals are a subset of {@link #fFilteredProposals},
+	 * <code>false</code> if not.
+	 */
+	private boolean fIsFilteredSubset;
+
 	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -221,12 +229,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 							hide();
 						
 						} else {
-						
-							if (fLineDelimiter == null)
-								fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
-							
 							createProposalSelector();
-							setProposals(fComputedProposals);
+							setProposals(fComputedProposals, false);
 							displayProposals();
 						}
 					}
@@ -268,7 +272,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
-		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
+		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+		
+		Listener listener= new Listener() {
+			public void handleEvent(Event event) {
+				handleSetData(event);
+			}
+		};
+		fProposalTable.addListener(SWT.SetData, listener);
 		
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -339,6 +350,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
+	}
+	
+	private void handleSetData(Event event) {
+		TableItem item= (TableItem) event.item;
+		int index= fProposalTable.indexOf(item);
+		
+		ICompletionProposal current= fFilteredProposals[index];
+		
+		item.setText(current.getDisplayString());
+		item.setImage(current.getImage());
+		item.setData(current);
 	}
 	
 	/**
@@ -540,30 +562,48 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	/**
 	 * Initializes the proposal selector with these given proposals.
-	 * 
 	 * @param proposals the proposals
+	 * @param isFilteredSubset if <code>true</code>, the proposal table is
+	 *        not cleared, but the proposals that are not in the passed array
+	 *        are removed from the displayed set
 	 */
-	private void setProposals(ICompletionProposal[] proposals) {
+	private void setProposals(ICompletionProposal[] proposals, boolean isFilteredSubset) {
 		if (Helper.okToUse(fProposalTable)) {
 
 			ICompletionProposal oldProposal= getSelectedProposal();
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
-			fFilteredProposals= proposals;
-
-			fProposalTable.setRedraw(false);
-			fProposalTable.removeAll();
-
-			TableItem item;
-			ICompletionProposal p;
-			for (int i= 0; i < proposals.length; i++) {
-				p= proposals[i];
-				item= new TableItem(fProposalTable, SWT.NULL);
-				if (p.getImage() != null)
-					item.setImage(p.getImage());
-				item.setText(p.getDisplayString());
-				item.setData(p);
+			if (isFilteredSubset && fFilteredProposals != null && fProposalTable.getItemCount() == fFilteredProposals.length) {
+				final int oldLen= fFilteredProposals.length;
+				final int newLen= proposals.length;
+				final int removedLen= oldLen - newLen;
+				Assert.isTrue(removedLen >= 0 && newLen > 0);
+				
+				if (removedLen > 0) {
+					int[] removed= new int[removedLen];
+					int removedIdx= 0;
+					ICompletionProposal next= proposals[0];
+					int nextIdx= 0;
+					for (int oldIdx= 0; oldIdx < oldLen; oldIdx++) {
+						if (fFilteredProposals[oldIdx] != next) {
+							removed[removedIdx++]= oldIdx;
+						} else if (++nextIdx < newLen) {
+							next= proposals[nextIdx];
+						} else {
+							while (++oldIdx < oldLen)
+								removed[removedIdx++]= oldIdx;
+							break;
+						}
+					}
+					
+					fFilteredProposals= proposals;
+					fProposalTable.remove(removed);
+				}
+			} else {
+				fFilteredProposals= proposals;
+				fProposalTable.setItemCount(fFilteredProposals.length);
+				fProposalTable.clearAll();
 			}
 
 			Point currentLocation= fProposalShell.getLocation();
@@ -572,7 +612,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fProposalShell.setLocation(newLocation);
 
 			selectProposal(0, false);
-			fProposalTable.setRedraw(true);
 		}
 	}
 	
@@ -757,14 +796,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 			default:			
 				ICompletionProposal p= getSelectedProposal();
-			if (p instanceof ICompletionProposalExtension) {
-				ICompletionProposalExtension t= (ICompletionProposalExtension) p;
-				char[] triggers= t.getTriggerCharacters();
-				if (contains(triggers, key)) {		
-					e.doit= false;
-					hide();
-					insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-				}
+				if (p instanceof ICompletionProposalExtension) {
+					ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+					char[] triggers= t.getTriggerCharacters();
+					if (contains(triggers, key)) {		
+						e.doit= false;
+						hide();
+						insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+					}
 			}
 		}
 		
@@ -836,7 +875,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		++ fInvocationCounter;
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 		control.getDisplay().asyncExec(new Runnable() {
-			long fCounter= fInvocationCounter;
+			final long fCounter= fInvocationCounter;
 			public void run() {
 				
 				if (fCounter != fInvocationCounter)
@@ -859,13 +898,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fFilterOffset= offset;
 				
 				if (proposals != null && proposals.length > 0)
-					setProposals(proposals);
+					setProposals(proposals, fIsFilteredSubset);
 				else
 					hide();
 			}
 		});
 	}
-	
+
 	/**
 	 * Computes the subset of already computed proposals that are still valid for
 	 * the given offset.
@@ -877,21 +916,31 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private ICompletionProposal[] computeFilteredProposals(int offset, DocumentEvent event) {
 		
-		if (offset == fInvocationOffset && event == null)
+		if (offset == fInvocationOffset && event == null) {
+			fIsFilteredSubset= false;
 			return fComputedProposals;
+		}
 			
 		if (offset < fInvocationOffset) {
+			fIsFilteredSubset= false;
 			fInvocationOffset= offset;
 			fComputedProposals= computeProposals(fInvocationOffset);
 			return fComputedProposals;
 		}
 		
-		ICompletionProposal[] proposals= fComputedProposals;
-		if (offset > fFilterOffset)
+		ICompletionProposal[] proposals;
+		if (offset < fFilterOffset) {
+			proposals= fComputedProposals;
+			fIsFilteredSubset= false;
+		} else {
 			proposals= fFilteredProposals;
+			fIsFilteredSubset= true;
+		}
 			
-		if (proposals == null)
+		if (proposals == null) {
+			fIsFilteredSubset= false;
 			return null;
+		}
 			
 		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 		int length= proposals.length;
@@ -912,15 +961,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 			} else {
 				// restore original behavior
+				fIsFilteredSubset= false;
 				fInvocationOffset= offset;
 				fComputedProposals= computeProposals(fInvocationOffset);
 				return fComputedProposals;
 			}
 		}
 		
-		ICompletionProposal[] p= new ICompletionProposal[filtered.size()];
-		filtered.toArray(p); 		
-		return p;
+		return (ICompletionProposal[]) filtered.toArray(new ICompletionProposal[filtered.size()]);
 	}
 
 	/**
@@ -968,15 +1016,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
 					} else {
-						if (fLineDelimiter == null)
-							fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
-						
 						if (completeCommonPrefix())
 							hide(); // TODO add some caching? for now: just throw away the completions
 						else {
 							fComputedProposals= fFilteredProposals;
 							createProposalSelector();
-							setProposals(fComputedProposals);
+							setProposals(fComputedProposals, false);
 							displayProposals();
 						}
 					}
