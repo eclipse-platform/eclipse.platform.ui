@@ -227,7 +227,7 @@ public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 			continue;
 		}
 		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0
-		    && children[i].getResource().isTeamPrivateMember()) {
+		    && ((ResourceDelta)children[i]).isTeamPrivate()) {
 			// child has is a team-private member which are not included
 			continue;
 		}
