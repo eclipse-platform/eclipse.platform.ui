@@ -148,6 +148,7 @@
                tooltip="%SetKeywordSubstitutionAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"
                menubarPath="team.main/group3"
+               helpContextId="org.eclipse.team.cvs.ui.team_set_keyword_mode_action_context"
                id="org.eclipse.team.ccvs.ui.setKeywordSubstitution">
          </action>
          <action
@@ -155,6 +156,7 @@
                tooltip="%MergeAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
                menubarPath="team.main/group2"
+               helpContextId="org.eclipse.team.cvs.ui.team_merge_action_context"
                id="org.eclipse.team.ccvs.ui.merge">
          </action>
          <action
@@ -162,6 +164,7 @@
                tooltip="%BranchAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
                menubarPath="team.main/group2"
+               helpContextId="org.eclipse.team.cvs.ui.team_branch_action_context"
                id="org.eclipse.team.ccvs.ui.branch">
          </action>
          <action
@@ -169,6 +172,7 @@
                tooltip="%TagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"
                menubarPath="team.main/group2"
+               helpContextId="org.eclipse.team.cvs.ui.team_tag_as_version_action_context"
                id="org.eclipse.team.ccvs.ui.tag">
          </action>
           <action
@@ -204,6 +208,7 @@
                tooltip="%GenerateDiff.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
                menubarPath="team.main/group1"
+               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
                id="org.eclipse.team.ccvs.ui.GenerateDiff">
          </action>
          <action
@@ -211,6 +216,7 @@
                tooltip="%UpdateAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
                menubarPath="team.main/group1"
+               helpContextId="org.eclipse.team.cvs.ui.team_update_action_context"
                id="org.eclipse.team.ccvs.ui.update">
          </action>
          <action
@@ -224,6 +230,7 @@
          <action
                label="%SynchronizeOutgoing.label"
                tooltip="%SynchronizeOutgoing.tooltip"
+               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_outgoing_action_context"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncOutgoingAction"
                menubarPath="team.main/group1"
                id="org.eclipse.team.ccvs.ui.syncOutgoing">
@@ -231,6 +238,7 @@
          <action
                label="%Synchronize.label"
                tooltip="%Synchronize.tooltip"
+               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
                menubarPath="team.main/group1"
                id="org.eclipse.team.ccvs.ui.sync">
@@ -249,6 +257,7 @@
                tooltip="%UnmanageFolder.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"
                menubarPath="team.main/projectGroup"
+               helpContextId="org.eclipse.team.cvs.ui.team_disconnect_action_context"
                id="org.eclipse.team.ccvs.ui.unmanage">
          </action>
       </objectContribution>
@@ -265,6 +274,7 @@
                tooltip="%IgnoreAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
                menubarPath="team.main/group3"
+               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
                id="org.eclipse.team.ccvs.ui.ignore">
          </action>
          <action
@@ -272,6 +282,7 @@
                tooltip="%AddAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
                menubarPath="team.main/group3"
+               helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
                id="org.eclipse.team.ccvs.ui.add">
          </action>
       </objectContribution>

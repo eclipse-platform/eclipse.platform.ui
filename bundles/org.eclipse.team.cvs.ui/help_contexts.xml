@@ -8,14 +8,170 @@
    	<topic label="CVS Repositories" href="reference/ref-47.htm"/>
 	<topic label="Create a Repository Location" href="tasks/tasks-92.htm"/>
    	<topic label="Disconnecting from a Repository" href="tasks/tasks-94.htm"/>
-   </context>	
+   </context>
+   
+	<!-- ********************************** -->
+ 	<!-- TagSelectionDialog 				-->
+ 	<!-- ********************************** -->
+	
+	<context id="replace_tag_selection_dialog_context">
+   		<description>This lets you replace the selected tag with another one, methinks ;-)
+		</description>
+   	</context>
+   	
+   	<context id="compare_tag_selection_dialog_context">
+   		<description>This lets you compare the selected tag to another one, methinks ;-)
+		</description>
+   	</context>
+   	
+   	<context id="tag_remote_with_existing_dialog_context">
+   		<description>You get here by selecting "Tag with existing" from the popup menu in the CVS repo view.
+		</description>
+   	</context>
+   	
+   	<context id="share_with_existing_tag_selection_dialog_context">
+   		<description>Cor! No idea what this does.
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- TagAsVersionDialog 				-->
+ 	<!-- ********************************** -->
+ 	
+ 	<context id="tag_as_version_dialog_context">
+   		<description>Tags the project with the version name you provide, methinks ;-)
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- WizardPages 						-->
+ 	<!-- ********************************** -->
+ 	
+ 	<context id="sharing_autoconnect_page_context">
+   		<description>This should be obvious, methinks ;-)
+		</description>
+   	</context>
+   	
+   	<context id="sharing_select_repository_page_context">
+   		<description>Here you can select an exisiting repository to use.
+		</description>
+   	</context>
+
+ 	<context id="sharing_new_repository_page_context">
+   		<description>Here you can create a new repository to use for your project.
+		</description>
+   	</context>
+
+ 	<context id="sharing_module_page_context">
+   		<description>Here you can decide whether to use the project name as the module name or give the module a different name.
+		</description>
+   	</context>
+
+ 	<context id="sharing_finish_page_context">
+   		<description>All you need to do now is hit the 'Finish' button to share the project.
+		</description>
+   	</context>
+
+ 	<context id="patch_selection_page_context">
+   		<description>Here you can select where you want to save the patch.
+		</description>
+   	</context>
+
+ 	<context id="patch_options_page_context">
+   		<description>Here you can specify the kind of patch you would like, methinks ;-)
+		</description>
+   	</context>
+
+ 	<context id="keyword_substituton_selection_page_context">
+   		<description>
+		</description>
+   	</context>
+
+ 	<context id="keyword_substituton_summary_page_context">
+   		<description>
+		</description>
+   	</context>
+
+ 	<context id="keyword_substituton_shared_page_context">
+   		<description>
+		</description>
+   	</context>
+
+ 	<context id="keyword_substituton_changed_page_context">
+   		<description>
+		</description>
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- TeamMenuActions 					-->
+ 	<!-- ********************************** -->
+	
+	<context id="team_synchronize_action_context">
+   		<description>Finds all differences between remote and local versions of the project.
+		</description>
+   	</context>
+   	
+   	<context id="team_synchronize_outgoing_action_context">
+   		<description>Find all outgoing changes.
+		</description>
+   	</context>
+
+ 	<context id="team_commit_action_context">
+   		<description>Updates the remote project with any changes that have been made locally.
+		</description>
+   	</context>
+
+ 	<context id="team_update_action_context">
+   		<description>Updates the local project with any changes that have been made remotely.
+		</description>
+   	</context>
+
+ 	<context id="team_create_patch_action_context">
+   		<description>Creates a patch that can be applied to the base project to bring it in sync with this copy.
+		</description>
+   	</context>
+
+ 	<context id="team_tag_as_version_action_context">
+   		<description>Tags a project with a version name that you can provide.
+		</description>
+   	</context>
+
+ 	<context id="team_branch_action_context">
+   		<description>Branch off a project into 2 streams.
+		</description>
+   	</context>
+
+ 	<context id="team_merge_action_context">
+   		<description>Merge 2 disparate streams into one cohesive whole.
+		</description>
+   	</context>
+
+ 	<context id="team_set_keyword_mode_action_context">
+   		<description>
+		</description>
+   	</context>
+
+ 	<context id="team_disconnect_action_context">
+   		<description>Stop managing the project with this repo provider.
+		</description>
+   	</context>
+
+ 	<context id="team_add_action_context">
+   		<description>Add this file to the repository
+		</description>
+   	</context>
+
+ 	<context id="team_ignore_action_context">
+   		<description>Ignore this file for all remote sync operations.
+		</description>
+   	</context>
 
  	<!-- ********************************** -->
  	<!-- TagConfiguration 					-->
  	<!-- ********************************** -->
 	
 	<context  id="tag_configuration_overview" >
-   		<description>Configure the branch and version tags that are shown in the workbench. By browing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
+   		<description>Configure the branch and version tags that are shown in the workbench. By browsing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
 		</description>
    	</context>
    
