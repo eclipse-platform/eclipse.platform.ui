@@ -64,6 +64,7 @@ public class TestJob extends Job {
 				try {
 					Thread.sleep(tickLength);
 				} catch (InterruptedException e) {
+					//ignore
 				}
 				monitor.worked(1);
 			}
