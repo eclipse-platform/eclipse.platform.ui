@@ -19,13 +19,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.RefreshSubscriberJob;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.ui.ISharedImages;
@@ -47,30 +46,27 @@ class RefreshAction extends Action {
 	
 	public void run() {
 		final SyncViewer view = actions.getSyncView();
-		try {
-			ActionContext context = actions.getContext();
-			if(context != null) {
-				getResources(context.getSelection());
-				SubscriberInput input = (SubscriberInput)context.getInput();
-				IResource[] resources = getResources(context.getSelection());
-				if (refreshAll || resources.length == 0) {
-					// If no resources are selected, refresh all the subscriber roots
-					resources = input.roots();
-				}
-				if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
-					// Cancel the scheduled background refresh but ensure it gets rescheduled
-					// to run later.
-					TeamUIPlugin.getPlugin().getRefreshJob().setRestartOnCancel(true);
-					Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
-					RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), input.getSubscriber(), resources);
-					job.schedule();
-				} else {
-					runBlocking(input.getSubscriber(), resources);
-				}					
+		ActionContext context = actions.getContext();
+		if(context != null) {
+			getResources(context.getSelection());
+			SubscriberInput input = (SubscriberInput)context.getInput();
+			IResource[] resources = getResources(context.getSelection());
+			if (refreshAll || resources.length == 0) {
+				// If no resources are selected, refresh all the subscriber roots
+				resources = input.roots();
 			}
-		} catch(TeamException e) {
-			Utils.handle(e);
-		}
+			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
+				// Cancel the scheduled background refresh but ensure it gets rescheduled
+				// to run later.
+				TeamUIPlugin.getPlugin().getRefreshJob().setRestartOnCancel(true);
+				Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
+				RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()));
+				job.setSubscriberInput(input);
+				job.schedule();
+			} else {
+				runBlocking(input.getSubscriber(), resources);
+			}
+		}					
 	}
 	
 	private IResource[] getResources(ISelection selection) {

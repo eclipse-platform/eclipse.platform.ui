@@ -96,7 +96,7 @@ public class SyncSetInputFromSubscriber extends SyncSetInput  implements IResour
 		}
 	}
 	
-	protected IResource[] getRoots() throws TeamException {
+	protected IResource[] getRoots() {
 		return getSubscriber().roots();
 	}
 

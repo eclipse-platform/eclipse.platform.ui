@@ -140,7 +140,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#roots()
 	 */
-	public IResource[] roots() throws TeamException {
+	public IResource[] roots() {
 		return null;
 	}
 

@@ -62,7 +62,7 @@ public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscr
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.sync.views.SyncSetInputFromSubscriber#getRoots()
 	 */
-	protected IResource[] getRoots() throws TeamException {
+	protected IResource[] getRoots() {
 		IResource[] roots = super.getRoots();
 		if (workingSet == null) return roots;
 		

@@ -93,7 +93,7 @@ abstract public class TeamSubscriber {
 	 * @return a list of resources
 	 * @throws TeamException
 	 */
-	abstract public IResource[] roots() throws TeamException;
+	abstract public IResource[] roots();
 	
 	/**
 	 * Returns a handle to the remote resource corresponding to the given

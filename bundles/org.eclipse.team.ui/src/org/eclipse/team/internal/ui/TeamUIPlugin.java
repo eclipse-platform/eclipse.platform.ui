@@ -30,7 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.subscribers.RefreshAllRegisteredSubscribersJob;
+import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,12 +60,12 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	private static Hashtable imageDescriptors = new Hashtable(20);
 	private static List disposeOnShutdownImages= new ArrayList();
 	
-	private RefreshAllRegisteredSubscribersJob refreshJob;
+	private RefreshSubscriberJob refreshJob;
 
 	/**
 	 * Returns the job that refreshes the active subscribers in the background.
 	 */
-	public RefreshAllRegisteredSubscribersJob getRefreshJob() {
+	public RefreshSubscriberJob getRefreshJob() {
 		return refreshJob;
 	}
 
@@ -182,7 +182,8 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshAllRegisteredSubscribersJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
+		refreshJob = new RefreshSubscriberJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
+		refreshJob.setReschedule(true);
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
 			// start once the platform has started and stabilized
@@ -353,13 +354,13 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	public void propertyChange(PropertyChangeEvent event) {		
 		// update the background sync delay
 		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_DELAY)) {
-			RefreshAllRegisteredSubscribersJob refreshJob = getRefreshJob();
+			RefreshSubscriberJob refreshJob = getRefreshJob();
 			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		}
 		
 		// enable / disable the background sync job
 		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
-			RefreshAllRegisteredSubscribersJob refreshJob = getRefreshJob();
+			RefreshSubscriberJob refreshJob = getRefreshJob();
 			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 			if(((Boolean)event.getNewValue()).booleanValue()) {
 				refreshJob.schedule();				

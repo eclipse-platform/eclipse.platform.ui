@@ -98,7 +98,7 @@ public class SubscriberInput implements IPropertyChangeListener {
 		subscriberInput.setWorkingSet(set);
 	}
 
-	public IResource[] roots() throws TeamException {
+	public IResource[] roots() {
 		return subscriberInput.getRoots();
 	}
 

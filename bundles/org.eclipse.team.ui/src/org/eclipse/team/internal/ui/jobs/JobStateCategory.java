@@ -104,15 +104,17 @@ class JobStateCategory implements IJobChangeListener {
 	
 	synchronized protected void handleJobChange(Object object) {
 		int s = Job.NONE;
+		boolean add = true;
 		Job job = null;
 		if(object instanceof Job) {
 			s = ((Job)object).getState();
 			job = ((Job)object);
 		} else if(object instanceof JobDoneElement) {
 			job = ((JobDoneElement)object).job;
+			add = ! ((JobDoneElement)object).status.isOK();
 		}
 		
-		if(s == state) {
+		if(s == state & add) {
 			add(object);
 		} else {
 			remove(job);

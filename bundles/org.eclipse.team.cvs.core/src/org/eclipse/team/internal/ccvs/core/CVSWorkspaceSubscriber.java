@@ -56,7 +56,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 * (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#roots()
 	 */
-	public IResource[] roots() throws TeamException {
+	public IResource[] roots() {
 		List result = new ArrayList();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {

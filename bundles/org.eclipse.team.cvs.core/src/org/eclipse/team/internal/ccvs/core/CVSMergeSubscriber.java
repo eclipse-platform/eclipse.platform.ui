@@ -149,7 +149,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#roots()
 	 */
-	public IResource[] roots() throws TeamException {
+	public IResource[] roots() {
 		return (IResource[]) roots.toArray(new IResource[roots.size()]);
 	}
 

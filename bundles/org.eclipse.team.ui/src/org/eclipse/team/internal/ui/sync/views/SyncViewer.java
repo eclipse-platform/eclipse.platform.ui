@@ -60,7 +60,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.RefreshSubscriberJob;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -69,6 +68,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
@@ -426,6 +426,8 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 				if (!hasRunnableContext()) return;				
 				SyncViewer.this.run(runnable);
 				viewer.setInput(input.getFilteredSyncSet());
+				RefreshSubscriberJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
+				refreshJob.setSubscriberInput(input);
 			}
 		});
 		updateTitle();
