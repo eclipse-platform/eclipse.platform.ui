@@ -193,7 +193,7 @@ private Class getCommonResourceClass(List objects) {
 				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if(resourceAdapter == null)
 				resourceAdapter = 
-					ResourceAdapterUtil.getResourceAdapter();
+					DefaultContributorResourceAdapter.getDefault();
 				
 			IResource resource = 
 				((IContributorResourceAdapter) resourceAdapter).

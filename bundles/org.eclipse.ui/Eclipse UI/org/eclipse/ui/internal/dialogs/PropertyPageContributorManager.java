@@ -10,9 +10,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IContributorResourceAdapter;
-import org.eclipse.ui.ResourceAdapterUtil;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.ObjectContributorManager;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
@@ -135,7 +133,7 @@ private Object getAdaptedObject(IAdaptable adaptable){
 	Object resourceAdapter =
 		adaptable.getAdapter(IContributorResourceAdapter.class);
 	if(resourceAdapter == null)
-		resourceAdapter = ResourceAdapterUtil.getResourceAdapter();
+		resourceAdapter = DefaultContributorResourceAdapter.getDefault();
 				
 	return((IContributorResourceAdapter) resourceAdapter).
 					getAdaptedResource(adaptable);

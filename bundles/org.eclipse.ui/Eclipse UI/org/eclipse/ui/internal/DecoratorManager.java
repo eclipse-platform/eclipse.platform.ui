@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
-import org.eclipse.ui.ResourceAdapterUtil;
 
 /**
  * The DecoratorManager is the class that handles all of the
@@ -145,7 +144,7 @@ public class DecoratorManager
 			Object resourceAdapter =
 				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if (resourceAdapter == null)
-				resourceAdapter = ResourceAdapterUtil.getResourceAdapter();
+				resourceAdapter = DefaultContributorResourceAdapter.getDefault();
 
 			return ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(
 				adaptable);

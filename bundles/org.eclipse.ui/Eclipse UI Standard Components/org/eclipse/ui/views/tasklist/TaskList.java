@@ -1032,7 +1032,7 @@ private ITaskListResourceAdapter getTaskListAdapter(Object object){
 		Object adapter =
 			((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
 		if(adapter == null)
-			return ResourceAdapterUtil.getTaskAdapter();
+			return DefaultTaskListResourceAdapter.getDefault();
 		else 
 			return (ITaskListResourceAdapter) adapter;
 	}
