@@ -49,7 +49,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 	private PrintStream fOut= null;
 	protected boolean fEmacsMode= false;
 	private File fBuildFileParent= null;
-	
+	private long fStartTime;
 	/**
 	 * An exception that has already been logged.
 	 */
@@ -78,8 +78,8 @@ public class AntProcessBuildLogger implements BuildLogger {
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
-		
-		if (fProcess == null) {
+		AntProcess antProcess = getAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
+		if (antProcess == null) {
 			return;
 		}
 		
@@ -254,9 +254,10 @@ public class AntProcessBuildLogger implements BuildLogger {
 	}	
 	
 	/**
-	 * Looks for associated ant process, if not already found.
+	 * Returns the associated Ant process, finding it if necessary, if not
+	 * already found.
 	 */
-	private void findAntProcess(String processId) {
+	private AntProcess getAntProcess(String processId) {
 		if (fProcess == null && processId != null) {
 			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 			for (int i = 0; i < all.length; i++) {
@@ -267,15 +268,16 @@ public class AntProcessBuildLogger implements BuildLogger {
 				}
 			}
 		}
+		return fProcess;
 	}
 
 	/**
-	 * Find assoicated ant process
+	 * Set the start time.
 	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		findAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
+		fStartTime= System.currentTimeMillis();
 	}
 	
 	/**
@@ -286,7 +288,41 @@ public class AntProcessBuildLogger implements BuildLogger {
 		handleException(event);
 		fHandledException= null;
 		fBuildFileParent= null;
+		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
 	}
+	
+	private String getTimeString(long milliseconds) {
+			long seconds = milliseconds / 1000;
+			long minutes = seconds / 60;
+			seconds= seconds % 60;
+		
+			StringBuffer result= new StringBuffer(AntSupportMessages.getString("AntProcessBuildLogger.Total_time")); //$NON-NLS-1$
+			if (minutes > 0) {
+				result.append(minutes);
+				if (minutes > 1) {
+					result.append(AntSupportMessages.getString("AntProcessBuildLogger._minutes_2")); //$NON-NLS-1$
+				} else {
+					result.append(AntSupportMessages.getString("AntProcessBuildLogger._minute_3")); //$NON-NLS-1$
+				}
+			}
+			if (seconds > 0) {
+				if (minutes > 0) {
+					result.append(' ');
+				}
+				result.append(seconds);
+			
+				if (seconds > 1) {
+					result.append(AntSupportMessages.getString("AntProcessBuildLogger._seconds_4")); //$NON-NLS-1$
+				} else {
+					result.append(AntSupportMessages.getString("AntProcessBuildLogger._second_5")); //$NON-NLS-1$
+				} 
+			}
+			if (seconds == 0 && minutes == 0) {
+				result.append(milliseconds);
+				result.append(AntSupportMessages.getString("AntProcessBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
+			}
+			return result.toString();
+		}
 	
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
