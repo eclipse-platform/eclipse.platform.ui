@@ -43,6 +43,7 @@ TABLE {
 
 FORM {
 	background:<%=prefs.getToolbarBackground()%>;
+	height:100%;
 	margin:0;
 }
 
@@ -83,10 +84,6 @@ INPUT {
 <%
 	if (data.isIE()) {
 %>
-#searchWord {
-	margin-bottom:-1px;
-} 
-
 #go {
 	padding-left:1px;
 }
