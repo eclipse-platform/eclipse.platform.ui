@@ -178,6 +178,7 @@ function highlightTopic(topic)
   var a = getAnchorNode(topic); 
   if (a != null)
   {
+  	  parent.parent.setToolbarTitle(tocTitle);
   	  if (oldActive && oldActive != a) {
   		if (oldActive.className == "activeLeaf" )
   			oldActive.className = "leaf";
@@ -253,12 +254,14 @@ function scrollIntoView(node)
 	window.scrollBy(0, scroll);
 }
 
-	
+
+var tocTitle = "";	
 /**
  * Handles the onload event
  */
 function onloadHandler(toc, title)
 {
+	tocTitle = title;
 	parent.parent.setToolbarTitle(title);
 }
 
