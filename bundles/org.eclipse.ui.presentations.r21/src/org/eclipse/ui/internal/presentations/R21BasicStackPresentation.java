@@ -782,6 +782,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		oldPart.setVisible(false);		
 		
 		item.dispose();
+
+		// Layout the folder again in case there is only one item
+		setControlSize();
 	}
 	
 	/* (non-Javadoc)
