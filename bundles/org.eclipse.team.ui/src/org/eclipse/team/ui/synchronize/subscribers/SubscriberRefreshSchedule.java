@@ -9,6 +9,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.RefreshUserNotificationPolicy;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -44,6 +45,10 @@ public class SubscriberRefreshSchedule {
 		public void refreshDone(final IRefreshEvent event) {
 			if (event.getSubscriber() == participant.getSubscriber()) {
 				lastRefreshEvent = event;
+				if(enabled && event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH) {
+					RefreshUserNotificationPolicy policy = new RefreshUserNotificationPolicy(participant);
+					policy.refreshDone(event);
+				}
 			}
 		}
 	};
@@ -91,10 +96,12 @@ public class SubscriberRefreshSchedule {
 	 * @param refreshInterval The refreshInterval to set.
 	 */
 	public void setRefreshInterval(long refreshInterval) {
-		stopJob();
-		this.refreshInterval = refreshInterval;
-		if(isEnabled()) {
-			startJob();
+		if(refreshInterval != getRefreshInterval()) {
+			stopJob();
+			this.refreshInterval = refreshInterval;
+			if(isEnabled()) {
+				startJob();
+			}
 		}
 	}
 	

@@ -30,6 +30,7 @@ public class SubscriberRefreshWizard extends Wizard {
 
 	private SubscriberParticipant participant;
 	private GlobalRefreshResourceSelectionPage selectionPage;
+	private GlobalRefreshSchedulePage schedulePage;
 	private int scopeHint;
 
 	public SubscriberRefreshWizard(SubscriberParticipant participant) {
@@ -48,7 +49,9 @@ public class SubscriberRefreshWizard extends Wizard {
 	 */
 	public void addPages() {
 		selectionPage = new GlobalRefreshResourceSelectionPage(participant, scopeHint);
+		schedulePage = new GlobalRefreshSchedulePage(participant);
 		addPage(selectionPage);
+		addPage(schedulePage);
 	}
 	
 	/* (non-Javadoc)
@@ -56,6 +59,7 @@ public class SubscriberRefreshWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		IResource[] resources = selectionPage.getCheckedResources();
+		schedulePage.performFinish();
 		if(resources != null && resources.length > 0) {
 			IRefreshSubscriberListener listener = participant.getRefreshListeners().createSynchronizeViewListener(participant);
 			

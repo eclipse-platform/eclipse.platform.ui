@@ -48,7 +48,11 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	private SyncInfoTree syncInfoSet = new SyncInfoTree();
 	
 	public RefreshCompleteDialog(Shell parentShell, IRefreshEvent event, SubscriberParticipant participant) {
-		super(parentShell, Policy.bind("RefreshCompleteDialog.4", participant.getName())); //$NON-NLS-1$
+		super(parentShell, 
+				event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH ?
+						Policy.bind("RefreshCompleteDialog.4a", participant.getName()) : //$NON-NLS-1$
+						Policy.bind("RefreshCompleteDialog.4", participant.getName()) //$NON-NLS-1$
+						);
 		this.participant = participant;
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);

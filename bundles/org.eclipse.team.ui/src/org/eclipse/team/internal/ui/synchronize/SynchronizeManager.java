@@ -344,14 +344,14 @@ public class SynchronizeManager implements ISynchronizeManager {
 		
 		// Otherwise determine if a prompt is required
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		String defaultSyncPerspective = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
-		String currentPerspective = null;
-		IPerspectiveDescriptor perspectiveDescriptor = registry.findPerspectiveWithId(defaultSyncPerspective);
+		String defaultSyncPerspectiveId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
+		IPerspectiveDescriptor perspectiveDescriptor = registry.findPerspectiveWithId(defaultSyncPerspectiveId);
 		IWorkbenchPage page = TeamUIPlugin.getActivePage();
 		if(page != null) {
 			IPerspectiveDescriptor p = page.getPerspective();
-			if(currentPerspective != null && currentPerspective.equals(defaultSyncPerspective)) {
-				perspectiveDescriptor = null;
+			if(p != null && p.getId().equals(defaultSyncPerspectiveId)) {
+				// currently in default perspective
+				return false;
 			}
 		}
 		
