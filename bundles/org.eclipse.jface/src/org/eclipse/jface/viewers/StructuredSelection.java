@@ -86,11 +86,11 @@ public boolean equals(Object o) {
 	}
 	StructuredSelection s2 = (StructuredSelection)o;
 
-	//null elements
-	if (elements == null) {
-		return s2.elements == null;
+	// either or both empty?
+	if (isEmpty()) {
+		return s2.isEmpty();
 	}
-	if (s2.elements == null) {
+	if (s2.isEmpty()) {
 		return false;
 	}
 
