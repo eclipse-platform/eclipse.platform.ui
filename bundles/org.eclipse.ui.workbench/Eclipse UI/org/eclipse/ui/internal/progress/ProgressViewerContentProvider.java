@@ -12,32 +12,25 @@ package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 /**
- * The ProgressTableContentProvider is the content provider for tables that are
- * showing jobs.
+ * The ProgressViewerContentProvider is the content provider progress
+ * viewers.
  */
-public class ProgressTableContentProvider extends ProgressContentProvider
+public class ProgressViewerContentProvider extends ProgressContentProvider
 		implements
 			IStructuredContentProvider {
-	StructuredViewer viewer;
+	ProgressViewer progressViewer;
 	HashSet jobsToShow;
-	final static int numShowItems = 2;
+	
 	/**
-	 * Initialize the table viewer.
-	 * 
-	 * @param table
-	 *            the table viewer.
+	 * Create a new instance of the receiver.
+	 * @param structured The Viewer we are providing content for
+	 * @param itemCount The number of items we will display.
 	 */
-	public ProgressTableContentProvider(StructuredViewer structured) {
-		viewer = structured;
+	public ProgressViewerContentProvider(ProgressViewer structured) {
+		progressViewer = structured;
 		jobsToShow = new HashSet();
 	}
 	/*
@@ -47,7 +40,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 */
 	public void add(Object[] elements) {
 		addToShowList(elements);
-		viewer.setInput(this);
+		progressViewer.setInput(this);
 	}
 	/**
 	 * Add the jobs to the temporary job list.
@@ -70,7 +63,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 		HashSet showing = new HashSet();
 		
 		for (int i = 0; i < elements.length; i++) {
-			if(showing.size() == numShowItems)
+			if(showing.size() == progressViewer.getNumShowItems())
 				break;
 			JobTreeElement element = (JobTreeElement) elements[i];
 			if(element.isActive()){
@@ -88,7 +81,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#refresh()
 	 */
 	public void refresh() {
-		viewer.refresh(true);
+		progressViewer.refresh(true);
 	}
 	/*
 	 * (non-Javadoc)
@@ -98,7 +91,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	public void refresh(Object[] elements) {
 		Object[] refreshes = getRoots(elements, true);
 		for (int i = 0; i < refreshes.length; i++) {
-			viewer.refresh(refreshes[i], true);
+			progressViewer.refresh(refreshes[i], true);
 		}
 	}
 	/*
@@ -108,7 +101,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 */
 	public void remove(Object[] elements) {
 		jobsToShow.remove(getRoots(elements, false));
-		viewer.setInput(this);
+		progressViewer.setInput(this);
 	}
 	/*
 	 * (non-Javadoc)
@@ -150,37 +143,6 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 		}
 		return roots.toArray();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		Shell shell = viewer.getControl().getShell();
-		shell.setSize(getMaximumSize(shell.getDisplay()));
-		super.inputChanged(viewer, oldInput, newInput);
-	}
-	/**
-	 * Get the maximum size of the window based on the display.
-	 * 
-	 * @param display
-	 * @return int
-	 */
-	private Point getMaximumSize(Display display) {
-		GC gc = new GC(display);
-		FontMetrics fm = gc.getFontMetrics();
-		int charWidth = fm.getAverageCharWidth();
-		int charHeight = fm.getHeight();
-		int maxWidth = display.getBounds().width / 6;
-		int maxHeight = display.getBounds().height / 6;
-		int fontWidth = charWidth * 34;
-		int fontHeight = charHeight * 3;
-		if (maxWidth < fontWidth)
-			fontWidth = maxWidth;
-		if (maxHeight < fontHeight)
-			fontHeight = maxHeight;
-		gc.dispose();
-		return new Point(fontWidth, fontHeight);
-	}
+	
+	
 }

@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -29,6 +27,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
@@ -87,7 +90,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	protected Control createContents(Composite root) {
 		Control buttonBar = createButtons(root);
-		viewer = new ProgressViewer(root, SWT.NONE) {
+		viewer = new ProgressViewer(root, SWT.NONE,2) {
 			/*
 			 * * (non-Javadoc)
 			 * 
@@ -110,6 +113,12 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		tableData.right = new FormAttachment(buttonBar, 0);
 		tableData.top = new FormAttachment(0);
 		tableData.bottom = new FormAttachment(100);
+		
+		Point preferredSize = viewer.getSizeHints();
+		
+		tableData.width = preferredSize.x;
+		tableData.height = preferredSize.y;
+		
 		viewer.getControl().setLayoutData(tableData);
 		initContentProvider();
 		viewer.setLabelProvider(viewerLabelProvider());
@@ -152,7 +161,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 				if (textValue == null)
 					return null;
 				GC gc = new GC(display);
-				int maxWidth = viewer.getControl().getBounds().width - 25;
+				int maxWidth = viewer.getControl().getBounds().width;
 				if (gc.textExtent(textValue).x < maxWidth) {
 					gc.dispose();
 					return textValue;
@@ -185,7 +194,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * Set the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider = new ProgressTableContentProvider(viewer);
+		IContentProvider provider = new ProgressViewerContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
