@@ -97,7 +97,7 @@ public class UndoTextFileChange extends Change {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		fValidationState= BufferValidationState.create(fFile);
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());

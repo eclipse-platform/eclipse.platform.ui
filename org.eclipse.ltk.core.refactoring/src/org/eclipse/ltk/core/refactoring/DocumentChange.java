@@ -53,7 +53,7 @@ public class DocumentChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 		// as long as we don't have modification stamps on documents
 		// we can only remember its length.
 		fLength= fDocument.getLength();

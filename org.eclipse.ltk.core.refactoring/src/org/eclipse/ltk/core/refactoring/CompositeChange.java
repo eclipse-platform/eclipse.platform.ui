@@ -194,7 +194,7 @@ public class CompositeChange extends Change {
 	 * will not receive the <code>initializeValidationData</code> call.
 	 * </p>
 	 */
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
 		for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
 			Change change= (Change)iter.next();

@@ -163,11 +163,8 @@ public abstract class Change implements IAdaptable {
 	 * </p>
 	 * 
 	 * @param pm a progress monitor
-	 * 
-	 * @throws CoreException if some error occurred while initializing the validation
-	 *  state. In this case the change object has to be treated as invalid
 	 */
-	public abstract void initializeValidationData(IProgressMonitor pm) throws CoreException;
+	public abstract void initializeValidationData(IProgressMonitor pm);
 	
 	/**
 	 * Verifies that this change object is still valid and can be executed by calling 

@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.core.refactoring.DelegatingValidationStateChange;
 
 public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
@@ -156,7 +156,9 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		for (int i= 0; i < fDerivedParticipants.length; i++) {
 			changes.add(fDerivedParticipants[i].createChange(new SubProgressMonitor(pm, 1)));
 		}
-		return new DelegatingValidationStateChange((Change[]) changes.toArray(new Change[changes.size()]));		
+		CompositeChange result= new CompositeChange();
+		result.addAll((Change[]) changes.toArray(new Change[changes.size()]));
+		return result;
 	}
 	
 	/**

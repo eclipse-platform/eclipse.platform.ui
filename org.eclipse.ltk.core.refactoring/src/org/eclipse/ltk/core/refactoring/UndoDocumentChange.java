@@ -56,7 +56,7 @@ public class UndoDocumentChange extends Change {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 		fLength= fDocument.getLength();
 	}
 	

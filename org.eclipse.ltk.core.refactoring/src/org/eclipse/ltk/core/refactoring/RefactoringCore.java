@@ -42,5 +42,4 @@ public class RefactoringCore {
 			fgUndoManager= createUndoManager();
 		return fgUndoManager;
 	}
-	
 }

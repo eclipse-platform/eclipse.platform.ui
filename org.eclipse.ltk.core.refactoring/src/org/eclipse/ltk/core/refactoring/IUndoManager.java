@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * performRedo</code> to undo or redo changes.
  * <p>
  * This interface is not intended to be implemented or extended. Use the method <code>
- * IUndoManager#createUndoManager</code> to create a new undo manager or the method
+ * RefactoringCore#createUndoManager</code> to create a new undo manager or the method
  * <code>RefactoringCore#getUndoManager()</code> to access the refactoring undo manager.
  * </p>
  * 
@@ -52,12 +52,8 @@ public interface IUndoManager {
 	 * The infrastructure has performed the given change.
 	 * 
 	 * @param change the change that was performed
-	 * @param undo the corresponding undo change or <code>null</code>
-	 *  if no undo has been created
-	 * @param e <code>null</code> if the change got executed
-	 *  successfully; otherwise the catched exception
 	 */
-	public void changePerformed(Change change, Change undo, Exception e);
+	public void changePerformed(Change change);
 
 	/**
 	 * Adds a new undo change to this undo manager.
