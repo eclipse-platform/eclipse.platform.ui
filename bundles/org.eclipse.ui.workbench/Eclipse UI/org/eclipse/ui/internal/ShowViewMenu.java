@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -128,7 +129,7 @@ public class ShowViewMenu extends ContributionItem {
             return;
 
         // Get visible actions. 
-        List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
+        List viewIds = Arrays.asList(page.getShowViewShortcuts());
 
         // add all open views
         viewIds = addOpenedViews(page, viewIds);

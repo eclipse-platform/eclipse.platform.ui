@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PopupMenuExtender;
@@ -70,7 +71,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	}
 	
 	public void testViewerContributions() {
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPart part = window.getActivePage().getActivePart();
 		MenuManager menu = new MenuManager();
 		resetViewerMenu(menu);
@@ -120,7 +121,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 	}
 
 	public void testObjectContribtions() {
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPart part = window.getActivePage().getActivePart();
 		ObjectActionContributorManager manager = ObjectActionContributorManager.getManager();
 		IMenuManager menu = new MenuManager();

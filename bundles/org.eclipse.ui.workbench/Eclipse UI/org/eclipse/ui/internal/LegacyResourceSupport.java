@@ -48,6 +48,14 @@ public final class LegacyResourceSupport {
 
     /**
      * Cached value of
+     * <code>Class.forName("org.eclipse.core.resources.IFile")</code>;
+     * <code>null</code> if not initialized or not present.
+     * @since 3.1
+     */
+    private static Class ifileClass;
+    
+    /**
+     * Cached value of
      * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter")</code>;
      * <code>null</code> if not initialized or not present.
      * @since 3.0
@@ -73,6 +81,60 @@ public final class LegacyResourceSupport {
      * resource contribution adapters) is even around.
      */
     private static boolean resourceAdapterPossible = true;
+
+
+    /**
+     * Returns <code>IFile.class</code> or <code>null</code> if the
+     * class is not available.
+     * <p>
+     * This method exists to avoid explicit references from the generic
+     * workbench to the resources plug-in.
+     * </p>
+     * 
+     * @return <code>IFile.class</code> or <code>null</code> if class
+     * not available
+     * @since 3.1
+     */
+    public static Class getFileClass() {
+        if (ifileClass != null) {
+            // tried before and succeeded
+            return ifileClass;
+        }
+        if (!resourcesPossible) {
+            // tried before and failed
+            return null;
+        }
+
+        // resource plug-in is not on prereq chain of generic wb plug-in
+        // hence: IResource.class won't compile
+        // and Class.forName("org.eclipse.core.resources.IResource") won't find it
+        // need to be trickier...
+        Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+        if (bundle == null) {
+            // resources plug-in is not around
+            // assume that it will never be around
+            resourcesPossible = false;
+            return null;
+        }
+        // resources plug-in is around
+        // it's not our job to activate the plug-in
+        if (!BundleUtility.isActivated(bundle)) {
+            // assume it might come alive later
+            resourcesPossible = true;
+            return null;
+        }
+        try {
+            Class c = bundle.loadClass("org.eclipse.core.resources.IFile"); //$NON-NLS-1$
+            // remember for next time
+            iresourceClass = c;
+            return iresourceClass;
+        } catch (ClassNotFoundException e) {
+            // unable to load IFile - sounds pretty serious
+            // treat as if resources plug-in were unavailable
+            resourcesPossible = false;
+            return null;
+        }
+    }
 
     /**
      * Returns <code>IResource.class</code> or <code>null</code> if the

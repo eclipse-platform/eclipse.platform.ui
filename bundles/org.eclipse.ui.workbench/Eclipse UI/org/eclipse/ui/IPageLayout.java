@@ -184,18 +184,22 @@ public interface IPageLayout {
     public void addFastView(String id, float ratio);
 
     /**
-     * Adds a creation wizard to the File New menu.
+     * Adds a new wizard shortcut to the page layout.
+     * These are typically shown in the UI to allow rapid navigation to appropriate new wizards.  
+     * For example, in the Eclipse IDE, these appear as items under the File > New menu.
      * The id must name a new wizard extension contributed to the 
-     * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).
+     * workbench's new wizards extension point (named <code>"org.eclipse.ui.newWizards"</code>).
      *
      * @param id the wizard id
      */
     public void addNewWizardShortcut(String id);
 
     /**
-     * Adds a perspective shortcut to the Perspective menu.
+     * Adds a perspective shortcut to the page layout.
+     * These are typically shown in the UI to allow rapid navigation to appropriate new wizards.  
+     * For example, in the Eclipse IDE, these appear as items under the Window > Open Perspective menu.
      * The id must name a perspective extension contributed to the 
-     * workbench's extension point (named <code>"org.eclipse.ui.perspectives"</code>).
+     * workbench's perspectives extension point (named <code>"org.eclipse.ui.perspectives"</code>).
      *
      * @param id the perspective id
      */
@@ -239,8 +243,10 @@ public interface IPageLayout {
     public void addShowInPart(String id);
 
     /**
-     * Adds a view to the Show View menu.
-     * The id must name a view contributed to the workbench's view extension point 
+     * Adds a show view shortcut to the page layout.
+     * These are typically shown in the UI to allow rapid navigation to appropriate views.  
+     * For example, in the Eclipse IDE, these appear as items under the Window > Show View menu.
+     * The id must name a view contributed to the workbench's views extension point 
      * (named <code>"org.eclipse.ui.views"</code>).
      *
      * @param id the view id

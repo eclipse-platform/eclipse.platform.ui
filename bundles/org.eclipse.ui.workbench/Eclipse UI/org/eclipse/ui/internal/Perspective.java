@@ -79,11 +79,11 @@ public class Perspective {
 
     private ArrayList alwaysOffActionSets;
 
-    private ArrayList newWizardActionIds;
+    private ArrayList newWizardShortcuts;
 
-    private ArrayList showViewActionIds;
+    private ArrayList showViewShortcuts;
 
-    private ArrayList perspectiveActionIds;
+    private ArrayList perspectiveShortcuts;
 
     private ArrayList fastViews;
 
@@ -331,11 +331,12 @@ public class Perspective {
     }
 
     /**
-     * Returns the new wizard actions the page.
-     * This is List of Strings.
+     * Returns the new wizard shortcuts associated with this perspective.
+     * 
+     * @return an array of new wizard identifiers
      */
-    public ArrayList getNewWizardActionIds() {
-        return newWizardActionIds;
+    public String[] getNewWizardShortcuts() {
+        return (String[]) newWizardShortcuts.toArray(new String[newWizardShortcuts.size()]);
     }
 
     /**
@@ -346,11 +347,12 @@ public class Perspective {
     }
 
     /**
-     * Returns the perspective actions for this page.
-     * This is List of Strings.
+     * Returns the perspective shortcuts associated with this perspective.
+     * 
+     * @return an array of perspective identifiers
      */
-    public ArrayList getPerspectiveActionIds() {
-        return perspectiveActionIds;
+    public String[] getPerspectiveShortcuts() {
+        return (String[]) perspectiveShortcuts.toArray(new String[perspectiveShortcuts.size()]);
     }
 
     /**
@@ -395,11 +397,12 @@ public class Perspective {
     }
 
     /**
-     * Returns the ids of the views to list in the Show View shortcuts.
-     * This is a List of Strings.
+     * Returns the show view shortcuts associated with this perspective.
+     * 
+     * @return an array of view identifiers
      */
-    public ArrayList getShowViewActionIds() {
-        return showViewActionIds;
+    public String[] getShowViewShortcuts() {
+        return (String[]) showViewShortcuts.toArray(new String[showViewShortcuts.size()]);
     }
 
     /**
@@ -722,9 +725,9 @@ public class Perspective {
         // Create action sets.
         createInitialActionSets(layout.getActionSets());
         alwaysOnActionSets.addAll(visibleActionSets);
-        newWizardActionIds = layout.getNewWizardActionIds();
-        showViewActionIds = layout.getShowViewActionIds();
-        perspectiveActionIds = layout.getPerspectiveActionIds();
+        newWizardShortcuts = layout.getNewWizardShortcuts();
+        showViewShortcuts = layout.getShowViewShortcuts();
+        perspectiveShortcuts = layout.getPerspectiveShortcuts();
         showInPartIds = layout.getShowInPartIds();
 
         // Retrieve fast views
@@ -1126,10 +1129,10 @@ public class Perspective {
 
         // Load "show view actions".
         actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
-        showViewActionIds = new ArrayList(actions.length);
+        showViewShortcuts = new ArrayList(actions.length);
         for (int x = 0; x < actions.length; x++) {
             String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            showViewActionIds.add(id);
+            showViewShortcuts.add(id);
         }
 
         // Load "show in times".
@@ -1153,19 +1156,19 @@ public class Perspective {
         // Load "new wizard actions".
         actions = memento
                 .getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
-        newWizardActionIds = new ArrayList(actions.length);
+        newWizardShortcuts = new ArrayList(actions.length);
         for (int x = 0; x < actions.length; x++) {
             String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            newWizardActionIds.add(id);
+            newWizardShortcuts.add(id);
         }
 
         // Load "perspective actions".
         actions = memento
                 .getChildren(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
-        perspectiveActionIds = new ArrayList(actions.length);
+        perspectiveShortcuts = new ArrayList(actions.length);
         for (int x = 0; x < actions.length; x++) {
             String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            perspectiveActionIds.add(id);
+            perspectiveShortcuts.add(id);
         }
 
         ArrayList extActionSets = getPerspectiveExtensionActionSets();
@@ -1361,7 +1364,7 @@ public class Perspective {
         }
 
         // Save "show view actions"
-        itr = showViewActionIds.iterator();
+        itr = showViewShortcuts.iterator();
         while (itr.hasNext()) {
             String str = (String) itr.next();
             IMemento child = memento
@@ -1381,7 +1384,7 @@ public class Perspective {
         }
 
         // Save "new wizard actions".
-        itr = newWizardActionIds.iterator();
+        itr = newWizardShortcuts.iterator();
         while (itr.hasNext()) {
             String str = (String) itr.next();
             IMemento child = memento
@@ -1390,7 +1393,7 @@ public class Perspective {
         }
 
         // Save "perspective actions".
-        itr = perspectiveActionIds.iterator();
+        itr = perspectiveShortcuts.iterator();
         while (itr.hasNext()) {
             String str = (String) itr.next();
             IMemento child = memento
@@ -1594,7 +1597,7 @@ public class Perspective {
      * This is List of Strings.
      */
     public void setNewWizardActionIds(ArrayList newList) {
-        newWizardActionIds = newList;
+        newWizardShortcuts = newList;
     }
 
     /**
@@ -1602,7 +1605,7 @@ public class Perspective {
      * This is List of Strings.
      */
     public void setPerspectiveActionIds(ArrayList list) {
-        perspectiveActionIds = list;
+        perspectiveShortcuts = list;
     }
 
     /**
@@ -1618,7 +1621,7 @@ public class Perspective {
      * This is a List of Strings.
      */
     public void setShowViewActionIds(ArrayList list) {
-        showViewActionIds = list;
+        showViewShortcuts = list;
     }
 
     /**

@@ -457,13 +457,17 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     
     /**
      * The <code>MenuManager</code> implementation of this <code>ContributionManager</code> method
-     * also marks the parent manager as dirty.
+     * also propagates the dirty flag up the parent chain.
      */
     public void markDirty() {
+        boolean wasDirty = isDirty();
         super.markDirty();
-        IContributionManager parent = getParent();
-        if (parent != null) {
-            parent.markDirty();
+        // optimization: if already dirty, assume all parents are already dirty too
+        if (!wasDirty) {
+            IContributionManager parent = getParent();
+            if (parent != null) {
+                parent.markDirty();
+            }
         }
     }
     

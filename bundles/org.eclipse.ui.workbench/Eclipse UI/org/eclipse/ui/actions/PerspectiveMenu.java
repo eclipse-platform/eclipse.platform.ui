@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 
@@ -239,13 +238,10 @@ public abstract class PerspectiveMenu extends ContributionItem {
         if (page == null)
             return list;
 
-        ArrayList ids = ((WorkbenchPage) page).getPerspectiveActionIds();
-        if (ids == null)
-            return list;
+        String[] ids = page.getPerspectiveShortcuts();
 
-        for (int i = 0; i < ids.size(); i++) {
-            String perspID = (String) ids.get(i);
-            IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
+        for (int i = 0; i < ids.length; i++) {
+            IPerspectiveDescriptor desc = reg.findPerspectiveWithId(ids[i]);
             if (desc != null && !list.contains(desc)) {
                 if (WorkbenchActivityHelper.filterItem(desc))
                     continue;

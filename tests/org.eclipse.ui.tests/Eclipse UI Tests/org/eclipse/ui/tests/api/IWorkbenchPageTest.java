@@ -11,6 +11,8 @@
 package org.eclipse.ui.tests.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -22,6 +24,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -1546,4 +1549,53 @@ public class IWorkbenchPageTest extends UITestCase {
         assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
     }
 
+    /**
+     * Tests the getNewWizardShortcuts() method.
+     *
+     * @since 3.1
+     */
+    public void testGetNewWizardShortcuts() {
+        String[] shortcuts = fActivePage.getNewWizardShortcuts();
+        assertNotNull(shortcuts);
+        assertEquals(0, shortcuts.length);
+        
+        IWorkbenchWindow win = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
+        IWorkbenchPage page = win.getActivePage();
+        shortcuts = page.getNewWizardShortcuts();
+        List shortcutList = Arrays.asList(shortcuts);
+        assertTrue(shortcutList.contains("org.eclipse.ui.wizards.new.folder"));
+        assertTrue(shortcutList.contains("org.eclipse.ui.wizards.new.file"));
+    }
+
+    /**
+     * Tests the getShowViewShortcuts() method.
+     *
+     * @since 3.1
+     */
+    public void testGetShowViewShortcuts() {
+        String[] shortcuts = fActivePage.getShowViewShortcuts();
+        assertNotNull(shortcuts);
+        assertEquals(0, shortcuts.length);
+        
+        IWorkbenchWindow win = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
+        IWorkbenchPage page = win.getActivePage();
+        shortcuts = page.getShowViewShortcuts();
+        List shortcutList = Arrays.asList(shortcuts);
+        assertTrue(shortcutList.contains(IPageLayout.ID_RES_NAV));
+        assertTrue(shortcutList.contains(IPageLayout.ID_OUTLINE));
+        assertTrue(shortcutList.contains(IPageLayout.ID_PROP_SHEET));
+        assertTrue(shortcutList.contains(IPageLayout.ID_PROBLEM_VIEW));
+    }
+
+    /**
+     * Tests the getPerspectiveShortcuts() method.
+     *
+     * @since 3.1
+     */
+    public void testGetPerspectiveShortcuts() {
+        String[] shortcuts = fActivePage.getPerspectiveShortcuts();
+        assertNotNull(shortcuts);
+        assertEquals(0, shortcuts.length);
+        // not much of a test
+    }
 }

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
@@ -39,7 +40,7 @@ public class ViewTests extends DynamicTestCase {
     }
     
 	public void testViewClosure() throws CoreException {
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		getBundle();
 				
 		ReferenceQueue queue = new ReferenceQueue();

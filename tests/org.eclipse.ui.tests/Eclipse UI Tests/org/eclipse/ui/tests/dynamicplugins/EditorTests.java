@@ -63,7 +63,7 @@ public class EditorTests extends DynamicTestCase {
 	}
 	
 	public void testEditorClosure() throws CoreException {
-		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IFile file = getFile();
 		getBundle();
 				

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -20,7 +20,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPart;
@@ -28,12 +27,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 
 /**
- *	Instances can launch arbitrary resource creation wizards
- *	that have been marked as being available as workbench shortcut
- *	items
+ * Opens a specific new wizard. 
  */
 public class NewWizardShortcutAction extends Action implements
         IPluginContribution {
@@ -42,11 +41,10 @@ public class NewWizardShortcutAction extends Action implements
     private IWorkbenchWindow window;
 
     /**
-     *	Create an instance of this class.  Use this constructor if you do
-     *	not wish to pre-specify the selection that should be provided to
-     *	launched shortcut wizards.
+     * Create an instance of this class.
      *
-     *	@param element WorkbenchWizardElement
+     * @param window the workbench window in which this action will appear
+     * @param element a wizard element
      */
     public NewWizardShortcutAction(IWorkbenchWindow window,
             WorkbenchWizardElement element) {
@@ -68,9 +66,9 @@ public class NewWizardShortcutAction extends Action implements
         try {
             wizard = (INewWizard) wizardElement.createExecutableExtension();
         } catch (CoreException e) {
-            ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages
+            ErrorDialog.openError(window.getShell(), WorkbenchMessages
                     .getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
-                    IDEWorkbenchMessages
+                    WorkbenchMessages
                             .getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
                     e.getStatus());
             return;
@@ -86,9 +84,12 @@ public class NewWizardShortcutAction extends Action implements
             IWorkbenchPart part = window.getPartService().getActivePart();
             if (part instanceof IEditorPart) {
                 IEditorInput input = ((IEditorPart) part).getEditorInput();
-                if (input instanceof IFileEditorInput) {
-                    selectionToPass = new StructuredSelection(
-                            ((IFileEditorInput) input).getFile());
+                Class fileClass = LegacyResourceSupport.getFileClass();
+                if (input != null && fileClass != null) {
+                    Object file = input.getAdapter(fileClass);
+                    if (file != null) {
+                        selectionToPass = new StructuredSelection(file);
+                    }
                 }
             }
         }
@@ -116,14 +117,4 @@ public class NewWizardShortcutAction extends Action implements
     public String getPluginId() {
         return wizardElement.getPluginId();
     }
-    
-    /**
-     * Return the wizard element associated with this action.
-     * 
-     * @return the wizard element associated with this action
-     * @since 3.1
-     */
-    public WorkbenchWizardElement getWizardElement() {
-		return wizardElement;
-	}
 }

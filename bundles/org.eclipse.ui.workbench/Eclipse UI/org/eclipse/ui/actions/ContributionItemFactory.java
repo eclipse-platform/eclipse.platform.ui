@@ -204,4 +204,29 @@ public abstract class ContributionItemFactory {
             return item;
         }
     };
+    
+    /**
+     * Workbench contribution item (id "newWizardShortlist"): A list of
+     * new item wizards available to be opened, arranged as a shortlist of 
+     * promising new item wizards and an "Other" subitem. Selecting
+     * one of the items invokes the corresponding new item wizard. 
+     * This action dynamically maintains the new item wizard shortlist.
+     */
+    public static final ContributionItemFactory NEW_WIZARD_SHORTLIST = new ContributionItemFactory(
+            "newWizardShortlist") { //$NON-NLS-1$
+        /* (non-javadoc) method declared on ContributionItemFactory */
+        public IContributionItem create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            // indicate that a open perspectives submenu has been created
+            ((WorkbenchWindow) window)
+                    .addSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU);
+            IContributionItem item = new BaseNewWizardMenu(window,
+                    getId());
+            return item;
+        }
+    };
+    
+    
 }

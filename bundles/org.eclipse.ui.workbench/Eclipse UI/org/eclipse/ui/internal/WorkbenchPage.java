@@ -1708,17 +1708,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Returns the new wizard actions the page. This is List of Strings.
-     */
-    public ArrayList getNewWizardActionIds() {
-        Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getNewWizardActionIds();
-        else
-            return new ArrayList();
-    }
-
-    /**
      * Returns the perspective.
      */
     public IPerspectiveDescriptor getPerspective() {
@@ -1729,17 +1718,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return persp.getDesc();
         else
             return null;
-    }
-
-    /**
-     * Returns the perspective actions for this page. This is List of Strings.
-     */
-    public ArrayList getPerspectiveActionIds() {
-        Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getPerspectiveActionIds();
-        else
-            return new ArrayList();
     }
 
     /*
@@ -1793,17 +1771,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             });
         }
-    }
-
-    /**
-     * Returns the show view actions the page. This is a List of Strings.
-     */
-    public ArrayList getShowViewActionIds() {
-        Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getShowViewActionIds();
-        else
-            return new ArrayList();
     }
 
     /**
@@ -4028,4 +3995,37 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public IConfigurationElementTracker getConfigurationElementTracker() {
 		return tracker ;		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
+     */
+    public String[] getNewWizardShortcuts() {
+        Perspective persp = getActivePerspective();
+        if (persp == null) {
+            return new String[0];
+        }
+        return persp.getNewWizardShortcuts();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
+     */
+    public String[] getPerspectiveShortcuts() {
+        Perspective persp = getActivePerspective();
+        if (persp == null) {
+            return new String[0];
+        }
+        return persp.getPerspectiveShortcuts();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
+     */
+    public String[] getShowViewShortcuts() {
+        Perspective persp = getActivePerspective();
+        if (persp == null) {
+            return new String[0];
+        }
+        return persp.getShowViewShortcuts();
+    }
 }

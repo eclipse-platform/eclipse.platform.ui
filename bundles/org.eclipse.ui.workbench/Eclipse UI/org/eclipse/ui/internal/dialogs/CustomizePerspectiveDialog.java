@@ -12,8 +12,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -1505,7 +1507,7 @@ public class CustomizePerspectiveDialog extends Dialog {
     }
 
     private void initializeShortCutMenu(ShortcutMenu menu,
-            WizardCollectionElement element, ArrayList activeIds) {
+            WizardCollectionElement element, List activeIds) {
         ShortcutMenu category = new ShortcutMenu(menu, element.getId(), element
                 .getLabel(element));
         Object[] wizards = element.getWizards();
@@ -1525,7 +1527,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     private void initializeShortcutMenuInput() {
         rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
-        ArrayList activeIds;
+        List activeIds;
 
         if (window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)) {
             ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu,
@@ -1536,7 +1538,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
             // @issue should not pass in null
             Object[] wizardCategories = wizardCollection.getChildren(null);
-            activeIds = perspective.getNewWizardActionIds();
+            activeIds = Arrays.asList(perspective.getNewWizardShortcuts());
             for (int i = 0; i < wizardCategories.length; i++) {
                 WizardCollectionElement element = (WizardCollectionElement) wizardCategories[i];
                 if (WorkbenchActivityHelper.filterItem(element))
@@ -1559,7 +1561,7 @@ public class CustomizePerspectiveDialog extends Dialog {
                     continue;
                 perspMenu.addItem(persps[i]);
             }
-            activeIds = perspective.getPerspectiveActionIds();
+            activeIds = Arrays.asList(perspective.getPerspectiveShortcuts());
             for (int i = 0; i < activeIds.size(); i++) {
                 String id = (String) activeIds.get(i);
                 Object item = perspMenu.getItem(id);
@@ -1575,7 +1577,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             IViewRegistry viewReg = WorkbenchPlugin.getDefault()
                     .getViewRegistry();
             Category[] categories = viewReg.getCategories();
-            activeIds = perspective.getShowViewActionIds();
+            activeIds = Arrays.asList(perspective.getShowViewShortcuts());
             for (int i = 0; i < categories.length; i++) {
                 Category category = categories[i];
                 if (WorkbenchActivityHelper.filterItem(category))

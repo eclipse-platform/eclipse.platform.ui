@@ -77,8 +77,12 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
     private IResourceChangeListener resourceChangeListener;
 
+    private NewWizardMenu newWizardMenu;
+
     /**
      * Constructs the main action group.
+     * 
+     * @param navigator the navigator view
      */
     public MainActionGroup(IResourceNavigator navigator) {
         super(navigator);
@@ -139,6 +143,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     protected void makeActions() {
         Shell shell = navigator.getSite().getShell();
 
+        newWizardMenu = new NewWizardMenu(navigator.getSite().getWorkbenchWindow());
         addBookmarkAction = new AddBookmarkAction(shell);
         addTaskAction = new AddTaskAction(shell);
         propertyDialogAction = new PropertyDialogAction(shell, navigator
@@ -227,15 +232,11 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     public void fillContextMenu(IMenuManager menu) {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
-        boolean onlyFilesSelected = !selection.isEmpty()
-                && ResourceSelectionUtil.allResourcesAreOfType(selection,
-                        IResource.FILE);
 
         MenuManager newMenu = new MenuManager(ResourceNavigatorMessages
                 .getString("ResourceNavigator.new")); //$NON-NLS-1$
         menu.add(newMenu);
-        new NewWizardMenu(newMenu, navigator.getSite().getWorkbenchWindow(),
-                false);
+        newMenu.add(newWizardMenu);
 
         gotoGroup.fillContextMenu(menu);
         openGroup.fillContextMenu(menu);
@@ -334,6 +335,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(
                 resourceChangeListener);
 
+        newWizardMenu.dispose();
         collapseAllAction.dispose();
         exportAction.dispose();
         importAction.dispose();

@@ -79,15 +79,15 @@ public class PageLayout implements IPageLayout {
 
     private Map mapIDtoViewLayoutRec = new HashMap(10);
 
-    private ArrayList newWizardActionIds = new ArrayList(3);
+    private ArrayList newWizardShortcuts = new ArrayList(3);
 
-    private ArrayList perspectiveActionIds = new ArrayList(3);
+    private ArrayList perspectiveShortcuts = new ArrayList(3);
 
     private ViewSashContainer rootLayoutContainer;
 
     private ArrayList showInPartIds = new ArrayList(3);
 
-    private ArrayList showViewActionIds = new ArrayList(3);
+    private ArrayList showViewShortcuts = new ArrayList(3);
 
     private ViewFactory viewFactory;
 
@@ -221,8 +221,8 @@ public class PageLayout implements IPageLayout {
      * @param id the wizard id
      */
     public void addNewWizardShortcut(String id) {
-        if (!newWizardActionIds.contains(id)) {
-            newWizardActionIds.add(id);
+        if (!newWizardShortcuts.contains(id)) {
+            newWizardShortcuts.add(id);
         }
     }
 
@@ -260,8 +260,8 @@ public class PageLayout implements IPageLayout {
      * @param id the perspective id
      */
     public void addPerspectiveShortcut(String id) {
-        if (!perspectiveActionIds.contains(id)) {
-            perspectiveActionIds.add(id);
+        if (!perspectiveShortcuts.contains(id)) {
+            perspectiveShortcuts.add(id);
         }
     }
 
@@ -327,8 +327,8 @@ public class PageLayout implements IPageLayout {
      * @param id the view id
      */
     public void addShowViewShortcut(String id) {
-        if (!showViewActionIds.contains(id)) {
-            showViewActionIds.add(id);
+        if (!showViewShortcuts.contains(id)) {
+            showViewShortcuts.add(id);
         }
     }
 
@@ -498,11 +498,11 @@ public class PageLayout implements IPageLayout {
     }
 
     /**
-     * @return the new wizard actions the page. This is <code>List</code> of 
+     * @return the new wizard shortcuts associated with the page. This is a <code>List</code> of 
      * <code>String</code>s.
      */
-    public ArrayList getNewWizardActionIds() {
-        return newWizardActionIds;
+    public ArrayList getNewWizardShortcuts() {
+        return newWizardShortcuts;
     }
 
     /**
@@ -513,11 +513,11 @@ public class PageLayout implements IPageLayout {
     }
 
     /**
-     * @return the perspective actions. This is <code>List</code> of 
+     * @return the perspective shortcuts associated with the page. This is a <code>List</code> of 
      * <code>String</code>s.
      */
-    public ArrayList getPerspectiveActionIds() {
-        return perspectiveActionIds;
+    public ArrayList getPerspectiveShortcuts() {
+        return perspectiveShortcuts;
     }
 
     /**
@@ -544,11 +544,11 @@ public class PageLayout implements IPageLayout {
     }
 
     /**
-     * @return the ids of the views to list in the Show View shortcuts. This is
-     * a <code>List</code> of <code>String</code>s.
+     * @return the show view shortcuts associated with the page. This is a <code>List</code> of 
+     * <code>String</code>s.
      */
-    public ArrayList getShowViewActionIds() {
-        return showViewActionIds;
+    public ArrayList getShowViewShortcuts() {
+        return showViewShortcuts;
     }
 
     /**

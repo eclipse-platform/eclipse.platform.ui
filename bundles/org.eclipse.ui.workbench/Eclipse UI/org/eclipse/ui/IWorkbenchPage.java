@@ -369,7 +369,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 
     /**
      * Returns the current perspective descriptor for this page, or 
-     * <code>null</code> if the is no current perspective.
+     * <code>null</code> if there is no current perspective.
      * 
      * @return the current perspective descriptor or <code>null</code>
      * @see #setPerspective
@@ -759,4 +759,35 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * @since 3.0
      */
     IViewPart[] getViewStack(IViewPart part);
+    
+    /**
+     * Returns the new wizard shortcuts associated with the current perspective.
+     * Returns an empty array if there is no current perspective.
+     * 
+     * @see IPageLayout#addNewWizardShortcut(String)
+     * @return an array of wizard identifiers
+     * @since 3.1
+     */
+    public String[] getNewWizardShortcuts();
+
+    /**
+     * Returns the perspective shortcuts associated with the current perspective.
+     * Returns an empty array if there is no current perspective.
+     * 
+     * @see IPageLayout#addPerspectiveShortcut(String)
+     * @return an array of perspective identifiers
+     * @since 3.1
+     */
+    public String[] getPerspectiveShortcuts();
+    
+    /**
+     * Returns the show view shortcuts associated with the current perspective.
+     * Returns an empty array if there is no current perspective.
+     * 
+     * @see IPageLayout#addShowViewShortcut(String)
+     * @return an array of view identifiers
+     * @since 3.1
+     */
+    public String[] getShowViewShortcuts();
+    
 }

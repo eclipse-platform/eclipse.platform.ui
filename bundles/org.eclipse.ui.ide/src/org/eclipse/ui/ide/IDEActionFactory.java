@@ -14,10 +14,11 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.actions.NewWizardDropDownAction;
+import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
 import org.eclipse.ui.internal.ide.actions.OpenWorkspaceAction;
@@ -181,7 +182,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Opens the "new" wizard drop down.
+     * IDE-specific workbench action: Opens the "new" wizard drop down, including
+     * resource-specific items for Project... and Example...
      * This action maintains its enablement state.
      */
     public static final ActionFactory NEW_WIZARD_DROP_DOWN = new ActionFactory(
@@ -193,8 +195,9 @@ public final class IDEActionFactory {
             }
             // @issue we are creating a NEW action just to pass to NewWizardDropDownAction
             IWorkbenchAction innerAction = ActionFactory.NEW.create(window);
+            NewWizardMenu newWizardMenu = new NewWizardMenu(window);
             IWorkbenchAction action = new NewWizardDropDownAction(window,
-                    innerAction);
+                    innerAction, newWizardMenu);
             action.setId(getId());
             return action;
         }

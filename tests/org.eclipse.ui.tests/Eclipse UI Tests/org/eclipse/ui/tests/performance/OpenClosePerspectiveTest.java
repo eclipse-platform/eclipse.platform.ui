@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
  * @since 3.1
@@ -53,7 +52,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         }
         
         // create a nice clean window.
-        IWorkbenchWindow window = openTestWindow(EmptyPerspective.PERSP_ID);          
+        IWorkbenchWindow window = openTestWindow();          
         IWorkbenchPage activePage = window.getActivePage();
         
         //causes creation of all views 

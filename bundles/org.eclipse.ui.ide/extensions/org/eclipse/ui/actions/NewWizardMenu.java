@@ -10,92 +10,52 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 
 /**
- * A <code>NewWizardMenu</code> is used to populate a menu manager with
- * New Wizard actions.  The visible actions are determined by user preference
- * from the Perspective Customize dialog.
+ * A <code>NewWizardMenu</code> augments <code>BaseNewWizardMenu</code> with IDE-specific
+ * actions: New Project... (always shown) and New Example... (shown only if there are example wizards installed).
  */
-public class NewWizardMenu extends ContributionItem {
-    private IAction showDlgAction;
+public class NewWizardMenu extends BaseNewWizardMenu {
 
-    private IAction newProjectAction;
+    private final IAction newProjectAction;
 
-    private IAction newExampleAction;
-
-    private Map actions = new HashMap(21);
-
-    private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
-
-    private boolean enabled = true;
-
-    private IWorkbenchWindow window;
-
-    private boolean dirty = true;
-
-    private static final String NO_TARGETS_MSG = WorkbenchMessages
-            .getString("Workbench.noApplicableItems"); //$NON-NLS-1$
-
-    private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
-            manager.markDirty();
-            dirty = true;
-        }
-    };
+    private final IAction newExampleAction;
 
     /**
-     * TODO: should this be done with an addition listener?
+     * Creates a new wizard shortcut menu for the IDE.
+     * 
+     * @param window
+     *            the window containing the menu
      */
-    private IRegistryChangeListener registryListener = new IRegistryChangeListener() {
-		public void registryChanged(IRegistryChangeEvent event) {
-			// reset the reader. 
-			getParent().markDirty();
-			dirty = true;
-			reader = new NewWizardsRegistryReader();
-		}
-    	
-    };
+    public NewWizardMenu(IWorkbenchWindow window) {
+        this(window, null);
+        
+    }
     
-    private IConfigurationElementRemovalHandler configListener = new IConfigurationElementRemovalHandler() {
-		public void removeInstance(IConfigurationElement source, Object object) {
-			if (object instanceof NewWizardShortcutAction) {
-				actions.values().remove(object);
-			}			
-		}    	
-    };
-	
+    /**
+     * Creates a new wizard shortcut menu for the IDE.
+     * 
+     * @param window
+     *            the window containing the menu
+     * @param id
+     *            the identifier for this contribution item 
+     */
+    public NewWizardMenu(IWorkbenchWindow window, String id) {
+        super(window, id);
+        newProjectAction = new NewProjectAction(window);
+        newExampleAction = new NewExampleAction(window);
+    }
+
     /**
      * Create a new wizard shortcut menu.  
      * <p>
@@ -110,25 +70,16 @@ public class NewWizardMenu extends ContributionItem {
      * @param innerMgr the location for the shortcut menu contents
      * @param window the window containing the menu
      * @param register if <code>true</code> the menu listens to perspective changes in
-     * 		the window
+     *      the window
+     * @deprecated use NewWizardMenu(IWorkbenchWindow) instead
      */
     public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window,
             boolean register) {
-        this(window);
-        registerListeners();
+        this(window, null);
         fillMenu(innerMgr);
         // Must be done after constructor to ensure field initialization.
     }
-
-    public NewWizardMenu(IWorkbenchWindow window) {
-        super();
-        this.window = window;
-        showDlgAction = ActionFactory.NEW.create(window);
-        newProjectAction = new NewProjectAction(window);
-        newExampleAction = new NewExampleAction(window);
-        registerListeners();
-    }
-
+    
     /* (non-Javadoc)
      * Fills the menu with New Wizards.
      */
@@ -136,187 +87,47 @@ public class NewWizardMenu extends ContributionItem {
         // Remove all.
         innerMgr.removeAll();
 
-        IWorkbenchPart sourcePart = getSourcePart();
-        if (sourcePart == null) {
-            return;
+        IContributionItem[] items = getContributionItems();
+        for (int i = 0; i < items.length; i++) {
+            innerMgr.add(items[i]);
         }
-
-        if (this.enabled) {
-            // Add new project ..
-            innerMgr.add(newProjectAction);
-
-            // Get visible actions.
-            List actions = null;
-            IWorkbenchPage page = window.getActivePage();
-            if (page != null)
-                actions = ((WorkbenchPage) page).getNewWizardActionIds();
-
-            if (actions != null) {
-                if (actions.size() > 0)
-                    innerMgr.add(new Separator());
-                for (Iterator i = actions.iterator(); i.hasNext();) {
-                    String id = (String) i.next();
-                    IAction action = getAction(id);
-                    if (action != null) {
-                        if (WorkbenchActivityHelper.filterItem(action))
-                            continue;
-                        innerMgr.add(action);
-                    }
-                }
-            }
-
-            if (hasExamples()) {
-                //Add examples ..
-                innerMgr.add(new Separator());
-                innerMgr.add(newExampleAction);
-            }
-
-            // Add other ..
-            innerMgr.add(new Separator());
-            innerMgr.add(showDlgAction);
-        }
-    }
-
-    /* (non-Javadoc)
-     * Returns the action for the given wizard id, or null if not found.
-     */
-    private IAction getAction(String id) {
-        // Keep a cache, rather than creating a new action each time,
-        // so that image caching in ActionContributionItem works.
-        IAction action = (IAction) actions.get(id);
-        if (action == null) {
-            WorkbenchWizardElement element = reader.findWizard(id);
-            if (element != null) {
-                action = new NewWizardShortcutAction(window, element);
-                actions.put(id, action);
-                ((WorkbenchWindow)window).getConfigurationElementTracker().registerObject(element.getConfigurationElement(), action);
-            }
-        }
-        return action;
-    }
-
-    /* (non-Javadoc)
-     * Method declared on IContributionItem.
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /* (non-Javadoc)
-     * Method declared on IContributionItem.
-     */
-    public boolean isDynamic() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * Method declared on IContributionItem.
-     */
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    /**
-     * Sets the enabled state of the receiver.
-     * 
-     * @param enabledValue if <code>true</code> the menu is enabled; else
-     * 		it is disabled
-     */
-    public void setEnabled(boolean enabledValue) {
-        this.enabled = enabledValue;
-    }
-
-    private IWorkbenchPart getSourcePart() {
-        IWorkbenchPage page = getWindow().getActivePage();
-        if (page != null) {
-            return page.getActivePart();
-        }
-        return null;
-    }
-
-    protected IWorkbenchWindow getWindow() {
-        return window;
     }
 
     /**
      * Removes all listeners from the containing workbench window.
      * <p>
-     * This method should only be called if the shortcut menu is created
-     * with <code>register = true</code>.
+     * This method should only be called if the shortcut menu is created with
+     * <code>register = true</code>.
      * </p>
      * 
-     * @deprecated
+     * @deprecated has no effect
      */
     public void deregisterListeners() {
-    }
-
-    /* (non-Javadoc)
-     * Method declared on IContributionItem.
-     */
-    public void fill(Menu menu, int index) {
-        if (getParent() instanceof MenuManager)
-            ((MenuManager) getParent()).addMenuListener(menuListener);
-
-        if (!dirty)
-            return;
-
-        MenuManager manager = new MenuManager();
-        fillMenu(manager);
-        IContributionItem items[] = manager.getItems();
-        if (items.length == 0) {
-            MenuItem item = new MenuItem(menu, SWT.NONE);
-            item.setText(NO_TARGETS_MSG);
-            item.setEnabled(false);
-        }
-        for (int i = 0; i < items.length; i++) {
-            items[i].fill(menu, index++);
-        }
-        dirty = false;
+        // do nothing
     }
 
     /**
-     * Return whether or not any examples are in the current
-     * install.
+     * Return whether or not any examples are in the current install.
+     * 
      * @return boolean
      */
     private boolean hasExamples() {
-        NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(false);
-
-        Object[] children = rdr.getWizardElements().getChildren(null);
-        for (int i = 0; i < children.length; i++) {
-            WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
-            if (currentChild.getId().equals(
-                    NewWizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY))
-                return true;
-        }
-        return false;
+        return registryHasCategory(NewWizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		unregisterListeners();
-	}
-	
-    /**
-	 * Unregisters listeners.
-	 * 
-	 * @since 3.1
-	 */
-	private void unregisterListeners() {
-		Platform.getExtensionRegistry().removeRegistryChangeListener(registryListener);
-		((WorkbenchWindow)window).getConfigurationElementTracker().unregisterRemovalHandler(configListener);
-	}
-
-	/**
-	 * Registers listeners.
-	 * 
-	 * @since 3.1
-	 */
-	private void registerListeners() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(registryListener);
-        ((WorkbenchWindow)window).getConfigurationElementTracker().registerRemovalHandler(configListener);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.BaseNewWizardMenu#addItems(org.eclipse.jface.action.IContributionManager)
+     */
+    protected void addItems(List list) {
+        list.add(new ActionContributionItem(newProjectAction)); 
+        list.add(new Separator());
+        addShortcuts(list);
+        list.add(new Separator());
+        if (hasExamples()) {
+            list.add(new ActionContributionItem(newExampleAction));
+            list.add(new Separator());
+        }
+        list.add(new ActionContributionItem(getShowDialogAction()));
+    }
+    
 }
