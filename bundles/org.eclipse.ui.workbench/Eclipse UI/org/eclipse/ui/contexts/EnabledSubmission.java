@@ -11,17 +11,20 @@
 package org.eclipse.ui.contexts;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * Submits a context to the workbench for activation. The submission indicates
- * under what conditions the context should become active. Given these
- * conditions, the workbench will decide whether the context should be active or
- * not.
+ * An instance of this class represents a request to enable a context, under
+ * particular conditions.
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
  * 
  * @since 3.0
+ * @see IWorkbenchContextSupport
  */
 public final class EnabledSubmission implements Comparable {
 
@@ -30,9 +33,11 @@ public final class EnabledSubmission implements Comparable {
     private final static int HASH_INITIAL = EnabledSubmission.class.getName()
             .hashCode();
 
-    private final Shell activeShell;
+    private String activePartId;
 
-    private IWorkbenchSite activeWorkbenchSite;
+    private Shell activeShell;
+
+    private IWorkbenchPartSite activeWorkbenchPartSite;
 
     private String contextId;
 
@@ -43,93 +48,124 @@ public final class EnabledSubmission implements Comparable {
     private transient String string;
 
     /**
-     * Constructs a new instance of <code>EnabledSubmission</code>.
+     * @deprecated to be removed for 3.0
      * 
      * @param activeWorkbenchSite
-     *            The workbench site which must be active for this submission to
-     *            be active. If this value is <code>null</code>, then any
-     *            workbench site can be active.
      * @param activeWorkbenchWindow
-     *            The workbench window which must be active for this submission
-     *            to be active. If this value is <code>null</code>, then any
-     *            workbench window can be active.
      * @param contextId
-     *            The context which should be activated when this submission is
-     *            enabled. This value must not be <code>null</code>.
-     * @deprecated The workbench window has been replaced with a reference to a
-     *             shell. This is a required level of generality for key
-     *             bindings in dialogs (since dialogs are not workbench
-     *             windows). Please use the other constructor.
      */
     public EnabledSubmission(IWorkbenchSite activeWorkbenchSite,
             IWorkbenchWindow activeWorkbenchWindow, String contextId) {
-        this(activeWorkbenchWindow.getShell(), activeWorkbenchSite, contextId);
+        if (contextId == null) throw new NullPointerException();
+
+        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
+                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
+
+        this.contextId = contextId;
     }
 
     /**
-     * Constructs a new instance of <code>EnabledSubmission</code>.
+     * @deprecated to be removed for 3.0
      * 
-     * @param activeShell
-     *            The shell which must be active for this submission to be
-     *            active. If this value is <code>null</code>, then any shell
-     *            can be active.
-     * @param workbenchSite
-     *            The workbench site which must be active for this submission to
-     *            be active. If this value is <code>null</code>, then any
-     *            workbench site can be active. workbench window can be active.
+     * @param activeWorkbenchSite
      * @param contextId
-     *            The context which should be activated when this submission is
-     *            enabled. This value must not be <code>null</code>.
+     * @param activeShell
      */
-    public EnabledSubmission(final Shell activeShell,
-            final IWorkbenchSite workbenchSite, final String contextId) {
+    public EnabledSubmission(Shell activeShell, IWorkbenchSite activeWorkbenchSite,
+            String contextId) {
         if (contextId == null) throw new NullPointerException();
+
         this.activeShell = activeShell;
-        this.activeWorkbenchSite = workbenchSite;
+
+        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
+                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
+
+        this.contextId = contextId;
+    }
+
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param activePartId
+     *            the identifier of the part that must be active for this
+     *            request to be considered. May be <code>null</code>.
+     * @param activeShell
+     *            the shell that must be active for this request to be
+     *            considered. May be <code>null</code>.
+     * @param activeWorkbenchPartSite
+     *            the workbench part site of the part that must be active for
+     *            this request to be considered. May be <code>null</code>.
+     * @param contextId
+     *            the identifier of the context to be enabled. Must not be
+     *            <code>null</code>.
+     */
+    public EnabledSubmission(String activePartId, Shell activeShell,
+            IWorkbenchPartSite activeWorkbenchPartSite, String contextId) {
+        if (contextId == null) throw new NullPointerException();
+
+        this.activePartId = activePartId;
+        this.activeShell = activeShell;
+        this.activeWorkbenchPartSite = activeWorkbenchPartSite;
         this.contextId = contextId;
     }
 
     public int compareTo(Object object) {
         EnabledSubmission castedObject = (EnabledSubmission) object;
-        int compareTo = Util.compare(activeWorkbenchSite,
-                castedObject.activeWorkbenchSite);
+        int compareTo = Util.compare(activeWorkbenchPartSite,
+                castedObject.activeWorkbenchPartSite);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(activeShell, castedObject.activeShell);
+            compareTo = Util.compare(activePartId, castedObject.activePartId);
 
-            if (compareTo == 0)
-                    compareTo = Util.compare(contextId, castedObject.contextId);
+            if (compareTo == 0) {
+                compareTo = Util.compare(activeShell, castedObject.activeShell);
+
+                if (compareTo == 0)
+                        compareTo = Util.compare(contextId,
+                                castedObject.contextId);
+            }
         }
 
         return compareTo;
     }
 
     /**
-     * An accessor for the shell in which this submission should be active.
+     * Returns the identifier of the part that must be active for this request
+     * to be considered.
      * 
-     * @return The shell in which this submission is active; <code>null</code>
-     *         if it is active in any shell.
+     * @return the identifier of the part that must be active for this request
+     *         to be considered. May be <code>null</code>.
      */
-    public final Shell getActiveShell() {
+    public String getActivePartId() {
+        return activePartId;
+    }
+
+    /**
+     * Returns the shell that must be active for this request to be considered.
+     * 
+     * @return the shell that must be active for this request to be considered.
+     *         May be <code>null</code>.
+     */
+    public Shell getActiveShell() {
         return activeShell;
     }
 
     /**
-     * An accessor the workbench site for which this submission should apply.
+     * Returns the workbench part site of the part that must be active for this
+     * request to be considered.
      * 
-     * @return The workbench site for which this submission should apply;
-     *         <code>null</code> if this submission applies to any workbench
-     *         site.
+     * @return the workbench part site of the part that must be active for this
+     *         request to be considered. May be <code>null</code>.
      */
-    public IWorkbenchSite getActiveWorkbenchSite() {
-        return activeWorkbenchSite;
+    public IWorkbenchPartSite getActiveWorkbenchPartSite() {
+        return activeWorkbenchPartSite;
     }
 
     /**
-     * An accessor for the identifier of the context that this submission wishes
-     * to activate.
+     * Returns the identifier of the context to be enabled.
      * 
-     * @return The context identifier; this should never be <code>null</code>.
+     * @return the identifier of the context to be enabled. Guaranteed not to be
+     *         <code>null</code>.
      */
     public String getContextId() {
         return contextId;
@@ -138,9 +174,10 @@ public final class EnabledSubmission implements Comparable {
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activePartId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
             hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activeWorkbenchSite);
+                    + Util.hashCode(activeWorkbenchPartSite);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
             hashCodeComputed = true;
         }
@@ -151,10 +188,12 @@ public final class EnabledSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activeShell="); //$NON-NLS-1$
+            stringBuffer.append("[activePartId="); //$NON-NLS-1$
+            stringBuffer.append(activePartId);
+            stringBuffer.append("activeShell="); //$NON-NLS-1$
             stringBuffer.append(activeShell);
             stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
-            stringBuffer.append(activeWorkbenchSite);
+            stringBuffer.append(activeWorkbenchPartSite);
             stringBuffer.append(",contextId="); //$NON-NLS-1$
             stringBuffer.append(contextId);
             stringBuffer.append(']');

@@ -13,8 +13,7 @@ package org.eclipse.ui.contexts;
 
 import java.util.Set;
 
-import org.eclipse.ui.internal.contexts.*;
-import org.eclipse.ui.internal.contexts.ws.*;
+import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 
 
 /**

@@ -392,7 +392,7 @@ final class KeyBindingService implements INestableKeyBindingService {
             if (submission instanceof EnabledSubmission) {
                 final EnabledSubmission enabledSubmission = (EnabledSubmission) submission;
                 if (!workbenchPartSite.equals(enabledSubmission
-                        .getActiveWorkbenchSite())) {
+                        .getActiveWorkbenchPartSite())) {
                     replacementSubmission = new EnabledSubmission(
                             enabledSubmission.getActiveShell(), workbenchPartSite,
                             enabledSubmission.getContextId());

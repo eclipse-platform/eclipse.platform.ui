@@ -421,7 +421,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                             continue;
 
                     IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
-                            .getActiveWorkbenchSite();
+                            .getActiveWorkbenchPartSite();
 
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != newActiveWorkbenchSite)
