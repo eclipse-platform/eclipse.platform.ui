@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+import org.osgi.framework.Bundle;
+
 /**
  * Products are the Eclipse unit of branding.  From the runtime point of view they have
  * a name, id and description and identify the Eclipse application to run.  
@@ -69,4 +71,13 @@ public interface IProduct {
 	 * @return the value associated with the given key or <code>null</code> if none
 	 */
 	public String getProperty(String key);
+	
+	/**
+	 * Returns the bundle which is responsible for the definition of this product.
+	 * Typically this is used as a base for searching for images and other files 
+	 * that are needed in presenting the product.
+	 * 
+	 * @return Bundle the bundle which defines this product or <code>null</code> if none
+	 */
+	public Bundle getDefiningBundle();
 }

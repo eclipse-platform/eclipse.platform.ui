@@ -11,8 +11,10 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.HashMap;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
+import org.osgi.framework.Bundle;
 
 public class Product implements IProduct {
 	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -25,6 +27,7 @@ public class Product implements IProduct {
 	String id = null;
 	String description = null;
 	HashMap properties;
+	Bundle definingBundle = null;
 
 	public Product(String id, IConfigurationElement element) {
 		this.id = id;
@@ -46,6 +49,11 @@ public class Product implements IProduct {
 			if (key != null && value != null)
 				properties.put(key, value);
 		}
+		definingBundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+	}
+
+	public Bundle getDefiningBundle() {
+		return definingBundle;
 	}
 
 	public String getApplication() {
