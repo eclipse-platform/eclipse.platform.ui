@@ -70,7 +70,7 @@ run multiple applications.
 &lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.boot.IPlatformRunnable"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.IPlatformRunnable"/>
                </appInfo>
             </annotation>
          </attribute>
