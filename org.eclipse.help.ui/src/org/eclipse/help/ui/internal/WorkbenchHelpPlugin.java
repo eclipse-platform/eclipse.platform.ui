@@ -44,26 +44,32 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		// stop the web app
 		AppServer.remove("help", "org.eclipse.help.webapp");
 		BrowserManager.getInstance().closeAll();
-		PlatformUI
-			.getWorkbench()
-			.getWorkingSetManager()
-			.removePropertyChangeListener(
-			workingSetListener);
-		HelpSystem.getWorkingSetManager().removePropertyChangeListener(workingSetListener);
+		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
+			PlatformUI
+				.getWorkbench()
+				.getWorkingSetManager()
+				.removePropertyChangeListener(
+				workingSetListener);
+			HelpSystem.getWorkingSetManager().removePropertyChangeListener(
+				workingSetListener);
+		}
 		super.shutdown();
 	}
 	/**
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
-		// register the working set listener to keep the ui and the help working sets in sych
-		workingSetListener = new HelpWorkingSetSynchronizer();
-		PlatformUI
-			.getWorkbench()
-			.getWorkingSetManager()
-			.addPropertyChangeListener(
-			workingSetListener);
-		HelpSystem.getWorkingSetManager().addPropertyChangeListener(workingSetListener);
+		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
+			// register the working set listener to keep the ui and the help working sets in sych
+			workingSetListener = new HelpWorkingSetSynchronizer();
+			PlatformUI
+				.getWorkbench()
+				.getWorkingSetManager()
+				.addPropertyChangeListener(
+				workingSetListener);
+			HelpSystem.getWorkingSetManager().addPropertyChangeListener(
+				workingSetListener);
+		}
 	}
 
 	public IBrowser getHelpBrowser() {
@@ -71,7 +77,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 			browser = BrowserManager.getInstance().createBrowser();
 		return browser;
 	}
-	
+
 	public HelpWorkingSetSynchronizer getWorkingSetSynchronizer() {
 		return workingSetListener;
 	}
