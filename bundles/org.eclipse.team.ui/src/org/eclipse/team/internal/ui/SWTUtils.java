@@ -37,7 +37,7 @@ public class SWTUtils {
 	}
 	
 	public static PreferenceLinkArea createPreferenceLink(IWorkbenchPreferenceContainer container, Composite parent, String pageId, String text, int span) {
-		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.BORDER, pageId, text, container, null);
+		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.NONE, pageId, text, container, null);
 		area.getControl().setLayoutData(createHFillGridData(span));
 		return area;
 	}
