@@ -6,20 +6,9 @@ package org.eclipse.update.core;
  
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.model.ContentEntryModel;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.InstallHandlerProxy;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of a packaged feature.

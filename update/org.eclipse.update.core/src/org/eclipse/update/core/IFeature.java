@@ -4,186 +4,141 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
- 
- /**
-  * Features define the packaging structure for a group 
-  * of related plug-ins, plug-in fragments, and optionally 
-  * non-plug-in files. 
-  * 
-  * <p>
-  * Features are treated purely as an installation and packaging construct. 
-  * They do not play a role during Eclipse plug-in execution. Features do not nest.
-  * They are simply an inclusive "manifest" of the plug-ins, fragments 
-  * and other files that make up that feature. If features are logically made 
-  * up of plug-ins from "sub-features", the top-level feature "manifest"
-  * must be fully resolved at packaging time.
-  * </p>
-  * 
-  */
- 
+
+/**
+ * Feature defines the packaging "container" for a group of related plug-ins,
+ * plug-in fragments, and optionally non-plug-in files. 
+ * <p>
+ * Features are treated purely as an installation and packaging construct. 
+ * They do not play a role during Eclipse plug-in execution. Features do not nest.
+ * They are simply an inclusive "manifest" of the plug-ins, fragments 
+ * and other files that make up that feature. If features are logically made 
+ * up of plug-ins from "sub-features", the top-level feature "manifest"
+ * must be fully resolved at packaging time.
+ * </p>
+ * <p>
+ * Clients may implement this interface. However, in most cases clients should 
+ * directly instantiate or subclass the provided implementation of this 
+ * interface.
+ * </p>
+ * @see org.eclipse.update.core.Feature
+ * @since 2.0
+ */
 public interface IFeature {
 
-
 	/**
-	 * Returns the Identifier of this DefaultFeature.
-	 * The Identifier is not intended to be the key of the DefaultFeature.
-	 * the URL is the key of the feature.
-	 * @return the Identifier of this feature.
-	 * @see VersionedIdentifier
+	 * Returns the feature identifier.
+	 * 
+	 * @return the feature identifier.
 	 * @since 2.0 
 	 */
-
 	VersionedIdentifier getVersionedIdentifier();
-	
+
 	/**
-	 * Returns the Site this DefaultFeature belongs to.
-	 * The site may be <code>null</code>.
-	 * @return the site of this feature
+	 * Returns the site this feature is associated with.
+	 * 
+	 * @return the site for this feature
 	 * @since 2.0 
 	 */
-
 	ISite getSite();
-	
+
 	/**
-	 * Sets the Site this DefaultFeature belongs to.
-	 * @throws CoreException if the site is already set for this feature
+	 * Sets the site for this feature.
+	 * 
+	 * @param site the site
+	 * @throws CoreException site for this feature is already set
 	 * @since 2.0 
 	 */
+	void setSite(ISite site) throws CoreException;
 
-	void setSite(ISite site) throws CoreException;	
-	
 	/**
-	 * Returns the label of the feature.
-	 * The label is declared in the <code>feature.xml</code> file.
-	 * @return the label of the feature
+	 * Returns the displayable label of the feature.
+	 * 
+	 * @return feature label
 	 * @since 2.0 
 	 */
-
 	String getLabel();
-	
+
 	/**
-	 * Returns the URL that points at the DefaultFeature.
-	 * This URL is the unique identifier of the feature
-	 * within the site.
+	 * Returns the feature URL.
+	 * This is the URL that was used to create the feature. The interpretation
+	 * of the URL is dependent on the concrete feature implementation.  * 
 	 * 
-	 * The URL is declared in the <code>feature.xml</code> file.	
-	 * The URL can be relative to the <codesite.xml</code> or absolute.
-	 * The DefaultFeature knows how to decipher the URL.
-	 * 
-	 * @return the URL identifying feature in the Site.
+	 * @see IFeatureFactory#createFeature(URL, ISite)
+	 * @return feature URL
 	 * @since 2.0 
 	 */
-
 	URL getURL();
-	
+
 	/**
-	 * Returns the Update Information about the DefaultFeature.
-	 * The URLEntry is usually a URL of a Site in which user 
-	 * can find new version of the feature.
+	 * Returns an information entry referencing the location of the
+	 * feature update site. The update site can be accessed to obtain
+	 * feature updates for this feature.
 	 * 
-	 * The Update Information is composed of a URL and short label
-	 * for this URL.
-	 * 
-	 * The URL is declared in the <code>feature.xml</code> file.
-	 * 
-	 * @see IURLEntry
-	 * @return the IURLEntry that contains Update Information about this feature
+	 * @return update site entry
 	 * @since 2.0 
 	 */
+	IURLEntry getUpdateSiteEntry();
 
-	IURLEntry getUpdateSiteEntry() ;
-	
 	/**
-	 * Return an array of info where the user can find other features
-	 * related to this features.
+	 * Return an array of information entries referencing locations of other
+	 * update sites. This mechanism can be used by features to distribute
+	 * location information about general update sites to clients.
 	 * 
-	 * Each Discovery Information is composed of a URL and short label
-	 * for this URL.
-	 * 
-	 * The URLs are declared in the <code>feature.xml</code> file.
-	 *  
-	 * @see IURLEntry
-	 * @return a Array of discovery info.Returns an empty array
-	 * if there are no discovey info.
+	 * @return an array of site entries, or an empty array.
 	 * @since 2.0 
 	 */
+	IURLEntry[] getDiscoverySiteEntries();
 
-	IURLEntry [] getDiscoverySiteEntries() ;
-	
 	/**
-	 * Returns the provider of the feature
-	 * @return the provider of the feature
+	 * Returns a displayable label identifying the provider of this feature
+	 * 
+	 * @return provider label
 	 * @since 2.0 
 	 */
+	String getProvider();
 
-	String getProvider() ;
-	
 	/**
-	 * Returns feature install handler entry.
+	 * Returns and optional custom install handler entry.
+	 * 
 	 * @return install handler entry, or <code>null</code> if
 	 * none was specified
+	 * @since 2.0
 	 */
 	IInstallHandlerEntry getInstallHandlerEntry();
-	
+
 	/**
-	 * Returns the description of the DefaultFeature.
-	 * The description can be a short text and/or a
-	 * URL pointing to a file.
+	 * Returns the feature description.
 	 * 
-	 * The URL can be absolute or relative to the 
-	 * <code> feature.xml. </code>
-	 * 
-	 * The description is declared in the <code>feature.xml</code> file.
-	 * 
-	 * @see IURLEntry
-	 * @return the description of this feature
+	 * @return feature rescription
 	 * @since 2.0 
 	 */
+	IURLEntry getDescription();
 
-	IURLEntry getDescription() ;
-	
 	/**
-	 * Returns the copyright of the DefaultFeature.
-	 * The copyright can be a short text and/or a
-	 * URL pointing to a file.
+	 * Returns the copyright information for the feature.
 	 * 
-	 * The URL can be absolute or relative to the 
-	 * <code> feature.xml. </code>
-	 * 
-	 * The copyright is declared in the <code>feature.xml</code> file.
-	 * 
-	 * @see IURLEntry
-	 * @return the copyright of this feature
+	 * @return copyright information
 	 * @since 2.0 
 	 */
+	IURLEntry getCopyright();
 
-	IURLEntry getCopyright() ;
-	
 	/**
-	 * Returns the license of the DefaultFeature.
-	 * The license can be a short text and/or a
-	 * URL pointing to a file.
+	 * Returns the license information for the feature.
 	 * 
-	 * The URL can be absolute or relative to the 
-	 * <code> feature.xml. </code>
-	 * 
-	 * The license is declared in the <code>feature.xml</code> file.
-	 * 
-	 * @see IURLEntry
-	 * @return the license of this feature
+	 * @return feature license
 	 * @since 2.0 
 	 */
+	IURLEntry getLicense();
 
-	IURLEntry getLicense() ;
-	
 	/**
 	 * Optional operating system specification.
-	 * A comma-separated list of os designators defined by Eclipse.
+	 * A comma-separated list of os designators defined by the platform.
 	 * Indicates this feature should only be installed on one of the specified
 	 * os systems. If this attribute is not specified, the feature can be
 	 * installed on all systems (portable implementation).
@@ -192,29 +147,43 @@ public interface IFeature {
 	 * support (user can force installation of feature regardless of this setting).
 	 *
 	 * @see org.eclipse.core.boot.BootLoader 
-	 * @return the operating system specification.
+	 * @return the operating system specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
+	String getOS();
 
-	String getOS()  ;
-	
 	/**
 	 * Optional windowing system specification. 
-	 * A comma-separated list of ws designators defined by Eclipse.
-	 *  Indicates this feature should only be installed on one of the specified
-	 *  ws systems. If this attribute is not specified, the feature can be
-	 *  installed on all systems (portable implementation).
+	 * A comma-separated list of ws designators defined by the platform.
+	 * Indicates this feature should only be installed on one of the specified
+	 * ws systems. If this attribute is not specified, the feature can be
+	 * installed on all systems (portable implementation).
 	 * 
 	 * This information is used as a hint by the installation and update
 	 * support (user can force installation of feature regardless of this setting).
 	 * 
 	 * @see org.eclipse.core.boot.BootLoader 
-	 * @return the windowing system specification.
+	 * @return the windowing system specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
+	String getWS();
 
-	String getWS()  ;
-	
+	/**
+	 * Optional system architecture specification. 
+	 * A comma-separated list of arch designators defined by the platform.
+	 * Indicates this feature should only be installed on one of the specified
+	 * systems. If this attribute is not specified, the feature can be
+	 * installed on all systems (portable implementation).
+	 * 
+	 * This information is used as a hint by the installation and update
+	 * support (user can force installation of feature regardless of this setting).
+	 * 
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @return system architecture specification, or <code>null</code>.
+	 * @since 2.0 
+	 */
+	String getArch();
+
 	/**
 	 * Optional locale specification. 
 	 * A comma-separated list of locale designators defined by Java.
@@ -226,133 +195,156 @@ public interface IFeature {
 	 * This information is used as a hint by the installation and update
 	 *  support (user can force installation of feature regardless of this setting).
 	 * 
-	 * @return the locale specification.
+	 * @return the locale specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
+	String getNL();
 
-	String getNL() ;
-	
 	/**
-	 * optional image to use when displaying information about the feature.
+	 * Return optional image for the feature.
 	 * 
-	 * The URL is either absolute or relative to the <code>feature.xml</code> file.
-	 * 
-	 * @return the URL pointing to the image
+	 * @return the URL pointing to the image, , or <code>null</code>.
 	 * @since 2.0 
 	 */
+	URL getImage();
 
-	URL getImage() ;
-	
 	/**
-	 * List of plugin the feature require
-	 * to be installed in the site before it
-	 * can be installed
+	 * Return a list of plug-in dependencies for this feature. A plug-in
+	 * dependency is a reference to a plug-in required for feature execution
+	 * that is not packaged as part of the feature.
 	 * 
-	 * @return the list of required plug-ins. Returns an empty array
-	 * if there are no required.
+	 * @return the list of required plug-in dependencies, or an empty array.
 	 * @since 2.0 
 	 */
-
 	IImport[] getImports();
-	
-		
-	
+
 	/**
-	 * Install this feature into the targetFeature
-	 * @param targetFeature the feature to install into
-	 * @param verifier
+	 * Install the contents of this feature into the specified target feature.
+	 * 
+	 * @param targetFeature
+	 * @param verificationListener
 	 * @param monitor
 	 * @throws CoreException
+	 * @since 2.0
 	 */
-	public IFeatureReference install(IFeature targetFeature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException;
+	public IFeatureReference install(
+		IFeature targetFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException;
 
 	/**
-	 * Returns an array of plug-ins managed by the Feature
+	 * Returns an array of plug-in entries referenced by this feature
 	 * 
-	 * @return the accessible plug-ins. Returns an empty array
-	 * if there are no plug-ins.
+	 * @return an erray of plug-in entries, or an empty array.
+	 * @since 2.0
 	 */
+	IPluginEntry[] getPluginEntries();
 
-	IPluginEntry [] getPluginEntries()  ;
+	/**
+	 * Returns the count of referenced plug-in entries.
+	 * 
+	 * @return plug-in entry count
+	 * @since 2.0
+	 */
+	int getPluginEntryCount();
 	
 	/**
-	 * Returns the number of managed plug-ins
-	 * @return the number of plug-ins
-	 */
-
-	int getPluginEntryCount() ;
-
-	/**
-	 * Returns an array of archives identifier that compose the feature.
+	 * Returns an array of non-plug-in entries referenced by this feature
 	 * 
-	 * @return 
-	 * @since 2.0 
+	 * @return an erray of non-plug-in entries, or an empty array.
+	 * @since 2.0
 	 */
 	INonPluginEntry[] getNonPluginEntries();
-	
+
 	/**
-	 * Returns the number of non plugin entries
-	 * @return the number of plug-ins
+	 * Returns the count of referenced non-plug-in entries.
+	 * 
+	 * @return non-plug-in entry count
+	 * @since 2.0
 	 */
+	int getNonPluginEntryCount();
 
-	int getNonPluginEntryCount() ;
-
-	
 	/**
-	 * Download Size of the feature in Kilo-Bytes
-	 * @return the size of the archive to be downloaded
+	 * Returns the download size of the feature, if it can be determined.
+	 * 
+	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
+	 * @return download size of the feature in KiloBytes, or an indication 
+	 * the size could not be determined
 	 * @since 2.0 
 	 */
-
 	long getDownloadSize();
-	
+
 	/**
-	 * Install Size of the feature in KiloBytes
-	 * @return the size of the plug-in when installed
+	 * Returns the install size of the feature, if it can be determined.
+	 * 
+	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
+	 * @return install size of the feature in KiloBytes, or an indication 
+	 * the size could not be determined
 	 * @since 2.0 
 	 */
-
 	long getInstallSize();
-	
-	/**
-	 * Indicates whether the feature can be used as a primary feature
-     * @since 2.0 
-	 */
 
+	/**
+	 * Indicates whether the feature can be used as a primary feature.
+	 * 
+	 * @return <code>true</code> if this is a primary feature, 
+	 * otherwise <code>false</code>
+	 * @since 2.0 
+	 */
 	boolean isPrimary();
-	
-	/**
-	 * optional identifier of the Eclipse application that is to be used during
-     * startup when the declaring feature is the primary feature.
-     *  The application identifier must represent a valid application registered
-     *  in the <code>org.eclipse.core.runtime.applications</code> extension point.
-     *  Default is <code>org.eclipse.ui.workbench</code>.
-     * @since 2.0 
-	 */
 
+	/**
+	 * Returns an optional identifier of an application to be used when
+	 * starting up the platform with this feature as the primary feature.
+	 * The application identifier must represent a valid application registered
+	 * in the <code>org.eclipse.core.runtime.applications</code> extension point.
+	 * 
+	 * @return application identifier, or <code>null</code>
+	 * @since 2.0 
+	 */
 	String getApplication();
-	
+
 	/**
-	 * Sets the IFeatureContentProvider for this feature
+	 * Returns the content provider for this feature. A content provider
+	 * is an abstraction of each feature internal packaging structure.
+	 * It allows the feature content to be accessed in a standard way
+	 * regardless of the internal packaging. All concrete features
+	 * need to be able to return a content provider.
+	 * 
+	 * @return feature content provider
+	 * @exception CoreExcepton
 	 * @since 2.0
 	 */
-	void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
-	
+	IFeatureContentProvider getFeatureContentProvider() throws CoreException;
+
 	/**
-	 * Returns the IFeatureContentProvider for this feature
-	 * @throws CoreExcepton if the content provider is <code>null</code>
-	 * @since 2.0
-	 */
-	IFeatureContentProvider getFeatureContentProvider() throws CoreException;	
-	
-	
-	/**
-	 *Returns the IFeatureContentConsumer for this feature
-	 * @throws CoreException when the DefaultFeature does not allow storage.
+	 * Returns the content consumer for this feature. A content consumer
+	 * is an abstraction of each feature internal packaging mechanism.
+	 * It allows content to be stored into a feature in a standard way
+	 * regardless of the packaging mechanism used. Only concrete features
+	 * that support storing need to implement a content consumer. The platform
+	 * implements at least one feature type supporting content consumer.
+	 * This is the feature type representing a locally-installed
+	 * feature.
+	 * 
+	 * @return feature content consumer
+	 * @exception CoreException
+	 * @exception UnsupportedOperationException
 	 * @since 2.0
 	 */
 	IFeatureContentConsumer getFeatureContentConsumer() throws CoreException;
-		
+	
+
+	/**
+	 * Sets the content provider for this feature. This is typically
+	 * performed as part of the feature creation operation. Once set, the provider
+	 * should not be reset.
+	 * 
+	 * @see IFeatureFactory#createFeature(URL, ISite)
+	 * @param featureContentProvider content provider
+	 * @since 2.0
+	 */
+	void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
+
 }
-
-

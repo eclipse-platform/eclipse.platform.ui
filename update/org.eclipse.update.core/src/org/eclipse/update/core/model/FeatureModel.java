@@ -146,6 +146,14 @@ public class FeatureModel extends ModelObject {
 	}
 
 	/**
+	 * Gets the arch.
+	 * @return Returns a String
+	 */
+	public String getArch() {
+		return arch;
+	}
+
+	/**
 	 * @since 2.0
 	 */
 	public String getNL() {
@@ -307,14 +315,6 @@ public class FeatureModel extends ModelObject {
 	public void setNL(String nl) {
 		assertIsWriteable();
 		this.nl = nl;
-	}
-
-	/**
-	 * Gets the arch.
-	 * @return Returns a String
-	 */
-	public String getArch() {
-		return arch;
 	}
 
 
