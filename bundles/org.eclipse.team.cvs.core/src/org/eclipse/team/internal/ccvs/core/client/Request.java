@@ -109,6 +109,7 @@ public abstract class Request {
 		// move some rather than remaining still and then jumping to 100).
 		final int TOTAL_WORK = 300;
 		monitor.beginTask(Policy.bind("Command.receivingResponses"), TOTAL_WORK); //$NON-NLS-1$
+        monitor.subTask(Policy.bind("Command.receivingResponses")); //$NON-NLS-1$
 		int halfWay = TOTAL_WORK / 2;
 		int currentIncrement = 4;
 		int nextProgress = currentIncrement;
