@@ -168,7 +168,7 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
 			ArrayList resources = (ArrayList)additions.get(project);
-			handleAdded((IResource[])resources.toArray(new IResource[additions.size()]));		
+			handleAdded((IResource[])resources.toArray(new IResource[resources.size()]));		
 		}			
 	}
 
@@ -186,7 +186,7 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
 			ArrayList resources = (ArrayList)changes.get(project);
-			handleChanged((IResource[])resources.toArray(new IResource[changes.size()]));
+			handleChanged((IResource[])resources.toArray(new IResource[resources.size()]));
 		}			
 	}
 
@@ -203,7 +203,7 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
 			ArrayList resources = (ArrayList)removals.get(project);
-			handleRemoved((IResource[])resources.toArray(new IResource[removals.size()]));
+			handleRemoved((IResource[])resources.toArray(new IResource[resources.size()]));
 		}
 	}
 	
