@@ -24,6 +24,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -243,6 +245,7 @@ public class CyclePartAction extends PageEventAction {
 			addMouseListener(table, dialog);
             workbench.disableKeyFilter();
 			addKeyListener(table, dialog);
+			addTraverseListener(table);
 			
 			while (!dialog.isDisposed())
 				if (!display.readAndDispatch())
@@ -384,6 +387,23 @@ public class CyclePartAction extends PageEventAction {
 				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
 				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
 					ok(dialog, table);
+			}
+		});
+	}
+	
+	/**
+	 * Adds a listener to the given table that blocks all traversal operations.
+	 * @param table The table to which the traversal suppression should be 
+	 * added; must not be <code>null</code>.
+	 */
+	private final void addTraverseListener(final Table table) {
+		table.addTraverseListener(new TraverseListener() {
+			/**
+			 * Blocks all key traversal events.
+			 * @param event The trigger event; must not be <code>null</code>.
+			 */
+			public final void keyTraversed(final TraverseEvent event) {
+				event.doit = false;
 			}
 		});
 	}
