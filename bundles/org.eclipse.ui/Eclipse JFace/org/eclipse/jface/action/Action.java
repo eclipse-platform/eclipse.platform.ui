@@ -4,23 +4,13 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.ActionDefinition;
-import org.eclipse.ui.internal.registry.ActionDefinitionRegistry;
 
 
 /**
@@ -39,6 +29,14 @@ public abstract class Action implements IAction {
 	 * @see #findKeyCode
 	 */
 	private static Map keyCodes = null;
+	/**
+	 * Table of string representations of keys
+	 * (key type: <code>Integer</code>,
+	 * value type: <code>String</code>); <code>null</code>>
+	 * if not yet initialized.
+	 * @see #findKeyString
+	 */
+	private static Map keyStrings = null;
 
 	/**
 	 * List of registered listeners (element type: <code>IPropertyChangeListener</code>).
@@ -149,9 +147,9 @@ public void addPropertyChangeListener(IPropertyChangeListener listener) {
  * Parses the given accelerator text, and converts it to an accelerator key code.
  *
  * @param acceleratorText the accelerator text
- * @result the SWT key code, or 0 if there is no accelerator
+ * @return the SWT key code, or 0 if there is no accelerator
  */
-private int convertAccelerator(String acceleratorText) {
+public static int convertAccelerator(String acceleratorText) {
 	int accelerator = 0;
 	StringTokenizer stok = new StringTokenizer(acceleratorText, "+");    //$NON-NLS-1$
 
@@ -178,6 +176,47 @@ private int convertAccelerator(String acceleratorText) {
 		accelerator |= keyCode;
 	}
 	return accelerator;
+}
+/**
+ * Converts an accelerator key code to a string representation.
+ * 
+ * @param keyCode the key code to be translated
+ * @return a string representation of the key code
+ */
+public static String convertAccelerator(int keyCode) {
+	String modifier = getModifierString(keyCode);
+	String fullKey;
+	if(modifier.equals("")) {
+		fullKey = findKeyString(keyCode);
+	} else {
+		fullKey = modifier + "+" + findKeyString(keyCode);	
+	}
+	return fullKey;
+}
+/*
+ * Returns the string representation of the modifiers (Ctrl, Alt, Shift)
+ * of the key event.
+ */
+private static String getModifierString(int keyCode) {
+	String modString = "";
+	if((keyCode & SWT.CTRL) != 0) {
+		modString = findModifierString(keyCode & SWT.CTRL);
+	}
+	if((keyCode & SWT.ALT) != 0) {
+		if(modString.equals("")) {
+			modString = findModifierString(keyCode & SWT.ALT);					
+		} else {
+			modString = modString+"+"+findModifierString(keyCode & SWT.ALT);
+		}
+	}
+	if((keyCode & SWT.SHIFT) != 0) {
+		if(modString.equals("")) {
+			modString = findModifierString(keyCode & SWT.SHIFT);					
+		} else {
+			modString = modString+"+"+findModifierString(keyCode & SWT.SHIFT);
+		}
+	}
+	return modString;	
 }
 /**
  * Extracts the accelerator text from the given text.
@@ -236,6 +275,28 @@ public static int findKeyCode(String token) {
 	return -1;
 }
 /**
+ * Maps an SWT key code to a standard keyboard key name. The key code is
+ * stripped of modifiers (SWT.CTRL, SWT.ALT, and SWT.SHIFT). If the key code is
+ * not an SWT code (for example if it a key code for the key 'S'), a string
+ * containing a character representation of the key code is returned.
+ * 
+ * @param keyCode the key code to be translated
+ * @return the string representation of the key code
+ * @see org.eclipse.swt.SWT
+ * @since 2.0
+ */
+public static String findKeyString(int keyCode) {
+	if (keyStrings == null)
+		initKeyStrings();
+	int i = keyCode & ~(SWT.CTRL|SWT.ALT|SWT.SHIFT);
+	Integer integer = new Integer(i);
+	String result = (String)keyStrings.get(integer);
+	if(result != null)
+		return result;
+	result = new String(new char[] {(char) i});
+	return result;
+}
+/**
  * Maps standard keyboard modifier key names to the corresponding 
  * SWT modifier bit. The following modifier key names are recognized 
  * (case is ignored): <code>"CTRL"</code>, <code>"SHIFT"</code>, and
@@ -255,6 +316,25 @@ public static int findModifier(String token) {
 	if (token.equals("ALT"))//$NON-NLS-1$
 		return SWT.ALT;
 	return 0;
+}
+/**
+ * Returns a string representation of an SWT modifier bit (SWT.CTRL,
+ * SWT.ALT, and SWT.SHIFT). Returns <code>null</code> if the key code 
+ * is not an SWT modifier bit.
+ * 
+ * @param keyCode the SWT modifier bit to be translated
+ * @return the string representation of the SWT modifier bit, or <code>null</code> if the key code was not an SWT modifier bit
+ * @see org.eclopse.swt.SWT
+ * @since 2.0
+ */
+public static String findModifierString(int keyCode) {
+	if(keyCode == SWT.CTRL)
+		return JFaceResources.getString("Ctrl");
+	if(keyCode == SWT.ALT)
+		return JFaceResources.getString("Alt");
+	if(keyCode == SWT.SHIFT)
+		return JFaceResources.getString("Shift");
+	return null;	
 }
 /**
  * Notifies any property change listeners that a property has changed.
@@ -378,7 +458,6 @@ public String getToolTipText() {
  * Initializes the internal key code table.
  */
 private static void initKeyCodes() {
-	
 	keyCodes = new HashMap(40);
 
 	keyCodes.put("BACKSPACE", new Integer(8));//$NON-NLS-1$
@@ -411,6 +490,44 @@ private static void initKeyCodes() {
 	keyCodes.put("F10", new Integer(SWT.F10));//$NON-NLS-1$
 	keyCodes.put("F11", new Integer(SWT.F11));//$NON-NLS-1$
 	keyCodes.put("F12", new Integer(SWT.F12));//$NON-NLS-1$
+}
+/**
+ * Initializes the internal key string table.
+ */
+private static void initKeyStrings() {
+	keyStrings = new HashMap(40);
+	
+	keyStrings.put(new Integer(8), JFaceResources.getString("Backspace"));//$NON-NLS-1$
+	keyStrings.put(new Integer(9), JFaceResources.getString("Tab"));//$NON-NLS-1$
+	keyStrings.put(new Integer(13), JFaceResources.getString("Return"));//$NON-NLS-1$
+	keyStrings.put(new Integer(13), JFaceResources.getString("Enter"));//$NON-NLS-1$
+	keyStrings.put(new Integer(27), JFaceResources.getString("Escape"));//$NON-NLS-1$
+	keyStrings.put(new Integer(27), JFaceResources.getString("Esc"));//$NON-NLS-1$
+	keyStrings.put(new Integer(127), JFaceResources.getString("Delete"));//$NON-NLS-1$
+
+	keyStrings.put(new Integer(' '), JFaceResources.getString("Space"));//$NON-NLS-1$
+	
+	keyStrings.put(new Integer(SWT.ARROW_UP), JFaceResources.getString("Arrow_Up"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.ARROW_DOWN), JFaceResources.getString("Arrow_Down"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.ARROW_LEFT), JFaceResources.getString("Arrow_Left"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.ARROW_RIGHT), JFaceResources.getString("Arrow_Right"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.PAGE_UP), JFaceResources.getString("Page_Up"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.PAGE_DOWN), JFaceResources.getString("Page_Down"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.HOME), JFaceResources.getString("Home"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.END), JFaceResources.getString("End"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.INSERT), JFaceResources.getString("Insert"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F1), JFaceResources.getString("F1"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F2), JFaceResources.getString("F2"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F3), JFaceResources.getString("F3"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F4), JFaceResources.getString("F4"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F5), JFaceResources.getString("F5"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F6), JFaceResources.getString("F6"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F7), JFaceResources.getString("F7"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F8), JFaceResources.getString("F8"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F9), JFaceResources.getString("F9"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F10), JFaceResources.getString("F10"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F11), JFaceResources.getString("F11"));//$NON-NLS-1$
+	keyStrings.put(new Integer(SWT.F12), JFaceResources.getString("F12"));//$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IAction.

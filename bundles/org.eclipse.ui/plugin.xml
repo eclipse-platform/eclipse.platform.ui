@@ -413,7 +413,7 @@
                id="org.eclipse.edit.text.goto.line_end">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+X G"
                id="org.eclipse.edit.text.goto.line">
          </accelerator>
          <accelerator
@@ -649,7 +649,7 @@
                id="org.eclipse.edit.text.goto.line_end">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+L"
                id="org.eclipse.edit.text.goto.line">
          </accelerator>
          <accelerator

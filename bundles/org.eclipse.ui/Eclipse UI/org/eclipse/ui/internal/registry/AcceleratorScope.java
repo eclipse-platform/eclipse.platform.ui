@@ -5,13 +5,10 @@ package org.eclipse.ui.internal.registry;
  */
 import java.util.HashMap;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.KeyBindingService;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 
 /**
  * An accelerator scope is a range in which a given accelerator (a mapping
@@ -90,8 +87,10 @@ public class AcceleratorScope {
 	/**
 	 * Reset the current mode
 	 */
-	private static void resetMode() {
+	private static void resetMode(KeyBindingService service) {
 		currentMode = defaultMode;
+		if(getStatusLineManager(service)!=null)
+			getStatusLineManager(service).setMessage("");	
 	}
 	/**
 	 * Set the current mode and service
@@ -110,7 +109,7 @@ public class AcceleratorScope {
 		if(service == currentService)
 			return;
 		currentService = service;
-		resetMode();
+		resetMode(service);
 	}
 	/**
 	 * Initialize this scope with all accelerators defined in the default 
@@ -122,7 +121,7 @@ public class AcceleratorScope {
 		this.configuration = configuration;
 		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
 		defaultMode = new AcceleratorMode();
-		resetMode();
+		currentMode = defaultMode;
 		initializeAccelerators(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID,defaultMode,registry);
 		if(!IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID.equals(configuration.getId()))
 			initializeAccelerators(configuration.getId(),defaultMode,registry);
@@ -175,13 +174,14 @@ public class AcceleratorScope {
 	/*
 	 * Convert and event to an Integer.
 	 */
-	private Integer convertEvent(KeyEvent event) {
+	private static Integer convertEvent(KeyEvent event) {
 		//ISSUE: Must fix the number 64.
 		char upper = Character.toUpperCase(event.character);
     	if(((event.stateMask & SWT.CONTROL) != 0) && (event.keyCode == 0))
 			if (0 <= upper && upper <= 64) 
 				return new Integer(event.stateMask | upper + 64);
     	return new Integer(event.stateMask | event.keyCode | upper);
+    	
     }
     /**
      * Process a key event. Find a action associated with the event
@@ -199,11 +199,17 @@ public class AcceleratorScope {
 		if(a == null) {
 			if(currentMode == defaultMode)
 				return false;
-			resetMode();
+			resetMode(service);
 			return true;
 		}
 		a.run(service,e);
 		return true;
+	}
+	private static IStatusLineManager getStatusLineManager(KeyBindingService service) {
+		WorkbenchWindow window = (WorkbenchWindow)service.getWindow();
+		if (window != null)
+			return window.getActionBars().getStatusLineManager();
+		return null;
 	}
 	/**
 	 * Adapter for an IAction with a definition in XML.
@@ -221,7 +227,7 @@ public class AcceleratorScope {
 			if((a != null) && (a.isEnabled()))
 				a.run();
 				//a.runWithEvent(e);
-			resetMode();
+			resetMode(service);
 		}
 	}
 	/**
@@ -256,6 +262,8 @@ public class AcceleratorScope {
 	 * </p>
 	 */
 	public static class AcceleratorMode extends AcceleratorAction {	
+		private static String previousMessage = "";
+			
 		private HashMap acceleratorToAction = new HashMap();
 		
 		AcceleratorMode() {
@@ -265,7 +273,22 @@ public class AcceleratorScope {
 			return true;
 		}	
 		public void run(KeyBindingService service,KeyEvent e) {
+			setStatusLineMessage(service, e);
 			setCurrentMode(service,this);
+		}
+		/*
+		 * Displays the appropriate message for the current mode on the status
+		 * line.
+		 */
+		private void setStatusLineMessage(KeyBindingService service, KeyEvent e) {
+			String keyString = Action.convertAccelerator(convertEvent(e).intValue());
+			if(currentMode==defaultMode) {
+				getStatusLineManager(service).setMessage(keyString);
+				previousMessage = keyString;
+			} else {
+				getStatusLineManager(service).setMessage(previousMessage+" "+keyString);
+				previousMessage = previousMessage+" "+keyString;
+			}		
 		}
 		public AcceleratorAction getAction(Integer keyCode) {
 			return (AcceleratorAction)acceleratorToAction.get(keyCode);	
