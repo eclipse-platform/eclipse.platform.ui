@@ -63,8 +63,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	}
 
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 250;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH= 300;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 200;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH= 50;
 
 	// Providers for populating this dialog
 	private ILabelProvider fLabelProvider;
@@ -109,7 +109,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		composite.setData(data);
 	
 		int id= IDialogConstants.CLIENT_ID + 1;
-		fNewButton= createButton(buttonComposite, id++, "New...", false);
+		fNewButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialognewButton.label"), false); //$NON-NLS-1$
 		fNewButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				WorkingSetDialog dlg= new WorkingSetDialog(getShell());
@@ -121,7 +121,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 			}
 		});
 
-		fDetailsButton= createButton(buttonComposite, id++, "Details...", false);
+		fDetailsButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialogdetailsButton.label"), false); //$NON-NLS-1$
 		fDetailsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				WorkingSetDialog dlg= new WorkingSetDialog(getShell(), getWorkingSet());
@@ -130,7 +130,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 			}
 		});
 	
-		fRemoveButton= createButton(buttonComposite, id++, "Remove", false);
+		fRemoveButton= createButton(buttonComposite, id++, WorkingSetMessages.getString("WorkingSetSelectionDialogremoveButton.label"), false); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedWorkingSets();

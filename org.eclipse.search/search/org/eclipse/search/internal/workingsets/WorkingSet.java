@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
-import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
@@ -54,7 +53,7 @@ public class WorkingSet implements IWorkingSet {
 	Set fElements; // of IResources
 
 	WorkingSet(String name, Object[] elements) {
-		Assert.isNotNull(name, "name must not be null");
+		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		fName= name;
 		setResources(elements, true);
 	}
@@ -64,11 +63,11 @@ public class WorkingSet implements IWorkingSet {
 	}
 
 	private void setResources(Object[] elements, boolean internal) {
-		Assert.isNotNull(elements, "IPath array must not be null");
+		Assert.isNotNull(elements, "IPath array must not be null"); //$NON-NLS-1$
 		fElements= new HashSet(elements.length);
 		for (int i= 0; i < elements.length; i++) {
 			Assert.isTrue(elements[i] instanceof IResource);
-			Assert.isTrue(!fElements.contains(elements[i]), "elements must only contain each element once");
+			Assert.isTrue(!fElements.contains(elements[i]), "elements must only contain each element once"); //$NON-NLS-1$
 			fElements.add(elements[i]);
 		}
 		if (!internal)
@@ -83,7 +82,7 @@ public class WorkingSet implements IWorkingSet {
 	}
 
 	void setName(String name) {
-		Assert.isNotNull(name, "name must not be null");
+		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		fName= name;
 		saveWorkingSets();
 	}
@@ -158,12 +157,12 @@ public class WorkingSet implements IWorkingSet {
 	 * The working set must not exist yet.
 	 */	
 	static void add(IWorkingSet workingSet) {
-		Assert.isTrue(!fgWorkingSets.contains(workingSet), "working set already registered");
+		Assert.isTrue(!fgWorkingSets.contains(workingSet), "working set already registered"); //$NON-NLS-1$
 		fgWorkingSets.add(workingSet);
 		saveWorkingSets();
 	}
 
-	// Persistency
+	//--- Persistency -----------------------------------------------
 
 	private static void restore() {
 		WorkingSetReader reader= null;
@@ -175,10 +174,10 @@ public class WorkingSet implements IWorkingSet {
 			reader= new WorkingSetReader(new BufferedInputStream(new FileInputStream(file)));
 			workingSets= reader.readXML();
 		} catch (IOException ex) {
-			String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+			String message= WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
 			ExceptionHandler.log(ex, message);
 		} catch (SAXException ex) {
-			String message= SearchMessages.getFormattedString("WorkingSet.error.badXmlFormat", ex.getMessage()); //$NON-NLS-1$
+			String message= WorkingSetMessages.getFormattedString("WorkingSet.error.badXmlFormat", ex.getMessage()); //$NON-NLS-1$
 			ExceptionHandler.log(ex, message);
 		} finally {
 			try {
@@ -186,7 +185,7 @@ public class WorkingSet implements IWorkingSet {
 					reader.close();
 			}
 			catch (IOException ex) {
-				String message= SearchMessages.getFormattedString("WorkingSet.error.close", ex.getMessage()); //$NON-NLS-1$
+				String message= WorkingSetMessages.getFormattedString("WorkingSet.error.close", ex.getMessage()); //$NON-NLS-1$
 				ExceptionHandler.log(ex, message);
 			}
 		}
@@ -202,14 +201,14 @@ public class WorkingSet implements IWorkingSet {
 			writer= new WorkingSetWriter(new BufferedOutputStream(new FileOutputStream(file)));
 			writer.writeXML(SearchUI.getWorkingSets());
 		} catch (IOException ex) {
-			String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+			String message= WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
 			ExceptionHandler.log(ex, message);
 		} finally {
 			if (writer != null)
 				try {
 					writer.close();
 				} catch (IOException ex) {
-					String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+					String message= WorkingSetMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
 					ExceptionHandler.log(ex, message);
 				}
 		}

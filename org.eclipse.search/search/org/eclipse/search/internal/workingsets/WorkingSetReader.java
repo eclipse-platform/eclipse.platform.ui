@@ -34,7 +34,6 @@ import org.xml.sax.SAXException;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
-import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 /**
@@ -53,7 +52,7 @@ public class WorkingSetReader extends Object {
 	public WorkingSetReader(InputStream inputStream) {
 		Assert.isNotNull(inputStream);
 		fInputStream= new BufferedInputStream(inputStream);
-		fWarnings= new MultiStatus(SearchUI.PLUGIN_ID, 0, SearchMessages.getString("WorkingSetReader.warnings"), null); //$NON-NLS-1$
+		fWarnings= new MultiStatus(SearchUI.PLUGIN_ID, 0, WorkingSetMessages.getString("WorkingSetReader.warnings"), null); //$NON-NLS-1$
 	}
 
 	/**
@@ -86,7 +85,7 @@ public class WorkingSetReader extends Object {
 		}
 		Element xml= parser.parse(new InputSource(fInputStream)).getDocumentElement();
 		if (!xml.getNodeName().equals(WorkingSet.TAG_WORKINGSETS))
-			throw new IOException(SearchMessages.getString("WorkingSetReader.error.badFormat")); //$NON-NLS-1$
+			throw new IOException(WorkingSetMessages.getString("WorkingSetReader.error.badFormat")); //$NON-NLS-1$
 
 		NodeList topLevelElements= xml.getChildNodes();
 		Set workingSets= new HashSet(5);
@@ -97,33 +96,37 @@ public class WorkingSetReader extends Object {
 			Element element= (Element)node;
 			String workingSetName= element.getAttribute(WorkingSet.TAG_NAME);
 			Set resources= new HashSet(5);
-			if (element.getNodeName().equals(WorkingSet.TAG_WORKINGSET)) {
-				NodeList workingSetNode= element.getChildNodes();
-				for (int j= 0; j < workingSetNode.getLength(); j++) {
-					Node wsNodeNode= workingSetNode.item(j);
-					if (wsNodeNode.getNodeType() != Node.ELEMENT_NODE)
-						continue;
-					Element wsNodeElement= (Element)wsNodeNode;
-					if (wsNodeElement.getNodeName().equals(WorkingSet.TAG_CONTENTS)) {
-						NodeList contents= wsNodeElement.getChildNodes();
-						for (int k= 0; k < contents.getLength(); k++) {
-							Node selectedNode= contents.item(k);
-							if (selectedNode.getNodeType() != Node.ELEMENT_NODE)
-								continue;
-							Element selectedElement= (Element)selectedNode;
-							if (selectedElement.getNodeName().equals(WorkingSet.TAG_FILE))
-								addFile(resources, selectedElement);
-							else if (selectedElement.getNodeName().equals(WorkingSet.TAG_FOLDER))
-								addFolder(resources ,selectedElement);
-							else if (selectedElement.getNodeName().equals(WorkingSet.TAG_PROJECT))
-								addProject(resources ,selectedElement);
-						}
-					}
-				}
-			}
+			if (element.getNodeName().equals(WorkingSet.TAG_WORKINGSET))
+				readWorkingSetTag(resources, element.getChildNodes());
 			workingSets.add(new WorkingSet(workingSetName, resources.toArray()));
 		}
 		return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
+	}
+
+	private void readWorkingSetTag(Set resources, NodeList nodes) throws IOException {
+		for (int j= 0; j < nodes.getLength(); j++) {
+			Node node= nodes.item(j);
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			Element element= (Element)node;
+			if (element.getNodeName().equals(WorkingSet.TAG_CONTENTS))
+				readContentsTag(resources, element.getChildNodes());
+		}
+	}
+
+	private void readContentsTag(Set resources, NodeList contents) throws IOException {
+		for (int k= 0; k < contents.getLength(); k++) {
+			Node node= contents.item(k);
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			Element element= (Element)node;
+			if (element.getNodeName().equals(WorkingSet.TAG_FILE))
+				addFile(resources, element);
+			else if (element.getNodeName().equals(WorkingSet.TAG_FOLDER))
+				addFolder(resources ,element);
+			else if (element.getNodeName().equals(WorkingSet.TAG_PROJECT))
+				addProject(resources ,element);
+		}
 	}
 
 	private void addFile(Set selectedElements, Element element) throws IOException {
@@ -147,7 +150,7 @@ public class WorkingSetReader extends Object {
 	private void addProject(Set selectedElements, Element element) throws IOException {
 		String name= element.getAttribute(WorkingSet.TAG_NAME); //$NON-NLS-1$
 		if (name.equals("")) //$NON-NLS-1$
-			throw new IOException(SearchMessages.getString("WorkingSetReader.error.tagNameNotFound")); //$NON-NLS-1$
+			throw new IOException(WorkingSetMessages.getString("WorkingSetReader.error.tagNameNotFound")); //$NON-NLS-1$
 		IProject project= SearchPlugin.getWorkspace().getRoot().getProject(name);
 		if (project != null)
 			selectedElements.add(project);
@@ -156,7 +159,7 @@ public class WorkingSetReader extends Object {
 	private IPath getPath(Element element) throws IOException {
 		String pathString= element.getAttribute(WorkingSet.TAG_PATH);
 		if (pathString.equals("")) //$NON-NLS-1$
-			throw new IOException(SearchMessages.getString("WorkingSetReader.error.tagPathNotFound")); //$NON-NLS-1$
+			throw new IOException(WorkingSetMessages.getString("WorkingSetReader.error.tagPathNotFound")); //$NON-NLS-1$
 		return new Path(element.getAttribute(WorkingSet.TAG_PATH));
 	}
 	

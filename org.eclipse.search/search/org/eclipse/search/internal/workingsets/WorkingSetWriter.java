@@ -23,8 +23,6 @@ import org.w3c.dom.Element;
 
 import org.eclipse.search.ui.IWorkingSet;
 
-import org.eclipse.search.internal.ui.SearchMessages;
-
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
@@ -66,7 +64,7 @@ public class WorkingSetWriter extends Object {
  		try {   	
 	    	docBuilder= factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex) {
-			throw new IOException(SearchMessages.getString("WorkingSetWriter.error.couldNotGetXmlBuilder")); //$NON-NLS-1$
+			throw new IOException(WorkingSetMessages.getString("WorkingSetWriter.error.couldNotGetXmlBuilder")); //$NON-NLS-1$
  		}
 		Document document= docBuilder.newDocument();
 
