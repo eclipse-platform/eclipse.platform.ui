@@ -26,6 +26,7 @@ public class DecoratorDefinition {
 	private ILabelDecorator decorator;
 	private boolean adaptable;
 	private boolean enabled;
+	private boolean defaultEnabled;
 	private String id;
 	private IConfigurationElement element;
 
@@ -49,6 +50,7 @@ public class DecoratorDefinition {
 		this.element = configElement;
 		this.description = decoratorDescription;
 		this.enabled = initEnabled;
+		this.defaultEnabled = initEnabled;
 	}
 
 	/**
@@ -267,6 +269,14 @@ public class DecoratorDefinition {
 			handleCoreException(exception);
 			return false;
 		}
+	}
+	
+	/**
+	 * Return the default value for this type - this value
+	 * is the value read from the element description.
+	 */
+	public boolean getDefaultValue(){
+		return defaultEnabled;
 	}
 
 }

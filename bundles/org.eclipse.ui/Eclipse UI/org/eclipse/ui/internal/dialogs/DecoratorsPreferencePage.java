@@ -148,7 +148,11 @@ public class DecoratorsPreferencePage
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
-		checkboxViewer.setAllChecked(false);
+		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+		DecoratorDefinition[] definitions = manager.getDecoratorDefinitions();
+		for (int i = 0; i < definitions.length; i++) {
+			checkboxViewer.setChecked(definitions[i],definitions[i].getDefaultValue());
+		}
 	}
 
 	/**
