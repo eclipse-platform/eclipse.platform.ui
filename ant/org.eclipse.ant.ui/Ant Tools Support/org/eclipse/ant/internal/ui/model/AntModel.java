@@ -57,6 +57,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ISynchronizable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
@@ -166,7 +167,7 @@ public class AntModel implements IAntModel {
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#dispose()
 	 */
 	public void dispose() {		
-		synchronized (this) {
+		synchronized (getLockObject()) {
 			if (fDocument != null && fListener != null) {
 				fDocument.removeDocumentListener(fListener);
 			}
@@ -189,6 +190,13 @@ public class AntModel implements IAntModel {
 		}
 	}
 	
+	private Object getLockObject() {
+		if (fDocument instanceof ISynchronizable) {
+			return ((ISynchronizable)fDocument).getLockObject();
+		}
+		return this;
+	}
+
 	private void cleanup() {
         AntProjectNode projectNode= getProjectNode();
 		if (projectNode != null) {
@@ -209,7 +217,7 @@ public class AntModel implements IAntModel {
 			fIsDirty= false;
 		}
 
-		synchronized (this) {
+		synchronized (getLockObject()) {
 			if (fLocationProvider == null) {
 				// disposed
 				return;
@@ -1194,7 +1202,7 @@ public class AntModel implements IAntModel {
 	 */
 	public AntProjectNode getProjectNode(boolean doReconcile) {
 		if (doReconcile) {
-			synchronized (this) { //ensure to wait for any current synchronization
+			synchronized (getLockObject()) { //ensure to wait for any current synchronization
 				reconcile();
 			}
 		}
