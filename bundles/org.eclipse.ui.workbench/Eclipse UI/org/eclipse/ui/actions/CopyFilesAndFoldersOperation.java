@@ -718,6 +718,11 @@ public class CopyFilesAndFoldersOperation {
 					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
 					new Object[] {sourceResource.getName()});				
 			}
+			if (sourceResource.isLinked() == true && destination.getType() != IResource.PROJECT) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
+					new Object[] {sourceResource.getName()});				
+			}
 			if (sourcePath.equals(destinationPath)) {
 				return WorkbenchMessages.format(
 					"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
