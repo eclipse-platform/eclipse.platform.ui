@@ -372,6 +372,7 @@ protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
  * @see Window
  */
 public int open() {
+	ContextManager contextManager = ContextManager.getInstance();
 	int r = super.open();
 	workbench.fireWindowOpened(this);
 	return r;

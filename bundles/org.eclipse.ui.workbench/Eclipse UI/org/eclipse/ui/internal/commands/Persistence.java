@@ -25,6 +25,8 @@ final class Persistence {
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$
+	final static String TAG_CONTEXT = "context"; //$NON-NLS-1$
+	final static String TAG_CONTEXTS = "contexts"; //$NON-NLS-1$
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_GESTURE_BINDING = "gestureBinding"; //$NON-NLS-1$
 	final static String TAG_GESTURE_CONFIGURATION = "gestureConfiguration"; //$NON-NLS-1$
@@ -133,7 +135,35 @@ final class Persistence {
 			name = Util.ZERO_LENGTH_STRING;
 		
 		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
-		return Command.create(category, description, id, name, plugin);
+		List contexts = null;
+		IMemento[] contextsMementos = memento.getChildren(TAG_CONTEXTS);	
+
+		if (contextsMementos != null)
+			for (int i = 0; i < contextsMementos.length; i++) {
+				IMemento contextsMemento = contextsMementos[i];
+
+				if (contextsMemento != null) {
+					IMemento[] contextMementos = contextsMemento.getChildren(TAG_CONTEXT);
+					
+					if (contextMementos != null)	
+						for (int j = 0; j < contextMementos.length; j++) {
+							IMemento contextMemento = contextMementos[j];
+					
+							if (contextMemento != null) {
+								String value = contextMemento.getString(TAG_VALUE);
+	
+								if (value != null) {
+									if (contexts == null)				
+										contexts = new ArrayList();
+
+									contexts.add(value);
+								}
+							}								
+						}
+				}
+			}
+
+		return Command.create(category, description, id, name, plugin, contexts);
 	}
 
 	static List readCommands(IMemento memento, String name, String pluginOverride)
@@ -162,11 +192,6 @@ final class Persistence {
 		String command = memento.getString(TAG_COMMAND);
 		String configuration = memento.getString(TAG_CONFIGURATION);
 			
-		// TODO remove after 2.1 ships (BEGIN)
-		if (configuration == null)
-			configuration = memento.getString("keyConfiguration"); //$NON-NLS-1$
-		// TODO remove after 2.1 ships (END)
-
 		if (configuration == null)
 			configuration = Util.ZERO_LENGTH_STRING;
 
@@ -184,25 +209,7 @@ final class Persistence {
 				} catch (IllegalArgumentException eIllegalArgument) {					
 				}
 		}
-
-		// TODO remove after 2.1 ships (BEGIN)
-		if (sequence == null) {
-			mementoSequence = memento.getChild("keySequence"); //$NON-NLS-1$
-		
-			if (mementoSequence != null) 
-				sequence = readSequence(mementoSequence);	
-			else {
-				String string = memento.getString("keyString"); //$NON-NLS-1$
-			
-				if (string != null)			
-					try {			
-						sequence = KeySupport.parseSequence(string);
-					} catch (IllegalArgumentException eIllegalArgument) {					
-					}
-			}
-		}
-		// TODO remove after 2.1 ships (END)
-		
+	
 		if (sequence == null)
 			sequence = ZERO_LENGTH_SEQUENCE;
 
@@ -288,11 +295,6 @@ final class Persistence {
 			throw new IllegalArgumentException();
 			
 		IMemento[] mementos = memento.getChildren(TAG_STROKE);
-
-		// TODO remove after 2.1 ships (BEGIN)
-		if (mementos == null)
-			mementos = memento.getChildren("keyStroke"); //$NON-NLS-1$
-		// TODO remove after 2.1 ships (END)
 
 		if (mementos == null)
 			throw new IllegalArgumentException();

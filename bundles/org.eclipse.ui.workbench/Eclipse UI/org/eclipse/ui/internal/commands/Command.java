@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.commands;
 
 import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -25,9 +27,9 @@ public final class Command implements Comparable {
 
 	private static Comparator nameComparator;
 	
-	public static Command create(String category, String description, String id, String name, String plugin)
+	public static Command create(String category, String description, String id, String name, String plugin, List contexts)
 		throws IllegalArgumentException {
-		return new Command(category, description, id, name, plugin);
+		return new Command(category, description, id, name, plugin, contexts);
 	}
 
 	public static Comparator nameComparator() {
@@ -88,8 +90,9 @@ public final class Command implements Comparable {
 	private String id;
 	private String name;
 	private String plugin;
+	private List contexts;
 	
-	private Command(String category, String description, String id, String name, String plugin)
+	private Command(String category, String description, String id, String name, String plugin, List contexts)
 		throws IllegalArgumentException {
 		super();
 		
@@ -101,8 +104,17 @@ public final class Command implements Comparable {
 		this.id = id;
 		this.name = name;
 		this.plugin = plugin;
+		
+		if (contexts != null) {
+			this.contexts = Collections.unmodifiableList(new ArrayList(contexts));		
+			Iterator iterator = this.contexts.iterator();
+			
+			while (iterator.hasNext())
+				if (!(iterator.next() instanceof String))
+					throw new IllegalArgumentException();
+		}		
 	}
-	
+
 	public int compareTo(Object object) {
 		Command command = (Command) object;
 		int compareTo = Util.compare(category, command.category);
@@ -116,8 +128,12 @@ public final class Command implements Comparable {
 				if (compareTo == 0) {
 					compareTo = name.compareTo(command.name);
 						
-					if (compareTo == 0)
-						compareTo = Util.compare(plugin, command.plugin);				
+					if (compareTo == 0) {
+						compareTo = Util.compare(plugin, command.plugin);
+
+						if (compareTo == 0)
+							compareTo = Util.compare(contexts, command.contexts);
+					}				
 				}
 			}
 		}
@@ -130,7 +146,7 @@ public final class Command implements Comparable {
 			return false;
 
 		Command command = (Command) object;	
-		return Util.equals(category, command.category) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(plugin, command.plugin);
+		return Util.equals(category, command.category) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(plugin, command.plugin) && Util.equals(contexts, command.contexts);
 	}
 
 	public String getCategory() {
@@ -153,6 +169,10 @@ public final class Command implements Comparable {
 		return plugin;
 	}
 
+	public List getContexts() {
+		return contexts;
+	}
+
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + Util.hashCode(category);
@@ -160,6 +180,7 @@ public final class Command implements Comparable {
 		result = result * HASH_FACTOR + id.hashCode();
 		result = result * HASH_FACTOR + name.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
+		result = result * HASH_FACTOR + Util.hashCode(contexts);
 		return result;
 	}
 	
