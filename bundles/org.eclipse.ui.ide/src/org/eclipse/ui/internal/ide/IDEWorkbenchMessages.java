@@ -338,12 +338,6 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ICategory_other;
 
-	// ==============================================================================
-	// Wizards
-	// ==============================================================================
-	public static String NewWizardShortcutAction_errorTitle;
-	public static String NewWizardShortcutAction_errorMessage;
-
 	public static String WizardDataTransfer_existsQuestion;
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;
 	public static String WizardDataTransfer_exceptionMessage;
@@ -438,12 +432,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardExportPage_internalErrorTitle;
 	public static String WizardExportPage_resourceCountMessage;
 
-	public static String ZipExport_problemEncountered;
-	public static String ZipExport_progress;
-	public static String ZipExport_unableToOpen;
-	public static String ZipExport_unableToClose;
-	public static String ZipExport_errorOnResource;
-
 	// --- New Example ---
 	public static String NewExample_title;
 
@@ -511,9 +499,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_otherEncoding;
 	public static String WorkbenchPreference_unsupportedEncoding;
 
-	public static String WorkbenchPreference_encoding_BOM_UTF_8;
-	public static String WorkbenchPreference_encoding_BOM_UTF_16BE;
-	public static String WorkbenchPreference_encoding_BOM_UTF_16LE;
 	public static String WorkbenchPreference_encoding_encodingMessage;
 
 	// --- Linked Resources ---
@@ -605,8 +590,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_fileContentEncodingFormat;
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
-	public static String ResourceInfoPage_ResourceInfoMessage;
-
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
 
@@ -654,7 +637,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ContainerGenerator_pathOccupied;
 
 	public static String ResourceGroup_resource;
-	public static String ResourceGroup_containsSeperator;
 	public static String ResourceGroup_nameExists;
 	public static String ResourceGroup_folderEmpty;
 	public static String ResourceGroup_noProject;
