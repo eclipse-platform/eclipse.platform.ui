@@ -289,6 +289,16 @@ private static void initializeHelpSupport() {
 		}
 	});
 }
+
+/**
+ * Returns <code>true</code> if the context-sensitive help
+ * window is currently being displayed, <code>false</code> if not.
+ * This avoid activating the help support if it is not already activated.
+ */
+public static boolean isContextHelpDisplayed() {
+	return helpSupport != null && helpSupport.isContextHelpDisplayed();
+}
+
 /**
  * Sets the given help contexts on the given action.
  * <p>
