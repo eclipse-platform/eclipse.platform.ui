@@ -17,14 +17,20 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * Class for calculating scheduling rules for various resource operations.
  */
 class Rules {
-	private Rules() {
-	}
 	public static ISchedulingRule copyRule(IResource source, IResource destination) {
 		//source is not modified, destination is created
 		return parent(destination);
 	}
 	public static ISchedulingRule deleteRule(IResource resource) {
 		return parent(resource);
+	}
+	public static ISchedulingRule moveRule(IResource source, IResource destination) {
+		//move needs the parent of both source and destination
+		ISchedulingRule r1 = parent(source);
+		ISchedulingRule r2 = parent(destination);
+		if (r1.equals(r2))
+			return r1;
+		return new MultiRule(new ISchedulingRule[] {r1, r2});
 	}
 	private static ISchedulingRule parent(IResource resource) {
 		switch (resource.getType()) {
@@ -35,12 +41,12 @@ class Rules {
 				return resource.getParent();
 		}
 	}
-	public static ISchedulingRule moveRule(IResource source, IResource destination) {
-		//move needs the parent of both source and destination
-		ISchedulingRule r1 = parent(source);
-		ISchedulingRule r2 = parent(destination);
-		if (r1.equals(r2))
-			return r1;
-		return new MultiRule(new ISchedulingRule[] {r1, r2});
+	public static ISchedulingRule refreshRule(IResource resource) {
+		return parent(resource);
+	}
+	/**
+	 * Don't allow instantiation
+	 */
+	private Rules() {
 	}
 }

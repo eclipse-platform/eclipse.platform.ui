@@ -1149,7 +1149,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		String message = isRoot ? Policy.bind("resources.refreshingRoot") : Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
-		ISchedulingRule rule = (isRoot || getType() == PROJECT) ? (ISchedulingRule) this : getParent();
+		final ISchedulingRule rule = Rules.refreshRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			if (!isRoot && !getProject().isAccessible())
