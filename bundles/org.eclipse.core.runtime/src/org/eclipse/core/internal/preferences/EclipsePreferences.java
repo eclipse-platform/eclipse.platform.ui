@@ -314,7 +314,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public byte[] getByteArray(String key, byte[] defaultValue) {
 		String value = internalGet(key);
-		return value == null ? defaultValue : value.getBytes();
+		return value == null ? defaultValue : Base64.decode(value.getBytes());
 	}
 
 	/**
@@ -472,7 +472,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (properties == null)
 			properties = new Properties();
 		String oldValue = properties.getProperty(key);
-		properties.put(key, newValue);
+		properties.setProperty(key, newValue);
 		return oldValue;
 	}
 
@@ -743,12 +743,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#putByteArray(java.lang.String, byte[])
 	 */
 	public void putByteArray(String key, byte[] value) {
-		String newValue = new String(value);
+		String newValue = new String(Base64.encode(value));
 		String oldValue = internalPut(key, newValue);
-		// protect against NPE here. there is probably an easier way to do this
 		if (!newValue.equals(oldValue)) {
 			makeDirty();
-			preferenceChanged(key, oldValue == null ? null : oldValue.getBytes(), value);
+			preferenceChanged(key, oldValue == null ? null : Base64.decode(oldValue.getBytes()), value);
 		}
 	}
 

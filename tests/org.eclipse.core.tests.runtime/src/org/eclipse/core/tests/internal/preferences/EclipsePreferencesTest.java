@@ -95,9 +95,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(EclipsePreferencesTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new EclipsePreferencesTest("testLegacy"));
-		//		return suite;
+//				TestSuite suite = new TestSuite();
+//				suite.addTest(new EclipsePreferencesTest("testBytes"));
+//				return suite;
 	}
 
 	private String getUniqueString() {
@@ -294,11 +294,11 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	private byte[][] getByteValues() {
 		ArrayList result = new ArrayList();
 		result.add(new byte[0]);
-		//TODO		result.add(new byte[]{127});
-		//TODO		result.add(new byte[]{-128});
+		result.add(new byte[]{127});
+		result.add(new byte[]{-128});
 		result.add(new byte[]{0});
 		result.add(new byte[]{5});
-		//TODO		result.add(new byte[]{-23});
+		result.add(new byte[]{-23});
 		return (byte[][]) result.toArray(new byte[result.size()][]);
 	}
 
