@@ -412,25 +412,12 @@ public void xmlTest() {
 	Class aXML = load(a, xml, true, "1.1");
 	Class dXML = load(d, xml, true, "1.2");
 
-	if (!InternalPlatform.inVAJ()) {
-		// jdk mode
-		assertTrue("2.0", platformXML != aXML);
-		assertTrue("2.1", platformXML != dXML);
-		assertTrue("2.2", aXML != dXML);
-		assertTrue("2.3", platformXML.getClassLoader() == platformLoader);
-		assertTrue("2.4", aXML.getClassLoader() != a); // loaded by prereq com.ibm.xml loader
-		assertTrue("2.5", dXML.getClassLoader() == d);
-	} else {
-		// va mode
-		// in VA/Java there is realy only one class cache. All loaders return
-		// the same underlying class (even though it was defined multiple
-		// times. The class loader associated with the class is the last
-		// loader that did a defineClass(...) for this class (ie. the answer
-		// to getClassLoader() for a multiply-defined class changes 
-		// as the program executes).
-		assertTrue("3.0", platformXML == aXML);
-		assertTrue("3.1", platformXML == dXML);
-		assertTrue("3.2", aXML == dXML);
-	}
+	// jdk mode
+	assertTrue("2.0", platformXML != aXML);
+	assertTrue("2.1", platformXML != dXML);
+	assertTrue("2.2", aXML != dXML);
+	assertTrue("2.3", platformXML.getClassLoader() == platformLoader);
+	assertTrue("2.4", aXML.getClassLoader() != a); // loaded by prereq com.ibm.xml loader
+	assertTrue("2.5", dXML.getClassLoader() == d);
 }
 }
