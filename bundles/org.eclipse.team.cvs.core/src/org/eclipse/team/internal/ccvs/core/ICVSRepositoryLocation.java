@@ -65,8 +65,14 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress)  throws CVSException;
 	
 	/**
+	 * Returns a handle to a remote file at this repository location using the given tag as the
+	 * context. The corresponding remote file may not exist or may be a folder.
+	 */
+	public ICVSRemoteFile getRemoteFile(String remotePath, CVSTag tag);
+	
+	/**
 	 * Returns a handle to a remote folder at this repository location using the given tag as the
-	 * context. The corresponding remote folder may not exist.
+	 * context. The corresponding remote folder may not exist or may be a file.
 	 */
 	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag);
 	

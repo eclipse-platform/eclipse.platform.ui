@@ -18,6 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -32,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -42,8 +44,11 @@ import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 
 /**
@@ -250,6 +255,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag) {
 		return new RemoteFolder(null, this, new Path(remotePath), tag);		
+	}
+	
+	/*
+	 * @see ICVSRepositoryLocation#getRemoteFile(String, CVSTag)
+	 */
+	public ICVSRemoteFile getRemoteFile(String remotePath, CVSTag tag) {
+		IPath path = new Path(remotePath);
+		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, this, path.removeLastSegments(1), tag);
+		RemoteFile remoteFile = new RemoteFile(remoteFolder, Update.STATE_ADDED_LOCAL, path.lastSegment(), tag);
+		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });
+		return remoteFile;
 	}
 	
 	/*
