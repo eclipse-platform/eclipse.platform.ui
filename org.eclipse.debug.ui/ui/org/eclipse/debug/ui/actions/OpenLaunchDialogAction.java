@@ -13,6 +13,7 @@ package org.eclipse.debug.ui.actions;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Opens the launch configuration dialog in the context of a launch group.
@@ -52,7 +54,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 			setText(extension.getLabel() + "..."); //$NON-NLS-1$
 			setImageDescriptor(extension.getImageDescriptor());
 		}
-		// TODO: help context
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
 	}
 
 	/**
