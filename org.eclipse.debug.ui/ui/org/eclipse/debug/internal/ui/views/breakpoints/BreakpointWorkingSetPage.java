@@ -42,7 +42,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
@@ -241,22 +240,11 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 				}
 			}
 		}
-		if (errorMessage == null && !hasCheckedElement())
-			errorMessage= DebugUIViewsMessages.getString("BreakpointWorkingSetPage.7"); //$NON-NLS-1$
 
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 	}
-	
-	private boolean hasCheckedElement() {
-		TreeItem[] items= fTree.getTree().getItems();
-		for (int i= 0; i < items.length; i++) {
-			if (items[i].getChecked())
-				return true;
-		}
-		return false;
-	}
-	
+		
 	private void findCheckedElements(List checkedResources, Object parent) {
 		Object[] children= fTreeContentProvider.getChildren(parent);
 		for (int i= 0; i < children.length; i++) {
