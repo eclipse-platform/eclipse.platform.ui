@@ -341,8 +341,9 @@ public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);
  * The following codes (bit masks) are used when kind is <code>CHANGED</code>, and
  * also when the resource is involved in a move:
  * <ul>
- * <li><code>CONTENT</code> - The bytes contained by the resource have been altered.
- * 		This flag is only valid for file resources.</li>
+ * <li><code>CONTENT</code> - The bytes contained by the resource have 
+ * 		been altered, or <code>IResource.touch</code> has been called on 
+ * 		the resource.</li>
  * <li><code>DESCRIPTION</code> - The description of the project has been altered.
  * 		This flag is only valid for project resources.</li>
  * <li><code>OPEN</code> - The project's open/closed state has changed.
