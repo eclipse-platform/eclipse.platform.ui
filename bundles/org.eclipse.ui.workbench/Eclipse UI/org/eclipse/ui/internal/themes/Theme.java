@@ -25,8 +25,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -101,7 +101,7 @@ public class Theme implements ITheme {
     /**
      * Listener that is responsible for responding to preference changes.
      * 
-     * @return
+     * @return the property change listener
      */
     private IPropertyChangeListener getPropertyListener() {
         if (propertyListener == null) {
@@ -115,7 +115,7 @@ public class Theme implements ITheme {
                             Theme.this, event.getProperty());
                     String key = split[1];
                     String theme = split[0];
-                    if (key.equals(IPreferenceConstants.CURRENT_THEME_ID))
+                    if (key.equals(IWorkbenchPreferenceConstants.CURRENT_THEME_ID))
                         return;
                     try {
                         if (themeColorRegistry != null) { // we're using cascading registries
@@ -235,20 +235,20 @@ public class Theme implements ITheme {
     }
 
     public ColorRegistry getColorRegistry() {
-        if (themeColorRegistry != null)
-            return themeColorRegistry;
-        else
-            return WorkbenchThemeManager.getInstance()
-                    .getDefaultThemeColorRegistry();
-    }
+		if (themeColorRegistry != null)
+			return themeColorRegistry;
+
+		return WorkbenchThemeManager.getInstance()
+				.getDefaultThemeColorRegistry();
+	}
 
     public FontRegistry getFontRegistry() {
-        if (themeFontRegistry != null)
-            return themeFontRegistry;
-        else
-            return WorkbenchThemeManager.getInstance()
-                    .getDefaultThemeFontRegistry();
-    }
+		if (themeFontRegistry != null)
+			return themeFontRegistry;
+
+		return WorkbenchThemeManager.getInstance()
+				.getDefaultThemeFontRegistry();
+	}
 
     public void dispose() {
         if (themeColorRegistry != null) {

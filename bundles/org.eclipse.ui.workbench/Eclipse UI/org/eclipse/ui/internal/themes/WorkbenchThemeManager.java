@@ -22,8 +22,8 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -35,13 +35,46 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class WorkbenchThemeManager implements IThemeManager {
 
-    private IThemeRegistry themeRegistry;
-
     private static WorkbenchThemeManager instance;
+
+    /**
+     * Returns the singelton instance of the WorkbenchThemeManager
+     * 
+     * @return singleton instance
+     */
+    public static synchronized WorkbenchThemeManager getInstance() {
+        if (instance == null) {
+            instance = new WorkbenchThemeManager();
+            instance.getCurrentTheme(); //initialize the current theme
+        }
+        return instance;
+    }
+
+    private ITheme currentTheme;
+
+    private IPropertyChangeListener currentThemeListener = new IPropertyChangeListener() {
+
+        public void propertyChange(PropertyChangeEvent event) {
+            firePropertyChange(event);
+            if (event.getSource() instanceof FontRegistry) {
+                JFaceResources.getFontRegistry().put(event.getProperty(),
+                        (FontData[]) event.getNewValue());
+            } else if (event.getSource() instanceof ColorRegistry) {
+                JFaceResources.getColorRegistry().put(event.getProperty(),
+                        (RGB) event.getNewValue());
+            }
+        }
+    };
 
     private ColorRegistry defaultThemeColorRegistry;
 
     private FontRegistry defaultThemeFontRegistry;
+
+    private ListenerList propertyChangeListeners = new ListenerList();
+
+    private IThemeRegistry themeRegistry;
+
+    private Map themes = new HashMap(7);
 
     /*
      * Call dispose when we close
@@ -61,17 +94,11 @@ public class WorkbenchThemeManager implements IThemeManager {
         }
     }
 
-    /**
-     * Returns the singelton instance of the WorkbenchThemeManager
-     * 
-     * @return singleton instance
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IThemeManager#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
-    public static WorkbenchThemeManager getInstance() {
-        if (instance == null) {
-            instance = new WorkbenchThemeManager();
-            instance.getCurrentTheme(); //initialize the current theme
-        }
-        return instance;
+    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+        propertyChangeListeners.add(listener);
     }
 
     /**
@@ -86,56 +113,40 @@ public class WorkbenchThemeManager implements IThemeManager {
         themes.clear();
     }
 
-    /*
-     * Answer the IThemeRegistry for the Workbench 
+    private boolean doSetCurrentTheme(String id) {
+        ITheme oldTheme = currentTheme;
+        ITheme newTheme = getTheme(id);
+        if (oldTheme != newTheme && newTheme != null) {
+            currentTheme = newTheme;
+            return true;
+        }
+
+        return false;
+    }
+
+    protected void firePropertyChange(PropertyChangeEvent event) {
+        Object[] listeners = propertyChangeListeners.getListeners();
+
+        for (int i = 0; i < listeners.length; i++) {
+            ((IPropertyChangeListener) listeners[i]).propertyChange(event);
+        }
+    }
+
+    protected void firePropertyChange(String changeId, ITheme oldTheme,
+            ITheme newTheme) {
+
+        PropertyChangeEvent event = new PropertyChangeEvent(this, changeId,
+                oldTheme, newTheme);
+        firePropertyChange(event);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IThemeManager#getCurrentTheme()
      */
-    private IThemeRegistry getThemeRegistry() {
-        if (themeRegistry == null) {
-            themeRegistry = WorkbenchPlugin.getDefault().getThemeRegistry();
-        }
-        return themeRegistry;
-    }
-
-    // kims prototype
-    public ITheme getTheme(String id) {
-        if (id.equals(IThemeManager.DEFAULT_THEME))
-            return getTheme((IThemeDescriptor) null);
-
-        IThemeDescriptor td = getThemeRegistry().findTheme(id);
-        if (td == null)
-            return null;
-        return getTheme(td);
-    }
-
-    private ITheme getTheme(IThemeDescriptor td) {
-        ITheme theme = (ITheme) themes.get(td);
-        if (theme == null) {
-            theme = new Theme(td);
-            themes.put(td, theme);
-        }
-        return theme;
-    }
-
-    private IPropertyChangeListener currentThemeListener = new IPropertyChangeListener() {
-
-        public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event);
-            if (event.getSource() instanceof FontRegistry) {
-                JFaceResources.getFontRegistry().put(event.getProperty(),
-                        (FontData[]) event.getNewValue());
-            } else if (event.getSource() instanceof ColorRegistry) {
-                JFaceResources.getColorRegistry().put(event.getProperty(),
-                        (RGB) event.getNewValue());
-            }
-        }
-    };
-
-    private Map themes = new HashMap(7);
-
     public ITheme getCurrentTheme() {
         if (currentTheme == null) {
             String themeId = PlatformUI.getWorkbench().getPreferenceStore()
-                    .getString(IPreferenceConstants.CURRENT_THEME_ID);
+                    .getString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
             if (themeId.equals("")) //$NON-NLS-1$
                 themeId = IThemeManager.DEFAULT_THEME;
 
@@ -147,6 +158,66 @@ public class WorkbenchThemeManager implements IThemeManager {
         return currentTheme;
     }
 
+	/**
+	 * Return the default color registry.
+	 * 
+	 * @return the default color registry
+	 */
+    public ColorRegistry getDefaultThemeColorRegistry() {
+        return defaultThemeColorRegistry;
+    }
+
+	/**
+	 * Return the default font registry.
+	 * 
+	 * @return the default font registry
+	 */
+    public FontRegistry getDefaultThemeFontRegistry() {
+        return defaultThemeFontRegistry;
+    }
+
+    private ITheme getTheme(IThemeDescriptor td) {
+        ITheme theme = (ITheme) themes.get(td);
+        if (theme == null) {
+            theme = new Theme(td);
+            themes.put(td, theme);
+        }
+        return theme;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IThemeManager#getTheme(java.lang.String)
+     */
+    public ITheme getTheme(String id) {
+        if (id.equals(IThemeManager.DEFAULT_THEME))
+            return getTheme((IThemeDescriptor) null);
+
+        IThemeDescriptor td = getThemeRegistry().findTheme(id);
+        if (td == null)
+            return null;
+        return getTheme(td);
+    }
+
+    /**
+     * Answer the IThemeRegistry for the Workbench 
+     */
+    private IThemeRegistry getThemeRegistry() {
+        if (themeRegistry == null) {
+            themeRegistry = WorkbenchPlugin.getDefault().getThemeRegistry();
+        }
+        return themeRegistry;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IThemeManager#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+     */
+    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+        propertyChangeListeners.remove(listener);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.IThemeManager#setCurrentTheme(java.lang.String)
+     */
     public void setCurrentTheme(String id) {
         ITheme oldTheme = currentTheme;
         if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
@@ -158,9 +229,9 @@ public class WorkbenchThemeManager implements IThemeManager {
 
             // update the preference if required.
             if (!WorkbenchPlugin.getDefault().getPreferenceStore().getString(
-                    IPreferenceConstants.CURRENT_THEME_ID).equals(id)) {
+                    IWorkbenchPreferenceConstants.CURRENT_THEME_ID).equals(id)) {
                 WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-                        IPreferenceConstants.CURRENT_THEME_ID, id); //$NON-NLS-1$
+                        IWorkbenchPreferenceConstants.CURRENT_THEME_ID, id); //$NON-NLS-1$
                 WorkbenchPlugin.getDefault().savePluginPreferences();
             }
 
@@ -184,52 +255,5 @@ public class WorkbenchThemeManager implements IThemeManager {
                 }
             }
         }
-    }
-
-    private boolean doSetCurrentTheme(String id) {
-        ITheme oldTheme = currentTheme;
-        ITheme newTheme = getTheme(id);
-        if (oldTheme != newTheme && newTheme != null) {
-            currentTheme = newTheme;
-            return true;
-        }
-
-        return false;
-    }
-
-    private ITheme currentTheme;
-
-    protected void firePropertyChange(PropertyChangeEvent event) {
-        Object[] listeners = propertyChangeListeners.getListeners();
-
-        for (int i = 0; i < listeners.length; i++) {
-            ((IPropertyChangeListener) listeners[i]).propertyChange(event);
-        }
-    }
-
-    protected void firePropertyChange(String changeId, ITheme oldTheme,
-            ITheme newTheme) {
-
-        PropertyChangeEvent event = new PropertyChangeEvent(this, changeId,
-                oldTheme, newTheme);
-        firePropertyChange(event);
-    }
-
-    private ListenerList propertyChangeListeners = new ListenerList();
-
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
-    }
-
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
-    }
-
-    public ColorRegistry getDefaultThemeColorRegistry() {
-        return defaultThemeColorRegistry;
-    }
-
-    public FontRegistry getDefaultThemeFontRegistry() {
-        return defaultThemeFontRegistry;
     }
 }

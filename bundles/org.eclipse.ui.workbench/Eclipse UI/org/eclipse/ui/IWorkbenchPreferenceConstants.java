@@ -359,4 +359,11 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
 	 */
 	public static final String SHOW_SYSTEM_JOBS = "SHOW_SYSTEM_JOBS";//$NON-NLS-1$
+
+	/**
+	 * Workbench preference for the current theme.
+	 * 
+	 * @since 3.1
+	 */
+	public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
 }

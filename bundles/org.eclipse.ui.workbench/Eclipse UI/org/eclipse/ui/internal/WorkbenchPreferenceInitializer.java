@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -95,7 +96,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
 		//Set the default theme.
-		node.put(IPreferenceConstants.CURRENT_THEME_ID,
+		node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
 				IThemeManager.DEFAULT_THEME);
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform

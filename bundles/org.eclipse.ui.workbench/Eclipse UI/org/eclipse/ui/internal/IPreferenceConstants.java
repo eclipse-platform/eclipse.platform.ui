@@ -198,13 +198,6 @@ public interface IPreferenceConstants {
     public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
 
     /**
-     * Workbench preference for the current theme.
-     * 
-     * @since 3.0
-     */
-    public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
-
-    /**
      * Preference to show user jobs in a dialog.
      */
     public static String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
