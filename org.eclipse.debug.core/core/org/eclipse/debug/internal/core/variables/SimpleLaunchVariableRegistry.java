@@ -53,7 +53,7 @@ public class SimpleLaunchVariableRegistry {
 	private static final String VARIABLE_TAG= "variable"; //$NON-NLS-1$
 	private static final String NAME_TAG= "name"; //$NON-NLS-1$
 	private static final String VALUE_TAG= "value"; //$NON-NLS-1$
-	private static final String DESCRIPTION_TAG="description"; //$NON_NLS-1$
+	private static final String DESCRIPTION_TAG="description"; //$NON-NLS-1$
 
 	private Map fVariables= new HashMap(); 
 	
