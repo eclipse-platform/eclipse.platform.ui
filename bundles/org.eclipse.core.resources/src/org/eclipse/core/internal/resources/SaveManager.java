@@ -755,9 +755,9 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
  * all projects to the local disk.
  */
 protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
-	WorkspaceDescription description = workspace.internalGetDescription();
-	if (description.isDirty())
-		workspace.getMetaArea().write(description);
+	// save preferences (workspace description, path variables, etc)
+	ResourcesPlugin.getPlugin().savePluginPreferences();
+	// save projects' meta info
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++)
 		if (roots[i].isAccessible())

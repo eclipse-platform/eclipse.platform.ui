@@ -52,6 +52,17 @@ public void create(IProject target) {
 	file.mkdirs();
 }
 /**
+ * Creates the meta area root directory.
+ */
+public synchronized void createMetaArea() throws CoreException {
+	java.io.File workspaceLocation = getLocation().toFile();
+	Workspace.clear(workspaceLocation);
+	if (!workspaceLocation.mkdirs()) {
+		String message = Policy.bind("resources.writeWorkspaceMeta", workspaceLocation.toString()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, null);
+	}	
+}
+/**
  * The project is being deleted.  Delete all meta-data associated with the project.
  */
 public void delete(IProject target) throws CoreException {
@@ -160,7 +171,7 @@ public IPath getWorkingLocation(IResource resource, IPluginDescriptor plugin) {
 protected Workspace getWorkspace() {
 	return (Workspace) ResourcesPlugin.getWorkspace();
 }
-public IPath getWorkspaceDescriptionLocation() {
+public IPath getOldWorkspaceDescriptionLocation() {
 	return getLocation().append(F_DESCRIPTION);
 }
 public boolean hasSavedProject(IProject project) {
@@ -168,7 +179,7 @@ public boolean hasSavedProject(IProject project) {
 	return getOldDescriptionLocationFor(project).toFile().exists() || locationFor(project).append(F_PROJECT_LOCATION).toFile().exists();
 }
 public boolean hasSavedWorkspace() throws CoreException {
-	return getWorkspaceDescriptionLocation().toFile().exists() || getBackupLocationFor(getWorkspaceDescriptionLocation()).toFile().exists();
+	return getLocation().toFile().exists() || getBackupLocationFor(getLocation()).toFile().exists();
 }
 /**
  * Returns the local filesystem location in which the meta data for the given
@@ -234,11 +245,19 @@ public ProjectDescription readOldDescription(IProject project) throws CoreExcept
 	}
 	return description;
 }
-public WorkspaceDescription readWorkspace() throws CoreException {
-	IPath path = getWorkspaceDescriptionLocation();
+/**
+ * Provides backward compatibility with existing workspaces based on
+ * descriptions.
+ */
+public WorkspaceDescription readOldWorkspace() {
+	IPath path = getOldWorkspaceDescriptionLocation();
 	IPath tempPath = getBackupLocationFor(path);
 	try {
-		return (WorkspaceDescription) new ModelObjectReader().read(path, tempPath);
+		WorkspaceDescription oldDescription = (WorkspaceDescription) new ModelObjectReader().read(path, tempPath);
+		// if one of those files exist, get rid of them
+		Workspace.clear(path.toFile());
+		Workspace.clear(tempPath.toFile());		
+		return oldDescription;
 	} catch (IOException e) {
 		return null;
 	}
@@ -276,9 +295,12 @@ public void writeLocation(IProject target) throws CoreException {
 /**
  * Writes the workspace description to the local meta area. This method
  * is synchronized to prevent multiple current write attempts.
+ * 
+ * @deprecated should not be called any more - workspace preferences are now
+ * maintained in the plug-in's preferences
  */
 public synchronized void write(WorkspaceDescription description) throws CoreException {
-	IPath path = getWorkspaceDescriptionLocation();
+	IPath path = getOldWorkspaceDescriptionLocation();
 	path.toFile().getParentFile().mkdirs();
 	IPath tempPath = getBackupLocationFor(path);
 	try {
@@ -287,6 +309,6 @@ public synchronized void write(WorkspaceDescription description) throws CoreExce
 		String message = Policy.bind("resources.writeWorkspaceMeta", path.toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 	}
-	description.clean();
 }
+
 }

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.*;
 
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
-	protected WorkspaceDescription description;
+	protected WorkspacePreferences description;
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
 	protected ElementTree tree;
@@ -995,7 +995,9 @@ public Map getDanglingReferences() {
  * @see IWorkspace
  */
 public IWorkspaceDescription getDescription() {
-	return (IWorkspaceDescription) description.clone();
+	WorkspaceDescription workingCopy = defaultWorkspaceDescription();
+	description.copyTo(workingCopy);
+	return workingCopy;
 }
 /** 
  * Returns the current element tree for this workspace
@@ -1490,10 +1492,18 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 	// creating the WorkManager object (who takes care of operations).
 	String message = Policy.bind("resources.workspaceOpen"); //$NON-NLS-1$
 	Assert.isTrue(!isOpen(), message);
-	description = getMetaArea().readWorkspace();
-	if (description == null) {
+	if (!getMetaArea().hasSavedWorkspace()) {
 		message = Policy.bind("resources.readWorkspaceMeta"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
+	}
+	description = new WorkspacePreferences();
+	description.setDefaults(Workspace.defaultWorkspaceDescription());
+	
+	// if we have an old description file, read it (getting rid of it)
+	WorkspaceDescription oldDescription = getMetaArea().readOldWorkspace();
+	if (oldDescription != null) {
+		description.copyFrom(oldDescription);
+		ResourcesPlugin.getPlugin().savePluginPreferences();
 	}
 
 	// create root location
@@ -1626,12 +1636,13 @@ public void setDescription(IWorkspaceDescription value) throws CoreException {
 	// if both the old and new description's build orders are null, leave the
 	// workspace's build order slot because it is caching the computed order.
 	// Otherwise, set the slot to null to force recomputation or building from the description.
-	String[] newOrder = ((WorkspaceDescription) value).getBuildOrder(false);
+	WorkspaceDescription newDescription = (WorkspaceDescription) value;
+	String[] newOrder = newDescription.getBuildOrder(false);
 	if (description.getBuildOrder(false) != null || newOrder != null)
 		buildOrder = null;
-	description = (WorkspaceDescription) ((WorkspaceDescription) value).clone();
+	description.copyFrom(newDescription);
 	Policy.setupAutoBuildProgress(description.isAutoBuilding());
-	localMetaArea.write(description);
+	ResourcesPlugin.getPlugin().savePluginPreferences();
 }
 public void setTreeLocked(boolean locked) {
 	treeLocked = locked;

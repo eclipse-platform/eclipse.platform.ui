@@ -355,6 +355,9 @@
     <test id="internal.ResourceInfoTest">
       <run class="org.eclipse.core.tests.internal.resources.ResourceInfoTest"/>
     </test>
+    <test id="internal.WorkspacePreferencesTest">
+      <run class="org.eclipse.core.tests.internal.resources.WorkspacePreferencesTest"/>
+    </test>    
     <test id="internal.WorkspaceSerializationTest">
       <run class="org.eclipse.core.tests.internal.resources.WorkspaceSerializationTest"/>
     </test>
