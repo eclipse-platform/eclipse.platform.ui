@@ -294,6 +294,12 @@ public interface IWorkbenchActionConstants {
 	 * Edit menu: name of group for extra Cut-like actions (value <code>"cut.ext"</code>).
 	 */
 	public static final String CUT_EXT = "cut.ext";			// Group. //$NON-NLS-1$
+
+	/**
+	 * Edit menu: name of standard Print global action 
+	 * (value <code>"print"</code>).
+	 */
+	public static final String PRINT = "print"; 			// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Delete global action 
@@ -419,6 +425,7 @@ public interface IWorkbenchActionConstants {
 		CUT,
 		COPY,
 		PASTE,
+		PRINT,
 		DELETE,
 		FIND,
 		SELECT_ALL,

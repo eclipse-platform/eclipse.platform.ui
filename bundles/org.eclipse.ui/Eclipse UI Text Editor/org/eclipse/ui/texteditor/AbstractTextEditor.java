@@ -88,7 +88,6 @@ import org.eclipse.ui.part.EditorPart;
 
 
 
-
 /**
  * Abstract base implementation of a text editor.
  * <p>
@@ -175,7 +174,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				restoreSelection(s);
 			}
 		}
-		
+
 		/**
 		 * Restores the given selection in the editor.
 		 * 
@@ -543,6 +542,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
 		
+		action= new TextOperationAction(getResourceBundle(), "Print.", this, ITextOperationTarget.PRINT);
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
+		setAction(ITextEditorActionConstants.PRINT, action);
+		
 		action= new FindReplaceAction(getResourceBundle(), "FindReplace.", this);
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		setAction(ITextEditorActionConstants.FIND, action);
@@ -579,7 +582,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
-		
+				
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
 	}
@@ -885,6 +888,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			addAction(menu, ITextEditorActionConstants.COPY);
 			addAction(menu, ITextEditorActionConstants.SELECT_ALL);
 		}
+
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_PRINT));
+		addAction(menu, ITextEditorActionConstants.PRINT);
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		addAction(menu, ITextEditorActionConstants.SHIFT_RIGHT);
