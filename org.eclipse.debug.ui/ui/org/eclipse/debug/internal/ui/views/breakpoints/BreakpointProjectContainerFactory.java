@@ -91,9 +91,6 @@ public class BreakpointProjectContainerFactory extends AbstractBreakpointContain
 	
 	public void dispose() {
 		fImageProvider.dispose();
-		if (fOtherImage != null) {
-			fOtherImage.dispose();
-		}
 	}
 
 }
