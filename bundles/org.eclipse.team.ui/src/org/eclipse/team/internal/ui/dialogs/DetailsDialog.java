@@ -135,6 +135,9 @@ abstract public class DetailsDialog extends Dialog {
 	final protected Control createDialogArea(Composite parent) {
 		// create composite
 		Composite composite = (Composite)super.createDialogArea(parent);
+		if (!isMainGrabVertical()) {
+		    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		}
 		
 		// create image
 		String key = getImageKey();
@@ -173,7 +176,7 @@ abstract public class DetailsDialog extends Dialog {
 			right.setLayoutData(new GridData(GridData.FILL_BOTH));
 			createMainDialogArea(right);
 		} else {
-			createMainDialogArea(composite);
+		    createMainDialogArea(composite);
 		}
 		
 		if(includeErrorMessage()) {
@@ -189,6 +192,17 @@ abstract public class DetailsDialog extends Dialog {
 	}
 	
 	/**
+	 * Return whether the main area should grab excess vertical space.
+	 * The default is <code>true</code> but sublcasses can override
+	 * in cases where the main is more or less fixed but the details
+	 * needs to grab.
+     * @return whether the main area should grab excess vertical space
+     */
+    protected boolean isMainGrabVertical() {
+        return true;
+    }
+
+    /**
 	 * Creates the dialog's top composite
 	 * 
 	 * @param parent the parent composite

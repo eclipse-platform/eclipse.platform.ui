@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class TagOperation extends RepositoryProviderOperation implements ITagOperation {
@@ -151,5 +152,12 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
 			}
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#getTagSource()
+     */
+    public TagSource getTagSource() {
+        return TagSource.create(getResources());
+    }
 
 }

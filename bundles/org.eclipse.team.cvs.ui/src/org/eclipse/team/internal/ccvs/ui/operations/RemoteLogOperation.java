@@ -50,6 +50,16 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
             return (Map)entries.get(path);
         }
         
+        /**
+         * Return all the log entries at the given path
+         * @param path the file path
+         * @return the log entries for the file
+         */
+        public ILogEntry[] getLogEntries(String path) {
+            Map map = internalGetLogEntries(path);
+            return (ILogEntry[]) map.values().toArray(new ILogEntry[map.values().size()]);
+        }
+        
         private ILogEntry internalGetLogEntry(String path, String revision) {
 	        Map fileEntries = internalGetLogEntries(path);
 	        if (fileEntries != null) {
@@ -231,11 +241,8 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		LogListener listener = new LogListener(entryCache);
 		
 		ICVSRemoteResource[] remotes = remoteResources;
-		Command.LocalOption[] localOptions;
-		if(tag1 != null && tag2 != null) {
-			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES, RLog.makeTagOption(tag1, tag2)};
-		} else {
-			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES};
+		Command.LocalOption[] localOptions = getLocalOptions(tag1, tag2);
+		if(tag1 == null || tag2 == null) {
 			// Optimize the cases were we are only fetching the history for a single revision. If it is
 			// already cached, don't fetch it again.
 			ArrayList unCachedRemotes = new ArrayList();
@@ -263,5 +270,13 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 */
 	protected String getTaskName() {
 		return Policy.bind("RemoteLogOperation.1"); //$NON-NLS-1$
+	}
+	
+	protected Command.LocalOption[] getLocalOptions(CVSTag tag1, CVSTag tag2) {
+		if(tag1 != null && tag2 != null) {
+			return new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES, RLog.makeTagOption(tag1, tag2)};
+		} else {
+			return new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES};
+		}
 	}
 }

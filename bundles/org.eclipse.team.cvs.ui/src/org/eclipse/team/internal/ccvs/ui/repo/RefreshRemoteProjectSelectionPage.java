@@ -41,7 +41,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
     
-	private Dialog parentDialog;
 	private ICVSRemoteResource[] rootFolders;
 	private ListSelectionArea listArea;
 	private WorkingSetSelectionArea workingSetArea;
@@ -82,12 +81,10 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			String title,
 			ImageDescriptor titleImage,
 			String description, 
-			Dialog parentDialog, 
 			IDialogSettings settings,
 			ICVSRepositoryLocation root,
 			ICVSRemoteResource[] rootFolders) {
 		super(pageName, title, titleImage, description);
-		this.parentDialog = parentDialog;
 		this.settings = settings;
 		this.rootFolders = rootFolders;
 	}
@@ -105,7 +102,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.REFRESH_REMOTE_PROJECT_SELECTION_PAGE);
 		
-		listArea = new ListSelectionArea(parentDialog, 
+		listArea = new ListSelectionArea( 
 			new InputElement(), 
 			new RemoteContentProvider(), 
 			new WorkbenchLabelProvider(), 
@@ -119,7 +116,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		});
 		listArea.getViewer().setSorter(new RepositorySorter());
 		
-		workingSetArea = new WorkingSetSelectionArea(parentDialog, Policy.bind("RefreshRemoteProjectSelectionPage.noWorkingSet"), Policy.bind("RefreshRemoteProjectSelectionPage.workingSet"), settings); //$NON-NLS-1$ //$NON-NLS-2$
+		workingSetArea = new WorkingSetSelectionArea(getShell(), Policy.bind("RefreshRemoteProjectSelectionPage.noWorkingSet"), Policy.bind("RefreshRemoteProjectSelectionPage.workingSet"), settings); //$NON-NLS-1$ //$NON-NLS-2$
 		setWorkingSet(workingSet);
 		workingSetArea.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

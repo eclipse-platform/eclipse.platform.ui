@@ -115,17 +115,19 @@ public abstract class CVSWizardPage extends WizardPage {
 	}
 	/**
 	 * Creates composite control and sets the default layout data.
-	 *
 	 * @param parent  the parent of the new composite
 	 * @param numColumns  the number of columns for the new composite
+	 * @param grabExcess TODO
+	 *
 	 * @return the newly-created coposite
 	 */
-	protected Composite createComposite(Composite parent, int numColumns) {
+	protected Composite createComposite(Composite parent, int numColumns, boolean grabExcess) {
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout(numColumns, false));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		return composite;
 	}
+	
 	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data.
@@ -175,6 +177,7 @@ public abstract class CVSWizardPage extends WizardPage {
 		label.setText(text);
 		GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		data.horizontalIndent = indent;
+		data.horizontalSpan = horizontalSpan;
 		data.widthHint = LABEL_WIDTH_HINT;
 		label.setLayoutData(data);
 		return label;

@@ -220,12 +220,12 @@ public class RepositoryManager {
 	 * Fetches tags from auto-refresh files if they exist. Then fetches tags from the user defined auto-refresh file
 	 * list. The fetched tags are cached in the CVS ui plugin's tag cache.
 	 */
-	public void refreshDefinedTags(ICVSFolder project, boolean replace, boolean notify, IProgressMonitor monitor) throws TeamException {
-		RepositoryRoot root = getRepositoryRootFor(project);
-		String remotePath = RepositoryRoot.getRemotePathFor(project);
-		root.refreshDefinedTags(remotePath, replace, monitor);
-		if (notify)
+	public CVSTag[] refreshDefinedTags(ICVSFolder folder, boolean recurse, boolean notify, IProgressMonitor monitor) throws TeamException {
+		RepositoryRoot root = getRepositoryRootFor(folder);
+		CVSTag[] tags = root.refreshDefinedTags(folder, recurse, monitor);
+		if (tags.length > 0 && notify)
 			broadcastRepositoryChange(root);
+		return tags;
 	}
 	
 	/**
@@ -266,6 +266,10 @@ public class RepositoryManager {
 		RepositoryRoot root = getRepositoryRootFor(location);
 		root.addDateTag(tag);
 		broadcastRepositoryChange(root);
+	}
+	public CVSTag[] getDateTags(ICVSRepositoryLocation location) {
+		RepositoryRoot root = getRepositoryRootFor(location);
+		return root.getDateTags();
 	}
 	public void removeDateTag(ICVSRepositoryLocation location, CVSTag tag){
 		RepositoryRoot root = getRepositoryRootFor(location);

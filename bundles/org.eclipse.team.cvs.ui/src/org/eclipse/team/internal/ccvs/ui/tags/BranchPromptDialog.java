@@ -8,38 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ccvs.ui.tags;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
-import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class BranchPromptDialog extends DetailsDialog {
 
-	private ICVSFolder folder;
 	private String branchTag = ""; //$NON-NLS-1$
 	private String versionTag= ""; //$NON-NLS-1$
 	private String versionName= "";		 //$NON-NLS-1$
@@ -50,14 +38,17 @@ public class BranchPromptDialog extends DetailsDialog {
 	private Text versionText;
 	private Text branchText;
 	
-	private static final int TABLE_HEIGHT_HINT = 150;
+	private static final int TAG_AREA_HEIGHT_HINT = 200;
 	
 	// widgets;
-	private TreeViewer tagTree;
+    private TagSource tagSource;
+    private TagSelectionArea tagArea;
+    private final IResource[] resources;
 	
-	public BranchPromptDialog(Shell parentShell, String title, ICVSFolder folder, boolean allResourcesSticky, String versionName) {
+	public BranchPromptDialog(Shell parentShell, String title, IResource[] resources, boolean allResourcesSticky, String versionName) {
 		super(parentShell, title);
-		this.folder = folder;
+        this.resources = resources;
+		this.tagSource = TagSource.create(resources);
 		this.allStickyResources = allResourcesSticky;
 		this.versionName = versionName;
 	}	
@@ -77,10 +68,9 @@ public class BranchPromptDialog extends DetailsDialog {
 		label.setText(message);
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
 			GridData.HORIZONTAL_ALIGN_FILL |
 			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);
 		
 		CVSWizardPage.createLabel(composite, Policy.bind("BranchWizardPage.branchName")); //$NON-NLS-1$
@@ -92,6 +82,7 @@ public class BranchPromptDialog extends DetailsDialog {
 				updateVersionName(branchTag);
 			}
 		});
+		addBranchContentAssist();
 
 		final Button check = new Button(composite, SWT.CHECK);
 		data = new GridData();
@@ -108,9 +99,12 @@ public class BranchPromptDialog extends DetailsDialog {
 		
 		label = new Label(composite, SWT.WRAP);
 		label.setText(Policy.bind("BranchWizardPage.specifyVersion")); //$NON-NLS-1$
-		data = new GridData();
+		data = new GridData(
+				GridData.GRAB_HORIZONTAL |
+				GridData.HORIZONTAL_ALIGN_FILL |
+				GridData.VERTICAL_ALIGN_CENTER);
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		data.horizontalSpan = 2;
-		data.widthHint = 350;
 		label.setLayoutData(data);
 			
 		CVSWizardPage.createLabel(composite, Policy.bind("BranchWizardPage.versionName")); //$NON-NLS-1$
@@ -133,7 +127,17 @@ public class BranchPromptDialog extends DetailsDialog {
 		branchText.setFocus();
 	}
 
-	/**
+    private void addBranchContentAssist() {
+        TagSource projectTagSource = LocalProjectTagSource.create(getSeedProject());
+        if (projectTagSource != null)
+            TagContentAssistProcessor.createContentAssistant(branchText, projectTagSource, TagSelectionArea.INCLUDE_BRANCHES); 
+    }
+
+    private IProject getSeedProject() {
+        return resources[0].getProject();
+    }
+
+    /**
 	 * Updates version name
 	 */
 	protected void updateVersionName(String branchName) {
@@ -155,54 +159,16 @@ public class BranchPromptDialog extends DetailsDialog {
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = TAG_AREA_HEIGHT_HINT;
+		composite.setLayoutData(gridData);
 		
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(Policy.bind("BranchWizardPage.existingVersionsAndBranches")); //$NON-NLS-1$
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
-		label.setLayoutData(data);
-		
-		tagTree = createTree(composite);
-		tagTree.setInput(new ProjectElement(folder, ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS));
-		Runnable refresh = new Runnable() {
-			public void run() {
-				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-						tagTree.refresh();
-					}
-				});
-			}
-		};
-		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new ICVSFolder[] {folder}, 
-														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
-														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
-														  refresh, refresh);
-		Dialog.applyDialogFont(parent);
+		tagArea = new TagSelectionArea(getShell(), tagSource, TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_BRANCHES, null);
+		tagArea.setTagAreaLabel(Policy.bind("BranchWizardPage.existingVersionsAndBranches")); //$NON-NLS-1$
+		tagArea.setIncludeFilterInputArea(false);
+		tagArea.createArea(composite);
+
 		return composite;
-	}
-	
-	/**
-	 * Creates the existing branch and version tree viewer in the details pane
-	 */
-	protected TreeViewer createTree(Composite parent) {
-		Tree tree = new Tree(parent, SWT.SINGLE | SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);		
-		data.heightHint = TABLE_HEIGHT_HINT;
-		tree.setLayoutData(data);	
-		TreeViewer result = new TreeViewer(tree);
-		result.setContentProvider(new WorkbenchContentProvider());
-		result.setLabelProvider(new WorkbenchLabelProvider());
-		result.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {			
-			}
-		});
-		result.setSorter(new RepositorySorter());
-		return result;
 	}
 	
 	/**
@@ -254,4 +220,12 @@ public class BranchPromptDialog extends DetailsDialog {
 	public boolean getUpdate() {
 		return update;
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#isMainGrabVertical()
+     */
+    protected boolean isMainGrabVertical() {
+        return false;
+    }
+
 }

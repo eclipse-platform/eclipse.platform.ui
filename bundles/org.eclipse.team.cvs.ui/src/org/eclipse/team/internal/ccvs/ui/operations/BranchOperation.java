@@ -32,11 +32,11 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.BranchPromptDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.tags.BranchPromptDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -64,10 +64,9 @@ public class BranchOperation extends RepositoryProviderOperation {
 	protected boolean shouldRun() {
 		IResource[] resources = getResources();
 		boolean allSticky = areAllResourcesSticky(resources);
-		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resources[0].getProject());
 		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
 											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
-											folder, 
+											getResources(), 
 											allSticky, 
 											calculateInitialVersionName(resources,allSticky));
 		if (dialog.open() != InputDialog.OK) return false;		

@@ -69,7 +69,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 1);
+		Composite composite = createComposite(parent, 1, false);
 		setControl(composite);
 		
 		// set F1 help
@@ -99,7 +99,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	}
 	
 	private Control createNoChangesPage(PageBook pageBook) {
-		Composite composite = createComposite(pageBook, 1);
+		Composite composite = createComposite(pageBook, 1, false);
 		createWrappingLabel(composite, Policy.bind("SharingWizardSyncPage.3", project.getName()), 0); //$NON-NLS-1$
 		return composite;
 	}

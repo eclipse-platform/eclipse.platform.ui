@@ -12,23 +12,21 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.tags.*;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class UpdateWizard extends Wizard {
@@ -45,10 +43,18 @@ public class UpdateWizard extends Wizard {
 	
 	public void addPages() {
 		ImageDescriptor substImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_CHECKOUT);
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("UpdateWizard.0"), substImage, Policy.bind("UpdateWizard.1"), null /* no laqbel */, ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("UpdateWizard.0"), substImage, Policy.bind("UpdateWizard.1"), TagSource.create(resources), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		tagSelectionPage.setAllowNoTag(true);
-		tagSelectionPage.setFolders(getCVSFolders());
 		tagSelectionPage.setHelpContxtId(IHelpContextIds.UPDATE_TAG_SELETION_PAGE);
+		ICVSFolder[] folders = getCVSFolders();
+		if (folders.length > 0) {
+			try {
+				CVSTag selectedTag = folders[0].getFolderSyncInfo().getTag();
+				tagSelectionPage.setSelection(selectedTag);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
 		addPage(tagSelectionPage);
 	}
 	

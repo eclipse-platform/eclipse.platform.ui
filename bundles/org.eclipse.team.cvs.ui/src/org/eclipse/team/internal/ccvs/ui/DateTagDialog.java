@@ -37,10 +37,6 @@ public class DateTagDialog extends Dialog {
 		private Combo fromDayCombo;
 		private Combo fromMonthCombo;
 		private Combo fromYearCombo;
-		
-		public DateArea(Dialog parentDialog, IDialogSettings settings) {
-			super(parentDialog, settings);
-		}
 
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 4, false);
@@ -109,10 +105,6 @@ public class DateTagDialog extends Dialog {
 		private Combo minuteCombo;
 		private Combo secondCombo;
 		private Button includeTime, localTime, utcTime;
-		
-		public TimeArea(Dialog parentDialog, IDialogSettings settings) {
-			super(parentDialog, settings);
-		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ui.dialogs.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
@@ -223,12 +215,12 @@ public class DateTagDialog extends Dialog {
 	}
 
 	private void createDateArea(Composite topLevel) {
-		dateArea = new DateArea(this, settings);
+		dateArea = new DateArea();
 		dateArea.createArea(topLevel);
 	}
 
 	private void createTimeArea(Composite topLevel) {
-		timeArea = new TimeArea(this, settings);
+		timeArea = new TimeArea();
 		timeArea.createArea(topLevel);
 	}
 

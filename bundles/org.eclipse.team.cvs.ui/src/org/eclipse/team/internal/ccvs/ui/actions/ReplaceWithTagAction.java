@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -20,8 +19,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 
 /**
  * Action for replace with tag.
@@ -53,12 +55,7 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 					// nothing to do
 					return;
 				}
-				// show the tags for the projects of the selected resources
-				IProject[] projects = new IProject[resources[0].length];
-				for (int i = 0; i < resources[0].length; i++) {
-					projects[i] = resources[0][i].getProject();
-				}
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, 
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), TagSource.create(resources[0]), 
 					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
 					Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
 					TagSelectionDialog.INCLUDE_ALL_TAGS, 

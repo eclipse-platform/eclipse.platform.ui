@@ -10,19 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class RepositoriesViewContentHandler extends DefaultHandler {
@@ -45,6 +39,7 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	public static final String READ_ID_ATTRIBUTE = "read-id"; //$NON-NLS-1$
 	public static final String WRITE_ID_ATTRIBUTE = "write-id"; //$NON-NLS-1$
+	public static final String LAST_ACCESS_TIME_ATTRIBUTE = "lastAcessTime"; //$NON-NLS-1$
 	
 	public static final String[] TAG_TYPES = {"head", "branch", "version", "date"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	public static final String DEFAULT_TAG_TYPE = "version"; //$NON-NLS-1$
@@ -59,6 +54,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	private List dateTags;
 	private List autoRefreshFiles;
 	private boolean ignoreElements;
+
+    private long lastAccessTime;
 
 	public RepositoriesViewContentHandler(RepositoryManager manager) {
 		this.manager = manager;
@@ -98,6 +95,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			if (! ignoreElements && currentRepositoryRoot != null) {
 				currentRepositoryRoot.addTags(currentRemotePath, 
 					(CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
+				if (lastAccessTime > 0)
+				    currentRepositoryRoot.setLastAccessedTime(currentRemotePath, lastAccessTime);
 				currentRepositoryRoot.setAutoRefreshFiles(currentRemotePath,
 					(String[]) autoRefreshFiles.toArray(new String[autoRefreshFiles.size()]));
 			}
@@ -170,7 +169,17 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			if (type != null && type.equals(DEFINED_MODULE_TYPE)) {
 				path = RepositoryRoot.asDefinedModulePath(path);
 			}
-			startModule(path);
+			long cachedTime = 0;
+			String cachedTimeString = atts.getValue(LAST_ACCESS_TIME_ATTRIBUTE);
+			if (cachedTimeString != null) {
+			    try {
+			        Long time = Long.valueOf(cachedTimeString);
+			        cachedTime = time.longValue();
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+			}
+			startModule(path, cachedTime);
 		} else if (elementName.equals(TAG_TAG)) {
 			String type = atts.getValue(TYPE_ATTRIBUTE);
 			if (type == null) {
@@ -205,9 +214,10 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 		tagStack.push(elementName);
 	}
 
-	private void startModule(String path) {
+	private void startModule(String path, long cachedTime) {
 		currentRemotePath = path;
 		tags = new ArrayList();
+		this.lastAccessTime = cachedTime;
 		autoRefreshFiles = new ArrayList();
 	}
 	

@@ -50,7 +50,7 @@ public class CommitSetDialog extends Dialog {
         
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
-		commitCommentArea = new CommitCommentArea(this, null);
+		commitCommentArea = new CommitCommentArea();
 		// Get a project from which the commit template can be obtained
 		if (files.length > 0) 
 		    commitCommentArea.setProject(files[0].getProject());

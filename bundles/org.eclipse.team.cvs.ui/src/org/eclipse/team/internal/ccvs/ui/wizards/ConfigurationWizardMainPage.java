@@ -160,7 +160,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	 * @param parent  the parent of the created widgets
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 2);
+		Composite composite = createComposite(parent, 2, false);
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_NEW_REPOSITORY_PAGE);
 

@@ -21,8 +21,8 @@ import org.eclipse.team.internal.ccvs.core.client.RTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.TagAction;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
-
 
 public class TagInRepositoryOperation extends RemoteOperation implements ITagOperation {
 
@@ -110,4 +110,11 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	protected String getTaskName() {
 		return Policy.bind("TagFromRepository.taskName"); //$NON-NLS-1$
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#getTagSource()
+     */
+    public TagSource getTagSource() {
+        return TagSource.create(getCVSResources());
+    }
 }

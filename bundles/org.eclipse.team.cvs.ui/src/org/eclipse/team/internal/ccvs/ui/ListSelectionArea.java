@@ -54,12 +54,10 @@ public class ListSelectionArea extends DialogArea {
 	 * @param settings
 	 */
 	public ListSelectionArea(
-			Dialog parentDialog, 
 			Object input,
 			IStructuredContentProvider contentProvider,
 			ILabelProvider labelProvider,
 			String message) {
-		super(parentDialog, null);
 		this.inputElement = input;
 		this.contentProvider = contentProvider;
 		this.labelProvider = labelProvider;

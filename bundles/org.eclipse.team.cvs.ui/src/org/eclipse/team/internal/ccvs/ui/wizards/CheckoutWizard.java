@@ -75,7 +75,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		// Dummy page to allow lazy creation of CheckoutAsWizard
 		dummyPage = new CVSWizardPage("dummyPage") { //$NON-NLS-1$
 			public void createControl(Composite parent) {
-				Composite composite = createComposite(parent, 1);
+				Composite composite = createComposite(parent, 1, false);
 				setControl(composite);
 			}
 		};

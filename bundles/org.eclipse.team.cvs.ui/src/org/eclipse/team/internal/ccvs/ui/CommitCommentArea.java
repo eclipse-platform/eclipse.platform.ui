@@ -45,8 +45,7 @@ public class CommitCommentArea extends DialogArea {
 	 * @param parentDialog
 	 * @param settings
 	 */
-	public CommitCommentArea(Dialog parentDialog, IDialogSettings settings) {
-		super(parentDialog, settings);
+	public CommitCommentArea() {
 		comments = CVSUIPlugin.getPlugin().getRepositoryManager().getPreviousComments();
 	}
 

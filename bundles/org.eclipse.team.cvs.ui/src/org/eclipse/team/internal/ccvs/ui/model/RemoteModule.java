@@ -115,8 +115,7 @@ public class RemoteModule extends CVSModelElement implements IAdaptable,
         RepositoryManager manager = CVSUIPlugin.getPlugin()
                 .getRepositoryManager();
         try {
-            manager.refreshDefinedTags(folder, false /* replace */
-            , false, monitor);
+            manager.refreshDefinedTags(folder, false /* recurse */, false /* notify */, monitor);
         } catch (TeamException e) {
             // continue
         }

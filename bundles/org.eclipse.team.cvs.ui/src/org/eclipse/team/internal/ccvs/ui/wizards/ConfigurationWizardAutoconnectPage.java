@@ -51,7 +51,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 2);
+		Composite composite = createComposite(parent, 2, false);
 		setControl(composite);
 		
 		// set F1 help

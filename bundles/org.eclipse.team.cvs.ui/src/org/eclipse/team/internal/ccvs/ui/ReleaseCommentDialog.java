@@ -45,7 +45,7 @@ public class ReleaseCommentDialog extends DetailsDialog {
 		super(parentShell, Policy.bind("ReleaseCommentDialog.title")); //$NON-NLS-1$
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
-		commitCommentArea = new CommitCommentArea(this, null);
+		commitCommentArea = new CommitCommentArea();
 		// Get a project from which the commit template can be obtained
 		if (resourcesToCommit.length > 0) 
 		commitCommentArea.setProject(resourcesToCommit[0].getProject());

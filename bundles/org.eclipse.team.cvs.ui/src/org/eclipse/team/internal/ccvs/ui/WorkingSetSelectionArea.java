@@ -77,15 +77,18 @@ public class WorkingSetSelectionArea extends DialogArea {
 			}
 		}
 	};
+    private final IDialogSettings settings;
+    private final Shell shell;
 	
-	public WorkingSetSelectionArea(Dialog parentDialog) {
-		super(parentDialog, null);
+	public WorkingSetSelectionArea(Shell shell) {
+		this(shell, null, null, null);
 	}
 		
-	public WorkingSetSelectionArea(Dialog parentDialog, String noWorkingSetText, String workingSetText, IDialogSettings settings) {
-		super(parentDialog, settings);
-		this.noWorkingSetText = noWorkingSetText;
+	public WorkingSetSelectionArea(Shell shell, String noWorkingSetText, String workingSetText, IDialogSettings settings) {
+		this.shell = shell;
+        this.noWorkingSetText = noWorkingSetText;
 		this.workingSetText = workingSetText;
+        this.settings = settings;
 	}
 	
 	/**
@@ -159,7 +162,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 	 * is selected in the most recently used working set list.
 	 */
 	private void handleWorkingSetSelection() {
-		IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(getShell(), false);
+		IWorkingSetSelectionDialog dialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell, false);
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSet workingSet = workingSetManager.getWorkingSet(mruList.getText());
 

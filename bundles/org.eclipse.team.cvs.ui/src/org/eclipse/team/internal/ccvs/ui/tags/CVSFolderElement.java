@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.model;
+package org.eclipse.team.internal.ccvs.ui.tags;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.model.CVSResourceElement;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class CVSFolderElement extends CVSResourceElement {
 	

@@ -16,8 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 
 /**
  * Compare to versions of a remote resource.
@@ -29,7 +30,7 @@ public class CompareRemoteWithTagAction extends CVSAction {
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		
-		ICVSRemoteResource[] resources = getSelectedRemoteResources();
+		final ICVSRemoteResource[] resources = getSelectedRemoteResources();
 		if (resources.length == 0) return;
 		
 		// Obtain the tag to compare against
@@ -37,13 +38,7 @@ public class CompareRemoteWithTagAction extends CVSAction {
 		final CVSTag[] tag = new CVSTag[] { null};
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				ICVSFolder folder;
-				if (resource instanceof ICVSRemoteFolder) {
-					folder = (ICVSFolder)resource;
-				} else {
-					folder = resource.getParent();
-				}
-				tag[0] = TagSelectionDialog.getTagToCompareWith(getShell(), new ICVSFolder[] {folder});
+				tag[0] = TagSelectionDialog.getTagToCompareWith(getShell(), TagSource.create(resources));
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 		if (tag[0] == null) return;

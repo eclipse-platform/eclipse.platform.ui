@@ -38,7 +38,7 @@ public class KSubstWizardCommitCommentPage extends CVSWizardPage {
 		String description) {
 			
 		super(pageName, title, titleImage, description);
-		commitCommentArea = new CommitCommentArea(parentDialog, null);
+		commitCommentArea = new CommitCommentArea();
 	}
 
 	/**

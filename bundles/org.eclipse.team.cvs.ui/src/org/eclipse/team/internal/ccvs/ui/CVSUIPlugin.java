@@ -680,7 +680,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
             console = new CVSOutputConsole();
         } catch (RuntimeException e) {
             // Don't let the console bring down the CVS UI
-            log(IStatus.ERROR, "Errors occurred starting the CVS conbsole", e);
+            log(IStatus.ERROR, "Errors occurred starting the CVS conbsole", e); //$NON-NLS-1$
         }
 
 		// Must load the change set manager on startup since it listens to deltas

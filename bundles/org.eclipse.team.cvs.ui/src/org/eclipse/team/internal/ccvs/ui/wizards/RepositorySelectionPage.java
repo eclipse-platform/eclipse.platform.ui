@@ -66,7 +66,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	 * @param parent  the parent of the created widgets
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 1);
+		Composite composite = createComposite(parent, 1, false);
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		if (extendedDescription == null) {

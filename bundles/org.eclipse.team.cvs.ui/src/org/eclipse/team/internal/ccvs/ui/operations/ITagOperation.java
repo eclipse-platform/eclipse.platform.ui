@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 
 public interface ITagOperation {
 	public abstract CVSTag getTag();
@@ -22,4 +23,5 @@ public interface ITagOperation {
 	public abstract ICVSResource[] getCVSResources();
 	public abstract void moveTag();
 	public abstract void recurse();
+    public abstract TagSource getTagSource();
 }

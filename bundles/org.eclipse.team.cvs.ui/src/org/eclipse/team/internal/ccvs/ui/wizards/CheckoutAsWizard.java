@@ -11,19 +11,21 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.tags.*;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * @author Administrator
@@ -90,8 +92,15 @@ public class CheckoutAsWizard extends Wizard {
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
 		
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), Policy.bind("CheckoutAsWizard.5"), ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		tagSelectionPage.setFolders(remoteFolders);
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), TagSource.create(remoteFolders), TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (remoteFolders.length > 0) {
+			try {
+				CVSTag selectedTag = remoteFolders[0].getFolderSyncInfo().getTag();
+				tagSelectionPage.setSelection(selectedTag);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
 		tagSelectionPage.setHelpContxtId(IHelpContextIds.CHECKOUT_TAG_SELETION_PAGE);
 		addPage(tagSelectionPage);
 	}

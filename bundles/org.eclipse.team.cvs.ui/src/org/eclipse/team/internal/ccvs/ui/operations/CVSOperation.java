@@ -306,14 +306,14 @@ public abstract class CVSOperation extends TeamOperation {
      */
     protected IAction getShowConsoleAction() {
         // Show the console as the goto action
-        return new Action("Show CVS Console") {
+        return new Action(Policy.bind("CVSOperation.1")) { //$NON-NLS-1$
             public void run() {
                 CVSOutputConsole console = CVSUIPlugin.getPlugin().getConsole();
                 if (console != null)
                     console.show(true);
             }
             public String getToolTipText() {
-                return "Show CVS Console";
+                return Policy.bind("CVSOperation.2"); //$NON-NLS-1$
             }
         };
     }

@@ -63,7 +63,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	}
 	
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 2);
+		Composite composite = createComposite(parent, 2, false);
 
 		if (helpContextId != null)
 			WorkbenchHelp.setHelp(composite, helpContextId);

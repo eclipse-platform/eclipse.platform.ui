@@ -8,67 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ccvs.ui.tags;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
-import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
-import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
-import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
-import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -88,14 +55,10 @@ public class TagConfigurationDialog extends Dialog {
 	private TreeViewer cvsDefinedTagsTree;
 	
 	// remember the root element in the defined tags tree
-	private ProjectElement cvsDefinedTagsRootElement;
+	private TagSourceWorkbenchAdapter cvsDefinedTagsRootElement;
 	
 	// list of auto-refresh files
 	private org.eclipse.swt.widgets.List autoRefreshFileList;
-	
-	// folders from which their children files can be examined for tags
-	private ICVSFolder[] roots;
-	private ICVSFolder root;
 	
 	// enable selecting auto-refresh files
 	private boolean allowSettingAutoRefreshFiles = true;
@@ -114,6 +77,10 @@ public class TagConfigurationDialog extends Dialog {
 	
 	// dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
+
+    private final TagSource tagSource;
+
+    private final TagSourceWrapper wrappedTagSource;
 	
 	class FileSorter extends ViewerSorter {
 		public int compare(Viewer viewer, Object e1, Object e2) {
@@ -126,15 +93,126 @@ public class TagConfigurationDialog extends Dialog {
 		}
 	}
 	
-	public TagConfigurationDialog(Shell shell, ICVSFolder[] roots) {
+	/*
+	 * Create a tag source that cahces the added and removed tags
+	 * so that the changes can be propogated to the repository 
+	 * manager when OK is pressed
+	 */
+	class TagSourceWrapper extends TagSource {
+
+        private final TagSource tagSource;
+        private final List branches = new ArrayList();
+        private final List versions = new ArrayList();
+        private final List dates = new ArrayList();
+
+        public TagSourceWrapper(TagSource tagSource) {
+            this.tagSource = tagSource;
+            branches.addAll(Arrays.asList(tagSource.getTags(CVSTag.BRANCH)));
+            versions.addAll(Arrays.asList(tagSource.getTags(CVSTag.VERSION)));
+            dates.addAll(Arrays.asList(tagSource.getTags(CVSTag.DATE)));
+        }
+	    
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#getTags(int)
+         */
+        public CVSTag[] getTags(int type) {
+            if (type == CVSTag.HEAD || type == BASE) {
+                return super.getTags(type);
+            }
+            List list = getTagList(type);
+            if (list != null)
+                return (CVSTag[]) list.toArray(new CVSTag[list.size()]);
+            return tagSource.getTags(type);
+        }
+
+        private List getTagList(int type) {
+            switch (type) {
+            case CVSTag.VERSION: 
+                return versions;
+            case CVSTag.BRANCH:
+                return branches;
+            case CVSTag.DATE:
+                return dates;
+        }
+            return null;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#refresh(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public CVSTag[] refresh(boolean bestEffort, IProgressMonitor monitor) throws TeamException {
+            // The wrapper is never refreshed
+            return new CVSTag[0];
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#getLocation()
+         */
+        public ICVSRepositoryLocation getLocation() {
+            return tagSource.getLocation();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#getShortDescription()
+         */
+        public String getShortDescription() {
+            return tagSource.getShortDescription();
+        }
+
+        public void remove(CVSTag[] tags) {
+            for (int i = 0; i < tags.length; i++) {
+                CVSTag tag = tags[i];
+                List list = getTagList(tag.getType());
+                if (list != null)
+                    list.remove(tag);        
+            }
+        }
+
+        public void add(CVSTag[] tags) {
+            for (int i = 0; i < tags.length; i++) {
+                CVSTag tag = tags[i];
+                List list = getTagList(tag.getType());
+                if (list != null)
+                    list.add(tag);        
+            }
+        }
+
+        public void removeAll() {
+            versions.clear();
+            branches.clear();
+            dates.clear();
+        }
+
+        /**
+         * Remember the state that has been accumulated
+         * @param monitor
+         * @throws CVSException
+         */
+        public void commit(IProgressMonitor monitor) throws CVSException {
+            tagSource.commit(getTags(new int[] { CVSTag.VERSION, CVSTag.BRANCH, CVSTag.DATE }), true /* replace */, monitor);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#commit(org.eclipse.team.internal.ccvs.core.CVSTag[], boolean, org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public void commit(CVSTag[] tags, boolean replace, IProgressMonitor monitor) throws CVSException {
+            // Not invoked
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.internal.ccvs.ui.tags.TagSource#getCVSResources()
+         */
+        public ICVSResource[] getCVSResources() {
+            return tagSource.getCVSResources();
+        }
+	}
+	
+	public TagConfigurationDialog(Shell shell, TagSource tagSource) {
 		super(shell);
+        this.tagSource = tagSource;
+        wrappedTagSource = new TagSourceWrapper(tagSource);
 		setShellStyle(SWT.CLOSE|SWT.RESIZE|SWT.APPLICATION_MODAL);
-		this.roots = roots;
-		this.root = roots[0];
-		if(roots.length>1) {
-			allowSettingAutoRefreshFiles = false;
-		}
-		
+		allowSettingAutoRefreshFiles = getSingleFolder(tagSource, false) != null;
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		this.settings = workbenchSettings.getSection("TagConfigurationDialog");//$NON-NLS-1$
 		if (settings == null) {
@@ -147,11 +225,7 @@ public class TagConfigurationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		if(roots.length==1) {
-			newShell.setText(Policy.bind("TagConfigurationDialog.1", roots[0].getName())); //$NON-NLS-1$
-		} else {
-			newShell.setText(Policy.bind("TagConfigurationDialog.2", Integer.toString(roots.length))); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		newShell.setText(Policy.bind("TagConfigurationDialog.1", tagSource.getShortDescription())); //$NON-NLS-1$
 	}
 
 	/**
@@ -190,11 +264,7 @@ public class TagConfigurationDialog extends Dialog {
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		cvsResourceTree.getTree().setLayoutData(data);
-		if(roots.length==1) {
-			cvsResourceTree.setInput(new CVSFolderElement(roots[0], false /*don't include unmanaged resources*/));
-		} else {
-			cvsResourceTree.setInput(new CVSRootFolderElement(roots));
-		}
+		cvsResourceTree.setInput(TagSourceResourceAdapter.getViewerInput(tagSource));
 		cvsResourceTree.setSorter(new FileSorter());
 		cvsResourceTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -202,8 +272,7 @@ public class TagConfigurationDialog extends Dialog {
 				updateEnablements();
 			}
 		});
-	
-	
+
 		comp = new Composite(shell, SWT.NULL);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
@@ -303,10 +372,7 @@ public class TagConfigurationDialog extends Dialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
-		cvsDefinedTagsRootElement = new ProjectElement(roots[0], ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS |ProjectElement.INCLUDE_DATES);
-		cvsDefinedTagsRootElement.getBranches().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.BRANCH));
-		cvsDefinedTagsRootElement.getVersions().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.VERSION));
-		cvsDefinedTagsRootElement.getDates().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(root, CVSTag.DATE));
+		cvsDefinedTagsRootElement = new TagSourceWorkbenchAdapter(wrappedTagSource, TagSourceWorkbenchAdapter.INCLUDE_BRANCHES | TagSourceWorkbenchAdapter.INCLUDE_VERSIONS |TagSourceWorkbenchAdapter.INCLUDE_DATES);
 		cvsDefinedTagsTree.setInput(cvsDefinedTagsRootElement);
 		cvsDefinedTagsTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -343,7 +409,7 @@ public class TagConfigurationDialog extends Dialog {
 		addDatesButton.setLayoutData(data);
 		addDatesButton.addListener(SWT.Selection, new Listener(){
 			public void handleEvent(Event event){
-				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryLocationFor(root));
+				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), tagSource.getLocation());
 				addDateTagsSelected(dateTag);
 				updateShownTags();
 				updateEnablements();
@@ -390,7 +456,7 @@ public class TagConfigurationDialog extends Dialog {
 			data.grabExcessHorizontalSpace = true;
 			autoRefreshFileList.setLayoutData(data);		
 			try {
-				autoRefreshFileList.setItems(CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(roots[0]));
+				autoRefreshFileList.setItems(CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(getSingleFolder(tagSource, false)));
 			} catch (CVSException e) {
 				autoRefreshFileList.setItems(new String[0]);
 				CVSUIPlugin.log(e);
@@ -453,7 +519,7 @@ public class TagConfigurationDialog extends Dialog {
 		return shell;
 	}
 
-	private void updateShownTags() {
+    private void updateShownTags() {
 		final CVSFileElement[] filesSelection = getSelectedFiles();
 		final Set tags = new HashSet();
 		if(filesSelection.length!=0) {
@@ -482,9 +548,7 @@ public class TagConfigurationDialog extends Dialog {
 			for (Iterator it = tags.iterator(); it.hasNext();) {
 				CVSTag tag = (CVSTag) it.next();
 				List knownTags = new ArrayList();
-				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getBranches().getTags()));
-				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getVersions().getTags()));
-				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getDates().getTags()));
+				knownTags.addAll(Arrays.asList(wrappedTagSource.getTags(new int[] { CVSTag.VERSION, CVSTag.BRANCH, CVSTag.DATE })));
 				if(!knownTags.contains(tag)) {
 					TagElement tagElem = new TagElement(tag);
 					cvsTagTree.add(tagElem);
@@ -540,62 +604,50 @@ public class TagConfigurationDialog extends Dialog {
 	}
 	
 	private CVSTag[] getTagsFor(ICVSFile file, IProgressMonitor monitor) throws TeamException {
-		Set tagSet = new HashSet();
-		ILogEntry[] entries = file.getLogEntries(monitor);
-		for (int j = 0; j < entries.length; j++) {
-			CVSTag[] tags = entries[j].getTags();
-			for (int k = 0; k < tags.length; k++) {
-				tagSet.add(tags[k]);
-			}
-		}
-		return (CVSTag[])tagSet.toArray(new CVSTag[tagSet.size()]);
+		return SingleFileTagSource.fetchTagsFor(file, monitor);
 	}
 	
 	private void rememberCheckedTags() {
 		Object[] checked = cvsTagTree.getCheckedElements();
+		List tagsToAdd = new ArrayList();
 		for (int i = 0; i < checked.length; i++) {
 			CVSTag tag = ((TagElement)checked[i]).getTag();
-			if(tag.getType() == CVSTag.BRANCH) {
-				cvsDefinedTagsRootElement.getBranches().add(new CVSTag[] {tag});
-			}else if(tag.getType() == CVSTag.DATE){
-				cvsDefinedTagsRootElement.getDates().add(new CVSTag[] {tag});
-			}else {
-				cvsDefinedTagsRootElement.getVersions().add(new CVSTag[] {tag});
-			}
+			tagsToAdd.add(tag);
 		}
-		cvsDefinedTagsTree.refresh();
+		if (!tagsToAdd.isEmpty()) {
+		    wrappedTagSource.add((CVSTag[]) tagsToAdd.toArray(new CVSTag[tagsToAdd.size()]));
+			cvsDefinedTagsTree.refresh();
+		}
 	}
 	
 	private void deleteSelected() {
 		IStructuredSelection selection = (IStructuredSelection)cvsDefinedTagsTree.getSelection();
+		List tagsToRemove = new ArrayList();
 		if (!selection.isEmpty()) {
 			Iterator it = selection.iterator();
 			while(it.hasNext()) {
 				Object o = it.next();
 				if(o instanceof TagElement) {
 					CVSTag tag = ((TagElement)o).getTag();
-					if(tag.getType() == CVSTag.BRANCH) {
-						cvsDefinedTagsRootElement.getBranches().remove(tag);
-					} else if(tag.getType()==CVSTag.VERSION) {						
-						cvsDefinedTagsRootElement.getVersions().remove(tag);
-					} else if(tag.getType() == CVSTag.DATE){
-						cvsDefinedTagsRootElement.getDates().remove(tag);
-					}
+					tagsToRemove.add(tag);
 				}
 			}
 		}
-		cvsDefinedTagsTree.refresh();
-		cvsDefinedTagsTree.getTree().setFocus();
+		if (!tagsToRemove.isEmpty()) {
+		    wrappedTagSource.remove((CVSTag[]) tagsToRemove.toArray(new CVSTag[tagsToRemove.size()]));
+			cvsDefinedTagsTree.refresh();
+			cvsDefinedTagsTree.getTree().setFocus();
+		}
 	}
 	private void addDateTagsSelected(CVSTag tag){
 		if(tag == null) return;
 		List knownTags = new ArrayList();
-		knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getDates().getTags()));
+		knownTags.addAll(Arrays.asList(wrappedTagSource.getTags(CVSTag.DATE)));
 		if(!knownTags.contains( tag)){
-			cvsDefinedTagsRootElement.getDates().add(tag);
+			wrappedTagSource.add(new CVSTag[] { tag });
+			cvsDefinedTagsTree.refresh();
+			cvsDefinedTagsTree.getTree().setFocus();
 		}
-		cvsDefinedTagsTree.refresh();
-		cvsDefinedTagsTree.getTree().setFocus();
 	}
 	private boolean isTagSelectedInKnownTagTree() {
 		IStructuredSelection selection = (IStructuredSelection)cvsDefinedTagsTree.getSelection();
@@ -612,9 +664,7 @@ public class TagConfigurationDialog extends Dialog {
 	}
 
 	private void removeAllKnownTags() {
-		cvsDefinedTagsRootElement.getBranches().removeAll();
-		cvsDefinedTagsRootElement.getVersions().removeAll();
-		cvsDefinedTagsRootElement.getDates().removeAll();
+		wrappedTagSource.removeAll();
 		cvsDefinedTagsTree.refresh();
 	}
 	
@@ -643,141 +693,26 @@ public class TagConfigurationDialog extends Dialog {
 			// save auto refresh file names
 			if(allowSettingAutoRefreshFiles) {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				manager.setAutoRefreshFiles(root, autoRefreshFileList.getItems());		
+				manager.setAutoRefreshFiles(getSingleFolder(tagSource, false), autoRefreshFileList.getItems());		
 			}
 			
-			// save defined tags and update all project with the same version tags
-			final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();	
-			manager.run(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					CVSTag[] branches = cvsDefinedTagsRootElement.getBranches().getTags();
-					CVSTag[] versions = cvsDefinedTagsRootElement.getVersions().getTags();
-					CVSTag[] dates = cvsDefinedTagsRootElement.getDates().getTags();
-					try {
-						for(int i = 0; i < roots.length; i++) {
-							CVSTag[] oldTags = manager.getKnownTags(roots[i]);
-							manager.removeTags(roots[i], oldTags);
-							if(branches.length > 0) {
-								manager.addTags(roots[i], branches);
-							}
-							if(versions.length>0) {
-								manager.addTags(roots[i], versions);
-							}
-							if(dates.length>0) {
-								manager.addTags(roots[i], dates);
-							}
-						}
-					} catch (CVSException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			}, null);
+			wrappedTagSource.commit(null);
 			
 			super.okPressed();
 		} catch (CVSException e) {
 			CVSUIPlugin.openError(getShell(), null, null, e);
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.openError(getShell(), null, null, e);
-		} catch (InterruptedException e) {
 		}
 	}
-	
-	/*
-	 * Returns a button that implements the standard refresh tags operation. The runnable is run immediatly after 
-	 * the tags are fetched from the server. A client should refresh their widgets that show tags because they
-	 * may of changed. 
-	 */
-	private static Button createTagRefreshButton(final Shell shell, Composite composite, String title, final ICVSFolder folder, final Runnable runnable) {
-		Button refreshButton = new Button(composite, SWT.PUSH);
-		refreshButton.setText (title);
-		refreshButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					try {
-						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								try {
-									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(folder, false /* replace */, true, monitor);
-									Display.getDefault().asyncExec(runnable);
-								} catch (TeamException e) {
-									throw new InvocationTargetException(e);
-								}
-							}
-						});
-					} catch (InterruptedException e) {
-						// operation cancelled
-					} catch (InvocationTargetException e) {
-						CVSUIPlugin.openError(shell, Policy.bind("TagConfigurationDialog.14"), null, e); //$NON-NLS-1$
-					}
-				}
-			});
-		updateEnablementOnRefreshButton(refreshButton, folder);
-		return refreshButton;		
-	 }
 	 
-	 public static Control createTagDefinitionButtons(final Shell shell, Composite composite, final ICVSFolder[] folders, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
-	 	Composite buttonComp = new Composite(composite, SWT.NONE);
-		GridData data = new GridData ();
-		data.horizontalAlignment = GridData.END;		
-		buttonComp.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonComp.setLayout (layout);
-	 	
-	 	final Button refreshButton = TagConfigurationDialog.createTagRefreshButton(shell, buttonComp, Policy.bind("TagConfigurationDialog.20"), folders[0], afterRefresh); //$NON-NLS-1$
-		data = new GridData();
-		if(hHint!=0 && wHint!=0) {
-			data.heightHint = hHint;
-			//don't crop labels with large font
-			//int widthHint = wHint;
-			//data.widthHint = Math.max(widthHint, refreshButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		}
-		data.horizontalAlignment = GridData.END;
-		data.horizontalSpan = 1;
-		refreshButton.setLayoutData (data);		
+    protected ICVSFolder getSingleFolder(TagSource tagSource, boolean bestEffort) {
+        if (!bestEffort && tagSource instanceof MultiFolderTagSource)
+            return null;
+        if (tagSource instanceof SingleFolderTagSource)
+            return ((SingleFolderTagSource)tagSource).getFolder();
+        return null;
+    }
 
-		Button addButton = new Button(buttonComp, SWT.PUSH);
-		addButton.setText (Policy.bind("TagConfigurationDialog.21")); //$NON-NLS-1$
-		data = new GridData ();
-		if(hHint!=0 && wHint!=0) {
-			data.heightHint = hHint;
-			//don't crop labels with large font
-			//int widthHint = wHint;
-			//data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		}
-		data.horizontalAlignment = GridData.END;
-		data.horizontalSpan = 1;
-		addButton.setLayoutData (data);
-		addButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					TagConfigurationDialog d = new TagConfigurationDialog(shell, folders);
-					d.open();
-					updateEnablementOnRefreshButton(refreshButton, folders[0]);
-					afterConfigure.run();
-				}
-			});		
-		
-		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
-		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
-		
-		Dialog.applyDialogFont(buttonComp);
-		
-		return buttonComp;
-	 }
-	 
-	 private static void updateEnablementOnRefreshButton(Button refreshButton, ICVSFolder project) {
-	 	try {
-			String[] files = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(project);
-			refreshButton.setEnabled(files.length != 0);
-		} catch (CVSException e) {
-			refreshButton.setEnabled(false);
-			CVSUIPlugin.log(e);
-		}
- 		
-	 }
-	 
-	/**
+    /**
 	 * @see Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {

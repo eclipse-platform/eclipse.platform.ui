@@ -84,7 +84,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite= createComposite(parent, 2);
+		Composite composite= createComposite(parent, 2, false);
 		setControl(composite);
 		
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_PROJECT_SELECTION_PAGE);
@@ -109,7 +109,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 			}
 		});
 
-		Composite filterComposite = createComposite(composite, 2);
+		Composite filterComposite = createComposite(composite, 2, false);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;

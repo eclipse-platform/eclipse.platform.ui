@@ -13,7 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.ui.merge.MergeWizard;
+import org.eclipse.team.internal.ccvs.ui.wizards.MergeWizard;
 
 public class MergeAction extends WorkspaceAction {
 
@@ -24,8 +24,7 @@ public class MergeAction extends WorkspaceAction {
 		final Shell shell = getShell();
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				MergeWizard wizard = new MergeWizard();
-				wizard.setResources(getSelectedResources());
+				MergeWizard wizard = new MergeWizard(getTargetPart(), getSelectedResources());
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
 			}

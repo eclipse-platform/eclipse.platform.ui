@@ -29,21 +29,14 @@ import org.eclipse.swt.widgets.*;
  */
 public abstract class DialogArea {
 
-	protected Dialog parentDialog;
-	protected FontMetrics fontMetrics;
-	protected IDialogSettings settings;
-	
-	protected List listeners;
+	private FontMetrics fontMetrics;
+	private List listeners;
 	
 	/**
 	 * Create a dialog area
-	 * @param parentDialog the parent dialog or <code>null</code>
-	 * @param settings the dialog settings stroe or <code>null</code>
 	 */
-	protected DialogArea(Dialog parentDialog, IDialogSettings settings) {
+	protected DialogArea() {
 		this.listeners = new ArrayList();
-		this.parentDialog = parentDialog;
-		this.settings = settings;
 	}
 	
 	/**
@@ -95,18 +88,6 @@ public abstract class DialogArea {
 	 * @param parent
 	 */
 	public abstract void createArea(Composite parent);
-
-	/**
-	 * Returns a shell that can be used to show error conditions, etc.
-	 * This method will return <code>null</code> if there is no parent dialog.
-	 * @return a shell or <code>null</code>
-	 */
-	protected Shell getShell() {
-		if (parentDialog == null) {
-			return null;
-		}
-		return parentDialog.getShell();
-	}
 	
 	protected Button createCheckbox(Composite parent, String label, int span) {
 		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
@@ -205,5 +186,13 @@ public abstract class DialogArea {
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);
 		return composite;
+	}
+	
+	protected int convertVerticalDLUsToPixels(int dlus) {
+	    return Dialog.convertVerticalDLUsToPixels(fontMetrics, dlus);
+	}
+	
+	protected int convertHorizontalDLUsToPixels(int dlus) {
+	    return Dialog.convertHorizontalDLUsToPixels(fontMetrics, dlus);
 	}
 }

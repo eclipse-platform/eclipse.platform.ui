@@ -60,7 +60,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 */
 	public void createControl(Composite parent) {
 
-		Composite composite = createComposite(parent, 1);
+		Composite composite = createComposite(parent, 1, false);
 		setControl(composite);
 		
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_CONFIGURATION_PAGE);

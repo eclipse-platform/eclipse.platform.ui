@@ -115,7 +115,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite= createComposite(parent, 1);
+		Composite composite= createComposite(parent, 1, false);
 		setControl(composite);
 		
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE);

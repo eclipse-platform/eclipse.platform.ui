@@ -92,7 +92,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite= createComposite(parent, 1);
+		Composite composite= createComposite(parent, 1, false);
 		setControl(composite);
 		// required in order to use setButtonLayoutData
 		initializeDialogUnits(composite);
@@ -130,7 +130,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	private Composite createUserSpecifiedProjectLocationGroup(Composite parent, boolean enabled) {
 	
 		// This group needs 3 columns
-		Composite projectGroup = createComposite(parent, 3);
+		Composite projectGroup = createComposite(parent, 3, false);
 		
 		// location label
 		locationLabel = new Label(projectGroup, SWT.NONE);

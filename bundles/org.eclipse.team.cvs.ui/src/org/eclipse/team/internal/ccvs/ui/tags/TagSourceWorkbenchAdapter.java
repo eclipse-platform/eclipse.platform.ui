@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui.merge;
-
+package org.eclipse.team.internal.ccvs.ui.tags;
 
 import java.util.ArrayList;
 
@@ -18,24 +17,33 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
-	ICVSFolder project;
-	TagRootElement branches;
-	TagRootElement versions;
-	TagRootElement dates;
-	int includeFlags;
-	
+/**
+ * A workbench adapter for a tag source that creates a model
+ * for displaying the tags from a tag source in a tree or table 
+ * viewer. The workbench adapter is not a singleton since it needs
+ * to be configured to display certain types of tags.
+ */
+public class TagSourceWorkbenchAdapter implements IAdaptable, IWorkbenchAdapter {
+
+    /**
+     * Constants for configuring which types of tags should be displayed.
+     */
 	public static final int INCLUDE_HEAD_TAG = 1;
 	public static final int INCLUDE_BASE_TAG = 2;
 	public static final int INCLUDE_BRANCHES = 4;
 	public static final int INCLUDE_VERSIONS = 8;
 	public static final int INCLUDE_DATES = 16;
 	public static final int INCLUDE_ALL_TAGS = INCLUDE_HEAD_TAG | INCLUDE_BASE_TAG | INCLUDE_BRANCHES | INCLUDE_VERSIONS | INCLUDE_DATES;
-
+	
+	TagRootElement branches;
+	TagRootElement versions;
+	TagRootElement dates;
+	int includeFlags;
+	
 	public static class ProjectElementSorter extends ViewerSorter {
+	
 		/*
 		 * The order in the diaog should be HEAD, Branches, Versions, Dates, BASE
 		 */
@@ -71,29 +79,44 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 			return super.compare(viewer, e1, e2);
 		}
 	}
-		
-	public ProjectElement(ICVSFolder project, int includeFlags) {
-		this.project = project;
+
+	
+    /**
+     * Create a viewer input for the tag source
+     * @param tagSource the tag source
+     * @param includeFlags the types of tags to include
+     * @return a tree viewer input
+     */
+    public static Object createInput(TagSource tagSource, int includeFlags) {
+        if (includeFlags == INCLUDE_VERSIONS) {
+            // Versions only is requested by the merge start page.
+            // Only need to show version tags
+            return new TagRootElement(null, tagSource, CVSTag.VERSION);
+        }
+        return new TagSourceWorkbenchAdapter(tagSource, includeFlags);
+    }
+    
+	public TagSourceWorkbenchAdapter(TagSource tagSource, int includeFlags) {
 		this.includeFlags = includeFlags;
 		if (this.includeFlags == 0) this.includeFlags = INCLUDE_ALL_TAGS;
 		if ((includeFlags & INCLUDE_BRANCHES) > 0) {	
-			branches = new TagRootElement(project, CVSTag.BRANCH);
+            branches = new TagRootElement(this, tagSource, CVSTag.BRANCH);
 		}
 		if ((includeFlags & INCLUDE_VERSIONS) > 0) {
-			versions = new TagRootElement(project, CVSTag.VERSION);
+			versions = new TagRootElement(this, tagSource, CVSTag.VERSION);
 		}
 		if ((includeFlags & INCLUDE_DATES) > 0) {
-			dates = new TagRootElement(project, CVSTag.DATE);
+			dates = new TagRootElement(this, tagSource, CVSTag.DATE);
 		}
 	}
 	
 	public Object[] getChildren(Object o) {
 		ArrayList children = new ArrayList(4);
 		if ((includeFlags & INCLUDE_HEAD_TAG) > 0) {
-			children.add(new TagElement(CVSTag.DEFAULT));
+			children.add(new TagElement(this, CVSTag.DEFAULT));
 		}
 		if ((includeFlags & INCLUDE_BASE_TAG) > 0) {
-			children.add(new TagElement(CVSTag.BASE));
+			children.add(new TagElement(this, CVSTag.BASE));
 		}
 		if ((includeFlags & INCLUDE_BRANCHES) > 0) {
 			children.add(branches);
