@@ -103,6 +103,16 @@ public class PathVariableDialog extends TitleAreaDialog {
 	private String validationMessage;
 
 	/**
+	 * Whether a variable name has been entered.  
+	 */
+	private boolean nameEntered = false;
+
+	/**
+	 * Whether a variable location has been entered.  
+	 */
+	private boolean locationEntered = false;
+	
+	/**
 	 * The standard message to be shown when there are no problems being
 	 * reported.
 	 */
@@ -167,8 +177,10 @@ public class PathVariableDialog extends TitleAreaDialog {
 		createWidgets(contents, parent.getFont());
 
 		// validate possibly already incorrect variable definitions
-		if (type == EXISTING_VARIABLE)
+		if (type == EXISTING_VARIABLE) {
+			nameEntered = locationEntered = true;
 			validateVariableValue();
+		}
 
 		return contents;
 	}
@@ -328,6 +340,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		variableName = variableNameField.getText().trim();
 		validationStatus = IMessageProvider.NONE;
 		okButton.setEnabled(validateVariableName() && validateVariableValue());
+		nameEntered = true;
 	}
 	/**
 	 * Fires validations (variable value first) and updates enabled state for the
@@ -338,6 +351,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		variableValue = variableValueField.getText().trim();
 		validationStatus = IMessageProvider.NONE;
 		okButton.setEnabled(validateVariableValue() && validateVariableName());
+		locationEntered = true;
 	}
 
 	/**
@@ -387,7 +401,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * @return true if the name is valid, false otherwise
 	 */
 	private boolean validateVariableName() {
-
+		boolean allowFinish = false;
+		
 		// if the current validationStatus is ERROR, no additional validation applies
 		if (validationStatus == IMessageProvider.ERROR)
 			return false;
@@ -398,8 +413,11 @@ public class PathVariableDialog extends TitleAreaDialog {
 
 		if (variableName.length() == 0) {
 			// the variable name is empty
-			newValidationStatus = IMessageProvider.ERROR;
-			message = WorkbenchMessages.getString("PathVariableDialog.variableNameEmptyMessage"); //$NON-NLS-1$
+			if (nameEntered) {
+				// a name was entered before and is now empty
+				newValidationStatus = IMessageProvider.ERROR;				
+				message = WorkbenchMessages.getString("PathVariableDialog.variableNameEmptyMessage"); //$NON-NLS-1$
+			}
 		} else {
 			IStatus status = pathVariableManager.validateName(variableName);
 			if (!status.isOK()) {
@@ -410,6 +428,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 				// the variable name is already in use
 				message = WorkbenchMessages.getString("PathVariableDialog.variableAlreadyExistsMessage"); //$NON-NLS-1$
 				newValidationStatus = IMessageProvider.ERROR;
+			} else {
+				allowFinish = true;
 			}
 		}
 
@@ -417,10 +437,13 @@ public class PathVariableDialog extends TitleAreaDialog {
 		// or if we have a more serious problem than the current one
 		if (validationStatus == IMessageProvider.NONE || newValidationStatus == IMessageProvider.ERROR) {
 			validationStatus = newValidationStatus;
-			setMessage(message, validationStatus);
+			validationMessage = message;
 		}
-		// only ERRORs are not acceptable
-		return validationStatus != IMessageProvider.ERROR;
+		// only set the message here if it is not going to be set in 
+		// validateVariableValue to avoid flashing.
+		if (allowFinish == false)
+			setMessage(validationMessage, validationStatus);
+		return allowFinish;
 	}
 
 	/**
@@ -429,6 +452,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * @return true if the value is valid, false otherwise
 	 */
 	private boolean validateVariableValue() {
+		boolean allowFinish = false;
 
 		// if the current validationStatus is ERROR, no additional validation applies
 		if (validationStatus == IMessageProvider.ERROR)
@@ -440,8 +464,11 @@ public class PathVariableDialog extends TitleAreaDialog {
 
 		if (variableValue.length() == 0) {
 			// the variable value is empty
-			message = WorkbenchMessages.getString("PathVariableDialog.variableValueEmptyMessage"); //$NON-NLS-1$
-			newValidationStatus = IMessageProvider.ERROR;
+			if (locationEntered) {
+				// a location value was entered before and is now empty
+				newValidationStatus = IMessageProvider.ERROR;
+				message = WorkbenchMessages.getString("PathVariableDialog.variableValueEmptyMessage"); //$NON-NLS-1$
+			}			
 		} else if (!Path.EMPTY.isValidPath(variableValue)) {
 			// the variable value is an invalid path
 			message = WorkbenchMessages.getString("PathVariableDialog.variableValueInvalidMessage"); //$NON-NLS-1$
@@ -454,17 +481,19 @@ public class PathVariableDialog extends TitleAreaDialog {
 			// the path does not exist (warning)
 			message = WorkbenchMessages.getString("PathVariableDialog.pathDoesNotExistMessage"); //$NON-NLS-1$
 			newValidationStatus = IMessageProvider.WARNING;
+			allowFinish = true;
+		} else {
+			allowFinish = true;
 		}
 
 		// overwrite the current validation status / message only if everything is ok (clearing them)
 		// or if we have a more serious problem than the current one
 		if (validationStatus == IMessageProvider.NONE || newValidationStatus > validationStatus) {
 			validationStatus = newValidationStatus;
-			setMessage(message, validationStatus);
+			validationMessage = message;
 		}
-
-		// only ERRORs are not acceptable
-		return validationStatus != IMessageProvider.ERROR;
+		setMessage(validationMessage, validationStatus);		
+		return allowFinish;
 	}
 
 	/**
