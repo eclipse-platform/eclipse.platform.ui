@@ -439,5 +439,28 @@ public interface IDebugUIConstants {
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
-	public static final int INTERNAL_ERROR = 120;			
+	public static final int INTERNAL_ERROR = 120;		
+	
+	// launch configuration attribute keys
+	/**
+	 * Launch configuartion attribute - the perspective to
+	 * switch to when a launch configuration is launched in
+	 * run mode (value <code>org.eclipse.debug.ui.launch_run_perspective</code>).
+	 * Value is a string corresponding to a perspective identifier,
+	 * or <code>null</code> indicating no perspective change.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_RUN_PERSPECTIVE = PLUGIN_ID + ".launch_run_perspective";	
+	
+	/**
+	 * Launch configuartion attribute - the perspective to
+	 * switch to when a launch configuration is launched in
+	 * debug mode (value <code>org.eclipse.debug.ui.launch_run_perspective</code>).
+	 * Value is a string corresponding to a perspective identifier,
+	 * or <code>null</code> indicating no perspective change.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_DEBUG_PERSPECTIVE = PLUGIN_ID + ".launch_debug_perspective";		
 }

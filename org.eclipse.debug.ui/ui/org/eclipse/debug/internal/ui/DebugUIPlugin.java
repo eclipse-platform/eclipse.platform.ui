@@ -472,7 +472,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	/**
 	 * Debug ui thread safe access to a display
 	 */
-	protected Display getDisplay() {
+	public Display getDisplay() {
 		//we can rely on not creating a display as we 
 		//prereq the base eclipse ui plugin.
 		return Display.getDefault();
