@@ -203,7 +203,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
-		setAction("AutoManageViews", new AutoManageViewsAction(this));
+		setAction("AutoManageViews", new AutoManageViewsAction(this)); //$NON-NLS-1$
 		fEditConfigAction = new EditLaunchConfigurationAction();
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
