@@ -398,12 +398,18 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			return false;
 		}
 
-		IStatus locationStatus =
-			workspace.validateProjectLocation(handle, projectPath);
-		if (!locationStatus.isOK()) {
-			setErrorMessage(locationStatus.getMessage()); //$NON-NLS-1$
-			return false;
+		/*
+		 * If not using the default value validate the location.
+		 */
+		if(!useDefaults()){
+			IStatus locationStatus =
+				workspace.validateProjectLocation(handle, projectPath);
+			if (!locationStatus.isOK()) {
+				setErrorMessage(locationStatus.getMessage()); //$NON-NLS-1$
+				return false;
+			}
 		}
+		
 
 		setErrorMessage(null);
 		setMessage(null);
