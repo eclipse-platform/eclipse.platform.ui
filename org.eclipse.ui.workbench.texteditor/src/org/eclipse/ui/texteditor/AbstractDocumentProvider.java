@@ -651,7 +651,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IDocumentProviderExtension#validateState(Object, Object)
 	 * @since 2.0
 	 */
-	final public void validateState(Object element, Object computationContext) throws CoreException {
+	public void validateState(Object element, Object computationContext) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info == null)
 			return;
