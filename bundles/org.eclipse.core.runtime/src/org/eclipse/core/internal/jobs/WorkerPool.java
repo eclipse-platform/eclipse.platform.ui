@@ -119,7 +119,7 @@ class WorkerPool {
 		//if there is a sleeping thread, wake it up
 		if (sleepingThreads > 0) {
 			if (JobManager.DEBUG)
-				JobManager.debug("notifiying a worker"); //$NON-NLS-1$
+				JobManager.debug("notifying a worker"); //$NON-NLS-1$
 			notify();
 			return;
 		}
