@@ -12,7 +12,7 @@ package org.eclipse.help.internal.base;
 import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
@@ -60,7 +60,7 @@ public class HelpDisplay {
 	 */
 	public void displayHelpResource(String href) {
 		// check if this is a toc
-		IToc toc = HelpPlugin.getTocManager().getToc(href, BootLoader.getNL());
+		IToc toc = HelpPlugin.getTocManager().getToc(href, Platform.getNL());
 		if (toc != null)
 			try {
 				displayHelpURL(

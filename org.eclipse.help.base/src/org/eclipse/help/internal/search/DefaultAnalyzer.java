@@ -14,7 +14,7 @@ import java.text.*;
 import java.util.*;
 
 import org.apache.lucene.analysis.*;
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 /**
  * Lucene Analyzer.
@@ -83,7 +83,7 @@ public class DefaultAnalyzer extends Analyzer {
 	 */
 	private Locale getLocale(String clientLocale) {
 		if (clientLocale == null)
-			clientLocale = BootLoader.getNL();
+			clientLocale = Platform.getNL();
 		if (clientLocale == null)
 			clientLocale = Locale.getDefault().toString();
 

@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.context;
 import java.io.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.ResourceLocator;
 
 public class ContextsFile {
@@ -37,7 +37,7 @@ public class ContextsFile {
 		InputStream stream = null;
 		try {
 			if (definingPluginID != null)
-				stream = ResourceLocator.openFromPlugin(definingPluginID, href, BootLoader.getNL());
+				stream = ResourceLocator.openFromPlugin(definingPluginID, href, Platform.getNL());
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {

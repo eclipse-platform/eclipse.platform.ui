@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 //import org.eclipse.help.internal.appserver.*;
@@ -218,7 +217,7 @@ public class HelpURLConnection extends URLConnection {
 		if (locale == null) {
 			locale = getValue(LANG);
 			if (locale == null) {
-				locale = BootLoader.getNL();
+				locale = Platform.getNL();
 			}
 		}
 		return locale;

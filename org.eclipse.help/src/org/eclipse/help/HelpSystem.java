@@ -13,7 +13,7 @@ package org.eclipse.help;
 import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.protocols.*;
 
@@ -54,7 +54,7 @@ public final class HelpSystem {
 	 * @return an array of TOC's
 	 */
 	public static IToc[] getTocs() {
-		return HelpPlugin.getTocManager().getTocs(BootLoader.getNL());
+		return HelpPlugin.getTocManager().getTocs(Platform.getNL());
 	}
 
 	/**

@@ -13,7 +13,7 @@ package org.eclipse.help.internal.appserver;
 import java.text.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * Uses a resource bundle to load strings from a property file.
@@ -174,7 +174,7 @@ class AppserverResources {
 	}
 
 	private static Locale getDefaultLocale() {
-		String nl = BootLoader.getNL();
+		String nl = Platform.getNL();
 		// sanity test
 		if (nl == null)
 			return Locale.getDefault();

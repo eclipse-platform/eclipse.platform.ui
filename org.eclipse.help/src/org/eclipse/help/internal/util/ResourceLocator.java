@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
@@ -105,7 +104,7 @@ public class ResourceLocator {
 			return null;
 		}
 		if (locale == null || locale.length() <= 0) {
-			locale = BootLoader.getNL();
+			locale = Platform.getNL();
 		}
 		Locale l;
 		if (locale.length() >= 5) {

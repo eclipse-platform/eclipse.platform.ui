@@ -13,8 +13,10 @@ package org.eclipse.help.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.osgi.service.environment.*;
 
 /**
  * 
@@ -105,9 +107,9 @@ public class CustomBrowser implements IBrowser {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) {
 				if (withinQuotation) {
-					if (BootLoader
+					if (Constants
 						.OS_WIN32
-						.equalsIgnoreCase(BootLoader.getOS())) {
+						.equalsIgnoreCase(Platform.getOS())) {
 						// need to quote URLs on Windows
 						tokenList.add("\"" + quotedString + "\"");
 					} else {
