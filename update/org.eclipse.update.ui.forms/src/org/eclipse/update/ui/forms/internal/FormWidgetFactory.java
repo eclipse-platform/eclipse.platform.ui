@@ -248,12 +248,17 @@ public class FormWidgetFactory {
 	}
 
 	public FormEngine createFormEngine(Composite parent) {
+		return createFormEngine(parent, false);
+	}
+	
+	public FormEngine createFormEngine(Composite parent, boolean trackFocus) {
 		FormEngine engine = new FormEngine(parent, SWT.WRAP);
 		engine.setBackground(backgroundColor);
 		engine.setForeground(foregroundColor);
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkHandler());
+		if (trackFocus) engine.addFocusListener(visibilityHandler);
 		engine.addKeyListener(keyboardHandler);
 		engine.setMenu(parent.getMenu());
 		return engine;

@@ -111,7 +111,7 @@ public class MainForm extends UpdateWebForm {
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
-		text = factory.createFormEngine(parent);
+		text = factory.createFormEngine(parent, true);
 		setFocusControl(text);
 		text.load(
 			UpdateUI.getResourceString(KEY_UPDATES_DESC),
@@ -140,7 +140,7 @@ public class MainForm extends UpdateWebForm {
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
-		text = factory.createFormEngine(parent);
+		text = factory.createFormEngine(parent, true);
 		text.load(
 			UpdateUI.getResourceString(KEY_INSTALLS_DESC),
 			true,
@@ -171,7 +171,7 @@ public class MainForm extends UpdateWebForm {
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
-		text = factory.createFormEngine(parent);
+		text = factory.createFormEngine(parent, true);
 		text.load(
 			UpdateUI.getResourceString(KEY_UNINSTALLS_DESC),
 			true,
@@ -203,7 +203,7 @@ public class MainForm extends UpdateWebForm {
 		topic.setForeground(topicColor);
 		topics.add(topic);
 		factory.createLabel(parent, null);
-		text = factory.createFormEngine(parent);
+		text = factory.createFormEngine(parent, true);
 		text.load(
 			UpdateUI.getResourceString(KEY_HISTORY_DESC),
 			true,

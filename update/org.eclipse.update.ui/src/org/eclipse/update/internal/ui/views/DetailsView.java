@@ -184,7 +184,7 @@ public class DetailsView extends MultiPageView {
 
 	public void showPageWithInput(IWorkbenchPart part, String pageId, Object input) {
 		if (pageId.equals(HOME_PAGE) == false) {
-			if (!(input instanceof UIModelObject
+			if (input!=null && !(input instanceof UIModelObject
 				|| input instanceof ModelObject 
 				|| input instanceof IStructuredSelection))
 				return;
@@ -293,7 +293,7 @@ public class DetailsView extends MultiPageView {
 			} else
 				// defect 14692
 				showPageWithInput(part, 
-					(homeAction != null) ? HOME_PAGE : UNKNOWN_PAGE,
+					/*(homeAction != null) ? HOME_PAGE : */UNKNOWN_PAGE,
 					null);
 		}
 	}

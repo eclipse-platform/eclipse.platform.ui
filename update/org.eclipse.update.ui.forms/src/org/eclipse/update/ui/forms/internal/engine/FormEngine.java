@@ -285,10 +285,13 @@ public class FormEngine extends Canvas {
 			exitLink(current);
 
 		boolean valid = model.traverseLinks(next);
+		
+		IHyperlinkSegment newLink = model.getSelectedLink();
 
 		if (valid)
-			enterLink(model.getSelectedLink());
-		paintFocusTransfer(current, model.getSelectedLink());
+			enterLink(newLink);
+		paintFocusTransfer(current, newLink);
+		if (newLink!=null) ensureVisible(newLink);
 		return !valid;
 	}
 
