@@ -60,4 +60,13 @@ public class ExtensionHandle extends Handle implements IExtension {
 	RegistryObject getObject() {
 		return getExtension();
 	}
+
+	public boolean isValid() {
+		try {
+			getExtension();
+		} catch (InvalidHandleException e) {
+			return false;
+		}
+		return true;
+	}
 }

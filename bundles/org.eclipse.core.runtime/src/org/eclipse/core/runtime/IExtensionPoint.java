@@ -16,6 +16,16 @@ package org.eclipse.core.runtime;
  * available for an extension point is obtained from the declaring plug-in's 
  * manifest (<code>plugin.xml</code>) file.
  * <p>
+ * These registry objects are intended for relatively short-term use. Clients that 
+ * need to retain an object must be aware that it may become invalid if the 
+ * declaring plug-in is updated or uninstalled. If this happens, all methods except 
+ * {@link #isValid()} will throw a runtime exception. Clients may check for invalid 
+ * objects by calling {@link #isValid()}.
+ * More generally, clients may registry a listener with the extension registry to receive
+ * notification of changes.
+ *  
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  */
@@ -120,10 +130,21 @@ public interface IExtensionPoint {
 	 * This identifier is unique within the plug-in registry, and
 	 * is composed of the namespace for this extension point 
 	 * and this extension point's simple identifier.
+	 * 
 	 *
 	 * @return the unique identifier of the extension point
 	 *    (e.g. <code>"org.eclipse.core.resources.builders"</code>)
 	 */
 	public String getUniqueIdentifier();
 
+	/** 
+	 * @see Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o);
+	
+	/**
+	 * Indicates whether or not the object is valid.
+	 * @return true if the object is still valid.
+	 */
+	public boolean isValid();
 }

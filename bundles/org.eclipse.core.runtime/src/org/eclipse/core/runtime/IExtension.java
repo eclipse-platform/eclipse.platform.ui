@@ -13,7 +13,12 @@ package org.eclipse.core.runtime;
 /**
  * An extension declared in a plug-in.
  * All information is obtained from the declaring plug-in's 
- * manifest (<code>plugin.xml</code>) file. 
+ * manifest (<code>plugin.xml</code>) file.
+ * <p>
+ * An extension can become stale if the contributing bundle object has 
+ * been uninstalled (not in RESOLVED state).
+ * Any call to a stale extension will result in a runtime exception.
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -105,4 +110,15 @@ public interface IExtension {
 	 *    (e.g. <code>"com.example.acme.main"</code>), or <code>null</code>
 	 */
 	public String getUniqueIdentifier();
+	
+	/** 
+	 * @see Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o);
+	
+	/**
+	 * Indicates whether or not the object is valid.
+	 * @return true if the object is still valid.
+	 */
+	public boolean isValid();
 }

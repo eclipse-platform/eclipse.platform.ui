@@ -114,4 +114,13 @@ public class ConfigurationElementHandle extends Handle implements IConfiguration
 			return getDeclaringExtension().getNamespace();
 		return result;
 	}
+	
+	public boolean isValid() {
+		try {
+			getConfigurationElement();
+		} catch (InvalidHandleException e) {
+			return false;
+		}
+		return true;
+	}
 }

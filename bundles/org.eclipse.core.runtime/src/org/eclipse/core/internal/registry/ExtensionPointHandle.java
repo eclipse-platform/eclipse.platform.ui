@@ -88,4 +88,13 @@ public class ExtensionPointHandle extends Handle implements IExtensionPoint {
 		return (ExtensionPoint) objectManager.getObject(getId(), RegistryObjectManager.EXTENSION_POINT);
 	}
 
+	public boolean isValid() {
+		try {
+			getExtensionPoint();
+		} catch (InvalidHandleException e) {
+			return false;
+		}
+		return true;
+	}
+
 }

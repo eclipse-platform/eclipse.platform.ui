@@ -19,6 +19,11 @@ package org.eclipse.core.runtime;
  * objects.
  * </p>
  * <p>
+ * An configuration element can become stale if the contributing bundle object has 
+ * been uninstalled (not in RESOLVED state).
+ * Any call to a stale configuration element will result in a runtime exception.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  */
@@ -236,4 +241,15 @@ public interface IConfigurationElement {
 	 * @since 3.1
 	 */
 	public String getNamespace();
+	
+	/** 
+	 * @see Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o);
+	
+	/**
+	 * Indicates whether or not the object is valid.
+	 * @return true if the object is still valid.
+	 */
+	public boolean isValid();
 }
