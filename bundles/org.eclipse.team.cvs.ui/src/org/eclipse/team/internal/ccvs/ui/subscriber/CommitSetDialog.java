@@ -50,6 +50,7 @@ public class CommitSetDialog extends Dialog {
         if (files == null) {
             files = set.getFiles();
         }
+        
 		int shellStyle = getShellStyle();
 		setShellStyle(shellStyle | SWT.RESIZE | SWT.MAX);
 		commitCommentArea = new CommitCommentArea(this, null);
@@ -74,7 +75,8 @@ public class CommitSetDialog extends Dialog {
 		    if (set.hasComment()) {
 		        // Only set the comment if the set has a custom comment.
 		        // Otherwise, the template should be used
-		        commitCommentArea.setProposedComment(set.getComment());
+		        comment = set.getComment();
+		        commitCommentArea.setProposedComment(comment);
 		    }
 		} else {
 		    comment = set.getComment();
