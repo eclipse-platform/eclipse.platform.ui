@@ -57,6 +57,8 @@ public class MultiRule implements ISchedulingRule {
 		return (ISchedulingRule[]) rules.clone();
 	}
 	public boolean contains(ISchedulingRule rule) {
+		if (this == rule)
+			return true;
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
 			//for each child of the target, there must be some child in this rule that contains it.
@@ -67,14 +69,17 @@ public class MultiRule implements ISchedulingRule {
 				if (!found)
 					return false;
 			}
+			return true;
 		} else {
 			for (int i = 0; i < rules.length; i++)
 				if (rules[i].contains(rule))
 					return true;
+			return false;
 		}
-		return false;
 	}
 	public boolean isConflicting(ISchedulingRule rule) {
+		if (this == rule)
+			return true;
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
 			for (int j = 0; j < otherRules.length; j++)
