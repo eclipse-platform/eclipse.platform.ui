@@ -226,7 +226,7 @@ class MarkerUtil implements IMarkerConstants {
      * Returns the image with the given key, or <code>null</code> if not found.
      */
     static Image getImage(String key) {
-        Image image = (Image) imageRegistry.get(key);
+        Image image = imageRegistry.get(key);
         if (image == null) {
             ImageDescriptor desc = getImageDescriptor(key);
             if (desc != null) {

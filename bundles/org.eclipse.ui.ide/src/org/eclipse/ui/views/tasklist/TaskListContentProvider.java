@@ -135,7 +135,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
         }
 
         int visibleMarkerCount = sum(visibleMarkerCounts);
-        TasksFilter filter = (TasksFilter) taskList.getFilter();
+        TasksFilter filter = taskList.getFilter();
 
         if (filter.isShowingAll()) {
             return TaskListMessages.format("TaskList.titleSummaryUnfiltered", //$NON-NLS-1$

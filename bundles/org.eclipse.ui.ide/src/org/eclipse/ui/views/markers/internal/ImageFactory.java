@@ -49,7 +49,7 @@ public class ImageFactory {
 	 * no image could be created.
 	 */
 	public static Image getImage(String path) {
-		Image image = (Image) imageRegistry.get(path);
+		Image image = imageRegistry.get(path);
 
 		if (image == null) {
 			ImageDescriptor imageDescriptor = getImageDescriptor(path);

@@ -160,8 +160,7 @@ public class TreeFrame extends Frame {
         IMemento expandedMem = memento.getChild(TAG_EXPANDED);
         if (expandedMem != null) {
             List elements = restoreElements(expandedMem);
-            expandedElements = (Object[]) elements.toArray(new Object[elements
-                    .size()]);
+            expandedElements = elements.toArray(new Object[elements.size()]);
         } else {
             expandedElements = new Object[0];
         }

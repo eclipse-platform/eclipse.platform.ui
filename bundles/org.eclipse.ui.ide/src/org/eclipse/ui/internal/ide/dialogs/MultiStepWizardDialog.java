@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.ide.dialogs;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -119,11 +118,11 @@ public class MultiStepWizardDialog extends WizardDialog {
         if (label == null) {
             if (!button.getText().equals(IDialogConstants.FINISH_LABEL)) {
                 button.setText(IDialogConstants.FINISH_LABEL);
-                ((Composite) button.getParent()).layout(true);
+                button.getParent().layout(true);
             }
         } else {
             button.setText(label);
-            ((Composite) button.getParent()).layout(true);
+            button.getParent().layout(true);
         }
     }
 

@@ -389,7 +389,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (workingSet == null || onResource != ON_WORKING_SET) {
             return true;
         }
-        IResource resource = (IResource) marker.getResource();
+        IResource resource = marker.getResource();
         if (resource != null) {
             return isEnclosed(resource);
         }
@@ -409,7 +409,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (workingSet == null || onResource != ON_WORKING_SET) {
             return true;
         }
-        IResource resource = (IResource) markerDelta.getResource();
+        IResource resource = markerDelta.getResource();
         if (resource != null) {
             return isEnclosed(resource);
         }

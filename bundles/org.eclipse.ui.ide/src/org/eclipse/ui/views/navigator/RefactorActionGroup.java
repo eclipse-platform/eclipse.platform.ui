@@ -119,7 +119,7 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
     }
 
     protected void makeActions() {
-        TreeViewer treeViewer = (TreeViewer) navigator.getViewer();
+        TreeViewer treeViewer = navigator.getViewer();
         Shell shell = navigator.getSite().getShell();
         clipboard = new Clipboard(shell.getDisplay());
 

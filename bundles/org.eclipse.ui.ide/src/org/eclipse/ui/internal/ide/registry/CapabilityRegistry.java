@@ -352,7 +352,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
             Category cat = null;
             String catPath = cap.getCategoryPath();
             if (catPath != null)
-                cat = (Category) findCategory(catPath);
+                cat = findCategory(catPath);
             if (cat != null) {
                 cat.addElement(cap);
             } else {

@@ -187,7 +187,7 @@ class BookmarkPropertiesDialog extends Dialog {
             } catch (CoreException e) {
             }
         } else if (initialAttributes == null && resource == null) {
-            resource = (IResource) ResourcesPlugin.getWorkspace().getRoot();
+            resource = ResourcesPlugin.getWorkspace().getRoot();
         }
 
         Composite composite = (Composite) super.createDialogArea(parent);

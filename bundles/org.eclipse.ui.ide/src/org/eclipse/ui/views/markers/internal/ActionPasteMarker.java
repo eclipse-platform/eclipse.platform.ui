@@ -130,7 +130,7 @@ public class ActionPasteMarker extends SelectionProviderAction {
                 }
                 boolean pastable = false;
                 for (int j = 0; j < pastableTypes.length; j++) {
-                    if (marker.isSubtypeOf((String) pastableTypes[j])) {
+                    if (marker.isSubtypeOf(pastableTypes[j])) {
                         pastable = true;
                         break;
                     }

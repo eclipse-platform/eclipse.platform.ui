@@ -67,7 +67,7 @@ public class MarkerList {
      */
     public void clearCache() {
         for (int i = 0; i < markers.length; i++) {
-            ConcreteMarker marker = (ConcreteMarker) markers[i];
+            ConcreteMarker marker = markers[i];
 
             marker.clearCache();
         }
