@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -64,9 +63,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
     private ImageDescriptor image;
 
-    private InstanceTracker configElementHandle;
-
-    private static final String ATT_ID = "id";//$NON-NLS-1$
+    static final String ATT_ID = "id";//$NON-NLS-1$
 
     private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
 
@@ -80,12 +77,17 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
     private static final String ATT_FIXED = "fixed";//$NON-NLS-1$
 
+	private IConfigurationElement configElement;
+
     /**
      * Create a new empty descriptor.
+     * 
+     * @param id the id of the new descriptor
+     * @param label the label of the new descriptor
+     * @param originalDescriptor the descriptor that this descriptor is based on
      */
     public PerspectiveDescriptor(String id, String label,
             PerspectiveDescriptor originalDescriptor) {
-        super();
         this.id = id;
         this.label = label;
         if (originalDescriptor != null) {
@@ -118,44 +120,22 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
     /**
      * Create a descriptor from a config element.
+     * 
+     * @param id the id of the element to create
+     * @param configElement the element to base this perspective on
+     * @throws CoreException thrown if there are any missing attributes
      */
-    public PerspectiveDescriptor(IConfigurationElement configElement,
-            String desc) throws CoreException {
-        super();
-
-        // This instance tracker is just to ensure the config element is not
-        // used after the originating bundle is removed -- there's no need for
-        // an instance dispose handler in this case.
-        this.configElementHandle = new InstanceTracker(configElement, null);
-
-        id = configElement.getAttribute(ATT_ID);
-        pluginId = configElement.getDeclaringExtension().getNamespace();
-        label = configElement.getAttribute(ATT_NAME);
-        className = configElement.getAttribute(ATT_CLASS);
-        singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
-
-        String str = configElement.getAttribute(ATT_FIXED);
-        if (str != null && str.equalsIgnoreCase("true"))//$NON-NLS-1$
-            fixed = true;
-
-        description = desc;
-
+    public PerspectiveDescriptor(String id, IConfigurationElement configElement) throws CoreException {
+        this.configElement = configElement;
+        this.id = id;
         // Sanity check.
-        if ((label == null) || (className == null)) {
+        if ((getId() == null) || (getLabel() == null) || (getClassName() == null)) {
             throw new CoreException(new Status(IStatus.ERROR,
                     WorkbenchPlugin.PI_WORKBENCH, 0,
-                    "Invalid extension (missing label or class name): " + id,//$NON-NLS-1$
+                    "Invalid extension (missing label, id or class name): " + getId(),//$NON-NLS-1$
                     null));
         }
 
-        // Load icon.
-        String icon = configElement.getAttribute(ATT_ICON);
-        if (icon != null) {
-            IExtension extension = configElement.getDeclaringExtension();
-            String extendingPluginId = extension.getNamespace();
-            image = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    extendingPluginId, icon);
-        }
         registerOpenPerspectiveHandler();
     }
 
@@ -168,18 +148,19 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @since 3.1
      */
     private void registerOpenPerspectiveHandler() {
-        IHandler openPerspectiveHandler = new OpenPerspectiveHandler(id);
+        IHandler openPerspectiveHandler = new OpenPerspectiveHandler(getId());
         HandlerSubmission openPerspectiveSubmission = new HandlerSubmission(
-                null, null, null, id, openPerspectiveHandler, Priority.MEDIUM);
+                null, null, null, getId(), openPerspectiveHandler, Priority.MEDIUM);
         PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
                 openPerspectiveSubmission);
     }
     
     /**
      * Creates a factory for a predefined perspective. If the perspective is not
-     * predefined return null.
+     * predefined return <code>null</code>.
      * 
-     * @throws a CoreException if the object could not be instantiated.
+     * @return the IPerspectiveFactory or <code>null</code>
+     * @throws CoreException if the object could not be instantiated.
      */
     public IPerspectiveFactory createFactory() throws CoreException {
         // if there is an originalId, then use that descriptor instead
@@ -195,10 +176,10 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         }
 
         // otherwise try to create the executable extension
-        if (configElementHandle != null)
+        if (configElement != null)
             try {
-                return (IPerspectiveFactory) configElementHandle
-                            .getExecutableExtension(ATT_CLASS);
+                return (IPerspectiveFactory) configElement
+                            .createExecutableExtension(ATT_CLASS);
             } catch (CoreException e) {
                 // do nothing
             }
@@ -214,55 +195,65 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
                 .getPerspectiveRegistry()).deleteCustomDefinition(this);
     }
 
-    /**
-     * Returns this perspective's description. 
-     * This is the value of its <code>"description"</code> attribute.
-     *
-     * @return the description
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveDescriptor#getDescription()
      */
     public String getDescription() {
-        return description;
+        return configElement == null ? description : RegistryReader.getDescription(configElement);
     }
 
     /**
-     * Returns whether or not this perspective
-     * is fixed.
+     * Returns whether or not this perspective is fixed.
+     * 
+     * @return whether or not this perspective is fixed
      */
     public boolean getFixed() {
-        return fixed;
+        return configElement == null ? fixed : Boolean.valueOf(configElement.getAttribute(ATT_FIXED)).booleanValue();
     }
 
-    /**
-     * Returns the ID.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveDescriptor#getId()
      */
     public String getId() {
         return id;
     }
 
-    /**
-     * Returns the descriptor of the image for this perspective.
-     *
-     * @return the descriptor of the image to display next to this perspective
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveDescriptor#getImageDescriptor()
      */
     public ImageDescriptor getImageDescriptor() {
+    	if (image == null && configElement != null) {
+            String icon = configElement.getAttribute(ATT_ICON);
+            if (icon != null) {
+                image = AbstractUIPlugin.imageDescriptorFromPlugin(
+                        configElement.getNamespace(), icon);
+            }
+    	}
         return image;
     }
 
-    /**
-     * Returns the label.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveDescriptor#getLabel()
      */
     public String getLabel() {
-        return label;
+        return configElement == null ? label : configElement.getAttribute(ATT_NAME);
     }
 
+    /**
+     * Return the original id of this descriptor.
+     * 
+     * @return the original id of this descriptor
+     */
     public String getOriginalId() {
         if (originalId == null)
-            return id;
+            return getId();
         return originalId;
     }
 
     /**
-     * Returns true if this perspective has a custom file.
+     * Returns <code>true</code> if this perspective has a custom definition.
+     * 
+     * @return whether this perspective has a custom definition
      */
     public boolean hasCustomDefinition() {
         return ((PerspectiveRegistry) WorkbenchPlugin.getDefault()
@@ -270,35 +261,41 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     }
 
     /**
-     * Returns true if this perspective wants to be default.
+     * Returns <code>true</code> if this perspective wants to be default.
+     * 
+     * @return whether this perspective wants to be default
      */
     public boolean hasDefaultFlag() {
-        if (configElementHandle == null)
+        if (configElement == null)
             return false;
-        IConfigurationElement element = configElementHandle
-                .getConfigurationElement();
-        if (element == null)
-            return false;
-        String str = element.getAttribute(ATT_DEFAULT);
-        return str == null ? false : str.equals("true"); //$NON-NLS-1$
+        
+        return Boolean.valueOf(configElement.getAttribute(ATT_DEFAULT)).booleanValue();
     }
 
     /**
-     * Returns true if this perspective is predefined by an extension.
+     * Returns <code>true</code> if this perspective is predefined by an extension.
+     * 
+     * @return whether this perspective is predefined by an extension
      */
     public boolean isPredefined() {
-        return (className != null);
+        return (getClassName() != null);
     }
 
     /**
-     * Returns true if this perspective is a singleton.
+     * Returns <code>true</code> if this perspective is a singleton.
+     * 
+     * @return whether this perspective is a singleton
      */
     public boolean isSingleton() {
-        return singleton;
+        return configElement == null ? singleton : configElement.getAttributeAsIs(ATT_SINGLETON) != null;
     }
 
     /**
-     * @see IPersistable
+     * Restore the state of a perspective from a memento.
+     * 
+     * @param memento the memento to restore from
+     * @return the <code>IStatus</code> of the operation
+     * @see org.eclipse.ui.IPersistableElement
      */
     public IStatus restoreState(IMemento memento) {
         IMemento childMem = memento
@@ -332,49 +329,56 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     }
 
     /**
-     * @see IPersistable
+     * Save the state of a perspective to a memento.
+     * 
+     * @param memento the memento to restore from
+     * @return the <code>IStatus</code> of the operation
+     * @see org.eclipse.ui.IPersistableElement
      */
     public IStatus saveState(IMemento memento) {
         IMemento childMem = memento
                 .createChild(IWorkbenchConstants.TAG_DESCRIPTOR);
-        childMem.putString(IWorkbenchConstants.TAG_ID, id);
+        childMem.putString(IWorkbenchConstants.TAG_ID, getId());
         if (originalId != null)
             childMem.putString(IWorkbenchConstants.TAG_DESCRIPTOR, originalId);
-        childMem.putString(IWorkbenchConstants.TAG_LABEL, label);
-        childMem.putString(IWorkbenchConstants.TAG_CLASS, className);
+        childMem.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
+        childMem.putString(IWorkbenchConstants.TAG_CLASS, getClassName());
         if (singleton)
             childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
     /**
-     * @return the configuration element used to create this perspective, if one
-     *         was used.
+     * Return the configuration element used to create this perspective, if one was used.
+     * 
+     * @return the configuration element used to create this perspective
      * @since 3.0
      */
     public IConfigurationElement getConfigElement() {
-        return configElementHandle == null ? null : configElementHandle
-                .getConfigurationElement();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return pluginId != null;
+        return configElement;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return id;
+        return getId();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return pluginId;
+        return configElement == null ? pluginId : configElement.getNamespace();
+    }
+    
+    /**
+     * Returns the factory class name for this descriptor.
+     * 
+     * @return the factory class name for this descriptor
+     * @since 3.1
+     */
+    public String getClassName() {
+    	return configElement == null ? className : configElement.getAttribute(ATT_CLASS);
     }
 }

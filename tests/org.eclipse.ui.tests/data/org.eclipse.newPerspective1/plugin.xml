@@ -7,7 +7,7 @@
    provider-name="">
 
    <runtime>
-      <library name="newPerspective1.jar">
+      <library name="perspective.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -21,7 +21,7 @@
          point="org.eclipse.ui.perspectives" id="testDynamicPerspectiveAddition">
       <perspective
             name="NewPerspective1"
-            class="org.eclipse.newPerspective1.NewPerspective1"
+            class="org.eclipse.ui.dynamic.DynamicPerspective"
             id="org.eclipse.newPerspective1.newPerspective1">
       </perspective>
    </extension>

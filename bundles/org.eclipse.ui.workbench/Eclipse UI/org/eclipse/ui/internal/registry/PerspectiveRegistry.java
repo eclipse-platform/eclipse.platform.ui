@@ -21,13 +21,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -49,18 +47,19 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Perspective registry.
  */
-public class PerspectiveRegistry extends RegistryManager implements
-        IPerspectiveRegistry, IRegistryChangeListener {
+public class PerspectiveRegistry implements IPerspectiveRegistry, IConfigurationElementRemovalHandler, IConfigurationElementAdditionHandler {
     private String defaultPerspID;
 
     private static final String EXT = "_persp.xml"; //$NON-NLS-1$
@@ -69,25 +68,21 @@ public class PerspectiveRegistry extends RegistryManager implements
 
     private static final String PERSP = "_persp"; //$NON-NLS-1$
 
-    private static final String TAG_LAYOUT = "perspective";//$NON-NLS-1$
-
-    protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-
     private static final char SPACE_DELIMITER = ' '; //$NON-NLS-1$
 
+    private List perspectives = new ArrayList(10);
+    
     //keep track of the perspectives the user has selected to remove or revert
     private ArrayList perspToRemove = new ArrayList(5);
 
     /**
      * Construct a new registry.
-     *
-     * @param rootFolder is the root folder for perspective files.
      */
     public PerspectiveRegistry() {
-        super(WorkbenchPlugin.PI_WORKBENCH, IWorkbenchConstants.PL_PERSPECTIVES);
-        Platform.getExtensionRegistry().addRegistryChangeListener(this);
+    	Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
+    	Workbench.getInstance().getConfigurationElementTracker().registerAdditionHandler(this);
 
-        IPreferenceStore store = WorkbenchPlugin.getDefault()
+    	IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         store.addPropertyChangeListener(new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
@@ -142,7 +137,7 @@ public class PerspectiveRegistry extends RegistryManager implements
                             XMLMemento memento = XMLMemento
                                     .createReadRoot(reader);
                             desc.restoreState(memento);
-                            add(desc, desc.getPluginId());
+                            addPerspective(desc);
                         } catch (WorkbenchException e) {
                             unableToLoadPerspective(e.getStatus());
                         }
@@ -174,17 +169,36 @@ public class PerspectiveRegistry extends RegistryManager implements
 
     /**
      * Adds a perspective.  This is typically used by the reader.
+     * 
+     * @param desc
      */
     public void addPerspective(PerspectiveDescriptor desc) {
         if (desc == null)
             return;
-        add(desc, desc.getPluginId());
+        add(desc);
     }
 
     /**
-     * Create a new perspective.
-     * Return null if the creation failed.
-     */
+	 * @param desc
+	 */
+	private void add(PerspectiveDescriptor desc) {
+		perspectives.add(desc);
+		IConfigurationElement element = desc.getConfigElement();
+		if (element != null) {
+			Workbench.getInstance().getConfigurationElementTracker().registerObject(element, desc);
+		}
+	}
+
+	/**
+	 * Create a new perspective.
+	 * 
+	 * @param label
+	 *            the name of the new descriptor
+	 * @param originalDescriptor
+	 *            the descriptor on which to base the new descriptor
+	 * @return a new perspective descriptor or <code>null</code> if the
+	 *         creation failed.
+	 */
     public PerspectiveDescriptor createPerspective(String label,
             PerspectiveDescriptor originalDescriptor) {
         // Sanity check to avoid duplicate labels.
@@ -198,7 +212,7 @@ public class PerspectiveRegistry extends RegistryManager implements
         // Create descriptor.
         PerspectiveDescriptor desc = new PerspectiveDescriptor(id, label,
                 originalDescriptor);
-        add(desc, desc.getPluginId());
+        add(desc);
         return desc;
     }
 
@@ -228,22 +242,36 @@ public class PerspectiveRegistry extends RegistryManager implements
     /**
      * Delete a perspective.
      * Has no effect if the perspective is defined in an extension.
+     * 
+     * @param in
      */
     public void deletePerspective(IPerspectiveDescriptor in) {
         PerspectiveDescriptor desc = (PerspectiveDescriptor) in;
         // Don't delete predefined perspectives
         if (!desc.isPredefined()) {
             perspToRemove.add(desc.getId());
-            remove(desc.getPluginId(), desc);
+            perspectives.remove(desc);
             desc.deleteCustomDefinition();
             verifyDefaultPerspective();
-            cleanRegistry();
         }
     }
-
+    
     /**
+     * Delete a perspective.  This will remove perspectives defined in extensions.
+     * 
+     * @param desc the perspective to delete
+     * @since 3.1
+     */
+    private void internalDeletePerspective(PerspectiveDescriptor desc) {
+        perspToRemove.add(desc.getId());
+        perspectives.remove(desc);
+        desc.deleteCustomDefinition();
+        verifyDefaultPerspective();
+    }
+
+	/**
      * Removes the custom definition of a perspective from the preference store
-     * @param perspectiveDescriptor
+     * @param desc
      */
     /* package */
     void deleteCustomDefinition(PerspectiveDescriptor desc) {
@@ -260,7 +288,7 @@ public class PerspectiveRegistry extends RegistryManager implements
 
     /**
      * Method hasCustomDefinition.
-     * @param perspectiveDescriptor
+     * @param desc
      */
     /* package */
     boolean hasCustomDefinition(PerspectiveDescriptor desc) {
@@ -269,36 +297,28 @@ public class PerspectiveRegistry extends RegistryManager implements
         return store.contains(desc.getId() + PERSP);
     }
 
-    /**
-     * @see IPerspectiveRegistry
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithId(java.lang.String)
      */
     public IPerspectiveDescriptor findPerspectiveWithId(String id) {
-        Object[] allDescriptors = getRegistryObjects();
-        if (allDescriptors == null)
-            return null;
-
-        for (int i = 0; i < allDescriptors.length; i++) {
-            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) allDescriptors[i];
-            if (desc.getId().equals(id))
-                return desc;
-        }
+    	for (Iterator i = perspectives.iterator(); i.hasNext();) {
+			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
+			if (desc.getId().equals(id))
+				return desc;
+		}
 
         return null;
     }
 
-    /**
-     * @see IPerspectiveRegistry
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithLabel(java.lang.String)
      */
     public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
-        Object[] allDescriptors = getRegistryObjects();
-        if (allDescriptors == null)
-            return null;
-
-        for (int i = 0; i < allDescriptors.length; i++) {
-            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) allDescriptors[i];
-            if (desc.getLabel().equals(label))
-                return desc;
-        }
+    	for (Iterator i = perspectives.iterator(); i.hasNext();) {
+			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
+			if (desc.getLabel().equals(label)) 
+				return desc;
+		}
         return null;
     }
 
@@ -312,18 +332,11 @@ public class PerspectiveRegistry extends RegistryManager implements
         return defaultPerspID;
     }
 
-    /**
-     * @see IPerspectiveRegistry
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
      */
     public IPerspectiveDescriptor[] getPerspectives() {
-        Object[] midArray = getRegistryObjects();
-        if (midArray == null || midArray.length == 0)
-            return null;
-        IPerspectiveDescriptor[] retArray = new IPerspectiveDescriptor[midArray.length];
-        for (int i = 0; i < midArray.length; i++) {
-            retArray[i] = (IPerspectiveDescriptor) midArray[i];
-        }
-        return retArray;
+    	return (IPerspectiveDescriptor[]) perspectives.toArray(new IPerspectiveDescriptor[perspectives.size()]);
     }
 
     /**
@@ -378,7 +391,7 @@ public class PerspectiveRegistry extends RegistryManager implements
                 String id = newPersp.getId();
                 IPerspectiveDescriptor oldPersp = findPerspectiveWithId(id);
                 if (oldPersp == null)
-                    add(newPersp, newPersp.getPluginId());
+                    add(newPersp);
                 reader.close();
             } catch (IOException e) {
                 unableToLoadPerspective(null);
@@ -417,7 +430,7 @@ public class PerspectiveRegistry extends RegistryManager implements
                         IPerspectiveDescriptor oldPersp = findPerspectiveWithId(newPersp
                                 .getId());
                         if (oldPersp == null)
-                            add(newPersp, newPersp.getPluginId());
+                            add(newPersp);
 
                         //save to the preference store
                         saveCustomPersp(newPersp, memento);
@@ -437,6 +450,9 @@ public class PerspectiveRegistry extends RegistryManager implements
         }
     }
 
+    /**
+     * @param status
+     */
     private void unableToLoadPerspective(IStatus status) {
         String title = WorkbenchMessages
                 .getString("Perspective.problemLoadingTitle"); //$NON-NLS-1$
@@ -451,9 +467,12 @@ public class PerspectiveRegistry extends RegistryManager implements
 
     /**
      * Saves a custom perspective definition to the preference store.
-     * @param desc
+     * 
+     * @param desc the perspective 
+     * @param memento the memento to save to
+     * @throws IOException
      */
-    public void saveCustomPersp(PerspectiveDescriptor realDesc,
+    public void saveCustomPersp(PerspectiveDescriptor desc,
             XMLMemento memento) throws IOException {
 
         IPreferenceStore store = WorkbenchPlugin.getDefault()
@@ -461,18 +480,21 @@ public class PerspectiveRegistry extends RegistryManager implements
 
         // Save it to the preference store.
         Writer writer = new StringWriter();
-        ;
 
         memento.save(writer);
         writer.close();
-        store.setValue(realDesc.getId() + PERSP, writer.toString());
+        store.setValue(desc.getId() + PERSP, writer.toString());
 
     }
 
     /**
      * Gets the Custom perspective definition from the preference store.
-     * @param string
-     * @return IMemento
+     * 
+     * @param id the id of the perspective to find
+     * @return IMemento a memento containing the perspective description
+     * 
+     * @throws WorkbenchException
+     * @throws IOException
      */
     public IMemento getCustomPersp(String id) throws WorkbenchException,
             IOException {
@@ -493,8 +515,8 @@ public class PerspectiveRegistry extends RegistryManager implements
      * Read children from the plugin registry.
      */
     private void loadPredefined() {
-        PerspectiveRegistryReader reader = new PerspectiveRegistryReader();
-        reader.readPerspectives(Platform.getExtensionRegistry(), this);
+        PerspectiveRegistryReader reader = new PerspectiveRegistryReader(this);
+        reader.readPerspectives(Platform.getExtensionRegistry());
     }
 
     /**
@@ -514,12 +536,17 @@ public class PerspectiveRegistry extends RegistryManager implements
     }
 
     /**
-     * Return true if a label is valid and unused.
+     * Return <code>true</code> if a label is valid and unused.
+     * 
+     * @param label the label to test
+     * @return whether the label is valid
      */
     public boolean validateLabel(String label) {
         label = label.trim();
         if (label.length() <= 0)
             return false;
+        if (findPerspectiveWithLabel(label) != null)
+        	return false;
         return true;
     }
 
@@ -565,7 +592,7 @@ public class PerspectiveRegistry extends RegistryManager implements
         // Create descriptor.
         desc = new PerspectiveDescriptor(id, label,
                 (PerspectiveDescriptor) originalDescriptor);
-        add(desc, ((PerspectiveDescriptor) desc).getPluginId());
+        add((PerspectiveDescriptor) desc);
         return desc;
     }
 
@@ -578,74 +605,44 @@ public class PerspectiveRegistry extends RegistryManager implements
         desc.revertToPredefined();
     }
 
-    public Object[] buildNewCacheObject(IExtensionDelta delta) {
-        IExtension extension = delta.getExtension();
-        if (extension == null)
-            return null;
-        IConfigurationElement[] elements = extension.getConfigurationElements();
-        IPerspectiveDescriptor desc = null;
-        for (int i = 0; i < elements.length; i++) {
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            if (id == null)
-                continue;
-            desc = findPerspectiveWithId(id);
-            if (desc == null) {
-                if (elements[i].getName().equals(TAG_LAYOUT)) {
-                    try {
-                        String descText;
-                        IConfigurationElement[] children = elements[i]
-                                .getChildren(TAG_DESCRIPTION);
-                        if (children.length >= 1) {
-                            descText = children[0].getValue();
-                        } else {
-                            descText = ""; //$NON-NLS-1$
-                        }
-                        desc = new PerspectiveDescriptor(elements[i], descText);
-                    } catch (CoreException e) {
-                        // log an error since its not safe to open a dialog here
-                        WorkbenchPlugin
-                                .log(
-                                        "Unable to create layout descriptor.", e.getStatus());//$NON-NLS-1$
-                    }
-                }
-
-            }
-        }
-        Object retArray[] = new Object[1];
-        retArray[0] = desc;
-        return retArray;
-    }
-
-    public void dispose() {
-        Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-    }
-
     /**
-     * Subclasses can override this to be given an opportunity to cleanup after
-     * a registry removal. E.g., the PerspectiveRegistry has chosen to remove
-     * all open perspectives contributed by the removed bundle. The object will
-     * have been removed from the registry by the time this method is called.
-	 * @since 3.1
+     * 
      */
-    protected void handleBundleRemoved(String bundleId, Object registryObject) {
-        PerspectiveDescriptor desc = (PerspectiveDescriptor) registryObject;
-
-        // close the perspective in all windows
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        for (int w = 0; w < windows.length; ++w) {
-            IWorkbenchWindow window = windows[w];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int p = 0; p < pages.length; ++p) {
-                WorkbenchPage page = (WorkbenchPage) pages[p];
-                ClosePerspectiveAction.closePerspective(page, page
-                        .findPerspective(desc));
-            }
-        }
-
-        // remove the custom definition too (may be persisted in the preference
-        // service
-        if (desc.hasCustomDefinition())
-            desc.deleteCustomDefinition();
+    public void dispose() {
+    	Workbench.getInstance().getConfigurationElementTracker().unregisterRemovalHandler(this);
+    	Workbench.getInstance().getConfigurationElementTracker().unregisterAdditionHandler(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof PerspectiveDescriptor) {
+	        // close the perspective in all windows
+	        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+	                .getWorkbenchWindows();
+	        PerspectiveDescriptor desc = (PerspectiveDescriptor) object;
+			for (int w = 0; w < windows.length; ++w) {
+	            IWorkbenchWindow window = windows[w];
+	            IWorkbenchPage[] pages = window.getPages();
+	            for (int p = 0; p < pages.length; ++p) {
+	                WorkbenchPage page = (WorkbenchPage) pages[p];
+	                ClosePerspectiveAction.closePerspective(page, page
+	                        .findPerspective(desc));
+	            }
+	        }
+			
+			//((Workbench)PlatformUI.getWorkbench()).getPerspectiveHistory().removeItem(desc);
+			
+			internalDeletePerspective(desc);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
+	 */
+	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
+		PerspectiveRegistryReader reader = new PerspectiveRegistryReader(this);
+		reader.readElement(element);		
+	}
 }

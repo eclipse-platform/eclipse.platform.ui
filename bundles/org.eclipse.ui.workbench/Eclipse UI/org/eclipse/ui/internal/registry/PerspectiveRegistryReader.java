@@ -27,9 +27,12 @@ public class PerspectiveRegistryReader extends RegistryReader {
 
     /**
      * RegistryViewReader constructor comment.
+     * 
+     * @param out the output registry
      */
-    public PerspectiveRegistryReader() {
+    public PerspectiveRegistryReader(PerspectiveRegistry out) {
         super();
+    	registry = out;
     }
 
     /**
@@ -39,9 +42,7 @@ public class PerspectiveRegistryReader extends RegistryReader {
     protected boolean readElement(IConfigurationElement element) {
         if (element.getName().equals(TAG_LAYOUT)) {
             try {
-                String descText = getDescription(element);
-                PerspectiveDescriptor desc = new PerspectiveDescriptor(element,
-                        descText);
+                PerspectiveDescriptor desc = new PerspectiveDescriptor(element.getAttribute(PerspectiveDescriptor.ATT_ID), element);
                 registry.addPerspective(desc);
             } catch (CoreException e) {
                 // log an error since its not safe to open a dialog here
@@ -56,9 +57,10 @@ public class PerspectiveRegistryReader extends RegistryReader {
 
     /**
      * Read the view extensions within a registry.
+     * 
+     * @param in the registry to read
      */
-    public void readPerspectives(IExtensionRegistry in, PerspectiveRegistry out) {
-        registry = out;
+    public void readPerspectives(IExtensionRegistry in) {
         readRegistry(in, PlatformUI.PLUGIN_ID,
                 IWorkbenchConstants.PL_PERSPECTIVES);
     }
