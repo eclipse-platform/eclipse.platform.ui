@@ -15,10 +15,10 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class AddWizard extends ConnectionWizard {
 	protected String getMainPageDescription() {
-		return Policy.bind("AddWizard.description");
+		return Policy.bind("AddWizard.description"); //$NON-NLS-1$
 	}
 	protected String getMainPageTitle() {
-		return Policy.bind("AddWizard.title");
+		return Policy.bind("AddWizard.title"); //$NON-NLS-1$
 	}
 	protected int getStyle() {
 		return ConfigurationWizardMainPage.PROJECT_NAME |
