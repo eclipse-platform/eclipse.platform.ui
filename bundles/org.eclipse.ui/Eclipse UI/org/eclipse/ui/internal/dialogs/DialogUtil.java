@@ -53,11 +53,25 @@ public static void openError(Shell parent, String title, String message, PartIni
 
 /**
  * Removes the '&' accelerator indicator from a label, if any.
+ * Also removes the () accelerators which are used in Asian
+ * languages.
  */
 public static String removeAccel(String label) {
+	
+	int startBracket = label.indexOf("(&");
+	//Non latin accelerator?
+	if(startBracket >= 0){
+		int endBracket = label.indexOf(')');
+		
+		//If there is more than one character it is not an accelerator
+		if((endBracket - startBracket) == 3)
+			return label.substring(0, startBracket) + label.substring(endBracket+1);
+	}
+	
 	int i = label.indexOf('&');
 	if (i >= 0)
 		label = label.substring(0, i) + label.substring(i+1);
+		
 	return label;
 }
 
