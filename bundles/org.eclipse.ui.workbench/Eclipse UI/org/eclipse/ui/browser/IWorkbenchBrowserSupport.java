@@ -99,6 +99,12 @@ public interface IWorkbenchBrowserSupport {
 	 * browsers and the user didn't set the preference to external browsers.
 	 */
 	int AS_EXTERNAL = 1 << 7;
+	
+	/**
+	 * A unique identifier that can be used when reusing an shared default web
+	 * browser is desirable (value &quot;org.eclipse.ui.defualtBrowser&quot;).
+	 */
+	String DEFAULT_BROWSER_ID = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
 	/**
 	 * Creates the new web browser instance. If the user has chosen to use the
