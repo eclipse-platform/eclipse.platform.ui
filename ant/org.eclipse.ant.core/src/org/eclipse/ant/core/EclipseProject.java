@@ -20,7 +20,7 @@ public EclipseProject() {
  *
  * @throws IOException 
  */
-public void copyFile(File sourceFile, File destFile, boolean filtering, boolean overwrite, boolean preserveLastModified) throws IOException {
+public void copyFileInWorkspace(File sourceFile, File destFile, boolean filtering, boolean overwrite, boolean preserveLastModified) throws IOException {
 	log("Copy: " + sourceFile.getAbsolutePath() + " -> " + destFile.getAbsolutePath(), MSG_VERBOSE);
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	String sourcePath = fixSeparators(sourceFile.getPath());
