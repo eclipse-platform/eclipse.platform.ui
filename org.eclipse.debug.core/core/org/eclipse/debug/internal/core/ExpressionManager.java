@@ -364,7 +364,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	}
 	
 	protected void watchExpressionChanged(IWatchExpression expression) {
-		if (fExpressions.contains(expression)) {
+		if (fExpressions != null && fExpressions.contains(expression)) {
 			storeWatchExpressions();
 		}
 	}
