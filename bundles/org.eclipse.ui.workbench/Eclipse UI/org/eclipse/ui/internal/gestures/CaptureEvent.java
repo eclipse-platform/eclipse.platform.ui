@@ -48,14 +48,14 @@ public final class CaptureEvent implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		CaptureEvent captureEvent = (CaptureEvent) object;
-		int compareTo = data - captureEvent.data;
+		CaptureEvent castedObject = (CaptureEvent) object;
+		int compareTo = data - castedObject.data;
 
 		if (compareTo == 0) {
-			compareTo = pen - captureEvent.pen;
+			compareTo = pen - castedObject.pen;
 
 			if (compareTo == 0)
-				compareTo = Util.compare(points, captureEvent.points);
+				compareTo = Util.compare(points, castedObject.points);
 		}
 
 		return compareTo;
@@ -65,8 +65,8 @@ public final class CaptureEvent implements Comparable {
 		if (!(object instanceof CaptureEvent))
 			return false;
 
-		CaptureEvent captureEvent = (CaptureEvent) object;
-		return data == captureEvent.data && pen == captureEvent.pen && Arrays.equals(points, captureEvent.points);
+		CaptureEvent castedObject = (CaptureEvent) object;
+		return data == castedObject.data && pen == castedObject.pen && Arrays.equals(points, castedObject.points);
 	}
 
 	public int getData() {

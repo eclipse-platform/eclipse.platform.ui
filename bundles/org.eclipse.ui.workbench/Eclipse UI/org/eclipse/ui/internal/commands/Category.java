@@ -55,17 +55,17 @@ final class Category implements ICategory {
 	}
 
 	public int compareTo(Object object) {
-		Category category = (Category) object;
-		int compareTo = defined == false ? (category.defined == true ? -1 : 0) : 1;
+		Category castedObject = (Category) object;
+		int compareTo = defined == false ? (castedObject.defined == true ? -1 : 0) : 1;
 			
 		if (compareTo == 0) {
-			compareTo = Util.compare(description, category.description);
+			compareTo = Util.compare(description, castedObject.description);
 		
 			if (compareTo == 0) {		
-				compareTo = id.compareTo(category.id);			
+				compareTo = id.compareTo(castedObject.id);			
 			
 				if (compareTo == 0)
-					compareTo = Util.compare(name, category.name);
+					compareTo = Util.compare(name, castedObject.name);
 			}
 		}
 
@@ -76,12 +76,12 @@ final class Category implements ICategory {
 		if (!(object instanceof Category))
 			return false;
 
-		Category category = (Category) object;	
+		Category castedObject = (Category) object;	
 		boolean equals = true;
-		equals &= defined == category.defined;
-		equals &= Util.equals(description, category.description);
-		equals &= id.equals(category.id);
-		equals &= Util.equals(name, category.name);
+		equals &= defined == castedObject.defined;
+		equals &= Util.equals(description, castedObject.description);
+		equals &= id.equals(castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
 		return equals;
 	}
 

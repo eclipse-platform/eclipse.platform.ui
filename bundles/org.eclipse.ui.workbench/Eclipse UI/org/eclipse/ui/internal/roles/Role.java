@@ -62,20 +62,20 @@ final class Role implements IRole {
 	}
 
 	public int compareTo(Object object) {
-		Role role = (Role) object;		
-		int compareTo = Util.compare((Comparable[]) activityBindingsAsArray, (Comparable[]) role.activityBindingsAsArray);
+		Role castedObject = (Role) object;		
+		int compareTo = Util.compare((Comparable[]) activityBindingsAsArray, (Comparable[]) castedObject.activityBindingsAsArray);
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(defined, role.defined);
+			compareTo = Util.compare(defined, castedObject.defined);
 	
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, role.description);
+				compareTo = Util.compare(description, castedObject.description);
 	
 				if (compareTo == 0) {		
-					compareTo = Util.compare(id, role.id);			
+					compareTo = Util.compare(id, castedObject.id);			
 						
 					if (compareTo == 0)
-						compareTo = Util.compare(name, role.name);
+						compareTo = Util.compare(name, castedObject.name);
 				}
 			}
 		}
@@ -87,13 +87,13 @@ final class Role implements IRole {
 		if (!(object instanceof Role))
 			return false;
 
-		Role role = (Role) object;	
+		Role castedObject = (Role) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityBindings, role.activityBindings);		
-		equals &= Util.equals(defined, role.defined);
-		equals &= Util.equals(description, role.description);
-		equals &= Util.equals(id, role.id);
-		equals &= Util.equals(name, role.name);
+		equals &= Util.equals(activityBindings, castedObject.activityBindings);		
+		equals &= Util.equals(defined, castedObject.defined);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
 		return equals;
 	}
 

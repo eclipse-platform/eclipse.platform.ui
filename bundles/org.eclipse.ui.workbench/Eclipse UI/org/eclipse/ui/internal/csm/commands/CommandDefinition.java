@@ -91,20 +91,20 @@ public final class CommandDefinition implements Comparable, ICommandDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		CommandDefinition commandDefinition = (CommandDefinition) object;		
-		int compareTo = Util.compare(categoryId, commandDefinition.categoryId);
+		CommandDefinition castedObject = (CommandDefinition) object;		
+		int compareTo = Util.compare(categoryId, castedObject.categoryId);
 							
 		if (compareTo == 0) {
-			compareTo = Util.compare(description, commandDefinition.description);
+			compareTo = Util.compare(description, castedObject.description);
 		
 			if (compareTo == 0) {		
-				compareTo = Util.compare(id, commandDefinition.id);			
+				compareTo = Util.compare(id, castedObject.id);			
 			
 				if (compareTo == 0) {
-					compareTo = Util.compare(name, commandDefinition.name);
+					compareTo = Util.compare(name, castedObject.name);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, commandDefinition.pluginId);								
+						compareTo = Util.compare(pluginId, castedObject.pluginId);								
 				}							
 			}
 		}
@@ -116,13 +116,13 @@ public final class CommandDefinition implements Comparable, ICommandDefinition {
 		if (!(object instanceof CommandDefinition))
 			return false;
 
-		CommandDefinition commandDefinition = (CommandDefinition) object;	
+		CommandDefinition castedObject = (CommandDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(categoryId, commandDefinition.categoryId);
-		equals &= Util.equals(description, commandDefinition.description);
-		equals &= Util.equals(id, commandDefinition.id);
-		equals &= Util.equals(name, commandDefinition.name);
-		equals &= Util.equals(pluginId, commandDefinition.pluginId);
+		equals &= Util.equals(categoryId, castedObject.categoryId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

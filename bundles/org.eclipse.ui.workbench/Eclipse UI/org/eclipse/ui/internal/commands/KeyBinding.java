@@ -38,11 +38,11 @@ final class KeyBinding implements IKeyBinding {
 	}
 
 	public int compareTo(Object object) {
-		KeyBinding keyBinding = (KeyBinding) object;
-		int compareTo = match - keyBinding.match;
+		KeyBinding castedObject = (KeyBinding) object;
+		int compareTo = match - castedObject.match;
 		
 		if (compareTo == 0)
-			compareTo = keySequence.compareTo(keyBinding.keySequence);
+			compareTo = keySequence.compareTo(castedObject.keySequence);
 					
 		return compareTo;	
 	}
@@ -51,10 +51,10 @@ final class KeyBinding implements IKeyBinding {
 		if (!(object instanceof KeyBinding))
 			return false;
 
-		KeyBinding keyBinding = (KeyBinding) object;	
+		KeyBinding castedObject = (KeyBinding) object;	
 		boolean equals = true;
-		equals &= keySequence.equals(keyBinding.keySequence);
-		equals &= match == keyBinding.match;
+		equals &= keySequence.equals(castedObject.keySequence);
+		equals &= match == castedObject.match;
 		return equals;
 	}
 

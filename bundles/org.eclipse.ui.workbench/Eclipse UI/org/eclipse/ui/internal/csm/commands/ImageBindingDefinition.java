@@ -39,23 +39,23 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;
-		int compareTo = Util.compare(commandId, imageBindingDefinition.commandId);
+		ImageBindingDefinition castedObject = (ImageBindingDefinition) object;
+		int compareTo = Util.compare(commandId, castedObject.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(imageStyle, imageBindingDefinition.imageStyle);			
+			compareTo = Util.compare(imageStyle, castedObject.imageStyle);			
 
 			if (compareTo == 0) {		
-				compareTo = Util.compare(imageUri, imageBindingDefinition.imageUri);			
+				compareTo = Util.compare(imageUri, castedObject.imageUri);			
 
 				if (compareTo == 0) {		
-					compareTo = Util.compare(locale, imageBindingDefinition.locale);			
+					compareTo = Util.compare(locale, castedObject.locale);			
 
 					if (compareTo == 0) {		
-						compareTo = Util.compare(platform, imageBindingDefinition.platform);			
+						compareTo = Util.compare(platform, castedObject.platform);			
 		
 						if (compareTo == 0)
-							compareTo = Util.compare(pluginId, imageBindingDefinition.pluginId);								
+							compareTo = Util.compare(pluginId, castedObject.pluginId);								
 					}
 				}
 			}
@@ -68,14 +68,14 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 		if (!(object instanceof ImageBindingDefinition))
 			return false;
 
-		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;	
+		ImageBindingDefinition castedObject = (ImageBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(commandId, imageBindingDefinition.commandId);
-		equals &= Util.equals(imageStyle, imageBindingDefinition.imageStyle);
-		equals &= Util.equals(imageUri, imageBindingDefinition.imageUri);
-		equals &= Util.equals(locale, imageBindingDefinition.locale);
-		equals &= Util.equals(platform, imageBindingDefinition.platform);
-		equals &= Util.equals(pluginId, imageBindingDefinition.pluginId);
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= Util.equals(imageStyle, castedObject.imageStyle);
+		equals &= Util.equals(imageUri, castedObject.imageUri);
+		equals &= Util.equals(locale, castedObject.locale);
+		equals &= Util.equals(platform, castedObject.platform);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

@@ -33,8 +33,8 @@ final class ActivityBinding implements IActivityBinding {
 	}
 
 	public int compareTo(Object object) {
-		ActivityBinding activityBinding = (ActivityBinding) object;
-		int compareTo = Util.compare(activityId, activityBinding.activityId);					
+		ActivityBinding castedObject = (ActivityBinding) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);					
 		return compareTo;	
 	}
 	
@@ -42,9 +42,9 @@ final class ActivityBinding implements IActivityBinding {
 		if (!(object instanceof ActivityBinding))
 			return false;
 
-		ActivityBinding activityBinding = (ActivityBinding) object;	
+		ActivityBinding castedObject = (ActivityBinding) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, activityBinding.activityId);
+		equals &= Util.equals(activityId, castedObject.activityId);
 		return equals;
 	}
 

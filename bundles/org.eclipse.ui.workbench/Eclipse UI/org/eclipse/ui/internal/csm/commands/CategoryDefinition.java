@@ -90,17 +90,17 @@ public final class CategoryDefinition implements ICategoryDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		CategoryDefinition categoryDefinition = (CategoryDefinition) object;
-		int compareTo = Util.compare(description, categoryDefinition.description);
+		CategoryDefinition castedObject = (CategoryDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, categoryDefinition.id);	
+			compareTo = Util.compare(id, castedObject.id);	
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, categoryDefinition.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, categoryDefinition.pluginId);								
+					compareTo = Util.compare(pluginId, castedObject.pluginId);								
 			}
 		}
 		
@@ -111,12 +111,12 @@ public final class CategoryDefinition implements ICategoryDefinition {
 		if (!(object instanceof CategoryDefinition))
 			return false;
 
-		CategoryDefinition categoryDefinition = (CategoryDefinition) object;	
+		CategoryDefinition castedObject = (CategoryDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, categoryDefinition.description);
-		equals &= Util.equals(id, categoryDefinition.id);
-		equals &= Util.equals(name, categoryDefinition.name);
-		equals &= Util.equals(pluginId, categoryDefinition.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

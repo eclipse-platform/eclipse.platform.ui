@@ -89,17 +89,17 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		RoleDefinition roleDefinition = (RoleDefinition) object;
-		int compareTo = Util.compare(description, roleDefinition.description);
+		RoleDefinition castedObject = (RoleDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, roleDefinition.id);			
+			compareTo = Util.compare(id, castedObject.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, roleDefinition.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, roleDefinition.pluginId);								
+					compareTo = Util.compare(pluginId, castedObject.pluginId);								
 			}
 		}
 		
@@ -110,12 +110,12 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 		if (!(object instanceof RoleDefinition))
 			return false;
 
-		RoleDefinition roleDefinition = (RoleDefinition) object;	
+		RoleDefinition castedObject = (RoleDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, roleDefinition.description);
-		equals &= Util.equals(id, roleDefinition.id);
-		equals &= Util.equals(name, roleDefinition.name);
-		equals &= Util.equals(pluginId, roleDefinition.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

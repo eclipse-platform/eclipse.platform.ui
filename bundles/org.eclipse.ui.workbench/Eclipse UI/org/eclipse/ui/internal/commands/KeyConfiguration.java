@@ -57,23 +57,23 @@ final class KeyConfiguration implements IKeyConfiguration {
 	}
 
 	public int compareTo(Object object) {
-		KeyConfiguration keyConfiguration = (KeyConfiguration) object;
-		int compareTo = active == false ? (keyConfiguration.active == true ? -1 : 0) : 1;
+		KeyConfiguration castedObject = (KeyConfiguration) object;
+		int compareTo = active == false ? (castedObject.active == true ? -1 : 0) : 1;
 
 		if (compareTo == 0) {
-			compareTo = defined == false ? (keyConfiguration.defined == true ? -1 : 0) : 1;
+			compareTo = defined == false ? (castedObject.defined == true ? -1 : 0) : 1;
 			
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, keyConfiguration.description);
+				compareTo = Util.compare(description, castedObject.description);
 			
 				if (compareTo == 0) {		
-					compareTo = id.compareTo(keyConfiguration.id);			
+					compareTo = id.compareTo(castedObject.id);			
 				
 					if (compareTo == 0) {
-						compareTo = Util.compare(name, keyConfiguration.name);
+						compareTo = Util.compare(name, castedObject.name);
 						
 						if (compareTo == 0)
-							compareTo = Util.compare(parentId, keyConfiguration.parentId);		
+							compareTo = Util.compare(parentId, castedObject.parentId);		
 					}
 				}
 			}
@@ -86,14 +86,14 @@ final class KeyConfiguration implements IKeyConfiguration {
 		if (!(object instanceof KeyConfiguration))
 			return false;
 
-		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
+		KeyConfiguration castedObject = (KeyConfiguration) object;	
 		boolean equals = true;
-		equals &= active == keyConfiguration.active;
-		equals &= defined == keyConfiguration.defined;
-		equals &= Util.equals(description, keyConfiguration.description);
-		equals &= id.equals(keyConfiguration.id);
-		equals &= Util.equals(name, keyConfiguration.name);
-		equals &= Util.equals(parentId, keyConfiguration.parentId);
+		equals &= active == castedObject.active;
+		equals &= defined == castedObject.defined;
+		equals &= Util.equals(description, castedObject.description);
+		equals &= id.equals(castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
 		return equals;
 	}
 

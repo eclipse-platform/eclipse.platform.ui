@@ -23,8 +23,7 @@ final class Persistence {
 	final static String PACKAGE_BASE = "roles"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$	
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
-	// TODO roleActivityBinding -> activityBinding
-	final static String TAG_ACTIVITY_BINDING = "roleActivityBinding"; //$NON-NLS-1$	
+	final static String TAG_ACTIVITY_BINDING = "activityBinding"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$

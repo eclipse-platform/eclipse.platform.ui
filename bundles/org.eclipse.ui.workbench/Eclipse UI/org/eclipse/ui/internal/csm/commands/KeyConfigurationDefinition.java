@@ -92,20 +92,20 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 	}
 	
 	public int compareTo(Object object) {
-		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;
-		int compareTo = Util.compare(description, keyConfigurationDefintion.description);
+		KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, keyConfigurationDefintion.id);			
+			compareTo = Util.compare(id, castedObject.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, keyConfigurationDefintion.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, keyConfigurationDefintion.parentId);
+					compareTo = Util.compare(parentId, castedObject.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, keyConfigurationDefintion.pluginId);								
+						compareTo = Util.compare(pluginId, castedObject.pluginId);								
 				}							
 			}
 		}
@@ -117,13 +117,13 @@ public final class KeyConfigurationDefinition implements IKeyConfigurationDefini
 		if (!(object instanceof KeyConfigurationDefinition))
 			return false;
 
-		KeyConfigurationDefinition keyConfigurationDefintion = (KeyConfigurationDefinition) object;	
+		KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, keyConfigurationDefintion.description);
-		equals &= Util.equals(id, keyConfigurationDefintion.id);
-		equals &= Util.equals(name, keyConfigurationDefintion.name);
-		equals &= Util.equals(parentId, keyConfigurationDefintion.parentId);
-		equals &= Util.equals(pluginId, keyConfigurationDefintion.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

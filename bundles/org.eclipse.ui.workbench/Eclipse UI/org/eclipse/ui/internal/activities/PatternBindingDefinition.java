@@ -69,17 +69,17 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;
-		int compareTo = Util.compare(activityId, patternBindingDefinition.activityId);
+		PatternBindingDefinition castedObject = (PatternBindingDefinition) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);
 
 		if (compareTo == 0) {		
-			compareTo = Util.compare(inclusive, patternBindingDefinition.inclusive);			
+			compareTo = Util.compare(inclusive, castedObject.inclusive);			
 		
 			if (compareTo == 0) {		
-				compareTo = Util.compare(pattern, patternBindingDefinition.pattern);				
+				compareTo = Util.compare(pattern, castedObject.pattern);				
 		
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, patternBindingDefinition.pluginId);							
+					compareTo = Util.compare(pluginId, castedObject.pluginId);							
 			}
 		}
 		
@@ -90,12 +90,12 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 		if (!(object instanceof PatternBindingDefinition))
 			return false;
 
-		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;	
+		PatternBindingDefinition castedObject = (PatternBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, patternBindingDefinition.activityId);
-		equals &= Util.equals(inclusive, patternBindingDefinition.inclusive);
-		equals &= Util.equals(pattern, patternBindingDefinition.pattern);
-		equals &= Util.equals(pluginId, patternBindingDefinition.pluginId);
+		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(inclusive, castedObject.inclusive);
+		equals &= Util.equals(pattern, castedObject.pattern);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

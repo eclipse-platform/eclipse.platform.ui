@@ -215,8 +215,8 @@ public final class KeySequence implements Comparable {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public int compareTo(Object object) {
-		KeySequence keySequence = (KeySequence) object;
-		int compareTo = Util.compare(keyStrokes, keySequence.keyStrokes);
+		KeySequence castedObject = (KeySequence) object;
+		int compareTo = Util.compare(keyStrokes, castedObject.keyStrokes);
 		return compareTo;
 	}
 
@@ -227,9 +227,9 @@ public final class KeySequence implements Comparable {
 		if (!(object instanceof KeySequence))
 			return false;
 
-		KeySequence keySequence = (KeySequence) object;
+		KeySequence castedObject = (KeySequence) object;
 		boolean equals = true;
-		equals &= keyStrokes.equals(keySequence.keyStrokes);
+		equals &= keyStrokes.equals(castedObject.keyStrokes);
 		return equals;
 	}
 

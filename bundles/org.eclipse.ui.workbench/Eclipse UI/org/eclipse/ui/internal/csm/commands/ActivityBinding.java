@@ -31,8 +31,8 @@ final class ActivityBinding implements IContextBinding {
 	}
 
 	public int compareTo(Object object) {
-		ActivityBinding contextBinding = (ActivityBinding) object;
-		int compareTo = contextId.compareTo(contextBinding.contextId);			
+		ActivityBinding castedObject = (ActivityBinding) object;
+		int compareTo = contextId.compareTo(castedObject.contextId);			
 		return compareTo;	
 	}
 	
@@ -40,9 +40,9 @@ final class ActivityBinding implements IContextBinding {
 		if (!(object instanceof ActivityBinding))
 			return false;
 
-		ActivityBinding contextBinding = (ActivityBinding) object;	
+		ActivityBinding castedObject = (ActivityBinding) object;	
 		boolean equals = true;
-		equals &= contextId.equals(contextBinding.contextId);
+		equals &= contextId.equals(castedObject.contextId);
 		return equals;
 	}
 

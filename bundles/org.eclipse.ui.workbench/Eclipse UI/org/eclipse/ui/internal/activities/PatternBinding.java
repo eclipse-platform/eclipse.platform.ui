@@ -37,11 +37,11 @@ final class PatternBinding implements IPatternBinding {
 	}
 
 	public int compareTo(Object object) {
-		PatternBinding patternBinding = (PatternBinding) object;
-		int compareTo = Util.compare(inclusive, patternBinding.inclusive);			
+		PatternBinding castedObject = (PatternBinding) object;
+		int compareTo = Util.compare(inclusive, castedObject.inclusive);			
 		
 		if (compareTo == 0)			
-			compareTo = Util.compare(pattern.pattern(), patternBinding.pattern.pattern());
+			compareTo = Util.compare(pattern.pattern(), castedObject.pattern.pattern());
 		
 		return compareTo;	
 	}
@@ -50,10 +50,10 @@ final class PatternBinding implements IPatternBinding {
 		if (!(object instanceof PatternBinding))
 			return false;
 
-		PatternBinding patternBinding = (PatternBinding) object;	
+		PatternBinding castedObject = (PatternBinding) object;	
 		boolean equals = true;
-		equals &= Util.equals(inclusive, patternBinding.inclusive);
-		equals &= Util.equals(pattern, patternBinding.pattern);
+		equals &= Util.equals(inclusive, castedObject.inclusive);
+		equals &= Util.equals(pattern, castedObject.pattern);
 		return equals;
 	}
 

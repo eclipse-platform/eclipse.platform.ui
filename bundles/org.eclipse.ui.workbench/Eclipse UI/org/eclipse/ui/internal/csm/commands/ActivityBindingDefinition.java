@@ -33,14 +33,14 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 	}
 	
 	public int compareTo(Object object) {
-		ActivityBindingDefinition contextBindingDefinition = (ActivityBindingDefinition) object;
-		int compareTo = Util.compare(commandId, contextBindingDefinition.commandId);
+		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;
+		int compareTo = Util.compare(commandId, castedObject.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(contextId, contextBindingDefinition.contextId);			
+			compareTo = Util.compare(contextId, castedObject.contextId);			
 		
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, contextBindingDefinition.pluginId);								
+				compareTo = Util.compare(pluginId, castedObject.pluginId);								
 		}
 		
 		return compareTo;	
@@ -50,11 +50,11 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 		if (!(object instanceof ActivityBindingDefinition))
 			return false;
 
-		ActivityBindingDefinition contextBindingDefinition = (ActivityBindingDefinition) object;	
+		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(commandId, contextBindingDefinition.commandId);
-		equals &= Util.equals(contextId, contextBindingDefinition.contextId);
-		equals &= Util.equals(pluginId, contextBindingDefinition.pluginId);
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= Util.equals(contextId, castedObject.contextId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

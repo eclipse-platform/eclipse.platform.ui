@@ -29,11 +29,11 @@ public final class Point implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		Point point = (Point) object;
-		int compareTo = x - point.x;
+		Point castedObject = (Point) object;
+		int compareTo = x - castedObject.x;
 
 		if (compareTo == 0)
-			compareTo = y - point.y;
+			compareTo = y - castedObject.y;
 
 		return compareTo;
 	}
@@ -42,10 +42,10 @@ public final class Point implements Comparable {
 		if (!(object instanceof Point))
 			return false;
 
-		Point point = (Point) object;
+		Point castedObject = (Point) object;
 		boolean equals = true;
-		equals &= x == point.x;
-		equals &= y == point.y;
+		equals &= x == castedObject.x;
+		equals &= y == castedObject.y;
 		return equals;		
 	}
 

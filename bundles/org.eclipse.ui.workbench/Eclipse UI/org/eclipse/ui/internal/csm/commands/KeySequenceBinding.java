@@ -34,8 +34,8 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 	}
 
 	public int compareTo(Object object) {
-		KeySequenceBinding keySequenceBinding = (KeySequenceBinding) object;
-		int compareTo = Util.compare(keySequence, keySequenceBinding.keySequence);		
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;
+		int compareTo = Util.compare(keySequence, castedObject.keySequence);		
 		return compareTo;	
 	}
 	
@@ -43,9 +43,9 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 		if (!(object instanceof KeySequenceBinding))
 			return false;
 
-		KeySequenceBinding keySequenceBinding = (KeySequenceBinding) object;	
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;	
 		boolean equals = true;
-		equals &= Util.equals(keySequence, keySequenceBinding.keySequence);
+		equals &= Util.equals(keySequence, castedObject.keySequence);
 		return equals;
 	}
 

@@ -31,11 +31,11 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 	}
 	
 	public int compareTo(Object object) {
-		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;
-		int compareTo = Util.compare(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);			
+		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;
+		int compareTo = Util.compare(keyConfigurationId, castedObject.keyConfigurationId);			
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pluginId, activeKeyConfigurationDefinition.pluginId);								
+			compareTo = Util.compare(pluginId, castedObject.pluginId);								
 
 		return compareTo;	
 	}
@@ -44,10 +44,10 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 		if (!(object instanceof ActiveKeyConfigurationDefinition))
 			return false;
 
-		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;	
+		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);
-		equals &= Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
+		equals &= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

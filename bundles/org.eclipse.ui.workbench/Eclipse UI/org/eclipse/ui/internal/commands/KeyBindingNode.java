@@ -40,29 +40,29 @@ final class KeyBindingNode {
 		String pluginCommandIdInInheritedKeyConfiguration;
 
 		public int compareTo(Object object) {
-			Assignment assignment = (Assignment) object;
-			int compareTo = hasPreferenceCommandIdInFirstKeyConfiguration == false ? (assignment.hasPreferenceCommandIdInFirstKeyConfiguration == true ? -1 : 0) : 1;
+			Assignment castedObject = (Assignment) object;
+			int compareTo = hasPreferenceCommandIdInFirstKeyConfiguration == false ? (castedObject.hasPreferenceCommandIdInFirstKeyConfiguration == true ? -1 : 0) : 1;
 		
 			if (compareTo == 0) {
-				compareTo = hasPreferenceCommandIdInInheritedKeyConfiguration == false ? (assignment.hasPreferenceCommandIdInInheritedKeyConfiguration == true ? -1 : 0) : 1;
+				compareTo = hasPreferenceCommandIdInInheritedKeyConfiguration == false ? (castedObject.hasPreferenceCommandIdInInheritedKeyConfiguration == true ? -1 : 0) : 1;
 
 				if (compareTo == 0) {	
-					compareTo = hasPluginCommandIdInFirstKeyConfiguration == false ? (assignment.hasPluginCommandIdInFirstKeyConfiguration == true ? -1 : 0) : 1;
+					compareTo = hasPluginCommandIdInFirstKeyConfiguration == false ? (castedObject.hasPluginCommandIdInFirstKeyConfiguration == true ? -1 : 0) : 1;
 
 					if (compareTo == 0) {
-						compareTo = hasPluginCommandIdInInheritedKeyConfiguration == false ? (assignment.hasPluginCommandIdInInheritedKeyConfiguration == true ? -1 : 0) : 1;
+						compareTo = hasPluginCommandIdInInheritedKeyConfiguration == false ? (castedObject.hasPluginCommandIdInInheritedKeyConfiguration == true ? -1 : 0) : 1;
 
 						if (compareTo == 0) {		
-							compareTo = Util.compare(preferenceCommandIdInFirstKeyConfiguration, assignment.preferenceCommandIdInFirstKeyConfiguration);	
+							compareTo = Util.compare(preferenceCommandIdInFirstKeyConfiguration, castedObject.preferenceCommandIdInFirstKeyConfiguration);	
 	
 							if (compareTo == 0) {
-								compareTo = Util.compare(preferenceCommandIdInInheritedKeyConfiguration, assignment.preferenceCommandIdInInheritedKeyConfiguration);
+								compareTo = Util.compare(preferenceCommandIdInInheritedKeyConfiguration, castedObject.preferenceCommandIdInInheritedKeyConfiguration);
 	
 								if (compareTo == 0) {
-									compareTo = Util.compare(pluginCommandIdInFirstKeyConfiguration, assignment.pluginCommandIdInFirstKeyConfiguration);	
+									compareTo = Util.compare(pluginCommandIdInFirstKeyConfiguration, castedObject.pluginCommandIdInFirstKeyConfiguration);	
 	
 									if (compareTo == 0)
-										compareTo = Util.compare(pluginCommandIdInInheritedKeyConfiguration, assignment.pluginCommandIdInInheritedKeyConfiguration);
+										compareTo = Util.compare(pluginCommandIdInInheritedKeyConfiguration, castedObject.pluginCommandIdInInheritedKeyConfiguration);
 								}
 							}
 						}
@@ -77,16 +77,16 @@ final class KeyBindingNode {
 			if (!(object instanceof Assignment))
 				return false;
 
-			Assignment assignment = (Assignment) object;	
+			Assignment castedObject = (Assignment) object;	
 			boolean equals = true;
-			equals &= hasPreferenceCommandIdInFirstKeyConfiguration == assignment.hasPreferenceCommandIdInFirstKeyConfiguration;
-			equals &= hasPreferenceCommandIdInInheritedKeyConfiguration == assignment.hasPreferenceCommandIdInInheritedKeyConfiguration;
-			equals &= hasPluginCommandIdInFirstKeyConfiguration == assignment.hasPluginCommandIdInFirstKeyConfiguration;
-			equals &= hasPluginCommandIdInInheritedKeyConfiguration == assignment.hasPluginCommandIdInInheritedKeyConfiguration;
-			equals &= preferenceCommandIdInFirstKeyConfiguration == assignment.preferenceCommandIdInFirstKeyConfiguration;
-			equals &= preferenceCommandIdInInheritedKeyConfiguration == assignment.preferenceCommandIdInInheritedKeyConfiguration;
-			equals &= pluginCommandIdInFirstKeyConfiguration == assignment.pluginCommandIdInFirstKeyConfiguration;
-			equals &= pluginCommandIdInInheritedKeyConfiguration == assignment.pluginCommandIdInInheritedKeyConfiguration;
+			equals &= hasPreferenceCommandIdInFirstKeyConfiguration == castedObject.hasPreferenceCommandIdInFirstKeyConfiguration;
+			equals &= hasPreferenceCommandIdInInheritedKeyConfiguration == castedObject.hasPreferenceCommandIdInInheritedKeyConfiguration;
+			equals &= hasPluginCommandIdInFirstKeyConfiguration == castedObject.hasPluginCommandIdInFirstKeyConfiguration;
+			equals &= hasPluginCommandIdInInheritedKeyConfiguration == castedObject.hasPluginCommandIdInInheritedKeyConfiguration;
+			equals &= preferenceCommandIdInFirstKeyConfiguration == castedObject.preferenceCommandIdInFirstKeyConfiguration;
+			equals &= preferenceCommandIdInInheritedKeyConfiguration == castedObject.preferenceCommandIdInInheritedKeyConfiguration;
+			equals &= pluginCommandIdInFirstKeyConfiguration == castedObject.pluginCommandIdInFirstKeyConfiguration;
+			equals &= pluginCommandIdInInheritedKeyConfiguration == castedObject.pluginCommandIdInInheritedKeyConfiguration;
 			return equals;
 		}
 		

@@ -39,14 +39,14 @@ final class ImageBinding implements IImageBinding {
 	}
 
 	public int compareTo(Object object) {
-		ImageBinding imageBinding = (ImageBinding) object;
-		int compareTo = match - imageBinding.match;		
+		ImageBinding castedObject = (ImageBinding) object;
+		int compareTo = match - castedObject.match;		
 
 		if (compareTo == 0) {
-			compareTo = imageStyle.compareTo(imageBinding.imageStyle);	
+			compareTo = imageStyle.compareTo(castedObject.imageStyle);	
 		
 			if (compareTo == 0)
-				compareTo = imageStyle.compareTo(imageBinding.imageUri);
+				compareTo = imageStyle.compareTo(castedObject.imageUri);
 		}
 		
 		return compareTo;	
@@ -56,11 +56,11 @@ final class ImageBinding implements IImageBinding {
 		if (!(object instanceof ImageBinding))
 			return false;
 
-		ImageBinding imageBinding = (ImageBinding) object;	
+		ImageBinding castedObject = (ImageBinding) object;	
 		boolean equals = true;
-		equals &= imageStyle.equals(imageBinding.imageStyle);
-		equals &= imageUri.equals(imageBinding.imageUri);
-		equals &= match == imageBinding.match;
+		equals &= imageStyle.equals(castedObject.imageStyle);
+		equals &= imageUri.equals(castedObject.imageUri);
+		equals &= match == castedObject.match;
 		return equals;
 	}
 

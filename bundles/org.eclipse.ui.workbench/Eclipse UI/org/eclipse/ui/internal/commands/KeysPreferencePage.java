@@ -86,14 +86,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		private KeySequence keySequence;		
 		
 		public int compareTo(Object object) {
-			CommandAssignment commandAssignment = (CommandAssignment) object;
-			int compareTo = Util.compare(activityId, commandAssignment.activityId);
+			CommandAssignment castedObject = (CommandAssignment) object;
+			int compareTo = Util.compare(activityId, castedObject.activityId);
 	
 			if (compareTo == 0) {
-				compareTo = Util.compare(keySequence, commandAssignment.keySequence);	
+				compareTo = Util.compare(keySequence, castedObject.keySequence);	
 			
 				if (compareTo == 0)
-					compareTo = Util.compare(assignment, commandAssignment.assignment);
+					compareTo = Util.compare(assignment, castedObject.assignment);
 			}
 		
 			return compareTo;	
@@ -103,11 +103,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			if (!(object instanceof CommandAssignment))
 				return false;
 
-			CommandAssignment commandAssignment = (CommandAssignment) object;	
+			CommandAssignment castedObject = (CommandAssignment) object;	
 			boolean equals = true;
-			equals &= Util.equals(assignment, commandAssignment.assignment);
-			equals &= Util.equals(activityId, commandAssignment.activityId);
-			equals &= Util.equals(keySequence, commandAssignment.keySequence);
+			equals &= Util.equals(assignment, castedObject.assignment);
+			equals &= Util.equals(activityId, castedObject.activityId);
+			equals &= Util.equals(keySequence, castedObject.keySequence);
 			return equals;
 		}
 	}
@@ -118,11 +118,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		private String activityId;
 	
 		public int compareTo(Object object) {
-			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;
-			int compareTo = Util.compare(activityId, keySequenceAssignment.activityId);
+			KeySequenceAssignment castedObject = (KeySequenceAssignment) object;
+			int compareTo = Util.compare(activityId, castedObject.activityId);
 	
 			if (compareTo == 0)
-				compareTo = Util.compare(assignment, keySequenceAssignment.assignment);
+				compareTo = Util.compare(assignment, castedObject.assignment);
 		
 			return compareTo;	
 		}
@@ -131,10 +131,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			if (!(object instanceof CommandAssignment))
 				return false;
 
-			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) object;	
+			KeySequenceAssignment castedObject = (KeySequenceAssignment) object;	
 			boolean equals = true;
-			equals &= Util.equals(assignment, keySequenceAssignment.assignment);
-			equals &= Util.equals(activityId, keySequenceAssignment.activityId);
+			equals &= Util.equals(assignment, castedObject.assignment);
+			equals &= Util.equals(activityId, castedObject.activityId);
 			return equals;
 		}	
 	}

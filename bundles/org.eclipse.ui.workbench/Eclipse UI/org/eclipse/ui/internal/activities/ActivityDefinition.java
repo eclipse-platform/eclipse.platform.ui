@@ -91,20 +91,20 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		ActivityDefinition activityDefinition = (ActivityDefinition) object;
-		int compareTo = Util.compare(description, activityDefinition.description);
+		ActivityDefinition castedObject = (ActivityDefinition) object;
+		int compareTo = Util.compare(description, castedObject.description);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(id, activityDefinition.id);			
+			compareTo = Util.compare(id, castedObject.id);			
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, activityDefinition.name);
+				compareTo = Util.compare(name, castedObject.name);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, activityDefinition.parentId);
+					compareTo = Util.compare(parentId, castedObject.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, activityDefinition.pluginId);								
+						compareTo = Util.compare(pluginId, castedObject.pluginId);								
 				}							
 			}
 		}
@@ -116,13 +116,13 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		if (!(object instanceof ActivityDefinition))
 			return false;
 
-		ActivityDefinition activityDefinition = (ActivityDefinition) object;	
+		ActivityDefinition castedObject = (ActivityDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(description, activityDefinition.description);
-		equals &= Util.equals(id, activityDefinition.id);
-		equals &= Util.equals(name, activityDefinition.name);
-		equals &= Util.equals(parentId, activityDefinition.parentId);
-		equals &= Util.equals(pluginId, activityDefinition.pluginId);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

@@ -64,29 +64,29 @@ final class Command implements ICommand {
 	}
 
 	public int compareTo(Object object) {
-		Command command = (Command) object;
-		int compareTo = Util.compare(active, command.active);
+		Command castedObject = (Command) object;
+		int compareTo = Util.compare(active, castedObject.active);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(categoryId, command.categoryId);
+			compareTo = Util.compare(categoryId, castedObject.categoryId);
 		
 			if (compareTo == 0) {
-				compareTo = Util.compare(defined, command.defined);
+				compareTo = Util.compare(defined, castedObject.defined);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(description, command.description);
+					compareTo = Util.compare(description, castedObject.description);
 	
 					if (compareTo == 0) {
-						compareTo = Util.compare(enabled, command.enabled);
+						compareTo = Util.compare(enabled, castedObject.enabled);
 									
 						if (compareTo == 0) {		
-							compareTo = Util.compare(id, command.id);			
+							compareTo = Util.compare(id, castedObject.id);			
 						
 							if (compareTo == 0) {
-								compareTo = Util.compare(name, command.name);
+								compareTo = Util.compare(name, castedObject.name);
 
 								if (compareTo == 0) 
-									compareTo = Util.compare((Comparable[]) keySequenceBindingsAsArray, (Comparable[]) command.keySequenceBindingsAsArray); 
+									compareTo = Util.compare((Comparable[]) keySequenceBindingsAsArray, (Comparable[]) castedObject.keySequenceBindingsAsArray); 
 							}
 						}
 					}
@@ -101,16 +101,16 @@ final class Command implements ICommand {
 		if (!(object instanceof Command))
 			return false;
 
-		Command command = (Command) object;	
+		Command castedObject = (Command) object;	
 		boolean equals = true;
-		equals &= Util.equals(active, command.active);
-		equals &= Util.equals(categoryId, command.categoryId);
-		equals &= Util.equals(defined, command.defined);
-		equals &= Util.equals(description, command.description);
-		equals &= Util.equals(enabled, command.enabled);
-		equals &= Util.equals(id, command.id);
-		equals &= Util.equals(keySequenceBindings, command.keySequenceBindings);		
-		equals &= Util.equals(name, command.name);
+		equals &= Util.equals(active, castedObject.active);
+		equals &= Util.equals(categoryId, castedObject.categoryId);
+		equals &= Util.equals(defined, castedObject.defined);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(enabled, castedObject.enabled);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(keySequenceBindings, castedObject.keySequenceBindings);		
+		equals &= Util.equals(name, castedObject.name);
 		return equals;
 	}
 

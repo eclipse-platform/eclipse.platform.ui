@@ -76,26 +76,26 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 	}
 	
 	public int compareTo(Object object) {
-		KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) object;
-		int compareTo = Util.compare(activityId, keySequenceBindingDefinition.activityId);
+		KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(commandId, keySequenceBindingDefinition.commandId);			
+			compareTo = Util.compare(commandId, castedObject.commandId);			
 
 			if (compareTo == 0) {		
-				compareTo = Util.compare(keyConfigurationId, keySequenceBindingDefinition.keyConfigurationId);			
+				compareTo = Util.compare(keyConfigurationId, castedObject.keyConfigurationId);			
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(keySequence, keySequenceBindingDefinition.keySequence);
+					compareTo = Util.compare(keySequence, castedObject.keySequence);
 
 					if (compareTo == 0) {		
-						compareTo = Util.compare(locale, keySequenceBindingDefinition.locale);			
+						compareTo = Util.compare(locale, castedObject.locale);			
 	
 						if (compareTo == 0) {		
-							compareTo = Util.compare(platform, keySequenceBindingDefinition.platform);			
+							compareTo = Util.compare(platform, castedObject.platform);			
 			
 							if (compareTo == 0)
-								compareTo = Util.compare(pluginId, keySequenceBindingDefinition.pluginId);
+								compareTo = Util.compare(pluginId, castedObject.pluginId);
 						}
 					}
 				}
@@ -109,15 +109,15 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 		if (!(object instanceof KeySequenceBindingDefinition))
 			return false;
 
-		KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) object;	
+		KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, keySequenceBindingDefinition.activityId);
-		equals &= Util.equals(commandId, keySequenceBindingDefinition.commandId);
-		equals &= Util.equals(keyConfigurationId, keySequenceBindingDefinition.keyConfigurationId);
-		equals &= Util.equals(keySequence, keySequenceBindingDefinition.keySequence);
-		equals &= Util.equals(locale, keySequenceBindingDefinition.locale);
-		equals &= Util.equals(platform, keySequenceBindingDefinition.platform);
-		equals &= Util.equals(pluginId, keySequenceBindingDefinition.pluginId);
+		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
+		equals &= Util.equals(keySequence, castedObject.keySequence);
+		equals &= Util.equals(locale, castedObject.locale);
+		equals &= Util.equals(platform, castedObject.platform);
+		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 

@@ -35,11 +35,11 @@ public final class Match {
 	}
 
 	public int compareTo(Object object) {
-		Match match = (Match) object;
-		int compareTo = value - match.value;
+		Match castedObject = (Match) object;
+		int compareTo = value - castedObject.value;
 		
 		if (compareTo == 0)
-			compareTo = Util.compare(commandId, match.commandId);
+			compareTo = Util.compare(commandId, castedObject.commandId);
 					
 		return compareTo;	
 	}
@@ -48,10 +48,10 @@ public final class Match {
 		if (!(object instanceof Match))
 			return false;
 
-		Match match = (Match) object;	
+		Match castedObject = (Match) object;	
 		boolean equals = true;
-		equals &= Util.equals(commandId, match.commandId);
-		equals &= value == match.value;
+		equals &= Util.equals(commandId, castedObject.commandId);
+		equals &= value == castedObject.value;
 		return equals;
 	}
 

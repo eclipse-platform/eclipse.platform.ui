@@ -85,8 +85,8 @@ public abstract class Key implements Comparable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object object) {
-		Key key = (Key) object;
-		int compareTo = name.compareTo(key.name);
+		Key castedObject = (Key) object;
+		int compareTo = name.compareTo(castedObject.name);
 		return compareTo;
 	}
 
@@ -97,9 +97,9 @@ public abstract class Key implements Comparable {
 		if (!(object instanceof Key))
 			return false;
 
-		Key key = (Key) object;
+		Key castedObject = (Key) object;
 		boolean equals = true;
-		equals &= name.equals(key.name);
+		equals &= name.equals(castedObject.name);
 		return equals;
 	}
 

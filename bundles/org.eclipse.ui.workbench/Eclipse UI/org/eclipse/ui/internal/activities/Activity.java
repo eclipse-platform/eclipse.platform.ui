@@ -65,29 +65,29 @@ final class Activity implements IActivity {
 	}
 
 	public int compareTo(Object object) {
-		Activity activity = (Activity) object;
-		int compareTo = Util.compare(active, activity.active);
+		Activity castedObject = (Activity) object;
+		int compareTo = Util.compare(active, castedObject.active);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(defined, activity.defined);
+			compareTo = Util.compare(defined, castedObject.defined);
 			
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, activity.description);
+				compareTo = Util.compare(description, castedObject.description);
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(enabled, activity.enabled);
+					compareTo = Util.compare(enabled, castedObject.enabled);
 								
 					if (compareTo == 0) {		
-						compareTo = Util.compare(id, activity.id);			
+						compareTo = Util.compare(id, castedObject.id);			
 					
 						if (compareTo == 0) {
-							compareTo = Util.compare(name, activity.name);
+							compareTo = Util.compare(name, castedObject.name);
 
 							if (compareTo == 0) {
-								compareTo = Util.compare(parentId, activity.parentId);
+								compareTo = Util.compare(parentId, castedObject.parentId);
 
 								if (compareTo == 0) 
-									compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) activity.patternBindingsAsArray); 
+									compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray); 
 							}
 						}
 					}
@@ -102,16 +102,16 @@ final class Activity implements IActivity {
 		if (!(object instanceof Activity))
 			return false;
 
-		Activity activity = (Activity) object;	
+		Activity castedObject = (Activity) object;	
 		boolean equals = true;
-		equals &= Util.equals(active, activity.active);
-		equals &= Util.equals(defined, activity.defined);
-		equals &= Util.equals(description, activity.description);
-		equals &= Util.equals(enabled, activity.enabled);
-		equals &= Util.equals(id, activity.id);
-		equals &= Util.equals(name, activity.name);
-		equals &= Util.equals(parentId, activity.parentId);
-		equals &= Util.equals(patternBindings, activity.patternBindings);		
+		equals &= Util.equals(active, castedObject.active);
+		equals &= Util.equals(defined, castedObject.defined);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(enabled, castedObject.enabled);
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(parentId, castedObject.parentId);
+		equals &= Util.equals(patternBindings, castedObject.patternBindings);		
 		return equals;
 	}
 

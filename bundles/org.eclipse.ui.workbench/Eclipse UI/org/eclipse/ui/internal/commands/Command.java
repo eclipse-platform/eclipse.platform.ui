@@ -68,35 +68,35 @@ final class Command implements ICommand {
 	}
 
 	public int compareTo(Object object) {
-		Command command = (Command) object;
-		int compareTo = active == false ? (command.active == true ? -1 : 0) : 1;
+		Command castedObject = (Command) object;
+		int compareTo = active == false ? (castedObject.active == true ? -1 : 0) : 1;
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(categoryId, command.categoryId);
+			compareTo = Util.compare(categoryId, castedObject.categoryId);
 
 			if (compareTo == 0) {	
-				compareTo = Util.compare((Comparable[]) contextBindingsAsArray, (Comparable[]) command.contextBindingsAsArray); 
+				compareTo = Util.compare((Comparable[]) contextBindingsAsArray, (Comparable[]) castedObject.contextBindingsAsArray); 
 
 				if (compareTo == 0) {
-					compareTo = defined == false ? (command.defined == true ? -1 : 0) : 1;
+					compareTo = defined == false ? (castedObject.defined == true ? -1 : 0) : 1;
 
 					if (compareTo == 0) {		
-						compareTo = Util.compare(description, command.description);	
+						compareTo = Util.compare(description, castedObject.description);	
 	
 						if (compareTo == 0) {
-							compareTo = Util.compare(helpId, command.helpId);
+							compareTo = Util.compare(helpId, castedObject.helpId);
 	
 							if (compareTo == 0) {
-								compareTo = id.compareTo(command.id);	
+								compareTo = id.compareTo(castedObject.id);	
 	
 								if (compareTo == 0) {	
-									compareTo = Util.compare((Comparable[]) imageBindingsAsArray, (Comparable[]) command.imageBindingsAsArray);
+									compareTo = Util.compare((Comparable[]) imageBindingsAsArray, (Comparable[]) castedObject.imageBindingsAsArray);
 
 									if (compareTo == 0)	{
-										compareTo = Util.compare((Comparable[]) keyBindingsAsArray, (Comparable[]) command.keyBindingsAsArray);
+										compareTo = Util.compare((Comparable[]) keyBindingsAsArray, (Comparable[]) castedObject.keyBindingsAsArray);
 											
 										if (compareTo == 0)
-											compareTo = Util.compare(name, command.name);	
+											compareTo = Util.compare(name, castedObject.name);	
 									}
 								}
 							}
@@ -113,19 +113,19 @@ final class Command implements ICommand {
 		if (!(object instanceof Command))
 			return false;
 
-		Command command = (Command) object;	
+		Command castedObject = (Command) object;	
 		boolean equals = true;
-		equals &= active == command.active;	
-		equals &= Util.equals(categoryId, command.categoryId);
+		equals &= active == castedObject.active;	
+		equals &= Util.equals(categoryId, castedObject.categoryId);
 		// TODO can these not be null?
-		equals &= contextBindings.equals(command.contextBindings);
-		equals &= defined == command.defined;
-		equals &= Util.equals(description, command.description);
-		equals &= Util.equals(helpId, command.helpId);
-		equals &= id.equals(command.id);
-		equals &= imageBindings.equals(command.imageBindings);
-		equals &= keyBindings.equals(command.keyBindings);
-		equals &= Util.equals(name, command.name);
+		equals &= contextBindings.equals(castedObject.contextBindings);
+		equals &= defined == castedObject.defined;
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(helpId, castedObject.helpId);
+		equals &= id.equals(castedObject.id);
+		equals &= imageBindings.equals(castedObject.imageBindings);
+		equals &= keyBindings.equals(castedObject.keyBindings);
+		equals &= Util.equals(name, castedObject.name);
 		return equals;
 	}
 
