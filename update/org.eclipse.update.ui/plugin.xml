@@ -44,6 +44,13 @@
             </separator>
          </menu>
          <action
+               label="%actionSets.pendingChanges.label"
+               helpContextId="org.eclipse.update.ui.pendingChanges"
+               class="org.eclipse.update.internal.ui.DeltaWizardAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
+               id="org.eclipse.update.ui.pendingChanges">
+         </action>
+         <action
                label="%actionSets.unifiedUpdates.label"
                icon="icons/full/obj16/usearch_obj.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
@@ -139,6 +146,13 @@
             class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
+      <page
+            name="%appServerPreference.name"
+            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
+            class="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage"
+            id="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage">
+      </page>
+      
    </extension>
    <extension
          point="org.eclipse.update.core.deltaHandler">
