@@ -244,7 +244,7 @@ public String getTitle() {
  * Returns whether or not the welcome editor input should be wrapped.
  */
 public boolean isFormatWrapped() {
-	return format.equals(FORMAT_WRAP);
+	return FORMAT_WRAP.equals(format);
 }
 /**
  * Parse the contents of the input stream
