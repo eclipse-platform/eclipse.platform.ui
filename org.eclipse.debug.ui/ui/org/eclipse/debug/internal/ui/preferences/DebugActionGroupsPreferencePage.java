@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroup;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -60,6 +62,14 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
+	/**
+	 * @see PreferencePage#createControl(Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.DEBUG_ACTION_GROUPS_PREFERENCE_PAGE);
+	}
+	
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */

@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.DebugHistoryPreferenceTab;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Preference page to manage launch history & favorites
@@ -262,4 +264,12 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 5);	
 	}
+	/**
+	 * @see IDialogPage#createControl(Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_HISTORY_PREFERENCE_PAGE);
+	}
+
 }
