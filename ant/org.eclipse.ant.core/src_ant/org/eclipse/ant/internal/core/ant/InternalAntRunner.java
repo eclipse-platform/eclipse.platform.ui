@@ -422,7 +422,6 @@ public class InternalAntRunner {
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
-			createMonitorBuildListener(getCurrentProject());
 			fireBuildStarted(getCurrentProject());
 			
 			if (argList != null) {
@@ -443,7 +442,8 @@ public class InternalAntRunner {
 			setTypes(getCurrentProject());
 			
 			parseScript(getCurrentProject());
-	
+			createMonitorBuildListener(getCurrentProject());
+			
 			if (projectHelp) {
 				printHelp(getCurrentProject());
 				return;
