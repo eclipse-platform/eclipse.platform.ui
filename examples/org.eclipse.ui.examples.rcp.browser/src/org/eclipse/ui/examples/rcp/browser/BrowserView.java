@@ -21,6 +21,8 @@ import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.TitleEvent;
+import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -33,6 +35,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -56,6 +61,7 @@ public class BrowserView extends ViewPart {
 	
 	private Browser browser;
 	private Text location;
+	private String initialUrl = "http://eclipse.org"; //$NON-NLS-1$
 	
 	private Action backAction = new Action() {
 		{ setText("Back"); }
@@ -86,13 +92,6 @@ public class BrowserView extends ViewPart {
 			browser.refresh();
 		}
 	};
-
-	private Action goAction = new Action() {
-		{ setText("Go"); }
-		public void run() {
-			browser.setUrl(location.getText());
-		}
-	};
 	
 	/**
 	 * Constructs a new <code>BrowserView</code>.
@@ -100,10 +99,24 @@ public class BrowserView extends ViewPart {
 	public BrowserView() {
 		// do nothing
 	}
-
+	
+    public void init(IViewSite site, IMemento memento) throws PartInitException {
+        super.init(site);
+        if (memento != null) {
+	        String u = memento.getString("url"); //$NON-NLS-1$
+	        if (u != null) {
+	            initialUrl = u;
+	        }
+        }
+    }
+    
+    public void saveState(IMemento memento) {
+        memento.putString("url", browser.getUrl());
+    }
+    
 	public void createPartControl(Composite parent) {
 		browser = createBrowser(parent, getViewSite().getActionBars());
-		browser.setUrl("http://eclipse.org"); //$NON-NLS-1$
+		browser.setUrl(initialUrl);
 	}
 
 	public void setFocus() {
@@ -177,6 +190,11 @@ public class BrowserView extends ViewPart {
 				location.setText(event.location);
 			}
 		});
+		browser.addTitleListener(new TitleListener() {
+            public void changed(TitleEvent event) {
+                setPartName(event.title);
+            }
+        });
 		location.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				browser.setUrl(location.getText());

@@ -2,9 +2,9 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.ui.examples.rcp.browser"
-   name="Browser Example"
+   name="%pluginName"
    version="3.0.0"
-   provider-name="Eclipse.org">
+   provider-name="%providerName">
 
    <runtime>
       <library name="browser.jar">
@@ -21,7 +21,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.ui.examples.rcp.browser.BrowserApp">
+            class="org.eclipse.ui.examples.rcp.browser.BrowserApp">
          </run>
       </application>
    </extension>
@@ -31,17 +31,46 @@
             name="%perspectives.browser.name"
             class="org.eclipse.ui.examples.rcp.browser.BrowserPerspectiveFactory"
             id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
-            fixed="true">
-      </perspective>
+            fixed="true"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <category
+            name="%views.category.name"
+            id="org.eclipse.ui.examples.rcp.browser"/>
       <view
+            id="org.eclipse.ui.examples.rcp.browser.browserView"
             name="%views.browser.name"
-            icon="icons/sample.gif"
+            icon="icons/eclipse.gif"
             class="org.eclipse.ui.examples.rcp.browser.BrowserView"
-            id="org.eclipse.ui.examples.rcp.browser.browserView">
-      </view>
+            category="org.eclipse.ui.examples.rcp.browser"
+            allowMultiple="true"/>
+      <view
+            id="org.eclipse.ui.examples.rcp.browser.historyView"
+            name="%views.history.name"
+            icon="icons/eclipse.gif"
+            class="org.eclipse.ui.examples.rcp.browser.HistoryView"
+            category="org.eclipse.ui.examples.rcp.browser"/>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="%productName"
+            application="org.eclipse.ui.examples.rcp.browser.app">
+         <property
+               name="appName"
+               value="%swtAppName"/>
+         <property
+               name="windowImages"
+               value="icons/eclipse.gif,icons/eclipse32.gif"/>
+         <property
+               name="aboutText"
+               value="%aboutText"/>
+         <property
+               name="aboutImage"
+               value="icons/eclipse_lg.gif"/>
+      </product>
    </extension>
 
 </plugin>

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
-import org.eclipse.swt.SWT;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -22,10 +20,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -47,8 +46,10 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 public class BrowserActionBuilder {
 
 	private IWorkbenchWindow window;
-	private IAction newWindowAction, quitAction, aboutAction;
+	private ActionFactory.IWorkbenchAction newWindowAction, quitAction, aboutAction;
 	private RetargetAction backAction, forwardAction, stopAction, refreshAction;
+    private IAction historyAction;
+    private IAction newTabAction;
 
 	public BrowserActionBuilder(IWorkbenchWindow window) {
 		this.window = window;
@@ -70,7 +71,19 @@ public class BrowserActionBuilder {
 		ISharedImages images = window.getWorkbench().getSharedImages();
 		
 		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
-		newWindowAction.setText("New Window");
+		newWindowAction.setText("&New Window");
+		
+		newTabAction = new Action("New &Tab") {
+		    int counter = 0;
+            public void run() {
+                try {
+                    String secondaryId = Integer.toString(++counter);
+                    window.getActivePage().showView(BrowserApp.BROWSER_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                }
+            }
+		};
 		
 		quitAction = ActionFactory.QUIT.create(window);
 		
@@ -92,15 +105,16 @@ public class BrowserActionBuilder {
 		refreshAction.setToolTipText("Refresh");
 		window.getPartService().addPartListener(refreshAction);
 		
-		aboutAction = new Action() {
-			{ setText("&About"); }
-			public void run() {
-				MessageDialog.openInformation(
-					window.getShell(), 
-					"About RCP Browser Example", 
-					"Eclipse Rich Client Platform Browser Example.\n\n" +
-					"(c) 2003,2004 IBM Corporation and others.");
-			}
+		aboutAction = ActionFactory.ABOUT.create(window);
+		
+		historyAction = new Action("History") {
+		    public void run() {
+		        try {
+                    window.getActivePage().showView(BrowserApp.HISTORY_VIEW_ID);
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                }
+		    }
 		};
 	}
 
@@ -108,6 +122,7 @@ public class BrowserActionBuilder {
 		IMenuManager fileMenu = new MenuManager("&File", "file");  //$NON-NLS-2$
 		menuBar.add(fileMenu);
 		fileMenu.add(newWindowAction);
+		fileMenu.add(newTabAction);
 		fileMenu.add(new Separator());
 		fileMenu.add(quitAction);
 		
@@ -117,6 +132,8 @@ public class BrowserActionBuilder {
 		viewMenu.add(forwardAction);
 		viewMenu.add(stopAction);
 		viewMenu.add(refreshAction);
+		viewMenu.add(new Separator("views")); //$NON-NLS-1$
+		viewMenu.add(historyAction);
 
 		IMenuManager helpMenu = new MenuManager("&Help", "help");  //$NON-NLS-2$
 		menuBar.add(helpMenu);
@@ -140,5 +157,11 @@ public class BrowserActionBuilder {
 		
 		toolBar.add(stopAction);
 		toolBar.add(refreshAction);
+	}
+	
+	public void dispose() {
+	    newWindowAction.dispose();
+	    quitAction.dispose();
+	    aboutAction.dispose();
 	}
 }

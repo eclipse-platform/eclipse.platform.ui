@@ -33,6 +33,21 @@ public class BrowserApp implements IPlatformRunnable {
 	 * ID of the RCP Browser Example plug-in.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.ui.examples.rcp.browser"; //$NON-NLS-1$
+
+	/**
+	 * ID of the Browser perspective.
+	 */
+	public static final String BROWSER_PERSPECTIVE_ID = PLUGIN_ID + ".browserPerspective"; //$NON-NLS-1$
+
+	/**
+	 * ID of the Browser view.
+	 */
+	public static final String BROWSER_VIEW_ID = PLUGIN_ID + ".browserView"; //$NON-NLS-1$
+
+	/**
+	 * ID of the History view.
+	 */
+	public static final String HISTORY_VIEW_ID = PLUGIN_ID + ".historyView"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new <code>BrowserApp</code>.
