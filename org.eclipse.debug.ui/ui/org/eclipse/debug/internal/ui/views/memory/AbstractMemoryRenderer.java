@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.debug.internal.core.memory.MemoryByte;
 
 
 /**
@@ -46,10 +47,11 @@ abstract public class AbstractMemoryRenderer {
 	 * @param dataType - type of data the bytes hold
 	 * @param address - addres where the bytes belong to
 	 * @param data - the bytes
+	 * @param paddedStr - fill each byte that is invalid with this padded string.
 	 * @return a string to represent the memory.  
 	 * Do not return null.  Return a string to pad the cell if the memory cannot be converted successfully.
 	 */
-	abstract public String getString(String dataType, BigInteger address, byte[] data);
+	abstract public String getString(String dataType, BigInteger address, MemoryByte[] data, String paddedStr);
 	
 	/**
 	 * This is called by the cell modifier from an IMemoryViewTab.
@@ -62,6 +64,6 @@ abstract public class AbstractMemoryRenderer {
 	 * @param data - the string to be converted to bytes
 	 * @return the bytes to be passed to debug adapter for modification.
 	 */
-	abstract public byte[] getBytes(String dataType, BigInteger address, byte[] currentValues, String data);
+	abstract public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data);
 
 }
