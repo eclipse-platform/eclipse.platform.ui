@@ -51,11 +51,11 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
 import org.eclipse.search2.internal.ui.basic.views.RemoveAllResultsAction;
 import org.eclipse.search2.internal.ui.basic.views.RemoveMatchAction;
-import org.eclipse.search2.internal.ui.basic.views.SearchResultsTableViewer;
-import org.eclipse.search2.internal.ui.basic.views.SearchResultsTreeViewer;
 import org.eclipse.search2.internal.ui.basic.views.SetLayoutAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowNextResultAction;
 import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
+import org.eclipse.search2.internal.ui.basic.views.TableViewerNavigator;
+import org.eclipse.search2.internal.ui.basic.views.TreeViewerNavigator;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -167,26 +167,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 	private void createLayoutActions() {
 		if (countBits(fSupportedLayouts) > 1) {
-			fFlatAction = new SetLayoutAction(
-					this,
-					SearchMessages
-							.getString("AbstractTextSearchViewPage.flat_layout.label"),
-					SearchMessages
-							.getString("AbstractTextSearchViewPage.flat_layout.tooltip"),
-					FLAG_LAYOUT_FLAT); //$NON-NLS-1$ //$NON-NLS-2$
-			fHierarchicalAction = new SetLayoutAction(
-					this,
-					SearchMessages
-							.getString("AbstractTextSearchViewPage.hierarchical_layout.label"),
-					SearchMessages
-							.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"),
-					FLAG_LAYOUT_TREE); //$NON-NLS-1$ //$NON-NLS-2$
-			SearchPluginImages.setImageDescriptors(fFlatAction,
-					SearchPluginImages.T_LCL,
-					SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
-			SearchPluginImages.setImageDescriptors(fHierarchicalAction,
-					SearchPluginImages.T_LCL,
-					SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
+			fFlatAction = new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.tooltip"), FLAG_LAYOUT_FLAT); //$NON-NLS-1$ //$NON-NLS-2$
+			fHierarchicalAction = new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"), FLAG_LAYOUT_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+			SearchPluginImages.setImageDescriptors(fFlatAction,SearchPluginImages.T_LCL,SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
+			SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
 		}
 	}
 	private int countBits(int layoutFlags) {
@@ -443,13 +427,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 	private void createViewer(Composite parent, int layout) {
 		if ((layout & FLAG_LAYOUT_FLAT) != 0) {
-			TableViewer viewer = new SearchResultsTableViewer(parent, SWT.MULTI
-					| SWT.H_SCROLL | SWT.V_SCROLL);
+			TableViewer viewer = createTableViewer(parent);
 			fViewer = viewer;
 			configureTableViewer(viewer);
 		} else if ((layout & FLAG_LAYOUT_TREE) != 0) {
-			TreeViewer viewer = new SearchResultsTreeViewer(parent, SWT.MULTI
-					| SWT.H_SCROLL | SWT.V_SCROLL);
+			TreeViewer viewer = createTreeViewer(parent);
 			fViewer = viewer;
 			configureTreeViewer(viewer);
 		}
@@ -486,6 +468,27 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				fViewer);
 		updateLayoutActions();
 	}
+
+	/**
+	 * Creates the tree viewer to be shown on this page.
+	 * Clients may override this method.
+	 * @param parent
+	 * @return
+	 */
+	protected TreeViewer createTreeViewer(Composite parent) {
+		return new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+
+	/**
+	 * Creates the table viewer to be shown on this page.
+	 * Clients may override this method.
+	 * @param parent
+	 * @return
+	 */
+	protected TableViewer createTableViewer(Composite parent) {
+		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -549,14 +552,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			public void handleException(Throwable exception) {
 				if (exception instanceof PartInitException) {
 					PartInitException pie = (PartInitException) exception;
-					ErrorDialog
-							.openError(
-									getSite().getShell(),
-									SearchMessages
-											.getString("DefaultSearchViewPage.show_match"),
-									SearchMessages
-											.getString("DefaultSearchViewPage.error.no_editor"),
-									pie.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+					ErrorDialog.openError(getSite().getShell(), SearchMessages.getString("DefaultSearchViewPage.show_match"), SearchMessages.getString("DefaultSearchViewPage.error.no_editor"), pie.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			public void run() throws Exception {
@@ -613,10 +609,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		showCurrentMatch();
 	}
 	private void navigateNext(boolean forward) {
-		if (fViewer instanceof INavigate) {
-			((INavigate) fViewer).navigateNext(forward);
+		INavigate navigator= null;
+		if (fViewer instanceof TableViewer) {
+			navigator= new TableViewerNavigator((TableViewer) fViewer);
+		} else {
+			navigator= new TreeViewerNavigator((TreeViewer) fViewer);
 		}
+		navigator.navigateNext(forward);	
 	}
+	
 	private boolean showCurrentMatch() {
 		Match currentMatch = getCurrentMatch();
 		if (currentMatch != null) {

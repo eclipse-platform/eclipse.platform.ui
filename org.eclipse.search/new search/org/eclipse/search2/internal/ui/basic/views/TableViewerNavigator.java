@@ -9,47 +9,33 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
-
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.viewers.TableViewer;
-
 /**
  * @author Thomas Mäder
- *
+ *  
  */
-public class SearchResultsTableViewer extends TableViewer implements INavigate {
-
-
-	public SearchResultsTableViewer(Composite parent, int style) {
-		super(parent, style);
-		setUseHashlookup(true);
+public class TableViewerNavigator implements INavigate {
+	private TableViewer fViewer;
+	public TableViewerNavigator(TableViewer viewer) {
+		fViewer = viewer;
 	}
-
 	public void navigateNext(boolean forward) {
-		int itemCount= getTable().getItemCount();
+		int itemCount = fViewer.getTable().getItemCount();
 		if (itemCount == 0)
 			return;
-		int[] selection= getTable().getSelectionIndices();
-		int nextIndex= 0;
+		int[] selection = fViewer.getTable().getSelectionIndices();
+		int nextIndex = 0;
 		if (selection.length > 0) {
 			if (forward) {
-				nextIndex= selection[selection.length-1]+1;
+				nextIndex = selection[selection.length - 1] + 1;
 				if (nextIndex > itemCount)
-					nextIndex= 0;
+					nextIndex = 0;
 			} else {
-				nextIndex= selection[0]-1;
+				nextIndex = selection[0] - 1;
 				if (nextIndex < 0)
-					nextIndex= itemCount-1;
+					nextIndex = itemCount - 1;
 			}
 		}
-		getTable().setSelection(nextIndex);
+		fViewer.getTable().setSelection(nextIndex);
 	}
-
-	public void add(Object element) {
-		if (findItem(element) != null)
-			return;
-		super.add(element);
-	}
-
 }

@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,10 +54,6 @@ import org.eclipse.ui.progress.UIJob;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-/**
- * @author Thomas Mäder
- *
- */
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener, ISearchResultListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
 	private HashMap fPartsToPages;
@@ -288,7 +284,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	private void updateTitle(ISearchResult search) {
-		String title= "";
+		String title= ""; //$NON-NLS-1$
 		if (search != null) {
 			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
 			fCancelAction.setEnabled(queryRunning);
@@ -442,7 +438,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 				}
 			});
 		}
-		fUpdateJob= new UpdateUIJob("Refresh Search Progress");  
+		fUpdateJob= new UpdateUIJob(SearchMessages.getString("SearchView.refresh_progress_job.label"));   //$NON-NLS-1$
 		fUpdateJob.schedule(200);
 	}
 
