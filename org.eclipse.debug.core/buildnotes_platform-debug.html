@@ -11,6 +11,23 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Platform Debug</h1>
+<p>Sep 30, 2003 </p>
+<h3>API Changes</h3>
+<ul>
+<li>Support for variables that support string substitution has been changed. The previously
+experimental extension points for simpleLaunchVariables, contextLaunchVariables, and refreshLaunchVariables have been
+replaced with new (and yet experimental) extension points valueVariables and contextVariables.
+The new support is purely string based and is currently implemented in internal packages.
+It is percieved that the new support could be moved to a new plug-in such that more clients
+could leverage the support, as the current implementation is not tied to the debug plug-in.
+</li>
+</ul>
+
+<h3>Problem Reports Fixed</h3>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Platform Debug</h1>
 <p>Sep 23, 2003 </p>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=43225">43225</a>: No prompt to save dirty editors <br>
