@@ -11,7 +11,7 @@ import org.eclipse.debug.core.IBreakpointListener;
 /**
  * A debug target is a debuggable execution context. For example, a debug target
  * may represent a debuggable process or a virtual machine. A debug target is the root
- * of the debug element hierarchy. A debug targetcontains threads. Minimally, a debug
+ * of the debug element hierarchy. A debug target contains threads. Minimally, a debug
  * target supports the following:
  * <ul>
  * <li>terminate
@@ -35,12 +35,9 @@ import org.eclipse.debug.core.IBreakpointListener;
  */
 public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IMemoryBlockRetrieval {
 	/**
-	 * Returns the system process associated with this debug target
-	 * or <code>null</code> if no system process is associated with
-	 * this debug target.
+	 * Returns the system process associated with this debug target.
 	 * 
 	 * @return the system process associated with this debug target
-	 *  or <code>null</code> if none
 	 */
 	public IProcess getProcess();
 	/**

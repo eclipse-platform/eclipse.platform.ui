@@ -6,7 +6,6 @@ package org.eclipse.debug.core.model;
  */
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 
 /**
@@ -38,24 +37,19 @@ public interface IDebugElement extends IAdaptable {
 	 * Returns the unique identifier of the plug-in
 	 * this debug element originated from.
 	 *
-	 * @return plug-in identifier
+	 * @return the plug-in identifier
 	 */
 	public String getModelIdentifier();
 	/**
 	 * Returns the debug target this element is contained in.
 	 * 
-	 * @return debug target
+	 * @return the debug target this element is contained in
 	 */
 	public IDebugTarget getDebugTarget();
 	/**
-	 * Returns the launch this target is contained in,
-	 * or <code>null</code> if not yet registered with
-	 * a launch.
-	 * <p>
-	 * [Issue: Specification will be changed to not allow null
-	 *  to be returned.]
-	 * </p>
-	 * @return launch or <code>null</code>
+	 * Returns the launch this element is contained in.
+	 * 
+	 * @return the launch this element is contained in
 	 */
 	public ILaunch getLaunch();
 }
