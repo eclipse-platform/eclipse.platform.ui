@@ -78,13 +78,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setFont(font);
-		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab2.Check_targets_to_e&xecute__1")); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Check_targets_to_e&xecute__1")); //$NON-NLS-1$
 				
 		createTargetsTable(comp);
 		
 		fSelectionCountLabel = new Label(comp, SWT.NONE);
 		fSelectionCountLabel.setFont(font);
-		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab2.0_out_of_0_selected_2")); //$NON-NLS-1$
+		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.0_out_of_0_selected_2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSelectionCountLabel.setLayoutData(gd);
 		
@@ -92,7 +92,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		label = new Label(comp, SWT.NONE);
 		
 		label = new Label(comp, SWT.NONE);
-		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab2.Target_execution_order__3")); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_execution_order__3")); //$NON-NLS-1$
 		
 		Composite orderComposite = new Composite(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -108,7 +108,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 40;
 		fTargetOrderText.setLayoutData(gd);
 
-		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab2.&Order..._4"), null); //$NON-NLS-1$
+		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Order..._4"), null); //$NON-NLS-1$
 		gd = (GridData)fOrderButton.getLayoutData();
 		gd.verticalAlignment = GridData.BEGINNING;
 		fOrderButton.addSelectionListener(new SelectionAdapter() {
@@ -152,10 +152,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		table.setLayout(tableLayout);
 
 		TableColumn column1= new TableColumn(table, SWT.NULL);
-		column1.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab2.Name_5")); //$NON-NLS-1$
+		column1.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Name_5")); //$NON-NLS-1$
 			
 		TableColumn column2= new TableColumn(table, SWT.NULL);
-		column2.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab2.Description_6")); //$NON-NLS-1$
+		column2.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Description_6")); //$NON-NLS-1$
 		
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
@@ -187,7 +187,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			length= fAllTargets.length;
 		}
 		String total = Integer.toString(length);
-		fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab2.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
+		fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
 		
 		fOrderButton.setEnabled(checked.length > 1);
 		
