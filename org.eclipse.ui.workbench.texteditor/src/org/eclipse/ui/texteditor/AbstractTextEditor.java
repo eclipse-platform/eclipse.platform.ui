@@ -3052,11 +3052,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (enabled) {
 			
 			ISourceViewer viewer= getSourceViewer();
+			if (viewer == null)
+				return false;
+
 			fTextInputListener.inputChanged= false;
 			viewer.addTextInputListener(fTextInputListener);
+			
 			try {			
 				final IEditorInput input= getEditorInput();
-				
 				BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
 					/*
 					 * @see java.lang.Runnable#run()
@@ -3065,7 +3068,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						validateState(input);
 					}
 				});
-				
 				sanityCheckState(input);
 				return !isEditorInputReadOnly() && !fTextInputListener.inputChanged;
 	
@@ -4401,7 +4403,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (category == null)
 			return;
-			
+
 		IStatusField field= getStatusField(category);
 		if (field != null) {
 	
