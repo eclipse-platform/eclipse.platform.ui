@@ -131,15 +131,6 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages
 			.getString("ResourceInfo.fileEncodingTitle"); //$NON-NLS-1$
 
-	private static String FILE_CONTENT_ENCODING_FORMAT = IDEWorkbenchMessages
-			.getString("ResourceInfo.fileContentEncodingFormat"); //$NON-NLS-1$
-
-	private static String FILE_CONTAINER_ENCODING_FORMAT = IDEWorkbenchMessages
-			.getString("ResourceInfo.fileContainerEncodingFormat"); //$NON-NLS-1$
-
-	private static String CONTAINER_ENCODING_FORMAT = IDEWorkbenchMessages
-			.getString("ResourceInfo.containerEncodingFormat"); //$NON-NLS-1$
-
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
 

@@ -146,8 +146,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	private void updateDefaultEncoding() {
-		defaultEncodingButton.setText(IDEWorkbenchMessages.format(
-				"WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		defaultEncodingButton.setText(defaultButtonText()); //$NON-NLS-1$
 	}
 
 	private Composite getContainer() {
@@ -174,9 +173,8 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		};
 
 		defaultEncodingButton = new Button(group, SWT.RADIO);
-		defaultEnc = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-		defaultEncodingButton.setText(IDEWorkbenchMessages.format(
-				"WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		defaultEnc = findDefaultEncoding();
+		defaultEncodingButton.setText(defaultButtonText()); 
 		data = new GridData();
 		data.horizontalSpan = 2;
 		defaultEncodingButton.setLayoutData(data);
@@ -203,6 +201,23 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	}
 
 	/**
+	 * Get the default encoding for the object being shown.
+	 * @return String
+	 */
+	protected String findDefaultEncoding() {
+		return WorkbenchEncoding.getWorkbenchDefaultEncoding();
+	}
+
+	/**
+	 * Return the text for the default encoding button.
+	 * @return String
+	 */
+	protected String defaultButtonText() {
+		return IDEWorkbenchMessages.format(
+				"WorkbenchPreference.defaultEncoding", new String[] { defaultEnc });//$NON-NLS-1$
+	}
+
+	/**
 	 * Populate the encodings combo. Set the text based on the
 	 * selectedEncoding. If selectedEncoding is null set it to the
 	 * default.
@@ -215,7 +230,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		encodingCombo.setItems(encodingStrings);
 
 		if (selectedEncoding == null)
-			encodingCombo.setText(WorkbenchEncoding.getWorkbenchDefaultEncoding());
+			encodingCombo.setText(getDefaultEnc());
 		else
 			encodingCombo.setText(selectedEncoding);
 	}
