@@ -132,10 +132,9 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	public String getLaunchMode();
 	
 	/**
-	 * Returns the configuration that was launched, or <code>null</code>
-	 * if no configration was launched.
+	 * Returns the configuration that was launched.
 	 * 
-	 * @return the launched configuration or <code>null</code>
+	 * @return the launched configuration
 	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration();
