@@ -135,56 +135,19 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	protected void switchToPerspective(final String id) {
 		final IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
-			final IWorkbenchPage page = findPage(id);
-			if (page == null) {
-				async(new Runnable() {
-					public void run() {
-						try {
-							window.getWorkbench().openPage(id, ResourcesPlugin.getWorkspace().getRoot(),0);
-						} catch (WorkbenchException e) {
-							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-							"Error", 
-							MessageFormat.format("Unable to switch to perspective: {0}", new String[]{id}),
-							e.getStatus());
-						}
+			async(new Runnable() {
+				public void run() {
+					try {
+						window.getWorkbench().openPage(id, ResourcesPlugin.getWorkspace().getRoot(),0);
+					} catch (WorkbenchException e) {
+						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
+						"Error", 
+						MessageFormat.format("Unable to switch to perspective: {0}", new String[]{id}),
+						e.getStatus());
 					}
-				});
-				
-			} else {
-				if (page.equals(window.getActivePage())) {
-					// no switch required
-					return;
-				} else {
-					async(new Runnable() {
-						public void run() {
-							window.setActivePage(page);
-						}
-					});
-					
 				}
-			}
-			
-		}
-	}
-		
-	/**
-	 * Returns a page in the current workbench window with the
-	 * given identifier, or <code>null</code> if none.
-	 * 
-	 * @param id perpsective identifier
-	 * @return workbench page, or <code>null</code>
-	 */
-	protected IWorkbenchPage findPage(String id) {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage[] pages = window.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				if (pages[i].getPerspective().getId().equals(id)) {
-					return pages[i];
-				}
-			}
-		}
-		return null;
+			});	
+		} 
 	}
 	
 	/**
@@ -250,9 +213,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			} catch (CoreException e) {
 				DebugUIPlugin.logError(e);
 			}
-			// if no perspective specified, always switch to debg
+			// if no perspective specified, always switch to debug
 			// perspective (unless the current perspective has a 
-			// debug view open
+			// debug view open)
 			
 			// this has to be done in an asynch, such that the workbench
 			// window can be accessed
