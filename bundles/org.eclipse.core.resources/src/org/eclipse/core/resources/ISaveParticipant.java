@@ -114,10 +114,10 @@ public void rollback(ISaveContext context);
  *     Plugin plugin = ...; // known
  *     int saveNumber = context.getSaveNumber();
  *     String saveFileName = "save-" + Integer.toString(saveNumber);
- *     File f = plugin.getPluginStateLocation().append(saveFileName).toFile();
+ *     File f = plugin.getStateLocation().append(saveFileName).toFile();
  *     plugin.writeImportantState(f);
  *     context.map(new Path("save"), new Path(saveFileName));
- *     context.needStateNumber();
+ *     context.needSaveNumber();
  *     context.needDelta(); // optional
  * </pre>
  * When the plug-in is reactivited in a subsequent workspace session,
@@ -138,16 +138,20 @@ public void rollback(ISaveContext context);
  *         plugin.buildState();
  *     } else {
  *         String saveFileName = ss.lookup(new Path("save"));
- *         File f = plugin.getPluginStateLocation().append(saveFileName).toFile();
+ *         File f = plugin.getStateLocation().append(saveFileName).toFile();
  *         plugin.readImportantState(f);
- *         IResourceDelta delta = ss.getDelta();
- *         if (delta != null) {
- *             // fast reactivation using delta
- *             plugin.updateState(delta);
- *         } else {
- *             // slower reactivation without benefit of delta
- *             plugin.rebuildState();
- *         }
+ *         IResourceChangeListener listener = new IResourceChangeListener() {
+ *             public void resourceChanged(IResourceChangeEvent event) {
+ *                 IResourceDelta delta = event.getDelta();
+ *                 if (delta != null) {
+ *                     // fast reactivation using delta
+ *                     plugin.updateState(delta);
+ *                 } else {
+ *                     // slower reactivation without benefit of delta
+ *                     plugin.rebuildState();
+ *                 }
+ *         };
+ *         ss.processResourceChangeEvents(listener);
  *     }
  * </pre>
  * </p>
