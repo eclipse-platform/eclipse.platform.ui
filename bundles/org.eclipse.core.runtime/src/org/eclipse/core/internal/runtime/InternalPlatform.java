@@ -687,8 +687,8 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	setupMetaArea(locationString);
 	createLockFile();
 	adapterManager = new AdapterManager();
-	jobManager = JobManager.getInstance();
 	loadOptions(bootOptions);
+	jobManager = JobManager.getInstance();
 	createXMLClassLoader();
 	MultiStatus problems = loadRegistry(pluginPath);
 	initialized = true;
