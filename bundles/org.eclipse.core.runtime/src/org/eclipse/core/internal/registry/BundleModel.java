@@ -81,7 +81,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		extensionPoints = value;
 	}
 
-	// TODO is this method needed? does not appear to be called by anyone.
 	public IExtensionPoint getExtensionPoint(String xpt) {
 		if (xpt == null)
 			return null;
