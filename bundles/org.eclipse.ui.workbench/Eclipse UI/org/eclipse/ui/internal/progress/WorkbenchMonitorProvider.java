@@ -134,7 +134,7 @@ class WorkbenchMonitorProvider {
 		 * Update the message for the receiver.
 		 */
 		private void updateMessage() {
-			if (refreshJob.setMessage(getDisplayString()))
+			if (PlatformUI.isWorkbenchRunning() && refreshJob.setMessage(getDisplayString()))
 				refreshJob.schedule(100);
 		}
 

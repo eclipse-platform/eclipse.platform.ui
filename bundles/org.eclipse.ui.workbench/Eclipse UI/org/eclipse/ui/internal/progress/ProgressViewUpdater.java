@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -185,8 +186,10 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * Schedule an update.
 	 */
 	void scheduleUpdate() {
-		//Add in a 100ms delay so as to keep priority low
-		updateJob.schedule(100);
+		if(PlatformUI.isWorkbenchRunning()){
+			//Add in a 100ms delay so as to keep priority low
+			updateJob.schedule(100);
+		}
 	}
 
 	/**
