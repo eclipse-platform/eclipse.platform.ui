@@ -27,7 +27,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -301,9 +302,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 		
 		// Initialize other values and widget states
-		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
+		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
-			connectionMethodCombo.add(methods[i]);
+			connectionMethodCombo.add(methods[i].getName());
 		}
 		
 		connectionMethodCombo.select(0);

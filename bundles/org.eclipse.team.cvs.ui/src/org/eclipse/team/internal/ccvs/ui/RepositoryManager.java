@@ -33,14 +33,12 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSListener;
-import org.eclipse.team.internal.ccvs.core.ICVSProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -76,7 +74,7 @@ public class RepositoryManager {
 	 * Answer an array of all known remote roots.
 	 */
 	public ICVSRepositoryLocation[] getKnownRoots() {
-		return getCVSProvider().getKnownRepositories();
+		return CVSProviderPlugin.getPlugin().getKnownRepositories();
 	}
 	
 	/**
@@ -129,7 +127,7 @@ public class RepositoryManager {
 		List filesToRefresh = new ArrayList(Arrays.asList(getAutoRefreshFiles(project)));
 		monitor.beginTask(Policy.bind("RepositoryManager.refreshDefinedTags"), filesToRefresh.size() * 10); //$NON-NLS-1$
 		try {
-			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(project.getFolderSyncInfo().getRoot());
+			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(project.getFolderSyncInfo().getRoot());
 			List tags = new ArrayList();
 			for (Iterator it = filesToRefresh.iterator(); it.hasNext();) {
 				String relativePath = (String)it.next();
@@ -384,7 +382,7 @@ public class RepositoryManager {
 	
 	public void startup() throws TeamException {
 		loadState();
-		CVSProviderPlugin.getProvider().addRepositoryListener(new ICVSListener() {
+		CVSProviderPlugin.getPlugin().addRepositoryListener(new ICVSListener() {
 			public void repositoryAdded(ICVSRepositoryLocation root) {
 				rootAdded(root);
 			}
@@ -507,7 +505,7 @@ public class RepositoryManager {
 			repoSize = dis.readInt();
 		}
 		for (int i = 0; i < repoSize; i++) {
-			ICVSRepositoryLocation root = CVSProviderPlugin.getProvider().getRepository(dis.readUTF());
+			ICVSRepositoryLocation root = CVSProviderPlugin.getPlugin().getRepository(dis.readUTF());
 			
 			// read branch tags associated with this root
 			int tagsSize = dis.readInt();
@@ -742,7 +740,7 @@ public class RepositoryManager {
 				folder = resource.getParent();
 			}
 			if (folder.isCVSFolder()) {
-				ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(folder.getFolderSyncInfo().getRoot());
+				ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(folder.getFolderSyncInfo().getRoot());
 				return location;
 			}
 			return null;
@@ -761,9 +759,5 @@ public class RepositoryManager {
 			return getTags(file, monitor);
 		}
 		return new CVSTag[0];
-	}
-	
-	private ICVSProvider getCVSProvider() {
-		return CVSProviderPlugin.getProvider();
 	}
 }

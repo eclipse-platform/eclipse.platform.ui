@@ -29,8 +29,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.ui.PlatformUI;
@@ -145,7 +145,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, createdProject.getName())); //$NON-NLS-1$
 					}
 
-					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 95));
+					CVSWorkspaceRoot.checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 95));
 
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

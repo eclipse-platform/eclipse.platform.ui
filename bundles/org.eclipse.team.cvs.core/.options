@@ -1,7 +1,7 @@
 # Debugging options for the org.eclipse.team.cvs.core plugin.
 
 # Turn on debugging for the plugin.
-org.eclipse.team.cvs.core/debug=true
+org.eclipse.team.cvs.core/debug=false
 
 # Shows when meta-files are modified by a 3rd party
 org.eclipse.team.cvs.core/metafiles=false

@@ -666,12 +666,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 				newLocation.validateConnection(Policy.subMonitorFor(monitor, 20));
 			} catch (CVSException e) {
 				// XXX We should really only do this if it didn't exist previously
-				CVSProviderPlugin.getProvider().disposeRepository(newLocation);
+				CVSProviderPlugin.getPlugin().disposeRepository(newLocation);
 				throw e;
 			}
 			
 			// Add the location to the provider
-			CVSProvider.getInstance().addRepository(newLocation);
+			CVSProviderPlugin.getPlugin().addRepository(newLocation);
 			
 			// Set the project to use the new Locations
 			setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 80));

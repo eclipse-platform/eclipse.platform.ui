@@ -63,7 +63,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 			if (isModified) {
 				ICVSFolder parent = file.getParent();
 				FolderSyncInfo folderInfo = parent.getFolderSyncInfo();
-				Session.run(CVSProviderPlugin.getProvider().getRepository(folderInfo.getRoot()), parent, true, new ICVSRunnable() {
+				Session.run(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), parent, true, new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						Command.UPDATE.execute(Command.NO_GLOBAL_OPTIONS, 
 							new LocalOption[] {Update.makeTagOption(CVSTag.BASE), Update.IGNORE_LOCAL_CHANGES}, 
@@ -109,7 +109,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 		this.depth = depth;
 		final ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
 		FolderSyncInfo folderInfo = root.getFolderSyncInfo();
-		Session.run(CVSProviderPlugin.getProvider().getRepository(folderInfo.getRoot()), root, true, new ICVSRunnable() {
+		Session.run(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), root, true, new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				root.run(new ICVSRunnable() {
 					public void run(IProgressMonitor pm) throws CVSException {

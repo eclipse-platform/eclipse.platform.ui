@@ -38,7 +38,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -182,8 +181,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Get the repository location (the get will add the locatin to the provider)
-							boolean isPreviouslyKnown = CVSProviderPlugin.getProvider().isKnownRepository(info.getRoot());
-							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
+							boolean isPreviouslyKnown = CVSProviderPlugin.getPlugin().isKnownRepository(info.getRoot());
+							ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
 	
 							// Validate the connection if the user wants to
 							boolean validate = autoconnectPage.getValidate();					
@@ -200,7 +199,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 										// Remove the root
 										try {
 											if (!isPreviouslyKnown) {
-												CVSProviderPlugin.getProvider().disposeRepository(location);
+												CVSProviderPlugin.getPlugin().disposeRepository(location);
 											}
 										} catch (TeamException e1) {
 											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus()); //$NON-NLS-1$
@@ -213,7 +212,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Set the sharing
-							CVSProviderPlugin.getProvider().setSharing(project, info, new SubProgressMonitor(monitor, 50));
+							CVSWorkspaceRoot.setSharing(project, info, new SubProgressMonitor(monitor, 50));
 						} else {
 							// Import
 							doSync[0] = true;
@@ -222,7 +221,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							boolean isKnown = false;
 							try {
 								location = getLocation();
-								isKnown = CVSProviderPlugin.getProvider().isKnownRepository(location.getLocation());
+								isKnown = CVSProviderPlugin.getPlugin().isKnownRepository(location.getLocation());
 								location.validateConnection(monitor);
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
@@ -245,10 +244,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							// Add the location to the provider if it is new
 							if (!isKnown) {
-								CVSProviderPlugin.getProvider().addRepository(location);
+								CVSProviderPlugin.getPlugin().addRepository(location);
 							}
 							// Create the remote module for the project
-							CVSProviderPlugin.getProvider().createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
+							CVSWorkspaceRoot.createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
@@ -339,7 +338,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			}
 		});
 		Properties properties = createLocationPage.getProperties();
-		ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().createRepository(properties);
+		ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().createRepository(properties);
 		return location;
 	}
 	/**
@@ -422,7 +421,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				if (repoType.equals("CVS")) { //$NON-NLS-1$
 					// Get the repository so it is added to the provider 
 					// (in case the user cancels after we purge the old info)
-					CVSProviderPlugin.getProvider().getRepository(repoLocation);
+					CVSProviderPlugin.getPlugin().getRepository(repoLocation);
 					CVSTag tag;
 					if (stream.equals("HEAD")) { //$NON-NLS-1$
 						tag = CVSTag.DEFAULT;

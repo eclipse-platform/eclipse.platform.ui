@@ -28,7 +28,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -77,7 +76,7 @@ public class RemoveRootAction extends CVSAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length == 0) return;
-				ICVSProvider provider = CVSProviderPlugin.getProvider();
+				CVSProviderPlugin provider = CVSProviderPlugin.getPlugin();
 				for (int i = 0; i < roots.length; i++) {
 					try {
 						

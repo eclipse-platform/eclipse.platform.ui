@@ -41,6 +41,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
@@ -181,9 +182,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	private void initializeValues() {
 		passwordChanged = false;
 		
-		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
+		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
-			methodType.add(methods[i]);
+			methodType.add(methods[i].getName());
 		}
 		String method = location.getMethod().getName();
 		methodType.select(methodType.indexOf(method));
@@ -233,49 +234,56 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 						newLocation.setMethod(type);
 						newLocation.setUserInfo(info);
 						
-						// For each project shared with the old location, set connection info to the new one
-						List projects = new ArrayList();
-						IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-						for (int i = 0; i < allProjects.length; i++) {
-							RepositoryProvider teamProvider = RepositoryProvider.getProvider(allProjects[i], CVSProviderPlugin.getTypeId());
-							if (teamProvider != null) {
-								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
-								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(location)) {
-									projects.add(allProjects[i]);
-								}
-							}
-						}
-						if (projects.size() > 0) {
-							// To do: warn the user
-							DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
-								getShell(), 
-								Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), //$NON-NLS-1$
-								Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
-								Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
-								(IProject[]) projects.toArray(new IProject[projects.size()]),
-								true,
-								DetailsDialogWithProjects.DLG_IMG_WARNING);
-							int r = dialog.open();
-							if (r != dialog.OK) {
-								result[0] = false;
-								return;
-							}
-							monitor.beginTask(null, 1000 * projects.size());
-							try {
-								Iterator it = projects.iterator();
-								while (it.hasNext()) {
-									IProject project = (IProject)it.next();
-									RepositoryProvider teamProvider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+						try {
+							// For each project shared with the old location, set connection info to the new one
+							List projects = new ArrayList();
+							IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+							for (int i = 0; i < allProjects.length; i++) {
+								RepositoryProvider teamProvider = RepositoryProvider.getProvider(allProjects[i], CVSProviderPlugin.getTypeId());
+								if (teamProvider != null) {
 									CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
-									cvsProvider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 1000));
+									if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(location)) {
+										projects.add(allProjects[i]);
+									}
 								}
-							} finally {
-								monitor.done();
 							}
+							if (projects.size() > 0) {
+								// To do: warn the user
+								DetailsDialogWithProjects dialog = new DetailsDialogWithProjects(
+									getShell(), 
+									Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), //$NON-NLS-1$
+									Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository_2"), //$NON-NLS-1$
+									Policy.bind("CVSRepositoryPropertiesPage.sharedProject", location.toString()), //$NON-NLS-1$
+									(IProject[]) projects.toArray(new IProject[projects.size()]),
+									true,
+									DetailsDialogWithProjects.DLG_IMG_WARNING);
+								int r = dialog.open();
+								if (r != dialog.OK) {
+									result[0] = false;
+									return;
+								}
+								monitor.beginTask(null, 1000 * projects.size());
+								try {
+									Iterator it = projects.iterator();
+									while (it.hasNext()) {
+										IProject project = (IProject)it.next();
+										RepositoryProvider teamProvider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+										CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
+										cvsProvider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 1000));
+									}
+								} finally {
+									monitor.done();
+								}
+							}
+							
+							// Dispose the old repository location
+							CVSProviderPlugin.getPlugin().disposeRepository(location);
+						} finally {
+							// Even if we failed, ensure that the new location appears in the repo view.
+							newLocation = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(newLocation.getLocation());
+							newLocation.updateCache();
 						}
 						
-						// Dispose the old repository location
-						CVSProviderPlugin.getProvider().disposeRepository(location);
 						
 						// Set the location of the page to the new location in case Apply was chosen
 						location = newLocation;

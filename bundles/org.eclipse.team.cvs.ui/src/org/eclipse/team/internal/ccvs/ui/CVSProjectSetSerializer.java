@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IProjectSetSerializer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -83,7 +82,6 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 	 */
 	public IProject[] addToWorkspace(String[] referenceStrings, String filename, Object context, IProgressMonitor monitor) throws TeamException {
 		final int size = referenceStrings.length;
-		final CVSProvider provider = CVSProvider.getInstance();
 		final IProject[] projects = new IProject[size];
 		final ICVSRepositoryLocation[] locations = new ICVSRepositoryLocation[size];
 		final String[] modules = new String[size];
@@ -150,7 +148,7 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 				try {
 					for (int i = 0; i < size; i++) {
 						if (locations[i] != null) {
-							provider.checkout(locations[i], projects[i], modules[i], tags[i], new SubProgressMonitor(monitor, 1000));
+							CVSWorkspaceRoot.checkout(locations[i], projects[i], modules[i], tags[i], new SubProgressMonitor(monitor, 1000));
 						}
 					}
 				} catch (TeamException e) {

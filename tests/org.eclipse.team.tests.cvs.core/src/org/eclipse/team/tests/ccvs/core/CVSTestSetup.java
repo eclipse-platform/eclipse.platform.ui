@@ -15,7 +15,7 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
@@ -164,7 +164,7 @@ public class CVSTestSetup extends TestSetup {
 		
 		// Validate that we can connect, also creates and caches the repository location. This
 		// is important for the UI tests.
-		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProvider.getInstance().getRepository(location);
+		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(location);
 		//CVSRepositoryLocation repository = CVSRepositoryLocation.fromString(location);
 		try {
 			repository.validateConnection(new NullProgressMonitor());

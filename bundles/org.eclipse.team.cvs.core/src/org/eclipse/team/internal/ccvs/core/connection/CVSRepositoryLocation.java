@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -307,7 +306,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			
 			// Get the repository in order to ensure that the location is known by CVS.
 			// (The get will record the location if it's not already recorded.
-			CVSProvider.getInstance().getRepository(getLocation());
+			CVSProviderPlugin.getPlugin().getRepository(getLocation());
 			
 			while (true) {
 				try {
@@ -405,7 +404,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		updateCache(user, password, true);
 		password = null;
 		// Ensure that the receiver is known by the CVS provider
-		CVSProvider.getInstance().getRepository(getLocation());
+		CVSProviderPlugin.getPlugin().getRepository(getLocation());
 	}
 	
 	/*
@@ -516,9 +515,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	public static boolean validateConnectionMethod(String methodName) {
-		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
+		IConnectionMethod[] methods = getPluggedInConnectionMethods();
 		for (int i=0;i<methods.length;i++) {
-			if (methodName.equals(methods[i]))
+			if (methodName.equals(methods[i].getName()))
 				return true;
 		}
 		return false;

@@ -207,7 +207,7 @@ public class CVSDecorationRunnable implements Runnable {
 				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 				FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 				if (folderInfo != null) {
-					ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(folderInfo.getRoot());
+					ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
 					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());

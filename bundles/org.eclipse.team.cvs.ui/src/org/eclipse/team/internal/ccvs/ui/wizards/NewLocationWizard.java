@@ -19,7 +19,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -65,7 +64,7 @@ public class NewLocationWizard extends Wizard {
 		mainPage.finish(new NullProgressMonitor());
 		Properties properties = mainPage.getProperties();
 		final ICVSRepositoryLocation[] root = new ICVSRepositoryLocation[1];
-		ICVSProvider provider = CVSProviderPlugin.getProvider();
+		CVSProviderPlugin provider = CVSProviderPlugin.getPlugin();
 		try {
 			root[0] = provider.createRepository(properties);
 			if (mainPage.getValidate()) {

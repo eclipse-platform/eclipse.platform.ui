@@ -10,12 +10,21 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -32,11 +41,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
@@ -91,6 +104,10 @@ public class CVSProviderPlugin extends Plugin {
 	private IResourceChangeListener metaFileSyncListener;
 	private AddDeleteMoveListener addDeleteMoveListener;
 
+	private static final String REPOSITORIES_STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
+	private Map repositories = new HashMap();
+	private List repositoryListeners = new ArrayList();
+	
 	/**
 	 * The identifier for the CVS nature
 	 * (value <code>"org.eclipse.team.cvs.core.nature"</code>).
@@ -129,13 +146,6 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public static CVSProviderPlugin getPlugin() {
 		return instance;
-	}
-	
-	/**
-	 * Get the ICVSProvider
-	 */
-	public static ICVSProvider getProvider() {
-		return CVSProvider.getInstance();
 	}
 
 	/**
@@ -242,8 +252,8 @@ public class CVSProviderPlugin extends Plugin {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
-		// Start the synchronizer first as the startup of CVSProvider may use it.
-		CVSProvider.startup();
+		// load the state which includes the known repositories
+		loadState();
 		
 		// Initialize CVS change listeners. Note tha the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -265,7 +275,9 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		CVSProvider.shutdown();
+		
+		// save the state which includes the known repositories
+		saveState();
 		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -533,5 +545,227 @@ public class CVSProviderPlugin extends Plugin {
 	public File getCacheFileFor(String path) throws IOException {
 		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), path);
 	}
+	
+	/*
+	 * Add the repository location to the cahced locations
+	 */
+	private void addToRepositoriesCache(ICVSRepositoryLocation repository) {
+		repositories.put(repository.getLocation(), repository);
+		Iterator it = repositoryListeners.iterator();
+		while (it.hasNext()) {
+			ICVSListener listener = (ICVSListener)it.next();
+			listener.repositoryAdded(repository);
+		}
+	}
+	
+	private void removeFromRepositoriesCache(ICVSRepositoryLocation repository) {
+		if (repositories.remove(repository.getLocation()) != null) {
+			Iterator it = repositoryListeners.iterator();
+			while (it.hasNext()) {
+				ICVSListener listener = (ICVSListener)it.next();
+				listener.repositoryRemoved(repository);
+			}
+		}
+	}
+		
+	/**
+	 * Register to receive notification of repository creation and disposal
+	 */
+	public void addRepositoryListener(ICVSListener listener) {
+		repositoryListeners.add(listener);
+	}
+	
+	/**
+	 * De-register a listener
+	 */
+	public void removeRepositoryListener(ICVSListener listener) {
+		repositoryListeners.remove(listener);
+	}
+	
+	/**
+	 * Create a repository instance from the given properties.
+	 * The supported properties are:
+	 * 
+	 *   connection The connection method to be used
+	 *   user The username for the connection
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 * 
+	 * The created instance is not known by the provider and it's user information is not cached.
+	 * The purpose of the created location is to allow connection validation before adding the
+	 * location to the provider.
+	 * 
+	 * This method will throw a CVSException if the location for the given configuration already
+	 * exists.
+	 */
+	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException {
+		// Create a new repository location
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(configuration);
+		
+		// Check the cache for an equivalent instance and if there is one, throw an exception
+		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(location.getLocation());
+		if (existingLocation != null) {
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSProvider.alreadyExists"))); //$NON-NLS-1$
+		}
+
+		return location;
+	}
+
+	/**
+	 * Add the repository to the receiver's list of known repositories. Doing this will enable
+	 * password caching accross platform invokations.
+	 */
+	public void addRepository(ICVSRepositoryLocation repository) throws CVSException {
+		// Check the cache for an equivalent instance and if there is one, just update the cache
+		CVSRepositoryLocation existingLocation = (CVSRepositoryLocation)repositories.get(repository.getLocation());
+		if (existingLocation != null) {
+			((CVSRepositoryLocation)repository).updateCache();
+		} else {
+			// Cache the password and register the repository location
+			addToRepositoriesCache(repository);
+			((CVSRepositoryLocation)repository).updateCache();
+		}
+		saveState();
+	}
+	
+	/**
+	 * Dispose of the repository location
+	 * 
+	 * Removes any cached information about the repository such as a remembered password.
+	 */
+	public void disposeRepository(ICVSRepositoryLocation repository) throws CVSException {
+		((CVSRepositoryLocation)repository).dispose();
+		removeFromRepositoriesCache(repository);
+	}
+
+	/**
+	 * Answer whether the provided repository location is known by the provider or not.
+	 * The location string corresponds to the Strin returned by ICVSRepositoryLocation#getLocation()
+	 */
+	public boolean isKnownRepository(String location) {
+		return repositories.get(location) != null;
+	}
+	
+	/** 
+	 * Return a list of the know repository locations
+	 */
+	public ICVSRepositoryLocation[] getKnownRepositories() {
+		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[repositories.size()]);
+	}
+		
+	/**
+	 * Get the repository instance which matches the given String. The format of the String is
+	 * the same as that returned by ICVSRepositoryLocation#getLocation().
+	 * The format is:
+	 * 
+	 *   connection:user[:password]@host[#port]:root
+	 * 
+	 * where [] indicates optional and the identier meanings are:
+	 * 
+	 * 	 connection The connection method to be used
+	 *   user The username for the connection
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 * 
+	 * It is expected that the instance requested by using this method exists.
+	 * If the repository location does not exist, it will be automatically created
+	 * and cached with the provider.
+	 * 
+	 * WARNING: Providing the password as part of the String will result in the password being part
+	 * of the location permanently. This means that it cannot be modified by the authenticator. 
+	 */
+	public ICVSRepositoryLocation getRepository(String location) throws CVSException {
+		ICVSRepositoryLocation repository = (ICVSRepositoryLocation)repositories.get(location);
+		if (repository == null) {
+			repository = CVSRepositoryLocation.fromString(location);
+			addToRepositoriesCache(repository);
+		}
+		return repository;
+	}
+
+	private void loadState() {
+		try {
+			IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation().append(REPOSITORIES_STATE_FILE);
+			File file = pluginStateLocation.toFile();
+			if (file.exists()) {
+				try {
+					DataInputStream dis = new DataInputStream(new FileInputStream(file));
+					readState(dis);
+					dis.close();
+				} catch (IOException e) {
+					throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));  //$NON-NLS-1$
+				}
+			}  else {
+				// If the file did not exist, then prime the list of repositories with
+				// the providers with which the projects in the workspace are shared.
+				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				for (int i = 0; i < projects.length; i++) {
+					RepositoryProvider provider = RepositoryProvider.getProvider(projects[i], CVSProviderPlugin.getTypeId());
+					if (provider!=null) {
+						ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(projects[i]);
+						FolderSyncInfo info = folder.getFolderSyncInfo();
+						if (info != null) {
+							ICVSRepositoryLocation result = getRepository(info.getRoot());
+						}
+					}
+				}
+				saveState();
+			}
+		} catch (TeamException e) {
+			Util.logError(Policy.bind("CVSProvider.errorLoading"), e);//$NON-NLS-1$
+		}
+	}
+	private void saveState() {
+		try {
+			IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation();
+			File tempFile = pluginStateLocation.append(REPOSITORIES_STATE_FILE + ".tmp").toFile(); //$NON-NLS-1$
+			File stateFile = pluginStateLocation.append(REPOSITORIES_STATE_FILE).toFile();
+			try {
+				DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
+				writeState(dos);
+				dos.close();
+				if (stateFile.exists()) {
+					stateFile.delete();
+				}
+				boolean renamed = tempFile.renameTo(stateFile);
+				if (!renamed) {
+					throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
+				}
+			} catch (IOException e) {
+				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.save",stateFile.getAbsolutePath()), e)); //$NON-NLS-1$
+			}
+		} catch (TeamException e) {
+			Util.logError(Policy.bind("CVSProvider.errorSaving"), e);//$NON-NLS-1$
+		}
+	}
+	
+	private void readState(DataInputStream dis) throws IOException, CVSException {
+		int count = dis.readInt();
+		for (int i = 0; i < count; i++) {
+			getRepository(dis.readUTF());
+		}
+	}
+	
+	private void writeState(DataOutputStream dos) throws IOException {
+		// Write the repositories
+		Collection repos = repositories.values();
+		dos.writeInt(repos.size());
+		Iterator it = repos.iterator();
+		while (it.hasNext()) {
+			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
+			dos.writeUTF(root.getLocation());
+		}
+	}
+		
+	public static boolean isText(IFile file) {
+		if (CVSProviderPlugin.getPlugin().getRepositoriesAreBinary()) return false;
+		return Team.getType(file) == Team.TEXT;
+	}
+	
+
 }
 

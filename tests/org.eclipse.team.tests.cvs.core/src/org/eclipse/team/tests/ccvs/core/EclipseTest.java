@@ -28,8 +28,6 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -224,14 +222,14 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 protected IProject checkoutCopy(IProject project, String postfix) throws TeamException {
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + postfix);
-		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
+		CVSWorkspaceRoot.checkout(getRepository(), copy, CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), null, DEFAULT_MONITOR);
 		return copy;
 	 }
 	 
 	 protected IProject checkoutCopy(IProject project, CVSTag tag) throws TeamException {
 		// Check the project out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + tag.getName());
-		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, 
+		CVSWorkspaceRoot.checkout(getRepository(), copy, 
 			CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo().getRepository(), 
 			tag, DEFAULT_MONITOR);
 		return copy;
@@ -241,7 +239,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
 	 	if (project == null)
 	 		project = getWorkspace().getRoot().getProject(new Path(moduleName).lastSegment());
-		CVSProviderPlugin.getProvider().checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
+		CVSWorkspaceRoot.checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
 		return project;
 	 }
 	/*
@@ -538,7 +536,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void shareProject(IProject project) throws TeamException, CoreException {
-		((CVSProvider)CVSProviderPlugin.getProvider()).createModule(getRepository(), project, null, DEFAULT_MONITOR);
+		CVSWorkspaceRoot.createModule(getRepository(), project, null, DEFAULT_MONITOR);
 		List resourcesToAdd = new ArrayList();
 		IResource[] members = project.members();
 		for (int i = 0; i < members.length; i++) {

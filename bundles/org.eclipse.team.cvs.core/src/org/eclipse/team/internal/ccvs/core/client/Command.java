@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -553,7 +552,7 @@ public abstract class Command extends Request {
 		 * @return an instance for that mode
 		 */
 		public static KSubstOption fromFile(IFile file) {
-			if (CVSProvider.isText(file))
+			if (CVSProviderPlugin.isText(file))
 				return CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 			return KSUBST_BINARY;
 		}

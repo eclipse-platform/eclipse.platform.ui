@@ -10,6 +10,7 @@ import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -17,9 +18,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -113,7 +113,7 @@ public class ImportTest extends EclipseTest {
 		
 		// Check it out under a different name and validate that the results are the same
 		IProject copy = getWorkspace().getRoot().getProject(project.getName() + "Copy");
-		CVSProviderPlugin.getProvider().checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
+		CVSWorkspaceRoot.checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
 		assertValidCheckout(copy);
 		assertEquals(project, copy);
 	}

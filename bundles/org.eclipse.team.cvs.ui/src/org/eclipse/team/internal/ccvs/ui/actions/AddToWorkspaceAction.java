@@ -22,10 +22,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -88,7 +88,7 @@ public class AddToWorkspaceAction extends CheckoutAction {
 						}
 						
 						monitor.setTaskName(getTaskName(remoteFolders));						
-						CVSProviderPlugin.getProvider().checkout(remoteFolders, localFolders, Policy.subMonitorFor(monitor, 100));
+						CVSWorkspaceRoot.checkout(remoteFolders, localFolders, Policy.subMonitorFor(monitor, 100));
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

@@ -10,10 +10,10 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
-import java.io.File;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,9 +24,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
@@ -48,7 +47,7 @@ public class CheckoutAction extends CVSAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					expansions[0] = CVSProviderPlugin.getProvider().getExpansions(remoteFolders, monitor);
+					expansions[0] = CVSWorkspaceRoot.getExpansions(remoteFolders, monitor);
 				} catch (CVSException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -74,7 +73,7 @@ public class CheckoutAction extends CVSAction {
 				try {
 					monitor.beginTask(getTaskName(remoteFolders), 100);
 					monitor.setTaskName(getTaskName(remoteFolders));						
-					CVSProviderPlugin.getProvider().checkout(remoteFolders, null, Policy.subMonitorFor(monitor, 100));
+					CVSWorkspaceRoot.checkout(remoteFolders, null, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
