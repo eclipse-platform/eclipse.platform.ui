@@ -1,7 +1,6 @@
 package org.eclipse.ui.internal;
 
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -174,8 +173,8 @@ public class EditorCoolBar {
 	}	
 	
 	public void updateEmptyEditorLabel() {
-		String title = WorkbenchMessages.getString("EditorCoolBar.NoEditors.text"); //$NON-NLS-1$
-		String toolTip = WorkbenchMessages.getString("EditorCoolBar.NoEditors.toolTip"); //$NON-NLS-1$
+		String title = WorkbenchMessages.getString("EditorShortcut.NoEditors.text"); //$NON-NLS-1$
+		String toolTip = WorkbenchMessages.getString("EditorShortcut.NoEditors.toolTip"); //$NON-NLS-1$
 		updateEditorLabel(title, false, null, toolTip);		
 	}
 
@@ -209,6 +208,7 @@ public class EditorCoolBar {
 		Shell parent = window.getShell();
 		Display display = parent.getDisplay();
 		listComposite = new ViewForm(parent, SWT.BORDER);
+		listComposite.setVisible(false);
 		listComposite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				listComposite = null;
@@ -223,7 +223,7 @@ public class EditorCoolBar {
 		});
 		
 		Control editorListControl = editorList.createControl(listComposite);
-				
+		editorListControl.setVisible(false);
 		editorListLostFocusByButton = false;
 		Table editorsTable = ((Table)editorListControl);
 		TableItem[] items = editorsTable.getItems();
@@ -248,6 +248,7 @@ public class EditorCoolBar {
 		listComposite.setVisible(true);
 		listComposite.moveAbove(null);
 		listComposite.setLocation(point);
+		editorListControl.setVisible(true);
 			 
  		editorListControl.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
@@ -629,10 +630,8 @@ public class EditorCoolBar {
 	}
 		
 	private void fillContextMenu(IMenuManager menuMgr) {
-		RenameAction renameAction = new RenameAction();
-		renameAction.setEnabled(selection.length == 1);
 		menuMgr.add(new OpenAction());
-		menuMgr.add(renameAction);
+		menuMgr.add(new RenameAction());
 		menuMgr.add(new DeleteAction());
 	}	
 	
@@ -743,8 +742,8 @@ public class EditorCoolBar {
 		 *	Create an instance of this class
 		 */
 		private OpenAction() {
-			setText(WorkbenchMessages.getString("EditorCoolBar.OpenAction.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.OpenAction.toolTip")); //$NON-NLS-1$
+			setText(WorkbenchMessages.getString("EditorShortcut.OpenAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorShortcut.OpenAction.toolTip")); //$NON-NLS-1$
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_ACTION);
 		}
 		/**
@@ -770,8 +769,8 @@ public class EditorCoolBar {
 		 *	Create an instance of this class
 		 */
 		private DeleteAction() {
-			setText(WorkbenchMessages.getString("EditorCoolBar.DeleteAction.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.DeleteAction.toolTip")); //$NON-NLS-1$
+			setText(WorkbenchMessages.getString("EditorShortcut.DeleteAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorShortcut.DeleteAction.toolTip")); //$NON-NLS-1$
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.DELETE_ACTION);
 		}
 		/** 
@@ -802,8 +801,8 @@ public class EditorCoolBar {
 		 *	Create an instance of this class
 		 */
 		private RenameAction() {
-			setText(WorkbenchMessages.getString("EditorCoolBar.RenameAction.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("EditorCoolBar.RenameAction.toolTipt")); //$NON-NLS-1$
+			setText(WorkbenchMessages.getString("EditorShortcut.RenameAction.text")); //$NON-NLS-1$
+			setToolTipText(WorkbenchMessages.getString("EditorShortcut.RenameAction.toolTipt")); //$NON-NLS-1$
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.RENAME_ACTION);
 		}
 		/** 
@@ -833,10 +832,8 @@ public class EditorCoolBar {
 			if (proposal == null) {
 				proposal = ""; //$NON-NLS-1$
 			}
-
-			//String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$			
-			String title = "Rename Shortcut";
-			String message = "Enter new name";
+			String title = WorkbenchMessages.getString("EditorShortcut.title"); //$NON-NLS-1
+			String message = WorkbenchMessages.getString("EditorShortcut.message"); //$NON-NLS-1
 			IInputValidator inputValidator = new IInputValidator() {
 				public String isValid(String newText) {
 					return  (newText == null || newText.length() == 0) ? " " : null;  //$NON-NLS-1$
@@ -857,20 +854,5 @@ public class EditorCoolBar {
 			newValue = newValue.trim();
 			return (newValue.length() != 0);
 		}
-		
-		/**
-		 * Check if the user wishes to overwrite the supplied resource
-		 * @returns true if there is no collision or delete was successful
-		 * @param shell the shell to create the dialog in 
-		 * @param destination - the resource to be overwritten
-		 */
-		private boolean checkOverwrite() {
-			final String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
-			final String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
-
-			return MessageDialog.openQuestion(window.getShell(), 
-				RESOURCE_EXISTS_TITLE,
-				MessageFormat.format(RESOURCE_EXISTS_MESSAGE,new Object[] {newValue}));
-		}		
-	}	
+	}
 }
