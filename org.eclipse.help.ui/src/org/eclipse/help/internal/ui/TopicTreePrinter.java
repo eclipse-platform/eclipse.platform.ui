@@ -84,10 +84,19 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		printBrowser.addDocumentCompleteListener(this);
 		buildPrintList(rootTopic);
 		currentTopic=0;
-		if(tocFile!=null)
-			printBrowser.navigate((String)topicList.get(currentTopic));
-		else
-			printBrowser.navigate(qualifyTopicURL((String)topicList.get(currentTopic)));
+		if(tocFile!=null){
+			if(okToPrint(topicList.size()-1)){
+				printBrowser.navigate((String)topicList.get(currentTopic));
+			}else{
+				endPrinting();
+			}
+		}else{
+			if(okToPrint(topicList.size())){
+				printBrowser.navigate(qualifyTopicURL((String)topicList.get(currentTopic)));
+			}else{
+				endPrinting();
+			}
+		}
 	}
 	/*
 	 * @see IDocumentCompleteListener#documentComplete()
@@ -197,5 +206,19 @@ public class TopicTreePrinter implements IDocumentCompleteListener {
 		}
 		writer.println("</li>");
 		writer.println("</ul>");
+	}
+	/** 
+	 * Confirms with the user if they are O.K to print x separate docs.
+	 */
+	private boolean okToPrint(int numberOfTopics) {
+		String topics = Integer.toString(numberOfTopics);
+		if (numberOfTopics == 0) {
+			String msg = WorkbenchResources.getString("no_Topics_To_Print");
+			ErrorUtil.displayInfoDialog(msg);
+			return false;
+		} else {
+			String question = WorkbenchResources.getString("ok_To_Print", topics);
+			return ErrorUtil.displayQuestionDialog(question);
+		}
 	}
 }
