@@ -122,7 +122,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IWorkbenchActionConstants.PASTE,
 		IWorkbenchActionConstants.DELETE,
 		IWorkbenchActionConstants.SELECT_ALL,
-		//IWorkbenchActionConstants.SAVE
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -132,7 +131,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
-		//MergeSourceViewer.SAVE_ID
 	};
 		
 	private static final String MY_UPDATER= "my_updater"; //$NON-NLS-1$
@@ -787,8 +785,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		invalidateLines();
 		updateVScrollBar();
 		
-		if (!emptyInput)
-			selectFirstDiff();
+		if (!emptyInput && !fComposite.isDisposed()) {
+			// delay so that StyledText widget gets a chance to resize itself
+			// (otherwise selectFirstDiff would not know its visible area)
+			fComposite.getDisplay().asyncExec(
+				new Runnable() {
+					public void run() {
+						selectFirstDiff();
+					}
+				}
+			);
+		}
 	}
 	
 	private void updateDiffBackground(Diff diff) {
@@ -1489,7 +1496,24 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
 			
+		boolean enableNavigation= false;
+		if (fCurrentDiff == null && fChangeDiffs != null && fChangeDiffs.size() > 0)
+			enableNavigation= true;
+		else if (fChangeDiffs != null && fChangeDiffs.size() > 1)
+			enableNavigation= true;
+		else if (fCurrentDiff != null && fCurrentDiff.fDiffs != null)
+			enableNavigation= true;
+		else if (fCurrentDiff != null && fCurrentDiff.fIsToken)
+			enableNavigation= true;
 		
+		if (fNextItem != null) {
+			IAction a= fNextItem.getAction();
+			a.setEnabled(enableNavigation);
+		}
+		if (fPreviousItem != null) {
+			IAction a= fPreviousItem.getAction();
+			a.setEnabled(enableNavigation);
+		}	
 	}
 
 	private void updateStatus(Diff diff) {
@@ -1610,6 +1634,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 			doDiff();
 					
+			updateControls();
 			invalidateLines();
 			updateVScrollBar();
 			
@@ -1658,7 +1683,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (CompareNavigator.getDirection(fComposite))
 			firstDiff= findNext(fRight, fChangeDiffs, -1, -1, false);
 		else
-			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);			
+			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);
 		setCurrentDiff(firstDiff, true);
 	}
 	
