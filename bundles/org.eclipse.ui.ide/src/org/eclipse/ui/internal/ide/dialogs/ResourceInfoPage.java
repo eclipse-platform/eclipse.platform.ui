@@ -18,6 +18,7 @@ import java.util.Date;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -54,19 +55,32 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private Button editableBox;
 
+	private Button executableBox;
+
+	private Button archiveBox;
+
 	private Button derivedBox;
 
 	private boolean previousReadOnlyValue;
 
+	private boolean previousExecutableValue;
+
+	private boolean previousArchiveValue;
+
 	private boolean previousDerivedValue;
 
 	private IContentDescription cachedContentDescription;
-	
-	private ResourceEncodingFieldEditor encodingEditor;
 
+	private ResourceEncodingFieldEditor encodingEditor;
 
 	private static String READ_ONLY = IDEWorkbenchMessages
 			.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
+
+	private static String EXECUTABLE = IDEWorkbenchMessages
+			.getString("ResourceInfo.executable"); //$NON-NLS-1$
+	
+	private static String ARCHIVE = IDEWorkbenchMessages
+			.getString("ResourceInfo.archive"); //$NON-NLS-1$
 
 	private static String DERIVED = IDEWorkbenchMessages
 			.getString("ResourceInfo.derived"); //$NON-NLS-1$
@@ -252,8 +266,15 @@ public class ResourceInfoPage extends PropertyPage {
 		// layout the page
 		IResource resource = (IResource) getElement();
 		if (resource.getType() != IResource.PROJECT) {
-			this.previousReadOnlyValue = resource.isReadOnly();
-			this.previousDerivedValue = resource.isDerived();
+			ResourceAttributes attrs = resource.getResourceAttributes();
+			if (attrs != null) {
+				previousReadOnlyValue = attrs.isReadOnly();
+				previousExecutableValue = attrs.isExecutable();
+				previousArchiveValue = attrs.isArchive();
+			} else {
+				previousReadOnlyValue = previousExecutableValue = previousArchiveValue = false;
+			}
+			previousDerivedValue = resource.isDerived();
 		}
 
 		// top level group
@@ -272,28 +293,31 @@ public class ResourceInfoPage extends PropertyPage {
 		createStateGroup(composite, resource);
 		new Label(composite, SWT.NONE); // a vertical spacer
 		encodingEditor = new ResourceEncodingFieldEditor(
-				getFieldEditorLabel(resource),composite,resource);
+				getFieldEditorLabel(resource), composite, resource);
 		encodingEditor.setPreferencePage(this);
 		encodingEditor.load();
-		
-		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener(){
-			/* (non-Javadoc)
+
+		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				  if (event.getProperty().equals(FieldEditor.IS_VALID))
-				  	 setValid(encodingEditor.isValid());
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					setValid(encodingEditor.isValid());
 
 			}
 		});
-		
+
 		return composite;
 	}
 
 	/**
-	 * Return the label for the encoding field editor for the 
-	 * resource.
-	 * @param resource - the resource to edit.
+	 * Return the label for the encoding field editor for the resource.
+	 * 
+	 * @param resource -
+	 *            the resource to edit.
 	 * @return String
 	 */
 	private String getFieldEditorLabel(IResource resource) {
@@ -306,7 +330,9 @@ public class ResourceInfoPage extends PropertyPage {
 	 * Create the isEditable button and it's associated label as a child of
 	 * parent using the editableValue of the receiver. The Composite will be the
 	 * parent of the button.
-	 * @param composite the parent of the button
+	 * 
+	 * @param composite
+	 *            the parent of the button
 	 */
 	private void createEditableButton(Composite composite) {
 
@@ -321,10 +347,52 @@ public class ResourceInfoPage extends PropertyPage {
 	}
 
 	/**
+	 * Create the isExecutable button and it's associated label as a child of
+	 * parent using the editableValue of the receiver. The Composite will be the
+	 * parent of the button.
+	 * 
+	 * @param composite
+	 *            the parent of the button
+	 */
+	private void createExecutableButton(Composite composite) {
+
+		this.executableBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
+		this.executableBox.setAlignment(SWT.LEFT);
+		this.executableBox.setText(EXECUTABLE);
+		this.executableBox.setSelection(this.previousExecutableValue);
+		this.executableBox.setFont(composite.getFont());
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		this.executableBox.setLayoutData(data);
+	}
+
+	/**
+	 * Create the isArchive button and it's associated label as a child of
+	 * parent using the editableValue of the receiver. The Composite will be the
+	 * parent of the button.
+	 * 
+	 * @param composite
+	 *            the parent of the button
+	 */
+	private void createArchiveButton(Composite composite) {
+
+		this.archiveBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
+		this.archiveBox.setAlignment(SWT.LEFT);
+		this.archiveBox.setText(ARCHIVE);
+		this.archiveBox.setSelection(this.previousArchiveValue);
+		this.archiveBox.setFont(composite.getFont());
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		this.archiveBox.setLayoutData(data);
+	}
+
+	/**
 	 * Create the derived button and it's associated label as a child of parent
 	 * using the derived of the receiver. The Composite will be the parent of
 	 * the button.
-	 * @param composite the parent of the button
+	 * 
+	 * @param composite
+	 *            the parent of the button
 	 */
 	private void createDerivedButton(Composite composite) {
 
@@ -340,7 +408,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 	/**
 	 * Create a separator that goes across the entire page
-	 * @param composite The parent of the seperator
+	 * 
+	 * @param composite
+	 *            The parent of the seperator
 	 */
 	private void createSeparator(Composite composite) {
 
@@ -388,6 +458,8 @@ public class ResourceInfoPage extends PropertyPage {
 		//Not relevant to projects
 		if (resource.getType() != IResource.PROJECT) {
 			createEditableButton(composite);
+			createExecutableButton(composite);
+			createArchiveButton(composite);
 			createDerivedButton(composite);
 		}
 	}
@@ -413,12 +485,12 @@ public class ResourceInfoPage extends PropertyPage {
 		return cachedContentDescription;
 	}
 
-
 	/**
 	 * Return the value for the date String for the timestamp of the supplied
 	 * resource.
 	 * 
-	 * @param resource The resource to query
+	 * @param resource
+	 *            The resource to query
 	 * @return String
 	 */
 	private String getDateStringValue(IResource resource) {
@@ -431,20 +503,21 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} 
-		
+		}
+
 		File localFile = location.toFile();
 		if (localFile.exists()) {
-			DateFormat format = DateFormat.getDateTimeInstance(
-					DateFormat.LONG, DateFormat.MEDIUM);
+			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
+					DateFormat.MEDIUM);
 			return format.format(new Date(localFile.lastModified()));
 		}
 		return NOT_EXIST_TEXT;
-		
+
 	}
 
 	/**
 	 * Get the location of a resource
+	 * 
 	 * @param resource
 	 * @return String the text to display the location
 	 */
@@ -459,8 +532,8 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 		if (location == null) {
 			return NOT_EXIST_TEXT;
-		} 
-		
+		}
+
 		String locationString = location.toOSString();
 		if (resolvedLocation != null && !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
@@ -471,12 +544,13 @@ public class ResourceInfoPage extends PropertyPage {
 			}
 		}
 		return locationString;
-		
+
 	}
 
 	/**
 	 * Get the resolved location of a resource. This resolves path variables if
 	 * present in the resource path.
+	 * 
 	 * @param resource
 	 * @return String
 	 */
@@ -490,8 +564,8 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} 
-		
+		}
+
 		String locationString = location.toOSString();
 		File file = location.toFile();
 
@@ -499,11 +573,12 @@ public class ResourceInfoPage extends PropertyPage {
 			locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
 		}
 		return locationString;
-		
+
 	}
 
 	/**
 	 * Return a String that indicates the size of the supplied file.
+	 * 
 	 * @param file
 	 * @return String
 	 */
@@ -517,8 +592,8 @@ public class ResourceInfoPage extends PropertyPage {
 				return MISSING_PATH_VARIABLE_TEXT;
 
 			return NOT_EXIST_TEXT;
-		} 
-			
+		}
+
 		File localFile = location.toFile();
 
 		if (localFile.exists()) {
@@ -527,11 +602,12 @@ public class ResourceInfoPage extends PropertyPage {
 					new Object[] { bytesString });
 		}
 		return NOT_EXIST_TEXT;
-		
+
 	}
 
 	/**
 	 * Get the string that identifies the type of this resource.
+	 * 
 	 * @param resource
 	 * @return String
 	 */
@@ -599,14 +675,17 @@ public class ResourceInfoPage extends PropertyPage {
 		//Nothing to update if we never made the box
 		if (this.editableBox != null)
 			this.editableBox.setSelection(false);
+		
+		//Nothing to update if we never made the box
+		if (this.executableBox != null)
+			this.executableBox.setSelection(false);
 
 		//Nothing to update if we never made the box
 		if (this.derivedBox != null)
 			this.derivedBox.setSelection(false);
 
 		encodingEditor.loadDefault();
-		
-		
+
 	}
 
 	/**
@@ -618,27 +697,50 @@ public class ResourceInfoPage extends PropertyPage {
 
 		encodingEditor.store();
 
-		//Nothing to update if we never made the box
-		if (this.editableBox != null) {
-			boolean localReadOnlyValue = editableBox.getSelection();
-			if (previousReadOnlyValue != localReadOnlyValue) {
-				resource.setReadOnly(localReadOnlyValue);
+		try {
+			//Nothing to update if we never made the box
+			if (editableBox != null && executableBox != null
+					&& archiveBox != null) {
+				boolean localReadOnlyValue = editableBox.getSelection();
+				boolean localExecutableValue = executableBox.getSelection();
+				boolean localArchiveValue = archiveBox.getSelection();
+				ResourceAttributes attrs = resource.getResourceAttributes();
+				if (attrs != null) {
+					attrs.setExecutable(localExecutableValue);
+					attrs.setReadOnly(localReadOnlyValue);
+					attrs.setArchive(localArchiveValue);
+					if (previousReadOnlyValue != localReadOnlyValue
+							|| previousExecutableValue != localExecutableValue
+							|| previousArchiveValue != localArchiveValue) {
+						resource.setResourceAttributes(attrs);
+						attrs = resource.getResourceAttributes();
+						if (attrs != null) {
+							previousReadOnlyValue = attrs.isReadOnly();
+							previousExecutableValue = attrs.isExecutable();
+							previousArchiveValue = attrs.isArchive();
+							editableBox.setSelection(attrs.isReadOnly());
+							executableBox.setSelection(attrs.isExecutable());
+							archiveBox.setSelection(attrs.isArchive());
+						}
+					}
+				}
 			}
-		}
 
-		//Nothing to update if we never made the box
-		if (this.derivedBox != null) {
-			try {
+			//Nothing to update if we never made the box
+			if (this.derivedBox != null) {
 				boolean localDerivedValue = derivedBox.getSelection();
 				if (previousDerivedValue != localDerivedValue) {
 					resource.setDerived(localDerivedValue);
+					boolean isDerived = resource.isDerived();
+					previousDerivedValue = isDerived;
+					derivedBox.setSelection(isDerived);
 				}
-			} catch (CoreException exception) {
-				ErrorDialog.openError(getShell(), IDEWorkbenchMessages
-						.getString("InternalError"), //$NON-NLS-1$
-						exception.getLocalizedMessage(), exception.getStatus());
-				return false;
 			}
+		} catch (CoreException exception) {
+			ErrorDialog.openError(getShell(), IDEWorkbenchMessages
+					.getString("InternalError"), //$NON-NLS-1$
+					exception.getLocalizedMessage(), exception.getStatus());
+			return false;
 		}
 		return true;
 	}
