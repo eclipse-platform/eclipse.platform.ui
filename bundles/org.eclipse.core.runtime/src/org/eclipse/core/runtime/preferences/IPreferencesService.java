@@ -37,7 +37,7 @@ public interface IPreferencesService {
 	 * </p>
 	 * @param key the preference key
 	 * @param defaultValue the default value
-	 * @param nodes the list of nodes to search
+	 * @param nodes the list of nodes to search, or <core>null</code>
 	 * @return the stored preference value or the specified default value 
 	 * @see org.osgi.service.prefs.Preferences
 	 */
