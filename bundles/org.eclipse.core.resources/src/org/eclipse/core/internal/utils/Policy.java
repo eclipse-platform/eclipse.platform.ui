@@ -15,7 +15,7 @@ public class Policy {
 	private static final int autoBuildBuildWork = 30;
 	private static final int manualBuildOpWork = 99;
 	private static final int manualBuildBuildWork = 1;
-	private static String bundleName = "org.eclipse.core.internal.utils.Messages";
+	private static String bundleName = "org.eclipse.core.internal.utils.messages";
 	
 	public static final boolean buildOnCancel = false;
 	public static int opWork;
