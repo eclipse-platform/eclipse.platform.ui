@@ -45,13 +45,15 @@ import org.eclipse.jface.text.TypedPosition;
 
 
 /**
- * Standard implementation of <code>IPresentationReconciler</code>.
- * This implementation assumes that the tasks performed by its 
- * presentation damagers and repairers are lightweight and of low cost.
- * This presentation reconciler runs in the UI thread and always repairs
- * the complete damage caused by a document change rather than just the
- * portion overlapping with the viewer's viewport.<p>
+ * Standard implementation of <code>IPresentationReconciler</code>. This
+ * implementation assumes that the tasks performed by its presentation damagers
+ * and repairers are lightweight and of low cost. This presentation reconciler
+ * runs in the UI thread and always repairs the complete damage caused by a
+ * document change rather than just the portion overlapping with the viewer's
+ * viewport.
+ * <p>
  * Usually, clients instantiate this class and configure it before using it.
+ * </p>
  */
 public class PresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
 	
@@ -274,7 +276,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	
 	/**
 	 * Creates a new presentation reconciler. There are no damagers or repairers
-	 * registered with this reconciler. The default partitioning 
+	 * registered with this reconciler by default. The default partitioning 
 	 * <code>IDocumentExtension3.DEFAULT_PARTITIONING</code> is used.
 	 */
 	public PresentationReconciler() {
@@ -304,9 +306,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Registers a given presentation damager for a particular content type.
-	 * If there is already a damager registered for this type, the new damager 
-	 * is registered instead of the old one.
+	 * Registers the given presentation damager for a particular content type.
+	 * If there is already a damager registered for this type, the old damager
+	 * is removed first.
 	 *
 	 * @param damager the presentation damager to register, or <code>null</code> to remove an existing one
 	 * @param contentType the content type under which to register
@@ -325,9 +327,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Registers a given presentation repairer for a particular content type.
-	 * If there is already a repairer registered for this type, the new repairer 
-	 * is registered instead of the old one.
+	 * Registers the given presentation repairer for a particular content type.
+	 * If there is already a repairer registered for this type, the old repairer
+	 * is removed first.
 	 *
 	 * @param repairer the presentation repairer to register, or <code>null</code> to remove an existing one
 	 * @param contentType the content type under which to register
@@ -388,7 +390,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Informs all registed damagers about the document on which they will work. 
+	 * Informs all registered damagers about the document on which they will work. 
 	 *
 	 * @param document the document on which to work
 	 */
@@ -403,7 +405,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Informs all registed repairers about the document on which they will work.
+	 * Informs all registered repairers about the document on which they will work.
 	 *
 	 * @param document the document on which to work
 	 */
@@ -418,15 +420,15 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Constructs a "repair description" for the given damage and returns 
-	 * this description as a text presentation. For this, it queries the 
-	 * partitioning of the damage region and asks for each partition an 
-	 * appropriate presentation repairer to construct the "repair description"
-	 * for this partition.
-	 *
+	 * Constructs a "repair description" for the given damage and returns this
+	 * description as a text presentation. For this, it queries the partitioning
+	 * of the damage region and asks the appropriate presentation repairer for
+	 * each partition to construct the "repair description" for this partition.
+	 * 
 	 * @param damage the damage to be repaired
 	 * @param document the document whose presentation must be repaired
-	 * @return the presentation repair description as text presentation
+	 * @return the presentation repair description as text presentation or
+	 *         <code>null</code> if the partitioning could not be computed
 	 */
 	protected TextPresentation createPresentation(IRegion damage, IDocument document) { 
 		try {
@@ -456,13 +458,16 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	
 		
 	/**
-	 * Checks for the first and the last affected partition and calls their damagers.
-	 * Invalidates everything from the start of the damage for the first partition
-	 * until the end of the damage for the last partition.
-	 *
+	 * Checks for the first and the last affected partition affected by a
+	 * document event and calls their damagers. Invalidates everything from the
+	 * start of the damage for the first partition until the end of the damage
+	 * for the last partition.
+	 * 
 	 * @param e the event describing the document change
-	 * @param optimize <code>true</code> if partition changes should be considered for optimization
-	 * @return the damaged caused by the change
+	 * @param optimize <code>true</code> if partition changes should be
+	 *        considered for optimization
+	 * @return the damaged caused by the change or <code>null</code> if
+	 *         computing the partitioning failed
 	 * @since 3.0
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
@@ -507,7 +512,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 	
 	/**
-	 * Returns the end offset of the damage. If a partition has been splitted by
+	 * Returns the end offset of the damage. If a partition has been split by
 	 * the given document event also the second half of the original
 	 * partition must be considered. This is achieved by using the remembered 
 	 * partition range.

@@ -11,8 +11,8 @@
 package org.eclipse.jface.text.presentation;
 
 /**
- * Extension interface for <code>IPresentationReconciler</code>.
- * Updates the presentation reconciler to be aware of documents with multiple partitions.
+ * Extension interface for {@link IPresentationReconciler}. Adds awareness of
+ * documents with multiple partitions.
  * 
  * @since 3.0
  */

@@ -18,17 +18,21 @@ import org.eclipse.jface.text.TextPresentation;
 
 
 /**
- * Presentation repairers are used by a presentation reconciler
- * to rebuild a damaged region in a document's presentation. A presentation repairer
- * is assumed to be specific for a particular document content type. The presentation
- * repairer gets the region which it should repair and constructs a "repair description" 
- * The presentation repairer adds the individual steps of this sequence into the 
- * text presentation it gets passed in.<p>
- * This interface must either be implemented by clients or clients use the rule-based
- * default implementation <code>RuleBasedDamagerRepairer</code>. Implementers should be
- * registered with a presentation reconciler in order get involved in the reconciling 
- * process. 
- *
+ * A presentation repairer is a strategy used by a presentation reconciler to
+ * rebuild a damaged region in a document's presentation. A presentation
+ * repairer is assumed to be specific for a particular document content type.
+ * The presentation repairer gets the region which it should repair and
+ * constructs a "repair description". The presentation repairer merges the steps
+ * contained within this description into the text presentation passed into
+ * <code>createPresentation</code>.
+ * <p>
+ * This interface may be implemented by clients. Alternatively, clients may use
+ * the rule-based default implementation
+ * {@link org.eclipse.jface.text.rules.DefaultDamagerRepairer}. Implementers
+ * should be registered with a presentation reconciler in order get involved in
+ * the reconciling process.
+ * </p>
+ * 
  * @see IPresentationReconciler
  * @see IDocument
  * @see org.eclipse.swt.custom.StyleRange

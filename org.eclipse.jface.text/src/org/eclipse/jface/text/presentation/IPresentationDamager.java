@@ -19,18 +19,20 @@ import org.eclipse.jface.text.ITypedRegion;
 
 
 /**
- * Presentation damagers are used by a presentation reconciler to determine the 
- * region of the document's presentation which must be rebuilt because of the 
- * occurrence of a document change. A presentation damager is assumed to be 
- * specific for a particular document content type. A presentation damager is 
- * expected to return a damage region which is a valid input for a presentation repairer.
- * I.e. having access to the damage region only the repairer must be able to derive
- * all the information needed to successfully repair this region.<p>
- * This interface must either be implemented by clients or clients use the rule-based
- * default implementation <code>RuleBasedDamagerRepairer</code>. Implementers should be
- * registered with a presentation reconciler in order get involved in the reconciling 
- * process.
- *
+ * A presentation damager is a strategy used by a presentation reconciler to
+ * determine the region of the document's presentation which must be rebuilt
+ * because of a document change. A presentation damager is assumed to be
+ * specific for a particular document content type. A presentation damager is
+ * expected to return a damage region which is a valid input for a presentation
+ * repairer. I.e. having access to the damage region only the repairer must be
+ * able to derive all the information needed to successfully repair this region.
+ * <p>
+ * This interface must either be implemented by clients or clients use the
+ * rule-based default implementation
+ * {@link org.eclipse.jface.text.rules.DefaultDamagerRepairer}. Implementers
+ * should be registered with a presentation reconciler in order get involved in
+ * the reconciling process.
+ * 
  * @see IPresentationReconciler
  * @see IDocument
  * @see DocumentEvent
