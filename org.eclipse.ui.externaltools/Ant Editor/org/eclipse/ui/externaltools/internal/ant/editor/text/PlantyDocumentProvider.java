@@ -441,6 +441,7 @@ public class PlantyDocumentProvider extends FileDocumentProvider {
 		    XMLFileInfo xmlInfo= (XMLFileInfo) info;
 		    if (xmlInfo.fModel != null)
 			    xmlInfo.fModel.dispose();
-	    }	
+	    }
+	    super.disposeElementInfo(element, info);	
     }
 }
