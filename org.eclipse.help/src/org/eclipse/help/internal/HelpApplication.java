@@ -8,7 +8,8 @@ import java.util.*;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.tomcat.AppServer;
+import org.eclipse.help.internal.appserver.WebappManager;
+
 
 /**
  * Help application.
@@ -78,8 +79,8 @@ public class HelpApplication
 	}
 	private void writeHostAndPort() throws IOException {
 		Properties p = new Properties();
-		p.put("host", AppServer.getHost());
-		p.put("port", "" + AppServer.getPort());
+		p.put("host", WebappManager.getHost());
+		p.put("port", "" + WebappManager.getPort());
 
 		File workspace = Platform.getLocation().toFile();
 		File hostPortFile = new File(workspace, ".metadata/.connection");

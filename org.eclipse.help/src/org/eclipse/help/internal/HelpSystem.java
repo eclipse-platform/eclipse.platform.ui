@@ -7,12 +7,13 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.tomcat.*;
+
 /**
  * The actual implementation of the help system plugin.
  */
@@ -140,11 +141,22 @@ public final class HelpSystem {
 			getInstance().webappStarted = true;
 			if (getMode() != MODE_WORKBENCH) {
 				// start the help control web app
-				AppServer.add("helpControl", "org.eclipse.help.webapp", "");
+				try {
+					WebappManager.start("helpControl", "org.eclipse.help.webapp", Path.EMPTY);
+				} catch (CoreException e) {
+					Logger.logError("ensureWebappRunning()",e);
+					return false;
+				}
 			}
 			// start the help web app
-			getInstance().webappRunning =
-				AppServer.add("help", "org.eclipse.help.webapp", "");
+			try {
+				WebappManager.start("help", "org.eclipse.help.webapp", Path.EMPTY);
+			} catch (CoreException e) {
+				Logger.logError("ensureWebappRunning()",e);
+				return false;
+			}
+			getInstance().webappRunning = true;
+				
 		}
 		return getInstance().webappRunning;
 	}
