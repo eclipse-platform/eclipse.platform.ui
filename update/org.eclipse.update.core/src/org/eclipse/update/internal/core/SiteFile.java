@@ -106,6 +106,7 @@ public class SiteFile extends Site {
 				feature.getInstallHandlerEntry(),
 				monitor);
 		boolean success = false;
+		Throwable originalException = null;
 
 		try {
 			handler.uninstallInitiated();
@@ -146,11 +147,19 @@ public class SiteFile extends Site {
 			}
 			
 			success = true;
+		} catch(Throwable t) {
+			originalException = t;
 		} finally {
-			handler.uninstallCompleted(success);
-			IStatus status = handler.getCompletionStatus();
-			if (success && status!=null)
-				throw new CoreException(status); // report handler problem detected earlier
+			Throwable newException = null;
+			try {
+				handler.uninstallCompleted(success);
+			} catch(Throwable t) {
+				newException = t;
+			}
+			if (originalException != null) // original exception wins
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+			if (newException != null)
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
 		}
 	}
 

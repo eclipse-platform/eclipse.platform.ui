@@ -240,13 +240,14 @@ public class Feature extends FeatureModel implements IFeature {
 				this,
 				this.getInstallHandlerEntry(),
 				monitor);
+		boolean success = false;
+		Throwable originalException = null;
 
 		// Get source feature provider and verifier. Initialize target variables.
 		IFeatureContentProvider provider = getFeatureContentProvider();
 		IVerifier verifier = provider.getVerifier();
 		IFeatureReference result = null;
 		IFeatureContentConsumer consumer = null;
-		boolean success = false;
 
 		try {
 			// determine list of plugins to install
@@ -356,21 +357,29 @@ public class Feature extends FeatureModel implements IFeature {
 
 			// indicate install success
 			success = true;
-
+			
+		} catch(Throwable t) {
+			originalException = t;
 		} finally {
-			// ensure we always cleanup
-			if (consumer != null)
-				if (success) {
-					// successful install
-					result = consumer.close();
-					handler.installCompleted(true);
-				} else {
-					// unsuccessful install
-					consumer.abort();
-					handler.installCompleted(false);
-				}
 			if (monitor != null)
 				monitor.done();
+				
+			Throwable newException = null;
+			try {
+				if (consumer != null) {
+					if (success)
+						result = consumer.close();
+					else
+						consumer.abort();
+				}				
+				handler.installCompleted(success);
+			} catch(Throwable t) {
+				newException = t;
+			}
+			if (originalException != null) // original exception wins
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", this.getLabel()),originalException);
+			if (newException != null)
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", this.getLabel()),newException);
 		}
 		return result;
 	}

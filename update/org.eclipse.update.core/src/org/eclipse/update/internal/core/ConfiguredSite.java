@@ -169,7 +169,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 		}
 
-		configure(installedFeature.getFeature());
+		configure(installedFeature.getFeature(), false /*callInstallHandler*/);
 
 		return installedFeature;
 	}
@@ -236,8 +236,15 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @see IConfiguredSite#configure(IFeature)
 	 */
 	public void configure(IFeature feature) throws CoreException {
+		configure(feature, true /*callInstallHandler*/);
+	}
+
+	/*
+	 * @see IConfiguredSite#configure(IFeatureReference)
+	 */
+	private void configure(IFeature feature, boolean callInstallHandler) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(featureReference);
+		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(featureReference, callInstallHandler);
 	}
 
 	/*

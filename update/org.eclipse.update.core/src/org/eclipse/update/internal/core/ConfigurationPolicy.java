@@ -21,7 +21,8 @@ import org.eclipse.update.internal.core.Policy;
 /**
  * 
  */
-public class ConfigurationPolicy extends ConfigurationPolicyModel {
+public class ConfigurationPolicy extends ConfigurationPolicyModel{
+
 
 	private IConfiguredSite configuredSite;
 
@@ -30,7 +31,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 */
 	public ConfigurationPolicy() {
 	}
-
+	
+	
 	/**
 	 * Copy Constructor for ConfigurationPolicyModel.
 	 */
@@ -42,6 +44,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		setConfiguredSite(configPolicy.getConfiguredSite());
 	}
 
+
 	/**
 	 * @since 2.0
 	 */
@@ -50,26 +53,62 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	}
 
 	/**
-	 * adds teh feature to teh list of features if the policy is USER_INCLUDE
+	 * adds the feature to the list of features if the policy is USER_INCLUDE
 	 */
 	/*package*/
-	void configure(IFeatureReference featureReference) throws CoreException {
+	void configure(IFeatureReference featureReference, boolean callInstallHandler) throws CoreException {
 
-		if (featureReference == null)
+
+		if (featureReference==null)
 			return;
-
-		//FIXME: Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 		IFeature feature = featureReference.getFeature();
-		if (feature != null) {
+		if (feature == null)
+			return;
+				
+		// Setup optional install handler
+		InstallHandlerProxy handler = null;
+		if (callInstallHandler)
+			handler = new InstallHandlerProxy(
+				IInstallHandler.HANDLER_ACTION_CONFIGURE,
+				feature,
+				feature.getInstallHandlerEntry(),
+				null);
+		boolean success = false;
+		Throwable originalException = null;
+		
+		// do the configure action
+		try {
+			if (handler != null)
+				handler.configureInitiated();
+				
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 			activity.setLabel(feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
-
-			addConfiguredFeatureReference((FeatureReferenceModel) featureReference);
-
+	
+			addConfiguredFeatureReference((FeatureReferenceModel)featureReference);
+	
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+			
+			if (handler != null)
+				handler.completeConfigure();
+				
+			success = true;
+		} catch(Throwable t) {
+			originalException = t;
+		} finally {
+			Throwable newException = null;
+			try {
+				if (handler != null)
+					handler.configureCompleted(success);
+			} catch(Throwable t) {
+				newException = t;
+			}
+			if (originalException != null) // original exception wins
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+			if (newException != null)
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
 		}
 	}
 
@@ -80,19 +119,54 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	/*package*/
 	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
 
-		if (featureReference == null)
+		if (featureReference==null)
+			return false;			
+		IFeature feature = featureReference.getFeature();
+		if (feature == null)
 			return false;
+				
+		// Setup optional install handler
+		InstallHandlerProxy handler = 
+			new InstallHandlerProxy(
+				IInstallHandler.HANDLER_ACTION_UNCONFIGURE,
+				feature,
+				feature.getInstallHandlerEntry(),
+				null);
+		boolean success = false;
+		Throwable originalException = null;
+		
+		// do the unconfigure action
+		try {
+			handler.unconfigureInitiated();
+			
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
+			activity.setDate(new Date());
 
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
-		activity.setDate(new Date());
+			addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
 
-		addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
-
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
-
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+			
+			handler.completeUnconfigure();
+		
+			success = true;
+		} catch(Throwable t) {
+			originalException = t;
+		} finally {
+			Throwable newException = null;
+			try {
+				handler.configureCompleted(success);
+			} catch(Throwable t) {
+				newException = t;
+			}
+			if (originalException != null) // original exception wins
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+			if (newException != null)
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
+		}
+		
 		return true;
 	}
 
@@ -181,6 +255,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		return result;
 	}
 
+	
+	
+	
+	
 	/**
 	 * @since 2.0
 	 */
@@ -249,6 +327,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 		return result;
 	}
+
+
 
 	/**
 	 * Gets the configuredSite.

@@ -295,9 +295,12 @@ public class InstallHandlerProxy implements IInstallHandler {
 	 * @see IInstallHandler#unconfigureCompleted
 	 */
 	public void unconfigureCompleted(boolean success) throws CoreException {
-		if (handler == null)
-			return;
-		else {
+		if (handler == null) {
+			if (savedStatus == null)
+				return;
+			else
+				throw new CoreException(savedStatus); // delayed exception
+		} else {
 			try {
 				if (DEBUG)
 					System.out.println("InstallHandler: calling unconfigureInitiated()");
@@ -305,6 +308,8 @@ public class InstallHandlerProxy implements IInstallHandler {
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
 			}
+			if (savedStatus != null)
+				throw new CoreException(savedStatus); // delayed exception
 		}
 	}
 
@@ -346,9 +351,12 @@ public class InstallHandlerProxy implements IInstallHandler {
 	 * @see IInstallHandler#uninstallCompleted
 	 */
 	public void uninstallCompleted(boolean success) throws CoreException {
-		if (handler == null)
-			return;
-		else {
+		if (handler == null) {
+			if (savedStatus == null)
+				return;
+			else
+				throw new CoreException(savedStatus); // delayed exception
+		} else {
 			try {
 				if (DEBUG)
 					System.out.println("InstallHandler: calling uninstallCompleted()");
@@ -356,15 +364,10 @@ public class InstallHandlerProxy implements IInstallHandler {
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
 			}
+			if (savedStatus != null)
+				throw new CoreException(savedStatus); // delayed exception
 		}
 	}
-	
-	/*
-	 * recover saved status
-	 */
-	 public IStatus getCompletionStatus() {
-	 	return savedStatus;
-	 }
 
 	/*
 	 * common exception handling for initialization
