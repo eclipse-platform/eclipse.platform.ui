@@ -4536,7 +4536,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Caret createOverwriteCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
 		GC gc= new GC(styledText);
-		// XXX this overwrite box is not proportiona-font aware
+		// XXX this overwrite box is not proportional-font aware
 		// take 'a' as a medium sized character
 		Point charSize= gc.stringExtent("a"); //$NON-NLS-1$
 		caret.setSize(charSize.x, styledText.getLineHeight());
