@@ -187,15 +187,15 @@ public class InternalSiteManager {
 				// 1 try to add site.xml
 				try {
 					url = new URL(url,Site.SITE_XML);
-				} catch (MalformedURLException e2){
-					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e2);
+				} catch (MalformedURLException e1){
+					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e1);
 				}
 				try {
 					site = factory.createSite(url, forceCreation);
 				} catch (ParsingException e1){
-					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
 				} catch (IOException e1){
-					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
 				}
 			} else if (url.getFile().endsWith(Site.SITE_XML)) {
 				// 3 nothing we can do
@@ -203,17 +203,17 @@ public class InternalSiteManager {
 			} else {
 				// 2 try to add /site.xml
 				try {
-					url = new URL(url,"/"+Site.SITE_XML);
-				} catch (MalformedURLException e2){
-					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e2);
+					url = new URL(url.getProtocol(),url.getHost(), url.getPort(), url.getFile()+"/"+Site.SITE_XML);
+				} catch (MalformedURLException e1){
+					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e1);
 				}
 				
 				try {
 					site = factory.createSite(url, forceCreation);
 				} catch (ParsingException e1){
-					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
 				} catch (IOException e1){
-					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
 				}				
 			}
 
@@ -225,26 +225,39 @@ public class InternalSiteManager {
 				// 4 nothing we can do
 				throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);
 			} else if (url.getFile().endsWith("/")) {
-				// 1 nothing we can do
+				// 1 try to add site.xml
 				try {
 					url = new URL(url,Site.SITE_XML);
-				} catch (MalformedURLException e2){
-					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e2);
+				} catch (MalformedURLException e1){
+					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e1);
 				}
 				try {
 					site = factory.createSite(url, forceCreation);
 				} catch (ParsingException e1){
-					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
 				} catch (IOException e1){
-					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);
+					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);
 				}				
 
 			} else if (url.getFile().endsWith(Site.SITE_XML)) {
-				// 3
+				// 3 nothing we can do
 				throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
 			} else {
-				// 2
-				throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e.getMessage(),e);					
+				// 2 try to add /site.xml
+				
+				try {
+					url = new URL(url.getProtocol(),url.getHost(), url.getPort(), url.getFile()+"/"+Site.SITE_XML);
+				} catch (MalformedURLException e1){
+					throw newCoreException("Cannot create URL:"+url.toExternalForm()+"+"+Site.SITE_XML,e1);
+				}
+				try {
+					site = factory.createSite(url, forceCreation);
+				} catch (ParsingException e1){
+					throw newCoreException("Error parsing URL:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);					
+				} catch (IOException e1){
+					throw newCoreException("Error accessing url:"+url.toExternalForm()+"\r\n"+e1.getMessage(),e1);
+				}							
+		
 			}
 		} 
 

@@ -8,6 +8,7 @@ package org.eclipse.update.core;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.ParsingException;
  

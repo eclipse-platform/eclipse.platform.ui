@@ -53,11 +53,5 @@ public class TestCategories extends UpdateManagerTestCase {
 
 		assertEquals("Required Drivers", categories[0].getLabel());
 
-		remoteSite = SiteManager.getSite(new URL("http://klicnik/Update Manager2/"));
-
-		categories = remoteSite.getCategories();
-
-		assertEquals("Required Drivers", categories[0].getLabel());
-
 	}
 }

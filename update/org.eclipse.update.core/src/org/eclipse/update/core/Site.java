@@ -392,7 +392,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		for (int index = 0; index < archives.length; index++) {
 			IArchiveEntry element = (IArchiveEntry) archives[index];
 			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
-			w.println(gap + "<archive " + "id = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
+			w.println(gap + "<archive " + "path = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
 		}
 		w.println("");
 

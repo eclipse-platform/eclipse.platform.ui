@@ -47,7 +47,7 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 		fileWriter.close();
 		
 		//get the local Site again
-		URL newURL = new URL(tempSite.getURL().getProtocol(),tempSite.getURL().getHost(),tempSite.getURL().getPort(),tempSite.getURL().getFile());
+		URL newURL =tempSite.getURL();
 		ISite compareSite = SiteManager.getSite(newURL);
 		
 		// compare
@@ -75,7 +75,7 @@ public class TestSiteGeneration extends UpdateManagerTestCase {
 			String tempDir = System.getProperty("java.io.tmpdir");
 			if (!tempDir.endsWith(File.separator))
 				tempDir += File.separator;
-			String fileAsURL = (tempDir+TEMP_NAME+"site.xml").replace(File.separatorChar,'/');
+			String fileAsURL = (tempDir+TEMP_NAME).replace(File.separatorChar,'/');
 				File file = new File(fileAsURL);
 				TEMP_SITE = InternalSiteManager.createSite(file);
 		}

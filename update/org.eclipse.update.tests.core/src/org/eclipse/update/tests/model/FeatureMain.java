@@ -22,7 +22,7 @@ public class FeatureMain extends UpdateManagerTestCase {
 		super(testcase);
 	}
 
-	public void testMain() {
+	public void testMain() throws Exception {
 		
 		FeatureModelFactory factory = new FeatureModelFactory();
 		InputStream is = null;
@@ -33,8 +33,6 @@ public class FeatureMain extends UpdateManagerTestCase {
 		try {
 			is = FeatureMain.class.getResourceAsStream("feature.xml");		
 			feature = factory.parseFeature(is);
-		} catch(Exception e) {
-			w.println(e);
 		} finally {
 			if (is != null) {
 				try { is.close();} catch(IOException e) {}
@@ -44,12 +42,8 @@ public class FeatureMain extends UpdateManagerTestCase {
 		String base = "http://another.server/feature.xml";
 		w.println("Resolving feature using "+base+" ...");
 		ResourceBundle bundle = null;
-		try {
-			bundle = ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
-			feature.resolve(new URL(base), bundle);
-		} catch(Exception e) {
-			w.println(e);
-		}
+		bundle = ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
+		feature.resolve(new URL(base), bundle);
 		
 		ContentGroupModel[] groups = new ContentGroupModel[2];
 		groups[0] = factory.createContentGroupModel();

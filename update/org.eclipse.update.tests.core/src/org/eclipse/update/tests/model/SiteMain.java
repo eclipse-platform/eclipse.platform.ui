@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ArchiveReferenceModel;
 import org.eclipse.update.core.model.DefaultSiteParser;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -20,16 +21,22 @@ public class SiteMain extends UpdateManagerTestCase {
 		super(name);
 	}
 
-	public void testMain() {
+	public void testMain() throws Exception {
 		
 		PrintWriter w = new PrintWriter(System.out);
 		process("site_old_format.xml",w);
 		process("site.xml",w);
-		process("site_with_type.xml",w);
-		w.close();
+		try {
+			process("site_with_type.xml",w);
+			fail("InvalidSiteTypeException not thrown");
+		} catch (InvalidSiteTypeException e) {
+			assertEquals(e.getNewType(),"some.other.site.type");
+		} finally {
+			w.close();
+		}
 	}
 	
-	private static void process(String xml, PrintWriter w) {
+	private static void process(String xml, PrintWriter w) throws Exception {
 		
 		SiteModelFactory factory = new SiteModelFactory();
 		InputStream is = null;
@@ -40,9 +47,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		try {
 			is = SiteMain.class.getResourceAsStream(xml);		
 			site = factory.parseSite(is);
-		} catch(Exception e) {
-			w.println(e);
-		} finally {
+		}  finally {
 			if (is != null) {
 				try { is.close();} catch(IOException e) {}
 			}
@@ -52,11 +57,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		
 		String base = "http://another.server/site.xml";
 		w.println("Resolving site using "+base+" ...");
-		try {
-			site.resolve(new URL(base), null);
-		} catch(Exception e) {
-			w.println(e);
-		}
+		site.resolve(new URL(base), null);
 		
 		w.println("Writing site ...");
 		writeSite(w,0,site);

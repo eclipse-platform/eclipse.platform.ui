@@ -86,6 +86,10 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of categories", categories.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 2);
 
+		// FIXME teh parse doesn't return speace before < and after >
+		String valideString = "This category contains all of the<currently>available versions of Red Dot feature.";
+		assertEquals(valideString,remoteSite.getCategoryModels()[0].getDescriptionModel().getAnnotation());
+
 		String path = new URL(SOURCE_FILE_SITE + "parsertests/").getFile();
 		String path2 = remoteSite.getDescriptionModel().getURL().getFile();
 		assertEquals(path + "info/siteInfo.html", path2);

@@ -28,6 +28,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private FeatureModelFactory factory;
 	private MultiStatus status;
 
+	private boolean URL_ALREADY_SEEN = false;
+
 	private static final int STATE_IGNORED_ELEMENT = -1;
 	private static final int STATE_INITIAL = 0;
 	private static final int STATE_FEATURE = 1;
@@ -77,7 +79,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public FeatureModel parse(InputStream in) throws SAXException, IOException {
-		stateStack.push(new Integer(STATE_INITIAL));		
+		stateStack.push(new Integer(STATE_INITIAL));
 		parser.parse(new InputSource(in));
 		if (objectStack.isEmpty())
 			throw new SAXException("Error parsing stream. cannot find Feature tag. Feature not created.");
@@ -123,10 +125,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 				handleHandlerState(localName, attributes);
 				break;
 
-			case STATE_DESCRIPTION:
+			case STATE_DESCRIPTION :
 				handleDescriptionState(localName, attributes);
 				break;
-				
+
 			case STATE_COPYRIGHT :
 				handleCopyrightState(localName, attributes);
 				break;
@@ -136,6 +138,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_URL :
+				if (URL_ALREADY_SEEN)
+					internalError("There is more than one URL tag in the XML. There should be only one.");
 				handleURLState(localName, attributes);
 				break;
 
@@ -173,15 +177,15 @@ public class DefaultFeatureParser extends DefaultHandler {
 	public void handleInitialState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
-			processFeature(attributes);		
-		} else		
+			processFeature(attributes);
+		} else
 			internalErrorUnknownTag("unknown root element :" + elementName);
 	}
-	
+
 	public void handleFeatureState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(HANDLER)) {
 			stateStack.push(new Integer(STATE_HANDLER));
-			//processHandler(attributes);
+			processHandler(attributes);
 		} else if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
 			processInfo(attributes);
@@ -299,12 +303,34 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(feature);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 				debug("End process DefaultFeature tag: id:" + id + " ver:" + ver + " label:" + label + " provider:" + provider);
 				debug("End process DefaultFeature tag: image:" + imageURL);
 				debug("End process DefaultFeature tag: ws:" + ws + " os:" + os + " nl:" + nl + " application:" + application);
 			}
 		}
+	}
+
+
+	/** 
+	 * process URL info with element text
+	 */
+	private void processHandler(Attributes attributes) {
+		InstallHandlerModel handler = factory.createInstallHandlerModel();
+		
+		String handlerURL = attributes.getValue("url");
+		handler.setURLString(handlerURL);
+		
+		String library = attributes.getValue("library");
+		handler.setLibrary(library);
+		
+		String clazz = attributes.getValue("class");
+		handler.setClassName(clazz);
+
+		objectStack.push(handler);
+
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+			debug("Processed Handler: url:" + handlerURL+" library:"+library+" class:"+clazz);
 	}
 
 	/** 
@@ -345,7 +371,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (id == null || id.trim().equals(""))
 			internalError("Invalid plugin id tag of a import tag. Value is required.");
 		else {
-			ImportModel imp = factory.createImportModel();			
+			ImportModel imp = factory.createImportModel();
 			String ver = attributes.getValue("version");
 			String match = attributes.getValue("match");
 			imp.setPluginIdentifier(id);
@@ -354,7 +380,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(imp);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 				debug("Processed require: id:" + id + " ver:" + ver);
 				debug("Processed require: match:" + match);
 			}
@@ -416,7 +442,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(pluginEntry);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 				debug("Processed Plugin: id:" + id + " ver:" + ver + " fragment:" + fragment);
 				debug("Processed Plugin: os:" + os + " ws:" + ws + " nl:" + nl);
 				debug("Processed Plugin: download size:" + download_size + " install size:" + install_size);
@@ -462,7 +488,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			objectStack.push(dataEntry);
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 				debug("Processed Data: id:" + id);
 				debug("Processed Data: download size:" + download_size + " install size:" + install_size);
 			}
@@ -476,10 +502,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) {
 
 		String tag = localName.trim();
-		
+
 		// variables used
 		URLEntryModel info = null;
-		FeatureModel featureModel=null;
+		FeatureModel featureModel = null;
 		String text = null;
 		int innerState = 0;
 
@@ -505,13 +531,19 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_HANDLER :
 				stateStack.pop();
+				InstallHandlerModel handlerModel = (InstallHandlerModel) objectStack.pop();
+				featureModel = (FeatureModel) objectStack.peek();				
+				if (featureModel.getInstallHandlerModel() != null)
+					internalError("Install Handler already set for the Feature");
+				else
+					featureModel.setInstallHandlerModel(handlerModel);
 				break;
 			case STATE_DESCRIPTION :
 				stateStack.pop();
 
-				text = null;
-				if (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop();
+				text = "";
+				while (objectStack.peek() instanceof String) {
+					text = (String) objectStack.pop() + text;
 				}
 
 				info = (URLEntryModel) objectStack.pop();
@@ -522,7 +554,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 				switch (innerState) {
 					case STATE_FEATURE :
 						featureModel = (FeatureModel) objectStack.peek();
-						featureModel.setDescriptionModel(info);
+						if (featureModel.getDescriptionModel() != null)
+							internalError("Description already set for the Feature");
+						else
+							featureModel.setDescriptionModel(info);
 						break;
 
 					default :
@@ -534,9 +569,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_COPYRIGHT :
 				stateStack.pop();
-				text = null;
-				if (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop();
+				text = "";
+				while (objectStack.peek() instanceof String) {
+					text = (String) objectStack.pop() + text;
 				}
 
 				info = (URLEntryModel) objectStack.pop();
@@ -547,7 +582,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 				switch (innerState) {
 					case STATE_FEATURE :
 						featureModel = (FeatureModel) objectStack.peek();
-						featureModel.setCopyrightModel(info);
+						if (featureModel.getCopyrightModel() != null)
+							internalError("Copyright already set for the Feature");
+						else
+							featureModel.setCopyrightModel(info);
 						break;
 
 					default :
@@ -560,9 +598,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 			case STATE_LICENSE :
 				stateStack.pop();
 
-				text = null;
-				if (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop();
+				text = "";
+				while (objectStack.peek() instanceof String) {
+					text = (String) objectStack.pop() + text;
 				}
 
 				info = (URLEntryModel) objectStack.pop();
@@ -573,7 +611,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 				switch (innerState) {
 					case STATE_FEATURE :
 						featureModel = (FeatureModel) objectStack.peek();
-						featureModel.setLicenseModel(info);
+						if (featureModel.getLicenseModel() != null)
+							internalError("License already set for the Feature");
+						else
+							featureModel.setLicenseModel(info);
 						break;
 
 					default :
@@ -585,6 +626,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_URL :
 				stateStack.pop();
+				URL_ALREADY_SEEN = true;
 				break;
 
 			case STATE_UPDATE :
@@ -607,6 +649,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_REQUIRES :
 				stateStack.pop();
+				featureModel = (FeatureModel) objectStack.peek();				
+				if (featureModel.getImportModels().length==0){
+					internalError("Require tag didn't describe any import");
+				}
 				break;
 
 			case STATE_IMPORT :
@@ -618,14 +664,14 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_PLUGIN :
 				stateStack.pop();
-				PluginEntryModel pluginEntry = (PluginEntryModel) objectStack.pop();				
+				PluginEntryModel pluginEntry = (PluginEntryModel) objectStack.pop();
 				featureModel = (FeatureModel) objectStack.peek();
 				featureModel.addPluginEntryModel(pluginEntry);
 				break;
 
 			case STATE_DATA :
 				stateStack.pop();
-				NonPluginEntryModel nonPluginEntry = (NonPluginEntryModel) objectStack.pop();				
+				NonPluginEntryModel nonPluginEntry = (NonPluginEntryModel) objectStack.pop();
 				featureModel = (FeatureModel) objectStack.peek();
 				featureModel.addNonPluginEntryModel(nonPluginEntry);
 				break;
@@ -645,12 +691,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length) {
 		String text = new String(ch, start, length).trim();
-		if (!text.equals("")) {
 			//only push if not unknown state
 			int state = ((Integer) stateStack.peek()).intValue();
-			if (state != STATE_IGNORED_ELEMENT && state != STATE_INITIAL)
+			if (state == STATE_DESCRIPTION || state==STATE_COPYRIGHT || state == STATE_LICENSE)
 				objectStack.push(text);
-		}
+
 	}
 
 	private void debug(String s) {

@@ -5,7 +5,11 @@ package org.eclipse.update.core.model;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.eclipse.core.runtime.IStatus;
+import org.xml.sax.SAXException;
 
 /**
  * An object which can create install related model objects (typically when
@@ -29,9 +33,20 @@ public class FeatureModelFactory {
 	 * 
 	 * @param stream feature stream
 	 */
-	public FeatureModel parseFeature(InputStream stream) throws Exception {
+	public FeatureModel parseFeature(InputStream stream) throws ParsingException, IOException, SAXException {
 		DefaultFeatureParser parser = new DefaultFeatureParser(this);
-		return parser.parse(stream);
+		
+		FeatureModel featureModel =  parser.parse(stream);
+			if (parser.getStatus().getChildren().length>0){
+				// some internalError were detected
+				IStatus[] children = parser.getStatus().getChildren();
+				String error = "";
+				for (int i = 0; i < children.length; i++) {
+					error = error + "\r\n"+ children[i].getMessage();
+				}
+				throw new ParsingException(new Exception(error));
+			}		
+		return featureModel;
 	}
 
 	/**

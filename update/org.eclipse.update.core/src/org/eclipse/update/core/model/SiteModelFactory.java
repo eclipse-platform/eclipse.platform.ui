@@ -8,6 +8,7 @@ package org.eclipse.update.core.model;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.IStatus;
 import org.xml.sax.SAXException;
 
 /**
@@ -48,6 +49,15 @@ public class SiteModelFactory {
 		try {
 			DefaultSiteParser parser = new DefaultSiteParser(this);
 			result = parser.parse(stream);
+			if (parser.getStatus().getChildren().length>0){
+				// some internalError were detected
+				IStatus[] children = parser.getStatus().getChildren();
+				String error = "";
+				for (int i = 0; i < children.length; i++) {
+					error = error + "\r\n"+children[i].getMessage();
+				}
+				throw new ParsingException(new Exception(error));
+			}
 		} catch (SAXException e){
 			if (e instanceof SAXException){
 				SAXException exception = (SAXException) e;

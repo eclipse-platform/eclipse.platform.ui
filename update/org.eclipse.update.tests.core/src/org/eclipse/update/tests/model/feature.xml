@@ -38,8 +38,5 @@
    
    <data id="examples.zip" download-size="23456" install-size="1234567"/>
    <data id="custom/rt.jar"/>
-   
-   <group>
-   </group>
 
 </feature>

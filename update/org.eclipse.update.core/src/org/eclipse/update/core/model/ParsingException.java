@@ -1,4 +1,6 @@
 package org.eclipse.update.core.model;
+
+import org.xml.sax.SAXParseException;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -22,5 +24,13 @@ public class ParsingException extends Exception {
 	public Throwable getException(){
 		return exception;
 	}
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		
+		return "org.eclipse.update.core.ParsingException: "+exception.getMessage();
+	}
+
 }
 

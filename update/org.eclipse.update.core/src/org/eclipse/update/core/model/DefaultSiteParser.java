@@ -38,7 +38,6 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_DESCRIPTION = 6;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-
 	public static final String SITE = "site";
 	public static final String FEATURE = "feature";
 	public static final String ARCHIVE = "archive";
@@ -95,7 +94,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			debug("State: " + (Integer) stateStack.peek());
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
 		}
@@ -231,21 +230,21 @@ public class DefaultSiteParser extends DefaultHandler {
 		String urlInfo = attributes.getValue("url");
 		if (urlInfo == null || urlInfo.trim().equals(""))
 			internalError("Invalid URL tag of a feature tag. Value is required.");
-		else {
-			feature.setURLString(urlInfo);
 
-			String type = attributes.getValue("type");
-			feature.setType(type);
+		feature.setURLString(urlInfo);
 
-			SiteMapModel site = (SiteMapModel) objectStack.peek();
-			site.addFeatureReferenceModel(feature);
-			feature.setSiteModel(site);
+		String type = attributes.getValue("type");
+		feature.setType(type);
 
-			objectStack.push(feature);
+		SiteMapModel site = (SiteMapModel) objectStack.peek();
+		site.addFeatureReferenceModel(feature);
+		feature.setSiteModel(site);
+
+		objectStack.push(feature);
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-				debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
-		}
+			debug("End Processing DefaultFeature Tag: url:" + urlInfo + " type:" + type);
+
 	}
 
 	/** 
@@ -255,22 +254,23 @@ public class DefaultSiteParser extends DefaultHandler {
 		ArchiveReferenceModel archive = factory.createArchiveReferenceModel();
 		String id = attributes.getValue("path");
 		if (id == null || id.trim().equals("")) {
-			internalError("The id tag of an archive is null or does not exist.");
-		} else {
-			archive.setPath(id);
-
-			String url = attributes.getValue("url");
-			if (url == null || url.trim().equals("")) {
-				internalError("The url tag of an archive is null or does not exist.");
-			} else {
-				archive.setURLString(url);
-
-				SiteMapModel site = (SiteMapModel) objectStack.peek();
-				site.addArchiveReferenceModel(archive);
-			}
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
-				debug("End processing Archive: path:" + id + " url:" + url);
+			internalError("The path tag of an archive is null or does not exist.");
 		}
+
+		archive.setPath(id);
+
+		String url = attributes.getValue("url");
+		if (url == null || url.trim().equals("")) {
+			internalError("The url tag of an archive is null or does not exist.");
+		} else {
+			archive.setURLString(url);
+
+			SiteMapModel site = (SiteMapModel) objectStack.peek();
+			site.addArchiveReferenceModel(archive);
+		}
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
+			debug("End processing Archive: path:" + id + " url:" + url);
+
 	}
 
 	/** 
@@ -364,9 +364,9 @@ public class DefaultSiteParser extends DefaultHandler {
 			case STATE_DESCRIPTION :
 				stateStack.pop();
 
-				String text = null;
-				if (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop();
+				String text = "";
+				while (objectStack.peek() instanceof String) {
+					text = (String) objectStack.pop() + text;
 				}
 
 				URLEntryModel info = (URLEntryModel) objectStack.pop();
@@ -379,12 +379,20 @@ public class DefaultSiteParser extends DefaultHandler {
 					case STATE_SITE :
 
 						SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
-						siteModel.setDescriptionModel(info);
+						// override description.
+						// do not raise error as previous description may be default one
+						// when parsing site tage
+						if (siteModel.getDescriptionModel() != null)
+							debug("Description already set for the Site");
+							siteModel.setDescriptionModel(info);
 						break;
 
 					case STATE_CATEGORY_DEF :
 						SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
-						category.setDescriptionModel(info);
+						if (category.getDescriptionModel() != null)
+							internalError("Description already set for the Category:" + category.getLabel());
+						else
+							category.setDescriptionModel(info);
 						break;
 
 					default :
@@ -407,16 +415,15 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length) {
 		String text = new String(ch, start, length).trim();
-		if (!text.equals("")) {
-			//only push if not unknown state
-			int state = ((Integer) stateStack.peek()).intValue();
-			if (state != STATE_IGNORED_ELEMENT && state != STATE_INITIAL)
-				objectStack.push(text);
-		}
+		//only push if description
+		int state = ((Integer) stateStack.peek()).intValue();
+		if (state == STATE_DESCRIPTION)
+			objectStack.push(text);
+
 	}
 
 	private void debug(String s) {
-		System.out.println("DefaultSiteParser: " + s);
+		UpdateManagerPlugin.getPlugin().debug(s);
 	}
 
 	public void error(SAXParseException ex) {
@@ -452,7 +459,6 @@ public class DefaultSiteParser extends DefaultHandler {
 	public void error(IStatus error) {
 
 		getStatus().add(error);
-		UpdateManagerPlugin.getPlugin().getLog().log(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			UpdateManagerPlugin.getPlugin().debug(error.toString());
 	}
