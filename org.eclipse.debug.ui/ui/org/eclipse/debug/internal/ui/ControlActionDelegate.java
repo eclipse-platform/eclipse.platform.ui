@@ -14,8 +14,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	
 	protected String fMode= ILaunchManager.DEBUG_MODE;
 
-	protected boolean fSetActionImages = false;
-
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
@@ -31,7 +29,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * action specific initialization.
 	 */
 	public void initializeForOwner(ControlAction controlAction) {
-		setActionImagesConditionally(controlAction);
+		setActionImages(controlAction);
 		LaunchesViewer provider= (LaunchesViewer)controlAction.getSelectionProvider();
 		IContentProvider contentProvider= provider.getContentProvider();
 		fMode= ILaunchManager.DEBUG_MODE;
@@ -100,7 +98,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IActionDelegate
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-		setActionImagesConditionally(action);
 		LaunchesView view= getLaunchesView(fMode);
 		if (view == null) {
 			action.setEnabled(false);
@@ -147,17 +144,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		
 	}
 	
-	/**
-	 * Set the enabled, disabled and hover icons on the action if
-	 * they haven't already been set.
-	 */
-	protected void setActionImagesConditionally(IAction action) {
-		if (!fSetActionImages) {
-			setActionImages(action);
-			fSetActionImages = true;
-		}
-	}
-
 	/**
 	 * Does the specific action of this action to the process.
 	 */
