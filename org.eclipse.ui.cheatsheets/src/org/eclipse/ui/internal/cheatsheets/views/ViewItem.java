@@ -66,7 +66,7 @@ public abstract class ViewItem {
 	protected FormToolkit toolkit;
 	protected ScrolledForm form;
 
-	private boolean bold = false;
+	private boolean bold = true;
 	private Font boldFont;
 	private Font regularFont;
 
@@ -205,12 +205,12 @@ public abstract class ViewItem {
 		setButtonsCollapsed();
 		setCollapsed();
 
-		regularFont = mainItemComposite.getFont();
-		FontData[] fontDatas = regularFont.getFontData();
+		boldFont = mainItemComposite.getFont();
+		FontData[] fontDatas = boldFont.getFontData();
 		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
+			fontDatas[i].setStyle(fontDatas[i].getStyle() ^ SWT.BOLD);
 		}
-		boldFont = new Font(mainItemComposite.getDisplay(), fontDatas);
+		regularFont = new Font(mainItemComposite.getDisplay(), fontDatas);
 	}
 
 	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
@@ -253,8 +253,10 @@ public abstract class ViewItem {
 			white.dispose();
 		if (titleComposite != null)
 			titleComposite.dispose();
-		if (boldFont != null)
-			boldFont.dispose();
+//		if (boldFont != null)
+//			boldFont.dispose();
+		if (regularFont != null)
+			regularFont.dispose();
 
 		ArrayList itemExts = contentItem.getItemExtensions();
 		if (itemExts != null) {
@@ -413,11 +415,11 @@ public abstract class ViewItem {
 
 	/*package*/
 	void setBold(boolean value) {
-		if(value && !bold) {
+		if(value) {
 			mainItemComposite.setFont(boldFont);
 			mainItemComposite.layout();
 			parent.layout();
-		} else if(!value && bold) {
+		} else {
 			mainItemComposite.setFont(regularFont);
 			mainItemComposite.layout();
 			parent.layout();
