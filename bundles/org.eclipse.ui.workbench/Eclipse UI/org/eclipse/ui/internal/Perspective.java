@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
@@ -285,7 +286,7 @@ public IPerspectiveDescriptor getDesc() {
 	// Copy the bounds of the page composite
 	Rectangle bounds = page.getClientComposite().getBounds();
 	// get the width ratio of the fast view
-	float ratio = getFastViewWidthRatio(ref.getId());
+    float ratio = getFastViewWidthRatio(ref);
 	// Compute the actual width of the fast view.
 	bounds.width = (int)(ratio*getClientComposite().getSize().x);
 	return bounds;
@@ -324,19 +325,22 @@ public ArrayList getPerspectiveActionIds() {
 public PerspectiveHelper getPresentation() {
 	return presentation;
 }
+
 /**
- * Retrieves the ratio for the fast view with the given compound id. If
- * the ratio is not known, the default ratio for the view is returned.
- * 
- * @param id the compound id for the view
+ * Retrieves the fast view width ratio for the given view. 
+ * If the ratio is not known, the default ratio for the view is assigned and returned.
  */
-private float getFastViewWidthRatio(String id) {
-	ViewLayoutRec rec = getViewLayoutRec(id, true);
-	if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
-	    IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();	
-	    rec.fastViewWidthRatio = reg.find(id).getFastViewWidthRatio();
-	}
-	return rec.fastViewWidthRatio;
+private float getFastViewWidthRatio(IViewReference ref) {
+    ViewLayoutRec rec = getViewLayoutRec(ref, true);
+    if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
+        IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+        IViewDescriptor desc = reg.find(ref.getId());
+        rec.fastViewWidthRatio = 
+            (desc != null 
+                ? desc.getFastViewWidthRatio()
+                : IPageLayout.DEFAULT_FASTVIEW_RATIO);
+    }
+    return rec.fastViewWidthRatio;
 }
 
 /**
@@ -1323,7 +1327,7 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
 			String id = ViewFactory.getKey(ref);
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-			float ratio = getFastViewWidthRatio(id);
+			float ratio = getFastViewWidthRatio(ref);
 			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
 		}
 	}
@@ -1565,7 +1569,7 @@ boolean showFastView(IViewReference ref) {
 	}
 	int side = bar.getViewSide(ref);
 	
-	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref.getId()));	
+	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref));	
 	
 	setFastViewIconSelection(ref, true);
 	
