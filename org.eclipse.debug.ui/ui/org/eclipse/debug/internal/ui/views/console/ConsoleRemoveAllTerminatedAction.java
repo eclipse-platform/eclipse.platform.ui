@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -27,7 +28,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * ConsoleRemoveAllTerminatedAction
  */
-public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate, IDebugEventSetListener {
+public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate, IDebugEventSetListener, ILaunchesListener {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
@@ -48,7 +49,8 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 	}
 
 	public void dispose() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);	
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -82,6 +84,28 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		update();
-	}	
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesRemoved(ILaunch[] launches) {
+       if (isEnabled()) {
+           update();
+       }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesAdded(ILaunch[] launches) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesChanged(ILaunch[] launches) {
+    }	
 }
