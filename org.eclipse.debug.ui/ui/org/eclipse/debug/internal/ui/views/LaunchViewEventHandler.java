@@ -110,6 +110,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				selectAndReveal(element);
 				resetStackFrameCount((IThread)element);
 				return;
+			} else {
+				updateButtons();
 			}
 		}			
 		labelChanged(element);
@@ -122,6 +124,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void doHandleSuspendEvent(Object element) {
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element);
+		} else {
+			refresh(element);
+			updateButtons();
 		}
 	}
 	
