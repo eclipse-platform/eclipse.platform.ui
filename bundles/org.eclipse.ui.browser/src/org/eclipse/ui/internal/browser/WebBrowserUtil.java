@@ -145,20 +145,22 @@ public class WebBrowserUtil {
 		List paths = getExternalBrowserPaths();
 
 		String os = Platform.getOS();
-		File[] roots = File.listRoots();
-		int rootSize = Math.min(roots.length, 2); // just check the first two drives
-		
-		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
+		File[] roots = getUsableDrives(File.listRoots());
+		int rootSize = roots.length;
+        
+        //Math.min(roots.length, 2); // just check the first two drives
+         
+        IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
 		int size = browsers.length;
 		for (int i = 0; i < size; i++) {
 			if (browsers[i].getDefaultLocations() != null && browsers[i].getOS().toLowerCase().indexOf(os) >= 0) {
 				for (int k = 0; k < rootSize; k++) {
-					int size2 = browsers[i].getDefaultLocations().length;
+                	int size2 = browsers[i].getDefaultLocations().length;
 					for (int j = 0; j < size2; j++) {
 						String location = browsers[i].getDefaultLocations()[j];
 						try {
 							File f = new File(roots[k], location);
-							if (!paths.contains(f.getAbsolutePath().toLowerCase())) {
+                            if (!paths.contains(f.getAbsolutePath().toLowerCase())) {
 								if (f.exists()) {
 									BrowserDescriptor browser = new BrowserDescriptor();
 									browser.name = browsers[i].getName();
@@ -176,6 +178,19 @@ public class WebBrowserUtil {
 			}
 		}
 	}
+    
+    private static File [] getUsableDrives(File [] roots) {
+        if (!Platform.getOS().equals(Platform.OS_WIN32))
+            return roots;
+        ArrayList list = new ArrayList();
+        for (int i=0; i<roots.length; i++) {
+           String path = roots[i].getAbsolutePath();
+           if (path!=null && path.equals("A:\\") || path.equals("B:\\"))
+               continue;
+           list.add(roots[i]);
+        }
+        return (File[])list.toArray(new File[list.size()]);
+    }
 
 	/**
 	 * Create an external Web browser if the file matches the default (known) browsers.
