@@ -7,18 +7,20 @@ package org.eclipse.team.core.internal;
  
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -28,15 +30,21 @@ import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamNature;
 import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.ITeamValidator;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 
-
 public class TeamManager implements ITeamManager {
 
+	// Constants
+	protected final static String TAG_VALIDATOR = "validator";
+	protected final static String ATT_CLASS = "class";
+	protected final static String ATT_NATUREID = "natureId";
+	
 	private static List natureIdsRegistry = new ArrayList(5);
 	private static List listeners = new ArrayList(5);
-
+	private static Map validators = new HashMap(5);
+	
 	/**
 	 * Start the team manager.
 	 * 
@@ -46,6 +54,7 @@ public class TeamManager implements ITeamManager {
 	 */
 	public void startup() throws TeamException {
 		initializeProviders();
+		initializeValidators();
 	}
 	
 	protected boolean alreadyMapped(IProject project) {
@@ -165,6 +174,7 @@ public class TeamManager implements ITeamManager {
 														 proj.getName(), natureId), e));
 		}
 	}
+	
 	protected void removeNatureFromProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
 		try {
 			IProjectDescription description = proj.getDescription();
@@ -215,7 +225,36 @@ public class TeamManager implements ITeamManager {
 				}
 			}
 		}	
-	}	
+	}
+	
+	/**
+	 * Initialize the validators table
+	 */
+	void initializeValidators() {
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(TeamPlugin.ID, TeamPlugin.VALIDATOR_EXTENSION);
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(TAG_VALIDATOR)) {						
+						try {
+							String natureId = element.getAttribute(ATT_NATUREID);
+							ITeamValidator validator = (ITeamValidator)element.createExecutableExtension(ATT_CLASS);
+							validators.put(natureId, validator);
+						} catch(ClassCastException e) {
+							TeamPlugin.log(IStatus.ERROR, Policy.bind("manager.badClassType"), e);
+						} catch(CoreException e) {
+							TeamPlugin.log(IStatus.ERROR, Policy.bind("manager.coreException"), e);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	/*
 	 * @see ITeamManager#addResourceStateChangeListener(IResourceStateChangeListener)
 	 */
@@ -246,5 +285,12 @@ public class TeamManager implements ITeamManager {
 			};
 			Platform.run(code);
 		}
+	}
+	
+	/**
+	 * Return the validator for the given resource.
+	 */
+	protected ITeamValidator getValidatorFor(IResource resource) {
+		return null;
 	}
 }

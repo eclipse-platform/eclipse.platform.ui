@@ -19,5 +19,6 @@
 
 <extension-point id="providers" name="Providers"/>
 <extension-point id="fileTypes" name="File Types Registry"/>
+<extension-point id="validators" name="Validate Edit and Save"/>
 
 </plugin>
