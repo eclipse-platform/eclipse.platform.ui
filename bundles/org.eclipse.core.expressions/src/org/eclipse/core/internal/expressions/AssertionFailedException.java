@@ -22,6 +22,7 @@ package org.eclipse.core.internal.expressions;
 /* package */
 class AssertionFailedException extends RuntimeException {
 	
+	/** This class is not intended to be serialized. */
 	private static final long serialVersionUID= 1L;
 
 	/** 
