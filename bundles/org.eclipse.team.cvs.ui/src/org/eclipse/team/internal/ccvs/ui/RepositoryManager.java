@@ -125,11 +125,12 @@ public class RepositoryManager {
 	 * Fetches tags from .project and .vcm_meta if they exist. Then fetches tags from the user defined auto-refresh file
 	 * list. The fetched tags are cached in the CVS ui plugin's tag cache.
 	 */
-	public void refreshDefinedTags(ICVSFolder project, boolean notify) throws TeamException {
+	public void refreshDefinedTags(ICVSFolder project, boolean notify, IProgressMonitor monitor) throws TeamException {
+		List filesToRefresh = new ArrayList(Arrays.asList(getAutoRefreshFiles(project)));
+		monitor.beginTask(Policy.bind("RepositoryManager.refreshDefinedTags"), filesToRefresh.size() * 10); //$NON-NLS-1$
 		try {
 			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(project.getFolderSyncInfo().getRoot());
 			List tags = new ArrayList();
-			List filesToRefresh = new ArrayList(Arrays.asList(getAutoRefreshFiles(project)));
 			filesToRefresh.add(".project"); //$NON-NLS-1$
 			filesToRefresh.add(".vcm_meta"); //$NON-NLS-1$
 			for (Iterator it = filesToRefresh.iterator(); it.hasNext();) {
@@ -138,7 +139,7 @@ public class RepositoryManager {
 				if (project instanceof ICVSRemoteFolder) {
 					// There should be a better way of doing this.
 					ICVSRemoteFolder parentFolder = location.getRemoteFolder(new Path(project.getName()).append(relativePath).removeLastSegments(1).toString(), CVSTag.DEFAULT);
-					ICVSResource[] resources = parentFolder.fetchChildren(null);
+					ICVSResource[] resources = parentFolder.fetchChildren(Policy.subMonitorFor(monitor, 5));
 					for (int i = 0; i < resources.length; i++) {
 						if (resources[i] instanceof ICVSRemoteFile && resources[i].getName().equals(new Path(relativePath).lastSegment())) {
 							file = (ICVSFile)resources[i];
@@ -148,7 +149,10 @@ public class RepositoryManager {
 					file = project.getFile(relativePath);
 				}
 				if (file != null) {
-					tags.addAll(Arrays.asList(fetchDefinedTagsFor(file, project, location)));
+					tags.addAll(Arrays.asList(fetchDefinedTagsFor(file, project, location,
+						Policy.subMonitorFor(monitor, 5))));
+				} else {
+					monitor.worked(5);
 				}
 			}
 			// add all tags in one pass so that the listeners only get one notification for
@@ -174,6 +178,8 @@ public class RepositoryManager {
 			notifyRepoView = true;
 		} catch (CVSException e) {
 			throw new TeamException(e.getStatus());
+		} finally {
+			monitor.done();
 		}
 	}
 	
@@ -747,9 +753,10 @@ public class RepositoryManager {
 	/*
 	 * Fetches and caches the tags found on the provided remote file.
 	 */
-	private CVSTag[] fetchDefinedTagsFor(ICVSFile file, ICVSFolder project, ICVSRepositoryLocation location) throws TeamException {
+	private CVSTag[] fetchDefinedTagsFor(ICVSFile file, ICVSFolder project,
+		ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
 		if (file != null && file.exists()) {
-			return getTags(file, null);
+			return getTags(file, monitor);
 		}
 		return new CVSTag[0];
 	}

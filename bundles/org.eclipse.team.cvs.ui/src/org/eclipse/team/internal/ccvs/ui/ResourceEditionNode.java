@@ -5,19 +5,18 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
@@ -25,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 /**
  * A class for comparing ICVSRemoteResource objects
  */
-public class ResourceEditionNode extends BufferedContent implements IStructureComparator, ITypedElement {
+public class ResourceEditionNode implements IStructureComparator, ITypedElement, IStreamContentAccessor {
 	private ICVSRemoteResource resource;
 	private ResourceEditionNode[] children;
 	
@@ -36,20 +35,6 @@ public class ResourceEditionNode extends BufferedContent implements IStructureCo
 		this.resource = resourceEdition;
 	}
 		
-	/**
-	 * @see BufferedContent#createStream
-	 */
-	public InputStream createStream() throws CoreException {
-		if (resource == null) {
-			return null;
-		}
-		try {
-			return resource.getContents(new NullProgressMonitor());
-		} catch (TeamException e) {
-			throw new CoreException(e.getStatus());
-		}
-	}
-	
 	/**
 	 * Returns true if both resources names are identical.
 	 * The content is not considered.
@@ -68,17 +53,29 @@ public class ResourceEditionNode extends BufferedContent implements IStructureCo
 	 */
 	public Object[] getChildren() {
 		if (children == null) {
-			if (resource == null) {
-				children = new ResourceEditionNode[0];
-			} else {
+			children = new ResourceEditionNode[0];
+			if (resource != null) {
 				try {
-					IRemoteResource[] members = resource.members(new NullProgressMonitor());
-					children = new ResourceEditionNode[members.length];
-					for (int i = 0; i < members.length; i++) {
-						children[i] = new ResourceEditionNode((ICVSRemoteResource)members[i]);
+					CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								IRemoteResource[] members = resource.members(monitor);
+								children = new ResourceEditionNode[members.length];
+								for (int i = 0; i < members.length; i++) {
+									children[i] = new ResourceEditionNode((ICVSRemoteResource)members[i]);
+								}
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					// operation canceled
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						CVSUIPlugin.log(((TeamException) t).getStatus());
 					}
-				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -92,32 +89,28 @@ public class ResourceEditionNode extends BufferedContent implements IStructureCo
 		if (resource == null) {
 			return null;
 		}
-		//show busy cursor if this is happening in the UI thread
-		Display display = Display.getCurrent();
-		if (display != null) {
-			final InputStream[] stream = new InputStream[1];
-			final TeamException[] exception = new TeamException[1];
-			BusyIndicator.showWhile(display, new Runnable() {
-				public void run() {
+		try {
+			final InputStream[] holder = new InputStream[1];
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						stream[0] = resource.getContents(new NullProgressMonitor());
+						holder[0] = resource.getContents(monitor);
 					} catch (TeamException e) {
-						exception[0] = e;
+						throw new InvocationTargetException(e);
 					}
 				}
 			});
-			if (exception[0] != null) {
-				throw new CoreException(exception[0].getStatus());
+			return holder[0];
+		} catch (InterruptedException e) {
+			// operation canceled
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			if (t instanceof TeamException) {
+				throw new CoreException(((TeamException) t).getStatus());
 			}
-			return stream[0];
-		} else {
-			//we're not in the UI thread, just get the contents.
-			try {
-				return resource.getContents(new NullProgressMonitor());
-			} catch (TeamException e) {
-				throw new CoreException(e.getStatus());
-			}
+			// should not get here
 		}
+		return new ByteArrayInputStream(new byte[0]);
 	}
 	
 	public Image getImage() {

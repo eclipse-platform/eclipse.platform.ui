@@ -5,15 +5,16 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -35,7 +36,8 @@ import org.eclipse.team.ui.sync.TeamFile;
 public class CVSSyncCompareInput extends SyncCompareInput {
 	private boolean dirty = false;
 	private IResource[] resources;
-	
+	TeamFile previousTeamFile = null;	
+
 	/**
 	 * Creates a new catchup or release operation.
 	 */
@@ -57,43 +59,64 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			 * @see MouseMoveListener#mouseMove(MouseEvent)
 			 */
 			public void mouseMove(MouseEvent e) {
-				Tree tree = (Tree)e.widget;
+				final Tree tree = (Tree)e.widget;
 				TreeItem item = tree.getItem(new Point(e.x, e.y));
+				final TeamFile file;
 				if (item != null) {
 					// Hack: this is the only way to get an item from the tree viewer
 					Object o = item.getData();
 					if (o instanceof TeamFile) {
-						TeamFile file = (TeamFile)o;
-						if (file.getChangeDirection() != ITeamNode.OUTGOING) {
-							IRemoteSyncElement element = file.getMergeResource().getSyncElement();
-							ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
-							ILogEntry logEntry;
-							if (remoteFile != null) {
-								try {
-									// XXX Should have real progress here
-									logEntry = remoteFile.getLogEntry(new NullProgressMonitor());
-								} catch (TeamException ex) {
-									tree.setToolTipText(null);
-									return;
-								}
-								if (logEntry != null) {
-									String newText = logEntry.getComment();
-									String oldText = tree.getToolTipText();
-									if (!newText.equals(oldText)) {
-										tree.setToolTipText(logEntry.getComment());
-									}
-									return;
-								}
-							}
-						}
+						file = (TeamFile)o;
+					} else file = null;
+				} else file = null;
+
+				// avoid redundant updates -- identity test is good enough here
+ 				if (file == previousTeamFile) return;
+				previousTeamFile = file;
+				getShell().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updateToolTip(tree, file);
 					}
-				}
-				tree.setToolTipText(null);
+				});
 			}
 		});
 		return catchupReleaseViewer;
 	}
-
+	
+	protected void updateToolTip(Tree tree, TeamFile file) {
+		String newText = null;
+		if (file != null && file.getChangeDirection() != ITeamNode.OUTGOING) {
+			IRemoteSyncElement element = file.getMergeResource().getSyncElement();
+			final ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
+			final ILogEntry[] logEntry = new ILogEntry[1];
+			if (remoteFile != null) {
+				try {
+					CVSUIPlugin.runWithProgress(getViewer().getTree().getShell(), true /*cancelable*/,
+						new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								logEntry[0] = remoteFile.getLogEntry(monitor);
+							} catch (TeamException ex) {
+								throw new InvocationTargetException(ex);
+							}
+						}
+					});
+				} catch (InterruptedException ex) {
+					// ignore cancellation
+				} catch (InvocationTargetException ex) {
+					// ignore the exception
+				}
+			}
+			if (logEntry[0] != null) {
+				newText = logEntry[0].getComment();
+			}
+		}
+		if (tree.isDisposed()) return;
+		String oldText = tree.getToolTipText();
+		if (newText == oldText || newText != null && newText.equals(oldText)) return;
+		tree.setToolTipText(newText);
+	}
+	
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
 		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
 		int work = 1000 * resources.length;

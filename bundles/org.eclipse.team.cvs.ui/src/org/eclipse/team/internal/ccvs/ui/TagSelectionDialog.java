@@ -129,13 +129,17 @@ public class TagSelectionDialog extends Dialog {
 		tagTree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(projects[0]), true /*show HEAD tag*/));
 		Runnable refresh = new Runnable() {
 			public void run() {
-				tagTree.refresh();
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						tagTree.refresh();
+					}
+				});
 			}
 		};
 		TagConfigurationDialog.createTagDefinitionButtons(getShell(), top, projects, 
-																							convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
-																							convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
-																							refresh, refresh);
+														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
+														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
+														  refresh, refresh);
 		
 		Label seperator = new Label(top, SWT.SEPARATOR | SWT.HORIZONTAL);
 		data = new GridData (GridData.FILL_BOTH);		

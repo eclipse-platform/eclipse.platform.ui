@@ -5,16 +5,18 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -29,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -270,12 +271,30 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		IRemoteResource remote = syncTree.getRemote();
 		if (remote != null) {
 			try {
-				ICVSRemoteFile remoteFile = (ICVSRemoteFile)remote;
+				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)remote;
 				String revision = remoteFile.getRevision();
-				// XXX Should have real progress
-				ILogEntry logEntry = remoteFile.getLogEntry(new NullProgressMonitor());
-				String author = logEntry.getAuthor();
-				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author})); //$NON-NLS-1$
+				final String[] author = new String[] { "" }; //$NON-NLS-1$
+				try {
+					CVSUIPlugin.runWithProgress(getTree().getShell(), true /*cancelable*/,
+						new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								ILogEntry logEntry = remoteFile.getLogEntry(monitor);
+								author[0] = logEntry.getAuthor();
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InterruptedException e) { // ignore cancellation
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						throw (TeamException) t;
+					}
+					// should not get here
+				}
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author[0]})); //$NON-NLS-1$
 			} catch (TeamException e) {
 				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name)); //$NON-NLS-1$

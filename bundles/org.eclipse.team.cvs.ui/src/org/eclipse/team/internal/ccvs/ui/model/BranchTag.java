@@ -5,12 +5,13 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -54,16 +55,22 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 	public Object[] getChildren(Object o) {
 		// Return the remote elements for the tag
 		final Object[][] result = new Object[1][];
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-			public void run() {
-				try {
-					IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-					result[0] = root.members(tag, store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), new NullProgressMonitor());
-				} catch (TeamException e) {
-					handle(e);
+		try {
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+						result[0] = root.members(tag, store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), monitor);
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
+					}
 				}
-			}
-		});
+			});
+		} catch (InterruptedException e) {
+			return new Object[0];
+		} catch (InvocationTargetException e) {
+			handle(e.getTargetException());
+		}
 		return result[0];
 	}
 	public ImageDescriptor getImageDescriptor(Object object) {

@@ -5,11 +5,12 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -56,22 +57,28 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		final Object[][] result = new Object[1][];
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-			public void run() {
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				try {
-					manager.refreshDefinedTags(folder, false);
-				} catch(TeamException e) {
-					// continue
+		try {
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+					try {
+						manager.refreshDefinedTags(folder, false, monitor);
+					} catch(TeamException e) {
+						// continue
+					}
+					CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
+					Object[] versions = new Object[tags.length];
+					for (int i = 0; i < versions.length; i++) {
+						versions[i] = folder.getRepository().getRemoteFolder(folder.getRepositoryRelativePath(), tags[i]);
+					}
+					result[0] = versions;
 				}
-				CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
-				Object[] versions = new Object[tags.length];
-				for (int i = 0; i < versions.length; i++) {
-					versions[i] = folder.getRepository().getRemoteFolder(folder.getRepositoryRelativePath(), tags[i]);
-				}
-				result[0] = versions;
-			}
-		});
+			});
+		} catch (InterruptedException e) {
+			return new Object[0];
+		} catch (InvocationTargetException e) {
+			handle(e.getTargetException());
+		}
 		return result[0];
 	}
 	

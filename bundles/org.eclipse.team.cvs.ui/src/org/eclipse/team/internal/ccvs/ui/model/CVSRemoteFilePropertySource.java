@@ -5,11 +5,11 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -126,21 +126,26 @@ public class CVSRemoteFilePropertySource implements IPropertySource {
 	}
 	
 	private void initialize() {
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-			public void run() {
-				try {
-					ILogEntry[] entries = file.getLogEntries(new NullProgressMonitor());
-					String revision = file.getRevision();
-					for (int i = 0; i < entries.length; i++) {
-						if (entries[i].getRevision().equals(revision)) {
-							entry = entries[i];
-							return;
+		try {
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						ILogEntry[] entries = file.getLogEntries(monitor);
+						String revision = file.getRevision();
+						for (int i = 0; i < entries.length; i++) {
+							if (entries[i].getRevision().equals(revision)) {
+								entry = entries[i];
+								return;
+							}
 						}
+					} catch (TeamException e) {
+						CVSUIPlugin.log(e.getStatus());
 					}
-				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
 				}
-			}
-		});
+			});
+		} catch (InterruptedException e) { // ignore cancellation
+		} catch (InvocationTargetException e) {
+			// FIXME
+		}
 	}
 }

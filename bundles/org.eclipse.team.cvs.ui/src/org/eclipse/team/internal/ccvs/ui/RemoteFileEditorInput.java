@@ -5,11 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -75,20 +72,6 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	 */
 	public Object[] getChildren(Object o) {
 		return new Object[0];
-	}
-	/**
-	 * Returns an open input stream on the contents of this file.
-	 * The client is responsible for closing the stream when finished.
-	 *
-	 * @return an input stream containing the contents of the file
-	 * @exception CoreException if this method fails. 
-	 */
-	public InputStream getContents() throws CoreException {
-		try {
-			return file.getContents(new NullProgressMonitor());
-		} catch (TeamException e) {
-			throw new CoreException(e.getStatus());
-		}
 	}
 	/**
 	 * Returns the content type of the input.  For instance, if the input

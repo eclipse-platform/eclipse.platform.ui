@@ -103,13 +103,21 @@ public class MergeWizardStartPage extends CVSWizardPage {
 
 		Runnable afterRefresh = new Runnable() {
 			public void run() {
-				table.refresh();
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						table.refresh();
+					}
+				});
 			}
 		};
 		
 		Runnable afterConfigure = new Runnable() {
 			public void run() {
-				initialize();
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						initialize();
+					}
+				});
 			}
 		};
 

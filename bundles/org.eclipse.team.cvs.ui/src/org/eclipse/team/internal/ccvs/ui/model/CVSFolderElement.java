@@ -5,16 +5,16 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -33,25 +33,31 @@ public class CVSFolderElement extends CVSResourceElement {
 	 */
 	public Object[] getChildren(final Object o) {
 		final Object[][] result = new Object[1][];
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-			public void run() {
-				try {
-					ICVSResource[] children = folder.fetchChildren(null);
-					CVSResourceElement[] elements = new CVSResourceElement[children.length];
-					for (int i = 0; i < children.length; i++) {
-						ICVSResource resource = children[i];
-						if(resource.isFolder()) {
-							elements[i] = new CVSFolderElement((ICVSFolder)resource, includeUnmanaged);
-						} else {
-							elements[i] = new CVSFileElement((ICVSFile)resource);
+		try {
+			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						ICVSResource[] children = folder.fetchChildren(monitor);
+						CVSResourceElement[] elements = new CVSResourceElement[children.length];
+						for (int i = 0; i < children.length; i++) {
+							ICVSResource resource = children[i];
+							if(resource.isFolder()) {
+								elements[i] = new CVSFolderElement((ICVSFolder)resource, includeUnmanaged);
+							} else {
+								elements[i] = new CVSFileElement((ICVSFile)resource);
+							}
 						}
+						result[0] = elements;
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
 					}
-					result[0] = elements;
-				} catch (TeamException e) {
-					handle(e);
 				}
-			}
-		});
+			});
+		} catch (InterruptedException e) {
+			return new Object[0];
+		} catch (InvocationTargetException e) {
+			handle(e.getTargetException());
+		}
 		return result[0];
 	}
 	/**

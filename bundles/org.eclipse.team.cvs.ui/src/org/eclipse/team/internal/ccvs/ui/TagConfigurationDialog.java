@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,11 +20,11 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,7 +35,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -44,7 +44,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -386,25 +385,32 @@ public class TagConfigurationDialog extends Dialog {
 	
 	private void updateShownTags() {
 		final CVSFileElement[] filesSelection = getSelectedFiles();
-		final CVSTag[][] elements = new CVSTag[1][];
+		final Set tags = new HashSet();
 		if(filesSelection.length!=0) {
-			BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-				public void run() {
-					try {
-						Set tags = new HashSet();
-						for (int i = 0; i < filesSelection.length; i++) {
-							ICVSFile file = filesSelection[i].getCVSFile();
-							tags.addAll(Arrays.asList(getTagsFor(file, new NullProgressMonitor())));
+			try {
+				CVSUIPlugin.runWithProgress(getShell(), true /*cancelable*/, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask(Policy.bind("Updating tags"), filesSelection.length);
+						try {
+							for (int i = 0; i < filesSelection.length; i++) {
+								ICVSFile file = filesSelection[i].getCVSFile();
+								tags.addAll(Arrays.asList(getTagsFor(file, Policy.subMonitorFor(monitor, 1))));
+							}
+						} catch (TeamException e) {
+							// ignore the exception
+						} finally {
+							monitor.done();
 						}
-						elements[0] = (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
-					} catch (TeamException e) {
 					}
-				}
-			});
+				});
+			} catch (InterruptedException e) {
+				// operation cancelled
+			} catch (InvocationTargetException e) {
+				// can't happen since we're ignoring all possible exceptions
+			}
 			cvsTagTree.getTable().removeAll();
-			
-			for (int i = 0; i < elements[0].length; i++) {
-				CVSTag tag = elements[0][i];
+			for (Iterator it = tags.iterator(); it.hasNext();) {
+				CVSTag tag = (CVSTag) it.next();
 				List knownTags = new ArrayList();
 				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getBranches().getTags()));
 				knownTags.addAll(Arrays.asList(cvsDefinedTagsRootElement.getVersions().getTags()));
@@ -594,16 +600,26 @@ public class TagConfigurationDialog extends Dialog {
 		updateToolTipHelpForRefreshButton(refreshButton, project);
 		refreshButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-						public void run() {
-							try {
-								CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(CVSWorkspaceRoot.getCVSFolderFor((project)), true);
-								runnable.run();
-							} catch(TeamException e) {
-								ErrorDialog.openError(shell, Policy.bind("TagConfigurationDialog.14"), e.getMessage(), e.getStatus()); //$NON-NLS-1$
+					try {
+						CVSUIPlugin.runWithProgress(shell, true /*cancelable*/, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {
+									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(
+										CVSWorkspaceRoot.getCVSFolderFor((project)), true, monitor);
+									runnable.run();
+								} catch (TeamException e) {
+									throw new InvocationTargetException(e);
+								}
 							}
+						});
+					} catch (InterruptedException e) {
+						// operation cancelled
+					} catch (InvocationTargetException e) {
+						Throwable t = e.getTargetException();
+						if (t instanceof TeamException) {
+							ErrorDialog.openError(shell, Policy.bind("TagConfigurationDialog.14"), t.getMessage(), ((TeamException) t).getStatus()); //$NON-NLS-1$
 						}
-					});
+					}
 				}
 			});	
 		return refreshButton;		

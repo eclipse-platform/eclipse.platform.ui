@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -71,7 +70,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -409,20 +407,26 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				final Object[][] result = new Object[1][];
-				final TeamException[] ex = new TeamException[1];
-				BusyIndicator.showWhile(getViewSite().getShell().getDisplay(), new Runnable() {
-					public void run() {
-						try {
-							entries = remoteFile.getLogEntries(new NullProgressMonitor());
-							result[0] = entries;
-						} catch (TeamException e) {
-							ex[0] = e;
+				try {
+					CVSUIPlugin.runWithProgress(getViewer().getTable().getShell(), true /*cancelable*/,
+						new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								entries = remoteFile.getLogEntries(monitor);
+								result[0] = entries;
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
 						}
+					});
+				} catch (InterruptedException e) { // ignore cancellation
+					result[0] = new Object[0];
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException) t).getStatus());
 					}
-				});
-				if (ex[0] != null) {
-					ErrorDialog.openError(getViewSite().getShell(), null, null, ex[0].getStatus());
-					return new Object[0];
+					result[0] = new Object[0];
 				}
 				return result[0];				
 			}
