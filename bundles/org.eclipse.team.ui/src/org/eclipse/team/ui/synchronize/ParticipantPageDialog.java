@@ -32,12 +32,12 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 	private Button rememberParticipantButton;
 
 	/**
-	 * Creates a dialog with the given title and input. The input is not created until the dialog
+	 * Creates a dialog with the given participant and input. The input is not created until the dialog
 	 * is opened.
 	 * 
 	 * @param shell the parent shell or <code>null</code> to create a top level shell. 
-	 * @param title the shell's title
 	 * @param input the compare input to show in the dialog
+	 * @param participant the given participant
 	 */
 	public ParticipantPageDialog(Shell shell, SaveablePartAdapter input, ISynchronizeParticipant participant) {
 		super(shell, input);

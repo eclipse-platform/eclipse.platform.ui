@@ -44,7 +44,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	 * Save the scope to the given memento
 	 * 
 	 * @param scope a scope
-	 * @param memento a memento
+	 * @param settings a memento
 	 */
 	protected static void saveScope(ISynchronizeScope scope, IMemento settings) {
 		settings.putString(CTX_SUBSCRIBER_SCOPE_TYPE, getType(scope));
@@ -54,8 +54,8 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	/**
 	 * Restore a scope from the given memento
 	 * 
-	 * @param scope a scope
-	 * @param memento a memento
+	 * @param settings a memento
+	 * @return the scope restored from the given memento
 	 */
 	protected static ISynchronizeScope createScope(IMemento settings) {
 		String type = settings.getString(CTX_SUBSCRIBER_SCOPE_TYPE);

@@ -410,8 +410,6 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * the sync info collector.
 	 * 
 	 * @param subscriber the subscriber to associate with this participant.
-	 * @param roots the root resources to be consider by this participant
-	 * (or <code>null</code> if all roots of the subscriber should be considered
 	 */
 	protected void setSubscriber(Subscriber subscriber) {
 		if (scope == null) {

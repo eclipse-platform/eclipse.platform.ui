@@ -24,7 +24,7 @@ package org.eclipse.team.ui.synchronize;
  * Clients are not intended to implement this interface.
  * </p>
  * @see ISynchronizeParticipant
- * @see TeamUI#getSynchronizeManager()
+ * @see org.eclipse.team.ui.TeamUI#getSynchronizeManager()
  * @since 3.0 
  */
 public interface ISynchronizeManager {	
@@ -35,7 +35,7 @@ public interface ISynchronizeManager {
 	 * that schedule background jobs that affect synchronization state should include this job
 	 * family in their implementation of <code>belongsTo</code>.
 	 * 
-	 * @see Job#belongsTo(Object)
+	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 	 */
 	public static final Object FAMILY_SYNCHRONIZE_OPERATION = new Object();
 	
@@ -98,7 +98,7 @@ public interface ISynchronizeManager {
 	 * @return the registered synchronize participants with the given id, or 
 	 * <code>null</code> if none with that id is not registered.
 	 */
-	public ISynchronizeParticipantReference get(String id, String secondayId);
+	public ISynchronizeParticipantReference get(String id, String secondaryId);
 	
 	/**
 	 * Opens the synchronize view in the perspective defined by the user in the team synchronize

@@ -43,7 +43,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * </p>
  * @see org.eclipse.ui.progress.IProgressService
  * @see org.eclipse.core.runtime.jobs.Job
- * @see org.eclipse.core.runtime.ISchedulingRule
+ * @see org.eclipse.core.runtime.jobs.ISchedulingRule
  * @see org.eclipse.core.runtime.jobs.IJobChangeListener
  * @since 3.0
  */

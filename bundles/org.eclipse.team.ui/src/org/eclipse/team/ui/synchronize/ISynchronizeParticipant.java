@@ -58,11 +58,11 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * with a handle to the state that was saved. The dispose method is called when the participant is
  * removed from the manager and at shutdown.
  * </p><p>
- * Clients are not intended to implement this interface. Instead, sublcass {@link AbstractSynchronizeParticpant}.
+ * Clients are not intended to implement this interface. Instead, sublcass {@link AbstractSynchronizeParticipant}.
  * </p>
  * @see ISynchronizeView
  * @see ISynchronizeManager
- * @see AbstractSynchronizeParticpant
+ * @see AbstractSynchronizeParticipant
  * @since 3.0
  */
 public interface ISynchronizeParticipant extends IExecutableExtension {

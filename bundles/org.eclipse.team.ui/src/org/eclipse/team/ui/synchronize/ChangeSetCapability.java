@@ -72,7 +72,6 @@ public abstract class ChangeSetCapability {
      * overridden by subclasses that support active change sets.
      * @param configuration the configuration of the page displaying the change sets
      * @param infos the sync info to be added to the change set
-     * @param manager a change set manager
      * @return the created set.
      */
     public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, SyncInfo[] infos) {

@@ -228,7 +228,7 @@ public interface ISynchronizePageConfiguration {
 	
 	/**
 	 * Set the page for this configuration. This methpd should only
-	 * be called once by the {@link ISynchronzeParticipant} that created
+	 * be called once by the {@link ISynchronizeParticipant} that created
 	 * the page.
 	 * @param page the configuration's page
 	 */
@@ -254,8 +254,8 @@ public interface ISynchronizePageConfiguration {
 	 * If the new value differs from the old a <code>PropertyChangeEvent</code>
 	 * is sent to registered listeners.
 	 *
-	 * @param propertyName the name of the property to set
-	 * @param value the new value of the property
+	 * @param key the name of the property to set
+	 * @param newValue the new value of the property
 	 */
 	public abstract void setProperty(String key, Object newValue);
 
@@ -263,7 +263,7 @@ public interface ISynchronizePageConfiguration {
 	 * Returns the property with the given name, or <code>null</code>
 	 * if no such property exists.
 	 *
-	 * @param propertyName the name of the property to retrieve
+	 * @param key the name of the property to retrieve
 	 * @return the property with the given name, or <code>null</code> if not found
 	 */
 	public abstract Object getProperty(String key);

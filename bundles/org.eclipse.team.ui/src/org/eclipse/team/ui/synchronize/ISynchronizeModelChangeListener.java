@@ -21,7 +21,7 @@ public interface ISynchronizeModelChangeListener {
 	/**
 	 * Called whenever the input model shown in a diff node viewer is updated.
 	 *
-	 * @param input the root <code>DiffNode</code> of the model.
+	 * @param root the root <code>DiffNode</code> of the model.
 	 */
 	public void modelChanged(ISynchronizeModelElement root);
 }

@@ -81,7 +81,7 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
 
     /**
      * Create a collector that contains the sync info from the given seed set
-     * @param seedSet the set used to determine which sync info
+     * @param configuration the set used to determine which sync info
      * should be included in the change sets.
      */
     public SyncInfoSetChangeSetCollector(ISynchronizePageConfiguration configuration) {

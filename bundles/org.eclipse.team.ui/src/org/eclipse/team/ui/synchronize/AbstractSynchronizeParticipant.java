@@ -341,7 +341,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * sync info based.
 	 * @param element the sync model element whose contents are about to be displayed to the user
 	 * 		in a compare editor or compare dialog
-	 * @param configuration the compare configuration that will be used to configure the compare editor or dialog
+	 * @param config the compare configuration that will be used to configure the compare editor or dialog
 	 * @param monitor a progress monitor that can be used if contacting a server to prepare the element and configuration
 	 * @throws TeamException if an error occurred that shoudl rpevent the display of the compare editor containing
 	 * the element

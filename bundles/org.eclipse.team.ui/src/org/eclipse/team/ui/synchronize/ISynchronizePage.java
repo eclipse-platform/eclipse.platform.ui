@@ -28,7 +28,7 @@ public interface ISynchronizePage {
 	 * This method will be called after the <code>Page#init(IPageSite)</code>
 	 * but before <code>Page#createControl(Composite)</code>
 	 * 
-	 * @param part the workbench part for the view containing the page
+	 * @param site the workbench part for the view containing the page
 	 * @throws PartInitException
 	 */
 	public void init(ISynchronizePageSite site) throws PartInitException;

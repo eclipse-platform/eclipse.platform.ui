@@ -107,7 +107,7 @@ public final class ParticipantPagePane {
 	 * or {@link CompareConfiguration#setRightEditable(boolean)}. 
 	 * </p>
 	 * @param shell the parent shell for this part
-	 * @param cc the compare configuration that will be used to create the compare panes
+	 * @param isModal to set the pane as modal or not
 	 * @param pageConfiguration the configuration that will be provided to the participant prior to creating the page
 	 * @param participant the participant whose page will be displayed in this part
 	 */

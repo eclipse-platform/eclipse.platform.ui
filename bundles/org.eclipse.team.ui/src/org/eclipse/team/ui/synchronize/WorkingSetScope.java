@@ -39,10 +39,9 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	private IWorkingSet[] sets;
 	
 	/**
-	 * Create the scope for the subscriber and working set
+	 * Create the scope for the working sets
 	 * 
-	 * @param subscriber the subscriber that defines this scope
-	 * @param set the working set that defines this scope
+	 * @param sets the working sets that defines this scope
 	 */
 	public WorkingSetScope(IWorkingSet[] sets) {
 		setWorkingSets(sets);
