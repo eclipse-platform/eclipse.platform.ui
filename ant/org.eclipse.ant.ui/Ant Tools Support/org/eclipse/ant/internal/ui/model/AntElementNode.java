@@ -289,7 +289,6 @@ public class AntElementNode implements IAdaptable {
 		fLength = aLength;
 		if (fProblem != null && fProblem instanceof AntModelProblem) {
 			((AntModelProblem)fProblem).setLength(aLength);
-			//fProblem= null;
 		}
 	}
 
