@@ -178,9 +178,18 @@ public class UIPreferencesAuto extends TestCase {
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testPerspectivesPref() {
-		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
+		Dialog dialog =
+			getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
+
+	//Only really checking if this opens without an exception
+	public void testFontEditorsPref() {
+		Dialog dialog =
+			getPreferenceDialog("org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage");
+		DialogCheck.assertDialogTexts(dialog,this);
+	}
+
 	public void testInfoProp() {
 		/*
 		 * Commented out because it generates a failure
@@ -214,7 +223,7 @@ public class UIPreferencesAuto extends TestCase {
 		if (manager != null) {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
-			
+
 			for (Iterator iterator =
 				manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 				iterator.hasNext();
@@ -234,8 +243,5 @@ public class UIPreferencesAuto extends TestCase {
 		}
 
 	}
-	
-
-	
 
 }
