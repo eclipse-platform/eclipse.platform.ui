@@ -29,12 +29,14 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	private Date date;
 	private List featureReferences;
 	private File file;
+	private int process;
 
 	/**
 	 * Constructor for SessionDelta.
 	 */
 	public SessionDelta() {
 		super();
+		process=ENABLE;
 	}
 
 	/**
@@ -56,12 +58,15 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	}
 
 	/**
-	 * @see ISessionDelta#configureSessionDelta(boolean, IProgressMonitor)
+	 * @see ISessionDelta#process(IProgressMonitor)
 	 */
-	public void configureSessionDelta(boolean configure, IProgressMonitor pm) throws CoreException {
+	public void process(IProgressMonitor pm) throws CoreException {
 
+		// manage ProgressMonitor
+		// FIXME
+		
 		// process all feature reference to configure
-		if (configure) {
+		if (process==ENABLE) {
 			// loop through all the configured site
 			// find the configuredSite that maintains this featureReference
 			// configure the feature
@@ -127,4 +132,11 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		this.file = file;
 	}
 	
+	/*@
+	 * @see ISessionDelta#getType()
+	 */
+	public int getType() {
+		return process;
+	}
+
 	}

@@ -65,8 +65,7 @@ public class InstallDeltaWizard
 		monitor.beginTask(UpdateUIPlugin.getResourceString(KEY_PROCESSING), selectedDeltas.length);
 		for (int i=0; i<selectedDeltas.length; i++) {
 			ISessionDelta delta = selectedDeltas[i];
-			boolean doConfigure = true; //?? how do I know?
-			delta.configureSessionDelta(doConfigure, monitor);
+			delta.process(monitor);
 			monitor.worked(1);
 		}
 	}

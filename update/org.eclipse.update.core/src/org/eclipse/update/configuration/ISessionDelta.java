@@ -18,6 +18,20 @@ import org.eclipse.update.core.IFeatureReference;
 public interface ISessionDelta extends IAdaptable {
 
 	/**
+	 * Indicates a processing type to enable the features
+	 * 
+	 * @since 2.0
+	 */
+	public int ENABLE = 1;
+
+	/**
+	 * Indicates a processing type to disable the features
+	 * 
+	 * @since 2.0
+	 */
+ 	public int DISABLE = 2;
+
+	/**
 	 * Returns the list of Features found during reconciliation
 	 * 
 	 * @return an array of feature references, or an empty array
@@ -34,12 +48,23 @@ public interface ISessionDelta extends IAdaptable {
 	public Date getDate();
 
 	/**
-	 * Configure or unconfigure all the feature references of the 
-	 * Session Delta.
-	 * @param configure true if the feature reference must be configured, false if they must be unconfigured
-	 * @param pm the progress monitor
+	 * Returns the type of the processing type
+	 * that will affect all the associated features. 
+	 * 
+	 * @return the processing type
+	 * @see ISessionDelta#ENABLE
+	 * @see ISessionDelta#DISABLE
+	 * @since 2.0
+	 */
+	public int getType();
+
+	/**
+	 * Process all the feature references of the 
+	 * Session Delta. 
+	 * 
+	 * @param progressMonitor the progress monitor
 	 * @throws CoreException if an error occurs. 
 	 * @since 2.0 
 	 */
-	public void configureSessionDelta(boolean configure, IProgressMonitor pm) throws CoreException;
+	public void process(IProgressMonitor progressMonitor) throws CoreException;
 }
