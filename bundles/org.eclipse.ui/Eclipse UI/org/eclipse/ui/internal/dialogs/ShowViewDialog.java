@@ -1,47 +1,52 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.*;
+
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.*;
 
 /**
- * A dialog for perspective creation
+ * The Show View dialog.
  */
 public class ShowViewDialog extends org.eclipse.jface.dialogs.Dialog
 	implements ISelectionChangedListener, IDoubleClickListener
 {
 	private TreeViewer tree;
 	private IViewRegistry viewReg;
-	private IViewDescriptor selection;
-	private IViewDescriptor viewDesc;
+	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 	private Button okButton;
 	private Button cancelButton;
 
-	private static final int LIST_WIDTH = 200;
-	private static final int LIST_HEIGHT = 200;
+	private static final int LIST_WIDTH = 250;
+	private static final int LIST_HEIGHT = 300;
 
 	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog";//$NON-NLS-1$
 	private static final String STORE_EXPANDED_CATEGORIES_ID =
 		DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID";//$NON-NLS-1$
+
 /**
- * PerspectiveDialog constructor comment.
+ * Constructs a new ShowViewDialog.
  */
 public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
 	super(parentShell);
 	this.viewReg = viewReg;
 }
+
 /**
  * This method is called if a button has been pressed.
  */
@@ -50,13 +55,15 @@ protected void buttonPressed(int buttonId) {
 		saveWidgetValues();
 	super.buttonPressed(buttonId); 
 }
+
 /**
  * Notifies that the cancel button of this dialog has been pressed.
  */
 protected void cancelPressed() {
-	viewDesc = null;
+	viewDescs = new IViewDescriptor[0];
 	super.cancelPressed();
 }
+
 /* (non-Javadoc)
  * Method declared in Window.
  */
@@ -92,10 +99,10 @@ protected Control createDialogArea(Composite parent) {
 	GridLayout layout = (GridLayout)composite.getLayout();
 
 	// Add perspective list.
-	tree = new TreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	tree = new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	tree.setLabelProvider(new ViewLabelProvider());
 	tree.setContentProvider(new ViewContentProvider());
-	tree.setSorter(new ViewSorter((ViewRegistry)viewReg));
+	tree.setSorter(new ViewSorter((ViewRegistry) viewReg));
 	tree.setInput(viewReg);
 	tree.addSelectionChangedListener(this);
 	tree.addDoubleClickListener(this);
@@ -117,12 +124,12 @@ protected Control createDialogArea(Composite parent) {
  * Method declared on IDoubleClickListener
  */
 public void doubleClick(DoubleClickEvent event) {
-	IStructuredSelection s = (IStructuredSelection)event.getSelection();
+	IStructuredSelection s = (IStructuredSelection) event.getSelection();
 	Object element = s.getFirstElement();
 	if (tree.isExpandable(element)) {
 		tree.setExpandedState(element, !tree.getExpandedState(element));
 	}
-	else if (viewDesc != null) {
+	else if (viewDescs.length > 0) {
 		setReturnCode(OK);
 		close();
 	}
@@ -137,12 +144,14 @@ protected IDialogSettings getDialogSettings() {
 		section = workbenchSettings.addNewSection(DIALOG_SETTING_SECTION_NAME);
 	return section;
 }
+
 /**
- * Returns the current selection.
+ * Returns the descriptors for the selected views.
  */
-public IViewDescriptor getSelection() {
-	return viewDesc;
+public IViewDescriptor[] getSelection() {
+	return viewDescs;
 }
+
 /**
  * Use the dialog store to restore widget values to the values that they held
  * last time this dialog was used to completion.
@@ -164,6 +173,7 @@ protected void restoreWidgetValues() {
 	if (!categoriesToExpand.isEmpty())
 		tree.setExpandedElements(categoriesToExpand.toArray());
 }
+
 /**
  * Since OK was pressed, write widget values to the dialog store so that they
  * will persist into the next invocation of this dialog
@@ -182,6 +192,7 @@ protected void saveWidgetValues() {
 		STORE_EXPANDED_CATEGORIES_ID,
 		expandedCategoryIds);
 }
+
 /**
  * Notifies that the selection has changed.
  *
@@ -191,22 +202,27 @@ public void selectionChanged(SelectionChangedEvent event) {
 	updateSelection();
 	updateButtons();
 }
+
 /**
  * Update the button enablement state.
  */
 protected void updateButtons() {
 	okButton.setEnabled(getSelection() != null);	
 }
+
 /**
  * Update the selection object.
  */
 protected void updateSelection() {
-	viewDesc = null;
-	IStructuredSelection sel = (IStructuredSelection)tree.getSelection();
-	if (!sel.isEmpty()) {
-		Object obj = sel.getFirstElement();
-		if (obj instanceof IViewDescriptor)
-			viewDesc = (IViewDescriptor)obj;
+	ArrayList descs = new ArrayList();
+	IStructuredSelection sel = (IStructuredSelection) tree.getSelection();
+	for (Iterator i = sel.iterator(); i.hasNext();) {
+		Object o = i.next();
+		if (o instanceof IViewDescriptor) {
+			descs.add(o);
+		}
 	}
+	viewDescs = new IViewDescriptor[descs.size()];
+	descs.toArray(viewDescs);
 }
 }
