@@ -404,43 +404,167 @@ public final class BindingManagerTest extends UITestCase {
 						.get(partialMatch2));
 	}
 
-	public final void testGetPerfectMatch() {
-		// TODO Implement this test case.
+	/**
+	 * Tests that this method returns the expected command identifier. In the
+	 * first scenario, there is one perfect match bindings and a partial match
+	 * binding. In the second scenario, there are two partial match bindings. In
+	 * the third scenario, we are checking that nothing matches an empty
+	 * sequence.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 * @throws ParseException
+	 *             If the hard-coded strings aren't constructed properly.
+	 */
+	public final void testGetPerfectMatch() throws NotDefinedException,
+			ParseException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SCENARIO 1
+		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
+				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+		final KeySequence partialMatch1 = KeySequence
+				.getInstance("CTRL+F CTRL+F");
+		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
+				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(perfectMatchBinding);
+		bindings.add(partialMatchBinding1);
+		bindingManager.setBindings(bindings);
+		String actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
+		assertSame("This should be a perfect match", perfectMatchBinding
+				.getCommandId(), actualCommandId);
+
+		// SCENARIO 2
+		final KeySequence partialMatch2 = KeySequence
+				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
+				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+		bindings.clear();
+		bindings.add(partialMatchBinding1);
+		bindings.add(partialMatchBinding2);
+		bindingManager.setBindings(bindings);
+		actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
+		assertNull("This should be no perfect matches", actualCommandId);
+
+		// SCENARIO 3
+		bindings.add(perfectMatchBinding);
+		bindingManager.setBindings(bindings);
+		actualCommandId = bindingManager.getPerfectMatch(KeySequence
+				.getInstance());
+		assertNull("This should be no perfect matches for an empty sequence",
+				actualCommandId);
 	}
 
+	/**
+	 * Tests that the platform is never <code>null</code>.
+	 */
 	public final void testGetPlatform() {
-		// TODO Implement this test case.
+		assertNotNull("The platform can never be null", bindingManager
+				.getPlatform());
 	}
 
+	/**
+	 * Tests that when a scheme is first retrieved, it is undefined. Tests that
+	 * a second access to a scheme returns the same scheme.
+	 */
 	public final void testGetScheme() {
-		// TODO Implement this test case.
+		final String schemeId = "schemeId";
+		final Scheme firstScheme = bindingManager.getScheme(schemeId);
+		assertTrue("A scheme should start undefined", !firstScheme.isDefined());
+		final Scheme secondScheme = bindingManager.getScheme(schemeId);
+		assertSame("The two scheme should be the same", firstScheme,
+				secondScheme);
 	}
 
 	public final void testIsPartialMatch() {
 		// TODO Implement this test case.
 	}
 
-	public final void testIsPerfectMatch() {
-		// TODO Implement this test case.
+	/**
+	 * Tests that this method returns <code>true</code> when expected. In the
+	 * first scenario, there is one perfect match bindings and a partial match
+	 * binding. In the second scenario, there are two partial match bindings. In
+	 * the third scenario, we are checking that nothing matches an empty
+	 * sequence.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 * @throws ParseException
+	 *             If the hard-coded strings aren't constructed properly.
+	 */
+	public final void testIsPerfectMatch() throws NotDefinedException,
+			ParseException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SCENARIO 1
+		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
+				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+		final KeySequence partialMatch1 = KeySequence
+				.getInstance("CTRL+F CTRL+F");
+		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
+				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(perfectMatchBinding);
+		bindings.add(partialMatchBinding1);
+		bindingManager.setBindings(bindings);
+		assertTrue("This should be a perfect match", bindingManager
+				.isPerfectMatch(perfectMatch));
+
+		// SCENARIO 2
+		final KeySequence partialMatch2 = KeySequence
+				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
+				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+		bindings.clear();
+		bindings.add(partialMatchBinding1);
+		bindings.add(partialMatchBinding2);
+		bindingManager.setBindings(bindings);
+		assertTrue("This should be no perfect matches", bindingManager
+				.isPerfectMatch(perfectMatch));
+
+		// SCENARIO 3
+		bindings.add(perfectMatchBinding);
+		bindingManager.setBindings(bindings);
+		assertTrue("This should be no perfect matches", bindingManager
+				.isPerfectMatch(KeySequence.getInstance()));
 	}
 
 	public final void testRemoveBindings() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testSetActiveScheme() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testSetBindings() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testSetLocale() {
-
+		// TODO Implement this test case.
 	}
 
 	public final void testSetPlatform() {
-
+		// TODO Implement this test case.
 	}
 }
