@@ -107,7 +107,7 @@ public class TeamProvider implements ISaveParticipant {
 	public void startup() {
 		try {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(TeamPlugin.getPlugin(), this);
-			refreshJob = new RefreshSubscribersJob();
+			//refreshJob = new RefreshSubscribersJob();
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 		}
