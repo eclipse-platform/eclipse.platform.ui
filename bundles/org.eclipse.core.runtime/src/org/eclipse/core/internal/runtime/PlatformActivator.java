@@ -84,7 +84,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				start = System.currentTimeMillis();
 			
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
-			File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile(); //$NON-NLS-1$
+			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
+			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
 
 			if (cacheFile.isFile())
 				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
@@ -133,7 +134,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void stopRegistry(BundleContext context) {
 		context.removeBundleListener(this.pluginBundleListener);
 		if (registry != null && registry.isDirty()) {
-			File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile(); //$NON-NLS-1$
+			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
+			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
 			new RegistryCacheWriter(cacheFile).saveCache(registry);
 			registry = null;
 		}

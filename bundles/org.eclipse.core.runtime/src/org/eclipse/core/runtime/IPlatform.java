@@ -673,80 +673,6 @@ public interface IPlatform {
 	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 */
 	public Location getInstanceLocation();
-			
-	
-	
-	// TODO remove these methods before 3.0 ships
-	/**
-	 * Lock the instance data. 
-	 * The method throws a CoreException if the lock can not be acquired or 
-	 * an IllegalStateException if no instance data has been specified.
-	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().lock()
-	 * @since 3.0
-	 */
-	public void lockInstanceData() throws CoreException, IllegalStateException;
-
-	/**
-	 * Unlock the instance data. 
-	 * @since 3.0
-	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().release()
-	 */
-	public void unlockInstanceData() throws IllegalStateException;
-	/**
-	 * Set the location of the keyring file. 
-	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
-	 * @param keyringFile, the location of the keyring file
-	 * @since 3.0
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
-	/**
-	 * Checks if the specified bundle is a fragment bundle.
-	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
-	 */
-	public boolean isFragment(Bundle bundle);	
-	/**
-	 * Returns an array of host bundles that the specified fragment bundle is 
-	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
-	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
-	 * 
-	 * @param bundle the bundle to get the host bundles for.
-	 * @return an array of host bundles or null if the bundle does not have any
-	 * host bundles.
-	 */
-	public Bundle[] getHosts(Bundle bundle);	
-	/**
-	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
-	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
-	 * attached to the specified bundle then <tt>null</tt> is returned.
-	 * 
-	 * @param bundle the bundle to get the attached fragment bundles for.
-	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
-	 * have any attached fragment bundles. 
-	 */
-	public Bundle[] getFragments(Bundle bundle);    
-	/**
-     * Returns the resolved bundle with the specified symbolic name that has the
-     * highest version.  If no resolved bundles are installed that have the 
-     * specified symbolic name then null is returned.
-     * 
-     * @param symbolicName the symbolic name of the bundle to be returned.
-     * @return the bundle that has the specified symbolic name with the 
-     * highest version, or <tt>null</tt> if no bundle is found.
-     */
-	public Bundle getBundle(String symbolicName);	
-	/**
-	 * Returns the location in the filesystem of the configuration information 
-	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various user setttings
-	 * (those shared across different instances of the same configuration)
-	 * and any other such data needed by plug-ins.
-	 * 
-	 * @return the path indicating the directory containing the configuration 
-	 * information for this running Eclipse.
-	 * @deprecated see getConfigurationLocation This method will be removed by M8
-	 */
-	public IPath getConfigurationMetadataLocation();
 	
 	/**
 	 * Returns the content type manager.
@@ -755,21 +681,6 @@ public interface IPlatform {
 	 */
 	public IContentTypeManager getContentTypeManager();
 	
-	/**
-	 * Returns all command line arguments specified when the running framework was started.
-	 * @return the array of command line arguments.
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public String[] getAllArgs();
-	
-	/**
-	 * Returns the arguments consumed by the framework implementation itself.  Which
-	 * arguments are consumed is implementation specific.
-	 * @return the array of command line arguments consumed by the framework.
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public String[] getFrameworkArgs();
-
 	/**
 	 * Returns whether the platform is running.
 	 *

@@ -226,7 +226,9 @@ public class DataArea {
 		if (keyring != null && new File(keyringFile).lastModified()==keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
-			keyringFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(F_KEYRING).toOSString();
+			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
+			file = new File(file, F_KEYRING); 
+			keyringFile = file.getAbsolutePath();
 		}
 		try {
 			keyring = new AuthorizationDatabase(keyringFile, password);
