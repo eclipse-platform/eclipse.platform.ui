@@ -1248,4 +1248,10 @@ public final class InternalPlatform implements IPlatform {
 		else
 			return ((PlatformAdmin) context.getService(platformAdminReference)).getState().getTimeStamp();
 	}
+	public PlatformAdmin getPlatformAdmin() {
+		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
+		if (platformAdminReference == null)
+			return null;
+		return (PlatformAdmin) context.getService(platformAdminReference);
+	}
 }

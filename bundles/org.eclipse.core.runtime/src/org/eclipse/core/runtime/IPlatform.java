@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
 // TODO clarify the javadoc below.  Copy the signatures from Platform.
@@ -533,4 +534,6 @@ public interface IPlatform {
 	 * @return the array of command line arguments not consumed by the framework.
 	 */
 	public String[] getApplicationArgs();
+	
+	public PlatformAdmin getPlatformAdmin();
 }

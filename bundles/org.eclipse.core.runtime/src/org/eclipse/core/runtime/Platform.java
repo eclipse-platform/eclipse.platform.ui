@@ -18,6 +18,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
 // TODO clarify the javadoc below 
@@ -853,5 +854,9 @@ public final class Platform {
 	 */
 	public static String[] getApplicationArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
+	}
+	
+	public PlatformAdmin getPlatformAdmin() {
+		return InternalPlatform.getDefault().getPlatformAdmin();
 	}
 }
