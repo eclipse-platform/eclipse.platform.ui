@@ -34,6 +34,9 @@ import org.eclipse.jface.text.tests.TestTextViewer;
  * Reconciler tests. Uses barrier synchronization and a call log to assert
  * correct order of reconciling events.
  * 
+ * TODO test reconciler arguments (delay > 0 etc.)
+ * TODO incremental reconciler tests
+ * 
  * @since 3.1
  */
 public class AbstractReconcilerTest extends TestCase {
@@ -126,6 +129,7 @@ public class AbstractReconcilerTest extends TestCase {
 	private List fCallLog;
 	private ITextViewer fViewer;
 	protected AbstractReconciler fReconciler;
+	private Document fDocument;
 	
 	protected void setUp() {
 		fBarrier= new Barrier();
@@ -156,6 +160,7 @@ public class AbstractReconcilerTest extends TestCase {
 		fReconciler.setDelay(50); // make tests run faster
 		
 		// XXX tests fail if there is no progress monitor
+		// since dirty state is controlled using the PM
 		fReconciler.setProgressMonitor(new NullProgressMonitor());
 		fViewer= new TestTextViewer();
 		fReconciler.install(fViewer);
@@ -178,14 +183,14 @@ public class AbstractReconcilerTest extends TestCase {
 		assertFalse(isDirty());
 		
 		// set up initial document
-		Document document= new Document("foo");
-		fViewer.setDocument(document);
+		fDocument= new Document("foo");
+		fViewer.setDocument(fDocument);
 		assertEquals("reconcilerDocumentChanged", fCallLog.remove(0));
 		assertEquals("aboutToBeReconciled", fCallLog.remove(0));
 		
 		fBarrier.await();
 		assertEquals("initialProcess", fCallLog.remove(0));
-		// XXX should be dirty and active during initialProcess
+		// XXX shouldn't it be dirty and active during initialProcess?
 		assertFalse(isActive());
 		assertFalse(isDirty());
 		fBarrier.wakeAll();
@@ -197,10 +202,9 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 	public void testDirtyingWhenClean() throws BadLocationException, InterruptedException {
-		Document document= installDocument();
+		installDocument();
 
-		// dirty 
-		document.replace(0,3,"bar");
+		dirty();
 		assertEquals("aboutToBeReconciled", fCallLog.remove(0));
 		assertEquals("reconcilerReset", fCallLog.remove(0));
 		
@@ -217,16 +221,20 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 
+	private void dirty() throws BadLocationException {
+		fDocument.replace(0,0,"bar");
+	}
+
+
 	public void testDirtyingWhenRunning() throws InterruptedException, BadLocationException {
-		Document document= installDocument();
+		installDocument();
 		
-		// dirty and dirty again
-		document.replace(0,3,"bar");
+		dirty();
 		fBarrier.await();
 		assertTrue(isActive());
 		assertTrue(isDirty());
 		fCallLog.clear();
-		document.replace(2,1,"borg");
+		dirty();
 		// no aboutToBeReconciled since the reconciler is still running
 		// when the second edition comes in
 		assertEquals("reconcilerReset", fCallLog.remove(0));
@@ -241,10 +249,10 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 	public void testCancellingWhenClean() throws InterruptedException, BadLocationException {
-		Document document= installDocument();
+		installDocument();
 		
 		// dirty again
-		document.replace(0,3,"bar");
+		dirty();
 		fBarrier.await();
 		fBarrier.wakeAll();
 		
@@ -259,10 +267,10 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 	public void testCancellingWhenRunning() throws InterruptedException, BadLocationException {
-		Document document= installDocument();
+		installDocument();
 		
 		// dirty and cancel
-		document.replace(0,3,"bar");
+		dirty();
 		fBarrier.await();
 		fCallLog.clear();
 		fReconciler.uninstall();
@@ -293,10 +301,10 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 	public void testReplacingDocumentWhenRunning() throws InterruptedException, BadLocationException {
-		Document document= installDocument();
+		installDocument();
 		
 		// dirty and replace
-		document.replace(0,3,"bar");
+		dirty();
 		fBarrier.await();
 		fCallLog.clear();
 		fViewer.setDocument(new Document("bar"));
@@ -312,18 +320,16 @@ public class AbstractReconcilerTest extends TestCase {
 //		fBarrier.wakeAll();
 	}
 
-	private Document installDocument() throws InterruptedException {
-		// set up initial document - no asserts as this is tested
-		// in testInitialReconcile()
-		Document document= new Document("foo");
-		fViewer.setDocument(document);
+	void installDocument() throws InterruptedException {
+		fDocument= new Document("foo");
+		fViewer.setDocument(fDocument);
 
 		// initial process
 		fBarrier.await();
 		fBarrier.wakeAll();
+		
 		pollUntilClean();
 		fCallLog.clear();
-		return document;
 	}
 
 	void pollUntilClean() throws InterruptedException {
