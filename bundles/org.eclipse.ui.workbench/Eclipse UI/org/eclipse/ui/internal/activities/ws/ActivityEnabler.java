@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -390,21 +388,20 @@ public class ActivityEnabler {
 	 * Restore the default activity states.
 	 */
 	public void restoreDefaults() {
-		// we have to read the platform registry because we do not have access
-		// to the activity registry. This illustrates a shortcoming in the
-		// API that should be addressed post 3.0. See bug 61905
-		Set defaultEnabled = new HashSet();
-		IConfigurationElement[] configurationElements = Platform
-				.getExtensionRegistry().getConfigurationElementsFor(
-						"org.eclipse.ui.activities"); //$NON-NLS-1$
-		for (int i = 0; i < configurationElements.length; i++) {
-			if (configurationElements[i].getName().equals("defaultEnablement")) { //$NON-NLS-1$
-				String id = configurationElements[i].getAttribute("id"); //$NON-NLS-1$
-				if (id != null) {
-					defaultEnabled.add(id);
-				}
-			}
-		}
+	    Set defaultEnabled = new HashSet();
+	    Set activityIds = activitySupport.getActivityManager().getDefinedActivityIds();
+	    for (Iterator i = activityIds.iterator(); i.hasNext();) {
+            String activityId = (String) i.next();
+            IActivity activity = activitySupport.getActivityManager().getActivity(activityId);
+            try {
+                if (activity.isDefaultEnabled()) {
+                    defaultEnabled.add(activityId);
+                }
+            } catch (NotDefinedException e) {
+                // this can't happen - we're iterating over defined activities.
+            }
+        }
+	    
 		setEnabledStates(defaultEnabled);
 	}
 
