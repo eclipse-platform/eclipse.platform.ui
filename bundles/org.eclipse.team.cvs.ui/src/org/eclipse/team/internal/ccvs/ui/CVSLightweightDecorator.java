@@ -140,6 +140,8 @@ public class CVSLightweightDecorator
 		return null;
 	}
 	/**
+	 * This method should only be called by the decorator thread.
+	 * 
 	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
