@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -69,7 +68,7 @@ public class AddCustomDialog extends StatusDialog {
 	private boolean entryChanged = false;
 
 	private Combo sourceNameField;
-	private List libraryUrls;
+	private List libraryEntries;
 	private List existingNames;
 	
 	private String noNameErrorMsg;
@@ -80,7 +79,7 @@ public class AddCustomDialog extends StatusDialog {
 	private Text nameField;
 	
 	private String name=""; //$NON-NLS-1$
-	private URL library= null;
+	private ClasspathEntry library= null;
 	private String className=""; //$NON-NLS-1$
 	
 	private boolean editing= false;
@@ -90,15 +89,15 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames, String helpContext) {
+	public AddCustomDialog(Shell parent, List libraryEntries, List existingNames, String helpContext) {
 		super(parent);
-		this.libraryUrls = libraryUrls;
+		this.libraryEntries = libraryEntries;
 		this.existingNames= existingNames;
 		this.helpContext= helpContext;
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite topComposite= (Composite) super.createDialogArea(parent);
@@ -110,7 +109,7 @@ public class AddCustomDialog extends StatusDialog {
 		createFileSelectionGroup(topComposite);
 		
 		if (library != null) {
-			setSourceName(library.getFile());
+			setSourceName(library.getLabel());
 		}
 		return topComposite;
 	}
@@ -144,12 +143,13 @@ public class AddCustomDialog extends StatusDialog {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on Window.
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		WorkbenchHelp.setHelp(newShell, helpContext);
 	}
+	
 	/**
 	 * Clears the cached structure provider after first finalizing
 	 * it properly.
@@ -160,6 +160,7 @@ public class AddCustomDialog extends StatusDialog {
 			providerCache = null;
 		}
 	}
+	
 	/**
 	 * Attempts to close the passed zip file, and answers a boolean indicating success.
 	 */
@@ -205,10 +206,10 @@ public class AddCustomDialog extends StatusDialog {
 			}
 		});
 
-		Iterator libraries= libraryUrls.iterator();
+		Iterator libraries= libraryEntries.iterator();
 		while (libraries.hasNext()) {
-			URL srcLibrary = (URL) libraries.next();
-			sourceNameField.add(srcLibrary.getFile());
+			ClasspathEntry entry = (ClasspathEntry) libraries.next();
+			sourceNameField.add(entry.getLabel());
 		}
 
 		sourceNameField.addKeyListener(new KeyAdapter() {
@@ -542,7 +543,7 @@ public class AddCustomDialog extends StatusDialog {
 		};
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
 	protected void cancelPressed() {
@@ -550,13 +551,13 @@ public class AddCustomDialog extends StatusDialog {
 		super.cancelPressed();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
 		clearProviderCache();
 		name= nameField.getText().trim();
-		library= (URL)libraryUrls.get(sourceNameField.getSelectionIndex());
+		library= (ClasspathEntry)libraryEntries.get(sourceNameField.getSelectionIndex());
 		IStructuredSelection selection= this.selectionGroup.getListTableSelection();
 		MinimizedFileSystemElement element= (MinimizedFileSystemElement)selection.getFirstElement();
 		if (element == null) {
@@ -569,7 +570,7 @@ public class AddCustomDialog extends StatusDialog {
 		} else {
 			className= ((File)file).getAbsolutePath();
 			IPath classPath= new Path(className);
-			IPath libraryPath= new Path(library.getPath());
+			IPath libraryPath= new Path(library.getURL().getPath());
 			int matching= classPath.matchingFirstSegments(libraryPath);
 			classPath= classPath.removeFirstSegments(matching);
 			classPath= classPath.setDevice(null);
@@ -589,12 +590,12 @@ public class AddCustomDialog extends StatusDialog {
 		this.name= name;
 	} 
 	
-	protected void setLibrary(URL library) {
+	protected void setLibrary(ClasspathEntry library) {
 		this.library= library;
 		editing= true;
 	}
 	
-	protected URL getLibrary() {
+	protected ClasspathEntry getLibrary() {
 		return this.library;
 	}
 	
@@ -606,7 +607,7 @@ public class AddCustomDialog extends StatusDialog {
 		this.className= className;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {

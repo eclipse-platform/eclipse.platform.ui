@@ -170,14 +170,26 @@ public abstract class AntPage {
 	}
 
 	/**
-	 * Returns the currently listed objects in the table.  Returns null
-	 * if this widget has not yet been created or has been disposed.
+	 * Returns the currently listed objects in the table if the library
+	 * for that entry is still included in the preferences.  Default objects
+	 * are included depending on the value of the <code>forDisplay</code> parameter.
+	 * Returns <code>null</code> if this widget has not yet been created
+	 * or has been disposed.
+	 * @param forDisplay Whether the result is to be displayed in the UI or stored in the preferences
+	 * @return The list of objects currently displayed in the table
 	 */
 	protected List getContents(boolean forDisplay) {
 		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return null;
 		}
-		List URLs= getPreferencePage().getLibraryURLs();
+		List entries= getPreferencePage().getLibraryEntries();
+		List URLs= new ArrayList(entries.size());
+		Iterator iter= entries.iterator();
+		while (iter.hasNext()) {
+			IClasspathEntry entry = (IClasspathEntry) iter.next();
+			URLs.add(entry.getEntryURL());
+			
+		}
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		List contents= new ArrayList(elements.length);
 		Object element;
@@ -312,6 +324,11 @@ public abstract class AntPage {
 		removeButton.setEnabled(enabled && size > 0);
 	}
 	
+	/**
+	 * Allows the user to edit a custom Ant object.
+	 *
+	 * @param selection The selection containing the object to edit
+	 */
 	protected abstract void edit(IStructuredSelection selection);
 	
 	/**
