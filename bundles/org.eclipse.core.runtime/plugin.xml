@@ -4,7 +4,8 @@
    id="org.eclipse.core.runtime"
    name="%pluginName"
    version="3.0.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.core.internal.runtime.PlatformActivator">
 
    <runtime>
       <library name="runtime.jar">

@@ -14,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.osgi.framework.Bundle;
 
 /**
  * A table of preference settings, mapping named properties to values. Property
@@ -455,9 +456,10 @@ public class Preferences {
 	}
 
 	private static Object exporterInvoker(String methodName, IPath file) throws CoreException {
-		if (InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime.compatibility") != null) {
+		Bundle compatibility = InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime.compatibility");
+		if (compatibility != null) {
 			try {
-				Class prefExporter = Class.forName("org.eclipse.core.internal.plugins.PreferenceExporter");
+				Class prefExporter = compatibility.loadClass("org.eclipse.core.internal.plugins.PreferenceExporter");
 				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[] { IPath.class });
 				return exportingMethod.invoke(prefExporter, new Object[] { file });
 			} catch (Exception e) {
