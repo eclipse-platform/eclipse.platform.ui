@@ -172,20 +172,30 @@ public class CopyResourceAction extends SelectionListenerAction implements ISele
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		operation = createOperation();
-		IPath destination = queryDestinationResource();
-		if (destination == null)
-			return;
-
-		IWorkspaceRoot root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
-		IContainer container = (IContainer) root.findMember(destination);
-		if (container == null) {
-			return;
-		}
-
-		List sources = getSelectedResources();
-		runOperation(getResources(sources), container);
-		operation = null;
+	    try {
+			operation = createOperation();
+	
+			// WARNING: do not query the selected resources more than once
+			// since the selection may change during the run, 
+			// e.g. due to window activation when the prompt dialog is dismissed.
+			// For more details, see Bug 60606 [Navigator] (data loss) Navigator deletes/moves the wrong file
+			List sources = getSelectedResources();
+	
+			IPath destination = queryDestinationResource();
+			if (destination == null)
+				return;
+	
+			IWorkspaceRoot root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
+			IContainer container = (IContainer) root.findMember(destination);
+			if (container == null) {
+				return;
+			}
+	
+			runOperation(getResources(sources), container);
+	    }
+	    finally {
+	        operation = null;
+	    }
 	}
 	/**
 	 * Runs the operation created in <code>createOperaiton</code>
