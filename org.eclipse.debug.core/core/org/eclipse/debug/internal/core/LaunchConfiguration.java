@@ -154,6 +154,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
 		return new LaunchConfigurationWorkingCopy(this);
 	}
+	
+	/**
+	 * @see ILaunchConfiguration#copy(String name)
+	 */
+	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException {
+		ILaunchConfigurationWorkingCopy copy = new LaunchConfigurationWorkingCopy(this, name);
+		return copy;
+	}	
 
 	/**
 	 * @see ILaunchConfiguration#isWorkingCopy()

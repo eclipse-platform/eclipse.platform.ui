@@ -221,6 +221,10 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns a working copy of this launch configuration.
+	 * Changes to the working copy will be applied to this
+	 * launch configuration when saved. The working copy will
+	 * refer to this launch cofiguration as its original
+	 * launch configuration.
 	 * 
 	 * @return a working copy of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
@@ -228,8 +232,30 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>An exception occurs while initializing the contents of the
 	 * working copy from this configurations underlying storage.</li>
 	 * </ul>
+	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException;		
+	
+	/**
+	 * Returns a copy of this launch configuration, as a
+	 * working copy, with the specified name. The new
+	 * working copy does not refer back to this configuration
+	 * as its original launch configuration (the working copy
+	 * will return <code>null</code> for <code>getOriginal()</code>).
+	 * When the working copy is saved it will not effect this
+	 * launch configuration. Note: clients should rename the
+	 * copy to avoid overwriting this launch configuration.
+	 * 
+	 * @param name the name of the copy
+	 * @return a copy of this launch configuration
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurs while initializing the contents of the
+	 * working copy from this configurations underlying storage.</li>
+	 * </ul>
+	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
+	 */
+	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException;	
 	
 	/**
 	 * Returns whether this launch configuration is a working

@@ -66,7 +66,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private IContainer fContainer;
 
 	/**
-	 * Constructs a working for the specified lanuch 
+	 * Constructs a working copy of the specified lanuch 
 	 * configuration.
 	 * 
 	 * @param original launch configuration to make
@@ -76,7 +76,26 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original) throws CoreException {
 		super(original.getLocation());
+		copyFrom(original);
 		setOriginal(original);
+		fSuppressChange = false;
+	}
+	
+	/**
+	 * Constructs a copy of the specified lanuch 
+	 * configuration, with the given (new) name.
+	 * 
+	 * @param original launch configuration to make
+	 *  a working copy of
+	 * @param name the new name for the copy of the launch
+	 *  configuration
+	 * @exception CoreException if unable to initialize this
+	 *  working copy's attributes based on the original configuration
+	 */
+	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original, String name) throws CoreException {
+		super(original.getLocation());
+		copyFrom(original);
+		setNewName(name);
 		fSuppressChange = false;
 	}
 	
@@ -246,13 +265,23 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 *  working copy based on the original's current attribute
 	 *  set
 	 */
-	private void setOriginal(LaunchConfiguration original) throws CoreException {
-		fOriginal = original;
+	private void copyFrom(LaunchConfiguration original) throws CoreException {
 		LaunchConfigurationInfo info = original.getInfo();
 		setInfo(info.getCopy());
 		setContainer(original.getContainer());
 		resetDirty();
 	}
+	
+	/**
+	 * Sets the launch configuration this working copy
+	 * is based on.
+	 * 
+	 * @param originl the launch configuration this working
+	 *  copy is based on.
+	 */
+	private void setOriginal(LaunchConfiguration original) {
+		fOriginal = original;
+	}	
 	
 	/**
 	 * Sets the working copy info object for this working copy.
