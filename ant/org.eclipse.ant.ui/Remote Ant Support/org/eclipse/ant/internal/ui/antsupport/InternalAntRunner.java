@@ -46,10 +46,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.DemuxOutputStream;
 import org.apache.tools.ant.Diagnostics;
@@ -57,6 +59,8 @@ import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.util.FileUtils;
 
 /**
@@ -353,7 +357,8 @@ public class InternalAntRunner {
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			
-			setTasksAndTypes();
+			setTasks();
+			setTypes();
 			
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 				getCurrentProject().setKeepGoingMode(keepGoing);
@@ -405,36 +410,59 @@ public class InternalAntRunner {
 		}
 	}
 	
-	private void setTasksAndTypes() {
+	private void setTasks() {
 		if (eclipseSpecifiedTasks != null) {
 			Iterator itr= eclipseSpecifiedTasks.keySet().iterator();
-			
+			String taskName;
+			String taskClassName;
 			while (itr.hasNext()) {
-				String taskName = (String) itr.next();
-				String taskClassName= (String) eclipseSpecifiedTasks.get(taskName);
-				try {
-					Class taskClass = Class.forName(taskClassName);
-					getCurrentProject().addTaskDefinition(taskName, taskClass);
-				} catch (ClassNotFoundException e) {
-					String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.161"), new String[]{taskClassName, taskName}); //$NON-NLS-1$
-					getCurrentProject().log(message, Project.MSG_WARN);
-				}	
+				taskName= (String) itr.next();
+				taskClassName= (String) eclipseSpecifiedTasks.get(taskName);
+				
+				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+					AntTypeDefinition def= new AntTypeDefinition();
+					def.setName(taskName);
+		            def.setClassName(taskClassName);
+		            def.setClassLoader(this.getClass().getClassLoader());
+		            def.setAdaptToClass(Task.class);
+		            def.setAdapterClass(TaskAdapter.class);
+		            ComponentHelper.getComponentHelper(getCurrentProject()).addDataTypeDefinition(def);
+				} else {
+					try {
+						Class taskClass = Class.forName(taskClassName);
+						getCurrentProject().addTaskDefinition(taskName, taskClass);
+					} catch (ClassNotFoundException e) {
+						String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.161"), new String[]{taskClassName, taskName}); //$NON-NLS-1$
+						getCurrentProject().log(message, Project.MSG_WARN);
+					}	
+				}
 			}
 		}
-		
+	}
+
+	private void setTypes() {
 		if (eclipseSpecifiedTypes != null) {
 			Iterator itr= eclipseSpecifiedTypes.keySet().iterator();
-			
+			String typeName;
+			String typeClassName;
 			while (itr.hasNext()) {
-				String typeName = (String) itr.next();
-				String typeClassName= (String) eclipseSpecifiedTypes.get(typeName);
-				try {
-					Class typeClass = Class.forName(typeClassName);
-					getCurrentProject().addDataTypeDefinition(typeName, typeClass);
-				} catch (ClassNotFoundException e) {
-					String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.162"), new String[]{typeClassName, typeName}); //$NON-NLS-1$
-					getCurrentProject().log(message, Project.MSG_WARN);
-				}	
+				typeName = (String) itr.next();
+				typeClassName= (String) eclipseSpecifiedTypes.get(typeName);
+				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+					AntTypeDefinition def = new AntTypeDefinition();
+	                def.setName(typeName);
+	                def.setClassName(typeClassName);
+	                def.setClassLoader(this.getClass().getClassLoader());
+	                ComponentHelper.getComponentHelper(getCurrentProject()).addDataTypeDefinition(def);
+				} else {
+					try {
+						Class typeClass = Class.forName(typeClassName);
+						getCurrentProject().addDataTypeDefinition(typeName, typeClass);
+					} catch (ClassNotFoundException e) {
+						String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.162"), new String[]{typeClassName, typeName}); //$NON-NLS-1$
+						getCurrentProject().log(message, Project.MSG_WARN);
+					}	
+				}
 			}
 		}
 	}
