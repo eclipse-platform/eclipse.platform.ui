@@ -280,7 +280,6 @@ public class JobTest extends TestCase {
 		assertTrue("2.0", main.getResult() == null);
 		//schedule the job to run
 		main.schedule();
-		//waitForStart(main);
 		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
 		assertTrue("3.0", main.getState() == Job.RUNNING);
 		//the asynchronous process that assigns the thread the job is going to run in has not been started yet
@@ -316,7 +315,6 @@ public class JobTest extends TestCase {
 		
 		//schedule the job to run again
 		main.schedule();
-		//waitForStart(main);
 		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
 		assertTrue("5.0", main.getState() == Job.RUNNING);
 		
@@ -368,7 +366,7 @@ public class JobTest extends TestCase {
 			//status[i] = StatusChecker.STATUS_START;
 		}
 		//all the jobs should be running at the same time
-		waitForStart(jobs);
+		waitForStart(jobs, status);
 		
 		//every job should now be waiting for the STATUS_START flag
 		for(int i = 0; i < status.length; i++) {
@@ -440,7 +438,6 @@ public class JobTest extends TestCase {
 		
 		//these 3 jobs should be waiting for the STATUS_START flag
 		for(int i = 0; i < 3; i++) {
-			//waitForStart(jobs[i]);
 			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
 			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
@@ -494,7 +491,6 @@ public class JobTest extends TestCase {
 		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_DONE, 100);
 		
 		//the fourth job should now start running, the fifth job should still be waiting
-		//waitForStart(jobs[3]);
 		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
 		assertEquals("9.1", Job.RUNNING, jobs[3].getState());
 		assertEquals("9.2", Job.WAITING, jobs[4].getState());
@@ -544,16 +540,14 @@ public class JobTest extends TestCase {
 				Thread.yield();
 				Thread.sleep(100);
 			} catch(InterruptedException e) {
-				
 			}
-			
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to start", i++ < 1000);
 		}
 	}
-	private void waitForStart(Job[] jobs) {
+	private void waitForStart(Job[] jobs, int [] status) {
 		for (int i = 0; i < jobs.length; i++) 
-			waitForStart(jobs[i]);
+			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
 	}
 		
 	
