@@ -90,7 +90,7 @@ abstract public class AbstractInformationControlManager {
 	};
 	
 	/** Internal anchor list. */
-	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };
+	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor(), new Anchor() };
 	
 	/** Anchor representing the top of the information area */
 	public final static Anchor ANCHOR_TOP=  ANCHORS[0];
@@ -100,7 +100,8 @@ abstract public class AbstractInformationControlManager {
 	public final static Anchor ANCHOR_LEFT=  ANCHORS[2];
 	/** Anchor representing the right side of the information area */
 	public final static Anchor ANCHOR_RIGHT= ANCHORS[3];
-	
+	/** Anchor representing the middle of the subject control */
+	public final static Anchor ANCHOR_GLOBAL= ANCHORS[4];
 	
 	
 	/** The subject control of the information control */
@@ -173,7 +174,7 @@ abstract public class AbstractInformationControlManager {
 	 * <li> enforce constraints as minimal size == false
 	 * <li> enforce constraints as maximal size == false
 	 * <li> layout anchor == ANCHOR_BOTTOM
-	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT }
+	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT, ANCHOR_GLOBAL }
 	 * <li> takes focus when visible == false
 	 * </ul>
 	 *
@@ -437,6 +438,14 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		
+		if (ANCHOR_GLOBAL == anchor) {
+			Point subjectControlSize= fSubjectControl.getSize();
+			Point location= new Point(subjectControlSize.x / 2, subjectControlSize.y / 2);
+			location.x -= (controlSize.x / 2);
+			location.y -= (controlSize.y / 2);
+			return fSubjectControl.toDisplay(location);
+		}
+		
 		int xShift= 0;
 		int yShift= 0;
 				
@@ -491,7 +500,8 @@ abstract public class AbstractInformationControlManager {
 			
 			if (lowerRightX > displayLowerRightX)
 				location.x= location.x - (lowerRightX - displayLowerRightX);
-			return true;
+				
+			return (location.x >= 0 && location.y >= 0);
 			
 		} else if (ANCHOR_RIGHT == anchor || ANCHOR_LEFT == anchor) {
 			
@@ -505,7 +515,18 @@ abstract public class AbstractInformationControlManager {
 				
 			if (lowerRightY > displayLowerRightY)
 				location.y= location.y - (lowerRightY - displayLowerRightY);
-			return true;
+				
+			return (location.x >= 0 && location.y >= 0);
+		
+		} else if (ANCHOR_GLOBAL == anchor) {
+			
+			if (lowerRightX > displayLowerRightX)
+				location.x= location.x - (lowerRightX - displayLowerRightX);
+			
+			if (lowerRightY > displayLowerRightY)
+				location.y= location.y - (lowerRightY - displayLowerRightY);
+			
+			return (location.x >= 0 && location.y >= 0);
 		}
 		
 		return false;
@@ -543,7 +564,7 @@ abstract public class AbstractInformationControlManager {
 	 * @return the computed location of the information control
 	 */
 	protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
-		
+				
 		Rectangle displayBounds= fSubjectControl.getDisplay().getClientArea();
 		
 		Point upperLeft;
