@@ -275,10 +275,6 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 			out.writeByte(RegistryCacheReader.TYPE_LABEL);
 			out.writeUTF(outString);
 		}
-		if ((outString = library.getSource()) != null) {
-			out.writeByte(RegistryCacheReader.SOURCE_LABEL);
-			out.writeUTF(outString);
-		}
 
 		String[] exports = null;
 		if ((exports = library.getExports()) != null) {

@@ -107,8 +107,6 @@ public void writeLibrary(LibraryModel library, PrintWriter w, int indent) {
 		w.print(" " + IModel.LIBRARY_NAME + "=\"" + PluginParser.xmlSafe(library.getName()) + "\"");
 	if (library.getType() != null)
 		w.print(" " + IModel.LIBRARY_TYPE + "=\"" + PluginParser.xmlSafe(library.getType()) + "\"");
-	if (library.getSource() != null)
-		w.print(" " + IModel.LIBRARY_SOURCE + "=\"" + PluginParser.xmlSafe(library.getSource()) + "\"");
 	if (!library.isExported())
 		w.println("/>");
 	else {

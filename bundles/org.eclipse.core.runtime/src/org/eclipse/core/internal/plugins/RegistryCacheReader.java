@@ -536,9 +536,6 @@ public LibraryModel readLibrary(DataInputStream in) {
 				case LIBRARY_EXPORTS_LENGTH_LABEL :
 					exportsLength = in.readInt();
 					break;
-				case SOURCE_LABEL :
-					library.setSource(in.readUTF());
-					break;
 				case TYPE_LABEL :
 					library.setType(in.readUTF());
 					break;
