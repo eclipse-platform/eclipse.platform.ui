@@ -708,29 +708,28 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
-		IPath destinationPath = destination.getFullPath();
+		IPath destinationLocation = destination.getLocation();
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
-			IPath sourcePath = sourceResource.getFullPath();
+			IPath sourceLocation = sourceResource.getLocation();
 
 			if (sourceResource.exists() == false) {
 				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+					"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
 					new Object[] {sourceResource.getName()});				
 			}
-			if (sourceResource.isLinked() == true && destination.getType() != IResource.PROJECT) {
+			if (sourceLocation.equals(destinationLocation)) {
 				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
-					new Object[] {sourceResource.getName()});				
-			}
-			if (sourcePath.equals(destinationPath)) {
-				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
+					"CopyFilesAndFoldersOperation.sameSourceAndDest", 	//$NON-NLS-1$
 					new Object[] {sourceResource.getName()});
 			}
-			// is the source a parent of the destination path?
-			if (sourcePath.isPrefixOf(destinationPath)) {
+			// is the source a parent of the destination?
+			if (sourceLocation.isPrefixOf(destinationLocation)) {
 				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+			}
+			String linkedResourceMessage = validateLinkedResource(destination, sourceResource);
+			if (linkedResourceMessage != null) {
+				return linkedResourceMessage;
 			}
 		}
 		return null;
@@ -772,6 +771,39 @@ public class CopyFilesAndFoldersOperation {
 					}
 					destinationParent = destinationParent.removeLastSegments(1);
 				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * Check if the destination is valid for the given source resource. 
+	 * 
+	 * @param destination destination container of the operation
+	 * @param source source resource
+	 * @return String error message or null if the destination is valid
+	 */
+	private String validateLinkedResource(IContainer destination, IResource source) {
+		if (source.isLinked() && destination.getType() != IResource.PROJECT) {
+			return WorkbenchMessages.format(
+				"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
+				new Object[] {source.getName()});				
+		}
+		if (source.getProject().equals(destination.getProject()) == false) {
+			try {
+				IResource[] members = destination.members();
+				IPath sourceLocation = source.getLocation();
+				for (int j = 0; j < members.length; j++) {
+					if (sourceLocation.equals(members[j].getLocation())) {
+						return WorkbenchMessages.format(
+							"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
+							new Object[] {source.getName()});
+					}
+				}
+			}
+			catch (CoreException exception) {
+				displayError(WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.internalError", 				//$NON-NLS-1$
+					new Object[] {exception.getMessage()}));
 			}
 		}
 		return null;
