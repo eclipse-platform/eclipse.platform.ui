@@ -89,7 +89,7 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.searach</servlet-name>
+		<servlet-name>jsp.ns4.search</servlet-name>
 		<servlet-class>jsp.ns4.search</servlet-class>
 	</servlet>
 
