@@ -26,8 +26,10 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -83,12 +85,13 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fMemento= null;
 		SearchManager.getDefault().addSearchChangeListener(fViewer);
 		fViewer.init();
-		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 
 		// Add selectAll action handlers.
 		fCellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 		fSelectAllAction= new SelectAllAction(fViewer);
 		fCellEditorActionHandler.setSelectAllAction(fSelectAllAction);
+
+		fillActionBars(getViewSite().getActionBars());
 		
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -141,6 +144,15 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	
 	//---- Adding Action to Toolbar -------------------------------------------
 	
+	private void fillActionBars(IActionBars actionBars) {
+		IToolBarManager toolBar= actionBars.getToolBarManager();
+		fillToolBar(toolBar);
+		actionBars.updateActionBars();
+		
+		// Add selectAll action handlers.
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, fSelectAllAction);
+	}
+
 	private void fillToolBar(IToolBarManager tbm) {
 		fViewer.fillToolBar(tbm);
 	}	
