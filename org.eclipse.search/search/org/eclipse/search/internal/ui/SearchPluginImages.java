@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -23,8 +24,17 @@ public class SearchPluginImages {
 	private static URL fgIconLocation;
 
 	static {
+		String pathSuffix= ""; //$NON-NLS-1$
+		Display display= Display.getCurrent();
+		if (display == null)
+			// class might get loaded by non-UI thread.
+			display= Display.getDefault();
+		if (display != null && display.getCurrent().getIconDepth() > 4)
+			pathSuffix = "icons/full/"; //$NON-NLS-1$
+		else
+			pathSuffix = "icons/basic/"; //$NON-NLS-1$
 		try {
-			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), "icons/"); //$NON-NLS-1$
+			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
 		} catch (MalformedURLException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.incorrectIconLocation.title"), SearchMessages.getString("Search.Error.incorrectIconLocation.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
@@ -33,10 +43,8 @@ public class SearchPluginImages {
 	// The plugin registry
 	private final static ImageRegistry PLUGIN_REGISTRY= SearchPlugin.getDefault().getImageRegistry();
 
-	private static final String T= "full/"; //$NON-NLS-1$
-
-	public static final String T_OBJ= T + "obj16/"; //$NON-NLS-1$
-	public static final String T_WIZBAN= T + "wizban/"; //$NON-NLS-1$
+	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
+	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL= "lcl16/"; //$NON-NLS-1$
 	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
 	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
@@ -99,8 +107,8 @@ public class SearchPluginImages {
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
+		action.setDisabledImageDescriptor(create("d" + type, relPath)); //$NON-NLS-1$
+		action.setHoverImageDescriptor(create("c" + type, relPath)); //$NON-NLS-1$
+		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
 }
