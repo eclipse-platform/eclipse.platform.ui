@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.*;
@@ -33,7 +34,7 @@ public class RenameDialog extends Dialog {
 	private static final String KEY_LABEL = "RenameDialog.label";
 	private static final String KEY_EXISTS = "RenameDialog.exists";
 	private Text text;
-	private Label status;
+	private CLabel status;
 	private NamedModelObject object;
 	private Object [] siblings;
 	private Button okButton;
@@ -44,6 +45,7 @@ public class RenameDialog extends Dialog {
 	 */
 	public RenameDialog(Shell parentShell, NamedModelObject object, Object [] siblings) {
 		super(parentShell);
+		//setShellStyle(getShellStyle()|SWT.RESIZE);
 		this.object = object;
 		this.siblings = siblings;
 	}
@@ -73,14 +75,13 @@ public class RenameDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(
-			UpdateUI.getFormattedMessage(KEY_LABEL, object.getName()));
+		label.setText(UpdateUI.getString(KEY_LABEL));
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
 
-		status = new Label(container, SWT.NULL);
+		status = new CLabel(container, SWT.NULL);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		status.setLayoutData(gd);
 
@@ -96,7 +97,7 @@ public class RenameDialog extends Dialog {
 	}
 
 	private void verifyName() {
-		String name = text.getText();
+		String name = text.getText().trim();
 		boolean duplicate = false;
 		for (int i = 0; i < siblings.length; i++) {
 			if (((NamedModelObject)siblings[i]).getName().equals(name)) {

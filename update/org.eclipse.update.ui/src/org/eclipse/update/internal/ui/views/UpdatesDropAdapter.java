@@ -102,7 +102,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 		if (mustRename) {
 			RenameDialog dialog = new RenameDialog(shell, object, siblings);
 			dialog.create();
-			dialog.getShell().setSize(350, 150);
+			dialog.getShell().setSize(400, 150);
 			dialog.getShell().setText(
 				UpdateUI.getString(KEY_CONFLICT));
 			if (dialog.open() != RenameDialog.OK)
