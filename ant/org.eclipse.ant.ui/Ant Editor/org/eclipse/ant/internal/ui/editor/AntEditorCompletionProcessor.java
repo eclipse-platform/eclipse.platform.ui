@@ -1043,7 +1043,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         }
         
         if (startOfWordToken != anOffset) {
-            currentPrefix= aDocumentText.substring(startOfWordToken, anOffset);
+            currentPrefix= aDocumentText.substring(startOfWordToken, anOffset).toLowerCase();
         } else {
             currentPrefix= ""; //$NON-NLS-1$
         }
