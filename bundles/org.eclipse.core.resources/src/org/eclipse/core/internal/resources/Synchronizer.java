@@ -29,13 +29,6 @@ public class Synchronizer implements ISynchronizer {
 	// Registry of sync partners. Set of qualified names.
 	protected Set registry = new HashSet(5);
 
-	// version number used for serialization
-	protected static int VERSION = 2;
-
-	//
-	protected static final int INT_CONSTANT = 1;
-	protected static final int QNAME_CONSTANT = 2;
-
 	public Synchronizer(Workspace workspace) {
 		super();
 		this.workspace = workspace;

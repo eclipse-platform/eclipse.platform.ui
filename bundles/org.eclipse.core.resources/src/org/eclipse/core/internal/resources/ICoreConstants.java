@@ -21,7 +21,6 @@ public interface ICoreConstants {
 	public static final QualifiedName K_BUILD_LIST = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "BuildMap"); //$NON-NLS-1$
 
 	// resource info constants
-	static final long I_UNKNOWN_SYNC_INFO = -2;
 	static final long I_NULL_SYNC_INFO = -1;
 
 	// Useful flag masks for resource info states
@@ -75,15 +74,9 @@ public interface ICoreConstants {
 
 	// Internal status codes	
 	// Information Only [00-24]
-	public static final int FIRST_INTERNAL_INFO = 10000;
 	public static final int OPERATION_FAILED = 10002;
-	public static final int LAST_INTERNAL_INFO = 10024;
 	// Warnings [25-74]
-	public static final int FIRST_INTERNAL_WARNING = 10025;
-	public static final int LAST_INTERNAL_WARNING = 10074;
 	// Errors [75-99]
-	public static final int FIRST_INTERNAL_ERROR = 10075;
-	public static final int LAST_INTERNAL_ERROR = 10099;
 
 	public static final int PROJECT_SEGMENT_LENGTH = 1;
 	public static final int MINIMUM_FOLDER_SEGMENT_LENGTH = 2;

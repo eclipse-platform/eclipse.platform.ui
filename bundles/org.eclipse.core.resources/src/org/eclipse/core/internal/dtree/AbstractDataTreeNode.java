@@ -33,7 +33,6 @@ public abstract class AbstractDataTreeNode {
 	public static final int T_DELTA_NODE = 1;
 	public static final int T_DELETED_NODE = 2;
 	public static final int T_NO_DATA_DELTA_NODE = 3;
-	public static final int T_MISSING_NODE = 4;
 
 	/**
 	 * Creates a new data tree node

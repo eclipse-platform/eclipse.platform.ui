@@ -77,8 +77,8 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	public static final int ShiftByte = 8;
 	public static final int PrintStringSize = 32;
-	public static final int[] PrintStringDashPositions = new int[] {8, 13, 18, 23};
-	public static final char[] ValidPrintStringCharacters = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', '-'};
+//	public static final int[] PrintStringDashPositions = new int[] {8, 13, 18, 23};
+//	public static final char[] ValidPrintStringCharacters = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', '-'};
 
 	/**
 	 UniversalUniqueIdentifier default constructor returns a

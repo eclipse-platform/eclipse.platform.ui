@@ -34,11 +34,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class ElementTreeWriter {
 	/**
-	 * Debug flag turns on internal trace.
-	 */
-	protected static final boolean DEBUG = false;
-
-	/**
 	 * The current format version number.
 	 */
 	public static final int CURRENT_FORMAT = 1;

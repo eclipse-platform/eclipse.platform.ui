@@ -29,7 +29,6 @@ import org.xml.sax.SAXException;
  */
 public class WorkspaceDescriptionReader implements IModelObjectConstants {
 	/** constants */
-	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	public WorkspaceDescriptionReader() {

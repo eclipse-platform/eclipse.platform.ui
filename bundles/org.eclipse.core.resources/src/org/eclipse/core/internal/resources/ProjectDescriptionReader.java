@@ -24,10 +24,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ProjectDescriptionReader extends DefaultHandler implements IModelObjectConstants {
 
-	/** constants */
-	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
-	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
-
 	//states
 	protected static final int S_BUILD_COMMAND = 0;
 	protected static final int S_BUILD_COMMAND_ARGUMENTS = 1;
@@ -50,7 +46,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECT_NAME = 18;
 	protected static final int S_PROJECTS = 19;
 	protected static final int S_REFERENCED_PROJECT_NAME = 20;
-	protected static final int S_WORKSPACE_DESC = 21;
 	
 	protected final StringBuffer charBuffer = new StringBuffer();
 

@@ -34,11 +34,6 @@ import org.eclipse.core.runtime.Path;
  * that the <code>IElementInfoFactory</code> is thread-safe.
  */
 public class ElementTreeReader {
-
-	/** Debug flag turns on internal trace.
-	 */
-	protected static final boolean DEBUG = false;
-
 	/** The element info factory.
 	 */
 	protected IElementInfoFlattener elementInfoFlattener;

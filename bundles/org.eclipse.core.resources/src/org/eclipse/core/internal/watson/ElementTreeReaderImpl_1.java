@@ -25,10 +25,6 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
  */
 /* package */class ElementTreeReaderImpl_1 extends ElementTreeReader {
 
-	/** The format version number.
-	 */
-	public static final int LEGAL_FORMAT = 1;
-
 	/** 
 	 * Constructs a new element tree reader that works for
 	 * the given element info factory.

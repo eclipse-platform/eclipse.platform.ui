@@ -29,7 +29,6 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	protected volatile long maxFileStateSize;
 	// thread safety: (Concurrency004)
 	private volatile long snapshotInterval;
-	protected Workspace workspace;
 	protected int operationsPerSnapshot;
 	protected long deltaExpiration;
 

@@ -25,7 +25,6 @@ public interface IModelObjectConstants {
 	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
 	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
 	public static final String KEY = "key"; //$NON-NLS-1$
-	public static final String LOCAL = "local"; //$NON-NLS-1$
 	public static final String LOCATION = "location"; //$NON-NLS-1$
 	public static final String MAX_FILE_STATE_SIZE = "maxFileStateSize"; //$NON-NLS-1$
 	public static final String MAX_FILE_STATES = "maxFileStates"; //$NON-NLS-1$
@@ -37,9 +36,7 @@ public interface IModelObjectConstants {
 	public static final String PROJECT_DESCRIPTION = "projectDescription"; //$NON-NLS-1$
 	public static final String PROJECTS = "projects"; //$NON-NLS-1$
 	public static final String TYPE = "type"; //$NON-NLS-1$
-	public static final String URI = "uri"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
-	public static final String VERSION = "version"; //$NON-NLS-1$
 	public static final String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
 	public static final String LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
 	public static final String LINK = "link"; //$NON-NLS-1$

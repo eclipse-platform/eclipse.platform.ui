@@ -112,8 +112,6 @@ public abstract class Bucket {
 		public final static int CONTINUE = 0;
 		// should stop looking at states for files in this container (or any of its children)	
 		public final static int RETURN = 2;
-		// should stop the traversal	
-		public final static int STOP = 1;
 
 		/**
 		 * Called after the bucket has been visited (and saved). 
