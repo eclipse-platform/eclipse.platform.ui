@@ -188,7 +188,7 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public Window getWindow() {
         Control ctrl = getControl();
-        if (ctrl != null) {
+        if (!SwtUtil.isDisposed(ctrl)) {
             Object data = ctrl.getShell().getData();
             if (data instanceof Window)
                 return (Window) data;
@@ -315,7 +315,7 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public void setBounds(Rectangle r) {
         Control ctrl = getControl();
-        if (ctrl != null)
+        if (!SwtUtil.isDisposed(ctrl))
             ctrl.setBounds(r);
     }
 

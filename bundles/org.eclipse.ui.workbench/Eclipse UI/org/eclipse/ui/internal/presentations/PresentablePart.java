@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 
@@ -113,7 +114,9 @@ public class PresentablePart implements IPresentablePart {
      * @see org.eclipse.ui.presentations.IPresentablePart#setBounds(org.eclipse.swt.graphics.Rectangle)
      */
     public void setBounds(Rectangle bounds) {
-        part.setBounds(bounds);
+        if (!SwtUtil.isDisposed(part.getControl())) {
+            part.setBounds(bounds);
+        }
     }
 
     /* (non-Javadoc)
@@ -127,7 +130,9 @@ public class PresentablePart implements IPresentablePart {
      * @see org.eclipse.ui.presentations.IPresentablePart#setFocus()
      */
     public void setFocus() {
-        part.setFocus();
+        if (!SwtUtil.isDisposed(part.getControl())) {
+            part.setFocus();   
+        }
     }
 
     /* (non-Javadoc)
