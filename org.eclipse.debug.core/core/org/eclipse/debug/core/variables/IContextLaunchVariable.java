@@ -35,7 +35,7 @@ package org.eclipse.debug.core.variables;
  * &lt;/extension&gt;
  * </pre>
  * <p>
- * Clients may implement this interface.
+ * Clients are not intended to implement this interface.
  * </p>
  * @since 3.0
  */
