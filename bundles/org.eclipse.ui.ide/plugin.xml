@@ -411,6 +411,9 @@
             class="org.eclipse.ui.internal.ViewIntroAdapterPart"
             id="org.eclipse.ui.internal.introview">
       </view>
+      <stickyView
+            id="org.eclipse.ui.internal.introview">
+      </stickyView>
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">

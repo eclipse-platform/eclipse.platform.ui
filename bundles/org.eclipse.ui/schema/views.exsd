@@ -24,6 +24,7 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="category"/>
             <element ref="view"/>
+            <element ref="stickyView"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -165,6 +166,23 @@ If no value is supplied, a default ratio will be used.
       </annotation>
    </element>
 
+   <element name="stickyView">
+      <annotation>
+         <documentation>
+            A sticky view is a view that will appear by default across all perspectives in a window once opened.  It will initially appear to the right of the editor area but nothing prevents it from being moved or closed by the user.  Please note that usage of this element should be done with great care and should only be applied to views that truely have a need to live across perspectives.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the view to be made sticky.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -187,6 +205,13 @@ If no value is supplied, a default ratio will be used.
       &lt;/view&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;/p&gt;
+The following is an example of a sticky view declaration:
+&lt;p&gt;
+   &lt;extension point=&quot;org.eclipse.ui.views&quot;&gt; 
+      &lt;stickyView
+         id=&quot;com.xyz.views.XYZView&quot; /&gt;
+   &lt;/extension&gt; 
 &lt;/p&gt;
       </documentation>
    </annotation>
