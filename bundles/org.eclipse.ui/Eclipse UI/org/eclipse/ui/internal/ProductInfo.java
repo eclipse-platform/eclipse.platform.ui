@@ -63,6 +63,7 @@ public class ProductInfo extends ConfigurationInfo {
 	private String productURL;
 	private String detailedName;
 	private String defaultPerspId;
+	private String baseInfosets;
 	private ImageDescriptor productImage = null;
 	private ImageDescriptor splashImage = null;
 	private ImageDescriptor aboutImage = null;
@@ -160,6 +161,19 @@ public String getDefaultPerspective() {
  */
 public String getDetailedName() {
 	return detailedName;
+}
+/**
+ * Returns the base information set identifiers for this product.
+ * <p>
+ * This value will be used to determine the ordering of the online
+ * information sets provided by the product.
+ * </p>
+ * 
+ * @return a comma-separated list of information set identifiers, 
+ * or <code>null</code> if none specified
+ */
+public String getInformationSetIds() {
+	return baseInfosets;
 }
 /**
  * Returns the name of this product.
@@ -383,6 +397,9 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 	if ((defaultPerspId = (String) ini.get("defaultPerspectiveId") ) == null) {//$NON-NLS-1$
 		defaultPerspId = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
 	}
+
+
+	baseInfosets = (String) ini.get("baseInfosets"); //$NON-NLS-1$
 
 	configurationPreferences= readConfigurationPreferences();
 }
