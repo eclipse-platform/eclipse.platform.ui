@@ -177,16 +177,10 @@ public class GlobalBuildAction extends Action
 						PlatformUI.PLUGIN_ID, 0, IDEWorkbenchMessages
 								.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
 						null);
-				monitor.beginTask("", 1); //$NON-NLS-1$
-				// Fix for bug 31768 - Don't provide a task name in beginTask
-				// as it will be appended to each subTask message. Need to
-				// call setTaskName as its the only was to assure the task name
-				// is
-				// set in the monitor (see bug 31824)
-				monitor.setTaskName(getOperationMessage());
+				monitor.beginTask(getOperationMessage(), 100); //$NON-NLS-1$
 				try {
 					ResourcesPlugin.getWorkspace().build(buildType,
-							new SubProgressMonitor(monitor, 1));
+							new SubProgressMonitor(monitor, 100));
 				} catch (CoreException e) {
 					status.add(e.getStatus());
 				} finally {
