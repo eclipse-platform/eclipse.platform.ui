@@ -171,8 +171,6 @@ private Font createFont(FontData[] fonts) {
 		if (fd == null)
 			break;
 
-		fd.setName(fd.getName().toLowerCase());
-
 		FontData[] fixedFonts = display.getFontList(fd.getName(), false);
 		if (isFixedFont(fixedFonts, fd)) {
 			return new Font(display, fd);
