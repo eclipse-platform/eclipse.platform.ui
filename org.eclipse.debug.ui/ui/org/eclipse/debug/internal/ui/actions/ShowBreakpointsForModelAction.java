@@ -92,6 +92,7 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 	public ShowBreakpointsForModelAction(StructuredViewer viewer) {
 		super();
 		setText(ActionMessages.getString("ShowBreakpointsForModelAction.Show_For_Selected")); //$NON-NLS-1$
+		setToolTipText(getHideText());
 		setViewerFilter(new BreakpointFilter());
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
