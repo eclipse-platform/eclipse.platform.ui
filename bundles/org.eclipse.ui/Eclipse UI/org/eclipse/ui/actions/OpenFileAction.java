@@ -6,19 +6,13 @@ package org.eclipse.ui.actions;
  */
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.Iterator;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
  * Standard action for opening an editor on the currently selected file 
@@ -31,7 +25,7 @@ import java.util.Iterator;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenFileAction extends OpenSystemEditorAction {
+public class OpenFileAction extends OpenSystemEditorAction implements IDoubleClickListener{
 
 	/**
 	 * The id of this action.
@@ -105,4 +99,18 @@ void openFile(IFile file) {
 			e);
 	}
 }
+
+	/*
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		
+		IStructuredSelection s = (IStructuredSelection)event.getSelection();
+		Object element = s.getFirstElement();
+		if (element instanceof IFile) {
+			selectionChanged(s);
+			run();
+		}
+	}
+
 }
