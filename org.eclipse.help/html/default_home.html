@@ -14,7 +14,7 @@ function resizeFix()
 { 
     window.location.reload();
 }
-if (!document.all)
+if (document.layers)
 	window.onresize = resizeFix;
 
 /** 
@@ -58,14 +58,29 @@ var infosetTitle = args['title'];
 
 <div id="bannerTitle" style="position:absolute; left:10; top:13; font-weight:bold;">
   <script> 
-     if (document.all)
+	 if (document.getElementById)
+	 {
+	 	// code for IE5 and NS6
+	 	var div = document.getElementById("bannerTitle");
+	 	if (div)
+	 	{
+	 		//div.document.write(infosetTitle);
+	 		//div.document.close();
+	 		div.appendChild(document.createTextNode(infosetTitle));
+	 	}
+	 }
+     else if (document.all)
      {
-         document.all("bannerTitle").document.write(infosetTitle); 
-         document.all("bannerTitle").document.close();
+         // code for IE4 (even though we require IE5...)
+         var div = document.all("bannerTitle");
+         if (div)
+             div.document.write(infosetTitle); 
      }
-     else 
+     else if (document.layers) 
      {
-          window.document.bannerTitle.document.write(infosetTitle);
+     	 // code for NS4
+     	 if (window.document.bannerTitle)
+              window.document.bannerTitle.document.write(infosetTitle);
      }
   </script>
 </div>
