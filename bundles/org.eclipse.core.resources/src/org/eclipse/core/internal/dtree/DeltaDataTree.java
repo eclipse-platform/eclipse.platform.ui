@@ -478,11 +478,10 @@ protected AbstractDataTreeNode[] getChildNodes(IPath parentKey) {
 	 */
 	 
 	AbstractDataTreeNode[] childNodes = null;
-	
+	String[] keyNames = parentKey.segments();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		String[] keyNames = parentKey.segments();
 		for (int i = 0; i < keyNames.length; i++) {
 			node = node.childAtOrNull(keyNames[i]);
 			if (node == null) {
@@ -551,10 +550,10 @@ public Object getData (IPath key) {
 	 *   report error if node is missing or has been deleted
 	 */
 	
+	String[] keyNames = key.segments();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		String[] keyNames = key.segments();
 		for (int i = 0; i < keyNames.length; i++) {
 			node = node.childAtOrNull(keyNames[i]);
 			if (node == null) {
@@ -662,10 +661,10 @@ public boolean includes (IPath key) {
  * @param key  key of node for which we want to retrieve data.
  */
 public DataTreeLookup lookup(IPath key) {
+	String[] keyNames = key.segments();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		String[] keyNames = key.segments();
 		for (int i = 0; i < keyNames.length; i++) {
 			node = node.childAtOrNull(keyNames[i]);
 			if (node == null) {
@@ -790,10 +789,10 @@ protected void reroot(DeltaDataTree sourceTree) {
  * if the node is not found or if it has been deleted
  */
 protected AbstractDataTreeNode searchNodeAt (IPath key) {
+	String[] keyNames = key.segments();
 	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
 		AbstractDataTreeNode node = tree.rootNode;
 		boolean complete = !node.isDelta();
-		String[] keyNames = key.segments();
 		for (int i = 0; i < keyNames.length; i++) {
 			node = node.childAtOrNull(keyNames[i]);
 			if (node == null) {
