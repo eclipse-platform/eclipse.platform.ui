@@ -109,4 +109,8 @@ public class MirrorsDialog extends Dialog {
 		return mirrorSelected;
 	}
 
+   protected void configureShell(Shell shell) {
+       super.configureShell(shell);
+       shell.setText(UpdateUI.getString("MirrorsDialog.title"));
+    }
 }
