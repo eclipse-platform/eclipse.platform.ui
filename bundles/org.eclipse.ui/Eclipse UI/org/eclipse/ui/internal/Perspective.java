@@ -1334,6 +1334,8 @@ public IViewPart showView(String viewID)
 			else
 				throw new PartInitException(status);
 		}
+		else //No error so the part has been created
+			part = (IViewPart)ref.getPart(false);
 	}
 	ViewSite site = (ViewSite)part.getSite();
 	ViewPane pane = (ViewPane)site.getPane();
