@@ -158,8 +158,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * Map of build files (IFile) to project nodes (ProjectNode)
 	 */
 	private Map buildFilesToProjects = new HashMap();
-	private IResourceDeltaVisitor visitor= null;
-	
+	private IResourceDeltaVisitor visitor = null;
+
 	class AntViewVisitor implements IResourceDeltaVisitor {
 		/**
 		 * Returns whether children should be visited
@@ -180,7 +180,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				return false;
 			} else if (resource.getType() == IResource.PROJECT) {
 				if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
-					IProject project= resource.getProject();
+					IProject project = resource.getProject();
 					if (!project.isOpen()) {
 						handleProjectClosed(project);
 						return false;
@@ -234,13 +234,13 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * The given XML file has been removed from the workspace. If the file is
 	 * present in the view, remove it.
 	 */
 	private void handleXMLFileRemoved(IFile file) {
-		final ProjectNode project= (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
+		final ProjectNode project = (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
 		if (project == null) {
 			return;
 		}
@@ -250,14 +250,14 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * The given project has been closed. If any files present in the view are
 	 * contained in that project, remove them from the view.
 	 */
 	private void handleProjectClosed(IProject project) {
-		ProjectNode[] projects= projectContentProvider.getRootNode().getProjects();
-		final List projectsToRemove= new ArrayList();
+		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
+		final List projectsToRemove = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
 			ProjectNode projectNode = projects[i];
 			if (!AntUtil.getFile(projectNode.getBuildFileName()).exists()) {
@@ -377,7 +377,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		updateActions.add(moveUpAction);
 		moveDownAction = new TargetMoveDownAction(this);
 		updateActions.add(moveDownAction);
-		goToBuildFileAction= new GoToBuildFileAction(this);
+		goToBuildFileAction = new GoToBuildFileAction(this);
 		updateActions.add(goToBuildFileAction);
 	}
 	/**
@@ -440,13 +440,13 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				while (actionIter.hasNext()) {
 					((IUpdate) actionIter.next()).update();
 				}
-				Iterator selectionIter= ((IStructuredSelection) event.getSelection()).iterator();
-				Object selection= null;
+				Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
+				Object selection = null;
 				if (selectionIter.hasNext()) {
-					selection= selectionIter.next();
-				} 
+					selection = selectionIter.next();
+				}
 				if (!selectionIter.hasNext() && selection instanceof ProjectNode) {
-					ProjectNode project= (ProjectNode) selection;
+					ProjectNode project = (ProjectNode) selection;
 					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(project.getBuildFileName());
 				} else {
 					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(null);
@@ -484,7 +484,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	public List getActiveTargets() {
 		return targetContentProvider.getTargets();
 	}
-	
+
 	/**
 	 * Returns the <code>ProjectNode</code>s currently displayed in this view.
 	 * 
@@ -721,29 +721,49 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 
 	/**
-	 * Moves the given target up in the list of active targets
+	 * Moves the selected targets up in the list of active targets
 	 */
-	public void moveUpTarget(TargetNode target) {
-		int index = targetViewer.getTable().getSelectionIndex();
-		if (index < 0) {
+	public void moveUpTargets() {
+		int indices[] = targetViewer.getTable().getSelectionIndices();
+		if (indices.length == 0) {
 			return;
 		}
-		targetContentProvider.moveUpTarget(index);
+		int newIndices[] = new int[indices.length];
+		if (indices[0] == 0) {
+			// Only perform the move if the items have somewhere to move to
+			return;
+		}
+		for (int i = 0; i < newIndices.length; i++) {
+			int index = indices[i];
+			targetContentProvider.moveUpTarget(index);
+			newIndices[i] = index - 1;
+		}
 		targetViewer.refresh();
-		targetViewer.getTable().select(index - 1);
+		targetViewer.getTable().select(newIndices);
+		updateActions();
 	}
 
 	/**
-	 * Moves the given target down in the list of active targets
+	 * Moves the selected targets down in the list of active targets
 	 */
-	public void moveDownTarget(TargetNode target) {
-		int index = targetViewer.getTable().getSelectionIndex();
-		if (index < 0) {
+	public void moveDownTargets() {
+		int indices[] = targetViewer.getTable().getSelectionIndices();
+		if (indices.length == 0) {
 			return;
 		}
-		targetContentProvider.moveDownTarget(index);
+		int newIndices[] = new int[indices.length];
+		if (indices[indices.length - 1] == targetViewer.getTable().getItemCount() - 1) {
+			// Only perform the move if the items have somewhere to move to
+			return;
+		}
+		for (int i= indices.length - 1; i >= 0; i--) {
+			int index = indices[i];
+			targetContentProvider.moveDownTarget(index);
+			newIndices[i] = index + 1;
+		}
 		targetViewer.refresh();
-		targetViewer.getTable().select(index + 1);
+		targetViewer.getTable().select(newIndices);
+		updateActions();
 	}
 
 	/**
@@ -755,11 +775,11 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
+		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
 			if (visitor == null) {
-				visitor= new AntViewVisitor();
-			}			
+				visitor = new AntViewVisitor();
+			}
 			try {
 				delta.accept(visitor);
 			} catch (CoreException e) {

@@ -1,15 +1,15 @@
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
-import java.util.Iterator;
-
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
-import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
+/**
+ * Action which affects the selected targets in the active targets pane of the
+ * ant view. The selected targets are moved up in the order.
+ */
 public class TargetMoveUpAction extends Action implements IUpdate {
 	
 	private AntView view;
@@ -21,41 +21,23 @@ public class TargetMoveUpAction extends Action implements IUpdate {
 		this.view= view;
 	}
 	
+	/**
+	 * Tells the Ant view to move the selected targets up.
+	 */
 	public void run() {
-		TargetNode target= getSelectedTarget();
-		if (target == null) {
-			return;
-		}
-		view.moveUpTarget(target);
+		view.moveUpTargets();
 	}
 	
 	/**
 	 * Updates the enablement of this action based on the user's selection
 	 */
 	public void update() {
-		setEnabled(getSelectedTarget() != null);
-	}
-
-	/**
-	 * Returns the selected target in the target viewer or <code>null</code> if
-	 * no target is selected or more than one element is selected.
-	 *
-	 * @return TargetNode the selected target
-	 */
-	public TargetNode getSelectedTarget() {
-		IStructuredSelection selection= (IStructuredSelection) view.getTargetViewer().getSelection();
-		if (selection.isEmpty()) {
-			return null;
-		}
-		Iterator iter= selection.iterator();
-		while (iter.hasNext()) {
-			Object data= iter.next();
-			if (iter.hasNext() || !(data instanceof TargetNode)) {
-				// Only enable for single selection of a TargetNode
-				return null;
-			}
-		}
-		return (TargetNode)selection.getFirstElement();
+		int indices[]= view.getTargetViewer().getTable().getSelectionIndices();
+		if (indices.length == 0) {
+			setEnabled(false);
+		} else {
+			setEnabled(indices[0] != 0);
+		} 
 	}
 
 }
