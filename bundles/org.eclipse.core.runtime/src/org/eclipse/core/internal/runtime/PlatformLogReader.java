@@ -123,13 +123,13 @@ protected Object read(Node node) {
 	switch (node.getNodeType()) {
 		case Node.ELEMENT_NODE :
 			String name = node.getNodeName();
-			if (name.equals(PlatformLogListener.ELEMENT_LOG)) {
+			if (name.equals(PlatformLogWriter.ELEMENT_LOG)) {
 				return readLog(node);
-			} else if (name.equals(PlatformLogListener.ELEMENT_LOG_ENTRY)) {
+			} else if (name.equals(PlatformLogWriter.ELEMENT_LOG_ENTRY)) {
 				return readLogEntry(node);
-			} else if (name.equals(PlatformLogListener.ELEMENT_STATUS)) {
+			} else if (name.equals(PlatformLogWriter.ELEMENT_STATUS)) {
 				return readStatus(node);
-			} else if (name.equals(PlatformLogListener.ELEMENT_EXCEPTION)) {
+			} else if (name.equals(PlatformLogWriter.ELEMENT_EXCEPTION)) {
 				return readException(node);
 			}
 			break;
@@ -150,11 +150,11 @@ protected IStatus readLogEntry(Node node) {
 	return null;
 }
 protected IStatus readStatus(Node node) {
-	int severity = decodeSeverity(getString(node, PlatformLogListener.ATTRIBUTE_SEVERITY));
-	String pluginID = getString(node, PlatformLogListener.ATTRIBUTE_PLUGIN_ID);
-	String s = getString(node, PlatformLogListener.ATTRIBUTE_CODE);
+	int severity = decodeSeverity(getString(node, PlatformLogWriter.ATTRIBUTE_SEVERITY));
+	String pluginID = getString(node, PlatformLogWriter.ATTRIBUTE_PLUGIN_ID);
+	String s = getString(node, PlatformLogWriter.ATTRIBUTE_CODE);
 	int code = s == null ? -1 : Integer.parseInt(s);
-	String message = getString(node, PlatformLogListener.ATTRIBUTE_MESSAGE);
+	String message = getString(node, PlatformLogWriter.ATTRIBUTE_MESSAGE);
 	if (severity == -1 || pluginID == null || code == -1 || message == null)
 		throw new IllegalStateException();
 	//status children are either child statii or an exception
@@ -181,8 +181,8 @@ protected IStatus readStatus(Node node) {
 }
 
 protected Throwable readException(Node node) {
-	String message = getString(node, PlatformLogListener.ATTRIBUTE_MESSAGE);
-	String stack = getString(node, PlatformLogListener.ATTRIBUTE_TRACE);
+	String message = getString(node, PlatformLogWriter.ATTRIBUTE_MESSAGE);
+	String stack = getString(node, PlatformLogWriter.ATTRIBUTE_TRACE);
 	return new FakeException(message, formatStack(stack));
 }
 	
