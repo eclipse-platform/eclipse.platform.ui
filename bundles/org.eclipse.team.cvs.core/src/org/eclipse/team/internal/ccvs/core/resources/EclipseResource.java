@@ -60,7 +60,8 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			EclipseResource rootFolder;
 			String result;
 			rootFolder = (EclipseResource)root;
-			result = Util.getRelativePath(rootFolder.getPath(), getPath()); 
+			result = Util.getRelativePath(rootFolder.getPath(), getPath());
+			if (result.length() == 0) return CURRENT_LOCAL_FOLDER;
 			return result;	
 		} catch (ClassCastException e) {
 			throw new CVSException(Policy.bind("EclipseResource.invalidResourceClass"), e); //$NON-NLS-1$
