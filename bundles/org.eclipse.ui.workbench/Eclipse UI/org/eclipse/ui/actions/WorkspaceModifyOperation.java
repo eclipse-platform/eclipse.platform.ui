@@ -5,7 +5,6 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;

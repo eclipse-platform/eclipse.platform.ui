@@ -7,25 +7,17 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IFileEditorMapping;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // disambiguate from SWT
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 /**
  * Abstract superclass for a typical export wizard's main page.
  * <p>

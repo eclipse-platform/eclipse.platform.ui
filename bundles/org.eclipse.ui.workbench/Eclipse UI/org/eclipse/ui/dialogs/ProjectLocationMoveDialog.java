@@ -7,8 +7,6 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;

@@ -4,7 +4,6 @@ package org.eclipse.ui.dialogs;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
 
 /**
