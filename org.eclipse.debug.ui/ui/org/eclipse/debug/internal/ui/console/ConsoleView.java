@@ -299,9 +299,11 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#display(org.eclipse.debug.internal.ui.console.IConsole)
 	 */
 	public void display(IConsole console) {
-		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
-		if (part != null) {
-			partActivated(part);
+		if (!isPinned()) {
+			ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
+			if (part != null) {
+				partActivated(part);
+			}
 		}
 	}
 

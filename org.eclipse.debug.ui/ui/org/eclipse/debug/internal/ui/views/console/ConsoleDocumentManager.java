@@ -26,7 +26,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -40,8 +39,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -265,33 +262,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		}
 	}
 	
-	protected IProcess getDebugViewProcess() {
-		IProcess debugViewProcess= null;
-		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {	
-			ISelection selection= window.getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-			if (selection instanceof IStructuredSelection) {
-				Object element= ((IStructuredSelection)selection).getFirstElement();
-				if (element instanceof IProcess) {
-					debugViewProcess= (IProcess) element;
-				} else if (element instanceof ILaunch) {
-					IDebugTarget target= ((ILaunch) element).getDebugTarget();
-					if (target != null) {
-						debugViewProcess= target.getProcess();
-					} else {
-						IProcess[] processes= ((ILaunch) element).getProcesses();
-						if ((processes != null) && (processes.length > 0)) {
-							debugViewProcess= processes[0];
-						}
-					}
-				} else if (element instanceof IDebugElement) {
-					debugViewProcess= ((IDebugElement) element).getDebugTarget().getProcess();
-				}
-			}
-		}
-		return debugViewProcess;
-	}
-	
 	/**
 	 * Opens the console view. If the view is already open, it is brought to the front.
 	 */
@@ -303,21 +273,24 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				if (window != null) {
 					IWorkbenchPage page= window.getActivePage();
 					if (page != null) {
-						try {
-							IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-							if(consoleView == null) {
-								IWorkbenchPart activePart= page.getActivePart();
+						IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+						if (consoleView == null) {
+							IWorkbenchPart activePart= page.getActivePart();
+							try {
 								consoleView = page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
-								//restore focus stolen by the creation of the console
-								page.activate(activePart);
-							} else {
+							} catch (PartInitException pie) {
+								DebugUIPlugin.log(pie);
+							}
+							//restore focus stolen by the creation of the console
+							page.activate(activePart);
+						} else {
+							boolean bringToTop = shouldBringToTop(process, consoleView);
+							if (bringToTop) {
 								page.bringToTop(consoleView);
 							}
-							if (consoleView instanceof IConsoleView) {
-								((IConsoleView)consoleView).display(console);
-							}
-						} catch (PartInitException pie) {
-							DebugUIPlugin.log(pie);
+						}
+						if (consoleView instanceof IConsoleView) {
+							((IConsoleView)consoleView).display(console);
 						}
 					}
 				}
@@ -325,8 +298,21 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		});
 	}
 	
-
-	
+	private boolean shouldBringToTop(IProcess process, IViewPart consoleView) {
+		boolean bringToTop= true;
+		if (consoleView instanceof IConsoleView) {
+			IConsoleView cView= (IConsoleView)consoleView;
+			if (cView.isPinned()) {
+				IConsole pinnedConsole= cView.getConsole();
+				if (pinnedConsole instanceof ProcessConsole) {
+					ProcessConsole pConsole= (ProcessConsole) pinnedConsole;
+					bringToTop= process.equals(pConsole.getProcess());
+				}
+			}
+		}
+		return bringToTop;
+	}
+				
 	/**
 	 * Returns a new console document color provider extension for the given
 	 * process type, or <code>null</code> if none.
