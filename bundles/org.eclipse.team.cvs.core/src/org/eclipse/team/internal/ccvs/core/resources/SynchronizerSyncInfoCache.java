@@ -265,11 +265,30 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
 				}
 			} else {
-				getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
+				// ensure that the sync info is not already set to the same thing.
+				// We do this to avoid causing a resource delta when the sync info is 
+				// initially loaded (i.e. the synchronizer has it and so does the Entries file
+				byte[] oldBytes = getCachedSyncBytes(resource);
+				if (oldBytes == null || !equals(syncBytes, oldBytes))
+					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
+	}
+	
+	/**
+	 * Method equals.
+	 * @param syncBytes
+	 * @param oldBytes
+	 * @return boolean
+	 */
+	private boolean equals(byte[] syncBytes, byte[] oldBytes) {
+		if (syncBytes.length != oldBytes.length) return false;
+		for (int i = 0; i < oldBytes.length; i++) {
+			if (oldBytes[i] != syncBytes[i]) return false;
+		}
+		return true;
 	}
 
 	/**
