@@ -99,7 +99,7 @@ public class BrowserActionBuilder {
 					window.getShell(), 
 					"About RCP Browser Example", 
 					"Eclipse Rich Client Platform Browser Example.\n\n" +
-					"(c) 2003 IBM Corporation and others.");
+					"(c) 2003,2004 IBM Corporation and others.");
 			}
 		};
 	}
