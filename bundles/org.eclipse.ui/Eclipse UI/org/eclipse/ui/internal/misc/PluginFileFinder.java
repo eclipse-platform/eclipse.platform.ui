@@ -36,6 +36,7 @@ public class PluginFileFinder {
 		InputStream in = null;
 		try {
 			res = new URL(desc.getInstallURL(), name);
+			res = Platform.resolve(res);
 			//Make sure it exists.
 			in = res.openConnection().getInputStream();
 			in.close();
