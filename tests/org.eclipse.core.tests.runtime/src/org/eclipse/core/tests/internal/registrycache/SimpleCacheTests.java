@@ -1412,7 +1412,7 @@ public void requiresTest() {
 	factory = null;
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite();
+	TestSuite suite = new TestSuite("SimpleCacheTests");
 	suite.addTest(new SimpleCacheTests("pluginTest"));
 	suite.addTest(new SimpleCacheTests("requiresTest"));
 	suite.addTest(new SimpleCacheTests("libraryTest"));

@@ -16,10 +16,11 @@ import org.eclipse.core.runtime.model.ConfigurationElementModel;
 import org.eclipse.core.runtime.model.ExtensionModel;
 
 public class Extension extends ExtensionModel implements IExtension {
-  public Extension()
-  {
-	super();
-  }  
+	// this extension's elements data offset in the registry cache
+	private int subElementsCacheOffset;
+	// is this extension already fully loaded?
+	private boolean fullyLoaded = true;
+
 public IConfigurationElement[] getConfigurationElements() {
 	ConfigurationElementModel[] list = getSubElements();
 	if (list == null)
@@ -49,5 +50,32 @@ public String getUniqueIdentifier() {
 }
 public String toString() {
 	return getParent().getPluginId() + "." + getSimpleIdentifier(); //$NON-NLS-1$
+}
+int getSubElementsCacheOffset() {
+	return subElementsCacheOffset;
+}
+void setSubElementsCacheOffset(int subElementsCacheOffset) {
+	this.subElementsCacheOffset = subElementsCacheOffset;
+}
+public boolean isFullyLoaded() {
+	return fullyLoaded;
+}
+public void setFullyLoaded(boolean fullyLoaded) {
+	this.fullyLoaded = fullyLoaded;
+}
+public ConfigurationElementModel[] getSubElements() {
+	// maybe it was lazily loaded
+	if (!fullyLoaded)
+		((PluginRegistry)this.getParent().getRegistry()).loadConfigurationElements(this);
+	return super.getSubElements();
+}
+/**
+ * Overridden to relax read-only contraints and allow lazy loading of read-only
+ * extensions.
+ * @see org.eclipse.core.runtime.model.PluginModelObject#assertIsWriteable
+ */
+protected void assertIsWriteable() {
+	if (fullyLoaded)
+		super.assertIsWriteable();
 }
 }

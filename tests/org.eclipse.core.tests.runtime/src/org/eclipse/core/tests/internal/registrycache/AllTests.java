@@ -22,6 +22,7 @@ public AllTests(String name) {
 public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(SimpleCacheTests.suite());
+	suite.addTest(LazyCacheTests.suite());
 	return suite;
 }
 }

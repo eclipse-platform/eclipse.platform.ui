@@ -33,9 +33,9 @@ public CacheHelpers(String name) {
 	super(name);
 }
 public void compareConfigurationElements(ConfigurationElementModel originalConfigurationElement, ConfigurationElementModel cachedConfigurationElement) {
-	assertEquals("8.0 Confuguration element name", originalConfigurationElement.getName(), cachedConfigurationElement.getName());
-	assertTrue("8.1 Confuguration element read only flag", originalConfigurationElement.isReadOnly() == cachedConfigurationElement.isReadOnly());
-	assertEquals("8.2 Confuguration element value", originalConfigurationElement.getValue(), cachedConfigurationElement.getValue());
+	assertEquals("8.0 Configuration element name", originalConfigurationElement.getName(), cachedConfigurationElement.getName());
+	assertTrue("8.1 Configuration element read only flag", originalConfigurationElement.isReadOnly() == cachedConfigurationElement.isReadOnly());
+	assertEquals("8.2 Configuration element value", originalConfigurationElement.getValue(), cachedConfigurationElement.getValue());
 
 	// Parent is either another configuration element or an extension.  How
 	// should I ensure the parents are identical?
@@ -61,9 +61,9 @@ public void compareConfigurationElements(ConfigurationElementModel originalConfi
 	}
 }
 public void compareConfigurationProperties(ConfigurationPropertyModel originalConfigurationProperty, ConfigurationPropertyModel cachedConfigurationProperty) {
-	assertEquals("9.0 Confuguration property name", originalConfigurationProperty.getName(), cachedConfigurationProperty.getName());
-	assertTrue("9.1 Confuguration property read only flag", originalConfigurationProperty.isReadOnly() == cachedConfigurationProperty.isReadOnly());
-	assertEquals("9.2 Confuguration property value", originalConfigurationProperty.getValue(), cachedConfigurationProperty.getValue());
+	assertEquals("9.0 Configuration property name", originalConfigurationProperty.getName(), cachedConfigurationProperty.getName());
+	assertTrue("9.1 Configuration property read only flag", originalConfigurationProperty.isReadOnly() == cachedConfigurationProperty.isReadOnly());
+	assertEquals("9.2 Configuration property value", originalConfigurationProperty.getValue(), cachedConfigurationProperty.getValue());
 }
 public void compareExtensionPoints(ExtensionPointModel originalExtensionPoint, ExtensionPointModel cachedExtensionPoint) {
 	assertEquals("6.0 Extension Point name", originalExtensionPoint.getName(), cachedExtensionPoint.getName());
@@ -328,7 +328,7 @@ public PluginRegistryModel doCacheRead(PluginRegistryModel inRegistry, DataInput
 		}
 	}
 	RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input, pluginPath, false);
+	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input, pluginPath, true);
 	return newRegistry;
 }
 public void doCacheWrite(PluginRegistryModel inRegistry, DataOutputStream output, Factory factory) {

@@ -27,9 +27,13 @@ public class PluginRegistry extends PluginRegistryModel implements IPluginRegist
 	// lifecycle events
 	private static final int STARTUP = 0;
 	private static final int SHUTDOWN = 1;
+	
+	// the registry keeps a reference to the cache reader for lazily loading extensions
+	private RegistryCacheReader registryCacheReader;
+	final private File registryCacheFile;
 
 public PluginRegistry() {
-	super();
+	this.registryCacheFile = InternalPlatform.getMetaArea().getRegistryPath().toFile();
 }  
 /**
  * Iterate over the plug-ins in this registry.  Plug-ins are visited in dependent order.  That is, 
@@ -295,4 +299,38 @@ private void shutdownPlugins() {
 	accept(visitor, true);
 }
 public void startup(IProgressMonitor progress) {}
+/**
+ * Loads an extension model's sub-elements.
+ */
+final void loadConfigurationElements(Extension extension) {
+	DataInputStream input = null;	
+	try {
+		input = new DataInputStream(new BufferedInputStream(new FileInputStream(registryCacheFile)));
+		input.skipBytes(extension.getSubElementsCacheOffset());					
+		ConfigurationElementModel[] subElements = this.registryCacheReader.readSubElements(input, extension, InternalPlatform.DEBUG);
+		extension.setSubElements(subElements);
+		extension.setFullyLoaded(true);
+		// to force the just loaded sub-elements to be read-only as their parent
+		if (extension.isReadOnly())
+			extension.markReadOnly();
+	} catch (IOException e) {
+		// an I/O failure would keep the extension elements unloaded
+		//TODO: log this exception?
+		if (InternalPlatform.DEBUG)
+			e.printStackTrace();
+	} catch (RegistryCacheReader.InvalidRegistryCacheException e) {
+		// it has already been checked by RegistryCacheLazyReader - shouldn't happen
+		if (InternalPlatform.DEBUG)
+			e.printStackTrace();		
+	} finally {
+		try {
+			if (input != null)
+				input.close();
+		} catch (IOException ioe) {
+		}
+	}
+}
+void setCacheReader(RegistryCacheReader registryCacheReader) {
+	this.registryCacheReader = registryCacheReader;
+}
 }

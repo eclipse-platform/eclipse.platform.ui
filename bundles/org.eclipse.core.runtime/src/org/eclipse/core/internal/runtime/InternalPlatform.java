@@ -52,6 +52,7 @@ public final class InternalPlatform {
 	private static String password = ""; //$NON-NLS-1$
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = true;
+	private static boolean noLazyRegistryCacheLoading = false;	
 	private static String pluginCustomizationFile = null;
 
 	private static File lockFile = null;
@@ -87,6 +88,7 @@ public final class InternalPlatform {
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$
+	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$	
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
 
@@ -665,8 +667,14 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 			input = new DataInputStream(new BufferedInputStream(new FileInputStream(path.toFile())));
 			try {
 				long start = System.currentTimeMillis();
-				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-				registry = (PluginRegistry)cacheReader.readPluginRegistry(input, augmentedPluginPath, DEBUG && DEBUG_PLUGINS);
+				if (DEBUG && !noLazyRegistryCacheLoading)
+					System.out.println("Lazily loading plug-in registry cache"); //$NON-NLS-1$
+				// read the registry cache
+				RegistryCacheReader cacheReader = new RegistryCacheReader(factory, !noLazyRegistryCacheLoading);
+				registry = (PluginRegistry) cacheReader.readPluginRegistry(input, augmentedPluginPath, DEBUG && DEBUG_PLUGINS);
+				// turn off lazy loading from now on if it was on				
+				if (!noLazyRegistryCacheLoading)
+					cacheReader.setLazilyLoadExtensions(false);
 				if (DEBUG)
 					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			} finally {
@@ -771,6 +779,13 @@ private static String[] processCommandLine(String[] args) {
 			found = true;
 		}
 
+		// check to see if we should NOT be lazily loading plug-in definitions from the registry cache file.
+		// This will be processed below.
+		if (args[i].equalsIgnoreCase(NO_LAZY_REGISTRY_CACHE_LOADING)) {
+			noLazyRegistryCacheLoading = true;
+			found = true;
+		}
+		
 		// look for the flag to turn off using package prefixes
 		if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
 			PluginClassLoader.usePackagePrefixes = false;

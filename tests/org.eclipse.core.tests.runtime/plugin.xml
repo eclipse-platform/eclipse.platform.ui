@@ -44,6 +44,9 @@
    <test id="internal.core.registrycache.SimpleCacheTests">
       <run class="org.eclipse.core.tests.internal.registrycache.SimpleCacheTests"/>
     </test>
+   <test id="internal.core.registrycache.LazyCacheTests">
+      <run class="org.eclipse.core.tests.internal.registrycache.LazyCacheTests"/>
+    </test>    
    <test id="internal.core.registrycache.AllTests">
       <run class="org.eclipse.core.tests.internal.registrycache.AllTests"/>
     </test>

@@ -39,7 +39,7 @@ public abstract class PluginModelObject {
  * Checks that this model object is writeable.  A runtime exception
  * is thrown if it is not.
  */
-protected final void assertIsWriteable() {
+protected void assertIsWriteable() {
 	Assert.isTrue(!isReadOnly(), "Model is read-only"); //$NON-NLS-1$
 }
 /**

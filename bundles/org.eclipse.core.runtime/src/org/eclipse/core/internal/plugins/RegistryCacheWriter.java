@@ -11,18 +11,16 @@
 
 package org.eclipse.core.internal.plugins;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.zip.CRC32;
+import java.util.zip.CheckedOutputStream;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.*;
 
 public class RegistryCacheWriter {
 	// See RegistryCacheReader for constants commonly used here too.
@@ -70,20 +68,7 @@ private void writeLabel(byte labelValue, DataOutputStream out) {
 }
 public void writeConfigurationElement(ConfigurationElementModel configElement, DataOutputStream out) {
 	try {
-		// Check to see if this configuration element already exists in the
-		// objectTable.  If it is there, it has already been written to the 
-		// cache so just write out the index.
-		int configElementIndex = getFromObjectTable(configElement);
-		if (configElementIndex != -1) {
-			// this extension is already there
-			writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_INDEX_LABEL, out);
-			out.writeInt(configElementIndex);
-			return;
-		}
-
 		String outString;
-		// add this object to the object table first
-		addToObjectTable(configElement);
 
 		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_LABEL, out);
 
@@ -120,20 +105,6 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 				writeConfigurationElement(subElements[i], out);
 			}
 		}
-
-		// Write out the parent information.  We can assume that the parent has
-		// already been written out.
-		// Add the index to the registry object for this plugin
-		Object parent = configElement.getParent();
-		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_PARENT_LABEL, out);
-		// What happens if objectTable.get(parent) returns null?
-		// Need to add some error handling here.  Perhaps the 
-		// write* methods should return a boolean value that is
-		// false if something fails to write.  Then we could
-		// abort writing the registry cache, which will cause
-		// the reading of the cache to fail and therefore, the
-		// plugin registry will be reparse.
-		out.writeInt(getFromObjectTable(parent));
 
 		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_END_LABEL, out);
 	} catch (IOException ioe) {
@@ -207,14 +178,7 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 			out.writeUTF(outString);
 		}
 
-		ConfigurationElementModel[] subElements = extension.getSubElements();
-		if (subElements != null) {
-			writeLabel(RegistryCacheReader.SUBELEMENTS_LENGTH_LABEL, out);
-			out.writeInt(subElements.length);
-			for (int i = 0; i < subElements.length; i++) {
-				writeConfigurationElement(subElements[i], out);
-			}
-		}
+		writeSubElements(out, extension);
 
 		// Now worry about the parent plugin descriptor or plugin fragment
 		PluginModel parent = extension.getParent();
@@ -241,6 +205,28 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 	} catch (IOException ioe) {
 		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_EXTENSION_LABEL)), ioe)); //$NON-NLS-1$
 	}
+}
+public void writeSubElements(DataOutputStream out, ExtensionModel extension) throws IOException {
+	ConfigurationElementModel[] subElements = extension.getSubElements();
+	if (subElements == null) 
+		return;		
+	writeLabel(RegistryCacheReader.SUBELEMENTS_LABEL, out);
+	// write the offset for sub-elements data
+	out.writeInt(out.size());
+	// write the sub-elements data to a memory stream...
+	// so we can prefix that data with its size (to easily skip it) 
+	ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
+	CheckedOutputStream checkedOut = new CheckedOutputStream(arrayOut, new CRC32());
+	DataOutputStream tempOut = new DataOutputStream(checkedOut);		 
+	writeLabel(RegistryCacheReader.SUBELEMENTS_LENGTH_LABEL, tempOut);
+	tempOut.writeInt(subElements.length);
+	for (int i = 0; i < subElements.length; i++) 
+		writeConfigurationElement(subElements[i], tempOut);
+	tempOut.close();
+	// write the block size, the data and a checksum
+	out.writeInt(arrayOut.size());
+	out.write(arrayOut.toByteArray());
+	out.writeLong(checkedOut.getChecksum().getValue());
 }
 public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream out) {
 	try {

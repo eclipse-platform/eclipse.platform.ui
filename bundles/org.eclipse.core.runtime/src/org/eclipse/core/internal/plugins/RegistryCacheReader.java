@@ -1,4 +1,4 @@
-/**********************************************************************
+ /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
@@ -14,6 +14,10 @@ package org.eclipse.core.internal.plugins;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.CRC32;
+import java.util.zip.CheckedInputStream;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
@@ -24,21 +28,22 @@ public class RegistryCacheReader {
 
 	Factory cacheFactory;
 	// objectTable will be an array list of objects.  The objects will be things 
-	// like a plugin descriptor, extension, extension point, etc.  The integer 
+	// like a plugin descriptor, extension point, etc.  The integer 
 	// index value will be used in the cache to allow cross-references in the 
 	// cached registry.
-	ArrayList objectTable = null;
+	protected List objectTable = null;
 
-	public MultiStatus cacheReadProblems = null;
+	private boolean lazilyLoadExtensions;
 
-	public static final byte REGISTRY_CACHE_VERSION = 10;
+	private MultiStatus cacheReadProblems = null;
+
+	public static final byte REGISTRY_CACHE_VERSION = 11;
 
 	public static final byte NONLABEL = 0;
 
 	public static final byte CONFIGURATION_ELEMENT_END_LABEL = 1;
-	public static final byte CONFIGURATION_ELEMENT_INDEX_LABEL = 45;
 	public static final byte CONFIGURATION_ELEMENT_LABEL = 2;
-	public static final byte CONFIGURATION_ELEMENT_PARENT_LABEL = 3;
+
 	public static final byte CONFIGURATION_PROPERTY_END_LABEL = 4;
 	public static final byte CONFIGURATION_PROPERTY_LABEL = 5;
 
@@ -102,9 +107,10 @@ public class RegistryCacheReader {
 	public static final byte TYPE_LABEL = 54;
 	public static final byte VALUE_LABEL = 43;
 	public static final byte VERSION_LABEL = 44;
+	public static final byte SUBELEMENTS_LABEL = 62;
 	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 61;
+	public static final byte LARGEST_LABEL = 62;
 	
 	// String constants for those byte values in the cache that
 	// do not translate directly to strings found in manifest xml
@@ -139,15 +145,16 @@ public class RegistryCacheReader {
 	private static final String REQUIRES_INDEX = "<index of prerequisite>"; //$NON-NLS-1$
 	private static final String UNKNOWN = "<unknown label>"; //$NON-NLS-1$
 
-public RegistryCacheReader(Factory factory) {
+public RegistryCacheReader(Factory factory, boolean lazilyLoadExtensions) {
 	super();
 	cacheFactory = factory;
-	objectTable = null;
+	this.objectTable = new ArrayList();
+	setLazilyLoadExtensions(lazilyLoadExtensions);
+}
+public RegistryCacheReader(Factory factory) {
+	this(factory, false);
 }
 private int addToObjectTable(Object object) {
-	if (objectTable == null) {
-		objectTable = new ArrayList();
-	}
 	objectTable.add(object);
 	// return the index of the object just added (i.e. size - 1)
 	return (objectTable.size() - 1);
@@ -271,9 +278,6 @@ public static String decipherLabel(byte labelValue) {
 		case PLUGIN_PARENT_LABEL:
 			retValue += PARENT_REGISTRY;
 			break;
-		case CONFIGURATION_ELEMENT_PARENT_LABEL:
-			retValue += CONFIGURATION_ELEMENT_PARENT;
-			break;
 		case PLUGIN_INDEX_LABEL:
 			retValue += PLUGIN_INDEX;
 			break;
@@ -291,9 +295,6 @@ public static String decipherLabel(byte labelValue) {
 			break;
 		case EXTENSION_PARENT_LABEL:
 			retValue += EXTENSION_PARENT;
-			break;
-		case CONFIGURATION_ELEMENT_INDEX_LABEL:
-			retValue += ELEMENT_INDEX;
 			break;
 		case REGISTRY_INDEX_LABEL:
 			retValue += REGISTRY_INDEX;
@@ -342,7 +343,7 @@ public static String decipherLabel(byte labelValue) {
 	retValue += "\""; //$NON-NLS-1$
 	return retValue;
 }
-public boolean interpretHeaderInformation(DataInputStream in) {
+private boolean interpretHeaderInformation(DataInputStream in) {
 	try {
 		if (in.readInt() != REGISTRY_CACHE_VERSION)
 			return false;
@@ -368,12 +369,10 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 		return false;
 	}
 }
-public ConfigurationElementModel readConfigurationElement(DataInputStream in, boolean debugFlag) {
+
+private ConfigurationElementModel readConfigurationElement(DataInputStream in, PluginModelObject parent, boolean debugFlag) {
 	ConfigurationElementModel configurationElement = cacheFactory.createConfigurationElement();
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// configuration element.
-	addToObjectTable(configurationElement);
+	configurationElement.setParent(parent);
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -392,10 +391,10 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 					configurationElement.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					configurationElement.setName(in.readUTF());
+					configurationElement.setName(in.readUTF().intern());
 					break;
 				case VALUE_LABEL :
-					configurationElement.setValue(in.readUTF());
+					configurationElement.setValue(in.readUTF().intern());
 					break;
 				case PROPERTIES_LENGTH_LABEL :
 					int propertiesLength = in.readInt();
@@ -427,7 +426,7 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 						byte subInByte = in.readByte();
 						switch (subInByte) {
 							case CONFIGURATION_ELEMENT_LABEL :
-								subElements[i] = readConfigurationElement(in, debugFlag);
+								subElements[i] = readConfigurationElement(in, configurationElement, debugFlag);
 								if (subElements[i] == null) {
 									if (debugFlag) {
 										String name = configurationElement.getName();
@@ -438,9 +437,6 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 									configurationElement = null;
 									done = true;
 								}
-								break;
-							case CONFIGURATION_ELEMENT_INDEX_LABEL :
-								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
 								break;
 							default:
 								// We found something we weren't expecting
@@ -458,10 +454,6 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 					if (configurationElement != null)
 						configurationElement.setSubElements(subElements);
 					subElements = null;
-					break;
-				case CONFIGURATION_ELEMENT_PARENT_LABEL :
-					// We know the parent already exists, just grab it.
-					configurationElement.setParent(objectTable.get(in.readInt()));
 					break;
 				case CONFIGURATION_ELEMENT_END_LABEL :
 					done = true;
@@ -485,11 +477,8 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 	}
 	return configurationElement;
 }
-public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, boolean debugFlag) {
+private ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, boolean debugFlag) {
 	ConfigurationPropertyModel configurationProperty = cacheFactory.createConfigurationProperty();
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// configuration property.
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -510,10 +499,10 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 					configurationProperty.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					configurationProperty.setName(in.readUTF());
+					configurationProperty.setName(in.readUTF().intern());
 					break;
 				case VALUE_LABEL :
-					configurationProperty.setValue(in.readUTF());
+					configurationProperty.setValue(in.readUTF().intern());
 					break;
 				case CONFIGURATION_PROPERTY_END_LABEL :
 					done = true;
@@ -537,12 +526,9 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 	}
 	return configurationProperty;
 }
-public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
+private ExtensionModel readExtension(DataInputStream in, boolean debugFlag) throws InvalidRegistryCacheException {
 	ExtensionModel extension = cacheFactory.createExtension();
 	addToObjectTable(extension);
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// extension.
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -561,54 +547,17 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 					extension.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					extension.setName(in.readUTF());
+					extension.setName(in.readUTF().intern());
 					break;
 				case ID_LABEL :
-					extension.setId(in.readUTF());
+					extension.setId(in.readUTF().intern());
 					break;
 				case EXTENSION_EXT_POINT_NAME_LABEL :
-					extension.setExtensionPoint(in.readUTF());
+					extension.setExtensionPoint(in.readUTF().intern());
 					break;
-				case SUBELEMENTS_LENGTH_LABEL :
-					int subElementsLength = in.readInt();
-					ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
-					for (int i = 0; i < subElementsLength && !done; i++) {
-						// Do we have a configuration element or an index into
-						// objectTable?
-						byte subInByte = in.readByte();
-						switch (subInByte) {
-							case CONFIGURATION_ELEMENT_LABEL :
-								subElements[i] = readConfigurationElement(in, debugFlag);
-								if (subElements[i] == null) {
-									if (debugFlag) {
-										String name = extension.getName();
-										if (name == null)
-											name = new String("<unknown name>"); //$NON-NLS-1$
-										debug ("Unable to read subelement #" + i + " for extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									extension = null;
-									done = true;
-								}
-								break;
-							case CONFIGURATION_ELEMENT_INDEX_LABEL :
-								subElements[i] = (ConfigurationElementModel) objectTable.get(in.readInt());
-								break;
-							default:
-								// We got something unexpected
-								if (debugFlag) {
-									String name = extension.getName();
-									if (name == null)
-										name = new String("<unknown name>"); //$NON-NLS-1$
-									debug ("Unexpected byte code " + decipherLabel(subInByte) + " reading subelements for extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								extension = null;
-								done = true;
-								break;
-						}
-					}
-					if (extension != null)
-						extension.setSubElements(subElements);
-					subElements = null;
+				case SUBELEMENTS_LABEL :
+					ConfigurationElementModel[] subElements = readSubElements(in, extension, debugFlag);
+					extension.setSubElements(subElements);
 					break;
 				case EXTENSION_PARENT_LABEL :
 					// Either there is a plugin or there is an index into the
@@ -657,7 +606,7 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 								String name = extension.getName();
 								if (name == null)
 									name = new String("<unknown name>"); //$NON-NLS-1$
-								debug ("Unexpected byte code " + decipherLabel(subByte) + "reading parent of extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
+								debug ("Unexpected byte code " + decipherLabel(subByte) + " reading parent of extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							done = true;
 							extension = null;
@@ -686,13 +635,11 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 	}
 	return extension;
 }
-public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugFlag) {
+
+private ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugFlag) throws InvalidRegistryCacheException {
 	ExtensionPointModel extPoint = cacheFactory.createExtensionPoint();
 	addToObjectTable(extPoint);
 
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// extension point.
 	int extensionLength = 0;
 	try {
 		byte inByte = 0;
@@ -712,13 +659,13 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 					extPoint.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					extPoint.setName(in.readUTF());
+					extPoint.setName(in.readUTF().intern());
 					break;
 				case ID_LABEL :
-					extPoint.setId(in.readUTF());
+					extPoint.setId(in.readUTF().intern());
 					break;
 				case EXTENSION_POINT_SCHEMA_LABEL :
-					extPoint.setSchema(in.readUTF());
+					extPoint.setSchema(in.readUTF().intern());
 					break;
 				case EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL :
 					extensionLength = in.readInt();
@@ -788,12 +735,9 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 	}
 	return extPoint;
 }
-public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
+private LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	LibraryModel library = cacheFactory.createLibrary();
 	addToObjectTable(library);
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// library.
 	int exportsLength = 0;
 	int prefixesLength = 0;
 	try {
@@ -814,18 +758,18 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 					library.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					library.setName(in.readUTF());
+					library.setName(in.readUTF().intern());
 					break;
 				case LIBRARY_EXPORTS_LENGTH_LABEL :
 					exportsLength = in.readInt();
 					break;
 				case TYPE_LABEL :
-					library.setType(in.readUTF());
+					library.setType(in.readUTF().intern());
 					break;
 				case LIBRARY_EXPORTS_LABEL :
 					String[] exports = new String[exportsLength];
 					for (int i = 0; i < exportsLength && !done; i++) {
-						exports[i] = in.readUTF();
+						exports[i] = in.readUTF().intern();
 						if (exports[i] == null) {
 							if (debugFlag) {
 								String name = library.getName();
@@ -850,7 +794,7 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 				case LIBRARY_PACKAGES_PREFIXES_LABEL:
 					String[] prefixes = new String[prefixesLength];
 					for (int i = 0; i < prefixesLength && !done; i++) {
-						prefixes[i] = in.readUTF();
+						prefixes[i] = in.readUTF().intern();
 						if (prefixes[i] == null) {
 							if (debugFlag) {
 								String name = library.getName();
@@ -885,12 +829,9 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	}
 	return library;
 }
-public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean debugFlag) {
+private PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean debugFlag) throws InvalidRegistryCacheException {
 	PluginDescriptorModel plugin = cacheFactory.createPluginDescriptor();
 	addToObjectTable(plugin);
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// plugin.
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -909,22 +850,22 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 					plugin.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					plugin.setName(in.readUTF());
+					plugin.setName(in.readUTF().intern());
 					break;
 				case ID_LABEL :
-					plugin.setId(in.readUTF());
+					plugin.setId(in.readUTF().intern());
 					break;
 				case PLUGIN_PROVIDER_NAME_LABEL :
-					plugin.setProviderName(in.readUTF());
+					plugin.setProviderName(in.readUTF().intern());
 					break;
 				case VERSION_LABEL :
-					plugin.setVersion(in.readUTF());
+					plugin.setVersion(in.readUTF().intern());
 					break;
 				case PLUGIN_CLASS_LABEL :
-					plugin.setPluginClass(in.readUTF());
+					plugin.setPluginClass(in.readUTF().intern());
 					break;
 				case PLUGIN_LOCATION_LABEL :
-					plugin.setLocation(in.readUTF());
+					plugin.setLocation(in.readUTF().intern());
 					break;
 				case PLUGIN_ENABLED_LABEL :
 					plugin.setEnabled(in.readBoolean());
@@ -1178,12 +1119,9 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 	}
 	return plugin;
 }
-public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugFlag) {
+private PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugFlag) throws InvalidRegistryCacheException {
 	PluginFragmentModel fragment = cacheFactory.createPluginFragment();
 	addToObjectTable(fragment);
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// plugin.
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -1202,25 +1140,25 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 					fragment.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					fragment.setName(in.readUTF());
+					fragment.setName(in.readUTF().intern());
 					break;
 				case ID_LABEL :
-					fragment.setId(in.readUTF());
+					fragment.setId(in.readUTF().intern());
 					break;
 				case PLUGIN_PROVIDER_NAME_LABEL :
-					fragment.setProviderName(in.readUTF());
+					fragment.setProviderName(in.readUTF().intern());
 					break;
 				case VERSION_LABEL :
-					fragment.setVersion(in.readUTF());
+					fragment.setVersion(in.readUTF().intern());
 					break;
 				case PLUGIN_LOCATION_LABEL :
-					fragment.setLocation(in.readUTF());
+					fragment.setLocation(in.readUTF().intern());
 					break;
 				case FRAGMENT_PLUGIN_LABEL :
-					fragment.setPlugin(in.readUTF());
+					fragment.setPlugin(in.readUTF().intern());
 					break;
 				case FRAGMENT_PLUGIN_VERSION_LABEL :
-					fragment.setPluginVersion(in.readUTF());
+					fragment.setPluginVersion(in.readUTF().intern());
 					break;
 				case FRAGMENT_PLUGIN_MATCH_LABEL :
 					fragment.setMatch(in.readByte());
@@ -1343,7 +1281,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						extList = newExtValues = null;
 					}
 					break;
-				case EXTENSION_INDEX_LABEL :
+				case EXTENSION_INDEX_LABEL :				
 					extension = (ExtensionModel) objectTable.get(in.readInt());
 					ExtensionModel[] extList = fragment.getDeclaredExtensions();
 					ExtensionModel[] newExtValues = null;
@@ -1429,12 +1367,9 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 	}
 	return fragment;
 }
-public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolean debugFlag) {
+private PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolean debugFlag) {
 	PluginPrerequisiteModel requires = cacheFactory.createPluginPrerequisite();
-	addToObjectTable(requires);
-	// Use this flag to determine if the read-only flag should be set.  You
-	// can't set it now or you won't be able to add anything more to this
-	// prerequisite.
+	addToObjectTable(requires);	
 	try {
 		byte inByte = 0;
 		boolean done = false;
@@ -1453,10 +1388,10 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 					requires.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
-					requires.setName(in.readUTF());
+					requires.setName(in.readUTF().intern());
 					break;
 				case VERSION_LABEL :
-					requires.setVersion(in.readUTF());
+					requires.setVersion(in.readUTF().intern());
 					break;
 				case REQUIRES_MATCH_LABEL :
 					requires.setMatchByte(in.readByte());
@@ -1468,10 +1403,10 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 					requires.setOptional(in.readBoolean());
 					break;
 				case REQUIRES_RESOLVED_VERSION_LABEL :
-					requires.setResolvedVersion(in.readUTF());
+					requires.setResolvedVersion(in.readUTF().intern());
 					break;
 				case REQUIRES_PLUGIN_NAME_LABEL :
-					requires.setPlugin(in.readUTF());
+					requires.setPlugin(in.readUTF().intern());
 					break;
 				case REQUIRES_END_LABEL :
 					done = true;
@@ -1496,7 +1431,7 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 	}
 	return requires;
 }
-public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPath, boolean debugFlag) {
+public final PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPath, boolean debugFlag) {
 	if (cacheReadProblems == null) {
 		cacheReadProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheReadProblems"), null); //$NON-NLS-1$
 	}
@@ -1508,7 +1443,6 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 	}
 	PluginRegistryModel cachedRegistry = cacheFactory.createPluginRegistry();
 	addToObjectTable(cachedRegistry);
-
 	boolean setReadOnlyFlag = false;
 	try {
 		byte inByte = 0;
@@ -1583,6 +1517,9 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 					break;
 			}
 		}
+	} catch (InvalidRegistryCacheException irce) {
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.registryCacheReadProblems", decipherLabel(REGISTRY_LABEL)), irce)); //$NON-NLS-1$
+		return null;
 	} catch (IOException ioe) {
 		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
@@ -1590,6 +1527,8 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 	if (cachedRegistry == null)
 		return null;
 		
+	if (lazilyLoadExtensions)
+		((PluginRegistry) cachedRegistry).setCacheReader(this);
 	if (setReadOnlyFlag) {
 		// If we are finished reading this registry, we don't need to worry
 		// about setting the read-only flag on other objects we might wish
@@ -1614,5 +1553,73 @@ private String[] getPathMembers(URL path) {
 		// XXX: attempt to read URL and see if we got html dir page
 	}
 	return list == null ? new String[0] : list;
+}
+/**
+ * Loads the configuration elements for an extension.
+ */
+public final ConfigurationElementModel[] readSubElements(DataInputStream in, ExtensionModel parent, boolean debugFlag) throws IOException, InvalidRegistryCacheException {
+	
+	// the first field is extension sub-elements data offset
+	int offset = in.readInt();
+	
+	if (lazilyLoadExtensions) {
+		Extension extension = (Extension) parent;
+		extension.setSubElementsCacheOffset(offset);		
+		checkSubElements(in, parent, debugFlag);
+		extension.setFullyLoaded(false);				
+		return null;
+	}
+	// skip elements data length
+	in.readInt();	
+	byte nextLabel = in.readByte();
+	if (nextLabel != SUBELEMENTS_LENGTH_LABEL)
+		throw new InvalidRegistryCacheException();
+	int subElementsLength = in.readInt();
+	ConfigurationElementModel[] subElements = new ConfigurationElementModel[subElementsLength];
+	for (int i = 0; i < subElementsLength; i++) {
+		nextLabel = in.readByte(); 
+		if (nextLabel != CONFIGURATION_ELEMENT_LABEL)
+			throw new InvalidRegistryCacheException();		
+		subElements[i] = readConfigurationElement(in, parent, debugFlag);
+		if (subElements[i] == null) {
+			String message = null;
+			if (debugFlag)
+				message = "Unable to read subelement #" + i + " for extension " + parent.getName(); //$NON-NLS-1$ //$NON-NLS-2$ 
+			throw new InvalidRegistryCacheException(message);
+		}
+	}
+	// skip checksum
+	in.readLong();
+	return subElements;
+}
+private void checkSubElements(DataInputStream in, ExtensionModel parent, boolean debugFlag) throws IOException, InvalidRegistryCacheException {
+	int subElementsDataLength = in.readInt();
+	CheckedInputStream checkedIn = new CheckedInputStream(in, new CRC32());
+	if (checkedIn.skip(subElementsDataLength) != subElementsDataLength) {
+		String message = null;
+		if (debugFlag)
+			message = "EOF checking sub-elements data for extension " + parent.getName(); //$NON-NLS-1$ 
+		throw new InvalidRegistryCacheException(message);
+	}
+	long checksum = in.readLong();
+	if (checksum != checkedIn.getChecksum().getValue()) {
+		String message = null;
+		if (debugFlag)
+			message = "Checksum error checking sub-elements data for extension " + parent.getName(); //$NON-NLS-1$ 
+		throw new InvalidRegistryCacheException(message);
+	}	
+}
+public class InvalidRegistryCacheException extends Exception {
+	public InvalidRegistryCacheException() {
+		super(); 
+	}
+	public InvalidRegistryCacheException(String string) {
+		super(string);
+	}
+}
+final public void setLazilyLoadExtensions(boolean lazilyLoadExtensions) {
+	if (lazilyLoadExtensions && !(cacheFactory instanceof InternalFactory))
+		throw new UnsupportedOperationException("Invalid factory: " + cacheFactory.getClass().getName());//$NON-NLS-1$
+	this.lazilyLoadExtensions = lazilyLoadExtensions;
 }
 }
