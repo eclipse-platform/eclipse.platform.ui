@@ -51,6 +51,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -167,7 +168,18 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 
 		IAction qAction = new ShowQualifiedAction(viewer);
 		qAction.setChecked(false);
-		setAction("ShowQualifiedNames", qAction);		
+		setAction("ShowQualifiedNames", qAction);	
+		
+		// submit an async exec to update the selection once the
+		// view has been created - i.e. auto-expand and select the
+		// suspended thread on creation. (Done here, because the
+		// viewer needs to be set).
+		Runnable r = new Runnable() {
+			public void run() {
+				initializeSelection();
+			}
+		};
+		asyncExec(r);		
 	}
 
 	/**
@@ -181,10 +193,52 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		lv.setUseHashlookup(true);
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
-		lv.expandToLevel(2);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setEventHandler(new LaunchViewEventHandler(this, lv));
 		return lv;
+	}
+	
+	/**
+	 * Select the first stack frame in a suspended thread,
+	 * if any.
+	 */
+	protected void initializeSelection() {
+		TreeViewer tv = (TreeViewer)getViewer();
+		tv.expandToLevel(2);
+		Object[] elements = tv.getExpandedElements();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof ILaunch) {
+				IStackFrame frame = findFrame((ILaunch)elements[i]);
+				if (frame != null) {
+					autoExpand(frame, false, true);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns the first stack frame in the first suspened
+	 * thread of the given lanuch, or <code>null</code> if
+	 * none.
+	 * 
+	 * @param lanuch a launch in this view
+	 * @return stack frame or <code>null</code>
+	 */
+	protected IStackFrame findFrame(ILaunch launch) {
+		IDebugTarget target = launch.getDebugTarget();
+		if (target != null) {
+			try {
+				IThread[] threads = target.getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					if (threads[i].isSuspended()) {
+						return threads[i].getTopStackFrame();
+					}
+				}
+			} catch (DebugException e) {
+				DebugUIPlugin.logError(e);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -226,17 +280,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		getSite().getWorkbenchWindow().removePageListener(this);
 		getEventHandler().dispose();
 		super.dispose();
-	}
-	
-	public void autoExpand(Object element) {
-		Object selectee = element;
-		if (element instanceof ILaunch) {
-			IProcess[] ps= ((ILaunch)element).getProcesses();
-				if (ps != null && ps.length > 0) {
-					selectee= ps[0];
-				}
-		}
-		getViewer().setSelection(new StructuredSelection(selectee), true);
 	}
 	
 	/**
