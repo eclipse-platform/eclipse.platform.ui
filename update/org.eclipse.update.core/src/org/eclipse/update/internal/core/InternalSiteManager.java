@@ -134,4 +134,13 @@ public class InternalSiteManager {
 		this.sitesTypes = sitesTypes;
 	}
 
+	/**
+	 * 
+	 */
+	public static ISite createSite(URL siteLocation) throws CoreException {
+		Site site = (Site)getSite(siteLocation);
+		site.save();
+		return site;
+	}
+
 }

@@ -89,6 +89,24 @@ public abstract class Site implements ISite, IWritable {
 		}
 	}
 	
+	
+	/**
+	 * Saves the site into the site.xml
+	 */
+	public void save() throws CoreException {
+		File file = new File(getURL().getFile()+SITE_XML);
+		try {
+		PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
+		Writer writer = new Writer();
+		writer.writeSite(this,fileWriter);
+		fileWriter.close();
+		} catch (FileNotFoundException e){
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot save site into "+file.getAbsolutePath(),e);
+			throw new CoreException(status);
+		}
+	}
+	
 	/**
 	 * Logs that an attempt to read a non initialize variable has been made
 	 */

@@ -5,6 +5,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
  
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,5 +69,21 @@ public class SiteManager {
 	 */
 	public static URL resolveAsLocal(URL url) throws IOException, MalformedURLException, CoreException {
 		return UpdateManagerUtils.resolveAsLocal(url);
+	}
+	
+	
+	/**
+	 * Creates a new local site on the file system
+	 * This is the only Site we can create.
+	 * 
+	 * Also adds the new Site into the LocalSite
+	 * 
+	 * @param siteLocation
+	 * @throws CoreException
+	 */
+	public static ISite createSite(URL siteLocation) throws CoreException {
+		ISite createdSite = InternalSiteManager.createSite(siteLocation);
+		getLocalSite().getCurrentConfiguration().addInstallSite(createdSite);
+		return createdSite;
 	}
 }
