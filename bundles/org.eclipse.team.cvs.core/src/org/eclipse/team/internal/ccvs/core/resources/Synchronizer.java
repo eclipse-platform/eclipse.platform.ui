@@ -93,7 +93,8 @@ public class Synchronizer {
 		protected void handleRemoved(IProject project, IResource resource) {
 			try {
 				if(resource.getType()!=IResource.FILE && !resource.getName().equals("CVS")) {
-					Synchronizer.getInstance().deleteFolderSync(resource.getLocation().toFile(), new NullProgressMonitor());
+					String location = new Path(project.getWorkspace().getRoot().getLocation().toString()).append(resource.getFullPath()).toString();
+					Synchronizer.getInstance().deleteFolderSync(new File(location), new NullProgressMonitor());
 					Synchronizer.getInstance().save(new NullProgressMonitor());
 				}
 			} catch(CVSException e) {
@@ -371,13 +372,8 @@ public class Synchronizer {
 			File file = fsFolder.getLocalFile();
 			getFolderSync(file, true);
 			
-			// XXX not a great way to force a reload of the entries file :<
-			ICVSFile[] files = folder.getFiles();
-			for (int i = 0; i < files.length; i++) {
-				ICVSFile iCVSFile = files[i];
-				getResourceSync(((LocalFile)iCVSFile).getLocalFile(), true);
-				break;
-			}
+			// XXX not a great way to force a reload of the entries file :<			
+			getResourceSync(new File(file, "dummy"), true);
 			monitor.worked(1);
 			
 			ICVSFolder[] folders = folder.getFolders();
@@ -411,6 +407,7 @@ public class Synchronizer {
 		if(folderSync==null || reload) {
 			
 			if(!folder.exists()) {
+				deleteFolderAndChildEntries(folder);
 				return null;
 			}
 			
@@ -466,6 +463,10 @@ public class Synchronizer {
 		
 		if(!file.exists()) {
 			file = file.getParentFile();
+			// project is gone, there is nobody left to update
+			if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
+				return;
+			}
 			depth = IResource.DEPTH_ONE;
 		}
 		

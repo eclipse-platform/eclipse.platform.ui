@@ -43,10 +43,18 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 					try {
 						IResourceDelta root = event.getDelta();
 						IResourceDelta[] projectDeltas = root.getAffectedChildren();
-						for (int i = 0; i < projectDeltas.length; i++) {
+						for (int i = 0; i < projectDeltas.length; i++) {							
 							IResourceDelta delta = projectDeltas[i];
 							IResource resource = delta.getResource();
 							ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
+
+							// if a project is moved the originating project will not be associated with the CVS provider
+							// however listeners will probably still be interested in the move delta.	
+							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
+								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
+								provider = TeamPlugin.getManager().getProvider(destination);
+							}
+							
 							if (provider instanceof CVSTeamProvider)
 								delta.accept(visitor);
 						}
