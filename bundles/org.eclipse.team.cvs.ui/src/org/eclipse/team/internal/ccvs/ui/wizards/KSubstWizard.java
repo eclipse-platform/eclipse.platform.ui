@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -226,6 +227,10 @@ public class KSubstWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		try {
+			if (sharedFilesPage.includeSharedFiles() 
+					&& !MessageDialog.openConfirm(getShell(), null, Policy.bind("KSubstWizardSharedFilesPage.contents"))) {
+				return false;
+			}
 			defaultKSubst = mainPage.getKSubstOption();
 			final List messages = new ArrayList();
 			getContainer().run(false /*fork*/, true /*cancelable*/, new IRunnableWithProgress() {
