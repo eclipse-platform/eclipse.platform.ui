@@ -5,6 +5,8 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import java.text.Collator;
+import java.util.Hashtable;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -35,11 +37,24 @@ import org.eclipse.swt.widgets.*;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- */
+ */ 
 public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
-	
+	private EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry();
+	private Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			switch (event.type) {
+				case SWT.Selection:
+					IEditorDescriptor editorDesc = (IEditorDescriptor) event.item.getData();
+					openEditor(editorDesc);
+					break;
+			}
+		}
+	};
+
+	private static Hashtable imageCache = new Hashtable(11);
+	 
 	/**
 	 * The id of this action.
 	 */
@@ -84,26 +99,42 @@ public OpenWithMenu(IWorkbenchPage page, IAdaptable file) {
 	this.file = file;
 }
 /**
- * Creates an image to show for the corresponding image descriptor.
+ * Returns an image to show for the corresponding editor descriptor.
  *
- * @param descriptor the editor descriptor, or null for the system editor
- * @return a newly created image
+ * @param editorDesc the editor descriptor, or null for the system editor
+ * @return the image or null
  */
-private Image createImage(IEditorDescriptor descriptor) {
+private Image getImage(IEditorDescriptor editorDesc) {
+	ImageDescriptor imageDesc = getImageDescriptor(editorDesc);
+	if (imageDesc == null) {
+		return null;
+	}
+	Image image = (Image) imageCache.get(imageDesc);
+	if (image == null) {
+		image = imageDesc.createImage();
+		imageCache.put(imageDesc, image);
+	}
+	return image;
+}
+
+
+/**
+ * Returns the image descriptor for the given editor descriptor,
+ * or null if it has no image.
+ */
+private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
 	ImageDescriptor imageDesc = null;
-	if (descriptor == null) {
-		imageDesc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(getFileResource());
+	if (editorDesc == null) {
+		imageDesc = registry.getImageDescriptor(getFileResource());
 	}
 	else {
-		imageDesc = descriptor.getImageDescriptor();
+		imageDesc = editorDesc.getImageDescriptor();
 	}
 	if (imageDesc == null) {
-		if (descriptor.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID))
-			imageDesc = ((EditorRegistry)PlatformUI.getWorkbench().getEditorRegistry()).getSystemEditorImageDescriptor(getFileResource());
-		if (imageDesc == null)
-			return null;
+		if (editorDesc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID))
+			imageDesc = registry.getSystemEditorImageDescriptor(getFileResource());
 	}
-	return imageDesc.createImage();
+	return imageDesc;
 }
 /**
  * Creates the menu item for the editor descriptor.
@@ -112,31 +143,16 @@ private Image createImage(IEditorDescriptor descriptor) {
  * @param descriptor the editor descriptor, or null for the system editor
  * @param isPreferredEditor whether the editor descriptor is the preferred one for the selected file
  */
-private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boolean isPreferredEditor) {
-	MenuItem menuItem;
+private void createMenuItem(Menu menu, IEditorDescriptor descriptor, boolean isPreferredEditor) {
 	// XXX: Would be better to use bold here, but SWT does not support it.
-	menuItem = new MenuItem(menu, SWT.RADIO);
+	MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
 	menuItem.setSelection(isPreferredEditor);
 	menuItem.setText(descriptor.getLabel());
-	final Image image = createImage(descriptor);
+	Image image = getImage(descriptor);
 	if (image != null) {
 		menuItem.setImage(image);
 	}
-	Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			switch (event.type) {
-				case SWT.Selection:
-					openEditor(descriptor);
-					break;
-				case SWT.Dispose:
-					if (image != null) {
-						image.dispose();
-					}
-					break;
-			}
-		}
-	};
-	menuItem.addListener(SWT.Dispose, listener);
+	menuItem.setData(descriptor);
 	menuItem.addListener(SWT.Selection, listener);
 }
 /* (non-Javadoc)
@@ -148,8 +164,6 @@ public void fill(Menu menu, int index) {
 		return;
 	}
 
-	IEditorRegistry registry =
-		page.getWorkbenchWindow().getWorkbench().getEditorRegistry();
 	IEditorDescriptor defaultEditor = registry.getDefaultEditor();
 	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file);
 	Object[] editors = sorter.sort(registry.getEditors(file));
@@ -179,7 +193,7 @@ public void fill(Menu menu, int index) {
 	if (preferredEditor != null)
 		isPreferred = descriptor.getId().equals(preferredEditor.getId());
 	createMenuItem(menu, descriptor, isPreferred);
-	createDefaultMenuItem(menu,file,registry);
+	createDefaultMenuItem(menu, file);
 }
 /**
  * Converts the IAdaptable file to IFile or null.
@@ -231,7 +245,7 @@ private void openEditor(IEditorDescriptor editor) {
  * @param file the file bing edited
  * @param registry the editor registry
  */
-private void createDefaultMenuItem(Menu menu, final IFile file, final IEditorRegistry registry) {
+private void createDefaultMenuItem(Menu menu, final IFile file) {
 	MenuItem menuItem;
 	if (registry.getDefaultEditor(file) == null) {
 		menuItem = new MenuItem(menu, SWT.CHECK);

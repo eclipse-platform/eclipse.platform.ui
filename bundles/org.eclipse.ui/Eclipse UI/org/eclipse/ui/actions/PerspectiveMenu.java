@@ -55,6 +55,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
 			return collator.compare(d1.getLabel(), d2.getLabel());
 		}
 	};
+	
+	private static Hashtable imageCache = new Hashtable(11);
 
 	/**
 	 * Constructs a new instance of <code>PerspectiveMenu</code>.  
@@ -77,31 +79,15 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		Menu menu,
 		int index,
 		final IPerspectiveDescriptor desc,
-		int nAccelerator,
 		boolean bCheck) {
 			
 		MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
-
-		ImageDescriptor imageDescriptor = desc.getImageDescriptor();
-		if (imageDescriptor == null) {
-			imageDescriptor =
-				WorkbenchImages.getImageDescriptor(
-					IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
-		}
 		mi.setText(desc.getLabel());
-		mi.setImage(imageDescriptor.createImage());
+		Image image = getImage(desc);
+		if (image != null) {
+			mi.setImage(image);
+		}
 		mi.setSelection(bCheck);
-		mi.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				Item item;
-				Image itemImage;
-				if ((item = (Item) e.getSource()) != null) {
-					if ((itemImage = item.getImage()) != null) {
-						itemImage.dispose();
-					}
-				}
-			}
-		});
 		mi.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				run(desc, e);
@@ -115,8 +101,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	/* package */
 	void createOtherItem(Menu menu, int index) {
 		MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
-		mi.setText(WorkbenchMessages.getString("PerspectiveMenu.otherItem"));
-		//$NON-NLS-1$
+		mi.setText(WorkbenchMessages.getString("PerspectiveMenu.otherItem"));  //$NON-NLS-1$
 		mi.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				runOther(e);
@@ -128,7 +113,6 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	 * Fills the menu with perspective items.
 	 */
 	public void fill(Menu menu, int index) {
-		int nAccelerator = 0;
 
 		// Get the checked persp.
 		String checkID = null;
@@ -145,17 +129,38 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		// Add perspective shortcut
 		for (int i = 0; i < persps.size(); i++) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) persps.get(i);
-			createMenuItem(menu, index, desc, nAccelerator, desc.getId().equals(checkID));
-			++index;
-			++nAccelerator;
+			createMenuItem(menu, index++, desc, desc.getId().equals(checkID));
 		}
 
 		// Add others item..
-		if (nAccelerator > 0) {
-			new MenuItem(menu, SWT.SEPARATOR, index);
-			++index;
+		if (persps.size() > 0) {
+			new MenuItem(menu, SWT.SEPARATOR, index++);
 		}
 		createOtherItem(menu, index);
+	}
+	
+	/**
+	 * Returns an image to show for the corresponding perspective descriptor.
+	 *
+	 * @param perspDesc the perspective descriptor
+	 * @return the image or null
+	 */
+	private Image getImage(IPerspectiveDescriptor perspDesc) {
+		ImageDescriptor imageDesc = perspDesc.getImageDescriptor();
+		if (imageDesc == null) {
+			imageDesc =
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER);
+		}
+		if (imageDesc == null) {
+			return null;
+		}
+		Image image = (Image) imageCache.get(imageDesc);
+		if (image == null) {
+			image = imageDesc.createImage();
+			imageCache.put(imageDesc, image);
+		}
+		return image;
 	}
 	
 	/* (non-Javadoc)
