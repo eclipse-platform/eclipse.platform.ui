@@ -13,6 +13,7 @@ import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class InstallConfigurationForm extends PropertyWebForm {
@@ -51,9 +52,12 @@ public class InstallConfigurationForm extends PropertyWebForm {
 				if (obj instanceof PreservedConfiguration)
 					obj = ((PreservedConfiguration) obj).getConfiguration();
 				if (obj.equals(currentConfiguration)) {
+					SWTUtil.getStandardDisplay().asyncExec(new Runnable() {
+						public void run() {
 					inputChanged(currentConfiguration);
+						}
+					});
 				}
-
 			}
 		};
 		model.addUpdateModelChangedListener(modelListener);

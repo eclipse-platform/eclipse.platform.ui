@@ -511,8 +511,12 @@ public class ConfigurationView
 			}
 			public void objectsRemoved(Object parent, Object[] children) {
 			}
-			public void objectChanged(Object obj, String property) {
-				viewer.update(obj, null);
+			public void objectChanged(final Object obj, String property) {
+				viewer.getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						viewer.update(obj, null);
+					}
+				});
 			}
 		};
 		model.addUpdateModelChangedListener(modelListener);

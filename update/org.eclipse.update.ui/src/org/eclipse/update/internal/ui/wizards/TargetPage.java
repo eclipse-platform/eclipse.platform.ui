@@ -178,12 +178,14 @@ public class TargetPage extends BannerPage {
 		table.setLayoutData(gd);
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
+/*
 		tableViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IConfiguredSite site = (IConfiguredSite) obj;
 				return site.isUpdatable();
 			}
 		});
+*/
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();

@@ -69,7 +69,7 @@ public class InstallWizard extends Wizard {
 			}
 		};
 		try {
-			getContainer().run(false, true, operation);
+			getContainer().run(true, true, operation);
 		} catch (InvocationTargetException e) {
 			UpdateUIPlugin.logException(e);
 			return false;

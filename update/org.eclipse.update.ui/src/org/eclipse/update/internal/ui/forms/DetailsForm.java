@@ -24,6 +24,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.internal.ui.wizards.*;
@@ -115,8 +116,13 @@ public class DetailsForm extends PropertyWebForm {
 		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
 		 */
 		public void objectsAdded(Object parent, Object[] children) {
-			if (isCurrentFeature(children))
-				refresh();
+			if (isCurrentFeature(children)) {
+				SWTUtil.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						refresh();
+					}
+				});
+			}
 		}
 
 		boolean isCurrentFeature(Object[] children) {
@@ -136,8 +142,13 @@ public class DetailsForm extends PropertyWebForm {
 		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
 		 */
 		public void objectsRemoved(Object parent, Object[] children) {
-			if (isCurrentFeature(children))
-				doButton.setEnabled(true);
+			if (isCurrentFeature(children)) {
+				SWTUtil.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						doButton.setEnabled(true);
+					}
+				});
+			}
 		}
 
 		/**
@@ -551,6 +562,8 @@ public class DetailsForm extends PropertyWebForm {
 
 	private boolean getUninstallButtonVisibility() {
 		if (currentFeature instanceof MissingFeature)
+			return false;
+		if (currentAdapter == null || currentAdapter.isIncluded())
 			return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))

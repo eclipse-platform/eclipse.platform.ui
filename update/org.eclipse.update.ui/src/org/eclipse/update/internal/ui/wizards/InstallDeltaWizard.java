@@ -3,9 +3,11 @@ package org.eclipse.update.internal.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
@@ -16,8 +18,10 @@ public class InstallDeltaWizard
 	private static final String KEY_WTITLE = "InstallDeltaWizard.wtitle";
 	private static final String KEY_PROCESSING =
 		"InstallDeltaWizard.processing";
+	private static final String KEY_RESTART_MESSAGE = "InstallDeltaWizard.restart.message";
 	private ISessionDelta[] deltas;
 	private InstallDeltaWizardPage page;
+	private int processed = 0;
 
 	/**
 	 * Constructor for InstallDeltaWizard.
@@ -68,10 +72,12 @@ public class InstallDeltaWizard
 		monitor.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_PROCESSING),
 			selectedDeltas.length);
+		processed = 0;
 		for (int i = 0; i < selectedDeltas.length; i++) {
 			ISessionDelta delta = selectedDeltas[i];
 			delta.process(monitor);
 			monitor.worked(1);
+			processed++;
 			if (monitor.isCanceled()) return;
 		}
 	}
@@ -96,7 +102,19 @@ public class InstallDeltaWizard
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();
+				if (processed>0) informRestartNeeded();
 			}
 		});
 	}
+	private void informRestartNeeded() {
+		String title = UpdateUIPlugin.getResourceString(KEY_WTITLE);
+		String message= UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
+		boolean restart =
+			MessageDialog.openConfirm(
+				getShell(),
+				title,
+				message);
+		if (restart)
+			PlatformUI.getWorkbench().restart();
+	}	
 }

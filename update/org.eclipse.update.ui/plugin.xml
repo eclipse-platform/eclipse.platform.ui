@@ -29,11 +29,19 @@
             label="%actionSets.softwareUpdates.label"
             visible="true"
             id="org.eclipse.update.ui.softwareUpdates">
+         <menu
+               label="%updateMenu.label"
+               path="help/helpEnd"
+               id="org.eclipse.update.ui.updateMenu">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
          <action
                label="%actionSets.updateManager.label"
                icon="icons/full/cview16/update_pers.gif"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
-               menubarPath="help/helpEnd"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group"
                id="org.eclipse.update.ui.updateManager">
          </action>
       </actionSet>

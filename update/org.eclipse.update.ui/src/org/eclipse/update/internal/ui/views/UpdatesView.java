@@ -686,6 +686,7 @@ public class UpdatesView
 
 	public void objectsAdded(Object parent, Object[] children) {
 		Object child = children[0];
+		if (child instanceof PendingChange) return;
 		if (child instanceof NamedModelObject
 			|| child instanceof SearchResultSite
 			|| child instanceof IFeature
@@ -701,6 +702,7 @@ public class UpdatesView
 	}
 
 	public void objectsRemoved(Object parent, Object[] children) {
+		if (children[0] instanceof PendingChange) return;
 		if (children[0] instanceof NamedModelObject
 			|| children[0] instanceof SearchResultSite) {
 			viewer.remove(children);

@@ -211,7 +211,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 			(IStructuredSelection) deltaViewer.getSelection();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (!(obj instanceof ISessionDelta)) {
+			if (obj instanceof ISessionDelta) {
 				if (!removed.contains(obj)) {
 					removed.add(obj);
 				}
