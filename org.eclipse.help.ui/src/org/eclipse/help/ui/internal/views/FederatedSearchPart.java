@@ -222,7 +222,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, 
 		ArrayList entries = new ArrayList();
 		for (int i=0; i<engineDescriptors.size(); i++) {
 			EngineDescriptor ed = (EngineDescriptor)engineDescriptors.get(i);
-			if (set.getEngineEnabled(ed)) {
+			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
 				ISearchScope scope = ed.createSearchScope(set.getPreferenceStore());
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed.getId(), scope, ed.getEngine());
 				entries.add(entry);
