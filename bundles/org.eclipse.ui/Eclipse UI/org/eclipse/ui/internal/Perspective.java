@@ -681,8 +681,8 @@ public void restoreState(IMemento memento) {
 		} else {
 			Status allErrors[] = new Status[errors.size()];
 			errors.toArray(allErrors);
-			message = WorkbenchMessages.getString("Perspectiver.couldNotCreateAllViews"); //$NON-NLS-1$
-			s = new MultiStatus(PlatformUI.PLUGIN_ID,0,allErrors,WorkbenchMessages.getString("Perspectiver.multipleErrorsRestoring"),null); //$NON-NLS-1$
+			message = WorkbenchMessages.getString("Perspective.couldNotCreateAllViews"); //$NON-NLS-1$
+			s = new MultiStatus(PlatformUI.PLUGIN_ID,0,allErrors,WorkbenchMessages.getString("Perspective.multipleErrorsRestoring"),null); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"),message,s);
 	}
