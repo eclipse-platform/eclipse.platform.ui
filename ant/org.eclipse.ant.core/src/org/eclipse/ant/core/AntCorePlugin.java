@@ -132,7 +132,7 @@ public class AntCorePlugin extends Plugin {
 	 * Given an extension point name, extract its extensions and return them
 	 * as a List.
 	 */
-	private List extractExtensions(String point, String key) {
+	private List extractExtensions(String point) {
 		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
 		if (extensionPoint == null) {
 			return null;
@@ -148,7 +148,7 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public AntCorePreferences getPreferences() {
 		if (preferences == null) {
-			preferences = new AntCorePreferences(extractExtensions(PT_TASKS, NAME), extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY), extractExtensions(PT_TYPES, NAME));
+			preferences = new AntCorePreferences(extractExtensions(PT_TASKS), extractExtensions(PT_EXTRA_CLASSPATH), extractExtensions(PT_TYPES));
 		}
 		return preferences;
 	}
