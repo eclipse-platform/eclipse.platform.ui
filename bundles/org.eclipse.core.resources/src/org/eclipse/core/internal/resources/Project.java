@@ -548,14 +548,6 @@ public boolean hasNature(String natureID) throws CoreException {
 		checkAccessible(NULL_FLAG);
 	return desc.hasNature(natureID);
 }
-/**
- * Increments the content id for this resource.  Note that it is assumed
- * that this resource exists
- */
-private void incrementContentId() {
-	ResourceInfo info = getResourceInfo(false, true);
-	info.incrementContentId();
-}
 protected void internalCopy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
