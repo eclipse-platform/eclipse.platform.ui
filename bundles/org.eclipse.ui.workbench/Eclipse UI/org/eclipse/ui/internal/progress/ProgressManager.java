@@ -70,7 +70,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	final private Collection listeners = Collections.synchronizedList(new ArrayList());
 	final Object listenerKey = new Object();
 	final ErrorNotificationManager errorManager = new ErrorNotificationManager();
-	final private WorkbenchMonitorProvider monitorProvider = new WorkbenchMonitorProvider();
 	final private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 	IJobChangeListener changeListener;
 
@@ -145,7 +144,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private class JobMonitor implements IProgressMonitorWithBlocking {
 		Job job;
-		IProgressMonitor workbenchMonitor;
 		String currentTaskName;
 
 		/**
@@ -155,7 +153,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
-			workbenchMonitor = monitorProvider.getMonitor(job);
 		}
 
 		/*
@@ -169,7 +166,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.beginTask(taskName, totalWork);
 			refreshJobInfo(info);
 			currentTaskName = taskName;
-			workbenchMonitor.beginTask(taskName, totalWork);
 		}
 		/*
 		 * (non-Javadoc)
@@ -180,7 +176,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			JobInfo info = getJobInfo(job);
 			info.clearTaskInfo();
 			info.clearChildren();
-			workbenchMonitor.done();
 			runnableMonitors.remove(this);
 		}
 
@@ -195,7 +190,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				info.addWork(work);
 				refreshJobInfo(info);
 			}
-			workbenchMonitor.internalWorked(work);
 		}
 		/*
 		 * (non-Javadoc)
@@ -213,7 +207,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
-			workbenchMonitor.setCanceled(value);
 			JobInfo info = getJobInfo(job);
 
 			//Don't bother cancelling twice
@@ -239,7 +232,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			refreshJobInfo(info);
 			currentTaskName = taskName;
-			workbenchMonitor.setTaskName(taskName);
 		}
 
 		/*
@@ -256,7 +248,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			info.addSubTask(name);
 			refreshJobInfo(info);
-			workbenchMonitor.subTask(name);
 		}
 
 		/*

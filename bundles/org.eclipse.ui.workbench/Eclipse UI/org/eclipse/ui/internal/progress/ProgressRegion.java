@@ -11,12 +11,14 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.viewers.IContentProvider;
 
@@ -48,36 +50,43 @@ public class ProgressRegion {
 		
 		workbenchWindow = window;
 		
-		region = new Composite(parent, SWT.BORDER | SWT.FLAT);
-		
+		region = new Composite(parent, SWT.NONE);
 		FormLayout regionLayout = new FormLayout();
 		region.setLayout(regionLayout);
-		region.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		
-		item = new IconAnimationItem(window,AnimationManager.getInstance().animationProcessor);
+		Label seperator = new Label(region, SWT.SEPARATOR);
 		
+		item = new ProgressAnimationItem(window);
 		item.createControl(region);
-		item.setAnimationContainer(getAnimationContainer());
 		Control itemControl = item.getControl();
-
-		FormData itemData = new FormData();
-		itemData.right = new FormAttachment(100);
-		itemData.top = new FormAttachment(0);
-		itemData.width = AnimationManager.getInstance().getPreferredWidth() + 5;
-		itemControl.setLayoutData(itemData);
 		
 		viewer = new ProgressViewer(region, SWT.NONE, 1,36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
-
+		
+		int widthPreference = AnimationManager.getInstance().getPreferredWidth();
+		Point preferredSize = viewer.getSizeHints();
 		int margin = 2;
 		
+		FormData labelData = new FormData();
+		labelData.left = new FormAttachment(0, margin);
+		labelData.top = new FormAttachment(0);
+		seperator.setLayoutData(labelData);
+		
+		FormData itemData = new FormData();
+		itemData.right = new FormAttachment(100, (-1 * margin));
+		itemData.top = new FormAttachment(viewerControl,margin,SWT.TOP);
+		itemData.width = widthPreference + (margin * 2);
+		itemData.height = preferredSize.y;
+		itemControl.setLayoutData(itemData);
+
+		
 		FormData viewerData = new FormData();
-		viewerData.left = new FormAttachment(0);
+		viewerData.left = new FormAttachment(seperator,margin);
 		viewerData.right = new FormAttachment(itemControl, margin);
 		viewerData.top = new FormAttachment(0);
-		viewerData.bottom = new FormAttachment(itemControl,0,SWT.BOTTOM);
-		Point preferredSize = viewer.getSizeHints();
+		viewerData.bottom = new FormAttachment(100);
+		
 		viewerData.width = preferredSize.x + margin;
 		viewerData.height = preferredSize.y;
 		viewerControl.setLayoutData(viewerData);
@@ -91,6 +100,32 @@ public class ProgressRegion {
 			}
 		});
 		
+		viewerControl.addMouseTrackListener(new MouseTrackListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseEnter(MouseEvent e) {
+				//Do nothing
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseExit(MouseEvent e) {
+				//Do nothing
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseHover(MouseEvent e) {
+				item.openFloatingWindow();
+			}
+			
+		});
+		
 		IContentProvider provider = new ProgressViewerContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
@@ -98,31 +133,7 @@ public class ProgressRegion {
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 		return region;
 	}
-	/**
-	 * Set the info colors of the control
-	 * 
-	 * @param control
-	 *            The Control to color.
-	 */
-	private void setInfoColors(Control control) {
-		control.setBackground(control.getDisplay().getSystemColor(
-				SWT.COLOR_INFO_BACKGROUND));
-		control.setForeground(control.getDisplay().getSystemColor(
-				SWT.COLOR_INFO_FOREGROUND));
-	}
 	
-	/**
-	 * Set the info colors opf the control
-	 * 
-	 * @param control
-	 *            The Control to color.
-	 */
-	private void setBackgroundColors(Control control) {
-		control.setBackground(control.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
-		control.setForeground(control.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_FOREGROUND));
-	}
 	
 	/**
 	 * Return the animationItem for the receiver.
@@ -140,25 +151,5 @@ public class ProgressRegion {
 		return region;
 	}
 	
-	private AnimationItem.IAnimationContainer getAnimationContainer(){
-		return new AnimationItem.IAnimationContainer(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
-			 */
-			public void animationDone() {
-				setBackgroundColors(item.getControl());
-				setBackgroundColors(viewer.getControl());
-				setBackgroundColors(region);
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
-			 */
-			public void animationStart() {
-				setInfoColors(item.getControl());
-				setInfoColors(viewer.getControl());
-				setInfoColors(region);
-			}
-		};
-	}
 }
+

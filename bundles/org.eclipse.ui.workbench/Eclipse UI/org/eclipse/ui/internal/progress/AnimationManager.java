@@ -52,7 +52,7 @@ public class AnimationManager {
 
 	AnimationManager() {
 
-		animationProcessor = new ImageAnimationProcessor(this);
+		animationProcessor = new ProgressAnimationProcessor(this);
 
 		listener = getProgressListener();
 		ProgressManager.getInstance().addListener(listener);

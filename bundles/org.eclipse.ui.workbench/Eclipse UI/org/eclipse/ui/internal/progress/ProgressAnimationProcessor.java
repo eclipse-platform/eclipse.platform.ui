@@ -116,7 +116,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 	 * @see org.eclipse.ui.internal.progress.IAnimationProcessor#getPreferredWidth()
 	 */
 	public int getPreferredWidth() {
-		return 20;
+		return 30;
 	}
 	
 	/**
