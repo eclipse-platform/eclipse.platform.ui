@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -243,7 +242,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, LaunchVariableContextManager.getDefault().getVariableContext());
 			if (expandedLocation != null && status.isOK()) {
 				try {
-					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration);
+					String[] arguments = LaunchVariableUtil.parseStringIntoList(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null));
 					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 				} catch (CoreException ce) {
 					IStatus exceptionStatus= ce.getStatus();
