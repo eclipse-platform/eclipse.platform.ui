@@ -135,25 +135,23 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 	if (!path.isRoot() && !nodeIDMap.isEmpty()) {
 		int kind = getKind();
 		switch (kind) {
-			case ADDED :
 			case CHANGED :
-				long nodeID = newInfo.getNodeId();
-				IPath oldPath = (IPath) nodeIDMap.getOldPath(nodeID);
+			case ADDED :
+				IPath oldPath = (IPath) nodeIDMap.getOldPath(newInfo.getNodeId());
 				if (oldPath != null && !oldPath.equals(path)) {
 					//get the old info from the old tree
-					oldInfo = (ResourceInfo)oldTree.getElementData(oldPath);
+					ResourceInfo actualOldInfo = (ResourceInfo)oldTree.getElementData(oldPath);
 					// Replace change flags by comparing old info with new info,
 					// Note that we want to retain the kind flag, but replace all other flags
 					// This is done only for MOVED_FROM, not MOVED_TO, since a resource may be both.
-					status = (status & KIND_MASK) | (deltaInfo.getComparator().compare(oldInfo, newInfo) & ~KIND_MASK);
+					status = (status & KIND_MASK) | (deltaInfo.getComparator().compare(actualOldInfo, newInfo) & ~KIND_MASK);
 					status |= MOVED_FROM;
 				}
 		}
 		switch (kind) {
-			case CHANGED :
 			case REMOVED :
-				long nodeID = oldInfo.getNodeId();
-				IPath newPath = (IPath) nodeIDMap.getNewPath(nodeID);
+			case CHANGED :
+				IPath newPath = (IPath) nodeIDMap.getNewPath(oldInfo.getNodeId());
 				if (newPath != null && !newPath.equals(path)) {
 					status |= MOVED_TO;
 				}
