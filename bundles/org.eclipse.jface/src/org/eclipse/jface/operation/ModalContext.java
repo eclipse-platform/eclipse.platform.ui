@@ -140,6 +140,7 @@ public class ModalContext {
 				try {
 					join();
 				} catch (InterruptedException e) {
+					throwable= e;
 				}
 			}
 		}		
