@@ -430,6 +430,24 @@
             id="org.eclipse.ui.views.ResourceNavigator">
       </command>  
       <command
+            name="%Views.Progress"
+            description="%command.showProgressView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.views.ProgressView">
+      </command>
+      <command
+            name="%Views.Bookmark"
+            description="%command.showBookmarkView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.views.BookmarkView">
+      </command>
+      <command
+            name="%Views.Task"
+            description="%command.showTaskView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.views.TaskList">
+      </command>
+      <command
             name="%command.openWorkspace.name"
             description="%command.openWorkspace.description"
             categoryId="org.eclipse.ui.category.file"
@@ -581,6 +599,26 @@
             scope="org.eclipse.ui.globalScope"
             keySequence="Command+Alt+N"
              keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Alt+Shift+Q X"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.views.ProblemView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            string="Alt+Shift+Q X"
+            scope="org.eclipse.ui.globalScope"
+            command=""
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            string="Command+Alt+Q X"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.views.ProblemView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension
