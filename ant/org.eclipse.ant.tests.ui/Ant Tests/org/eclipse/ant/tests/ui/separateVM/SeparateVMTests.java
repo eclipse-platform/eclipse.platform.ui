@@ -23,10 +23,10 @@ import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.console.IHyperlink;
 
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 		
@@ -92,7 +92,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	public void testLinks() throws CoreException {
 		launch("echoingSepVM");
 		int offset= 15; //buildfile link
-		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 		try {
 			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 10; //echo link

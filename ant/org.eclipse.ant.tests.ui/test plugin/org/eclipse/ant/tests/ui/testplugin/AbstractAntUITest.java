@@ -41,7 +41,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.BadLocationException;
@@ -52,6 +51,7 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePartition;
@@ -308,7 +308,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		return suspendee;		
 	}
 	
-	protected IConsoleHyperlink getHyperlink(int offset, IDocument doc) {
+	protected IHyperlink getHyperlink(int offset, IDocument doc) {
 		if (offset >= 0 && doc != null) {
 			Position[] positions = null;
 			try {
@@ -320,7 +320,7 @@ public abstract class AbstractAntUITest extends TestCase {
 			for (int i = 0; i < positions.length; i++) {
 				Position position = positions[i];
 				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-					return (IConsoleHyperlink)((IOConsoleHyperlinkPosition)position).getHyperLink();
+					return ((IOConsoleHyperlinkPosition)position).getHyperLink();
 				}
 			}
 		}

@@ -15,9 +15,9 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.console.IHyperlink;
 
 
 public class BuildTests extends AbstractAntUIBuildTest {
@@ -53,7 +53,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		} catch (BadLocationException e) {
 			assertTrue("failed getting offset of line", false);
 		}
-		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 	}
   
@@ -64,7 +64,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 	public void testLinks() throws CoreException {
 		launch("build");
 		int offset= 25; //buildfile link
-		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+		IHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No hyperlink found at offset " + offset, link);
 		activateLink(link);
 		
