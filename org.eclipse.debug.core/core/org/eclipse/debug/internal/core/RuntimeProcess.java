@@ -65,8 +65,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		} catch (IllegalThreadStateException e) {
 			fTerminated= false;
 		}
-		fMonitor = new ProcessMonitor(this);
 		fStreamsProxy = new StreamsProxy(this);
+		fMonitor = new ProcessMonitor(this);
 		fireCreationEvent();
 	}
 
