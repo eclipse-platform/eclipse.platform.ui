@@ -135,8 +135,12 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 				// find best match
 				if (configuredSite==null)
 					configuredSite = getSite().getCurrentConfiguredSite();
-				IFeatureReference bestMatch = getBestMatch(configuredSite);
-				bestMatchFeature = getFeature(bestMatch,monitor);
+				IFeatureReference bestMatchReference = getBestMatch(configuredSite);
+				IFeature localBestMatchFeature = getFeature(bestMatchReference,monitor);
+				// during reconciliation, we may not have the currentConfiguredSite yet
+				// do not preserve the best match
+				if (configuredSite==null) return localBestMatchFeature;
+				else bestMatchFeature = localBestMatchFeature;
 			}
 			return bestMatchFeature;
 		}

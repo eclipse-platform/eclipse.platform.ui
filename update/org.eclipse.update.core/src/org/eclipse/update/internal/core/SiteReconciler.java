@@ -807,7 +807,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		for (int j = 0; j < children.length; j++) {
 			IFeature child = null;
 			try {
-				// 71730 expand with best match
+				// 71730 expand with best match (i.e not perfect match)
 				child = children[j].getFeature(false, configuredSite, null);
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
@@ -837,28 +837,29 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * remove all possible matching childrens from the list of possible root
 	 */
-	private static void removeMatchingFeatures(IIncludedFeatureReference featureReference, ArrayList possibleRootFeaturesReferencesArray) {
+	private static void removeMatchingFeatures(IIncludedFeatureReference featureReference, ArrayList possibleRootFeaturesArray) {
 
-		if (possibleRootFeaturesReferencesArray == null || possibleRootFeaturesReferencesArray.isEmpty())
+		if (possibleRootFeaturesArray == null || possibleRootFeaturesArray.isEmpty())
 			return;
 
-		IFeatureReference[] possibleRootFeatureRef = new IFeatureReference[possibleRootFeaturesReferencesArray.size()];
-		possibleRootFeaturesReferencesArray.toArray(possibleRootFeatureRef);
+		IFeature[] possibleRootFeatures = new IFeature[possibleRootFeaturesArray.size()];
+		possibleRootFeaturesArray.toArray(possibleRootFeatures);
 
 		// find the all the possible matching features in the list of possible root features 
 		// remove the exact feature of each found feature reference from the list of possible root
-		boolean isIncludedFeatureReference;
-		for (int ref = 0; ref < possibleRootFeatureRef.length; ref++) {
+		//boolean isIncludedFeatureReference;
+		for (int ref = 0; ref < possibleRootFeatures.length; ref++) {
 			try {
-				if (possibleRootFeatureRef[ref] != null) {
-					VersionedIdentifier possibleRootFeatureRefID = possibleRootFeatureRef[ref].getVersionedIdentifier();
+				if (possibleRootFeatures[ref] != null) {
+					VersionedIdentifier possibleRootFeatureRefID = possibleRootFeatures[ref].getVersionedIdentifier();
 					if (matches(featureReference, possibleRootFeatureRefID)) {
-						isIncludedFeatureReference = possibleRootFeatureRef[ref] instanceof IIncludedFeatureReference;
-						if (isIncludedFeatureReference) {
-							possibleRootFeaturesReferencesArray.remove(((IIncludedFeatureReference) possibleRootFeatureRef[ref]).getFeature(true, null, null));
-						} else {
-							possibleRootFeaturesReferencesArray.remove(possibleRootFeatureRef[ref].getFeature(null));
-						}
+					//	isIncludedFeatureReference = possibleRootFeatures[ref] instanceof IIncludedFeatureReference;
+					//	if (isIncludedFeatureReference) {
+					//		possibleRootFeaturesArray.remove(((IIncludedFeatureReference) possibleRootFeatures[ref]).getFeature(true, null, null));
+					//	} else {
+					//		possibleRootFeaturesArray.remove(possibleRootFeatures[ref].getFeature(null));
+					//	}
+					possibleRootFeaturesArray.remove(possibleRootFeatures[ref]);
 					}
 				}
 			} catch (CoreException e) {
