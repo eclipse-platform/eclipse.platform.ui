@@ -115,6 +115,10 @@ public void doHideOthers() {
 	getPage().closeEditors(otherEditors, true);
 }
 
+public void doHideAll() {
+    getPage().closeEditors(getPage().getEditorReferences(), true);
+}
+
 /**
  * Answer the editor part child.
  */
@@ -203,6 +207,20 @@ protected void addCloseOthersItem (Menu menu) {
 		}
 	});	
 	item.setEnabled(getPage().getEditors().length > 1);
+}
+
+/**
+ * Adds the Close All menu item.
+ */
+protected void addCloseAllItem (Menu menu) {
+	MenuItem item = new MenuItem(menu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHideAll();
+		}
+	});	
+	item.setEnabled(getPage().getEditors().length >= 1);
 }
 
 /**

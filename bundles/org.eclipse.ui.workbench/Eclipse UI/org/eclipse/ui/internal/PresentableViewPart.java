@@ -10,94 +10,84 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.presentations.IPresentablePart;
 
-/**
- * @since 3.0
- */
 public class PresentableViewPart implements IPresentablePart {
-	
-	private ViewPane pane;
-	
-	public PresentableViewPart(ViewPane pane) {
-		this.pane = pane;
-	}
-	
-	/* not used
-	private Perspective getPerspective() {
-		return pane.getPage().getActivePerspective();
-	}
-	*/
-	
-	private IViewReference getViewReference() {
-		return pane.getViewReference();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#setBounds(org.eclipse.swt.graphics.Rectangle)
-	 */
-	public void setBounds(Rectangle bounds) {
-		pane.setBounds(bounds);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#setVisible(boolean)
-	 */
-	public void setVisible(boolean isVisible) {
-		pane.setVisible(isVisible);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#setFocus()
-	 */
-	public void setFocus() {
-		pane.setFocus();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#addPropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void addPropertyListener(IPropertyListener listener) {
-		getViewReference().addPropertyListener(listener);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getName()
-	 */
-	public String getName() {
-		WorkbenchPartReference ref = (WorkbenchPartReference)pane.getPartReference();
 
-		return ref.getRegisteredName();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitle()
-	 */
-	public String getTitle() {
-		return getViewReference().getTitle();
-	}
+    private final List listeners = new ArrayList();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitleImage()
-	 */
-	public Image getTitleImage() {
-		return getViewReference().getTitleImage();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#getTitleToolTip()
-	 */
-	public String getTitleToolTip() {
-		return getViewReference().getTitleToolTip();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.IPresentablePart#isDirty()
-	 */
-	public boolean isDirty() {
-		return false;
-	}
+    private ViewPane pane;
+
+    private final IPropertyListener propertyListenerProxy = new IPropertyListener() {
+
+        public void propertyChanged(Object source, int propId) {
+            for (int i = 0; i < listeners.size(); i++)
+                ((IPropertyListener) listeners.get(i)).propertyChanged(
+                        PresentableViewPart.this, propId);
+        }
+    };
+
+    public PresentableViewPart(ViewPane pane) {
+        this.pane = pane;
+    }
+
+    public void addPropertyListener(final IPropertyListener listener) {
+        if (listeners.isEmpty())
+                getViewReference().addPropertyListener(propertyListenerProxy);
+
+        listeners.add(listener);
+    }
+
+    public String getName() {
+        WorkbenchPartReference ref = (WorkbenchPartReference) pane
+                .getPartReference();
+        return ref.getRegisteredName();
+    }
+
+    public String getTitle() {
+        return getViewReference().getTitle();
+    }
+
+    public Image getTitleImage() {
+        return getViewReference().getTitleImage();
+    }
+
+    public String getTitleToolTip() {
+        return getViewReference().getTitleToolTip();
+    }
+
+    private IViewReference getViewReference() {
+        return pane.getViewReference();
+    }
+
+    public boolean isDirty() {
+        return false;
+    }
+
+    public void removePropertyListener(final IPropertyListener listener) {
+        listeners.remove(listener);
+
+        if (listeners.isEmpty())
+                getViewReference()
+                        .removePropertyListener(propertyListenerProxy);
+    }
+
+    public void setBounds(Rectangle bounds) {
+        pane.setBounds(bounds);
+    }
+
+    public void setFocus() {
+        pane.setFocus();
+    }
+
+    public void setVisible(boolean isVisible) {
+        pane.setVisible(isVisible);
+    }
 }

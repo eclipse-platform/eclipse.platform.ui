@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -29,6 +31,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -60,8 +63,8 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
         return new EditorWorkbook(editorArea, page);
     }
 
-    private WorkbenchPage page;
-
+    private WorkbenchPage page;  
+    
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
         public void selectPart(IPresentablePart toSelect) {
@@ -120,8 +123,37 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
         }
     };
 
-    private EditorPresentationSystemContribution paneContribution = new EditorPresentationSystemContribution(
-            presentationSite);
+    private ContributionItem editorPresentationSystemContribution;
+
+    private static class EditorWorkbookSystemContribution extends ContributionItem {
+    	   	
+        EditorPane editorPane;
+        
+    	public EditorWorkbookSystemContribution(EditorPane editorPane) {
+    		setEditorPane(editorPane);
+    	}
+
+    	public void setEditorPane(EditorPane editorPane) {
+    		this.editorPane = editorPane;
+    		IContributionManager parent = getParent();
+    		
+    		if (parent != null) {
+    			parent.markDirty();
+    		}
+    	}
+    	
+    	public boolean isDynamic() {
+    		return true;
+    	}
+    	
+    	public void fill(Menu menu, int index) {
+    	    editorPane.addCloseOthersItem(menu);
+    	    editorPane.addCloseAllItem(menu);
+    	    editorPane.addPinEditorItem(menu);
+    	}
+    }   
+    
+    private ContributionItem editorWorkbookSystemContribution;
     
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
@@ -999,26 +1031,42 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
         StackPresentation presentation = getPresentation();
 
         if (presentation == null) {
-            if (paneContribution != null) {
-                paneContribution.dispose();
-                paneContribution = null;
+            if (editorPresentationSystemContribution != null) {
+                editorPresentationSystemContribution.dispose();
+                editorPresentationSystemContribution = null;
             }
+
+            if (editorWorkbookSystemContribution != null) {
+                editorWorkbookSystemContribution.dispose();
+                editorWorkbookSystemContribution = null;
+            }
+
             return;
         }
 
         IMenuManager systemMenuManager = presentation.getSystemMenuManager();
         
-        if (paneContribution != null) {
-            systemMenuManager.remove(paneContribution);
-            paneContribution.dispose();
-            paneContribution = null;
+        if (editorPresentationSystemContribution != null) {
+            systemMenuManager.remove(editorPresentationSystemContribution);
+            editorPresentationSystemContribution.dispose();
+            editorPresentationSystemContribution = null;
+        }
+        
+        if (editorWorkbookSystemContribution != null) {
+            systemMenuManager.remove(editorWorkbookSystemContribution);
+            editorWorkbookSystemContribution.dispose();
+            editorWorkbookSystemContribution = null;
         }
 
         if (current != null && current instanceof PartPane) {
-            paneContribution = new EditorPresentationSystemContribution(
+            editorPresentationSystemContribution = new EditorPresentationSystemContribution(
                     presentationSite);
-            paneContribution.setCurrentPane((PartPane) current);
-            systemMenuManager.add(paneContribution);
+            ((EditorPresentationSystemContribution) editorPresentationSystemContribution).setCurrentPane((PartPane) current);         
+            systemMenuManager.add(editorPresentationSystemContribution);
+        
+            editorWorkbookSystemContribution = new EditorWorkbookSystemContribution(
+                    (EditorPane) current);
+            systemMenuManager.add(editorWorkbookSystemContribution);
         }        
     }
 

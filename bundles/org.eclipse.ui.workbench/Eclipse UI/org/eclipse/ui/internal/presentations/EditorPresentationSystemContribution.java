@@ -19,14 +19,18 @@ public class EditorPresentationSystemContribution extends
 
     public EditorPresentationSystemContribution(IStackPresentationSite site) {
         super(site);
-    }
+    }    
+    
+	protected String getMovePaneName() {
+		return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$
+	}
 
     public void fill(Menu menu, int index) {
         addStateContribution(menu, WorkbenchMessages
                 .getString("PartPane.restore"),
                 IStackPresentationSite.STATE_RESTORED); //$NON-NLS-1$
         addMoveMenuItem(menu, getMovePaneName(), WorkbenchMessages
-                .getString("ViewPane.moveFolder")); //$NON-NLS-1$
+                .getString("EditorPane.moveFolder")); //$NON-NLS-1$
         addSizeMenuItem(menu);
         addStateContribution(menu, WorkbenchMessages
                 .getString("PartPane.maximize"),

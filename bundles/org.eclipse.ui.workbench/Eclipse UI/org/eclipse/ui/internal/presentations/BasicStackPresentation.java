@@ -239,8 +239,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param property
 	 */
 	protected void childPropertyChanged(IPresentablePart part, int property) {
-		CTabItem tab = getTab(part);
-		 
+	    CTabItem tab = getTab(part);
 		initTab(tab, part);
 	}
 
