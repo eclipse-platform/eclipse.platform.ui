@@ -24,6 +24,57 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 - ICompletionProposalExtension3: renamed methods:
 	- getCompletionText -> getPrefixCompletionText
 	- getCompletionOffset -> getPrefixCompletionOffset
+	
+
+Headless annotation model support for text file buffers:
+
+We added headless annotation model support to text file buffers. Each text
+file buffer can now have its own annotation model. 
+        ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(<location>); 
+        IAnnotationModel model= buffer.getAnnotationModel(); 
+When the buffer's document is changed, all annotations in the buffer's annotation 
+model are accordingly updated. 
+
+As annotations (org.eclipse.jface.text.source.Annotation) had dependencies on 
+SWT the following changes have been applied. These changes might break existing 3.0 clients. 
+The changes in detail: 
+- ImageUtilities has been moved from org.eclipse.ui.texteditors to org.eclipse.jface.text.source 
+- removed static Annotation.drawImage methods -> use org.eclipse.jface.text.source.ImageUtilities 
+- removed setLayer, getLayer, and paint from Annotation -> annotations which want to draw 
+  themselves should implement IAnnotationPresentation (as has been introduced by Dec. 18th) 
+- MarkerAnnotation now directly implements the methods removed from Annotation (setLayer, getLayer, paint) 
+- MarkerAnnotation extends SimpleMarkerAnnotation, SimpleMarkerAnnotation just provides 
+  access to the represented IMarker 
+- the following classes have been moved from the plug-in org.eclipse.jface.text to the plug-in 
+  org.eclipse.text, the package names remain the same 
+        org.eclipse.jface.text.ISynchronizable 
+        org.eclipse.jface.text.source.Annotation 
+        org.eclipse.jface.text.source.AnnotationMap 
+        org.eclipse.jface.text.source.AnnotationModel 
+        org.eclipse.jface.text.source.AnnotationModelEvent 
+        org.eclipse.jface.text.source.IAnnotationMap 
+        org.eclipse.jface.text.source.IAnnotationModel 
+        org.eclipse.jface.text.source.IAnnotationModelExtension 
+        org.eclipse.jface.text.source.IAnnotationModelListener 
+        org.eclipse.jface.text.source.IAnnotationModelListenerExtension 
+
+The following changes were made to add headless annotation model support to filebuffers. 
+        - added ITextFileBuffer.getAnnotationModel(IPath) 
+        - added ITextFileBufferManager.createAnnotationModel(IPath) 
+        - introduced IPersistableAnnotationModel give annotations model a sense of a life cycle 
+        - added new extension point org.eclipse.core.filebuffers.annotationModelCreation for 
+          registering factories for file buffer annotation models 
+        - introduced IAnnotationModelFactory to reify the contract for the extension point 
+        - changed TextFileDocumentProvider to take the text file buffer annotation models into 
+          account. This is only the case when a subclass does override 
+              TextFileDocumentProvider.createAnnotationModel 
+
+Theses changes affect the following plug-ins: 
+        org.eclipse.core.filebuffers 
+        org.eclipse.jface.text 
+        org.eclipse.text 
+        org.eclipse.ui.editors 
+	
 </pre>
 <br>
 ========== Eclipse Build Input April 27th 2004 ==========<br>
