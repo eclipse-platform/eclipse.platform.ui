@@ -24,10 +24,9 @@ import org.eclipse.core.runtime.*;
 public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListener {
 	//Map keeping the association between extensions and a set of objects. Key: IExtension, value: ReferenceHashSet.
 	private Map extensionToObjects = new HashMap();
-
-	//The handlers
-	private ListenerList additionHandlers = new ListenerList();
-	private ListenerList removalHandlers = new ListenerList();
+	private ListenerList handlers = new ListenerList();
+	private final Object lock = new Object();
+	private boolean closed = false;
 
 	private static final Object[] EMPTY_ARRAY = new Object[0];
 
@@ -35,27 +34,20 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
 
-	public void registerAdditionHandler(IExtensionAdditionHandler handler) {
-		synchronized (additionHandlers) {
-			additionHandlers.add(handler);
+	public void registerHandler(IExtensionChangeHandler handler, IFilter filter) {
+		synchronized (lock) {
+			if (closed)
+				return;
+			// TODO need to store the filter with the handler
+			handlers.add(new HandlerWrapper(handler, filter));
 		}
 	}
 
-	public void unregisterAdditionHandler(IExtensionAdditionHandler handler) {
-		synchronized (additionHandlers) {
-			additionHandlers.remove(handler);
-		}
-	}
-
-	public void registerRemovalHandler(IExtensionRemovalHandler handler) {
-		synchronized (removalHandlers) {
-			removalHandlers.add(handler);
-		}
-	}
-
-	public void unregisterRemovalHandler(IExtensionRemovalHandler handler) {
-		synchronized (removalHandlers) {
-			removalHandlers.remove(handler);
+	public void unregisterHandler(IExtensionChangeHandler handler) {
+		synchronized (lock) {
+			if (closed)
+				return;
+			handlers.remove(new HandlerWrapper(handler, null));
 		}
 	}
 
@@ -63,17 +55,23 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		if (element == null || object == null)
 			return;
 
-		synchronized (extensionToObjects) {
+		synchronized (lock) {
+			if (closed)
+				return;
+
 			ReferenceHashSet associatedObjects = (ReferenceHashSet) extensionToObjects.get(element);
 			if (associatedObjects == null) {
 				associatedObjects = new ReferenceHashSet();
 				extensionToObjects.put(element, associatedObjects);
 			}
-
 			associatedObjects.add(object, referenceType);
 		}
 	}
 
+	/**
+	 * Implementation of IRegistryChangeListener interface.  This method should not
+	 * be called by clients.
+	 */
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta delta[] = event.getExtensionDeltas();
 		int len = delta.length;
@@ -90,59 +88,68 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 			}
 	}
 
-	private void doAdd(IExtensionDelta delta) {
+	/**
+	 * Notify all handlers whose filter matches that the given delta occured
+	 * If the list of objects is not null then this is a removal and the handlers
+	 * will be given a chance to process the list.  If it is null then the notification is 
+	 * an addition.
+	 * @param delta the change to broadcast
+	 * @param objects the objects to pass to the handlers on removals
+	 */
+	private void notify(IExtensionDelta delta, Object[] objects) {
 		// Get a copy of the handlers for safe notification
 		Object[] handlersCopy = null;
-		synchronized (additionHandlers) {
-			if (additionHandlers == null || additionHandlers.isEmpty())
+		synchronized (lock) {
+			if (closed)
 				return;
-			handlersCopy = additionHandlers.getListeners();
+
+			if (handlers == null || handlers.isEmpty())
+				return;
+			handlersCopy = handlers.getListeners();
 		}
 
 		for (int i = 0; i < handlersCopy.length; i++) {
-			IExtensionAdditionHandler handler = (IExtensionAdditionHandler) handlersCopy[i];
-			if (handler.getExtensionPointFilter() == null || handler.getExtensionPointFilter().equals(delta.getExtensionPoint())) {
-				applyAdd(handler, delta.getExtension());
+			HandlerWrapper wrapper = (HandlerWrapper) handlersCopy[i];
+			if (wrapper.filter == null || wrapper.filter.matches(delta.getExtensionPoint())) {
+				if (objects == null)
+					applyAdd(wrapper.handler, delta.getExtension());
+				else
+					applyRemove(wrapper.handler, delta.getExtension(), objects);
 			}
 		}
 	}
 
-	protected void applyAdd(IExtensionAdditionHandler handler, IExtension extension) {
-		handler.addInstance(this, extension);
+	protected void applyAdd(IExtensionChangeHandler handler, IExtension extension) {
+		handler.addExtension(this, extension);
+	}
+
+	private void doAdd(IExtensionDelta delta) {
+		notify(delta, null);
 	}
 
 	private void doRemove(IExtensionDelta delta) {
-		IExtension removedExtension = delta.getExtension();
 		Object[] removedObjects = null;
-		synchronized (extensionToObjects) {
-			ReferenceHashSet associatedObjects = (ReferenceHashSet) extensionToObjects.remove(removedExtension);
+		synchronized (lock) {
+			if (closed)
+				return;
+
+			ReferenceHashSet associatedObjects = (ReferenceHashSet) extensionToObjects.remove(delta.getExtension());
 			if (associatedObjects == null)
 				return;
 			//Copy the objects early so we don't hold the lock too long
 			removedObjects = associatedObjects.toArray();
 		}
-
-		// Get a copy of the handlers for safe notification
-		Object[] handlersCopy = null;
-		synchronized (removalHandlers) {
-			// No one is listening. Simply remove the objects
-			if (removalHandlers == null || removalHandlers.isEmpty())
-				return;
-			handlersCopy = removalHandlers.getListeners();
-		}
-
-		// Find the objects that have not been gc'ed, and notify the handlers
-		for (int i = 0; i < handlersCopy.length; i++) {
-			applyRemove((IExtensionRemovalHandler) handlersCopy[i], removedExtension, removedObjects);
-		}
+		notify(delta, removedObjects);
 	}
 
-	protected void applyRemove(IExtensionRemovalHandler handler, IExtension removedExtension, Object[] removedObjects) {
-		handler.removeInstance(removedExtension, removedObjects);
+	protected void applyRemove(IExtensionChangeHandler handler, IExtension removedExtension, Object[] removedObjects) {
+		handler.removeExtension(removedExtension, removedObjects);
 	}
 
 	public Object[] getObjects(IExtension element) {
-		synchronized (extensionToObjects) {
+		synchronized (lock) {
+			if (closed)
+				return EMPTY_ARRAY;
 			ReferenceHashSet objectSet = (ReferenceHashSet) extensionToObjects.get(element);
 			if (objectSet == null)
 				return EMPTY_ARRAY;
@@ -152,14 +159,22 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 	}
 
 	public void close() {
-		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-		extensionToObjects = null;
-		additionHandlers = null;
-		removalHandlers = null;
+		synchronized (lock) {
+			if (closed)
+				return;
+
+			Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+			extensionToObjects = null;
+			handlers = null;
+
+			closed = true;
+		}
 	}
 
 	public void unregisterObject(IExtension extension, Object object) {
-		synchronized (extensionToObjects) {
+		synchronized (lock) {
+			if (closed)
+				return;
 			ReferenceHashSet associatedObjects = (ReferenceHashSet) extensionToObjects.get(extension);
 			if (associatedObjects != null)
 				associatedObjects.remove(object);
@@ -167,11 +182,61 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 	}
 
 	public Object[] unregisterObject(IExtension extension) {
-		synchronized (extensionToObjects) {
+		synchronized (lock) {
+			if (closed)
+				return EMPTY_ARRAY;
 			ReferenceHashSet associatedObjects = (ReferenceHashSet) extensionToObjects.remove(extension);
 			if (associatedObjects == null)
 				return EMPTY_ARRAY;
 			return associatedObjects.toArray();
 		}
 	}
+
+	public IFilter createExtensionPointFilter(final IExtensionPoint point) {
+		return new IFilter() {
+			public boolean matches(IExtensionPoint target) {
+				return point.equals(target);
+			}
+		};
+	}
+
+	public IFilter createExtensionPointFilter(final IExtensionPoint[] points) {
+		return new IFilter() {
+			public boolean matches(IExtensionPoint target) {
+				for (int i = 0; i < points.length; i++)
+					if (points[i].equals(target))
+						return true;
+				return false;
+			}
+		};
+	}
+
+	public IFilter createPluginFilter(final String id) {
+		return new IFilter() {
+			public boolean matches(IExtensionPoint target) {
+				return id.equals(target.getNamespace());
+			}
+		};
+	}
+
+	private class HandlerWrapper {
+		IExtensionChangeHandler handler;
+		IFilter filter;
+
+		public HandlerWrapper(IExtensionChangeHandler handler, IFilter filter) {
+			this.handler = handler;
+			this.filter = filter;
+		}
+
+		public boolean equals(Object target) {
+			// much simplified equals as we know the each conditions under which 
+			// it will be called.
+			return handler.equals(target);
+		}
+
+		public int hashCode() {
+			return handler.hashCode();
+		}
+	}
+
 }

@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.dynamicHelpers;
 
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 
 /**
  * An extension tracker keeps associations between extensions and their derived objects on an extension basis.
@@ -46,28 +47,17 @@ public interface IExtensionTracker {
 	public static final int REF_WEAK = ReferenceHashSet.WEAK;
 	
 	/**
-	 * Register an addition handler with this tracker
-	 * @param handler : the handler to be registered
+	 * Register an extension change handler with this tracker using the given filter
+	 * @param handler the handler to be registered
+	 * @param filter the filter to use to choose interesting changes
 	 */
-	public void registerAdditionHandler(IExtensionAdditionHandler handler);
+	public void registerHandler(IExtensionChangeHandler handler, IFilter filter);
 	
 	/**
-	 * Unregister an addition handler previously registered with this tracker
-	 * @param handler : the handler to be unregistered 
+	 * Unregister the given extension change handler previously registered with this tracker
+	 * @param handler the handler to be unregistered 
 	 */
-	public void unregisterAdditionHandler(IExtensionAdditionHandler handler);
-	
-	/**
-	 * Register a removal handler with this tracker
-	 * @param handler : the handler to be registered
-	 */
-	public void registerRemovalHandler(IExtensionRemovalHandler handler);
-	
-	/**
-	 * Unregister a removal handler previously registered with this tracker
-	 * @param handler : the handler to be unregistered 
-	 */
-	public void unregisterRemovalHandler(IExtensionRemovalHandler handler);
+	public void unregisterHandler(IExtensionChangeHandler handler);
 	
 	/**
 	 * Create an association between the given extension and the given object.
@@ -106,4 +96,8 @@ public interface IExtensionTracker {
 	 * Close the tracker. All registered objects are fred and all handlers are being automatically removed.
 	 */
     public void close();
+    
+    public IFilter createExtensionPointFilter(final IExtensionPoint[] points);
+    
+    public IFilter createExtensionPointFilter(final IExtensionPoint points);
 }
