@@ -69,11 +69,9 @@ public IResource findMember(IPath path, boolean phantom) {
 /**
  */
 protected void fixupAfterMoveSource() throws CoreException {
-	if (!synchronizing(getResourceInfo(false, false)) || getType() == PROJECT) {
-		workspace.deleteResource(this);
-		return;
-	}
 	super.fixupAfterMoveSource();
+	if (!synchronizing(getResourceInfo(false, false)))
+		return;
 	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	for (int i = 0; i < members.length; i++)
 		 ((Resource) members[i]).fixupAfterMoveSource();

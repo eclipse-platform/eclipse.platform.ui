@@ -17,7 +17,8 @@ import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.*;
 
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
+
 	protected WorkspacePreferences description;
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
@@ -39,13 +41,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected PathVariableManager pathVariableManager;
 	protected PropertyManager propertyManager;
 	protected MarkerManager markerManager;
+	protected WorkManager workManager;
+	protected AliasManager aliasManager;
 	protected long nextNodeId = 0;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
-	protected WorkManager workManager;
 	protected IProject[] buildOrder = null;
 	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
+
+	protected final HashSet lifecycleListeners = new HashSet(10);
 
 	protected static final String REFRESH_ON_STARTUP = "-refresh"; //$NON-NLS-1$
 	
@@ -95,6 +100,13 @@ public Workspace() {
 	tree.setTreeData(newElement(IResource.ROOT));
 }
 /**
+ * Adds a listener for internal workspace lifecycle events.  There is no way to
+ * remove lifecycle listeners.
+ */
+public void addLifecycleListener(ILifecycleListener listener) {
+	lifecycleListeners.add(listener);
+}
+/**
  * @see IWorkspace
  */
 public void addResourceChangeListener(IResourceChangeListener listener) {
@@ -140,6 +152,17 @@ private void broadcastChanges(ElementTree currentTree, int type, boolean lockTre
 	monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
 	notificationManager.broadcastChanges(currentTree, type, lockTree, updateState);
 }
+/**
+ * Broadcasts an internal workspace lifecycle event to interested
+ * internal listeners.
+ */
+protected void broadcastEvent(LifecycleEvent event) throws CoreException {
+	for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
+		ILifecycleListener listener = (ILifecycleListener) it.next();
+		listener.handleEvent(event);
+	}
+}
+
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -155,19 +178,6 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
-}
-/**
- * Notify the relevant infrastructure pieces that the given project is being
- * changed (e.g., setDescription, move, copy...) and various parts of 
- * the workspace need to be
- * notified so they can update cached structures etc.
- */
-public void changing(IProject project) throws CoreException {
-	buildManager.changing(project);
-	natureManager.changing(project);
-	notificationManager.changing(project);
-	propertyManager.changing(project);
-	markerManager.changing(project);
 }
 /**
  * @see IWorkspace#checkpoint
@@ -255,7 +265,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 				IProject[] projects = getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					//notify managers of closing so they can cleanup
-					closing(projects[i]);
+					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
 					monitor.worked(1);
 				}
 				//empty the workspace tree so we leave in a clean state
@@ -271,18 +281,6 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-/**
- * Notify the relevant infrastructure pieces that the given project is being
- * closed.  
- */
-protected void closing(IProject project) throws CoreException {
-	buildManager.closing(project);
-	natureManager.closing(project);
-	notificationManager.closing(project);
-	propertyManager.closing(project);
-	markerManager.closing(project);
-}
-
 /**
  * Implementation of API method declared on IWorkspace.
  * 
@@ -627,7 +625,7 @@ public int countResources(IPath root, int depth, final boolean phantom) {
 		case IResource.DEPTH_INFINITE:
 			final int[] count = new int[1];
 			IElementContentVisitor visitor = new IElementContentVisitor() {
-				public void visitElement(ElementTree tree, IPath elementPath, Object elementContents) {
+				public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 					if (phantom || !((ResourceInfo)elementContents).isSet(M_PHANTOM))
 						count[0]++;
 				}
@@ -805,17 +803,6 @@ void deleteResource(IResource resource) {
 		tree.deleteElement(path);
 }
 /**
- * Notify the relevant infrastructure pieces that the given project is being
- * deleted. 
- */
-protected void deleting(IProject project) throws CoreException {
-	buildManager.deleting(project);
-	natureManager.deleting(project);
-	notificationManager.deleting(project);
-	propertyManager.deleting(project);
-	markerManager.deleting(project);
-}
-/**
  * For debugging purposes only.  Dumps plugin stats to console
  */
 public void dumpStats() {
@@ -915,6 +902,9 @@ protected void flushBuildOrder() {
 public void forgetSavedTree(String pluginId) {
 	Assert.isNotNull(pluginId, "PluginId must not be null"); //$NON-NLS-1$
 	saveManager.forgetSavedTree(pluginId);
+}
+public AliasManager getAliasManager() {
+	return aliasManager;
 }
 /**
  * Returns this workspace's build manager
@@ -1534,17 +1524,6 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 	}
 }
 /**
- * Notify the relevant infrastructure pieces that the given project is being
- * opened. 
- */
-protected void opening(IProject project) throws CoreException {
-	buildManager.opening(project);
-	natureManager.opening(project);
-	notificationManager.opening(project);
-	propertyManager.opening(project);
-	markerManager.opening(project);
-}
-/**
  * Called before checking the pre-conditions of an operation.
  */
 public void prepareOperation() throws CoreException {
@@ -1657,7 +1636,7 @@ private boolean shouldBuild() throws CoreException {
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, workManager };
+		IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, workManager, aliasManager};
 		monitor.beginTask(null, managers.length);
 		String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1707,6 +1686,7 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	pathVariableManager = new PathVariableManager(this);
 	pathVariableManager.startup(null);
 	natureManager = new NatureManager();
+	natureManager.startup(null);
 	buildManager = new BuildManager(this);
 	buildManager.startup(null);
 	notificationManager = new NotificationManager(this);
@@ -1716,6 +1696,10 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	synchronizer = new Synchronizer(this);
 	saveManager = new SaveManager(this);
 	saveManager.startup(null);
+	//must start after save manager, because (read) access to tree is needed
+	aliasManager = new AliasManager(this);
+	aliasManager.startup(null);
+	
 	treeLocked = false; // unlock the tree.
 }
 /** 
@@ -1726,12 +1710,12 @@ public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 	ElementTreeIterator iterator = new ElementTreeIterator();
-	IElementContentVisitor visitor = new IElementContentVisitor() {
+	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
 		public void visitElement(ElementTree tree, IPath path, Object elementContents) {
 			buffer.append("\n  " + path + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	};
-	iterator.iterate(tree, visitor);
+	iterator.iterateWithPath(tree, visitor, Path.ROOT);
 	return buffer.toString();
 }
 public void updateModificationStamp(ResourceInfo info) {
@@ -1785,9 +1769,14 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		message = Policy.bind("links.parentNotProject", resource.getFullPath().toString());//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
+	if (!parent.isAccessible()) {
+		message = Policy.bind("links.parentNotAccessible", resource.getFullPath().toString());//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
 	//check nature veto
 	String[] natureIds = ((Project)parent).internalGetDescription().getNatureIds();
+
 	IStatus result = getNatureManager().validateLinkCreation(natureIds);
 	if (!result.isOK())
 		return result;

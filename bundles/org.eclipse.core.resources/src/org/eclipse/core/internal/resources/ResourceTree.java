@@ -56,7 +56,7 @@ public void addToLocalHistory(IFile file) {
 	((Resource) file).getLocalManager().getHistoryStore().addState(file.getFullPath(), path, lastModified, false);
 }
 
-/*
+/**
  * Copies the local history of source to destination.  Note that if source
  * is an IFolder, it is assumed that the same structure exists under destination
  * and the local history of any IFile under source will be copied to the
@@ -405,20 +405,7 @@ private boolean isCaseChange(IProject project, IProjectDescription description) 
  * @see IResourceTree#isSynchronized
  */
 public boolean isSynchronized(IResource resource, int depth) {
-	Assert.isLegal(isValid);
-	UnifiedTree tree = new UnifiedTree(resource);
-	String message = Policy.bind("resources.errorRefresh", resource.getFullPath().toString()); //$NON-NLS-1$
-	// FIXME: this visitor does too much work because it collects statuses for all
-	// children who are out of sync. We could optimize by returning early when discovering
-	// the first out of sync child.
-	CollectSyncStatusVisitor visitor = new CollectSyncStatusVisitor(message, new NullProgressMonitor());
-	try {
-		tree.accept(visitor, depth);
-	} catch (CoreException e) {
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, resource.getFullPath(), message, e);
-		failed(status);
-	}
-	return !visitor.resourcesChanged();
+	return ((Resource)resource).getLocalManager().isSynchronized(resource, depth);
 }
 /**
  * @see IResourceTree#computeTimestamp
@@ -548,14 +535,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(folder, IResource.DEPTH_INFINITE)) {
 			// we are not in sync and force is false so delete via best effort
-			boolean deletedChildren = internalDeleteFolder(folder, updateFlags, monitor);
-			if (deletedChildren) {
-				deletedFolder(folder);
-			} else {
-				message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
-				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
-				failed(status);
-			}
+			internalDeleteFolder(folder, updateFlags, monitor);
 			return;
 		} 
 

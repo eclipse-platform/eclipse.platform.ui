@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.Assert;
@@ -445,6 +446,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		try {
 			workspace.prepareOperation();
 			assertLinkRequirements(localLocation, updateFlags);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 			workspace.beginOperation(true);
 			// resolve any variables used in the location path
 			IPath resolvedLocation = workspace.getPathVariableManager().resolvePath(localLocation);
@@ -458,7 +460,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 				new LinkDescription(this,localLocation));
 			project.writeDescription(IResource.NONE);
 			monitor.worked(Policy.opWork * 5 / 100);
-			
+
 			//refresh to discover any new resources below this linked location
 			if (getType() != IResource.FILE)
 				refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
@@ -519,6 +521,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 
 			workspace.beginOperation(true);
 			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
+			IPath originalLocation = getLocation();
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
@@ -532,14 +535,14 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
 					break;
 				case IResource.PROJECT:
-					workspace.deleting((IProject) this);
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
 					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
 						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
 					break;
 				case IResource.ROOT:
 					IProject[] projects = ((IWorkspaceRoot) this).getProjects();
 					for (int i = 0; i < projects.length; i++) {
-						workspace.deleting(projects[i]);
+						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
 						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2)))
 							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2));
 					}
@@ -553,6 +556,8 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			tree.makeInvalid();
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
+			//update any aliases of this resource
+			workspace.getAliasManager().updateAliases(this, originalLocation, monitor);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -608,6 +613,8 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 	// if this is a linked resource, remove the entry from the project description
 	if (isLinked()) {
+		//pre-delete notification to internal infrastructure
+		workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, this));
 		Project project = (Project)getProject();
 		ProjectDescription description = project.internalGetDescription();
 		description.setLinkLocation(getName(), null);
@@ -664,6 +671,13 @@ public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) th
 }
 protected void fixupAfterMoveSource() throws CoreException {
 	ResourceInfo info = getResourceInfo(true, true);
+	//if a linked resource is moved, we need to remove the location info from the .project 
+	if (isLinked()) {
+		Project project = (Project)getProject();
+		project.internalGetDescription().setLinkLocation(getName(), null);
+		project.writeDescription(IResource.NONE);
+	}
+		
 	if (!synchronizing(info)) {
 		workspace.deleteResource(this);
 		return;
@@ -980,14 +994,13 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 					break;
 				case IResource.PROJECT:
 					IProject project = (IProject) this;
-					// if there is a change in name, then we are deleting the source project so notify.
-					// else there is nothing to do so return.
+					// if there is no change in name, there is nothing to do so return.
 					if (getName().equals(path.lastSegment())) {
 						return;
-					} else {
-						workspace.changing(project);
-						workspace.deleting(project);
 					}
+					//we are deleting the source project so notify.
+					destination = workspace.getRoot().getProject(path.lastSegment());
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 					IProjectDescription description = project.getDescription();
 					description.setName(path.lastSegment());
 					if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))

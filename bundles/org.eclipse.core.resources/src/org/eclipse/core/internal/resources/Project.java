@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -149,7 +150,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 			// beginning so that infrastructure pieces have a chance to do clean up 
 			// while the resources still exist.
 			// Do this before the begin to prevent lifecycle participants to change the tree.
-			workspace.closing(this);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
 			workspace.beginOperation(true);
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();
@@ -217,6 +218,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			checkDoesNotExist();
 			if (description != null)
 				checkDescription(this, description, false);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
 			workspace.beginOperation(true);
 			workspace.createResource(this, false);
 			workspace.getMetaArea().create(this);
@@ -272,6 +274,9 @@ public void create(IProgressMonitor monitor) throws CoreException {
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
 	delete(updateFlags, monitor);
+}
+protected void fixupAfterMoveSource() throws CoreException {
+	workspace.deleteResource(this);
 }
 
 /**
@@ -422,7 +427,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			assertCopyRequirements(destPath, IResource.PROJECT, updateFlags);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
 			checkDescription(destProject, destDesc, false);
-			workspace.changing(this);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_COPY, this, destProject, updateFlags));
 
 			workspace.beginOperation(true);
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -626,11 +631,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			ResourceTree tree = new ResourceTree(status);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
-			// if there is a name change then we are deleting the source so notify
-			if (!getName().equals(description.getName())) {
-				workspace.changing(this);
-				workspace.deleting(this);
-			}
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 			if (!hook.moveProject(tree, this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 				tree.standardMoveProject(this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 			// Invalidate the tree for further use by clients.
@@ -781,8 +782,8 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			//see if we have an old .prj file
 			if (!hadSavedDescription)
 				hadSavedDescription = workspace.getMetaArea().hasSavedProject(this);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 			workspace.beginOperation(true);
-			workspace.changing(this);
 			MultiStatus status = basicSetDescription((ProjectDescription) description);
 			if (hadSavedDescription && !status.isOK())
 				throw new CoreException(status);
@@ -820,8 +821,9 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
 protected void startup() throws CoreException {
 	if (!isOpen())
 		return;
-	workspace.opening(this);
+	workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_OPEN, this));
 }
+
 /**
  * @see IResource
  */
@@ -832,8 +834,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
-			workspace.changing(this);
-
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 			workspace.beginOperation(true);
 			super.touch(Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
@@ -854,7 +855,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 protected void updateDescription() throws CoreException {
 	if (isWritingDescription)
 		return;
-	workspace.changing(this);
+	workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 	ProjectDescription description = getLocalManager().read(this, false);
 	reconcileLinks(description);
 	internalSetDescription(description, true);

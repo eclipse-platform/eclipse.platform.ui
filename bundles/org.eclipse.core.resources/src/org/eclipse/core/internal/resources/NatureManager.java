@@ -12,6 +12,8 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 
+import org.eclipse.core.internal.events.ILifecycleListener;
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,7 +22,7 @@ import org.eclipse.core.runtime.*;
  * Maintains collection of known nature descriptors, and implements
  * nature-related algorithms provided by the workspace.
  */
-public class NatureManager {
+public class NatureManager implements ILifecycleListener, IManager {
 	//maps String (nature ID) -> descriptor objects
 	protected Map descriptors;
 	
@@ -36,13 +38,6 @@ public class NatureManager {
 	private static final byte BLACK = 2;
 	
 protected NatureManager() {
-}
-public void changing(IProject project) {
-	//enablements can change even if new natures aren't configured/deconfigured
-	flushEnablements(project);
-}
-public void closing(IProject project) {
-	flushEnablements(project);
 }
 /**
  * Computes the list of natures that are enabled for the given project.
@@ -118,6 +113,16 @@ public IProjectNatureDescriptor[] getNatureDescriptors() {
 	lazyInitialize();
 	Collection values = descriptors.values();
 	return (IProjectNatureDescriptor[]) values.toArray(new IProjectNatureDescriptor[values.size()]);
+}
+public void handleEvent(LifecycleEvent event) {
+	switch (event.kind) {
+		case LifecycleEvent.PRE_PROJECT_CHANGE:
+		case LifecycleEvent.PRE_PROJECT_CLOSE:
+		case LifecycleEvent.PRE_PROJECT_DELETE:
+		case LifecycleEvent.PRE_PROJECT_MOVE:
+		case LifecycleEvent.PRE_PROJECT_OPEN:
+			flushEnablements((IProject)event.resource);
+	}
 }
 /**
  * Configures the nature with the given ID for the given project.
@@ -253,9 +258,6 @@ protected void deconfigureNature(final Project project, final String natureID, f
 		System.out.println("Deconfiguring nature: " + natureID + " on project: " + project.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	Platform.run(code);
-}
-public void deleting(IProject project) {
-	flushEnablements(project);
 }
 /**
  * Marks all nature descriptors that are involved in cycles
@@ -436,9 +438,6 @@ protected void lazyInitialize() {
 	//cycle detection on a graph subset is a pain
 	detectCycles();
 }
-public void opening(IProject project) {
-	flushEnablements(project);
-}
 /**
  * Sets the cached array of enabled natures for this project.
  */
@@ -447,6 +446,9 @@ protected void setEnabledNatures(IProject project, String[] enablements) {
 		natureEnablements = new HashMap(20);
 	natureEnablements.put(project, enablements);
 }
+public void shutdown(IProgressMonitor monitor) throws CoreException {
+}
+
 /**
  * @see IWorkspace#sortNatureSet
  */
@@ -468,6 +470,10 @@ public String[] sortNatureSet(String[] natureIds) {
 	}		
 	return (String[]) result.toArray(new String[result.size()]);
 }
+public void startup(IProgressMonitor monitor) throws CoreException {
+	((Workspace)ResourcesPlugin.getWorkspace()).addLifecycleListener(this);
+}
+
 /**
  * Validates the given nature additions in the nature set for this
  * project.  Tolerates existing inconsistencies in the nature set.
@@ -531,7 +537,7 @@ public IStatus validateLinkCreation(String[] natureIds) {
 	for (int i = 0; i < natureIds.length; i++) {
 		IProjectNatureDescriptor desc = getNatureDescriptor(natureIds[i]);
 		if (desc != null && !desc.isLinkingAllowed()) {
-			String msg = Policy.bind("links.natureVeto", natureIds[i]); //$NON-NLS-1$
+			String msg = Policy.bind("links.natureVeto", desc.getLabel()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.LINKING_NOT_ALLOWED, msg);
 		}
 	}

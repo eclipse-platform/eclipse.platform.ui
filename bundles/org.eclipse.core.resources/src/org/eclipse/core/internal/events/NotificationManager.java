@@ -17,7 +17,7 @@ import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-public class NotificationManager implements IManager {
+public class NotificationManager implements IManager, ILifecycleListener {
 	protected ResourceChangeListenerList listeners;
 	protected Workspace workspace;
 	protected ElementTree oldState;
@@ -80,19 +80,6 @@ public void broadcastChanges(ElementTree lastState, int type, boolean lockTree, 
 	}
 }
 
-public void changing(IProject project) {
-}
-
-public void closing(IProject project) {
-	if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_CLOSE))
-		return;
-	notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_CLOSE, project), true);
-}
-public void deleting(IProject project) {
-	if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_DELETE))
-		return;
-	notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_DELETE, project), true);
-}
 protected ResourceDelta getDelta(ElementTree tree) {
 	long id = workspace.getMarkerManager().getChangeId();
 	// if we have a delta from last time and no resources have changed since then, we
@@ -116,6 +103,27 @@ protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
 		result = listeners.getListeners();
 	}
 	return result;
+}
+public void handleEvent(LifecycleEvent event) {
+	switch (event.kind) {
+		case LifecycleEvent.PRE_PROJECT_CLOSE:
+			if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_CLOSE))
+				return;
+			IProject project = (IProject)event.resource;
+			notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_CLOSE, project), true);
+			break;
+		case LifecycleEvent.PRE_PROJECT_MOVE:
+			//only notify deletion on move if old project handle is going away
+			if (event.resource.equals(event.newResource))
+				return;
+			//fall through
+		case LifecycleEvent.PRE_PROJECT_DELETE:
+			if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_DELETE))
+				return;
+			project = (IProject)event.resource;
+			notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_DELETE, project), true);
+			break;
+	}
 }
 private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, boolean lockTree) {
 	int type = event.getType();
@@ -154,8 +162,6 @@ private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners
 		}
 	}
 }
-public void opening(IProject project) {
-}
 public void removeListener(IResourceChangeListener listener) {
 	synchronized (listeners) {
 		listeners.remove(listener);
@@ -169,5 +175,8 @@ public void startup(IProgressMonitor monitor) {
 	// tell the workspace to track changes from there.  This gives the
 	// notificaiton manager an initial basis for comparison.
 	oldState = workspace.getElementTree();
+	workspace.addLifecycleListener(this);
 }
+
+
 }

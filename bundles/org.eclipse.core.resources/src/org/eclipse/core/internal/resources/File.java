@@ -234,6 +234,7 @@ protected void internalSetContents(InputStream content, IPath location, boolean 
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
 	updateProjectDescription();
+	workspace.getAliasManager().updateAliases(this, location, monitor);
 }
 
 /*

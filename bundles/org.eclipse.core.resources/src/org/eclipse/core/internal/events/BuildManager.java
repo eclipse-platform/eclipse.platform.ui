@@ -19,7 +19,7 @@ import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-public class BuildManager implements ICoreConstants, IManager {
+public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {
 	protected Workspace workspace;
 	protected boolean building = false;
 	
@@ -261,10 +261,6 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 protected boolean canRun(int trigger) {
 	return !building;
 }
-public void changing(IProject project) {
-}
-public void closing(IProject project) {
-}
 /**
  * Creates and returns a Map mapping String(builder name) -> BuilderPersistentInfo. 
  * The table includes entries for all builders that are
@@ -314,11 +310,6 @@ protected String debugProject() {
 	if (currentBuilder== null)
 		return "<no project>"; //$NON-NLS-1$
 	return currentBuilder.getProject().getFullPath().toString();
-}
-public void deleting(IProject project) {
-	//make sure the builder persistent info is deleted for the project move case
-	if (project.isAccessible())
-		setBuildersPersistentInfo(project, null);
 }
 protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 	Hashtable builders = getBuilders(project);
@@ -411,6 +402,17 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 			}
 		}
 	};
+}
+public void handleEvent(LifecycleEvent event) {
+	IProject project = null;
+	switch (event.kind) {
+		case LifecycleEvent.PRE_PROJECT_DELETE:
+		case LifecycleEvent.PRE_PROJECT_MOVE:
+			project = (IProject)event.resource;
+			//make sure the builder persistent info is deleted for the project move case
+			if (project.isAccessible())
+				setBuildersPersistentInfo(project, null);
+	}			
 }
 /**
  * Hook for adding trace options and debug information at the start of a build.
@@ -546,8 +548,6 @@ protected boolean needsBuild(InternalBuilder builder) {
 	}
 	return false;	
 }
-public void opening(IProject project) {
-}
 /**
  * Removes all builders with the given ID from the build spec.
  * Does nothing if there were no such builders in the spec
@@ -598,6 +598,7 @@ public void setBuildersPersistentInfo(IProject project, Map map) {
 public void shutdown(IProgressMonitor monitor) {
 }
 public void startup(IProgressMonitor monitor) {
+	workspace.addLifecycleListener(this);
 }
 /**
  * Returns a string representation of the given builder.  
@@ -636,4 +637,6 @@ protected boolean validateNature(InternalBuilder builder, String builderId) thro
 	}
 	return project.isNatureEnabled(nature);
 }
+
+
 }
