@@ -45,6 +45,9 @@ public abstract class Command {
 	public final static Remove REMOVE = new Remove();
 	public final static Status STATUS = new Status();
 	public final static Tag TAG = new Tag();
+	// The CUSTOM_TAG command has special handling for added and removed resources.
+	// This behavior supports branching with local changes in the workspace
+	public final static Tag CUSTOM_TAG = new Tag(true);
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
 	public final static ExpandModules EXPAND_MODULES = new ExpandModules();
@@ -98,8 +101,10 @@ public abstract class Command {
 		registerResponseHandler(new StaticHandler(false));
 		registerResponseHandler(new StickyHandler(true));
 		registerResponseHandler(new StickyHandler(false));
-		registerResponseHandler(new UpdatedHandler(true));
-		registerResponseHandler(new UpdatedHandler(false));
+		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATED));
+		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_UPDATE_EXISTING));
+		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_CREATED));
+		registerResponseHandler(new UpdatedHandler(UpdatedHandler.HANDLE_MERGED));
 		registerResponseHandler(new ValidRequestsHandler());
 		registerResponseHandler(new ModuleExpansionHandler());		
 	}
@@ -282,12 +287,10 @@ public abstract class Command {
 	 * @see Command#sendFileStructure(ICVSResource,IProgressMonitor,boolean,boolean,boolean)
 	 */
 	protected void sendFileStructure(Session session, ICVSResource[] resources,
-		boolean modifiedOnly, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
+		boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 		checkResourcesManaged(resources);
-		FileStructureVisitor fsVisitor = new FileStructureVisitor(session, modifiedOnly, emptyFolders,  monitor);
-		for (int i = 0; i < resources.length; i++) {
-			resources[i].accept(fsVisitor);
-		}
+		
+		new FileStructureVisitor(session, emptyFolders, true, monitor).visit(session, resources);
 	}
 
 	/**
@@ -366,14 +369,14 @@ public abstract class Command {
 			Option[] gOptions = makeAndSendOptions(session, globalOptions, getDefaultGlobalOptions(globalOptions, localOptions));
 			Option[] lOptions = makeAndSendOptions(session, localOptions, getDefaultLocalOptions(globalOptions, localOptions));
 
+			// send arguments
+			sendArguments(session, arguments);
 			// send local working directory state
 			sendLocalResourceState(session, globalOptions, localOptions,
 				resources, Policy.subMonitorFor(monitor, 10));
 			Policy.checkCanceled(monitor);
 			// send local working directory path
 			sendLocalWorkingDirectory(session);
-			// send arguments
-			sendArguments(session, arguments);
 			// send command
 			session.sendCommand(getCommandId());
 

@@ -15,15 +15,15 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * included in the returned diff report.
  */
 class DiffStructureVisitor extends FileStructureVisitor {
-	public DiffStructureVisitor(Session session, boolean modifiedOnly, boolean emptyFolders,
-		IProgressMonitor monitor) {
-		super(session, modifiedOnly, emptyFolders, monitor);
+	
+	public DiffStructureVisitor(Session session, IProgressMonitor monitor) {
+		super(session, false, true, monitor);
 	}
 	
 	/**
 	 * Send unmanaged files as modified with a default entry line.
 	 */
-	protected void sendFile(ICVSFile mFile, boolean sendQuestionable, String mode) throws CVSException {
+	protected void sendFile(ICVSFile mFile, String mode) throws CVSException {
 		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
 		boolean newFile = false;
 

@@ -27,24 +27,17 @@ public class Commit extends Command {
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
-		
-		ICVSResource[] mWorkResources;
-		FileStructureVisitor visitor;
-		ICVSFile[] changedFiles;
-
-		visitor = new FileStructureVisitor(session, true, false, monitor);
 
 		// Get the folders we want to work on
 		checkResourcesManaged(resources);
 		
 		// Send all changed files to the server	
-		for (int i = 0; i < resources.length; i++) {
-			resources[i].accept(visitor);
-		}
+		ModifiedFileSender visitor = new ModifiedFileSender(session, monitor);
+		visitor.visit(session, resources);
 		
 		// Send the changed files as arguments
 		// XXX Is this the way the command line client works?
-		changedFiles = visitor.getSentFiles();
+		ICVSFile[] changedFiles = visitor.getSentFiles();
 		for (int i = 0; i < changedFiles.length; i++) {
 			session.sendArgument(changedFiles[i].getRelativePath(session.getLocalRoot()));
 		}

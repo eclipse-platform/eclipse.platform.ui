@@ -24,8 +24,9 @@ public class Remove extends Command {
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
-		// Send all changed files to the server	
-		sendFileStructure(session, resources, true, false, monitor);
+		// Send all modified files to the server
+		// XXX Does the command line client send all modified files?
+		new ModifiedFileSender(session, monitor).visit(session, resources);
 	}
 }
 

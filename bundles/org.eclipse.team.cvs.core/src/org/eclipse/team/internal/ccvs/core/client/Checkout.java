@@ -75,6 +75,8 @@ public class Checkout extends Command {
 		
 		// We need a folder to put the project(s) we checkout into
 		Assert.isTrue(session.getLocalRoot().isFolder());
+		
+		// XXX Should we send up resources that exists?
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {

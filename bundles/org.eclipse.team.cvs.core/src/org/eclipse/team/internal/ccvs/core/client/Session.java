@@ -473,6 +473,7 @@ public class Session {
 	 */
 	public void sendModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
+		
 		connection.writeLine("Modified " + file.getName()); //$NON-NLS-1$
 		ResourceSyncInfo info = file.getSyncInfo();
 		if (info != null && info.getPermissions() != null) {

@@ -43,10 +43,8 @@ public class Add extends Command {
 		
 		// Get a vistor and use it on every resource we should
 		// work on
-		ICVSResourceVisitor visitor = new AddStructureVisitor(session, monitor);
-		for (int i = 0; i < resources.length; i++) {
-			resources[i].accept(visitor);
-		}
+		AddStructureVisitor visitor = new AddStructureVisitor(session, monitor);
+		visitor.visit(session, resources);
 	}
 	
 	/**

@@ -14,24 +14,19 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
- * This visitor send the fileStructure to the requestSender.
+ * Visitor to send the local file structure to the CVS Server.
  * 
- * If accepted by an ICVSResource:<br>
- * Send all Directory under mResource as arguments to the server<br>
- * If accepted by a file:<br>
- * Send the file to the server<br>
- * <br>
- * Files that are changed are send with the content.
- * 
- * @param modifiedOnly sends files that are modified only to the server
- * @param emptyFolders sends the folder-entrie even if there is no file 
+ * Files are sent as Unchanged or Modified.
+ * Folders are sent if they contain files unless sendEmptyFolders is true
+ * in which case all folders are sent.
+ *
+ * @param sendEmptyFolders sends the folder-entrie even if there is no file 
  		  to send in it
  */
 
 class FileStructureVisitor extends AbstractStructureVisitor {
 
-	private final boolean modifiedOnly;
-	private final boolean emptyFolders;
+	private final boolean sendEmptyFolders;
 	private final Set sentFiles;
 
 	/**
@@ -40,11 +35,10 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	 * @param modifiedOnly sends files that are modified only to the server
 	 * @param emptyFolders sends the folder-entrie even if there is no file to send in it
 	 */
-	public FileStructureVisitor(Session session,
-		boolean modifiedOnly, boolean emptyFolders, IProgressMonitor monitor) {
-		super(session, monitor);
-		this.modifiedOnly = modifiedOnly;
-		this.emptyFolders = emptyFolders;
+	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, IProgressMonitor monitor) {
+			
+		super(session, true, sendModifiedContents, monitor);
+		this.sendEmptyFolders = sendEmptyFolders;
 		sentFiles = new HashSet();
 	}
 
@@ -52,15 +46,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
 	public void visitFile(ICVSFile mFile) throws CVSException {
-
-		// We assume, that acceptChildren() does call all the files
-		// and then the folder or first all the folders and then the
-		// files and does not mix. This is specified as well.
-
-		if (!modifiedOnly || mFile.isModified()) {
-			// sendFile sends the folder if it is nessary
-			sendFile(mFile);
-		}
+		sendFile(mFile);
 	}
 
 	/**
@@ -71,7 +57,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		ICVSFile[] files;
 		ICVSFolder[] folders;
 
-		if (emptyFolders) {
+		if (sendEmptyFolders) {
 			// If we want to send empty folder, that just send it when
 			// we come to it
 			sendFolder(mFolder);
@@ -105,28 +91,19 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 			}
 		}
 	}
+	
+	protected void sendFile(ICVSFile mFile) throws CVSException {
 
-	private void sendFile(ICVSFile mFile) throws CVSException {
+		// Send the parent folder if it hasn't been sent already
+		sendFolder(mFile.getParent());
 
-		// Only if we know about the file, it is added to the
-		// list of sended files, Questionables do not go into
-		// the list
+		// Send the file
+		super.sendFile(mFile);
+		
+		// Record all managed files we sent
 		if (mFile.isManaged()) {
 			sentFiles.add(mFile);
 		}
-
-		// Send the folder if it hasn't been send so far
-		sendFolder(mFile.getParent());
-
-		if (mFile.getSyncInfo() == null) {
-			sendFile(mFile, true, null);
-		} else {
-			sendFile(mFile, true, mFile.getSyncInfo().getKeywordMode());
-		}
-	}
-
-	private void sendFolder(ICVSFolder mFolder) throws CVSException {
-		sendFolder(mFolder, false, true);
 	}
 
 	/**

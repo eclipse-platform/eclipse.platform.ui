@@ -527,6 +527,72 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return cvsResource.isManaged();
 	}
 	
+	/*
+	 * Use specialiazed tagging to move all local changes (including additions and
+	 * deletions) to the specified branch.
+	 */
+	public void makeBranch(IResource[] resources, CVSTag versionTag, CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
+		
+		// Determine the total amount of work
+		int totalWork = 10 + (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
+		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
+		try {
+			
+			// Build the arguments list
+			String[] arguments = getValidArguments(resources, Command.NO_LOCAL_OPTIONS);
+			
+			// Tag the remote resources
+			Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
+			try {
+				s.open(Policy.subMonitorFor(monitor, 10));
+				
+				IStatus status;
+				if (versionTag != null) {
+					// Version using tag and braqnch using rtag
+					status = Command.CUSTOM_TAG.execute(s,
+						Command.NO_GLOBAL_OPTIONS,
+						Command.NO_LOCAL_OPTIONS,
+						versionTag,
+						arguments,
+						null,
+						Policy.subMonitorFor(monitor, 40));
+					if (status.getCode() != CVSStatus.SERVER_ERROR) {
+						status = Command.RTAG.execute(s,
+							Command.NO_GLOBAL_OPTIONS,
+							Command.NO_LOCAL_OPTIONS,
+							versionTag,
+							branchTag,
+							arguments,
+							Policy.subMonitorFor(monitor, 20));
+					}
+				} else {
+					// Just branch using tag
+					status = Command.CUSTOM_TAG.execute(s,
+						Command.NO_GLOBAL_OPTIONS,
+						Command.NO_LOCAL_OPTIONS,
+						branchTag,
+						arguments,
+						null,
+						Policy.subMonitorFor(monitor, 40));
+	
+				}
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
+			} finally {
+				s.close();
+			}
+			
+			// Set the tag of the local resources to the branch tag (The uodate command will not
+			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
+			if (moveToBranch) {
+				setTag(resources, branchTag, Policy.infiniteSubMonitorFor(monitor, 20));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
 	/**
 	 * Update the sync info of the local resource associated with the sync element such that
 	 * the revision of the local resource matches that of the remote resource.
@@ -594,34 +660,66 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 	
+	/*
+	 * This method sets the tag for a project.
+	 * It expects to be passed an InfiniteSubProgressMonitor
+	 */
+	private void setTag(IResource[] resources, final CVSTag tag, final IProgressMonitor monitor) throws TeamException {
+				
+		try {
+			// 512 ticks gives us a maximum of 2048 which seems reasonable for folders and files in a project
+			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 512);  //$NON-NLS-1$
+			
+			// Visit all the children folders in order to set the root in the folder sync info
+			for (int i = 0; i < resources.length; i++) {
+				CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(new ICVSResourceVisitor() {
+					public void visitFile(ICVSFile file) throws CVSException {
+						monitor.worked(1);
+						ResourceSyncInfo info = file.getSyncInfo();
+						if (info != null) {
+							monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", info.getName())); //$NON-NLS-1$
+							file.setSyncInfo(new ResourceSyncInfo(info.getName(), 
+							(info.isDeleted() ? info.DELETED_PREFIX : "") + info.getRevision(), //$NON-NLS-1$
+							info.getTimeStamp(), info.getKeywordMode(), tag, info.getPermissions()));
+						}
+					};
+					public void visitFolder(ICVSFolder folder) throws CVSException {
+						monitor.worked(1);
+						FolderSyncInfo info = folder.getFolderSyncInfo();
+						if (info != null) {
+							monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
+							folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
+							folder.acceptChildren(this);
+						}
+					};
+				});
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
 	/** 
 	 * Tag the resources in the CVS repository with the given tag.
+	 * 
+	 * The returned IStatus will be a status containing any errors or warnings.
+	 * If the returned IStatus is a multi-status, the code indicates the severity.
+	 * Possible codes are:
+	 *    CVSStatus.OK - Nothing to report
+	 *    CVSStatus.SERVER_ERROR - The server reported an error
+	 *    any other code - warning messages received from the server
 	 */
-	public void tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
-	
-		Assert.isNotNull(tag);
-		
-		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
-			throw new TeamException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.tagNotVersionOrBranchError"))); //$NON-NLS-1$
-		}
+	public IStatus tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
 						
 		// Build the local options
 		List localOptions = new ArrayList();
 		// If the depth is not infinite, we want the -l option
 		if (depth != IResource.DEPTH_INFINITE)
 			localOptions.add(Tag.DO_NOT_RECURSE);
-		if (tag.getType() == CVSTag.BRANCH)
-			localOptions.add(Tag.CREATE_BRANCH);
 		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 				
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, commandOptions);
-		
-		// The tag name is supposed to be the first argument
-		ArrayList args = new ArrayList();
-		args.add(tag.getName());
-		args.addAll(Arrays.asList(arguments));
-		arguments = (String[])args.toArray(new String[args.size()]);
 
 		IStatus status;
 		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
@@ -630,20 +728,20 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// Opening the session takes 20% of the time
 			s.open(Policy.subMonitorFor(progress, 20));
 			status = Command.TAG.execute(s,
-			Command.NO_GLOBAL_OPTIONS,
-			commandOptions,
-			// XXX We should pass the tag to the command
-			arguments,
-			null,
-			Policy.subMonitorFor(progress, 80));
+				Command.NO_GLOBAL_OPTIONS,
+				commandOptions,
+				tag,
+				arguments,
+				null,
+				Policy.subMonitorFor(progress, 80));
 		} finally {
 			s.close();
 			progress.done();
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			// XXX diff errors??
 			throw new CVSServerException(status);
 		}
+		return status;
 	}
 	
 	/**

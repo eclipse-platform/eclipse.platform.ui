@@ -15,26 +15,16 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
- * This is a visitor that is specially created for the add-command.<br>
- * It traverses the file-structure in the other direction, so that
- * all the parents are send until a parent is found that should allready
- * be known by the to the root are send.<br>
- * The visitor remembers the folders it has allready been to and does not
- * send them again (if possible). 
+ * This visitor is used by the Add command to ensure that the parent
+ * folder is sent along with the added resource.
  */
 class AddStructureVisitor extends AbstractStructureVisitor {
 	private boolean forceSend = false;
 	private Set visitedFolders = new HashSet();
 	private ICVSFolder lastVisitedFolder;
 	
-	/**
-	 * Constructor for AddStructureVisitor.
-	 * @param requestSender
-	 * @param mRoot
-	 * @param monitor
-	 */
 	public AddStructureVisitor(Session session, IProgressMonitor monitor) {
-		super(session, monitor);
+		super(session, false, true, monitor);
 	}
 
 	/**
@@ -42,10 +32,8 @@ class AddStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public void visitFile(ICVSFile mFile) throws CVSException {
 		
-		if (!mFile.getParent().equals(lastVisitedFolder)) {
-			forceSend = true;
-			mFile.getParent().accept(this);
-		}
+		// Send the parent folder
+		sendFolder(mFile.getParent());
 		
 		// Sends the Is-modified request if it is supported, otherwise
 		// the file contents are sent as binary.  The server does not
@@ -61,23 +49,16 @@ class AddStructureVisitor extends AbstractStructureVisitor {
 		
 		Assert.isNotNull(mFolder);
 		
-		// Save the status wheter we want to send
-		// this folder in every case
-		boolean alreadyVisited;
-		boolean forceSend = this.forceSend;
-		this.forceSend = false;
+		// Send the parent folder
+		sendFolder(mFolder.getParent());
 		
-		alreadyVisited = visitedFolders.contains(mFolder);
+		// Send the directory
+		String localPath = mFolder.getRelativePath(session.getLocalRoot());
+		String remotePath = mFolder.getRemoteLocation(session.getLocalRoot());
+		session.sendDirectory(localPath, remotePath);
 		
-		if (!mFolder.equals(session.getLocalRoot()) && !alreadyVisited) {
-			mFolder.getParent().accept(this);
-		}
-		
-		if (forceSend || !alreadyVisited) {
-			visitedFolders.add(mFolder);
-			lastVisitedFolder = mFolder;
-			sendFolder(mFolder,false,false);
-		}
+		// Record that we sent this folder
+		recordLastSent(mFolder);
 	}
 
 }

@@ -5,11 +5,13 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -18,15 +20,18 @@ import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
  * The ImportStructureVisitor sends the content of the folder it is
  * used on to the server. It constructs the locations of the resources
  * because the resources do not yet have a remote-location.<br>
- * Up to that it can ignore certain files and decides wether to send
+ * It can also ignore certain files and decides wether to send
  * a file in binary or text mode due to a specification that is passed 
  * as a "wrapper" argument.
  */
-class ImportStructureVisitor extends AbstractStructureVisitor {
+class ImportStructureVisitor implements ICVSResourceVisitor {
 	
 	private static final String KEYWORD_OPTION = "-k"; //$NON-NLS-1$
 	private static final String QUOTE = "'"; //$NON-NLS-1$
 	
+	protected Session session;
+	private Set sentFolders;
+	protected IProgressMonitor monitor;
 	private String[] wrappers;
 	
 	private FileNameMatcher ignoreMatcher;
@@ -40,8 +45,9 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public ImportStructureVisitor(Session session, 
 		String[] wrappers, IProgressMonitor monitor) {
-		super(session, monitor);
-		
+
+		this.session = session;
+		this.monitor = monitor;
 		this.wrappers = wrappers;
 		wrapMatcher = initWrapMatcher(wrappers);
 	}
@@ -104,6 +110,7 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 		} else {
 			mode = ""; //$NON-NLS-1$
 		}
+		// XXX Is this condition right?
 		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
 		session.sendModified(mFile, binary, monitor);
 	}
@@ -117,9 +124,8 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 			return;
 		}
 		
-		sendFolder(mFolder,true,false);
+		session.sendConstructedDirectory(mFolder.getRelativePath(session.getLocalRoot()));
 		mFolder.acceptChildren(this);
-		
 	}
 
 }

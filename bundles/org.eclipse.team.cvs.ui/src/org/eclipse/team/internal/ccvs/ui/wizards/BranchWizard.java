@@ -78,16 +78,14 @@ public class BranchWizard extends Wizard {
 							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							CVSTag tag = new CVSTag(tagString, CVSTag.BRANCH);
 							try {
+								provider.makeBranch(providerResources, versionTag, tag, update, subMonitor);
 								if (versionTag != null) {
-									provider.tag(providerResources, IResource.DEPTH_INFINITE, versionTag, subMonitor);
 									for (int i = 0; i < providerResources.length; i++) {
 										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder) CVSWorkspaceRoot.getRemoteResourceFor(providerResources[i]);
 										manager.addVersionTags(remoteResource, new CVSTag[] { versionTag });
 									}
 								}
-								provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
 								if (update) {
-									provider.update(providerResources, Command.NO_LOCAL_OPTIONS, tag, null, subMonitor);
 									manager.addBranchTags(root, new BranchTag[] { new BranchTag(tag, root) });
 								}
 							} catch (TeamException e) {

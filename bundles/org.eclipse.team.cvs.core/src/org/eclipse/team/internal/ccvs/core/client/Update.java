@@ -69,7 +69,7 @@ public class Update extends Command {
 		
 		// Send all folders that are already managed to the server
 		// even folders that are empty
-		sendFileStructure(session, resources, false, true, monitor);
+		sendFileStructure(session, resources, true, monitor);
 	}
 	
 	/**

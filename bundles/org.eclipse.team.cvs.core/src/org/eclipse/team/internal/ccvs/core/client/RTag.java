@@ -11,11 +11,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
@@ -59,24 +59,33 @@ public class RTag extends Command {
 	}
 	
 	public IStatus execute(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, CVSTag tag, String name, ICVSResource[] resources,
+		LocalOption[] localOptions, CVSTag sourceTag, CVSTag tag, String[] arguments,
 		IProgressMonitor monitor) throws CVSException {
+		
+		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("Tag.notVersionOrBranchError"))); //$NON-NLS-1$
+		}
 		
 		// Add the source tag to the local options
 		List modifiedLocalOptions = new ArrayList(localOptions.length + 1);
-		if (tag==null) tag = CVSTag.DEFAULT;
+		if (sourceTag==null) sourceTag = CVSTag.DEFAULT;
 		modifiedLocalOptions.addAll(Arrays.asList(localOptions));
-		modifiedLocalOptions.add(makeTagOption(tag));
+		modifiedLocalOptions.add(makeTagOption(sourceTag));
 		
-		// Build the arguments from the parameters
-		List arguments = new ArrayList(resources.length + 1);
-		arguments.add(name);
-		for (int i = 0; i < resources.length; i++) {
-			ICVSResource resource = resources[i];
-			arguments.add(resource.getRemoteLocation(null));
+		// Add the CREATE_BRANCH option for a branch tag
+		if (tag.getType() == tag.BRANCH) {
+			if ( ! CREATE_BRANCH.isElementOf(localOptions)) {
+				modifiedLocalOptions.add(CREATE_BRANCH);
+			}
 		}
-		return super.execute(session, globalOptions, 
+		
+		// Add the tag name to the start of the arguments
+		String[] newArguments = new String[arguments.length + 1];
+		newArguments[0] = tag.getName();
+		System.arraycopy(arguments, 0, newArguments, 1, arguments.length);
+		
+		return execute(session, globalOptions, 
 			(LocalOption[]) modifiedLocalOptions.toArray(new LocalOption[modifiedLocalOptions.size()]), 
-			(String[]) arguments.toArray(new String[arguments.size()]), null, monitor);
+			newArguments, null, monitor);
 	}
 }
