@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.internal.resources.Workspace;
@@ -147,7 +148,7 @@ protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
 	String locationString = null;
 	String name = null;
 	if (location != null) {
-		locationString = location.toOSString();
+		locationString = location.toFile().getAbsolutePath();
 		name = location.lastSegment();
 		stat = CoreFileSystemLibrary.getStat(locationString);
 	}
@@ -177,13 +178,7 @@ protected void addElementToQueue(UnifiedTreeNode target) {
  * Creates a string representing the OS path for the given parent and child name.
  */
 protected String createChildLocation(String parentLocation, String childLocation) {
-	if (parentLocation == null)
-		return null;
-	StringBuffer buffer = new StringBuffer(parentLocation.length() + childLocation.length() + 1);
-	buffer.append(parentLocation);
-	buffer.append(java.io.File.separatorChar);
-	buffer.append(childLocation);
-	return buffer.toString();
+	return parentLocation == null ? null : new File(parentLocation, childLocation).getAbsolutePath();
 }
 
 protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException {
@@ -204,7 +199,7 @@ protected void addRootToQueue() throws CoreException {
 	String rootLocationString = null;
 	String name = null;
 	if (rootLocalLocation != null) {
-		rootLocationString = rootLocalLocation.toOSString();
+		rootLocationString = rootLocalLocation.toFile().getAbsolutePath();
 		name = rootLocalLocation.lastSegment();
 		stat = CoreFileSystemLibrary.getStat(rootLocationString);
 	}
@@ -284,7 +279,7 @@ protected  String getLocalLocation(IResource target) {
 	if (rootLocalLocation == null)
 		return null;
 	int segments = target.getFullPath().matchingFirstSegments(root.getFullPath());
-	return rootLocalLocation.append(target.getFullPath().removeFirstSegments(segments)).toOSString();
+	return rootLocalLocation.append(target.getFullPath().removeFirstSegments(segments)).toFile().getAbsolutePath();
 }
 
 protected int getLevel() {
