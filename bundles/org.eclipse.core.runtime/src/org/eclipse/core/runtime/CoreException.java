@@ -13,7 +13,7 @@ package org.eclipse.core.runtime;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 /**
- * A checked expection representing a failure.
+ * A checked exception representing a failure.
  * <p>
  * Core exceptions contain a status object describing the 
  * cause of the exception.
