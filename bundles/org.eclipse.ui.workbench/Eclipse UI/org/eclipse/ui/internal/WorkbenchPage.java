@@ -563,6 +563,8 @@ public void bringToTop(IWorkbenchPart part) {
 		}
 
 		if (broughtToTop) {
+			// Need to make sure that the part lists are sorted correctly.
+			activationList.setActive(part);
 			firePartBroughtToTop(part);
 		}
 	} finally {
