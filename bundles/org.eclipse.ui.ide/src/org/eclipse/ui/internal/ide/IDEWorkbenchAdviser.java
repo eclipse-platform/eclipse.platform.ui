@@ -302,7 +302,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1)
 			return true;
 
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+/*		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean promptOnExit =	store.getBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 		if (promptOnExit) {
@@ -336,7 +336,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			}
 		}
 
-		return true;
+*/		return true;
 	}
 	
 	
