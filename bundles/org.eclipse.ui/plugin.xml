@@ -508,6 +508,11 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.edit.rename"
+            keySequence="F2"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.file.print"
             keySequence="Ctrl+P"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
