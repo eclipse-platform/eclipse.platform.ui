@@ -1214,7 +1214,7 @@ public final class InternalPlatform {
 				runtimeFileManager = new FileManager(controlledDir);
 				runtimeFileManager.open(true);
 			} catch (IOException e) {
-				getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME), 0, null, null)); //$NON-NLS-1$
+				getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME), 0, e, null)); //$NON-NLS-1$
 			}
 		}
 		return runtimeFileManager;
