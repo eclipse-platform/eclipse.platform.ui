@@ -219,18 +219,18 @@ public class Utilities {
 				ePath= "elcl16/" + relPath;
 			}
 			
-			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(cPath);
+			ImageDescriptor id= CompareUIPlugin.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
+			if (id != null)
+				a.setDisabledImageDescriptor(id);
+			id= CompareUIPlugin.getImageDescriptor(cPath);
 			if (id != null)
 				a.setHoverImageDescriptor(id);
 			id= CompareUIPlugin.getImageDescriptor(ePath);
 			if (id != null)
 				a.setImageDescriptor(id);
-			id= CompareUIPlugin.getImageDescriptor(dPath);
-			if (id != null)
-				a.setDisabledImageDescriptor(id);
 		}
 	}
-		
+	
 	public static String getString(ResourceBundle bundle, String key, String dfltValue) {
 		
 		if (bundle != null) {
