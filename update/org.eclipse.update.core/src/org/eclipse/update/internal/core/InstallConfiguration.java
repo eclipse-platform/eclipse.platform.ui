@@ -452,7 +452,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		} else {
 			// write non-primary feature entries
 			String version = feature.getVersionedIdentifier().getVersion().toString();
-			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginVersion, false, null, null);
+			String pluginIdentifier = feature.getPrimaryPluginID();
+			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, false, null, null);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		}
 

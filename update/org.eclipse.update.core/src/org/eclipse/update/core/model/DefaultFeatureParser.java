@@ -866,8 +866,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		int searchLocation = IUpdateConstants.SEARCH_ROOT;
 		if ("both".equalsIgnoreCase(locationName))
 			searchLocation = IUpdateConstants.SEARCH_ROOT & IUpdateConstants.SEARCH_SELF;
-		if ("root".equalsIgnoreCase(locationName))
-			searchLocation = IUpdateConstants.SEARCH_ROOT;
+		if ("self".equalsIgnoreCase(locationName))
+			searchLocation = IUpdateConstants.SEARCH_SELF;				
 		includedFeature.setSearchLocation(searchLocation);
 
 		// os arch ws

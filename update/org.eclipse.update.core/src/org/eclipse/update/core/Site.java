@@ -179,7 +179,12 @@ public class Site extends SiteModel implements ISite {
 	 * @see org.eclipse.update.core.ISite#getRawIncludedFeatureReferences()
 	 */
 	public ISiteFeatureReference[] getFeatureReferences() {
-		return filterFeatures(getRawFeatureReferences());
+		// only filter local site
+		if (getCurrentConfiguredSite()!=null)
+			return filterFeatures(getRawFeatureReferences());
+		else 
+			return getRawFeatureReferences();
+		
 	}
 
 	/*
