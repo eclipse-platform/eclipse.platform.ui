@@ -2177,8 +2177,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			animationItem.getControl().setVisible(true);
 		}
 		else {
-			layout.removeTrim(animationItem.getControl());
-			animationItem.getControl().setVisible(false);
+			if (animationItem != null) {
+				layout.removeTrim(animationItem.getControl());
+				animationItem.getControl().setVisible(false);
+			}
 		}
 		layout.setCenterControl(getClientComposite());	
 	}
