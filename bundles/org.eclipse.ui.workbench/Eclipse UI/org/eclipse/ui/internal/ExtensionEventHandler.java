@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -258,8 +259,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     //TODO: confirm
 	private void loadThemes(IExtension ext) {
-		ThemeRegistryReader reader = new ThemeRegistryReader();
-		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
+		ThemeRegistryReader reader = new ThemeRegistryReader();		
+		ThemeRegistry registry = (ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry();
+        reader.setRegistry(registry);
 		IConfigurationElement [] elements = ext.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) 
 			reader.readElement(elements[i]);	
@@ -279,6 +281,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		ThemeElementHelper.populateRegistry(theme, fontDefs, workbench.getPreferenceStore());		
 		
 		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();
+		
+		Map data = reader.getData();
+		registry.addData(data);
 	}
 
 	private void loadDecorators(IExtension ext) {

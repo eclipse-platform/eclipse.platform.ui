@@ -12,7 +12,10 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,6 +30,7 @@ public class ThemeRegistry implements IThemeRegistry {
 	private List fonts;
 	private List gradients;	
 	private List categories;
+	private Map dataMap;
 
 	/**
 	 * Create a new ThemeRegistry.
@@ -37,6 +41,7 @@ public class ThemeRegistry implements IThemeRegistry {
 		fonts = new ArrayList();
 		gradients = new ArrayList();
 		categories = new ArrayList();
+		dataMap = new HashMap();
 	}
 
 	/**
@@ -108,7 +113,7 @@ public class ThemeRegistry implements IThemeRegistry {
     /**
      * @param definition
      */
-    public void add(GradientDefinition definition) {
+    void add(GradientDefinition definition) {
         gradients.add(definition);
     }
 
@@ -126,7 +131,7 @@ public class ThemeRegistry implements IThemeRegistry {
     /**
      * @param definition
      */
-    public void add(FontDefinition definition) {
+    void add(FontDefinition definition) {
         fonts.add(definition);
     }
 
@@ -158,7 +163,7 @@ public class ThemeRegistry implements IThemeRegistry {
     /**
      * @param definition
      */
-    public void add(ThemeElementCategory definition) {
+    void add(ThemeElementCategory definition) {
         categories.add(definition);
     }
 
@@ -171,5 +176,29 @@ public class ThemeRegistry implements IThemeRegistry {
 		categories.toArray(retArray);
 		Arrays.sort(retArray, ID_COMPARATOR);
 		return retArray;
+    }
+
+    /**
+     * @param name
+     * @param value
+     */
+    void setData(String name, String value) {
+        dataMap.put(name, value);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getData()
+     */
+    public Map getData() {
+        return Collections.unmodifiableMap(dataMap);
+    }
+    
+    /**
+     * Add the data from another map to this data
+     * 
+     * @param otherData the other data to add
+     */
+    public void addData(Map otherData) {
+        dataMap.putAll(otherData);
     }
 }

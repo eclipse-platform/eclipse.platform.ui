@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Map;
 
 
 /**
@@ -174,4 +175,11 @@ public interface IThemeRegistry {
 	 * @return the themes in this registry
 	 */
 	public IThemeDescriptor [] getThemes();
+	
+	/**
+	 * Return the data map.
+	 * 
+	 * @return the data map
+	 */
+	public Map getData();
 }

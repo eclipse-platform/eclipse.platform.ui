@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.themes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,6 +39,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	
 	private String id;
 	private String name;
+	
+	private Map dataMap = new HashMap();
 
 	/**
 	 * Create a new ThemeDescriptor for an extension.
@@ -50,7 +55,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * 
      * @param definition the definition to add
      */
-    public void add(ColorDefinition definition) {
+    void add(ColorDefinition definition) {
         colors.add(definition);
     }
 
@@ -59,7 +64,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * 
      * @param definition the definition to add
      */
-    public void add(FontDefinition definition) {
+    void add(FontDefinition definition) {
         fonts.add(definition);        
     }    
     
@@ -68,8 +73,18 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * 
      * @param definition the definition to add
      */
-    public void add(GradientDefinition definition) {
+    void add(GradientDefinition definition) {
         gradients.add(definition);
+    }
+    
+    /**
+     * Add a data object to this descriptor.
+     * 
+     * @param key the key
+     * @param data the data
+     */
+    void setData(String key, Object data) {
+        dataMap.put(key, data);
     }
 	
 	/* (non-Javadoc)
@@ -135,5 +150,12 @@ public class ThemeDescriptor implements IThemeDescriptor {
      */
     void setDescription(String description) {
         this.description = description;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getData()
+     */
+    public Map getData() {
+        return Collections.unmodifiableMap(dataMap);
     }
 }

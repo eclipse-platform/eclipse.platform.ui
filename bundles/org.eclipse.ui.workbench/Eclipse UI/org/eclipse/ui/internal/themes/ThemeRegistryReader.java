@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
@@ -42,6 +44,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String ATT_LABEL = "label"; //$NON-NLS-1$
 	public static final String ATT_PERCENTAGE = "percentage"; //$NON-NLS-1$
 	public static final String ATT_VALUE = "value"; //$NON-NLS-1$
+	public static final String ATT_NAME = "name"; //$NON-NLS-1$
 	
 	public static final String ATT_COLORFACTORY = "colorFactory"; //$NON-NLS-1$
 	
@@ -58,6 +61,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String TAG_GRADIENTDEFINITION = "gradientDefinition"; //$NON-NLS-1$
 	public static final String TAG_GRADIENTOVERRIDE = "gradientOverride"; //$NON-NLS-1$
 	public static final String TAG_GRADIENTPART = "gradientPart"; //$NON-NLS-1$
+	public static final String TAG_DATA = "data"; //$NON-NLS-1$
 	public static final String TAG_THEME="theme";//$NON-NLS-1$
 
     private Collection categoryDefinitions = new ArrayList();
@@ -70,6 +74,8 @@ public class ThemeRegistryReader extends RegistryReader {
 	
 	private ThemeDescriptor themeDescriptor = null;
 	private ThemeRegistry themeRegistry;
+	
+	private Map dataMap = new HashMap();
 	
 	/**
 	 * ThemeRegistryReader constructor comment.
@@ -94,6 +100,15 @@ public class ThemeRegistryReader extends RegistryReader {
      */
     public Collection getColorDefinitions() {        
         return colorDefinitions;
+    }
+    
+    /**
+     * Returns the data map.
+     * 
+     * @return the data map
+     */
+    public Map getData() {
+        return dataMap;
     }
 
     /**     
@@ -266,6 +281,23 @@ public class ThemeRegistryReader extends RegistryReader {
             themeDescriptor.setDescription(element.getValue());
 			return true;
 	    }
+        else if (elementName.equals(TAG_DATA)) {            
+			String name = element.getAttribute(ATT_NAME);            
+			String value = element.getAttribute(ATT_VALUE);
+			if (name == null || value == null) {
+			    logError(element, RESOURCE_BUNDLE.getString("Data.badData")); //$NON-NLS-1$			    
+			}
+			else {
+				if (themeDescriptor != null) {
+				    themeDescriptor.setData(name, value);    
+				}
+	            else {
+	                themeRegistry.setData(name, value);
+	                dataMap.put(name, value);
+	            }
+			}
+			return true;
+	    }        
 		
 		return false;
 	}

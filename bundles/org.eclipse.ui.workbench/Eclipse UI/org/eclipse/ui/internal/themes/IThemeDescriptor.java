@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.Map;
+
 
 /**
  * Interface for the Theme descriptors
@@ -18,24 +20,6 @@ package org.eclipse.ui.internal.themes;
  */
 public interface IThemeDescriptor extends IThemeElementDefinition{
 	public static final String TAB_BORDER_STYLE = "TAB_BORDER_STYLE";	 //$NON-NLS-1$
-
-//	public static final String TAB_TITLE_FONT = "TAB_TITLE_FONT"; //$NON-NLS-1$
-//	public static final String TAB_TITLE_TEXT_COLOR_ACTIVE = "TAB_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
-//	public static final String TAB_TITLE_TEXT_COLOR_DEACTIVATED = "TAB_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-//	public static final String TAB_TITLE_TEXT_COLOR_HOVER = "TAB_TITLE_TEXT_COLOR_HOVER"; //$NON-NLS-1$
-//	public static final String VIEW_BORDER_STYLE = "VIEW_BORDER_STYLE"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_FONT = "VIEW_TITLE_FONT"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_COLOR_ACTIVE = "VIEW_TITLE_GRADIENT_COLOR_ACTIVE"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED = "VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-//	
-//	public static final String VIEW_TITLE_GRADIENT_COLOR_NORMAL = "VIEW_TITLE_GRADIENT_COLOR_NORMAL"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_DIRECTION = "VIEW_TITLE_GRADIENT_DIRECTION"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE = "VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED = "VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_GRADIENT_PERCENTS_NORMAL = "VIEW_TITLE_GRADIENT_PERCENTS_NORMAL"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_TEXT_COLOR_ACTIVE = "VIEW_TITLE_TEXT_COLOR_ACTIVE"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_TEXT_COLOR_DEACTIVATED = "VIEW_TITLE_TEXT_COLOR_DEACTIVATED"; //$NON-NLS-1$
-//	public static final String VIEW_TITLE_TEXT_COLOR_NORMAL = "VIEW_TITLE_TEXT_COLOR_NORMAL"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the color overrides for this theme.
@@ -53,5 +37,12 @@ public interface IThemeDescriptor extends IThemeElementDefinition{
 	 * Returns the gradient overrides for this theme.
 	 * @return GradientDefinition []
 	 */
-	public GradientDefinition [] getGradients();	
+	public GradientDefinition [] getGradients();
+	
+	/**
+	 * Returns the data map for this theme.
+	 * 
+	 * @return the data map.  This will be read only.
+	 */
+	public Map getData();
 }

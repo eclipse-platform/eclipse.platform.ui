@@ -1536,8 +1536,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                             }
 
                             public void dispose() {
-                                // TODO: confirm
-                                
+                                // TODO: confirm                                
+                            }
+
+                            public String getString(String themeKey) {
+                                return currentTheme.getString(themeKey);
+                            }
+
+                            public Set keySet() {
+                                return currentTheme.keySet();
                             }
 	                    };
 	                    preview.createControl(previewControl, theme);

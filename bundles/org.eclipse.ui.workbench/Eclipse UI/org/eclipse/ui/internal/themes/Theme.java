@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.Set;
+
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientRegistry;
@@ -19,9 +21,8 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.themes.*;
+import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
-
 
 /**
  * @since 3.0
@@ -34,11 +35,17 @@ public class Theme implements ITheme {
     private IThemeDescriptor descriptor;
     
     private IPropertyChangeListener themeListener;
+    private CascadingMap dataMap;
+    
+    private ListenerList propertyChangeListeners = new ListenerList();
+    private ThemeRegistry themeRegistry;
+    
     
     /**
      * @param descriptor
      */
     public Theme(IThemeDescriptor descriptor) {
+        themeRegistry = ((ThemeRegistry)WorkbenchPlugin.getDefault().getThemeRegistry());
         this.descriptor = descriptor;
         if (descriptor != null) {
             IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
@@ -60,8 +67,9 @@ public class Theme implements ITheme {
 	        if (fontDefinitions.length > 0) {
 	            themeFontRegistry = new CascadingFontRegistry(theme.getFontRegistry());	            
 	            ThemeElementHelper.populateRegistry(this, fontDefinitions, workbench.getPreferenceStore());
-	        }	        	   
-
+	        }
+	        
+	        dataMap = new CascadingMap(((ThemeRegistry)WorkbenchPlugin.getDefault().getThemeRegistry()).getData(), descriptor.getData());   
         }
         
         getColorRegistry().addListener(getListener());
@@ -151,12 +159,29 @@ public class Theme implements ITheme {
 		}
 	}    
     
-    private ListenerList propertyChangeListeners = new ListenerList();
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.ITheme#getLabel()
      */
     public String getLabel() {
         return descriptor == null ? null : descriptor.getLabel();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.ITheme#getString(java.lang.String)
+     */
+    public String getString(String key) {
+        if (dataMap != null)
+            return (String) dataMap.get(key);
+        return (String) themeRegistry.getData().get(key);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.themes.ITheme#keySet()
+     */
+    public Set keySet() {
+        if (dataMap != null)
+            return dataMap.keySet();
+        
+        return themeRegistry.getData().keySet();
     }
 }

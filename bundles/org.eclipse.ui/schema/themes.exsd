@@ -18,6 +18,7 @@
             <element ref="fontDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="gradientDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="themeElementCategory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="data" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -55,6 +56,7 @@
             <element ref="gradientOverride" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="fontOverride" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="data" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -503,6 +505,30 @@ Only one of defaultsTo or value may be defined.
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="data">
+      <annotation>
+         <documentation>
+            an element that allows arbitrary data to be associated with a theme (or the default theme).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the data name.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the data value
                </documentation>
             </annotation>
          </attribute>

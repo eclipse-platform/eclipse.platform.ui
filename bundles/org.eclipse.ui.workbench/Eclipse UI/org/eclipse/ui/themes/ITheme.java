@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.themes;
 
+import java.util.Set;
+
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientRegistry;
@@ -78,4 +80,19 @@ public interface ITheme {
      * Dispose of this theme.
      */
     public void dispose();
+    
+    /**
+     * Get arbitrary data associated with this theme.
+     *
+     * @param key the key
+     * @return the data, or <code>null</code> if none exists.
+     */
+    public String getString(String key);
+    
+    /**
+     * Get the set of keys associated with this theme.
+     *  
+     * @return the Set of keys
+     */
+    public Set keySet();
 }
