@@ -123,10 +123,12 @@ public class ProjectCapabilitySelectionGroup {
 		// Properly handle user checking and unchecking project features
 		listViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				Capability cap = (Capability)event.getElement();
 				if (event.getChecked())
-					handleCapabilityChecked((Capability)event.getElement());
+					handleCapabilityChecked(cap);
 				else
-					handleCapabilityUnchecked((Capability)event.getElement());
+					handleCapabilityUnchecked(cap);
+				listViewer.setSelection(new StructuredSelection(cap));
 			}
 		});
 
