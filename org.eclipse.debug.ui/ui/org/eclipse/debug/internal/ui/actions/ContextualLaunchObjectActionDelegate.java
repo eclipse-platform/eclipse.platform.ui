@@ -61,6 +61,7 @@ public class ContextualLaunchObjectActionDelegate
 			IMenuCreator {
 
 	private IStructuredSelection fSelection;
+	private IAction fDelegateAction;
 	
 	/*
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -112,7 +113,6 @@ public class ContextualLaunchObjectActionDelegate
 		// Never called because we become a menu.
 	}
 	
-	IAction delegateAction;
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -120,9 +120,9 @@ public class ContextualLaunchObjectActionDelegate
 		// if the selection is an IResource, save it and enable our action
 		if (selection instanceof IStructuredSelection) {
 			if (action instanceof Action) {
-				if (delegateAction != action) {
-					delegateAction = (Action) action;
-					delegateAction.setMenuCreator(this);
+				if (fDelegateAction != action) {
+					fDelegateAction = (Action) action;
+					fDelegateAction.setMenuCreator(this);
 				}
 				// save selection and enable our menu
 				fSelection = (IStructuredSelection) selection;
