@@ -85,6 +85,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private final static Image IMAGE_BLANK = ImageFactory.getImage("blank"); //$NON-NLS-1$
 	private final static Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
 	private final static Image IMAGE_CLEAR = ImageFactory.getImage("clear"); //$NON-NLS-1$
+	private final static Image IMAGE_EXCLAMATION = ImageFactory.getImage("exclamation"); //$NON-NLS-1$
 	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
 	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
 	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
@@ -624,7 +625,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
 		Composite compositeKeySequence = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
-		gridLayout.horizontalSpacing = 2;
+		gridLayout.horizontalSpacing = 0;
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;		
 		gridLayout.numColumns = 2;
@@ -645,10 +646,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		buttonClear = new Button(compositeKeySequence, SWT.FLAT);
 		buttonClear.setImage(IMAGE_CLEAR);
+		/* TODO 
 		gridData = new GridData();
-		// TODO gridData.heightHint = 20;
-		// TODO gridData.widthHint = 20;
+		gridData.heightHint = 20;
+		gridData.widthHint = 20;
 		buttonClear.setLayoutData(gridData);
+		*/
 
 		buttonClear.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
