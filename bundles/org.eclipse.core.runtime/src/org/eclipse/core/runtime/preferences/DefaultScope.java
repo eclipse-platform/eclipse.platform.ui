@@ -25,6 +25,14 @@ import org.eclipse.core.runtime.IPath;
  * The path for preferences defined in the default scope hierarchy
  * is as follows: <code>/default/&lt;qualifier&gt;</code>
  * </p>
+ * <p>
+ * Note about product preference customization:
+ * Clients who define their own {@link org.eclipse.core.runtime.IProduct} 
+ * are able to specify a product key of "<code>preferenceCustomization</code>".
+ * (defined as a constant in {@link org.eclipse.ui.branding.IProductConstants})
+ * Its value is either a {@link java.net.URL} or a file-system path to a 
+ * file whose contents are used to customize default preferences. 
+ * </p>
  * @since 3.0
  */
 public final class DefaultScope extends AbstractScope {

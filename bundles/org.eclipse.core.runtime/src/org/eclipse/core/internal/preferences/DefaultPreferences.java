@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.preferences;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -34,7 +35,8 @@ public class DefaultPreferences extends EclipsePreferences {
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private static final IPath NL_DIR = new Path("$nl$"); //$NON-NLS-1$
 
-	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.customization"; //$NON-NLS-1$
+	// declared in org.eclipse.ui.branding.IProductConstants
+	public static final String PRODUCT_KEY = "preferenceCustomization"; //$NON-NLS-1$
 	private static final String LEGACY_PRODUCT_CUSTOMIZATION_FILENAME = "plugin_customization.ini"; //$NON-NLS-1$
 	private static final String PROPERTIES_FILE_EXTENSION = "properties"; //$NON-NLS-1$
 	private EclipsePreferences loadLevel;
@@ -230,21 +232,33 @@ public class DefaultPreferences extends EclipsePreferences {
 				Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
 			return;
 		}
-		String filename = product.getProperty(PRODUCT_KEY);
-		if (filename == null) {
+		String value = product.getProperty(PRODUCT_KEY);
+		URL url = null;
+		URL transURL = null;
+		if (value == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Product : " + id + " does not define preference customization file. Using legacy file: plugin_customization.ini"); //$NON-NLS-1$//$NON-NLS-2$
-			filename = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
+			value = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
+			url = Platform.find(bundle, new Path(LEGACY_PRODUCT_CUSTOMIZATION_FILENAME));
+			transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+		} else {
+			// try to convert the key to a URL
+			try {
+				url = new URL(value);
+			} catch (MalformedURLException e) {
+				// didn't work so treat it as a filename
+				url = Platform.find(bundle, new Path(value));
+				if (url != null)
+					transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+			}
 		}
-		URL url = Platform.find(bundle, new Path(filename));
 		if (url == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Product preference customization file: " + filename + " not found in bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
+				Policy.debug("Product preference customization file: " + value + " not found for bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		URL transURL = Platform.find(bundle, NL_DIR.append(filename).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
 		if (transURL == null && InternalPlatform.DEBUG_PREFERENCES)
-			Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + filename); //$NON-NLS-1$
+			Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + value); //$NON-NLS-1$
 		applyDefaults(null, loadProperties(url), loadProperties(transURL));
 	}
 
