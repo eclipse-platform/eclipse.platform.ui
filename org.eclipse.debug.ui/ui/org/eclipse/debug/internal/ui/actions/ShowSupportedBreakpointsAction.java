@@ -48,7 +48,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	/**
 	 * The view associated with this action
 	 */
-	private IViewPart fView;
+	private BreakpointsView fView;
 	
 	/**
 	 * The list of identifiers for the current state
@@ -65,6 +65,16 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof String) {
+				// Breakpoint groups are visible if any of their children are visible.
+				Object[] children = fView.getTreeContentProvider().getChildren(element);
+				for (int i = 0; i < children.length; i++) {
+					if (select(viewer, element, children[i])) {
+						return true;
+					}
+				}
+				return false;
+			}
 			IBreakpoint breakpoint= (IBreakpoint)element;
 			if (fDebugTargets.isEmpty()) {
 				return true;
@@ -169,7 +179,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	}
 
 	protected void setView(IViewPart view) {
-		fView = view;
+		fView = (BreakpointsView) view;
 	}
 	
 	protected List getDebugTargets(IStructuredSelection ss) {
