@@ -624,7 +624,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void detailComputed(IValue value, final String result) {
 		Runnable runnable = new Runnable() {
 			public void run() {
-				getDetailDocument().set(result);
+				if (isAvailable()) {
+					getDetailDocument().set(result);
+				}
 			}
 		};
 		asyncExec(runnable);		

@@ -154,6 +154,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * if any.
 	 */
 	protected void initializeSelection() {
+		if (!isAvailable()) {
+			return;
+		}
 		TreeViewer tv = (TreeViewer)getViewer();
 		tv.expandToLevel(2);
 		Object[] elements = tv.getExpandedElements();
