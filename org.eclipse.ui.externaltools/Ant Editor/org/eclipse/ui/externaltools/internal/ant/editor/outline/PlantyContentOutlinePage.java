@@ -568,7 +568,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
         
 		InputStreamReader tempReader;
 		try {
-			tempReader = new InputStreamReader(tempStream, ResourcesPlugin.getEncoding()); //$NON-NLS-1$
+			//TODO: for test suite
+			if (ResourcesPlugin.getPlugin() != null) {
+				tempReader = new InputStreamReader(tempStream, ResourcesPlugin.getEncoding());
+			} else {
+				tempReader = new InputStreamReader(tempStream); 
+			}
 		} catch (UnsupportedEncodingException e) {
 			ExternalToolsPlugin.getDefault().log(e);
 			return ""; //$NON-NLS-1$
