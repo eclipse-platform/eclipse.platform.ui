@@ -15,9 +15,6 @@ package org.eclipse.ui.internal;
  * The IPreferenceConstants are the internal constants used by the Workbench.
  */
 public interface IPreferenceConstants {
-	// (boolean) Whether or not to display the Welcome dialog on startup.
-	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
-
 	//Do we show tabs up or down for views
 	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
 
@@ -109,10 +106,4 @@ public interface IPreferenceConstants {
 
 	// Show the toolbar in workbench windows
 	public static final String SHOW_TOOL_BAR = "SHOW_TOOL_BAR"; //$NON-NLS-1$
-	
-	// Switch perspectives when creating a new project 
-	public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
-	public static final String PSPM_PROMPT = "prompt"; //$NON-NLS-1$
-	public static final String PSPM_ALWAYS = "always"; //$NON-NLS-1$
-	public static final String PSPM_NEVER = "never"; //$NON-NLS-1$
-}
+	}

@@ -347,8 +347,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
 			
-		// @issue most of these are IDE-specific
-		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
+		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
@@ -363,7 +362,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
-		store.setDefault(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_PROMPT);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		store.setDefault(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current Window
 		store.setDefault(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
