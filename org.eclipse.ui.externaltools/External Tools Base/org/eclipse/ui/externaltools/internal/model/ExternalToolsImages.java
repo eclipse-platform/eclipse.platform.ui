@@ -83,7 +83,7 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, OBJECT + "ant_project_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "ant_target.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "ant_default_target.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "error.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, OBJECT + "elements.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT, OBJECT + "element.gif"); //$NON-NLS-1$
 		// Wizards
