@@ -318,7 +318,6 @@ public class ViewForm extends Composite {
 
         boolean top = false;
         if (separateTopCenter || minTopWidth > rect.width) {
-            ;
             int topHeight = Math.max(rightSize.y, leftSize.y);
             if (topRight != null && !topRight.isDisposed()) {
                 top = true;

@@ -72,9 +72,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
      * <code>null</code> if none.
      */
     public Capability findCapability(String id) {
-        Iterator enum = capabilities.iterator();
-        while (enum.hasNext()) {
-            Capability cap = (Capability) enum.next();
+        Iterator itr = capabilities.iterator();
+        while (itr.hasNext()) {
+            Capability cap = (Capability) itr.next();
             if (id.equals(cap.getId())) {
                 return cap;
             }
@@ -87,9 +87,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
      * <code>null</code> if none.
      */
     public Category findCategory(String id) {
-        Iterator enum = categories.iterator();
-        while (enum.hasNext()) {
-            Category cat = (Category) enum.next();
+        Iterator itr = categories.iterator();
+        while (itr.hasNext()) {
+            Category cat = (Category) itr.next();
             if (id.equals(cat.getRootPath())) {
                 return cat;
             }
@@ -162,9 +162,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
      */
     public ArrayList getUsedCategories() {
         ArrayList results = new ArrayList(categories.size());
-        Iterator enum = categories.iterator();
-        while (enum.hasNext()) {
-            Category cat = (Category) enum.next();
+        Iterator itr = categories.iterator();
+        while (itr.hasNext()) {
+            Category cat = (Category) itr.next();
             if (cat.hasElements())
                 results.add(cat);
         }
@@ -337,9 +337,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
     /* package */void mapCapabilities() {
         natureToCapability = new HashMap();
 
-        Iterator enum = capabilities.iterator();
-        while (enum.hasNext())
-            mapCapability((Capability) enum.next());
+        Iterator itr = capabilities.iterator();
+        while (itr.hasNext())
+            mapCapability((Capability) itr.next());
     }
 
     private void mapCapability(Capability cap) {

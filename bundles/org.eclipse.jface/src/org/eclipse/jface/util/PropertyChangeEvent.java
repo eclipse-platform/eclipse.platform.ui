@@ -32,6 +32,12 @@ import java.util.EventObject;
 public class PropertyChangeEvent extends EventObject {
 
     /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3256726173533811256L;
+
+    /**
      * The name of the changed property.
      */
     private String propertyName;

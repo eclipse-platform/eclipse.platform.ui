@@ -144,7 +144,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
     protected boolean updateSelection(IStructuredSelection selection) {
         // @issue typed selections
         return super.updateSelection(selection) && !selection.isEmpty()
-                && selectionIsOfType(IFile.FILE);
+                && selectionIsOfType(IResource.FILE);
     }
 
     /**

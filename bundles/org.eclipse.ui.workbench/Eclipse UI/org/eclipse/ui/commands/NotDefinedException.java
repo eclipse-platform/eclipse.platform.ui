@@ -22,6 +22,12 @@ package org.eclipse.ui.commands;
 public final class NotDefinedException extends CommandException {
 
     /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3257572788998124596L;
+
+    /**
      * Creates a new instance of this class with the specified detail message.
      * 
      * @param s

@@ -93,9 +93,9 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
      * Method declared on IAction.
      */
     public void run() {
-        Iterator enum = getSelectedResources().iterator();
-        while (enum.hasNext()) {
-            IResource resource = (IResource) enum.next();
+        Iterator itr = getSelectedResources().iterator();
+        while (itr.hasNext()) {
+            IResource resource = (IResource) itr.next();
             if (resource instanceof IFile)
                 openFile((IFile) resource);
         }

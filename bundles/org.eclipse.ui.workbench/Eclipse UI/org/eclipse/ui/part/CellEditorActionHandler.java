@@ -503,9 +503,9 @@ public class CellEditorActionHandler {
         setUndoAction(null);
         setRedoAction(null);
 
-        Iterator enum = controlToEditor.keySet().iterator();
-        while (enum.hasNext()) {
-            Control control = (Control) enum.next();
+        Iterator itr = controlToEditor.keySet().iterator();
+        while (itr.hasNext()) {
+            Control control = (Control) itr.next();
             if (!control.isDisposed()) {
                 control.removeListener(SWT.Activate, controlListener);
                 control.removeListener(SWT.Deactivate, controlListener);

@@ -811,9 +811,9 @@ class PropertySheetViewer extends Viewer {
         IStructuredSelection selection = (IStructuredSelection) getSelection();
 
         // Iterate over entries and reset them
-        Iterator enum = selection.iterator();
-        while (enum.hasNext())
-            ((IPropertySheetEntry) enum.next()).resetPropertyValue();
+        Iterator itr = selection.iterator();
+        while (itr.hasNext())
+            ((IPropertySheetEntry) itr.next()).resetPropertyValue();
     }
 
     /**

@@ -12,15 +12,12 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-
-import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 /**
  * @version 	1.0

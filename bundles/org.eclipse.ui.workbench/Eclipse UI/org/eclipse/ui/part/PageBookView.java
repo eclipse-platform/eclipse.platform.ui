@@ -415,9 +415,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
             defaultPageRec = null;
         }
         Map clone = (Map) ((HashMap) mapPartToRec).clone();
-        Iterator enum = clone.values().iterator();
-        while (enum.hasNext()) {
-            PageRec rec = (PageRec) enum.next();
+        Iterator itr = clone.values().iterator();
+        while (itr.hasNext()) {
+            PageRec rec = (PageRec) itr.next();
             removePage(rec);
         }
 
@@ -569,9 +569,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
      * @return the corresponding page record, or <code>null</code> if not found
      */
     protected PageRec getPageRec(IPage page) {
-        Iterator enum = mapPartToRec.values().iterator();
-        while (enum.hasNext()) {
-            PageRec rec = (PageRec) enum.next();
+        Iterator itr = mapPartToRec.values().iterator();
+        while (itr.hasNext()) {
+            PageRec rec = (PageRec) itr.next();
             if (rec.page == page)
                 return rec;
         }

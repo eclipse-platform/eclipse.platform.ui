@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.api;
 
 import java.util.List;
 
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

@@ -1334,45 +1334,45 @@ public class Perspective {
         }
 
         // Save the visible action sets.
-        Iterator enum = visibleActionSets.iterator();
-        while (enum.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
+        Iterator itr = visibleActionSets.iterator();
+        while (itr.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_ACTION_SET);
             child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
         }
 
         // Save the "always on" action sets.
-        enum = alwaysOnActionSets.iterator();
-        while (enum.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
+        itr = alwaysOnActionSets.iterator();
+        while (itr.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
             child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
         }
 
         // Save the "always off" action sets.
-        enum = alwaysOffActionSets.iterator();
-        while (enum.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
+        itr = alwaysOffActionSets.iterator();
+        while (itr.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_ALWAYS_OFF_ACTION_SET);
             child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
         }
 
         // Save "show view actions"
-        enum = showViewActionIds.iterator();
-        while (enum.hasNext()) {
-            String str = (String) enum.next();
+        itr = showViewActionIds.iterator();
+        while (itr.hasNext()) {
+            String str = (String) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
             child.putString(IWorkbenchConstants.TAG_ID, str);
         }
 
         // Save "show in times"
-        enum = showInTimes.keySet().iterator();
-        while (enum.hasNext()) {
-            String id = (String) enum.next();
+        itr = showInTimes.keySet().iterator();
+        while (itr.hasNext()) {
+            String id = (String) itr.next();
             Long time = (Long) showInTimes.get(id);
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_SHOW_IN_TIME);
@@ -1381,18 +1381,18 @@ public class Perspective {
         }
 
         // Save "new wizard actions".
-        enum = newWizardActionIds.iterator();
-        while (enum.hasNext()) {
-            String str = (String) enum.next();
+        itr = newWizardActionIds.iterator();
+        while (itr.hasNext()) {
+            String str = (String) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
             child.putString(IWorkbenchConstants.TAG_ID, str);
         }
 
         // Save "perspective actions".
-        enum = perspectiveActionIds.iterator();
-        while (enum.hasNext()) {
-            String str = (String) enum.next();
+        itr = perspectiveActionIds.iterator();
+        while (itr.hasNext()) {
+            String str = (String) itr.next();
             IMemento child = memento
                     .createChild(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
             child.putString(IWorkbenchConstants.TAG_ID, str);
@@ -1403,10 +1403,10 @@ public class Perspective {
         presentation.collectViewPanes(viewPanes);
 
         // Save the views.
-        enum = viewPanes.iterator();
+        itr = viewPanes.iterator();
         int errors = 0;
-        while (enum.hasNext()) {
-            ViewPane pane = (ViewPane) enum.next();
+        while (itr.hasNext()) {
+            ViewPane pane = (ViewPane) itr.next();
             IViewReference ref = pane.getViewReference();
             IMemento viewMemento = memento
                     .createChild(IWorkbenchConstants.TAG_VIEW);
@@ -1417,9 +1417,9 @@ public class Perspective {
         if (fastViews.size() > 0) {
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-            enum = fastViews.iterator();
-            while (enum.hasNext()) {
-                IViewReference ref = (IViewReference) enum.next();
+            itr = fastViews.iterator();
+            while (itr.hasNext()) {
+                IViewReference ref = (IViewReference) itr.next();
                 IMemento viewMemento = childMem
                         .createChild(IWorkbenchConstants.TAG_VIEW);
                 String id = ViewFactory.getKey(ref);

@@ -228,9 +228,9 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry {
      */
     public IViewDescriptor find(String id) {
         buildViews();
-        Iterator enum = views.iterator();
-        while (enum.hasNext()) {
-            IViewDescriptor desc = (IViewDescriptor) enum.next();
+        Iterator itr = views.iterator();
+        while (itr.hasNext()) {
+            IViewDescriptor desc = (IViewDescriptor) itr.next();
             if (id.equals(desc.getID())) {
                 return desc;
             }
@@ -243,9 +243,9 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry {
      */
     public Category findCategory(String id) {
         buildCategories();
-        Iterator enum = categories.iterator();
-        while (enum.hasNext()) {
-            Category cat = (Category) enum.next();
+        Iterator itr = categories.iterator();
+        while (itr.hasNext()) {
+            Category cat = (Category) itr.next();
             if (id.equals(cat.getRootPath())) {
                 return cat;
             }
@@ -316,9 +316,9 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry {
     public void mapViewsToCategories() {
         buildCategories();
         buildViews();
-        Iterator enum = views.iterator();
-        while (enum.hasNext()) {
-            IViewDescriptor desc = (IViewDescriptor) enum.next();
+        Iterator itr = views.iterator();
+        while (itr.hasNext()) {
+            IViewDescriptor desc = (IViewDescriptor) itr.next();
             Category cat = null;
             String[] catPath = desc.getCategoryPath();
             if (catPath != null) {

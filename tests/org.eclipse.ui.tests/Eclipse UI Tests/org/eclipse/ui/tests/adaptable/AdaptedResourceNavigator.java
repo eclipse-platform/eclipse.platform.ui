@@ -59,7 +59,6 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.navigator.NavigatorFrameSource;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
@@ -73,8 +72,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 
     private IMemento memento;
 
-    private NavigatorFrameSource frameSource;
-
     protected TestNavigatorActionGroup actionGroup;
 
     /**
@@ -86,25 +83,6 @@ public class AdaptedResourceNavigator extends ViewPart {
      * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
      */
     private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
-
-    // Persistance tags.
-    private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
-
-    private static final String TAG_FILTERS = "filters"; //$NON-NLS-1$
-
-    private static final String TAG_FILTER = "filter"; //$NON-NLS-1$
-
-    private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
-
-    private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
-
-    private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
-
-    private static final String TAG_PATH = "path"; //$NON-NLS-1$
-
-    private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
-
-    private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
     private IPartListener partListener = new IPartListener() {
         public void partActivated(IWorkbenchPart part) {

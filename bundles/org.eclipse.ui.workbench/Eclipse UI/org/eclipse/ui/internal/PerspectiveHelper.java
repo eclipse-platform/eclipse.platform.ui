@@ -222,9 +222,9 @@ public class PerspectiveHelper {
         // make sure all the views have been properly parented
         Vector children = new Vector();
         collectViewPanes(children, mainLayout.getChildren());
-        Enumeration enum = children.elements();
-        while (enum.hasMoreElements()) {
-            LayoutPart part = (LayoutPart) enum.nextElement();
+        Enumeration itr = children.elements();
+        while (itr.hasMoreElements()) {
+            LayoutPart part = (LayoutPart) itr.nextElement();
             part.reparent(parent);
         }
         mainLayout.createControl(parent);
@@ -562,9 +562,9 @@ public class PerspectiveHelper {
         }
 
         // *** Do we even need to do this if detached windows not supported?
-        Enumeration enum = children.elements();
-        while (enum.hasMoreElements()) {
-            LayoutPart part = (LayoutPart) enum.nextElement();
+        Enumeration itr = children.elements();
+        while (itr.hasMoreElements()) {
+            LayoutPart part = (LayoutPart) itr.nextElement();
             part.reparent(parent);
         }
 

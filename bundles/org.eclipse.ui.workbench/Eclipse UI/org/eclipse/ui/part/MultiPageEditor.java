@@ -118,9 +118,9 @@ public abstract class MultiPageEditor extends EditorPart {
      */
     protected void onPageChange() {
         if (syncVector != null) {
-            Iterator enum = syncVector.iterator();
-            while (enum.hasNext()) {
-                PageBook pageBook = (PageBook) enum.next();
+            Iterator itr = syncVector.iterator();
+            while (itr.hasNext()) {
+                PageBook pageBook = (PageBook) itr.next();
                 syncPageBook(pageBook);
             }
         }
@@ -143,9 +143,9 @@ public abstract class MultiPageEditor extends EditorPart {
      */
     protected void sync() {
         if (syncVector != null) {
-            Iterator enum = syncVector.iterator();
-            while (enum.hasNext()) {
-                PageBook pageBook = (PageBook) enum.next();
+            Iterator itr = syncVector.iterator();
+            while (itr.hasNext()) {
+                PageBook pageBook = (PageBook) itr.next();
                 syncPageBook(pageBook);
             }
         }

@@ -677,9 +677,9 @@ class WizardFileSystemResourceImportPage1 extends WizardResourceImportPage
         if (selectedTypes == null) // ie.- all extensions are acceptable
             return true;
 
-        Iterator enum = selectedTypes.iterator();
-        while (enum.hasNext()) {
-            if (extension.equalsIgnoreCase((String) enum.next()))
+        Iterator itr = selectedTypes.iterator();
+        while (itr.hasNext()) {
+            if (extension.equalsIgnoreCase((String) itr.next()))
                 return true;
         }
 

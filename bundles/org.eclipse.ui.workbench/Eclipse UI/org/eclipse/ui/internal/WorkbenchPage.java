@@ -1127,9 +1127,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Close each perspective in turn
         PerspectiveList oldList = perspList;
         perspList = new PerspectiveList();
-        Iterator enum = oldList.iterator();
-        while (enum.hasNext())
-            closePerspective((Perspective) enum.next(), false, false);
+        Iterator itr = oldList.iterator();
+        while (itr.hasNext())
+            closePerspective((Perspective) itr.next(), false, false);
         close();
     }
 
@@ -1266,9 +1266,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IViewReference refs[] = viewFactory.getViews();
 
         // Get rid of perspectives. This will close the views.
-        Iterator enum = perspList.iterator();
-        while (enum.hasNext()) {
-            Perspective perspective = (Perspective) enum.next();
+        Iterator itr = perspList.iterator();
+        while (itr.hasNext()) {
+            Perspective perspective = (Perspective) itr.next();
             window.removePerspectiveShortcut(perspective.getDesc(), this);
             window.firePerspectiveClosed(this, perspective.getDesc());
             perspective.dispose();
@@ -1377,9 +1377,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns the first view manager with given ID.
      */
     public Perspective findPerspective(IPerspectiveDescriptor desc) {
-        Iterator enum = perspList.iterator();
-        while (enum.hasNext()) {
-            Perspective mgr = (Perspective) enum.next();
+        Iterator itr = perspList.iterator();
+        while (itr.hasNext()) {
+            Perspective mgr = (Perspective) itr.next();
             if (desc.getId().equals(mgr.getDesc().getId()))
                 return mgr;
         }
@@ -2082,9 +2082,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * This method is called when the page is activated.
      */
     protected void onActivate() {
-        Iterator enum = perspList.iterator();
-        while (enum.hasNext()) {
-            Perspective perspective = (Perspective) enum.next();
+        Iterator itr = perspList.iterator();
+        while (itr.hasNext()) {
+            Perspective perspective = (Perspective) itr.next();
             window.addPerspectiveShortcut(perspective.getDesc(), this);
         }
         composite.setVisible(true);
@@ -2146,9 +2146,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (getActivePerspective() != null)
             getActivePerspective().onDeactivate();
         composite.setVisible(false);
-        Iterator enum = perspList.iterator();
-        while (enum.hasNext()) {
-            Perspective perspective = (Perspective) enum.next();
+        Iterator itr = perspList.iterator();
+        while (itr.hasNext()) {
+            Perspective perspective = (Perspective) itr.next();
             window.removePerspectiveShortcut(perspective.getDesc(), this);
         }
     }
@@ -2713,9 +2713,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         // Save each perspective in opened order
-        Iterator enum = perspList.iterator();
-        while (enum.hasNext()) {
-            Perspective persp = (Perspective) enum.next();
+        Iterator itr = perspList.iterator();
+        while (itr.hasNext()) {
+            Perspective persp = (Perspective) itr.next();
             IMemento gChildMem = childMem
                     .createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
             result.merge(persp.saveState(gChildMem));

@@ -136,9 +136,9 @@ public class DetachedWindow extends Window {
         // Reparent each view in the tab folder.
         Vector detachedChildren = new Vector();
         collectViewPanes(detachedChildren, getChildren());
-        Enumeration enum = detachedChildren.elements();
-        while (enum.hasMoreElements()) {
-            LayoutPart part = (LayoutPart) enum.nextElement();
+        Enumeration itr = detachedChildren.elements();
+        while (itr.hasMoreElements()) {
+            LayoutPart part = (LayoutPart) itr.nextElement();
             part.reparent(parent);
         }
 
@@ -160,9 +160,9 @@ public class DetachedWindow extends Window {
     protected void handleShellCloseEvent() {
         List views = new ArrayList();
         collectViewPanes(views, getChildren());
-        Iterator enum = views.iterator();
-        while (enum.hasNext()) {
-            ViewPane child = (ViewPane) enum.next();
+        Iterator itr = views.iterator();
+        while (itr.hasNext()) {
+            ViewPane child = (ViewPane) itr.next();
             page.hideView(child.getViewReference());
         }
         close();

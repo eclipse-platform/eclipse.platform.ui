@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.swt.graphics.Font;
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.PlatformUI;
 
 /**

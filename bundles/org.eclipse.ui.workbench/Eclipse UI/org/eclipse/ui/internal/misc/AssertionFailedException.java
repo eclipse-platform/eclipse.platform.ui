@@ -21,6 +21,13 @@ package org.eclipse.ui.internal.misc;
  */
 /* package */
 class AssertionFailedException extends RuntimeException {
+
+    /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3258693212804952114L;
+
     /** Constructs a new exception.
      */
     public AssertionFailedException() {

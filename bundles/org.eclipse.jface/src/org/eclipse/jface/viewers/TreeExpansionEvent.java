@@ -21,6 +21,12 @@ import java.util.EventObject;
 public class TreeExpansionEvent extends EventObject {
 
     /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3618414930227835185L;
+    
+    /**
      * The element that was expanded or collapsed.
      */
     private Object element;

@@ -33,6 +33,13 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
  */
 public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         IPluginContribution {
+
+    /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3905241225668998961L;
+
     private static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
 
     // @issue the following constants need not be public; see bug 47600

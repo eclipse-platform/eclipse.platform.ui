@@ -160,9 +160,9 @@ public abstract class BasicNewResourceWizard extends Wizard implements
         }
 
         final ISelection selection = new StructuredSelection(resource);
-        Iterator enum = parts.iterator();
-        while (enum.hasNext()) {
-            IWorkbenchPart part = (IWorkbenchPart) enum.next();
+        Iterator itr = parts.iterator();
+        while (itr.hasNext()) {
+            IWorkbenchPart part = (IWorkbenchPart) itr.next();
 
             // get the part's ISetSelectionTarget implementation
             ISetSelectionTarget target = null;

@@ -1224,9 +1224,9 @@ public class EditorManager {
 
                 //--------- This code was in the IWorkspaceRunnable above
                 monitorWrap.beginTask("", finalEditors.size()); //$NON-NLS-1$
-                Iterator enum = finalEditors.iterator();
-                while (enum.hasNext()) {
-                    IEditorPart part = (IEditorPart) enum.next();
+                Iterator itr = finalEditors.iterator();
+                while (itr.hasNext()) {
+                    IEditorPart part = (IEditorPart) itr.next();
                     part.doSave(new SubProgressMonitor(monitorWrap, 1));
                     if (monitorWrap.isCanceled())
                         break;

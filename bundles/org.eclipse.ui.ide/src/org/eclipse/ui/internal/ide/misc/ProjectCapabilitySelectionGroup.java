@@ -268,16 +268,16 @@ public class ProjectCapabilitySelectionGroup {
                     IStructuredSelection sel = (IStructuredSelection) event
                             .getSelection();
                     visibleCapabilities.clear();
-                    Iterator enum = sel.iterator();
-                    while (enum.hasNext()) {
-                        Category cat = (Category) enum.next();
+                    Iterator itr = sel.iterator();
+                    while (itr.hasNext()) {
+                        Category cat = (Category) itr.next();
                         visibleCapabilities.addAll(cat.getElements());
                     }
                     Collections.sort(visibleCapabilities, capabilityComparator);
                     checkboxViewer.refresh();
-                    enum = visibleCapabilities.iterator();
-                    while (enum.hasNext()) {
-                        Capability cap = (Capability) enum.next();
+                    itr = visibleCapabilities.iterator();
+                    while (itr.hasNext()) {
+                        Capability cap = (Capability) itr.next();
                         if (hasDependency(cap))
                             checkboxViewer.setGrayed(cap, true);
                         if (checkedCapabilities.contains(cap))
@@ -475,9 +475,9 @@ public class ProjectCapabilitySelectionGroup {
         if (initialCapabilities == null)
             return;
 
-        Iterator enum = (Arrays.asList(initialCapabilities)).iterator();
-        while (enum.hasNext()) {
-            Capability cap = (Capability) enum.next();
+        Iterator itr = (Arrays.asList(initialCapabilities)).iterator();
+        while (itr.hasNext()) {
+            Capability cap = (Capability) itr.next();
             String[] ids = registry.getMembershipSetIds(cap);
             for (int j = 0; j < ids.length; j++) {
                 memberships.put(ids[j], cap);
@@ -708,9 +708,9 @@ public class ProjectCapabilitySelectionGroup {
                                                 "ProjectCapabilitySelectionGroup.requiredPrereq", new Object[] { capability.getName(), cap.getName() })); //$NON-NLS-1$
             } else {
                 StringBuffer msg = new StringBuffer();
-                Iterator enum = descCopy.iterator();
-                while (enum.hasNext()) {
-                    Capability cap = (Capability) enum.next();
+                Iterator itr = descCopy.iterator();
+                while (itr.hasNext()) {
+                    Capability cap = (Capability) itr.next();
                     msg.append("\n    "); //$NON-NLS-1$
                     msg.append(cap.getName());
                 }
@@ -789,9 +789,9 @@ public class ProjectCapabilitySelectionGroup {
 
         public void dispose() {
             if (imageTable != null) {
-                Iterator enum = imageTable.values().iterator();
-                while (enum.hasNext())
-                    ((Image) enum.next()).dispose();
+                Iterator itr = imageTable.values().iterator();
+                while (itr.hasNext())
+                    ((Image) itr.next()).dispose();
                 imageTable = null;
             }
         }

@@ -102,6 +102,12 @@ public final class MutableContextManager extends AbstractContextManager
     private class DepthSortedContextIdSet extends TreeSet {
 
         /**
+         * Generated serial version UID for this class.
+         * @since 3.1
+         */
+        private static final long serialVersionUID = 3257291326872892465L;
+
+        /**
          * Constructs a new instance of <code>DepthSortedContextIdSet</code>
          * with the set to be sorted.
          * 

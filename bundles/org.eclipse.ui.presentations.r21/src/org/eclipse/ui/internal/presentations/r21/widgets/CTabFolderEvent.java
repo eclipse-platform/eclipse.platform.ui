@@ -14,6 +14,13 @@ import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.widgets.Widget;
 
 public class CTabFolderEvent extends TypedEvent {
+
+    /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3258688793199719730L;
+
     public Widget item;
 
     public boolean doit;

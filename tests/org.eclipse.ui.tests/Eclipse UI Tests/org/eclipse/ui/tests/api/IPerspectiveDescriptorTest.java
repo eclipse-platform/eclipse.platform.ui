@@ -13,15 +13,12 @@ package org.eclipse.ui.tests.api;
 import junit.framework.TestCase;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.util.ArrayUtil;
 
 public class IPerspectiveDescriptorTest extends TestCase {
 
     private IPerspectiveDescriptor fPer;
-
-    private IPerspectiveRegistry fReg;
 
     public IPerspectiveDescriptorTest(String testName) {
         super(testName);

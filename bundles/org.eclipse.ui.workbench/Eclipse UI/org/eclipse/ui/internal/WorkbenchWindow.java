@@ -646,9 +646,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
         pageList = new PageList();
 
         // Close all.
-        Iterator enum = oldList.iterator();
-        while (enum.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) enum.next();
+        Iterator itr = oldList.iterator();
+        while (itr.hasNext()) {
+            WorkbenchPage page = (WorkbenchPage) itr.next();
             firePageClosed(page);
             page.dispose();
         }
@@ -1935,9 +1935,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     private boolean saveAllPages(boolean bConfirm) {
         boolean bRet = true;
-        Iterator enum = pageList.iterator();
-        while (bRet && enum.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) enum.next();
+        Iterator itr = pageList.iterator();
+        while (bRet && itr.hasNext()) {
+            WorkbenchPage page = (WorkbenchPage) itr.next();
             bRet = page.saveAllEditors(bConfirm);
         }
         return bRet;
@@ -2064,9 +2064,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
 
         // Save each page.
-        Iterator enum = pageList.iterator();
-        while (enum.hasNext()) {
-            WorkbenchPage page = (WorkbenchPage) enum.next();
+        Iterator itr = pageList.iterator();
+        while (itr.hasNext()) {
+            WorkbenchPage page = (WorkbenchPage) itr.next();
 
             // Save perspective.
             IMemento pageMem = memento

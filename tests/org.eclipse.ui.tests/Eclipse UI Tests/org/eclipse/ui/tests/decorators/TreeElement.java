@@ -31,7 +31,6 @@ public class TreeElement extends TestElement {
 		} else {
 			level = parent.level + 1;
 			name = "Level" + String.valueOf(level) + " - " + String.valueOf(index);
-			parent = parent;
 			parent.children.add(this);
 		}
 	}

@@ -331,9 +331,9 @@ public abstract class ObjectContributorManager {
         if (resourceList == null) {
             List contributors = addContributorsFor(resourceClass);
             resourceList = new ArrayList(contributors.size());
-            Iterator enum = contributors.iterator();
-            while (enum.hasNext()) {
-                IObjectContributor contributor = (IObjectContributor) enum
+            Iterator itr = contributors.iterator();
+            while (itr.hasNext()) {
+                IObjectContributor contributor = (IObjectContributor) itr
                         .next();
                 if (contributor.canAdapt())
                     resourceList.add(contributor);

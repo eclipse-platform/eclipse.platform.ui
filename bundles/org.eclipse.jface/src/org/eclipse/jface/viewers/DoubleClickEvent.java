@@ -23,6 +23,12 @@ import org.eclipse.jface.util.Assert;
 public class DoubleClickEvent extends EventObject {
 
     /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3258408443605038133L;
+    
+    /**
      * The selection.
      */
     protected ISelection selection;

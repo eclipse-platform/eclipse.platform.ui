@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -22,8 +20,6 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class IPageListenerTest extends UITestCase implements IPageListener {
     private IWorkbenchWindow fWindow;
-
-    private IWorkspace fWorkspace;
 
     private int eventsReceived = 0;
 
@@ -42,7 +38,6 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
     protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
-        fWorkspace = ResourcesPlugin.getWorkspace();
         fWindow.addPageListener(this);
     }
 

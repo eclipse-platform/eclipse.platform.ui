@@ -18,9 +18,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
 import org.eclipse.ui.tests.performance.layout.LayoutTest;
 import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
+import org.eclipse.ui.tests.performance.layout.RecursiveTrimLayoutWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
-import org.eclipse.ui.tests.performance.layout.RecursiveTrimLayoutWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 

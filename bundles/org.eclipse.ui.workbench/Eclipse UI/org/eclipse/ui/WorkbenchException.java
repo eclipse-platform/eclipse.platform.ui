@@ -22,6 +22,13 @@ import org.eclipse.core.runtime.Status;
  * </p>
  */
 public class WorkbenchException extends CoreException {
+
+    /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3258125864872129078L;
+
     /**
      * Creates a new exception with the given message.
      * 

@@ -20,6 +20,13 @@ import org.eclipse.core.runtime.IStatus;
  * </p>
  */
 public class PartInitException extends WorkbenchException {
+    
+    /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3257284721296684850L;
+
     /**
      * Creates a new exception with the given message.
      * 

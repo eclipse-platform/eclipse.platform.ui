@@ -135,9 +135,9 @@ public class EditorRegistry implements IEditorRegistry {
         sortedEditorsFromPlugins.add(editor);
 
         // add it to the table of mappings
-        Iterator enum = extensions.iterator();
-        while (enum.hasNext()) {
-            String fileExtension = (String) enum.next();
+        Iterator itr = extensions.iterator();
+        while (itr.hasNext()) {
+            String fileExtension = (String) itr.next();
 
             if (fileExtension != null && fileExtension.length() > 0) {
                 FileEditorMapping mapping = getMappingFor("*." + fileExtension); //$NON-NLS-1$
@@ -153,9 +153,9 @@ public class EditorRegistry implements IEditorRegistry {
         }
 
         // add it to the table of mappings
-        enum = filenames.iterator();
-        while (enum.hasNext()) {
-            String filename = (String) enum.next();
+        itr = filenames.iterator();
+        while (itr.hasNext()) {
+            String filename = (String) itr.next();
 
             if (filename != null && filename.length() > 0) {
                 FileEditorMapping mapping = getMappingFor(filename);
@@ -829,16 +829,16 @@ public class EditorRegistry implements IEditorRegistry {
      * Rebuild the internal editor mapping.
      */
     private void rebuildInternalEditorMap() {
-        Iterator enum = null;
+        Iterator itr = null;
         IEditorDescriptor desc = null;
 
         // Allocate a new map.
         mapIDtoEditor = initialIdToEditorMap(mapIDtoEditor.size());
 
         // Add plugin editors.
-        enum = sortedEditorsFromPlugins.iterator();
-        while (enum.hasNext()) {
-            desc = (IEditorDescriptor) enum.next();
+        itr = sortedEditorsFromPlugins.iterator();
+        while (itr.hasNext()) {
+            desc = (IEditorDescriptor) itr.next();
             mapIDtoEditor.put(desc.getId(), desc);
         }
     }
@@ -913,9 +913,9 @@ public class EditorRegistry implements IEditorRegistry {
         }
 
         memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
-        Iterator enum = editors.iterator();
-        while (enum.hasNext()) {
-            EditorDescriptor editor = (EditorDescriptor) enum.next();
+        Iterator itr = editors.iterator();
+        while (itr.hasNext()) {
+            EditorDescriptor editor = (EditorDescriptor) itr.next();
             IMemento editorMemento = memento
                     .createChild(IWorkbenchConstants.TAG_DESCRIPTOR);
             editor.saveValues(editorMemento);

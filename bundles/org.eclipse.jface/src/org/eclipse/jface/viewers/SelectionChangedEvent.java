@@ -25,6 +25,12 @@ import org.eclipse.jface.util.Assert;
 public class SelectionChangedEvent extends EventObject {
 
     /**
+     * Generated serial version UID for this class.
+     * @since 3.1
+     */
+    private static final long serialVersionUID = 3835149545519723574L;
+    
+    /**
      * The selection.
      */
     protected ISelection selection;
