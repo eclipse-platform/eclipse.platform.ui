@@ -71,11 +71,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		createClasspathModel();
 		antClasspathBlock.setInput(model);
-		String antHomeString= prefs.getAntHome();
-		if (antHomeString != null && antHomeString.length() == 0) {
-			antHomeString= null;
-		}
-		antClasspathBlock.initializeAntHome(antHomeString);
+		antClasspathBlock.initializeAntHome(prefs.getAntHome());
 		
 		preferencePage.setErrorMessage(null);
 		preferencePage.setValid(true);

@@ -183,7 +183,7 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		return model.getURLEntries(ClasspathModel.GLOBAL);
 	}
 	
-	public void handleMove(int direction, IClasspathEntry entry) {
+	public void handleMove(boolean direction, IClasspathEntry entry) {
 		IClasspathEntry parent = (IClasspathEntry)getParent(entry);
 		parent.moveChild(direction, entry);
 	}

@@ -11,8 +11,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
-import java.net.URL;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.model.AntUtil;
@@ -207,7 +205,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		if (classpathString == null) {
 			model= new ClasspathModel();
 			AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-			model.setAntHomeEntries(new URL[]{});
+			model.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
 			model.setGlobalEntries(prefs.getAdditionalClasspathEntries());
 		} else {
 			model= new ClasspathModel(classpathString, customAntHome);

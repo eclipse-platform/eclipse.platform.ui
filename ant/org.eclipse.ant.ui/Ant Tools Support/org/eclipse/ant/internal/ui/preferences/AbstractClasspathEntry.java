@@ -22,8 +22,12 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#moveChild(int)
 	 */
-	public void moveChild(int direction, IClasspathEntry child) {
+	public void moveChild(boolean up, IClasspathEntry child) {
 		int index= childEntries.indexOf(child);
+		int direction= 1;
+		if (up) {
+			direction= -1;
+		}
 		Object moved= childEntries.get(index+direction);
 		childEntries.set(index + direction, child);
 		childEntries.set(index, moved);

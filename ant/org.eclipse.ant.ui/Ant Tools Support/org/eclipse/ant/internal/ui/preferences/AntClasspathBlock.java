@@ -146,13 +146,13 @@ public class AntClasspathBlock {
 		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
 		upButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleMove(-1, treeViewer);
+				handleMove(true, treeViewer);
 			}
 		});
 		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
 		downButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleMove(1, treeViewer);
+				handleMove(false, treeViewer);
 			}
 		});
 		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
@@ -215,10 +215,10 @@ public class AntClasspathBlock {
 		antContentProvider.setRefreshEnabled(true);
 	}
 
-	private void handleMove(int direction, TreeViewer viewer) {
+	private void handleMove(boolean up, TreeViewer viewer) {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		Iterator selected= null;
-		if (direction > 0) {
+		if (up) {
 			List list= sel.toList();
 			Collections.reverse(list);
 			selected= list.iterator();
@@ -227,7 +227,7 @@ public class AntClasspathBlock {
 		}
 		while (selected.hasNext()) {
 			IClasspathEntry entry =  (IClasspathEntry) selected.next();
-			((AntClasspathContentProvider) viewer.getContentProvider()).handleMove(direction, entry);
+			((AntClasspathContentProvider) viewer.getContentProvider()).handleMove(up, entry);
 		}
 		treeViewer.refresh();
 		treeViewer.setSelection(treeViewer.getSelection());
@@ -463,6 +463,9 @@ public class AntClasspathBlock {
 		antHome.setEnabled(false);
 		antHome.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (initializing) {
+					return;
+				}
 				String path= antHome.getText();
 				if (path.length() > 0) {
 					File rootDir = new File(path, "lib"); //$NON-NLS-1$
