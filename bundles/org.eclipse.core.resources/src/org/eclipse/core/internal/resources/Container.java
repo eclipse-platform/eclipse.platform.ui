@@ -45,7 +45,7 @@ public boolean exists(IPath path) {
  */
 public IResource findMember(String name) {
 	// forward to central method
-	return findMember(name, 0);
+	return findMember(name, IResource.NONE);
 }
 
 /**
@@ -53,7 +53,7 @@ public IResource findMember(String name) {
  */
 public IResource findMember(String name, boolean phantom) {
 	// forward to central method
-	return findMember(name, phantom ? INCLUDE_PHANTOMS : 0);
+	return findMember(name, phantom ? INCLUDE_PHANTOMS : IResource.NONE);
 }
 
 /*
@@ -72,7 +72,7 @@ public IResource findMember(String name, int memberFlags) {
  */
 public IResource findMember(IPath path) {
 	// forward to central method
-	return findMember(path, 0);
+	return findMember(path, IResource.NONE);
 }
 
 /**
@@ -80,7 +80,7 @@ public IResource findMember(IPath path) {
  */
 public IResource findMember(IPath path, boolean phantom) {
 	// forward to central method
-	return findMember(path, phantom ? INCLUDE_PHANTOMS : 0);
+	return findMember(path, phantom ? INCLUDE_PHANTOMS : IResource.NONE);
 }
 
 /*
@@ -180,7 +180,7 @@ public boolean isLocal(int flags, int depth) {
  */
 public IResource[] members() throws CoreException {
 	// forward to central method
-	return members(0);
+	return members(IResource.NONE);
 }
 
 /**
@@ -188,7 +188,7 @@ public IResource[] members() throws CoreException {
  */
 public IResource[] members(boolean phantom) throws CoreException {
 	// forward to central method
-	return members(phantom ? INCLUDE_PHANTOMS : 0);
+	return members(phantom ? INCLUDE_PHANTOMS : IResource.NONE);
 }
 
 /*

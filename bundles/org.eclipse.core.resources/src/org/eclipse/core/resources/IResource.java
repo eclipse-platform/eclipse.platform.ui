@@ -162,6 +162,22 @@ public interface IResource extends IAdaptable {
 	 */
 	public static final int NULL_STAMP = -1;
 	
+	/** 
+	 * General purpose zero-valued bit mask constant. Useful whenever you need to
+	 * supply a bit mask with no bits set.
+	 * <p>
+	 * Example usage:
+	 * <code>
+	 * <pre>
+	 *    delete(IResource.NONE, null)
+	 * </pre>
+	 * </code>
+	 * </p>
+	 *
+	 * @since 2.0
+	 */
+	public static final int NONE = 0;
+	
 	
 /**
  * Accepts the given visitor.
@@ -170,7 +186,7 @@ public interface IResource extends IAdaptable {
  * visits this resource's members.
  * <p>
  * This is a convenience method, fully equivalent to 
- * <code>accept(visitor,0,DEPTH_INFINITE)</code>.
+ * <code>accept(visitor,IResource.NONE,DEPTH_INFINITE)</code>.
  * </p>
  *
  * @param visitor the visitor
@@ -195,7 +211,7 @@ public void accept(IResourceVisitor visitor) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   accept(visitor, depth, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ *   accept(visitor, depth, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
  * </p>
  *
@@ -287,7 +303,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   copy(destination, (force ? FORCE : 0), monitor);
+ *   copy(destination, (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p> 
@@ -325,7 +341,7 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   copy(destination, (force ? FORCE : 0), monitor);
+ *   copy(destination, (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p> 
@@ -523,7 +539,7 @@ public IMarker createMarker(String type) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete(force ? FORCE : 0, monitor);
+ *   delete(force ? FORCE : IResource.NONE, monitor);
  * </pre>
  * </p>
  * <p>
@@ -1079,7 +1095,7 @@ public boolean isReadOnly();
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(destination, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -1123,7 +1139,7 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(destination, force ? FORCE : 0, monitor);
+ *   move(destination, force ? FORCE : IResource.NONE, monitor);
  * </pre>
  * </p>
  * <p>

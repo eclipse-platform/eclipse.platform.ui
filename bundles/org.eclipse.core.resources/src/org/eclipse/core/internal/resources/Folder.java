@@ -100,7 +100,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  */
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	create((force ? IResource.FORCE : 0), local, monitor);
+	create((force ? IResource.FORCE : IResource.NONE), local, monitor);
 }
 
 /** 

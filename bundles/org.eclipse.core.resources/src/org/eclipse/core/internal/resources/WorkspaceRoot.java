@@ -35,7 +35,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException {
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
-	//    delete(DELETE_PROJECT_CONTENT | (force ? FORCE : 0), monitor);
+	//    delete(DELETE_PROJECT_CONTENT | (force ? FORCE : IResource.NONE), monitor);
 	delete(true, force, monitor);
 }
 /**

@@ -62,7 +62,7 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
  */
 public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
 	appendContents(content, updateFlags, monitor);
 }
 
@@ -166,7 +166,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
  */
 public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	create(content, (force ? IResource.FORCE : 0), monitor);
+	create(content, (force ? IResource.FORCE : IResource.NONE), monitor);
 }
 
 /**
@@ -264,7 +264,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
  */
 public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
 	setContents(content, updateFlags, monitor);
 }
 
@@ -273,7 +273,7 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
 	setContents(source.getContents(), updateFlags, monitor);
 }
 

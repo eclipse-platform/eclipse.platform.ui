@@ -32,7 +32,7 @@ public interface IFolder extends IContainer, IAdaptable {
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   create((force ? FORCE : 0), local, monitor);
+ *   create((force ? FORCE : IResource.NONE), local, monitor);
  * </pre>
  * </p>
  * <p>
@@ -133,7 +133,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete((keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   delete((keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -201,7 +201,7 @@ public IFolder getFolder(String name);
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(destination, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>

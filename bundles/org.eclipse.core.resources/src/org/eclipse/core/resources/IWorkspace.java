@@ -210,7 +210,7 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects);
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   copy(resources, destination, (force ? IResource.FORCE : 0), monitor);
+ *   copy(resources, destination, (force ? IResource.FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -317,7 +317,7 @@ public IStatus copy(IResource[] resources, IPath destination, int updateFlags, I
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete(resources, IResource.KEEP_HISTORY | (force ? IResource.FORCE : 0), monitor);
+ *   delete(resources, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -493,7 +493,7 @@ public boolean isAutoBuilding();
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(resources, destination, IResource.KEEP_HISTORY | (force ? IResource.FORCE : 0), monitor);
+ *   move(resources, destination, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>

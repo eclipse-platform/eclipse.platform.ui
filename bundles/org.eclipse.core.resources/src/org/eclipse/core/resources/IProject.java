@@ -240,7 +240,7 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete((deleteContent ? DELETE_PROJECT_CONTENT : 0) | (force ? FORCE : 0), monitor);
+ *   delete((deleteContent ? DELETE_PROJECT_CONTENT : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -429,7 +429,7 @@ public boolean isOpen();
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(description, (force ? FORCE : 0), monitor);
+ *   move(description, (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>

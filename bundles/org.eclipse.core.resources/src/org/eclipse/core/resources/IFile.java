@@ -35,7 +35,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   appendContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   appendContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -142,7 +142,7 @@ public void appendContents(InputStream source, int updateFlags, IProgressMonitor
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   create(source, (force ? FORCE : 0), monitor);
+ *   create(source, (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -240,7 +240,7 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   delete((keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   delete((keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -359,7 +359,7 @@ public boolean isReadOnly();
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   move(destination, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -406,7 +406,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   setContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   setContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>
@@ -446,7 +446,7 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   setContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ *   setContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
  * </pre>
  * </p>
  * <p>

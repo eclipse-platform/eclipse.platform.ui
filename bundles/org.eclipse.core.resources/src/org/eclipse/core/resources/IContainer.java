@@ -69,7 +69,7 @@ public boolean exists(IPath path);
  * with the given name in this container, or <code>null</code> if no such
  * resource exists.
  * <p>
- * This is a convenience method, fully equivalent to <code>findMember(name,0)</code>.
+ * This is a convenience method, fully equivalent to <code>findMember(name,IResource.NONE)</code>.
  * </p>
  * <p> 
  * N.B. Unlike the methods which traffic strictly in resource
@@ -90,7 +90,7 @@ public IResource findMember(String name);
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   findMember(name, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ *   findMember(name, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
  * </p>
  *
@@ -151,7 +151,7 @@ public IResource findMember(String name, int memberFlags);
  * resource existing at the calculated path in the workspace.
  * </p>
  * <p>
- * This is a convenience method, fully equivalent to <code>findMember(path,0)</code>.
+ * This is a convenience method, fully equivalent to <code>findMember(path,IResource.NONE)</code>.
  * </p>
  *
  * @param path the path of the desired resource
@@ -169,7 +169,7 @@ public IResource findMember(IPath path);
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   findMember(path, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ *   findMember(path, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
  * </p>
  *
@@ -271,7 +271,7 @@ public IFolder getFolder(IPath path);
  * Returns a list of existing member resources (projects, folders and files)
  * in this resource, in no particular order.
  * <p>
- * This is a convenience method, fully equivalent to <code>members(0)</code>.
+ * This is a convenience method, fully equivalent to <code>members(IResource.NONE)</code>.
  * </p>
  * <p>
  * Note that the members of a project or folder are the files and folders
@@ -296,7 +296,7 @@ public IResource[] members() throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   members(includePhantoms ? INCLUDE_PHANTOMS : 0);
+ *   members(includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
  * </p>
  *

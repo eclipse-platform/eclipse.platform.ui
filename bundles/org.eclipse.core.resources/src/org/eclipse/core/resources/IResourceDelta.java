@@ -156,7 +156,7 @@ public interface IResourceDelta extends IAdaptable {
  * the resource delta's children are also visited.
  * <p>
  * This is a convenience method, fully equivalent to 
- * <code>accept(visitor,0)</code>.
+ * <code>accept(visitor,IResource.NONE)</code>.
  * </p>
  *
  * @param visitor the visitor
@@ -173,7 +173,7 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException;
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   accept(visitor, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ *   accept(visitor, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
  * </pre>
  * </p>
  *

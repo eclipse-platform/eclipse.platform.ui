@@ -306,7 +306,7 @@ public void create(IProgressMonitor monitor) throws CoreException {
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
-	//    delete((isOpen() ? DELETE_PROJECT_CONTENT : 0) | (force ? FORCE : 0), monitor);
+	//    delete((isOpen() ? DELETE_PROJECT_CONTENT : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	delete(isOpen(), force, monitor);
 }
 
