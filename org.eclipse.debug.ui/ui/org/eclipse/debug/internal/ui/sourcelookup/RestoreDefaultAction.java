@@ -10,15 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainer;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -55,5 +48,4 @@ public class RestoreDefaultAction extends SourceContainerAction {
 		}		
 		return selection.isEmpty()|| getViewer().getTree().getSelection()[0].getParentItem()==null;	
 	}
-	
 }
