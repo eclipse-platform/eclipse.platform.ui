@@ -286,7 +286,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		final CVSException[] error = new CVSException[1];
 		// Remove the registered Move/Delete hook, assuming that the cvs runnable will keep sync info up-to-date
 		final IMoveDeleteHook oldHook = CVSTeamProvider.getRegisteredMoveDeleteHook();
-		CVSTeamProvider.setMoveDeleteHook(null);
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -294,6 +293,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 					try {
 						monitor.beginTask(null, 100);
 						try {
+							CVSTeamProvider.setMoveDeleteHook(null);
 							EclipseSynchronizer.getInstance().beginOperation(Policy.subMonitorFor(monitor, 5));
 							job.run(Policy.subMonitorFor(monitor, 60));
 						} finally {
