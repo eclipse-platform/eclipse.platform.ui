@@ -95,13 +95,12 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
      */
     public IViewPart createView() throws CoreException {
-        Class viewClass = configElement
-                .loadExtensionClass(IWorkbenchRegistryConstants.ATT_CLASS);
+        Object extension = WorkbenchPlugin.createExtension(
+                getConfigurationElement(),
+                IWorkbenchRegistryConstants.ATT_CLASS);
         
-        if (IViewPart.class.isAssignableFrom(viewClass)) {
-            return (IViewPart) WorkbenchPlugin.createExtension(
-                    getConfigurationElement(),
-                    IWorkbenchRegistryConstants.ATT_CLASS);
+        if (extension instanceof IViewPart) {
+            return (IViewPart) extension;
         }
 
         return new NewViewToOldWrapper(getPartDescriptor());

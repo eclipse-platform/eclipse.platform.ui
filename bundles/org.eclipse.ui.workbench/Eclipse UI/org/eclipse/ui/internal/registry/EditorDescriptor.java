@@ -244,28 +244,14 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @return the editor part
      * @throws CoreException thrown if there is an issue creating the editor
      */
-    public IEditorPart createEditor() throws CoreException {
-        Class editorClass = loadClass();
+    public IEditorPart createEditor() throws CoreException {        
+        Object extension = WorkbenchPlugin.createExtension(getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
         
-        if (IEditorPart.class.isAssignableFrom(editorClass)) {
-            return (IEditorPart)WorkbenchPlugin.createExtension(getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
-        } 
+        if (extension instanceof IEditorPart) {
+            return (IEditorPart)extension;
+        }
         
-        NewEditorToOldWrapper adapter = new NewEditorToOldWrapper(getPartDescriptor());
-        return adapter;        
-    }
-
-
-
-    /**
-     * Pre-load the editor class.
-     *
-     * @return the class
-     * @throws CoreException thrown if there is an issue creating the class
-     * @since 3.1 
-     */
-    public Class loadClass() throws CoreException {
-        return getConfigurationElement().loadExtensionClass(IWorkbenchRegistryConstants.ATT_CLASS);
+        return new NewEditorToOldWrapper(getPartDescriptor());            
     }
 
     /**
