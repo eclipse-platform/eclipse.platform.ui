@@ -192,6 +192,18 @@ public class ReviewPage
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		
+		// when searching for updates, only nested patches can be shown.
+		// when searching for features, features and patches can be shown
+		String filterText = filterCheck.getText();
+		String filterFeatures = UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures");
+		String filterPatches = UpdateUI.getString("InstallWizard.ReviewPage.filterPatches");
+		boolean isUpdateSearch = searchRunner.getSearchProvider() instanceof ModeSelectionPage;
+		if (isUpdateSearch && filterText.equals(filterFeatures))
+			filterCheck.setText(filterPatches);
+		else if ( !isUpdateSearch && filterText.equals(filterPatches))
+			filterCheck.setText(filterFeatures);
+		
 		if (visible && searchRunner.isNewSearchNeeded()) {
 			jobs.clear();
 			tableViewer.refresh();
@@ -335,7 +347,7 @@ public class ReviewPage
 		counterLabel.setLayoutData(gd);
 
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filter")); //$NON-NLS-1$
+		filterCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures")); //$NON-NLS-1$
 		filterCheck.setSelection(true);
 		tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -525,7 +537,7 @@ public class ReviewPage
 		propertiesButton.setEnabled(feature != null);
 		moreInfoButton.setEnabled(job != null && getMoreInfoURL(job) != null);
 	}
-
+	
 	private void pageChanged() {
 		Object[] checked = tableViewer.getCheckedElements();
 		int totalCount = tableViewer.getTable().getItemCount();
