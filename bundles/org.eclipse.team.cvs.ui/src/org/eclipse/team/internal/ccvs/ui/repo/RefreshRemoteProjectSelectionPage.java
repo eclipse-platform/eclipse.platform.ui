@@ -110,6 +110,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 				updateEnablement();
 			}
 		});
+		listArea.getViewer().setSorter(new RepositorySorter());
 		
 		workingSetArea = new WorkingSetSelectionArea(parentDialog, settings);
 		setWorkingSet(workingSet);

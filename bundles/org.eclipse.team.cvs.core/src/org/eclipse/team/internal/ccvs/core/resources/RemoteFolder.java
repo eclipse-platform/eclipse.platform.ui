@@ -521,21 +521,21 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	public ICVSResource getChild(String path) throws CVSException {
 		if (path.equals(Session.CURRENT_LOCAL_FOLDER) || path.length() == 0)
 			return this;
-		ICVSRemoteResource[] children = getChildren();
-		if (children == null) 
-			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
-		if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
-			for (int i=0;i<children.length;i++) {
-				if (children[i].getName().equals(path))
-					return (ICVSResource)children[i];
-			}
-		} else {
+		if (path.indexOf(Session.SERVER_SEPARATOR) != -1) {
 			IPath p = new Path(path);
 			try {
 				return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
 			} catch (CVSException e) {
 				// regenerate the exception to give as much info as possible
 				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
+			}
+		} else {
+			ICVSRemoteResource[] children = getChildren();
+			if (children == null) 
+				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
+			for (int i=0;i<children.length;i++) {
+				if (children[i].getName().equals(path))
+					return (ICVSResource)children[i];
 			}
 		}
 		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$

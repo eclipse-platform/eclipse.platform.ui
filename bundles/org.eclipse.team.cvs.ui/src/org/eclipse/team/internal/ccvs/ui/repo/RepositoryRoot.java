@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -206,46 +205,19 @@ public class RepositoryRoot extends PlatformObject {
 	}
 	
 	/**
-	 * Returns the auto refresh file paths relative to the given remote path.
-	 * This approach doesn't work for defined modules.
+	 * Returns the absolute paths of the auto refresh files relative to the
+	 * repository.
 	 * 
 	 * @return String[]
-	 * @deprecated
 	 */
 	public String[] getAutoRefreshFiles(String remotePath) {
 		String name = getCachePathFor(remotePath);
 		Set files = (Set)autoRefreshFiles.get(name);
-		IPath parentPath = new Path(remotePath);
-		if (files == null || files.isEmpty()) {
-			return DEFAULT_AUTO_REFRESH_FILES;
-		} else {
-			// Convert the absolute paths to relative paths
-			List result = new ArrayList();
-			for (Iterator iter = files.iterator(); iter.hasNext();) {
-				IPath absolutePath = new Path((String) iter.next());
-				if (parentPath.isPrefixOf(absolutePath)) {
-					IPath relativePath = absolutePath.removeFirstSegments(parentPath.segmentCount());
-					result.add(relativePath.toString());
-				}
-			}
-			if (result.isEmpty()) return DEFAULT_AUTO_REFRESH_FILES;
-			return (String[]) result.toArray(new String[result.size()]);
-		}
-	}
-
-	/**
-	 * Return the absolute paths names of the files used to refresh the tags of
-	 * the given remote path.
-	 * 
-	 * @param remotePath
-	 * @return String[]
-	 */
-	public String[] getAutoRefreshFilePaths(String remotePath) {
-		String name = getCachePathFor(remotePath);
-		Set files = (Set)autoRefreshFiles.get(name);
 		if (files == null || files.isEmpty()) {
 			// convert the default relative file paths to full paths
-			// todo: special handling for defined modules?
+			if (isDefinedModuleName(remotePath)) {
+				return new String[0];
+			}
 			List result = new ArrayList();
 			for (int i = 0; i < DEFAULT_AUTO_REFRESH_FILES.length; i++) {
 				String relativePath = DEFAULT_AUTO_REFRESH_FILES[i];
@@ -259,20 +231,18 @@ public class RepositoryRoot extends PlatformObject {
 	
 	/**
 	 * Sets the auto refresh files for the given remote path to the given
-	 * stirng values which are file paths relative to the given remote path.
-	 * This doesn't work properly for modules.
+	 * string values which are absolute file paths (relative to the receiver).
 	 * 
 	 * @param autoRefreshFiles The autoRefreshFiles to set
-	 * @deprecated
 	 */
 	public void setAutoRefreshFiles(String remotePath, String[] autoRefreshFiles) {
-		List newFiles = Arrays.asList(autoRefreshFiles);
+		Set newFiles = new HashSet(Arrays.asList(autoRefreshFiles));
 		// Check to see if the auto-refresh files are the default files
 		if (autoRefreshFiles.length == DEFAULT_AUTO_REFRESH_FILES.length) {
 			boolean isDefault = true;
 			for (int i = 0; i < DEFAULT_AUTO_REFRESH_FILES.length; i++) {
 				String filePath = DEFAULT_AUTO_REFRESH_FILES[i];
-				if (!newFiles.contains(filePath)) {
+				if (!newFiles.contains(new Path(remotePath).append(filePath).toString())) {
 					isDefault = false;
 					break;
 				}
@@ -282,20 +252,14 @@ public class RepositoryRoot extends PlatformObject {
 				return;
 			}
 		}
-		// Convert the relative paths to absolute
-		Set files = new HashSet();
-		for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
-			String relativePath = (String) iter.next();
-			files.add(new Path(remotePath).append(relativePath).toString());
-		}
-		this.autoRefreshFiles.put(getCachePathFor(remotePath), files);
+		this.autoRefreshFiles.put(getCachePathFor(remotePath), newFiles);
 	}
 
 	/**
 	 * Fetches tags from auto-refresh files.
 	 */
 	public void refreshDefinedTags(String remotePath, boolean replace, IProgressMonitor monitor) throws TeamException {
-		String[] filesToRefresh = getAutoRefreshFilePaths(remotePath);
+		String[] filesToRefresh = getAutoRefreshFiles(remotePath);
 		monitor.beginTask(null, filesToRefresh.length * 10); //$NON-NLS-1$
 		try {
 			List tags = new ArrayList();
@@ -345,7 +309,11 @@ public class RepositoryRoot extends PlatformObject {
 	}
 	
 	private String getCachePathFor(String remotePath) {
-		return new Path(remotePath).segment(0);
+		String root = new Path(remotePath).segment(0);
+		if (isDefinedModuleName(remotePath)) {
+			return asDefinedModulePath(root);
+		}
+		return root;
 	}
 	
 	/**
@@ -398,7 +366,7 @@ public class RepositoryRoot extends PlatformObject {
 				while (filenameIt.hasNext()) {
 					String filename = (String)filenameIt.next();
 					attributes.clear();
-					attributes.put(RepositoriesViewContentHandler.PATH_ATTRIBUTE, filename);
+					attributes.put(RepositoriesViewContentHandler.FULL_PATH_ATTRIBUTE, filename);
 					writer.startAndEndTag(RepositoriesViewContentHandler.AUTO_REFRESH_FILE_TAG, attributes, true);
 				}
 			}

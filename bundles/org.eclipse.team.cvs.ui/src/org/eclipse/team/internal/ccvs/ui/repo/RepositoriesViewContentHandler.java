@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -154,11 +155,20 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			}
 			tags.add(new CVSTag(name, getCVSTagType(type)));
 		} else if (localName.equals(AUTO_REFRESH_FILE_TAG)) {
-			String path = atts.getValue(PATH_ATTRIBUTE);
+			String path = atts.getValue(FULL_PATH_ATTRIBUTE);
 			if (path == null) {
-				throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", AUTO_REFRESH_FILE_TAG, PATH_ATTRIBUTE));
+				// get the old path attribute format which was relative to the module
+				path = atts.getValue(PATH_ATTRIBUTE);
+				if (path == null) {
+					throw new SAXException(Policy.bind("RepositoriesViewContentHandler.missingAttribute", AUTO_REFRESH_FILE_TAG, FULL_PATH_ATTRIBUTE));
+				}
+				if (RepositoryRoot.isDefinedModuleName(currentRemotePath)) {
+					path = null;
+				} else {
+					path = new Path(currentRemotePath).append(path).toString();
+				}
 			}
-			autoRefreshFiles.add(path);
+			if (path != null) autoRefreshFiles.add(path);
 		} else if (localName.equals(CURRENT_WORKING_SET_TAG)) {
 			// Ignore any elements until the corresponding end tag is reached
 			ignoreElements = true;

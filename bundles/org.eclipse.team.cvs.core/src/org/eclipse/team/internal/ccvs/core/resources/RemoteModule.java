@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -331,12 +332,14 @@ public class RemoteModule extends RemoteFolder {
 		r.setExpandable(expandable);
 		if (folderInfo.getIsStatic()) {
 			ICVSRemoteResource[] children = getChildren();
-			List taggedChildren = new ArrayList(children.length);
-			for (int i = 0; i < children.length; i++) {
-				ICVSRemoteResource resource = children[i];
-				taggedChildren.add(((RemoteResource)resource).forTag(r, tagName));
+			if (children != null) {
+				List taggedChildren = new ArrayList(children.length);
+				for (int i = 0; i < children.length; i++) {
+					ICVSRemoteResource resource = children[i];
+					taggedChildren.add(((RemoteResource)resource).forTag(r, tagName));
+				}
+				r.setChildren((ICVSRemoteResource[]) taggedChildren.toArray(new ICVSRemoteResource[taggedChildren.size()]));
 			}
-			r.setChildren((ICVSRemoteResource[]) taggedChildren.toArray(new ICVSRemoteResource[taggedChildren.size()]));
 		}
 		if (referencedModules != null) {
 			List taggedModules = new ArrayList(referencedModules.length);
@@ -371,6 +374,27 @@ public class RemoteModule extends RemoteFolder {
 	 */
 	public int hashCode() {
 		return super.hashCode() | getName().hashCode();
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFolder#getChild(java.lang.String)
+	 */
+	public ICVSResource getChild(String path) throws CVSException {
+		if (path.equals(Session.CURRENT_LOCAL_FOLDER) || path.length() == 0)
+			return this;
+		// If the path is one segment and it's a referenced module, return the module
+		// Note: the overriden method will extract the first segment from a multi segment
+		// path and re-invoke this method so we only need to check for one segment here
+		// and use the inherited method in the other cases
+		if (referencedModules != null) {
+			if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
+				for (int i=0;i<referencedModules.length;i++) {
+					if (referencedModules[i].getName().equals(path))
+						return (ICVSResource)referencedModules[i];
+				}
+			}
+		}
+		return super.getChild(path);
 	}
 
 }

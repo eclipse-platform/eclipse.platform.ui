@@ -271,13 +271,10 @@ public class RepositoryManager {
 		broadcastRepositoryChange(root);
 	}
 	
-	public void addAutoRefreshFiles(ICVSFolder project, String[] relativeFilePaths) throws CVSException {
+	public void setAutoRefreshFiles(ICVSFolder project, String[] filePaths) throws CVSException {
 		RepositoryRoot root = getRepositoryRootFor(project);
 		String remotePath = RepositoryRoot.getRemotePathFor(project);
-		Set set = new HashSet();
-		set.addAll(Arrays.asList(root.getAutoRefreshFiles(remotePath)));
-		set.addAll(Arrays.asList(relativeFilePaths));
-		root.setAutoRefreshFiles(remotePath, (String[]) set.toArray(new String[set.size()]));
+		root.setAutoRefreshFiles(remotePath, filePaths);
 	}
 	
 	public void removeAutoRefreshFiles(ICVSFolder project, String[] relativeFilePaths) throws CVSException {

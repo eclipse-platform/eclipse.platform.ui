@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -62,7 +63,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
-import org.eclipse.team.internal.ccvs.ui.repo.*;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -482,11 +483,15 @@ public class TagConfigurationDialog extends Dialog {
 			if(!filesSelection.isEmpty()) {
 				for (it = filesSelection.iterator(); it.hasNext();) {
 					try {
-						String relativePath = ((CVSFileElement)it.next()).getCVSFile().getRelativePath(root);
-						if(autoRefreshFileList.indexOf(relativePath)==-1) {
-							autoRefreshFileList.add(relativePath);					
+						ICVSFile file = ((CVSFileElement)it.next()).getCVSFile();
+						ICVSFolder fileParent = file.getParent();
+						String filePath = new Path(fileParent.getFolderSyncInfo().getRepository())
+							.append(file.getRelativePath(fileParent)).toString();
+						if(autoRefreshFileList.indexOf(filePath)==-1) {
+							autoRefreshFileList.add(filePath);					
 						}
 					} catch(CVSException e) {
+						CVSUIPlugin.openError(getShell(), null, null, e);
 					}
 				}
 			}
@@ -585,12 +590,7 @@ public class TagConfigurationDialog extends Dialog {
 			// save auto refresh file names
 			if(allowSettingAutoRefreshFiles) {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				String[] oldFileNames = manager.getAutoRefreshFiles(root);
-				manager.removeAutoRefreshFiles(root, oldFileNames);
-				String[] newFileNames = autoRefreshFileList.getItems();
-				if(newFileNames.length!=0) {
-					manager.addAutoRefreshFiles(root, autoRefreshFileList.getItems());
-				}		
+				manager.setAutoRefreshFiles(root, autoRefreshFileList.getItems());		
 			}
 			
 			// save defined tags and update all project with the same version tags

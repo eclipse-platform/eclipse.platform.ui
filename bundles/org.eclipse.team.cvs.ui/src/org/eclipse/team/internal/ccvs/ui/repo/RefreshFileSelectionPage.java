@@ -200,7 +200,7 @@ public class RefreshFileSelectionPage extends CVSWizardPage {
 		RepositoryRoot repoRoot = manager.getRepositoryRootFor(root);
 		for (int i = 0; i < folders.length; i++) {
 			ICVSFolder folder = folders[i];
-			String[] filePaths = repoRoot.getAutoRefreshFilePaths(((ICVSRemoteFolder)folder).getRepositoryRelativePath());
+			String[] filePaths = repoRoot.getAutoRefreshFiles(((ICVSRemoteFolder)folder).getRepositoryRelativePath());
 			Set files = new HashSet();
 			for (int j = 0; j < filePaths.length; j++) {
 				String filePath = filePaths[j];

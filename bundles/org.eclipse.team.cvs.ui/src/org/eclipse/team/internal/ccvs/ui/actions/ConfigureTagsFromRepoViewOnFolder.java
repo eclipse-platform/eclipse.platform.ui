@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
-import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;;
+;
 
 /**
  * DefineTagAction remembers a tag by name
@@ -43,13 +43,12 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFolder) {
-					if(new Path(((ICVSRemoteFolder)next).getRepositoryRelativePath()).segmentCount()==1) {
+					ICVSRemoteFolder folder = (ICVSRemoteFolder)next;
+					if (folder.isDefinedModule()) {
+						resources.add(next);
+					} else if(new Path(((ICVSRemoteFolder)next).getRepositoryRelativePath()).segmentCount()==1) {
 						resources.add(next);
 					}
-					continue;
-				}
-				if(next instanceof RemoteModule) {
-					resources.add((ICVSRemoteFolder)((RemoteModule)next).getCVSResource());
 				}
 			}
 		}
@@ -86,7 +85,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		ICVSRemoteFolder[] roots = getSelectedRemoteFolders();
-		if (roots.length == 0) return false;
+		if (roots.length != 1) return false;
 		return true;
 	}
 	/**
