@@ -109,7 +109,10 @@ public class WorkbenchHelp {
 		/** @deprecated */
 		public void displayContext(String contextId, int x, int y) {
 			// convenience method - funnel through the real method
-			displayContext(HelpSystem.getContext(contextId), x, y);
+			IContext context = HelpSystem.getContext(contextId);
+			if (context != null) {
+				displayContext(context, x, y);
+			}
 		}
 
 		/** @deprecated */
@@ -295,8 +298,11 @@ public class WorkbenchHelp {
 			public void helpRequested(HelpEvent event) {
 				if (getHelpUI() != null) {
 					IContext context = HelpSystem.getContext(contextId);
-					Point point = computePopUpLocation(event.widget.getDisplay());
-					displayContext(context, point.x, point.y);
+					if (context != null) {
+						Point point = computePopUpLocation(event.widget
+								.getDisplay());
+						displayContext(context, point.x, point.y);
+					}
 				}
 			}
 		};
@@ -313,8 +319,10 @@ public class WorkbenchHelp {
 	 */
 	public static void displayHelp(String contextId) {
 		IContext context = HelpSystem.getContext(contextId);
-		Point point = computePopUpLocation(Display.getCurrent());
-		displayContext(context, point.x, point.y);
+		if (context != null) {
+			Point point = computePopUpLocation(Display.getCurrent());
+			displayContext(context, point.x, point.y);
+		}
 	}
 
 	/**
@@ -760,8 +768,11 @@ public class WorkbenchHelp {
 			public void helpRequested(HelpEvent event) {
 				if (getHelpUI() != null) {
 					IContext context = HelpSystem.getContext(contextId);
-					Point point = computePopUpLocation(event.widget.getDisplay());
-					displayContext(context, point.x, point.y);
+					if (context != null) {
+						Point point = computePopUpLocation(event.widget
+								.getDisplay());
+						displayContext(context, point.x, point.y);
+					}
 				}
 			}
 		});
