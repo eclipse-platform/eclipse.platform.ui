@@ -75,6 +75,8 @@ public class BrowserView extends ViewPart {
 		{ setText("Stop"); }
 		public void run() {
 			browser.stop();
+			// cancel any partial progress.
+			getViewSite().getActionBars().getStatusLineManager().getProgressMonitor().done();
 		}
 	};
 
