@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
@@ -33,8 +31,8 @@ import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
@@ -45,7 +43,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * A registry of simple variables, used for retrieving launch configuration
@@ -53,6 +50,7 @@ import org.xml.sax.InputSource;
  */
 public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	
+	private static final String PREF_SIMPLE_VARIABLES="simpleVariables"; //$NON-NLS-1$
 	// Variable extension point constants
 	private static final String ELEMENT_VARIABLE="variable"; //$NON-NLS-1$
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
@@ -149,18 +147,18 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	}
 	
 	/**
-	 * Loads the variables from a file in the metadata.
+	 * Loads the variables from the preferences.
 	 */
 	public void loadVariables() {
-		File file= getVariableFile();
-		if (!file.exists()) {
+		String variablesString= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_SIMPLE_VARIABLES);
+		if (variablesString.length() == 0) {
 			return;
 		}
 		Element root= null;
 		try {
-			FileInputStream inputStream= new FileInputStream(file);
+			ByteArrayInputStream stream= new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			root = parser.parse(new InputSource(inputStream)).getDocumentElement();
+			root = parser.parse(stream).getDocumentElement();
 		} catch (Throwable throwable) {
 			DebugPlugin.logMessage("An exception occurred while loading launch configuration variables.", throwable); //$NON-NLS-1$
 			return;
@@ -200,31 +198,17 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	 * @see ISimpleVariableRegistry#storeVariables()
 	 */
 	public void storeVariables() {
-		if (fVariables.isEmpty()) {
-			getVariableFile().delete();
-			return;
-		}
-		try {
-			String xml= getVariablesAsXML();
-			File file= getVariableFile();
-			if (!file.exists()) {
-				file.createNewFile();
+		Preferences prefs= DebugPlugin.getDefault().getPluginPreferences();
+		String variableString= ""; //$NON-NLS-1$
+		if (!fVariables.isEmpty()) {
+			try {
+				variableString= getVariablesAsXML();
+			} catch (IOException exception) {
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", exception)); //$NON-NLS-1$
 			}
-			FileOutputStream stream = new FileOutputStream(file);
-			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-			stream.close();
-		} catch (IOException exception) {
-			DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while storing launch configuration variables.", exception)); //$NON-NLS-1$
 		}
-	}
-	
-	/**
-	 * Returns the file in which variables are persisted
-	 * @return the file in which variables are persisted
-	 */
-	private File getVariableFile() {
-		IPath path= DebugPlugin.getDefault().getStateLocation().append(".launchConfigurationVariables"); //$NON-NLS-1$
-		return path.toFile();
+		prefs.setValue(PREF_SIMPLE_VARIABLES, variableString);
+		DebugPlugin.getDefault().savePluginPreferences();
 	}
 	
 	/**
