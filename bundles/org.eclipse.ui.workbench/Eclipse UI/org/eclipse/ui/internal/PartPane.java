@@ -77,11 +77,11 @@ public abstract class PartPane extends LayoutPart
 		public void fill(Menu menu, int index) {
 			// add view context menu items
 			final boolean isFastView = (page.getActiveFastView() == partReference);			
-			addRestoreMenuItem(menu);
+			//addRestoreMenuItem(menu);
 			addMoveMenuItem(menu);
 			addSizeMenuItem(menu);			
 			addFastViewMenuItem(menu,isFastView);
-			addMaximizeMenuItem(menu);		
+			//addMaximizeMenuItem(menu);		
 			addPinEditorItem(menu);						
 			addCloseMenuItem(menu);	
 			addCloseOthersItem(menu);			
@@ -150,20 +150,6 @@ protected void createChildControl() {
 	page.firePartOpened(part[0]);	
 }
 
-
-protected void addRestoreMenuItem (Menu menu) {
-	// add restore item
-	MenuItem item = new MenuItem(menu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			if (isZoomed())
-				doZoom();
-		}
-	});
-	item.setEnabled(isZoomed());
-}
-
 protected void addMoveMenuItem (Menu menu) {
 	//Add move menu
 	MenuItem item = new MenuItem(menu, SWT.CASCADE);
@@ -181,19 +167,6 @@ protected void addSizeMenuItem (Menu menu) {
 	Menu sizeMenu = new Menu(menu);
 	item.setMenu(sizeMenu);
 	addSizeItems(sizeMenu);
-}
-
-protected void addMaximizeMenuItem (Menu menu) {
-	// add maximize item
-	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
-	MenuItem item = new MenuItem(menu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doZoom();
-		}
-	});
-	item.setEnabled(!isZoomed() && canZoom);
 }
 
 protected void addCloseMenuItem (Menu menu) {

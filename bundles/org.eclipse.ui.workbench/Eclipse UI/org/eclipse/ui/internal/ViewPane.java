@@ -1030,14 +1030,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#addMaximizeMenuItem(org.eclipse.swt.widgets.Menu)
-	 */
-	protected void addMaximizeMenuItem(Menu menu) {
-		if(isMoveable())
-			super.addMaximizeMenuItem(menu);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartPane#addMoveMenuItem(org.eclipse.swt.widgets.Menu)
 	 */
 	protected void addMoveMenuItem(Menu menu) {
@@ -1051,14 +1043,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	protected void addPinEditorItem(Menu parent) {
 		if(isMoveable() && isCloseable())
 			super.addPinEditorItem(parent);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#addRestoreMenuItem(org.eclipse.swt.widgets.Menu)
-	 */
-	protected void addRestoreMenuItem(Menu menu) {
-		if(isMoveable())
-			super.addRestoreMenuItem(menu);
 	}
 
 	/* (non-Javadoc)
