@@ -786,6 +786,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 									return true;
 								}
 								TreeItem[] treeFrames= threads[k].getItems();
+								if (frames.length != treeFrames.length) {
+									return true;
+								}
 								for (int l= 0, numFrames= treeFrames.length; l < numFrames; l++) {
 									if (treeFrames[l].getData() != frames[l]) {
 										return true;
