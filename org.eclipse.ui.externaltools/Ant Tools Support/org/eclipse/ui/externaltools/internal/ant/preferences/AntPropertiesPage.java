@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -113,6 +114,7 @@ public class AntPropertiesPage extends AntPage {
 			GridData data= new GridData(GridData.FILL_BOTH);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			table.setLayoutData(data);
+			table.setFont(parent.getFont());
 			fileContentProvider = getContentProvider();
 			fileTableViewer = new TableViewer(table);
 			fileTableViewer.setContentProvider(fileContentProvider);
@@ -126,13 +128,16 @@ public class AntPropertiesPage extends AntPage {
 	}
 	
 	protected Composite createContents(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite top = new Composite(parent, SWT.NONE);
+		top.setFont(font);
 		
 		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntPropertiesPage.&Global_properties__1")); //$NON-NLS-1$
 		
 		super.createContents(top);
@@ -141,7 +146,7 @@ public class AntPropertiesPage extends AntPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntPropertiesPage.Glo&bal_property_files__2")); //$NON-NLS-1$
 		
 		createTable(top);

@@ -36,6 +36,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -316,14 +317,16 @@ public class AntClasspathPage extends AntPage {
 	 * Creates this page's controls
 	 */
 	protected Composite createContents(Composite parent) {
+		Font font = parent.getFont();
 		
 		Composite top = new Composite(parent, SWT.NONE);
+		top.setFont(font);
 		
 		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntClasspathPage.Run&time_classpath__8")); //$NON-NLS-1$
 		
 		super.createContents(top);
@@ -343,6 +346,7 @@ public class AntClasspathPage extends AntPage {
 		antHomeComposite.setLayout(layout);
 		
 		antHomeButton = new Button(antHomeComposite, SWT.CHECK);
+		antHomeButton.setFont(font);
 		antHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.Set_ANT_HO&ME_9")); //$NON-NLS-1$
 		antHomeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -355,6 +359,7 @@ public class AntClasspathPage extends AntPage {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		gd.horizontalSpan = 1;
 		antHome.setLayoutData(gd);
+		antHome.setFont(font);
 		antHome.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				File rootDir= validateAntHome(antHome.getText());
@@ -366,6 +371,7 @@ public class AntClasspathPage extends AntPage {
 		antHome.setEnabled(false);
 		
 		browseAntHomeButton= new Button(top, SWT.PUSH);
+		browseAntHomeButton.setFont(font);
 		browseAntHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.&Browse..._10")); //$NON-NLS-1$
 		browseAntHomeButton.setData(new Integer(BROWSE_ANT_HOME));
 		browseAntHomeButton.addSelectionListener(selectionAdapter);
@@ -376,7 +382,7 @@ public class AntClasspathPage extends AntPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntClasspathPage.Additional_classpath_entries__11")); //$NON-NLS-1$
 		
 		createTable(top);
@@ -397,6 +403,7 @@ public class AntClasspathPage extends AntPage {
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			data.horizontalSpan= 1;
 			table.setLayoutData(data);
+			table.setFont(parent.getFont());
 			userContentProvider = getContentProvider();
 			userTableViewer = new TableViewer(table);
 			userTableViewer.setContentProvider(userContentProvider);

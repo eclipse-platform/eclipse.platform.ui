@@ -88,6 +88,7 @@ public abstract class AntPage {
 	 */
 	protected Button createButton(Composite parent, String labelKey, int buttonId) {
 		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
 		button.setText(AntPreferencesMessages.getString(labelKey));
 		button.setData(new Integer(buttonId));
 		button.addSelectionListener(selectionAdapter);
@@ -105,7 +106,8 @@ public abstract class AntPage {
 		layout.marginWidth = 0;
 		buttonGroup.setLayout(layout);
 		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
+		buttonGroup.setFont(top.getFont());
+		
 		addButtonsToButtonGroup(buttonGroup);
 	}
 
@@ -129,6 +131,7 @@ public abstract class AntPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.horizontalSpan= 1;
 		table.setLayoutData(data);
+		table.setFont(parent.getFont());
 		
 		contentProvider = getContentProvider();
 		tableViewer = new TableViewer(table);

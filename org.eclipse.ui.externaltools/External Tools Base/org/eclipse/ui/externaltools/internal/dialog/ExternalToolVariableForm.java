@@ -13,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -58,6 +59,8 @@ public class ExternalToolVariableForm {
 	}
 
 	public Composite createContents(Composite parent, IGroupDialogPage page) {
+		Font font = parent.getFont();
+		
 		this.page = page;
 		
 		Composite mainComposite = new Composite(parent, SWT.NONE);
@@ -74,11 +77,13 @@ public class ExternalToolVariableForm {
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 1;
 		variableListLabel.setLayoutData(data);
-
+		variableListLabel.setFont(font);
+		
 		variableList = new List(mainComposite, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = variableList.getItemHeight() * VISIBLE_ITEM_COUNT;
 		variableList.setLayoutData(data);
+		variableList.setFont(font);
 
 		variableComposite = new Composite(mainComposite, SWT.NONE);
 		variableLayout = new StackLayout();
@@ -87,6 +92,7 @@ public class ExternalToolVariableForm {
 		data = new GridData(GridData.FILL_BOTH);
 		variableComposite.setLayout(variableLayout);
 		variableComposite.setLayoutData(data);
+		variableComposite.setFont(font);
 		
 		createVariableComponents(data);
 		

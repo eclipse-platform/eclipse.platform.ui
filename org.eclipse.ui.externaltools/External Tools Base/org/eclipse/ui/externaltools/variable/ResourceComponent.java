@@ -72,6 +72,7 @@ public class ResourceComponent implements IVariableComponent {
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		mainGroup.setLayout(layout);
 		mainGroup.setLayoutData(gridData);
+		mainGroup.setFont(parent.getFont());
 		mainGroup.setText(ToolUtil.buildVariableTag(varTag, null));
 		
 		createSelectedResourceOption();
@@ -89,6 +90,7 @@ public class ResourceComponent implements IVariableComponent {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = tree.getItemHeight() * getInitialVisibleItemCount();
 		tree.setLayoutData(data);
+		tree.setFont(mainGroup.getFont());
 		
 		resourceList = new TreeViewer(tree);
 		resourceList.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -111,6 +113,7 @@ public class ResourceComponent implements IVariableComponent {
 		selectedResourceButton.setText(ToolMessages.getString("ResourceComponent.selectedResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		selectedResourceButton.setLayoutData(data);
+		selectedResourceButton.setFont(mainGroup.getFont());
 		selectedResourceButton.setSelection(true);
 	}
 	
@@ -123,6 +126,7 @@ public class ResourceComponent implements IVariableComponent {
 		specificResourceButton.setText(ToolMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		specificResourceButton.setLayoutData(data);
+		specificResourceButton.setFont(mainGroup.getFont());
 		specificResourceButton.setSelection(false);
 		
 		specificResourceButton.addSelectionListener(new SelectionAdapter() {

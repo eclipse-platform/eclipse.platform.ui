@@ -24,6 +24,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,6 +69,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
+		mainComposite.setFont(parent.getFont());
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
 		createDescriptionComponent(mainComposite);
@@ -80,17 +82,21 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createDescriptionComponent(Composite parent) {
+		Font font = parent.getFont();
+		
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Descri&ption__1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		descriptionField = new Text(parent, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		descriptionField.setLayoutData(data);
+		descriptionField.setFont(font);
 	}
 	
 	/**
@@ -100,6 +106,8 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLocationComponent(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -113,11 +121,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		locationField = new Text(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		locationField.setLayoutData(data);
+		locationField.setFont(font);
 		
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		layout = new GridLayout();
@@ -127,6 +137,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
+		buttonComposite.setFont(font);
 		
 		createVerticalSpacer(buttonComposite, 1);
 		
@@ -151,6 +162,8 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createWorkDirectoryComponent(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -164,11 +177,13 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		workDirectoryField = new Text(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
+		workDirectoryField.setFont(font);
 		
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		layout = new GridLayout();
@@ -178,6 +193,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
+		buttonComposite.setFont(font);
 		
 		createVerticalSpacer(buttonComposite, 1);
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$

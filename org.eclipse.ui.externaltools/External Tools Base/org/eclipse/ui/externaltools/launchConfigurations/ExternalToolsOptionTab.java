@@ -19,6 +19,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -57,6 +58,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
+		mainComposite.setFont(parent.getFont());
 		
 		createVerticalSpacer(mainComposite, 1);
 		createRunBackgroundComponent(mainComposite);
@@ -72,6 +74,8 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createArgumentComponent(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -80,17 +84,20 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		comp.setLayout(layout);
 		comp.setLayoutData(data);
+		comp.setFont(font);
 
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.&Arguments___1")); //$NON-NLS-1$
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		argumentField = new Text(comp, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		argumentField.setLayoutData(data);
+		argumentField.setFont(font);
 		argumentField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
@@ -112,6 +119,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		instruction.setLayoutData(data);
+		instruction.setFont(font);
 	}
 	
 	/**
@@ -129,6 +137,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 //		}
 //		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 //		promptArgButton.setLayoutData(data);
+//      promptArgButton.setFont(parent.getFont();
 //		promptArgButton.addSelectionListener(getSelectionAdapter());
 	}
 	
@@ -143,6 +152,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		runBackgroundButton.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Run_tool_in_bac&kground_4")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		runBackgroundButton.setLayoutData(data);
+		runBackgroundButton.setFont(parent.getFont());
 		runBackgroundButton.addSelectionListener(getSelectionAdapter());
 	}
 		

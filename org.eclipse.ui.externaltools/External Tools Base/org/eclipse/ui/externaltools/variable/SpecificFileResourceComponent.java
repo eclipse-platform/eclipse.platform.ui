@@ -48,6 +48,7 @@ public class SpecificFileResourceComponent extends ResourceComponent {
 		Label label = new Label(mainGroup, SWT.NONE);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(data);
+		label.setFont(mainGroup.getFont());
 		label.setText(ToolMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
 	}
 

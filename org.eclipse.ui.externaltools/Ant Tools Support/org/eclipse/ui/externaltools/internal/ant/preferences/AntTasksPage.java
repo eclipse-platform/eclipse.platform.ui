@@ -93,6 +93,7 @@ public class AntTasksPage extends AntPage {
 		item.setImage(labelProvider.getTaskImage());
 		item.setData(this);
 		Composite top = new Composite(folder, SWT.NONE);
+		top.setFont(folder.getFont());
 		item.setControl(createContents(top));
 		return item;
 	}

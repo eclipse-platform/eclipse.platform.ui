@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,6 +66,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
 		GridLayout layout = new GridLayout();
@@ -79,7 +82,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginHeight = 0;
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		upperComposite.setLayout(layout);
-		upperComposite.setLayoutData(gridData);		
+		upperComposite.setLayoutData(gridData);
+		upperComposite.setFont(font);	
 		
 		createRunDefaultTargetButton(upperComposite);
 		
@@ -91,6 +95,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		middleComposite.setLayout(layout);
 		middleComposite.setLayoutData(gridData);
+		middleComposite.setFont(font);
 		
 		createExecuteTargetsList(middleComposite);
 		createButtonComposite(middleComposite);
@@ -101,7 +106,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginHeight = 0;
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		lowerComposite.setLayout(layout);
-		lowerComposite.setLayoutData(gridData);		
+		lowerComposite.setLayoutData(gridData);
+		lowerComposite.setFont(font);	
 		
 		createDescriptionField(lowerComposite);
 	}
@@ -143,7 +149,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		buttonComposite.setLayout(layout);
-
+		buttonComposite.setFont(parent.getFont());
+		
 		new Label(buttonComposite, SWT.NONE);
 		
 		addButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Add..._1"), null); //$NON-NLS-1$
@@ -274,6 +281,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * Creates the list of targets that will be used when the tool is run.
 	 */
 	private void createExecuteTargetsList(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -285,6 +294,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		tableComposite.setLayout(layout);
 				
 		executeLabel = new Label(tableComposite, SWT.LEFT);
+		executeLabel.setFont(font);
 		executeLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Targets_to_e&xecute__7"));  //$NON-NLS-1$
 		
 		executeTargetsTable = new TableViewer(tableComposite,SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
@@ -296,6 +306,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		executeTargetsTable.setLabelProvider(labelProvider);
 		gridData = new GridData(GridData.FILL_BOTH);
 		executeTargetsTable.getControl().setLayoutData(gridData);
+		executeTargetsTable.getTable().setFont(font);
 		
 		executeTargetsTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -324,12 +335,16 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * Creates the text field which displays the descriptionField of the selected target.
 	 */
 	private void createDescriptionField(Composite parent) {
+		Font font = parent.getFont();
+		
 		descriptionLabel = new Label(parent, SWT.NONE);
+		descriptionLabel.setFont(font);
 		descriptionLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_description__10")); //$NON-NLS-1$
 		
 		descriptionField = new Text(parent, SWT.READ_ONLY | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		descriptionField.setLayoutData(data);
+		descriptionField.setFont(font);
 	}
 	
 	/**
@@ -342,6 +357,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_11")); //$NON-NLS-1$
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		runDefaultTargetButton.setLayoutData(gridData);
+		runDefaultTargetButton.setFont(parent.getFont());
 		runDefaultTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				allowSelectTargets(!runDefaultTargetButton.getSelection(), true);

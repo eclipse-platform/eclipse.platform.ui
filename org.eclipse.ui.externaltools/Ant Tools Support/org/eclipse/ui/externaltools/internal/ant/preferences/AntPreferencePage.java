@@ -66,6 +66,7 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		folder.setFont(parent.getFont());
 
 		classpathPage = new AntClasspathPage(this);
 		classpathPage.createTabItem(folder);

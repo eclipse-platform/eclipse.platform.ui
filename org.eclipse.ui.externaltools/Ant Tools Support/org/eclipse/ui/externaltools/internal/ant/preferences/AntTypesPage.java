@@ -94,6 +94,7 @@ public class AntTypesPage extends AntPage {
 		item.setImage(labelProvider.getTypeImage());
 		item.setData(this);
 		Composite top = new Composite(folder, SWT.NONE);
+		top.setFont(folder.getFont());			
 		item.setControl(createContents(top));
 		return item;
 	}

@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -127,6 +128,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 			GridData data= new GridData(GridData.FILL_BOTH);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			table.setLayoutData(data);
+			table.setFont(parent.getFont());
 			
 			propertyTableViewer = new TableViewer(table);
 			propertyTableViewer.setContentProvider(new ExternalToolsContentProvider());
@@ -141,6 +143,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 			GridData data= new GridData(GridData.FILL_BOTH);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			table.setLayoutData(data);
+			table.setFont(parent.getFont());
 			
 			fileTableViewer = new TableViewer(table);
 			fileTableViewer.setContentProvider(new ExternalToolsContentProvider());
@@ -154,8 +157,11 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		fDialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
 		Composite top = new Composite(parent, SWT.NONE);
+		top.setFont(font);
 		setControl(top);
 		
 		GridLayout layout = new GridLayout();
@@ -170,7 +176,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6")); //$NON-NLS-1$
 		
 		createTable(top);
@@ -180,7 +186,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan =2;
 		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		label.setText(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$
 		
 		createTable(top);
@@ -197,6 +203,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		layout.marginWidth = 0;
 		buttonGroup.setLayout(layout);
 		buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		buttonGroup.setFont(top.getFont());
 
 		addButtonsToButtonGroup(buttonGroup);
 	}

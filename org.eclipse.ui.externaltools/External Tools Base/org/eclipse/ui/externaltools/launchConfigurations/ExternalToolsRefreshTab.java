@@ -47,6 +47,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
+		mainComposite.setFont(parent.getFont());
 		createVerticalSpacer(mainComposite, 1);
 		createRefreshComponent(mainComposite);
 		createRecursiveComponent(mainComposite);
@@ -64,6 +65,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		recursiveField.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Recursively_&include_sub-folders_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		recursiveField.setLayoutData(data);
+		recursiveField.setFont(parent.getFont());
 		recursiveField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -82,6 +84,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		refreshField.setText("R&efresh resources after running tool"); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		refreshField.setLayoutData(data);
+		refreshField.setFont(parent.getFont());
 		refreshField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();

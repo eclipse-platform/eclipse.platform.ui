@@ -1,5 +1,12 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -60,6 +67,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 		data.horizontalSpan= 2;
 		data.horizontalAlignment= GridData.CENTER;
 		button.setLayoutData(data);
+		button.setFont(parent.getFont());
 
 		return button;
 	}

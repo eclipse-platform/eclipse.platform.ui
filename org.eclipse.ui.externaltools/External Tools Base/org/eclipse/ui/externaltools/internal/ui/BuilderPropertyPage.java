@@ -49,6 +49,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -241,6 +242,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		button.setLayoutData(data);
+		button.setFont(parent.getFont());
 		button.setText(label);
 		button.setEnabled(false);
 		button.addSelectionListener(new SelectionAdapter() {
@@ -255,6 +257,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
+		
 		debugModelPresentation = DebugUITools.newDebugModelPresentation();
 		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();
 		invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_INVALID_BUILD_TOOL).createImage();
@@ -272,6 +276,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		Label description = new Label(topLevel, SWT.WRAP);
 		description.setText(ToolMessages.getString("BuilderPropertyPage.description")); //$NON-NLS-1$
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		description.setFont(font);
 
 		Composite tableAndButtons = new Composite(topLevel, SWT.NONE);
 		tableAndButtons.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -286,6 +291,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = BUILDER_TABLE_WIDTH;
 		builderTable.setLayoutData(data);
+		builderTable.setFont(font);
 		builderTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleTableSelectionChanged();
@@ -298,6 +304,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonArea.setLayout(layout);
+		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		newButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$

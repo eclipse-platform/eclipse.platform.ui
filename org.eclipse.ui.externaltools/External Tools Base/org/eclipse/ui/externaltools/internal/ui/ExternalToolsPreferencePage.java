@@ -1,7 +1,15 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,6 +37,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
+		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -47,8 +57,10 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		group.setLayoutData(data);
 		layout= new GridLayout();
 		group.setLayout(layout);
+		group.setFont(font);
 		
 		promptForMigrationButton= new Button(group, SWT.CHECK | SWT.LEFT);
+		promptForMigrationButton.setFont(font);
 		promptForMigrationButton.setText("Always prompt before migrating project builders");
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		return composite;

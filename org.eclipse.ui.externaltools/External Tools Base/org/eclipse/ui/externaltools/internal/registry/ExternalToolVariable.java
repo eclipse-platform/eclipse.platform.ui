@@ -120,6 +120,7 @@ public abstract class ExternalToolVariable {
 				message = new Label(parent, SWT.NONE);
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 				message.setLayoutData(data);
+				message.setFont(parent.getFont());
 				message.setText(ToolMessages.getString("ExternalToolVariable.componentErrorMessage")); //$NON-NLS-1$
 				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
 			}

@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -91,6 +92,8 @@ public class AddCustomDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite dialogArea = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -103,13 +106,16 @@ public class AddCustomDialog extends Dialog {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		label.setFont(font);
 
 		label = new Label(dialogArea, SWT.NONE);
+		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AddCustomDialog.name")); //$NON-NLS-1$;
 		nameField = new Text(dialogArea, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		nameField.setLayoutData(data);
+		nameField.setFont(font);
 		nameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateEnablement();
@@ -117,6 +123,7 @@ public class AddCustomDialog extends Dialog {
 		});
 
 		label = new Label(dialogArea, SWT.NONE);
+		label.setFont(font);
 		if (buttonLabel == null) {
 			label.setText(AntPreferencesMessages.getString("AddCustomDialog.class")); //$NON-NLS-1$;
 		} else {
@@ -126,6 +133,7 @@ public class AddCustomDialog extends Dialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		classField.setLayoutData(data);
+		classField.setFont(font);
 		classField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateEnablement();
@@ -134,12 +142,14 @@ public class AddCustomDialog extends Dialog {
 
 		if (showLibraryURLs) {
 			label = new Label(dialogArea, SWT.NONE);
+			label.setFont(font);			
 			label.setText(AntPreferencesMessages.getString("AddCustomDialog.library")); //$NON-NLS-1$;
 			libraryField = new org.eclipse.swt.widgets.List(dialogArea, SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			libraryField.setLayoutData(data);
+			libraryField.setFont(font);
 			libraryField.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateEnablement();

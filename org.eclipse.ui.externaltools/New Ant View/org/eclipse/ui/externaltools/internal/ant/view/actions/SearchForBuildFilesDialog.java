@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -86,9 +87,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Add the scope selection widgets to the dialog area
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
 		includeErrorResultButton= new Button(composite, SWT.CHECK);
+		includeErrorResultButton.setFont(font);
 		includeErrorResultButton.setText("Include build files that contain errors");
 		includeErrorResultButton.setSelection(false);
 		
@@ -98,6 +102,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		scope.setLayoutData(data);
 		GridLayout layout= new GridLayout(3, false);
 		scope.setLayout(layout);
+		scope.setFont(font);
 		
 		Composite radioComposite= new Composite(scope, SWT.NONE);
 		GridLayout radioLayout= new GridLayout();
@@ -111,11 +116,13 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				};
 		
 		Button workspaceScope= new Button(radioComposite, SWT.RADIO);
+		workspaceScope.setFont(font);
 		workspaceScope.setText("Workspace");
 		workspaceScope.setSelection(true);
 		workspaceScope.addSelectionListener(selectionListener);
 		
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
+		workingSetScopeButton.setFont(font);
 		workingSetScopeButton.setText("Working Set:");
 		workingSetScopeButton.addSelectionListener(selectionListener);
 		
@@ -123,10 +130,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		workingSetText.setEditable(false);
 		data= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END);
 		workingSetText.setLayoutData(data);
+		workingSetText.setFont(font);
 
 		Button button = new Button(scope, SWT.PUSH);
 		data= new GridData(GridData.VERTICAL_ALIGN_END);
 		button.setLayoutData(data);
+		button.setFont(font);
 		button.setText("Choose...");
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
