@@ -25,7 +25,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * WebForm should be used instead.
  */
 
-
 public class SectionForm extends AbstractSectionForm implements PaintListener {
 	private Composite control;
 	private int TITLE_HMARGIN = 10;
@@ -41,13 +40,14 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 				return new Point(wHint, hHint);
 			Control client = composite.getChildren()[0];
 			Point csize = client.computeSize(widthHint, heightHint, flushCache);
-			if (headingVisible) csize.y += getTitleHeight();
+			if (headingVisible)
+				csize.y += getTitleHeight();
 			return csize;
 		}
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clientArea = composite.getClientArea();
 			Control client = composite.getChildren()[0];
-			int theight = headingVisible?getTitleHeight() : 0;
+			int theight = headingVisible ? getTitleHeight() : 0;
 			client.setBounds(
 				clientArea.x,
 				clientArea.y + theight,
@@ -55,98 +55,107 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 				clientArea.height - theight);
 		}
 	}
-	private int widthHint=SWT.DEFAULT;
-	private int heightHint=SWT.DEFAULT;
+	private int widthHint = SWT.DEFAULT;
+	private int heightHint = SWT.DEFAULT;
 
-public SectionForm() {
-}
-
-public Control createControl(Composite parent) {
-	Composite canvas = new Composite(parent, SWT.NONE);
-	canvas.setBackground(factory.getBackgroundColor());
-	canvas.setForeground(factory.getForegroundColor());
-	canvas.addPaintListener(this);
-	canvas.setLayout(new FormLayout());
-	Composite formParent = factory.createComposite(canvas);
-	createFormClient(formParent);
-	this.control = canvas;
-	canvas.setFocus();
-	return canvas;
-}
-
-protected void createFormClient(Composite parent) {
-	factory.createComposite(parent);
-}
-
-public Control getControl() {
-	return control;
-}
-
-private int getTitleHeight() {
-	int imageHeight = 0;
-	if (headingImage!=null && SWT.getPlatform().equals("motif")==false) {
-		imageHeight = headingImage.getBounds().height;
+	public SectionForm() {
 	}
-	GC gc = new GC(control);
-	gc.setFont(titleFont);
-	FontMetrics fm = gc.getFontMetrics();
-	int fontHeight = fm.getHeight();
-	gc.dispose();
 
-	int height =  fontHeight + TITLE_VMARGIN + TITLE_VMARGIN;
-	return Math.max(height, imageHeight);
-}
+	public Control createControl(Composite parent) {
+		Composite canvas = new Composite(parent, SWT.NONE);
+		canvas.setBackground(factory.getBackgroundColor());
+		canvas.setForeground(factory.getForegroundColor());
+		canvas.addPaintListener(this);
+		canvas.setLayout(new FormLayout());
+		Composite formParent = factory.createComposite(canvas);
+		createFormClient(formParent);
+		this.control = canvas;
+		canvas.setFocus();
+		return canvas;
+	}
 
-private void paint(Control form, GC gc) {
-	Rectangle bounds = form.getBounds();
-	int height = getTitleHeight();
-	if (headingImage != null) {
-		Rectangle imageBounds = headingImage.getBounds();
-		int x = bounds.width - imageBounds.width;
-		int y = 0;
-		//x = Math.max(x, 0);
-		x = 0;
-		if (headingBackground != null) {
-			gc.setBackground(headingBackground);
-			gc.fillRectangle(0, 0, bounds.width, height);
+	protected void createFormClient(Composite parent) {
+		factory.createComposite(parent);
+	}
+
+	public Control getControl() {
+		return control;
+	}
+
+	private int getTitleHeight() {
+		int imageHeight = 0;
+		if (headingImage != null
+			&& SWT.getPlatform().equals("motif") == false) {
+			imageHeight = headingImage.getBounds().height;
 		}
-		if (SWT.getPlatform().equals("motif")==false) {
-	       gc.drawImage(headingImage, x, y);
-		}
-		if (headingForeground != null)
-			gc.setForeground(headingForeground);
-		else
+		GC gc = new GC(control);
+		gc.setFont(titleFont);
+		FontMetrics fm = gc.getFontMetrics();
+		int fontHeight = fm.getHeight();
+		gc.dispose();
+
+		int height = fontHeight + TITLE_VMARGIN + TITLE_VMARGIN;
+		return Math.max(height, imageHeight);
+	}
+
+	private void paint(Control form, GC gc) {
+		Rectangle bounds = form.getBounds();
+		int height = getTitleHeight();
+		if (headingImage != null) {
+			Rectangle imageBounds = headingImage.getBounds();
+			int x = bounds.width - imageBounds.width;
+			int y = 0;
+			//x = Math.max(x, 0);
+			x = 0;
+			if (headingBackground != null) {
+				gc.setBackground(headingBackground);
+				gc.fillRectangle(0, 0, bounds.width, height);
+			}
+			if (SWT.getPlatform().equals("motif") == false) {
+				gc.drawImage(headingImage, x, y);
+			}
+			if (headingForeground != null)
+				gc.setForeground(headingForeground);
+			else
+				gc.setForeground(factory.getForegroundColor());
+			gc.setFont(titleFont);
+			gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);
+		} else {
+			gc.setFont(titleFont);
+			gc.setBackground(factory.getColor(factory.DEFAULT_HEADER_COLOR));
+			//gc.fillRectangle(TITLE_HMARGIN, TITLE_VMARGIN, bounds.width-TITLE_HMARGIN*2, height-TITLE_VMARGIN*2);
 			gc.setForeground(factory.getForegroundColor());
-		gc.setFont(titleFont);
-		gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);
-	} else {
-		gc.setFont(titleFont);
-		gc.setBackground(factory.getColor(factory.DEFAULT_HEADER_COLOR));
-		//gc.fillRectangle(TITLE_HMARGIN, TITLE_VMARGIN, bounds.width-TITLE_HMARGIN*2, height-TITLE_VMARGIN*2);
-		gc.setForeground(factory.getForegroundColor());
-		gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);
+			gc.drawText(getHeadingText(), TITLE_HMARGIN, TITLE_VMARGIN, true);
+		}
 	}
-}
 
-public final void paintControl(PaintEvent event) {
-	if (!headingVisible) return;
-	GC gc = event.gc;
-	Control form = (Control)event.widget;
-	paint(form, gc);
-}
-
-public void setHeadingVisible(boolean newHeadingVisible) {
-	super.setHeadingVisible(newHeadingVisible);
-	if (control != null)
-		control.layout(true);
-}
-
-public void propertyChange(PropertyChangeEvent event) {
-	titleFont = JFaceResources.getHeaderFont();
-	if (control!=null) { 
-		control.layout(true);
-		control.redraw();
+	public final void paintControl(PaintEvent event) {
+		if (!headingVisible)
+			return;
+		GC gc = event.gc;
+		Control form = (Control) event.widget;
+		paint(form, gc);
 	}
-}
+
+	public void setHeadingVisible(boolean newHeadingVisible) {
+		super.setHeadingVisible(newHeadingVisible);
+		if (control != null)
+			control.layout(true);
+	}
+	public void setHeadingText(String headingText) {
+		super.setHeadingText(headingText);
+		if (control != null) {
+			control.layout(true);
+			control.redraw();
+		}
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		titleFont = JFaceResources.getHeaderFont();
+		if (control != null) {
+			control.layout(true);
+			control.redraw();
+		}
+	}
 
 }
