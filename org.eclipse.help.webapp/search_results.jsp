@@ -50,9 +50,14 @@ A {
 	color:WindowText; 
 	padding:0px;
 	white-space: nowrap;
-	cursor:default;
 }
 
+A:hover {
+	text-decoration:underline; 
+	color:WindowText; 
+	padding:0px;
+	white-space: nowrap;
+}
 
 TABLE {
 	background-color: Window;

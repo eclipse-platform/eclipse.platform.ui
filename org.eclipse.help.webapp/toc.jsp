@@ -67,13 +67,22 @@ IMG {
 A, A:visited, A:hover, A:link {
 	text-decoration:none; 
 	color:WindowText;
-	padding-right:10px;
+	padding-right:2px;
+	/* this works in ie5.5, but not in ie5.0  */
+	white-space: nowrap;
+}
+
+A:hover{
+	text-decoration:underline; 
+	color:WindowText;
+	padding-right:2px;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
 
 A.active{ 
 	background:ButtonFace;
+	width:100%;
 }
      
 </style>  
@@ -200,7 +209,7 @@ if (parent.parent.temp){
 %>
 		<li>
 			<nobr>
-			<img src="images/plus_tree.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic_obj.gif">&nbsp;<%=topic.getAttribute("label")%></a>
+			<img src="images/plus_tree.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic_obj.gif"><%=topic.getAttribute("label")%></a>
 			</nobr>
 		</li>
 <%
