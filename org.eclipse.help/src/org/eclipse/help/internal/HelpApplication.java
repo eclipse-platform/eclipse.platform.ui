@@ -10,7 +10,6 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 
-
 /**
  * Help application.
  * Starts webserver and help web application for use
@@ -45,7 +44,9 @@ public class HelpApplication
 	 */
 	public Object run(Object args) throws Exception {
 		if (!HelpSystem.ensureWebappRunning()) {
-			throw new Exception("Help web application is not running.");
+			System.out.println(
+				"Help web application could not start.  Check log file for details.");
+			return EXIT_OK;
 		}
 		writeHostAndPort();
 		// main program loop

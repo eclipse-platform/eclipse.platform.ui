@@ -200,7 +200,7 @@ public final class HelpSystem {
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
-					HelpPlugin.logError("ensureWebappRunning()", e);
+					HelpPlugin.logError(Resources.getString("E043"), e);
 					return false;
 				}
 			}
@@ -208,7 +208,7 @@ public final class HelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				HelpPlugin.logError("ensureWebappRunning()", e);
+				HelpPlugin.logError("E042", e);
 				return false;
 			}
 			getInstance().webappRunning = true;

@@ -190,8 +190,10 @@ public class DefaultHelpSupport implements IHelp {
 	 * The url can contain query parameters to identify how help displays the document
 	 */
 	void displayHelpURL(String helpURL) {
-		if (!HelpSystem.ensureWebappRunning())
+		if (!HelpSystem.ensureWebappRunning()) {
+			HelpSystem.getDefaultErrorUtil().displayError(Resources.getString("E043"));
 			return;
+		}
 
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
