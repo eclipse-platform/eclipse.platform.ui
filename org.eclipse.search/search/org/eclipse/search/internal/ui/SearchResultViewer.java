@@ -580,7 +580,7 @@ public class SearchResultViewer extends TableViewer {
 	 */
 	protected void clearTitle() {
 		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
-		if (title == null || !title.equals(fOuterPart.getTitle()))
+		if (!title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
 	}
 

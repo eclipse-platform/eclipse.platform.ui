@@ -319,7 +319,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 * Implements method from ISearchResultView
 	 */
 	public void searchFinished() {
-		SearchManager.getDefault().setCurrentResults(new ArrayList(fResponse.values()));
+		SearchManager.getDefault().searchFinished(new ArrayList(fResponse.values()));
 		fResponse= null;
 	}
 }

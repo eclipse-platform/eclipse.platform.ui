@@ -57,7 +57,6 @@ public class SearchManager implements IResourceChangeListener {
 	
 	private HashSet fListeners= new HashSet();
 	private LinkedList fPreviousSearches= new LinkedList();
-	private boolean fIsNewSearch= false;
 	private boolean fIsRemoveAll= false;
 	
 	public static SearchManager getDefault() {
@@ -287,7 +286,10 @@ public class SearchManager implements IResourceChangeListener {
 		}
 	}
 
-	void addNewSearch(Search newSearch) {
+	void addNewSearch(final Search newSearch) {
+		
+		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
+		
 		// Clear the viewers
 		Iterator iter= fListeners.iterator();
 		Display display= getDisplay();
@@ -299,9 +301,7 @@ public class SearchManager implements IResourceChangeListener {
 					public void run() {
 						if (fCurrentSearch != null && viewer == visibleViewer)
 							fCurrentSearch.setSelection(viewer.getSelection());
-						viewer.handleRemoveAll();
-						viewer.clearTitle();
-
+						setNewSearch(viewer, newSearch);
 					}
 				});
 			}
@@ -324,22 +324,24 @@ public class SearchManager implements IResourceChangeListener {
 		}
 	}
 
-	void setCurrentResults(ArrayList results) {
+	void searchFinished(ArrayList results) {
 		Assert.isNotNull(results);
 		getCurrentSearch().setResults(results);
-		if (results.isEmpty()) {
-			// directly update because there will be no delta
-				Display display= getDisplay();
-				if (display == null || display.isDisposed())
-					return;
-				display.syncExec(new Runnable() {
-					public void run() {
-						handleNewSearchResult();
-					}
-				});
+
+		Display display= getDisplay();
+		if (display == null || display.isDisposed())
+			return;
+		
+		if (Thread.currentThread() == display.getThread())
+			handleNewSearchResult();
+		else {
+			display.syncExec(new Runnable() {
+				public void run() {
+					handleNewSearchResult();
+				}
+			});
 		}
-		else
-			fIsNewSearch= true;
+		SearchPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	//--- Change event handling -------------------------------------------------
@@ -353,12 +355,7 @@ public class SearchManager implements IResourceChangeListener {
 		fListeners.remove(viewer);
 	}
 
-	private final void handleSearchMarkersChanged(final IResourceChangeEvent event, IMarkerDelta[] markerDeltas) {
-		if (fIsNewSearch) {
-			fIsNewSearch= false;
-			handleNewSearchResult();
-			return;
-		}
+	private final void handleSearchMarkersChanged(IMarkerDelta[] markerDeltas) {
 		if (fIsRemoveAll) {
 			handleRemoveAll();
 			fIsRemoveAll= false;
@@ -369,8 +366,9 @@ public class SearchManager implements IResourceChangeListener {
 		while (iter.hasNext())
 			((SearchResultViewer)iter.next()).getControl().setRedraw(false);
 	
-		for (int i=0; i < markerDeltas.length; i++)
+		for (int i=0; i < markerDeltas.length; i++) {
 			handleSearchMarkerChanged(markerDeltas[i]);
+		}
 
 		iter= fListeners.iterator();
 		while (iter.hasNext())
@@ -380,9 +378,8 @@ public class SearchManager implements IResourceChangeListener {
 
 	private void handleSearchMarkerChanged(IMarkerDelta markerDelta) {
 		int kind= markerDelta.getKind();
-		if ((kind & IResourceDelta.ADDED) != 0)
-			handleAddMatch(markerDelta.getMarker());
-		else if (((kind & IResourceDelta.REMOVED) != 0))
+		// don't listen for adds will be done by ISearchResultView.addMatch(...)
+		if (((kind & IResourceDelta.REMOVED) != 0))
 			handleRemoveMatch(markerDelta.getMarker());
 		else if ((kind & IResourceDelta.CHANGED) != 0)
 			handleUpdateMatch(markerDelta.getMarker());
@@ -395,38 +392,22 @@ public class SearchManager implements IResourceChangeListener {
 		while (iter.hasNext())
 			((SearchResultViewer)iter.next()).handleRemoveAll();
 	}
-
-	private void handleAddMatch(IMarker marker) {
-		Object groupByKey= getCurrentSearch().getGroupByKeyComputer().computeGroupByKey(marker);
-		SearchResultViewEntry entry= findEntry(groupByKey);
-		if (entry == null) {
-			entry= new SearchResultViewEntry(groupByKey, marker.getResource());
-			getCurrentResults().add(entry);
-			entry.add(marker);
-			Iterator iter= fListeners.iterator();
-			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).handleAddMatch(entry);
-		}
-		else {
-			entry.add(marker);
-			Iterator iter= fListeners.iterator();
-			while (iter.hasNext())
-				((SearchResultViewer)iter.next()).handleUpdateMatch(entry, false);
-		}
-	}
 	
 	private void handleNewSearchResult() {
 		Iterator iter= fListeners.iterator();
-		final Search search= getCurrentSearch();
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
-			viewer.setPageId(search.getPageId());
-			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
-			viewer.setContextMenuTarget(search.getContextMenuContributor());
-			viewer.setActionGroupFactory(null);
 			viewer.setInput(getCurrentResults());
-			viewer.setActionGroupFactory(search.getActionGroupFactory());
 		}
+	}
+	
+	private void setNewSearch(SearchResultViewer viewer, Search search) {
+		viewer.setInput(null);
+		viewer.clearTitle();
+		viewer.setPageId(search.getPageId());
+		viewer.setGotoMarkerAction(search.getGotoMarkerAction());
+		viewer.setContextMenuTarget(search.getContextMenuContributor());
+		viewer.setActionGroupFactory(search.getActionGroupFactory());
 	}
 	
 	private void handleRemoveMatch(IMarker marker) {
@@ -466,17 +447,6 @@ public class SearchManager implements IResourceChangeListener {
 		return null;
 	}
 
-	private SearchResultViewEntry findEntry(Object key) {
-		if (key == null)
-			return null;
-		Iterator entries= getCurrentResults().iterator();
-		while (entries.hasNext()) {
-			SearchResultViewEntry entry= (SearchResultViewEntry)entries.next();
-			if (key.equals(entry.getGroupByKey()))
-				return entry;
-		}
-		return null;
-	}
 	/**
 	 * Received a resource event. Since the delta could be created in a 
 	 * separate thread this methods post the event into the viewer's 
@@ -489,7 +459,7 @@ public class SearchManager implements IResourceChangeListener {
 		final IMarkerDelta[] markerDeltas= event.findMarkerDeltas(SearchUI.SEARCH_MARKER, true);
 		if (markerDeltas == null || markerDeltas.length < 1)
 			return;
-		
+
 		Display display= getDisplay();
 		if (display == null || display.isDisposed())
 			return;
@@ -497,7 +467,7 @@ public class SearchManager implements IResourceChangeListener {
 		Runnable runnable= new Runnable() {
 			public void run() {
 				if (getCurrentSearch() != null) {
-					handleSearchMarkersChanged(event, markerDeltas);
+					handleSearchMarkersChanged(markerDeltas);
 					// update title and actions
 					Iterator iter= fListeners.iterator();
 					while (iter.hasNext()) {
