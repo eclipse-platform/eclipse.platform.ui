@@ -60,7 +60,7 @@
   <target name="benchmark" depends="init,cleanup" if="performance">
       <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
         <property name="data-dir" value="performance"/>
-        <property name="plugin-name" value="org.eclipse.team.tests.cvs"/>
+        <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
         <property name="classname" value="org.eclipse.team.tests.ccvs.ui.benchmark.ShareAndCheckoutTest"/>
       </ant>
   </target>
