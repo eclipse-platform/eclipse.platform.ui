@@ -824,8 +824,14 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (partWasActive) {
 		IWorkbenchPart top = activationList.getTopEditor();
 		zoomOutIfNecessary(top);
-		if (top == null)
+		if (top == null) {
+			// Fix for bug #31122 (side effect from fix 28031 above)
+			actionSwitcher.updateTopEditor(null);
+			if (lastActiveEditor == editor)
+				lastActiveEditor = null;
+			// End - Fix for bug #31122
 			top = activationList.getActive();
+		}
 		if (top != null)
 			activate(top);
 		else
