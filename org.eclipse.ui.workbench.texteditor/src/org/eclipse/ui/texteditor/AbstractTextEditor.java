@@ -433,8 +433,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						IEditorInput input= getEditorInput();
 						Position pos= null;
 						if (sel instanceof ITextSelection) {
-							int offset= ((ITextSelection)sel).getOffset();
-							int length= ((ITextSelection)sel).getLength();
+							int offset= ((ITextSelection) sel).getOffset();
+							int length= ((ITextSelection) sel).getLength();
 							pos= new Position(offset, length);
 							try {
 								getDocumentProvider().getDocument(input).addPosition(pos);
