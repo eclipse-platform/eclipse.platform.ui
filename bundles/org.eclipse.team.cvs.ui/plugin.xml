@@ -246,6 +246,14 @@
                menubarPath="team.main/group1"
                id="org.eclipse.team.cvs.ui.GenerateDiff">
          </action>
+         <action
+               label="%ShowEditorsAction.label"
+               helpContextId="org.eclipse.team.cvs.ui.team_show_editors_action_context"
+               tooltip="%ShowEditorsAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowEditorsAction"
+               menubarPath="team.main/group4"
+               id="org.eclipse.team.ccvs.ui.showeditors">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
