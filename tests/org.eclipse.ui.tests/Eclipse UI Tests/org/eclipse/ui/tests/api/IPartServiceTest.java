@@ -12,12 +12,14 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -218,22 +220,53 @@ public class IPartServiceTest extends UITestCase {
 	}
 	
 	/**
-	 * Tests the partHidden method.
+	 * Tests the partHidden method by closing a view when it is not shared with another perspective.
 	 * Includes regression test for: 
 	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
 	 */
-	public void testPartHidden() throws Throwable {
+	public void testPartHiddenUnshared() throws Throwable {
 		// From Javadoc: "Notifies this listener that the given part is hidden."
 		
 	    IPartListener2 listener = new TestPartListener2() {
             public void partHidden(IWorkbenchPartReference ref) {
                 super.partHidden(ref);
-                // ensure that the view can't be found
+                // ensure that the notification is for the view we closed
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view cannot be found
                 assertNull(fPage.findView(MockViewPart.ID));
             }
 	    };
-	    fPage.addPartListener(listener);
 		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+	    fPage.addPartListener(listener);
+		clearEventState();
+		fPage.hideView(view);
+		assertTrue(history2.contains("partHidden"));
+		assertEquals(getRef(view), eventPartRef);
+	}
+
+	/**
+	 * Tests the partHidden method by closing a view when it is shared with another perspective.
+	 * Includes regression test for: 
+	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
+	 */
+	public void testPartHiddenShared() throws Throwable {
+		// From Javadoc: "Notifies this listener that the given part is hidden."
+		
+	    IPartListener2 listener = new TestPartListener2() {
+            public void partHidden(IWorkbenchPartReference ref) {
+                super.partHidden(ref);
+                // ensure that the notification is for the view we closed
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view cannot be found
+                assertNull(fPage.findView(MockViewPart.ID));
+            }
+	    };
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		IPerspectiveDescriptor emptyPerspDesc2 = fWindow.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID2);
+		fPage.setPerspective(emptyPerspDesc2);
+		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID);
+		assertEquals(view, view2);
+	    fPage.addPartListener(listener);
 		clearEventState();
 		fPage.hideView(view);
 		assertTrue(history2.contains("partHidden"));

@@ -46,6 +46,11 @@
             id="org.eclipse.ui.tests.util.EmptyPerspective">
       </perspective>
       <perspective
+            name="Empty Perspective 2"
+            class="org.eclipse.ui.tests.util.EmptyPerspective"
+            id="org.eclipse.ui.tests.util.EmptyPerspective2">
+      </perspective>
+      <perspective
             name="Drag Test Perspective"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
