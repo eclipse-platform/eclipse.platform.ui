@@ -37,7 +37,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class LaunchesView extends AbstractDebugView implements IPartListener, ISelectionChangedListener, IDoubleClickListener {
+public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
 
 	protected SelectionProviderAction fTerminateAction;
 	protected RemoveTerminatedAction fRemoveTerminatedAction;
@@ -140,9 +140,6 @@ public class LaunchesView extends AbstractDebugView implements IPartListener, IS
 			Control c = viewer.getControl();
 			if (!c.isFocusControl()) {
 				c.setFocus();
-				//ensure that all downstream listeners
-				//know the current selection..switching from another view
-				DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
 			}
 		}
 	}
@@ -175,7 +172,6 @@ public class LaunchesView extends AbstractDebugView implements IPartListener, IS
 	 */
 	public void dispose() {
 		if (getViewer() != null) {
-			DebugUIPlugin.getDefault().removeSelectionProvider(getViewer(), this);
 			getViewer().removeDoubleClickListener(this);
 			getViewer().removeSelectionChangedListener(this);
 		}
@@ -356,52 +352,4 @@ public class LaunchesView extends AbstractDebugView implements IPartListener, IS
 		fTerminateAndRemoveAction = terminateAndRemoveAction;
 	}
 	
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-	}
-	
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-		if (part == this) {
-			// remove this viewer as the debug UI selection provider
-			DebugUIPlugin.getDefault().removeSelectionProvider(getViewer(), this);
-		}
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part == this) {
-			// register this viewer as the debug UI selection provider
-			DebugUIPlugin.getDefault().addSelectionProvider(getViewer(), this);
-			//ensure that all downstream listeners
-			//know the current selection..switching from another view
-			DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
-		}			
-	}
-	
-	/**
-	 * @see IViewPart#init(IViewSite)
-	 */
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
-		getSite().getPage().addPartListener(this);
-	}	
 }

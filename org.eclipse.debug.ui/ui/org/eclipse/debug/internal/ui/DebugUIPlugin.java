@@ -101,8 +101,7 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChangedListener,
-															   IDebugEventListener, 
+public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListener, 
 															   ISelectionListener, 
 															   IDocumentListener, 
 															   ILaunchListener,
@@ -118,21 +117,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * A utility presentation used to obtain labels
 	 */
 	protected static IDebugModelPresentation fgPresentation = null;
-
-	/**
-	 * The selection providers for the debug UI
-	 */
-	protected List fSelectionProviders= new ArrayList(2);
-
-	/**
-	 * The desktop parts that contain the selections
-	 */
-	protected List fSelectionParts= new ArrayList(2);
-
-	/**
-	 * The list of selection listeners for the debug UI
-	 */
-	protected ListenerList fListeners= new ListenerList(2);
 
 	/**
 	 * The mappings of processes to their console documents.
@@ -759,7 +743,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		removeSelectionListener(this);
+		getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
@@ -786,8 +770,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		super.startup();
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchListener(this);
-		addSelectionListener(this);
+		launchManager.addLaunchListener(this);	
+		getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		//set up the docs for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
@@ -807,63 +791,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
-	}
-
-	/**
-	 * Adds the selection provider for the debug UI.
-	 */
-	public void addSelectionProvider(ISelectionProvider provider, IWorkbenchPart part) {
-		fSelectionProviders.add(provider);
-		fSelectionParts.add(part);
-		provider.addSelectionChangedListener(this);
-	}
-
-	/**
-	 * Removes the selection provider from the debug UI.
-	 */
-	public void removeSelectionProvider(ISelectionProvider provider, IWorkbenchPart part) {
-		fSelectionProviders.remove(provider);
-		fSelectionParts.remove(part);
-		provider.removeSelectionChangedListener(this);
-		selectionChanged(null);
-	}
-
-	/**
-	 * Adds an <code>ISelectionListener</code> to the debug selection manager.
-	 */
-	public void addSelectionListener(ISelectionListener l) {
-		fListeners.add(l);
-	}
-
-	/**
-	 * Removes an <code>ISelectionListener</code> from the debug selection manager.
-	 */
-	public synchronized void removeSelectionListener(ISelectionListener l) {
-		fListeners.remove(l);
-	}
-
-	/**
-	 * Selection has changed in the debug selection provider.
-	 * Notify the listeners.
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		Object[] copiedListeners= fListeners.getListeners();
-				
-		ISelection selection= null;
-		ISelectionProvider provider= null;
-		IWorkbenchPart part= null;
-		if (event != null) {
-			selection= event.getSelection();
-			provider= (ISelectionProvider) event.getSource();
-			int index= fSelectionProviders.indexOf(provider);
-			if (index == -1) {
-				return;
-			}
-			part= (IWorkbenchPart) fSelectionParts.get(index);
-		}
-		for (int i= 0; i < copiedListeners.length; i++) {
-			((ISelectionListener)copiedListeners[i]).selectionChanged(part, selection);
-		}
 	}
 
 	/**

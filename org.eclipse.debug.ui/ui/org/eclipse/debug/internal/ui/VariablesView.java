@@ -120,13 +120,13 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	private boolean fToggledDetailOnce;
 	
 	/**
-	 * Remove myself as a selection listener to the <code>LaunchesView</code> in this perspective,
-	 * and remove myself as a preference change listener.
+	 * Remove myself as a selection listener
+	 * and preference change listener.
 	 *
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		DebugUIPlugin.getDefault().removeSelectionListener(this);
+		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		super.dispose();
@@ -182,7 +182,8 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		DebugUIPlugin.getDefault().addSelectionListener(this);
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		
 		fModelPresentation = new DelegatingModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		// create the sash form that will contain the tree viewer & text viewer

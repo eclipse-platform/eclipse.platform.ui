@@ -549,13 +549,5 @@ public class DebugView extends LaunchesView implements IPartListener {
 			}
 		}
 	}
-	
-	/**
-	 * @see IWorkbenchPart
-	 */
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		DebugUIPlugin.getDefault().addSelectionProvider(getViewer(), this);
-	}
 
 }
