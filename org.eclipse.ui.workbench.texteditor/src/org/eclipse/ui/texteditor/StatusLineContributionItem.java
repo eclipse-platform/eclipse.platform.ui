@@ -18,11 +18,11 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -64,6 +64,11 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * @since 2.1
 	 */
 	private int fFixedWidth= -1;
+	/**
+	 * Precomputed label height hint.
+	 * @since 3.0
+	 */
+	private int fFixedHeight= -1;	
 	/** The text */
 	private String fText;
 	/** The image */
@@ -173,13 +178,8 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 */
 	public void fill(Composite parent) {
 		
-		fLabel= new CLabel(parent, SWT.NONE);
-		
-		Color[] colors= new Color[2];
-		colors[0]= parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		colors[1]= fLabel.getBackground();
-		int[] gradient= new int[] {JFaceColors.STATUS_PERCENT};
-		fLabel.setBackground(colors, gradient);
+		Label sep = new Label(parent, SWT.SEPARATOR);
+		fLabel= new CLabel(parent, SWT.SHADOW_NONE); 
 		
 		fLabel.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -190,10 +190,14 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			fMouseListener= new Listener();
 			fLabel.addMouseListener(fMouseListener);
 		}
-		
+
 		StatusLineLayoutData data = new StatusLineLayoutData();
 		data.widthHint= getWidthHint(parent);
 		fLabel.setLayoutData(data);
+		
+		data = new StatusLineLayoutData();
+		data.heightHint= getHeightHint(parent);
+		sep.setLayoutData(data);
 		
 		if (fText != null)
 			fLabel.setText(fText);
@@ -230,6 +234,23 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			gc.dispose();
 		}
 		return fFixedWidth;
+	}
+	
+	/**
+	 * Returns the height hint for this label.
+	 * 
+	 * @param control the root control of this label
+	 * @return the height hint for this label
+	 * @since 3.0
+	 */
+	private int getHeightHint(Composite control) {
+		if (fFixedHeight < 0) {
+			GC gc= new GC(control);
+			gc.setFont(control.getFont());
+			fFixedHeight= gc.getFontMetrics().getHeight();
+			gc.dispose();
+		}
+		return fFixedHeight;
 	}
 	
 	/**
