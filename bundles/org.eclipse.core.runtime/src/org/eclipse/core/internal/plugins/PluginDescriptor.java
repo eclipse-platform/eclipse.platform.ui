@@ -31,6 +31,7 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private ResourceBundle bundle = null; // plugin.properties
 	private Locale locale = null; // bundle locale
 	private boolean bundleNotFound = false; // marker to prevent unnecessary lookups
+	private Object[] cachedClasspath = null; // cached value of class loader's classpath
 
 	// constants
 	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -314,6 +315,9 @@ public ClassLoader getPluginClassLoader(boolean eclipseURLs) {
 	return loader;
 }
 private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
+	if (cachedClasspath != null)
+		return cachedClasspath;
+
 	// Any library access filters specified in the plugin.xml are
 	// applied to the corresponding loader search path entries
 
@@ -388,6 +392,8 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	array[1] = result[1].toArray(new URLContentFilter[result[1].size()]);
 	array[2] = result[2].toArray(new URL[result[2].size()]);
 	array[3] = result[3].toArray(new URLContentFilter[result[3].size()]);
+	// cache the value
+	cachedClasspath = array;
 	return array;
 }
 
@@ -530,7 +536,7 @@ public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResou
 	// try to load bundle from this plugin. A new loader is created to include the base 
 	// install directory on the search path (to maintain compatibility with current handling
 	// of plugin.properties bundles (not in code jar)).
-	URL[] cp = ((URLClassLoader)getPluginClassLoader()).getURLs();
+	URL[] cp = (URL[])getPluginClassLoaderPath(true)[0];
 	URL[] newcp = new URL[cp.length+1];
 	for (int i=0; i<cp.length; i++) newcp[i+1] = cp[i];
 	try {
