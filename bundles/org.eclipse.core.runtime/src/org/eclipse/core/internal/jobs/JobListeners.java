@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -11,8 +11,8 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
@@ -84,41 +84,62 @@ class JobListeners {
 	 * on the given job.
 	 */
 	private void doNotify(final IListenerDoit doit, final IJobChangeEvent event) {
-		InternalPlatform.getDefault().run(new ISafeRunnable() {
-			public void handleException(Throwable exception) {
+		//notify all global listeners
+		int size = global.size();
+		for (int i = 0; i < size; i++) {
+			//note: tolerate concurrent modification
+			IJobChangeListener listener = null;
+			try {
+				listener = (IJobChangeListener) global.get(i);
+			} catch (IndexOutOfBoundsException e) {
+				//concurrently removed
 			}
-			public void run() throws Exception {
-				//notify all global listeners
-				int size = global.size();
-				for (int i = 0; i < size; i++) {
-					//note: tolerate concurrent modification
-					IJobChangeListener listener = null;
-					try {
-						listener = (IJobChangeListener) global.get(i);
-					} catch (IndexOutOfBoundsException e) {
-						//concurrently removed
-					}
+			try {
+				if (listener != null)
+					doit.notify(listener, event);
+			} catch (Exception e) {
+				handleException(e);
+			} catch (LinkageError e) {
+				handleException(e);
+			}
+		}
+		//notify all local listeners
+		List local = ((InternalJob) event.getJob()).getListeners();
+		if (local != null) {
+			size = local.size();
+			for (int i = 0; i < size; i++) {
+				//note: tolerate concurrent modification
+				IJobChangeListener listener = null;
+				try {
+					listener = (IJobChangeListener) local.get(i);
+				} catch (IndexOutOfBoundsException e) {
+					//concurrently removed
+				}
+				try {
 					if (listener != null)
 						doit.notify(listener, event);
-				}
-				//notify all local listeners
-				List local = ((InternalJob) event.getJob()).getListeners();
-				if (local != null) {
-					size = local.size();
-					for (int i = 0; i < size; i++) {
-						//note: tolerate concurrent modification
-						IJobChangeListener listener = null;
-						try {
-							listener = (IJobChangeListener) local.get(i);
-						} catch (IndexOutOfBoundsException e) {
-							//concurrently removed
-						}
-						if (listener != null)
-							doit.notify(listener, event);
-					}
+				} catch (Exception e) {
+					handleException(e);
+				} catch (LinkageError e) {
+					handleException(e);
 				}
 			}
-		});
+		}
+	}
+	private  void handleException(Throwable e) {
+		//this code is roughly copied from InternalPlatform.run(ISafeRunnable), 
+		//but inlined here for performance reasons
+		if (e instanceof OperationCanceledException) 
+			return;
+		String pluginId = Platform.PI_RUNTIME;
+		String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
+		//we have to be safe, so don't try to log if the platform is not running 
+		//since it will fail - last resort is to print the stack trace on stderr
+		if (InternalPlatform.getDefault().isRunning())
+			InternalPlatform.getDefault().log(status);
+		else
+			e.printStackTrace();
 	}
 	public void add(IJobChangeListener listener) {
 		global.add(listener);
