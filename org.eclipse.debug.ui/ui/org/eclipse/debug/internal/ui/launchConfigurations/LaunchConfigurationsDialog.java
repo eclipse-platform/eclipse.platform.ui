@@ -1253,7 +1253,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				throw new CoreException(status);
 			}
 		} finally {
-			//remove any "error" launch
+			//remove any "error" launches
 			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 			ILaunch[] launches= manager.getLaunches();
 			for (int i = 0; i < launches.length; i++) {
