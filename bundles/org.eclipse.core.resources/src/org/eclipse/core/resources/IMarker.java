@@ -18,7 +18,7 @@ import java.util.Map;
  * Markers are a general mechanism for associating notes and metadata with
  * resources.
  * <p>
- * Markers are themselves are handles in the same way as <code>IResources</code>
+ * Markers themselves are handles in the same way as <code>IResources</code>
  * are handles.  Instances of <code>IMarker</code> do not hold the attributes
  * themselves but rather uniquely refer to the attribute container.  As such,
  * their state may change underneath the handle with no warning to the holder
@@ -250,9 +250,8 @@ public interface IMarker extends IAdaptable {
 public void delete() throws CoreException;
 /**
  * Tests this marker for equality with the given object.
- * Two markers are equal iff they have the same id.
- * Markers are assigned an id when created on a resource.
- *
+ * Two markers are equal iff their id and resource are both equal.
+ * 
  * @param object the other object
  * @return an indication of whether the objects are equal
  */
