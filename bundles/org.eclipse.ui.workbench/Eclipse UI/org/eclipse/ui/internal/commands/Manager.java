@@ -357,7 +357,7 @@ public class Manager {
 	private Manager() {
 		super();
 		keyMachine = Machine.create();
-		update();		
+		initializeConfigurations();		
 	}
 
 	public Machine getKeyMachine() {
@@ -377,6 +377,43 @@ public class Manager {
 			text = ((KeySequence) keySequenceSet.first()).toString();
 		
 		return text != null ? text : ""; //$NON-NLS-1$
+	}
+
+	public void initializeConfigurations() {
+		CoreRegistry coreRegistry = CoreRegistry.getInstance();
+		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+
+		try {
+			coreRegistry.load();
+		} catch (IOException eIO) {
+		}
+
+		try {
+			localRegistry.load();
+		} catch (IOException eIO) {
+		}
+		
+		try {
+			preferenceRegistry.load();
+		} catch (IOException eIO) {
+		}
+	
+		List registryActiveKeyConfigurations = new ArrayList();
+		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());	
+		String keyConfigurationId;
+			
+		if (registryActiveKeyConfigurations.size() == 0)
+			keyConfigurationId = ""; //$NON-NLS-1$
+		else {
+			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
+			keyConfigurationId = activeKeyConfiguration.getValue();
+		}
+
+		keyMachine.setKeyConfiguration(keyConfigurationId);
+		update();
 	}
 
 	public void update() {
@@ -420,6 +457,6 @@ public class Manager {
 
 		keyMachine.setKeyConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
 		keyMachine.setScopeMap(Collections.unmodifiableSortedMap(scopeMap));
-		keyMachine.setKeyBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));		
+		keyMachine.setKeyBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));
 	}
 }

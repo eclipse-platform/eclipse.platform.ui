@@ -1,14 +1,21 @@
+/************************************************************************
+Copyright (c) 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 
 /** 
@@ -113,7 +120,7 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
 	 */
     public String getActiveAcceleratorConfigurationId() {
-    	return ((Workbench) PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getId();
+    	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getKeyConfiguration();
     }
 
 	/*

@@ -124,7 +124,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private boolean runEventLoop;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
-	private KeyConfiguration acceleratorConfiguration;
 	private Object returnCode;
 	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
@@ -642,12 +641,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	/**
-	 * Returns the active AcceleratorConfiguration
-	 */
-	public KeyConfiguration getActiveAcceleratorConfiguration() {
-		return acceleratorConfiguration;
-	}
-	/**
 	 * Answer the workbench state file.
 	 */
 	private File getWorkbenchStateFile() {
@@ -695,6 +688,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			WorkbenchPlugin.DEBUG = true;
 			ModalContext.setDebugMode(true);
 		}
+
 		initializeProductImage();
 		connectToWorkspace();
 		addAdapters();
@@ -702,11 +696,23 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		WorkbenchColors.startup();
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
-		initializeFonts();
-		initializeConfiguration();
-		initializeSingleClickOption();
+		initializeFonts();	
 
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+
+			if (wWinKeyBindingService != null)
+				wWinKeyBindingService.clear();
+
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+			menuManager.update(IAction.TEXT);
+		}
+		
+		initializeSingleClickOption();
 		boolean avoidDeadlock = true;
+		
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
@@ -824,41 +830,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 
-	private void initializeConfiguration() {
-		String configurationId;
-		
-		CoreRegistry coreRegistry = CoreRegistry.getInstance();
-		LocalRegistry localRegistry = LocalRegistry.getInstance();
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
-
-		List registryActiveKeyConfigurations = new ArrayList();
-		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());
-		
-		if (registryActiveKeyConfigurations.size() == 0)
-			configurationId = ""; //$NON-NLS-1$
-		else {
-			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
-			configurationId = activeKeyConfiguration.getValue();
-		}
-
-		Manager manager = Manager.getInstance();
-		manager.getKeyMachine().setKeyConfiguration(configurationId);
-		manager.update();
-
-		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-
-		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-
-			if (wWinKeyBindingService != null)
-				wWinKeyBindingService.clear();
-
-			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.update(IAction.TEXT);
-		}
-	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
 	 */
@@ -1340,30 +1311,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		// Success !
 		return true;
-	}
-	/*
-	 * Sets the active accelerator configuration to be the configuration
-	 * with the given id.
-	 */
-	public void setActiveAcceleratorConfiguration(KeyConfiguration configuration) {
-		if (configuration != null) {
-			acceleratorConfiguration = configuration;
-			String id = configuration.getId();
-			Manager keyManager = Manager.getInstance();
-			keyManager.getKeyMachine().setKeyConfiguration(id);
-			keyManager.update();
-			IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-
-			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-
-				if (wWinKeyBindingService != null)
-					wWinKeyBindingService.clear();
-
-				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-				menuManager.update(IAction.TEXT);
-			}
-		}
 	}
 
 	/**

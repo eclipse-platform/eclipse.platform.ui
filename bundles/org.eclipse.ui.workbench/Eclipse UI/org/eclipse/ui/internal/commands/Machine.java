@@ -29,17 +29,13 @@ public final class Machine {
 	}
 
 	private Map commandMap;
-	private Map commandMapForMode;
-	
+	private Map commandMapForMode;	
 	private SortedSet keyBindingSet;
 	private String keyConfiguration;
-	private SortedMap keyConfigurationMap;
-	
+	private SortedMap keyConfigurationMap;	
 	private SortedMap keySequenceMap;
 	private SortedMap keySequenceMapForMode;
-
-	private KeySequence mode;
-	
+	private KeySequence mode;	
 	private SortedMap scopeMap;
 	private String[] scopes;
 	private boolean solved;
@@ -49,9 +45,9 @@ public final class Machine {
 		super();
 		keyConfigurationMap = new TreeMap();
 		scopeMap = new TreeMap();
-		keyBindingSet = new TreeSet();		
-		keyConfiguration = "org.eclipse.ui.defaultConfiguration"; //$NON-NLS-1$
-		scopes = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
+		keyBindingSet = new TreeSet();
+		keyConfiguration = ""; //$NON-NLS-1$
+		scopes = new String[] { "" }; //$NON-NLS-1$
 		mode = KeySequence.create();	
 	}
 
