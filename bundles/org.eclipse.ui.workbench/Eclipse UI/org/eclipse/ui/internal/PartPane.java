@@ -410,7 +410,6 @@ final protected void showPaneMenu(Control parent, Point point) {
 	}
 	Menu aMenu = paneMenuManager.createContextMenu(parent);
 	// open menu    
-	point = parent.toDisplay(point);
 	aMenu.setLocation(point.x, point.y);
 	aMenu.setVisible(true);
 }

@@ -210,16 +210,29 @@ public void createControl(Composite parent) {
 				CTabItem item = getTab(visibleEditor);
 				visibleEditor.setFocus();
 				Rectangle bounds = item.getBounds();
-				if(bounds.contains(e.x,e.y)) {
-					if (e.button == 3)
-						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
-					else if((e.button == 1) && overImage(item,e.x))
+				if (bounds.contains(e.x, e.y)) {
+					if ((e.button == 1) && overImage(item, e.x))
 						visibleEditor.showPaneMenu();
 				}
 			}
 		}
 	});
 
+	// Listen for popup menu mouse event
+	tabFolder.addListener(SWT.MenuDetect, new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MenuDetect && visibleEditor != null) {
+				CTabItem item = getTab(visibleEditor);
+				visibleEditor.setFocus();
+				Rectangle bounds = item.getBounds();
+				Point pt = tabFolder.toControl(event.x, event.y);
+				if (bounds.contains(pt.x, pt.y)) {
+					visibleEditor.showPaneMenu(tabFolder, new Point(event.x, event.y));
+				}
+			}
+		}
+	});
+	
 	// register the interested mouse down listener
 	if (!mouseDownListenerAdded && getEditorArea() != null) {
 		tabFolder.addListener(SWT.MouseDown, getEditorArea().getMouseDownListener());
@@ -362,7 +375,7 @@ public void showPaneMenu() {
 	if (visibleEditor != null) {
 		CTabItem item = getTab(visibleEditor);
 		Rectangle bounds = item.getBounds();
-		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height));
+		visibleEditor.showPaneMenu(tabFolder,tabFolder.toDisplay(new Point(bounds.x, bounds.height)));
 	}
 }
 /**

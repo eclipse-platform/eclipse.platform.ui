@@ -708,10 +708,11 @@ private void createShortcutBar(Shell shell) {
 
 	// Add right mouse button support.
 	ToolBar tb = shortcutBar.getControl();
-	tb.addMouseListener(new MouseAdapter() {
-		public void mouseDown(MouseEvent e) {
-			if (e.button == 3)
-				showShortcutBarPopup(e);
+	tb.addListener(SWT.MenuDetect, new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MenuDetect) {
+				showShortcutBarPopup(new Point(event.x, event.y));
+			}
 		}
 	});
 }
@@ -1652,11 +1653,10 @@ public void setShowToolBar(boolean show) {
 /**
  * Shows the popup menu for a page item in the shortcut bar.
  */
-private void showShortcutBarPopup(MouseEvent e) {
+private void showShortcutBarPopup(Point pt) {
 	// Get the tool item under the mouse.
-	Point pt = new Point(e.x, e.y);
 	ToolBar toolBar = shortcutBar.getControl();
-	ToolItem toolItem = toolBar.getItem(pt);
+	ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
 	if (toolItem == null)
 		return;
 
@@ -1697,7 +1697,6 @@ private void showShortcutBarPopup(MouseEvent e) {
 	
 		// Show popup menu.
 		if (fastViewBarMenu != null) {
-			pt = toolBar.toDisplay(pt);
 			fastViewBarMenu.setLocation(pt.x, pt.y);
 			fastViewBarMenu.setVisible(true);
 		}			
@@ -1749,7 +1748,6 @@ private void showShortcutBarPopup(MouseEvent e) {
 	
 		// Show popup menu.
 		if (perspectiveBarMenu != null) {
-			pt = toolBar.toDisplay(pt);
 			perspectiveBarMenu.setLocation(pt.x, pt.y);
 			perspectiveBarMenu.setVisible(true);
 		}
