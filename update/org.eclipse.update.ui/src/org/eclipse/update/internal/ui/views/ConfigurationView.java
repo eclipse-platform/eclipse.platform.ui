@@ -998,24 +998,24 @@ public class ConfigurationView
 				revertAction));
 		array.add(
 			new PreviewTask(
-				"Link an Extension Location",
-				"Locate and link an extension location to the current configuration.",
-				newExtensionLocationAction));
-		array.add(
-			new PreviewTask(
-				"Show Activities",
-				"View the activities that caused the creation of this configuration.",
-				propertiesAction));
-		array.add(
-			new PreviewTask(
 				"Scan for Updates",
 				"Search for updates for all the installed features.",
 				findUpdatesAction));
 		array.add(
 			new PreviewTask(
+				"Link an Extension Location",
+				"Locate and link an extension location to the current configuration.",
+				newExtensionLocationAction));
+		array.add(
+			new PreviewTask(
 				"View Installation History",
 				"View all activities since the installation of the product.",
 				installationHistoryAction));
+		array.add(
+			new PreviewTask(
+				"Show Activities",
+				"View the activities that caused the creation of this configuration.",
+				propertiesAction));
 
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
@@ -1044,6 +1044,11 @@ public class ConfigurationView
 		key = IFeatureAdapter.class;
 		array.add(
 			new PreviewTask(
+				"Replace With Another Version",
+				"Disables the current version of the feature and replaces it with another version from the list of the currently disabled features.",
+				swapVersionAction));
+		array.add(
+			new PreviewTask(
 				null,
 				"You can enable or disable a feature. Function provided by the feature will be removed but the feature itself will still be present to be enabled later.",
 				featureStateAction));
@@ -1052,11 +1057,6 @@ public class ConfigurationView
 				"Install from Originating Server",
 				"This optional feature was not originally installed. You can install it now by connecting to the originating server of the parent.",
 				installOptFeatureAction));
-		array.add(
-			new PreviewTask(
-				"Replace With Another Version",
-				"Disables the current version of the feature and replaces it with another version from the list of the currently disabled features.",
-				swapVersionAction));
 		array.add(
 			new PreviewTask(
 				"Uninstall",
