@@ -4,6 +4,8 @@
  */
 package org.eclipse.search.internal.ui.util;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -80,8 +82,9 @@ public class ListDialog extends SelectionDialog {
 		});
 		fViewer.setLabelProvider(fLabelProvider);
 		fViewer.setInput(fInput);
-		if (getInitialSelections() != null)
-			fViewer.setSelection(new StructuredSelection(getInitialSelections()));
+		List initialSelection= getInitialElementSelections();
+		if (initialSelection != null)
+			fViewer.setSelection(new StructuredSelection(initialSelection));
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
