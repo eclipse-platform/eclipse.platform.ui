@@ -10,38 +10,42 @@
  *******************************************************************************/
 package org.eclipse.update.standalone;
 import java.io.*;
-import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
+
 /**
  * Adds a new site
  */
-public class AddSiteCommand extends ScriptedCommand {
-	private ISite site;
+public class RemoveSiteCommand extends ScriptedCommand {
+	private IConfiguredSite csite;
 	private File sitePath;
 	
 	/**
-	 * @param fromSite if specified, list only the features from the specified local install site
+	 * @param toSite if specified, list only the features from the specified local install site
 	 */
-	public AddSiteCommand(String fromSite) throws Exception {
+	public RemoveSiteCommand(String toSite) throws Exception {
 		try {
-			if (fromSite != null) {
-				sitePath = new File(fromSite);
+			if (toSite != null) {
+				sitePath = new File(toSite);
+				if (!sitePath.getName().equals("eclipse"))
+					sitePath = new File(sitePath, "eclipse");
 				if (!sitePath.exists())
-					throw new Exception("Cannot find site: " + fromSite);
+					throw new Exception("Cannot find site: " + toSite);
 					
-				URL fromSiteURL = sitePath.toURL();
-				site = SiteManager.getSite(fromSiteURL, null);
-				if (site == null) {
-					throw new Exception(
-						"Cannot find site : " + fromSite);
+				IConfiguredSite[] csites = SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites();
+				for (int i=0; i<csites.length; i++) {
+					File f = new File(csites[i].getSite().getURL().getFile());
+					if (f.equals(sitePath)) {
+						csite = csites[i];
+						break;
+					}
 				}
-				IConfiguredSite csite = site.getCurrentConfiguredSite();
-				if (csite != null)
-					throw new Exception("Site is already configured " + fromSite);
+				
+				if (csite == null)
+					throw new Exception("Site is not configured " + toSite);
 			} else {
 				throw new Exception("No site specified");
 			}
@@ -54,13 +58,10 @@ public class AddSiteCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
-			if (site == null)
-				return false;
 			
 			try {
-				IConfiguredSite csite = getConfiguration().createConfiguredSite(sitePath);
-				getConfiguration().addConfiguredSite(csite);
-				// update the sites array to pick up new site
+				getConfiguration().removeConfiguredSite(csite);
+				// update the sites array
 				getConfiguration().getConfiguredSites();
 				SiteManager.getLocalSite().save();
 				return true;

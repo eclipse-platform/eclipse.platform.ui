@@ -92,7 +92,6 @@ public class DisableCommand extends ScriptedCommand {
 	}
 
 	/**
-	 * @see Wizard#performFinish()
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		if (isVerifyOnly()) {

@@ -72,7 +72,8 @@ public class CmdLineArgs {
 			|| cmd.equals("mirror")
 			|| cmd.equals("uninstall")
 			|| cmd.equals("configuredFeatures")
-			|| cmd.equals("addSite");
+			|| cmd.equals("addSite")
+			|| cmd.equals("removeSite");
 	}
 
 	public ScriptedCommand getCommand() {
@@ -120,6 +121,8 @@ public class CmdLineArgs {
 				return new ListConfigFeaturesCommand((String) options.get("-from"));
 			else if (cmd.equals("addSite"))
 				return new AddSiteCommand((String) options.get("-from"));
+			else if (cmd.equals("removeSite"))
+				return new RemoveSiteCommand((String) options.get("-to"));
 			else
 				return null;
 		} catch (Exception e) {

@@ -89,7 +89,7 @@ public abstract class ScriptedCommand implements IOperationListener {
 	 * @return the installation configuration affected by the command
 	 */
 	public final IInstallConfiguration getConfiguration() {
-		if (config == null) {
+//		if (config == null) {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
 				config = localSite.getCurrentConfiguration();
@@ -101,7 +101,7 @@ public abstract class ScriptedCommand implements IOperationListener {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(e);
 			}
-		}
+//		}
 		return config;
 	}
 

@@ -93,7 +93,6 @@ public class UninstallCommand extends ScriptedCommand {
 	}
 
 	/**
-	 * @see Wizard#performFinish()
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) {
