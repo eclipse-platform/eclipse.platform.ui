@@ -824,10 +824,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		Object annotationType= annotation.getType();
 		Boolean allowed= (Boolean) fAllowedAnnotationTypes.get(annotationType);
 		if (allowed != null)
-			return allowed.booleanValue();
+			return !allowed.booleanValue();
 		
 		boolean skip= skip(annotationType);
-		fAllowedAnnotationTypes.put(annotationType, skip ? Boolean.TRUE : Boolean.FALSE);
+		fAllowedAnnotationTypes.put(annotationType, !skip ? Boolean.TRUE : Boolean.FALSE);
 		return skip;
 	}
 	
