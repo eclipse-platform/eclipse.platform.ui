@@ -6,6 +6,7 @@ package org.eclipse.compare.internal;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
@@ -100,6 +101,13 @@ public class ImageMergeViewer extends ContentMergeViewer {
 				canvas.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 			} else {
 				canvas.setBackground(null);
+			}
+			
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException ex) {
+				}
 			}
 		}
 	}

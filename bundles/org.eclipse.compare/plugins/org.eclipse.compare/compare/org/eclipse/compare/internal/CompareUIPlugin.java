@@ -687,8 +687,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private static String guessType(ITypedElement input) {
 		if (input instanceof IStreamContentAccessor) {
 			IStreamContentAccessor sca= (IStreamContentAccessor) input;
+			InputStream is= null;
 			try {
-				InputStream is= sca.getContents();
+				is= sca.getContents();
 				if (is == null)
 					return null;
 				for (int i= 0; i < 1000; i++) {
@@ -703,6 +704,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				// be silent and return UNKNOWN_TYPE
 			} catch (IOException ex) {
 				// be silent and return UNKNOWN_TYPE
+			} finally {
+				if (is != null) {
+					try {
+						is.close();
+					} catch (IOException ex) {
+					}
+				}
 			}
 			return ITypedElement.UNKNOWN_TYPE;
 		}

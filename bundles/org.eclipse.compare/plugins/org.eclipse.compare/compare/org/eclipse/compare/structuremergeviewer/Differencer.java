@@ -426,11 +426,11 @@ public class Differencer {
 		
 		if (is1 == null && is2 == null)	// no byte contents
 			return true;
-			
-		if (is1 == null || is2 == null)	// only one has contents
-			return false;
 		
 		try {
+			if (is1 == null || is2 == null)	// only one has contents
+				return false;
+			
 			while (true) {
 				int c1= is1.read();
 				int c2= is2.read();
@@ -442,13 +442,17 @@ public class Differencer {
 			}
 		} catch (IOException ex) {
 		} finally {
-			try {
-				is1.close();
-			} catch(IOException ex) {
+			if (is1 != null) {
+				try {
+					is1.close();
+				} catch(IOException ex) {
+				}
 			}
-			try {
-				is2.close();
-			} catch(IOException ex) {
+			if (is2 != null) {
+				try {
+					is2.close();
+				} catch(IOException ex) {
+				}
 			}
 		}
 		return false;
