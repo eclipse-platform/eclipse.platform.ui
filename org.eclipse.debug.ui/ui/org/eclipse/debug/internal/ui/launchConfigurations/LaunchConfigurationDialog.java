@@ -2002,9 +2002,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification that the 'Revert' button has been pressed
 	 */
 	protected void handleRevertPressed() {
-		ISelection selection = getTreeViewer().getSelection();		
-		getTreeViewer().setSelection(StructuredSelection.EMPTY);		
-		getTreeViewer().setSelection(selection);
+		setLaunchConfiguration(getLaunchConfiguration().getOriginal(), false);
 	}
 	
 	protected void saveConfig() {
