@@ -63,38 +63,50 @@ public class OpenWithActionGroup extends ActionGroup {
 	 */
 	private void fillOpenWithMenu(IMenuManager menu, String groupId, IStructuredSelection selection) {
 
-		// Only supported if exactly one file is selected.
-		if (selection == null || selection.size() != 1)
-			return;
-		Object element = selection.getFirstElement();
-		IResource resources[] = Utils.getResources(new Object[] {element});
-		IResource resource = null;		
-		if(resources.length == 0) {
-			return;
-		}
-		resource = resources[0];
-		
-		if(resource.getType() != IResource.FILE) return;
-		
-		menu.appendToGroup(groupId, openInCompareAction);
-		
-		if(!((resource.exists()))) {
-			return;
-		}
-		
-		if (openFileAction != null) {
-			openFileAction.selectionChanged(selection);
-			menu.appendToGroup(groupId, openFileAction);
-		}
-		
-		IWorkbenchSite ws = site.getWorkbenchSite();
-		if (ws != null) {
-			MenuManager submenu =
-				new MenuManager(Policy.bind("OpenWithActionGroup.0")); //$NON-NLS-1$
-			submenu.add(new OpenWithMenu(ws.getPage(), resource));
-			menu.appendToGroup(groupId, submenu);
-		}
-	}
+        // Only supported if at least one file is selected.
+        if (selection == null || selection.size() < 1)
+            return;
+        Object[] elements = selection.toArray();
+        IResource resources[] = Utils.getResources(elements);       
+        if(resources.length == 0) {
+            return;
+        }
+        
+        for (int i = 0; i < resources.length; i++) {
+            if (resources[i].getType() != IResource.FILE) {
+                // Only supported if all the items are files.
+                return;
+            }
+        }       
+        
+        if (resources.length == 1) {
+            // Only supported if exactly one file is selected.
+            menu.appendToGroup(groupId, openInCompareAction);
+        }
+        
+        for (int i = 0; i < resources.length; i++) {
+            if (!((resources[i].exists()))) {
+                // Only support non-compare actions if all files exist.
+                return;
+            }
+        }
+        
+        if (openFileAction != null) {
+            openFileAction.selectionChanged(selection);
+            menu.appendToGroup(groupId, openFileAction);
+        }
+        
+        if (resources.length == 1) {
+            // Only support the "Open With..." submenu if exactly one file is selected.
+            IWorkbenchSite ws = site.getWorkbenchSite();
+            if (ws != null) {
+                MenuManager submenu =
+                    new MenuManager(Policy.bind("OpenWithActionGroup.0")); //$NON-NLS-1$
+                submenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
+                menu.appendToGroup(groupId, submenu);
+            }
+        }
+    }
 
 	public void openInCompareEditor() {
 		openInCompareAction.run();		
