@@ -121,7 +121,7 @@ public class CurrentBrowser implements IBrowser {
 	}
 	/*
 	 * Checks wheter default adapter has changed.
-	 * If yes, sets the newBrowserAdapter field
+	 * If yes, sets the newBrowserAdapterId field
 	 */
 	private void checkDefaultAdapter() {
 		if (browserAdapterId
