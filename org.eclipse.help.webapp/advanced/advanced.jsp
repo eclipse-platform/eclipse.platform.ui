@@ -67,7 +67,7 @@ FORM {
 }
 
 #booksContainer {
-	background:Window;
+	background:<%=prefs.getViewBackground()%>;
 	border:1px solid ThreeDShadow;
 	margin:0px 10px;
 	overflow:auto;
