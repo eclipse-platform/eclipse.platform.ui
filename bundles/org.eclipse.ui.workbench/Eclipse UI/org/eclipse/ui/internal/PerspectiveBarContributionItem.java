@@ -45,7 +45,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
             if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
-                    .equals(propertyChangeEvent.getProperty())) {
+                    .equals(propertyChangeEvent.getProperty()) || IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR.equals(propertyChangeEvent.getProperty())) {
                 update();
                 IContributionManager parent = getParent();
                 if (parent != null) {
@@ -130,13 +130,16 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     public void update() {
         if (toolItem != null && !toolItem.isDisposed()) {
-            toolItem
-                    .setSelection(workbenchPage.getPerspective() == perspective);
+            toolItem.setSelection(workbenchPage.getPerspective() == perspective);
             if (apiPreferenceStore
-                    .getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR))
-                toolItem.setText(shortenText(perspective.getLabel(), toolItem));
-            else
-                toolItem.setText(""); //$NON-NLS-1$            
+                    .getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
+            	if (apiPreferenceStore.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR).equals(IWorkbenchPreferenceConstants.TOP_LEFT))
+                	toolItem.setText(perspective.getLabel());
+                else
+                	toolItem.setText(shortenText(perspective.getLabel(), toolItem));
+            } else {
+                toolItem.setText(""); //$NON-NLS-1$
+            }
         }
     }
 
