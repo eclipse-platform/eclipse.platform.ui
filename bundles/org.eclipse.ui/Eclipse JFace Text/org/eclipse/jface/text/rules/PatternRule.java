@@ -16,7 +16,7 @@ import org.eclipse.jface.util.Assert;
  * not specified, it can be either end of line, end or file, or both. Additionally,
  * the pattern can be constrained to begin in a certain column.
  */
-public class PatternRule implements IRule {
+public class PatternRule implements IPredicateRule {
 	
 	protected static final int UNDEFINED= -1;
 
@@ -79,34 +79,42 @@ public class PatternRule implements IRule {
 	 * @return the token resulting from this evaluation
 	 */
 	protected IToken doEvaluate(ICharacterScanner scanner) {
+		return doEvaluate(scanner, false);
+	}
+	
+	/**
+	 * Evaluates this rules without considering any column constraints.
+	 *
+	 * @param scanner the character scanner to be used
+	 * @return the token resulting from this evaluation
+	 */
+	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		
-		int c= scanner.read();
+		if (resume) {
+			
+			if (endSequenceDetected(scanner))
+				return fToken;
 		
-		if (c == fStartSequence[0]) {
-			if (sequenceDetected(scanner, fStartSequence, false)) {
-				if (endSequenceDetected(scanner))
-					return fToken;
+		} else {
+			
+			int c= scanner.read();
+			if (c == fStartSequence[0]) {
+				if (sequenceDetected(scanner, fStartSequence, false)) {
+					if (endSequenceDetected(scanner))
+						return fToken;
+				}
 			}
 		}
 		
 		scanner.unread();
 		return Token.UNDEFINED;
-	}
+	}	
 	
 	/*
 	 * @see IRule#evaluate
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
-		
-		if (fColumn == UNDEFINED)
-			return doEvaluate(scanner);
-		
-		int c= scanner.read();
-		scanner.unread();
-		if (c == fStartSequence[0])
-			return (fColumn == scanner.getColumn() ? doEvaluate(scanner) : Token.UNDEFINED);
-		else
-			return Token.UNDEFINED;
+		return evaluate(scanner, false);
 	}	
 	
 	/**
@@ -167,4 +175,27 @@ public class PatternRule implements IRule {
 		
 		return true;
 	}
+	
+	/*
+	 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
+	 */
+	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
+		if (fColumn == UNDEFINED)
+			return doEvaluate(scanner, resume);
+		
+		int c= scanner.read();
+		scanner.unread();
+		if (c == fStartSequence[0])
+			return (fColumn == scanner.getColumn() ? doEvaluate(scanner, resume) : Token.UNDEFINED);
+		else
+			return Token.UNDEFINED;	
+	}
+
+	/*
+	 * @see IPredicateRule#getSuccessToken()
+	 */
+	public IToken getSuccessToken() {
+		return fToken;
+	}
+
 }

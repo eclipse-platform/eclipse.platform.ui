@@ -432,7 +432,18 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				
 				} else {
 					
-					int idx= fListeners.indexOf(listener);
+					int idx= -1;
+					
+					// find index based on identity
+					int size= fListeners.size();
+					for (int i= 0; i < size; i++) {
+						if (listener == fListeners.get(i)) {
+							idx= i;
+							break;
+						}
+					}
+					
+					// move or add it
 					if (idx != index) {
 						
 						if (idx != -1)
@@ -444,7 +455,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 							fListeners.add(index, listener);
 					}
 					
-					if (fListeners.size() == 1)
+					if (size == 0)  // checking old size, i.e. current size == size + 1
 						install();
 				}
 			}
@@ -465,10 +476,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 			} else {
 				
-				fListeners.remove(listener);
-				if (fListeners.isEmpty())
-					uninstall();
-			
+				int size= fListeners.size();
+				for (int i= 0; i < size; i++) {
+					if (listener == fListeners.get(i)) {
+						fListeners.remove(i);
+						if (size == 1)  // checking old size, i.e. current size == size - 1
+							uninstall();
+						return;
+					}
+				}
 			}
 		}
 		
@@ -2348,7 +2364,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 			IDocument document= getDocument();
 			int startLine= document.getLineOfOffset(s.x);
-			int endLine= document.getLineOfOffset(s.x + s.y);
+			int endLine= document.getLineOfOffset(s.x + s.y -1);
 			return startLine != endLine;
 		
 		} catch (BadLocationException x) {

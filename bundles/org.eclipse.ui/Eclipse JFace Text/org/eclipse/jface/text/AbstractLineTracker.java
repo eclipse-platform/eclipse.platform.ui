@@ -487,10 +487,13 @@ public abstract class AbstractLineTracker implements ILineTracker {
 		
 		int lines= fLines.size();
 		
-		if (line < 0 || line >= lines)
+		if (line < 0 || line > lines)
 			throw new BadLocationException();
 			
 		if (lines == 0)
+			return null;
+			
+		if (line == lines)
 			return null;
 					
 		Line l= (Line) fLines.get(line);

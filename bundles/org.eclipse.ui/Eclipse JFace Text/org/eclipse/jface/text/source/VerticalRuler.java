@@ -220,6 +220,10 @@ public final class VerticalRuler implements IVerticalRuler {
 		if (fModel == null || fTextViewer == null)
 			return;
 
+		int topLeft= fTextViewer.getTopIndexStartOffset();
+		int bottomRight= fTextViewer.getBottomIndexEndOffset();
+		int viewPort= bottomRight - topLeft;
+		
 		IDocument doc= fTextViewer.getDocument();
 		StyledText styledText= fTextViewer.getTextWidget();
 		
@@ -238,7 +242,7 @@ public final class VerticalRuler implements IVerticalRuler {
 		} catch (BadLocationException x) {
 			return;
 		}
-		
+				
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int maxLayer= 1;	// loop at least once thru layers.
@@ -254,29 +258,27 @@ public final class VerticalRuler implements IVerticalRuler {
 					continue;
 				
 				Position position= fModel.getPosition(annotation);
-				
-				/*
-				 * 1GF5TZW: ITPJUI:WINNT - NPE discarding a package
-				 * As getAnnotationIterator() returns a robust iterator,
-				 * getPosition(annotation) might return null.
-				 */
 				if (position == null)
 					continue;
 					
-					
-				int offset= position.getOffset();
-				int length= position.getLength();
 				
-				if (!fTextViewer.overlapsWithVisibleRegion(offset, length))
+				if (!position.overlapsWith(topLeft, viewPort))
 					continue;
-									
+				
+													
 				try {
+					
+					int offset= position.getOffset();
+					int length= position.getLength();
+					
 					int startLine= doc.getLineOfOffset(offset);
 					if (startLine < topLine)
 						startLine= topLine;
 					startLine -= topLine;
 					
-					int endLine= doc.getLineOfOffset(offset + (length == 0 ? 0 : length - 1));
+					int endLine= startLine;
+					if (length > 0)
+						endLine= doc.getLineOfOffset(offset + length - 1);
 					if (endLine > bottomLine)
 						endLine= bottomLine;
 					endLine -= topLine;
@@ -289,9 +291,9 @@ public final class VerticalRuler implements IVerticalRuler {
 						lines= -lines;
 					r.height= (lines+1) * lineheight;
 					
-					if (r.y < d.y) // annotation within visible area
+					if (r.y < d.y)  // annotation within visible area
 						annotation.paint(gc, fCanvas, r);
-						
+					
 				} catch (BadLocationException e) {
 				}
 			}

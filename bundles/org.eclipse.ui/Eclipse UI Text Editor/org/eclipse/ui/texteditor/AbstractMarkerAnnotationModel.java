@@ -312,34 +312,40 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
 		if (annotations != null && annotations.size() > 0) {
 
-			List markers= new ArrayList();
+			List markerAnnotations= new ArrayList();
 			for (Iterator e= annotations.iterator(); e.hasNext();) {
 				Annotation a= (Annotation) e.next();
-				if (a instanceof MarkerAnnotation) {
-					MarkerAnnotation ma= (MarkerAnnotation) a;
-					markers.add(ma.getMarker());
-				}
+				if (a instanceof MarkerAnnotation)
+					markerAnnotations.add(a);
 
 				// remove annotations from annotation model
 				removeAnnotation(a, false);
 			}
 
-			// if model initiated also remove it from the marker manager
-			if (modelInitiated && markers.size() > 0) {
+			if (markerAnnotations.size() > 0) {
 				
-				listenToMarkerChanges(false);
-				try {
-					IMarker[] m= new IMarker[markers.size()];
-					markers.toArray(m);
-					deleteMarkers(m);
-				} catch (CoreException x) {
-					handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
+				if (modelInitiated) {
+					// if model initiated also remove it from the marker manager
+					
+					listenToMarkerChanges(false);
+					try {
+						
+						IMarker[] m= new IMarker[markerAnnotations.size()];
+						for (int i= 0; i < m.length; i++) {
+							MarkerAnnotation ma = (MarkerAnnotation) markerAnnotations.get(i);
+							m[i]= ma.getMarker();
+						}
+						deleteMarkers(m);
+						
+					} catch (CoreException x) {
+						handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
+					}
+					listenToMarkerChanges(true);
+				
+				} else {
+					// remember deleted annotations in order to remove their markers later on
+					fDeletedAnnotations.addAll(markerAnnotations);
 				}
-				listenToMarkerChanges(true);
-			
-			} else {
-				// remember deleted annotations in order to remove their markers later on
-				fDeletedAnnotations.addAll(annotations);
 			}
 
 			if (fireModelChanged)

@@ -5,7 +5,10 @@ package org.eclipse.ui.texteditor;
  * All Rights Reserved.
  */
  
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -15,9 +18,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.text.source.Annotation;
 
 
 /**
@@ -29,8 +31,9 @@ import org.eclipse.jface.text.source.Annotation;
  */
 public class DefaultRangeIndicator extends Annotation {
 
-	static ImageData fgData;
-	static RGB fgRGBs[]= new RGB[2];
+	private static PaletteData fgPaletteData;
+
+	private Image fImage;
 	
 	/**
 	 * Creates a new range indicator.
@@ -40,40 +43,84 @@ public class DefaultRangeIndicator extends Annotation {
 		setLayer(0);
 	}
 	
-	/**
-	 * Creates the pattern that fills the source line range.
-	 *
-	 * @param width the width of the pattern
-	 */
-	void createPattern(int width) {
-		fgData= new ImageData(width, 64, 1, new PaletteData(fgRGBs));
-		
-		for (int y= 0; y < fgData.height; y++)
-			for (int x= 0; x < width; x++)
-				if (x % 2 == y % 2)
-					fgData.setPixel(x, y, 1);
-	}
-	
 	/*
 	 * @see Annotation#paint
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
-		
-		Point d= canvas.getSize();
-		Display display= canvas.getDisplay();
-						
-		int x= 0;
-		int y= bounds.y+1;
-		int w= d.x;
+
+		Point canvasSize= canvas.getSize();
+
+		int x= 0;		
+		int y= bounds.y;
+		int w= canvasSize.x;
 		int h= bounds.height;
-		
 		int b= 1;
+
+		if (y + h > canvasSize.y)
+			h= canvasSize.y - y;
 		
-		if (fgData == null || w > fgData.width)
-			createPattern(w);
+		if (y < 0) {
+			h= h + y;
+			y= 0;				
+		}
 		
+		if (h <= 0)
+			return;
+
+		Image image = getImage(canvas);
+		gc.drawImage(image, 0, 0, w, h, x, y, w, h);
+		
+		gc.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		gc.fillRectangle(x, bounds.y, w, b);
+		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
+	}
+
+	private Image getImage(Control control) {
+		if (fImage == null) {
+				fImage= createImage(control.getDisplay(), control.getSize());
+
+				control.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						if (fImage != null && !fImage.isDisposed()) {
+							fImage.dispose();
+							fImage= null;
+						}
+					}
+				});
+		} else {
+			Rectangle imageRectangle= fImage.getBounds();
+			Point controlSize= control.getSize();
+			
+			if (imageRectangle.width < controlSize.x || imageRectangle.height < controlSize.y) {
+				fImage.dispose();
+				fImage= createImage(control.getDisplay(), controlSize);
+			}
+		}
+		
+		return fImage;
+	}
+	
+	private static Image createImage(Display display, Point size) {
+
+		int width= size.x;
+		int height= size.y;
+
+		if (fgPaletteData == null)
+			fgPaletteData= createPalette(display);
+		
+		ImageData imageData= new ImageData(width, height, 1, fgPaletteData);
+
+		for (int y= 0; y < height; y++)
+			for (int x= 0; x < width; x++)
+				imageData.setPixel(x, y, (x + y) % 2);
+
+		return new Image(display, imageData);
+	}
+
+	private static PaletteData createPalette(Display display) {
 		Color c1;
 		Color c2;
+
 		if (false) {
 			// range lighter
 			c1= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
@@ -84,22 +131,10 @@ public class DefaultRangeIndicator extends Annotation {
 			c2= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		}
 		
-		fgRGBs[0]= new RGB(c1.getRed(), c1.getGreen(), c1.getBlue());
-		fgRGBs[1]= new RGB(c2.getRed(), c2.getGreen(), c2.getBlue());
-		Image im= new Image(display, fgData);
-						
-		int end= y+h;
-		for (int yy= y; yy < end; yy+= fgData.height) {
-			int hh= fgData.height;
-			if (yy + hh > end)
-				hh= end - yy;
-			gc.drawImage(im, 0, 0, w, hh, x, yy, w, hh);
-		}
-		
-		im.dispose();
-			
-		gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION));
-		gc.fillRectangle(x, y, w, b);
-		gc.fillRectangle(x, end-b, w, b);
+		RGB rgbs[]= new RGB[] {
+			new RGB(c1.getRed(), c1.getGreen(), c1.getBlue()),
+			new RGB(c2.getRed(), c2.getGreen(), c2.getBlue())};
+
+		return new PaletteData(rgbs);
 	}
 }

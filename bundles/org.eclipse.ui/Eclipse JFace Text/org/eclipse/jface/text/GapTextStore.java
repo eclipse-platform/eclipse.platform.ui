@@ -47,13 +47,14 @@ public class GapTextStore implements ITextStore {
 	 * the addition of a specified number of characters without having to be shifted.
 	 * The <code>sizeHint</code> represents the range that will be filled afterwards.
 	 * If the gap is already at the right offset, it must only be
-	 * resized if it will be no longer between the low and high watermark.
+	 * resized if it will be no longer between the low and high watermark. However,
+	 * on delete (sizeHint &lt; 0) at the edges of the gap, the gap is only enlarged.
 	 *
 	 * @param offset the offset at which the change happens
 	 * @param sizeHint the number of character which will be inserted
 	 */
 	private void adjustGap(int offset, int sizeHint) {
-
+					
 		if (offset == fGapStart) {
 			int size= (fGapEnd - fGapStart) - sizeHint;
 			if (fLowWatermark <= size && size <= fHighWatermark)
@@ -174,24 +175,33 @@ public class GapTextStore implements ITextStore {
 	 */
 	public void replace(int offset, int length, String text) {
 		
-		if (text == null)
-			text= ""; //$NON-NLS-1$
-
+		int textLength= (text == null ? 0 : text.length());		
+		
+		// handle delete at the edges of the gap
+		if (textLength == 0) {
+			if (offset <= fGapStart && offset + length >= fGapStart && fGapStart > -1 && fGapEnd > -1) {
+				length -= fGapStart - offset;
+				fGapStart= offset;
+				fGapEnd += length;
+				return;
+			}
+		}
+		
 		// move gap
-		adjustGap(offset + length, text.length() - length);
+		adjustGap(offset + length, textLength - length);
 
 		// overwrite
-		int min= Math.min(text.length(), length);
+		int min= Math.min(textLength, length);
 		for (int i= offset, j= 0; i < offset + min; i++, j++)
 			fContent[i]= text.charAt(j);
 
-		if (length > text.length()) {
+		if (length > textLength) {
 			// enlarge the gap
-			fGapStart -= (length - text.length());
-		} else if (text.length() > length) {
+			fGapStart -= (length - textLength);
+		} else if (textLength > length) {
 			// shrink gap
-			fGapStart += (text.length() - length);
-			for (int i= length; i < text.length(); i++)
+			fGapStart += (textLength - length);
+			for (int i= length; i < textLength; i++)
 				fContent[offset + i]= text.charAt(i);
 		}	
 	}

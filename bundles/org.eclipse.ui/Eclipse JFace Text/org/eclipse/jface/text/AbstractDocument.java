@@ -757,7 +757,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		if (c == null)
 			throw new BadPositionCategoryException();
 			
-		c.remove(position);
+		// remove based on identity not equality
+		int size= c.size();
+		for (int i= 0; i < size; i++) {
+			if (position == c.get(i)) {
+				c.remove(i);
+				return;
+			}
+		}
 	}
 	
 	/*

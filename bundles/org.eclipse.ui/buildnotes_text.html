@@ -14,7 +14,44 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020418
+<p><br>Eclipse SDK Build 20020423
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+Viewport clipping in the vertical ruler</li>
+
+<li>
+Improved painting of range indicator</li>
+
+<li>
+Fixed problem in position handling in AbstractDocument</li>
+
+<li>
+Improved handling of delete in GapTextStore</li>
+
+<li>
+Changes in partition parsing: Introduced the concept of a partition token
+scanner which can resume scanning in the middle of&nbsp; token range.&nbsp;
+The basic assumption is that partition delimiters don't contain line delimiters.
+Partition token scanners can be built with rules implementing IPredicateRule.
+A predicate rule can start evaluation between their start and end sequence.
+PatternRule has been adapted.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+
+<p><br>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 20020418
 <h2>
 Breaking API changes</h2>
 
@@ -41,13 +78,7 @@ Problem reports closed</h2>
 
 <p><br>
 <hr WIDTH="100%">
-<h1>
-Eclipse Platform Build Notes</h1>
-
-<h1>
-Text Editor Support (including JFace Text)</h1>
-
-<p><br>Eclipse SDK Build 20020411
+<p>Eclipse SDK Build 20020411
 <h2>
 Breaking API changes</h2>
 

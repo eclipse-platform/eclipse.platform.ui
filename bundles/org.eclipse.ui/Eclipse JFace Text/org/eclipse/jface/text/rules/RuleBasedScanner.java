@@ -21,7 +21,7 @@ import org.eclipse.jface.util.Assert;
  *
  * @see IRule
  */
-public class RuleBasedScanner implements ICharacterScanner {
+public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	
 	protected IRule[] fRules;
 	protected IToken fDefaultReturnToken;
@@ -63,13 +63,9 @@ public class RuleBasedScanner implements ICharacterScanner {
 		Assert.isNotNull(defaultReturnToken.getData());
 		fDefaultReturnToken= defaultReturnToken;
 	}
-		
-	/**
-	 * Configures the scanner by providing access to the document range over which to scan.
-	 *
-	 * @param document the document to scan
-	 * @paran offset the offset of the document range to scan
-	 * @param length the length of the document range to scan
+	
+	/*
+	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
 	public void setRange(IDocument document, int offset, int length) {
 		
@@ -86,33 +82,25 @@ public class RuleBasedScanner implements ICharacterScanner {
 			fDefaultReturnToken= new Token(null);
 	}
 	
-	/**
-	 * Returns the offset of the last token read by this scanner.
-	 *
-	 * @return the offset of the last token read by this scanner
+	/*
+	 * @see ITokenScanner#getTokenOffset()
 	 */
 	public int getTokenOffset() {
 		return fTokenOffset;
 	}
 	
-	/**
-	 * Returns the length of the last token read by this scanner.
-	 *
-	 * @return the length of the last token read by this scanner
+	/*
+	 * @see ITokenScanner#getTokenLength()
 	 */
 	public int getTokenLength() {
-		/*
-		 * 1GEUXEA: ITPUI:WIN2000 - IllegalArgumentException: Manifest Editor
-		 * Ensure that token length never extends the range to be scanned.
-		 * return fOffset - fTokenOffset;
-		 */
 		if (fOffset < fRangeEnd)
-			return fOffset - fTokenOffset;
-		return fRangeEnd - fTokenOffset;
+			return fOffset - getTokenOffset();
+		return fRangeEnd - getTokenOffset();
 	}
 	
-	/**
-	 * Returns the current column of the scanner.
+
+	/*
+	 * @see ICharacterScanner#getColumn()
 	 */
 	public int getColumn() {
 		if (fColumn == UNDEFINED) {
@@ -141,14 +129,12 @@ public class RuleBasedScanner implements ICharacterScanner {
 	 * 
 	 * @return the scanner's default return token
 	 */
-	public IToken getDefaultReturnToken() {
+	private IToken getDefaultReturnToken() {
 		return fDefaultReturnToken;
 	}
 	
-	/**
-	 * Returns the next token in the document.
-	 *
-	 * @return the next token in the document
+	/*
+	 * @see ITokenScanner#nextToken()
 	 */
 	public IToken nextToken() {
 		
