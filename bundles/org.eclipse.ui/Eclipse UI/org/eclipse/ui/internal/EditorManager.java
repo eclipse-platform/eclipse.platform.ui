@@ -672,7 +672,7 @@ public boolean saveAll(boolean confirm, boolean closing) {
 		input.add(dirtyEditors.iterator());
 
 		ListSelectionDialog dlg =
-			new YesNoCancelListSelectionDialog(
+			new ListSelectionDialog(
 				window.getShell(),
 				input,
 				new WorkbenchContentProvider(),
@@ -686,10 +686,6 @@ public boolean saveAll(boolean confirm, boolean closing) {
 		//Just return false to prevent the operation continuing
 		if (result == IDialogConstants.CANCEL_ID)
 			return false;
-
-		//Just return true but doing nothing if they chose not to save
-		if (result == IDialogConstants.NO_ID)
-			return true;
 
 		dirtyEditors = Arrays.asList(dlg.getResult());
 		if (dirtyEditors == null)
