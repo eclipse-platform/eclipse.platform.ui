@@ -41,6 +41,7 @@ if (data.isMozilla()){
 
 /* tabs at the bottom */
 .tab {
+	font-size:5px;<%-- needed to verticaly center icon image --%>
 	margin:0px;
 	padding:0px;
 	border-top:1px solid ThreeDShadow;
@@ -55,6 +56,7 @@ if (!data.isMozilla()){
 }
 
 .pressed {
+	font-size:5px;<%-- needed to verticaly center icon image --%>
 	margin:0px;
 	padding:0px;
 	cursor:default;
