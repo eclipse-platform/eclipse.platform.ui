@@ -94,7 +94,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		layout.marginHeight = 5;
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
 		intro.setText(Policy.bind("ExtMethodPreferencePage.2")); //$NON-NLS-1$
@@ -115,7 +115,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		layout.marginHeight = 5;
 		layout.numColumns = 3;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
 		intro.setText(Policy.bind("ExtMethodPreferencePage_message")); //$NON-NLS-1$
