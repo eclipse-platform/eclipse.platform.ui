@@ -19,11 +19,9 @@ public class TestLocalSystemInfo extends UpdateManagerTestCase {
 	}
 
 	public void testNative() throws Exception {
-		// space
-		LocalSystemInfo system = new LocalSystemInfo();
 	
 		// mount point
-       IVolume[] a = system.getVolumes();
+       IVolume[] a = LocalSystemInfo.getVolumes();
         if (a==null) throw new Exception("cannot find native library");
 		System.out.println("Found "+a.length+" mount points.");
 		for (int i =0; i<a.length;i++){
@@ -33,7 +31,7 @@ public class TestLocalSystemInfo extends UpdateManagerTestCase {
 			String label = a[i].getLabel();
 			if (label==null) label="NO LABEL";
 			int type = a[i].getType();
-			long size = system.getFreeSpace(root);
+			long size = LocalSystemInfo.getFreeSpace(root);
 			System.out.println(" ->:"+label+":"+getType(type)+":"+getSize(size));
 		}
 	}

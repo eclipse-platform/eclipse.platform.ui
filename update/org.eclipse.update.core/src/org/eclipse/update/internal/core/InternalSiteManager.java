@@ -341,7 +341,7 @@ public class InternalSiteManager {
 
 		// check if new features have been found
 		if (localSite instanceof SiteLocal) {
-			return ((SiteLocal) localSite).newFeaturesFound;
+			return SiteLocal.newFeaturesFound;
 		}
 		return false;
 	}

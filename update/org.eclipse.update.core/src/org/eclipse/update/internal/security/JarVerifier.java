@@ -119,10 +119,12 @@ public class JarVerifier extends Verifier {
 				if (!jarFile.exists()) throw new IOException();
 				JarFile jar = new JarFile(jarFile);
 				entries = jar.size();
-				try {
-					jar.close();
-				} catch (IOException ex) {
-					// unchecked
+				if (jar !=null){
+					try {
+						jar.close();
+					} catch (IOException ex) {
+						// unchecked
+					}
 				}
 				jarFileName = jarFile.getName();
 			} catch (ZipException e){
@@ -182,7 +184,8 @@ public class JarVerifier extends Verifier {
 				while ((in.read(buffer, 0, buffer.length)) != -1) {
 					// Security error thrown if tempered
 				}
-				in.close();
+				if (in!=null)
+					in.close();
 			}
 		} catch (IOException e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);

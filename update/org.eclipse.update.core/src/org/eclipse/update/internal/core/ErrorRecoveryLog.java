@@ -196,7 +196,7 @@ public class ErrorRecoveryLog {
 				out.write(END_OF_FILE);
 				out.flush();
 				out.close();
-			} catch (Exception e) { //eat the exception
+			} catch (IOException e) { //eat the exception
 			} finally {
 				out = null;
 				open=false;

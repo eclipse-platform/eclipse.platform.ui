@@ -154,7 +154,11 @@ public class KeyStores {
 			// only log, the keystore may not exist
 			log(e);	
 		} finally {
-			try { in.close();} catch (Exception e){}
+			if (in!=null){
+				try {
+					in.close();
+				} catch (IOException e){}
+			}
 		}
 		return null;
 	}

@@ -109,10 +109,12 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath), e);
 			//$NON-NLS-1$
 		} finally {
-			try {
-				// close stream
-				inStream.close();
-			} catch (Exception e) {
+			if (inStream != null) {
+				try {
+					// close stream
+					inStream.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 

@@ -290,7 +290,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	*/
 	private Feature createPackagedFeature(URL url, ISite site)
 		throws CoreException {
-		String packagedFeatureType = site.DEFAULT_PACKAGED_FEATURE_TYPE;
+		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
 		Feature result = null;
 		if (packagedFeatureType != null) {
 			IFeatureFactory factory =

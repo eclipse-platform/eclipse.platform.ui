@@ -3,6 +3,7 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.io.*;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -60,8 +61,9 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			//$NON-NLS-1$
 		} finally {
 			try {
-				featureStream.close();
-			} catch (Exception e) {
+				if (featureStream!=null)
+					featureStream.close();
+			} catch (IOException e) {
 			}
 		}
 		return feature;

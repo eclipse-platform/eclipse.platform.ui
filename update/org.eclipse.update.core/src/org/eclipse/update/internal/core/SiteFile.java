@@ -132,12 +132,12 @@ public class SiteFile extends Site {
 		try {
 
 			// start log
-			recoveryLog.open(recoveryLog.START_REMOVE_LOG);
+			recoveryLog.open(ErrorRecoveryLog.START_REMOVE_LOG);
 
 			aboutToRemove(feature);
 
 			// log files have been downloaded
-			recoveryLog.append(recoveryLog.END_ABOUT_REMOVE);
+			recoveryLog.append(ErrorRecoveryLog.END_ABOUT_REMOVE);
 
 			handler.uninstallInitiated();
 
@@ -204,10 +204,10 @@ public class SiteFile extends Site {
 			try {
 				if (success) {
 					// close the log
-					recoveryLog.close(recoveryLog.END_REMOVE_LOG);
+					recoveryLog.close(ErrorRecoveryLog.END_REMOVE_LOG);
 					recoveryLog.delete();
 				} else {
-					recoveryLog.close(recoveryLog.END_REMOVE_LOG);
+					recoveryLog.close(ErrorRecoveryLog.END_REMOVE_LOG);
 				}
 				handler.uninstallCompleted(success);
 			} catch (Throwable t) {

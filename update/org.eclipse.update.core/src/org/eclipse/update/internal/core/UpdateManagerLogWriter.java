@@ -206,7 +206,7 @@ public class UpdateManagerLogWriter {
 					old.close();
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			//we've shutdown the log, so not much else we can do!
 			e.printStackTrace();
 		}

@@ -19,7 +19,7 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	/*
 	 * Constructor 
 	 */
-	public SiteFileNonPluginContentConsumer(String featurePath){
+	public SiteFileNonPluginContentConsumer(String featurePath) {
 		this.path = featurePath;
 	}
 
@@ -27,41 +27,43 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
-		
-		if (closed){
-			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFileNonPluginContentConsumer",new Exception());						
+
+		if (closed) {
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFileNonPluginContentConsumer", new Exception());
 			return;
-		}	
-		
+		}
+
 		InputStream inStream = null;
 		String featurePath = path;
 		String contentKey = contentReference.getIdentifier();
-		featurePath += contentKey ;
+		featurePath += contentKey;
 		try {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
-			UpdateManagerUtils.checkPermissions(contentReference,featurePath); // 20305
+			UpdateManagerUtils.checkPermissions(contentReference, featurePath); // 20305
 		} catch (IOException e) {
 			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath), e); //$NON-NLS-1$
 		} finally {
-			try {
-				// close stream
-				inStream.close();
-			} catch (Exception e) {}
+			if (inStream != null) {
+				try {
+					// close stream
+					inStream.close();
+				} catch (IOException e) {
+				}
+			}
 		}
-		
+
 	}
 
 	/*
 	 * @see ISiteContentConsumer#close()
 	 */
 	public void close() {
-		if (closed){
-			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileNonPluginContentConsumer",new Exception());						
+		if (closed) {
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileNonPluginContentConsumer", new Exception());
 			return;
-		}	
-		closed = true;		
+		}
+		closed = true;
 	}
-	
-		
+
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 
-import org.eclipse.core.runtime.CoreException; 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModelFactory;
@@ -42,7 +42,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 
 			URL resolvedURL = URLEncoder.encode(url);
 			Response response = UpdateManagerPlugin.getPlugin().get(resolvedURL);
-			UpdateManagerUtils.checkConnectionResult(response,resolvedURL);
+			UpdateManagerUtils.checkConnectionResult(response, resolvedURL);
 			siteStream = response.getInputStream();
 
 			SiteModelFactory factory = (SiteModelFactory) this;
@@ -59,9 +59,11 @@ public class SiteURLFactory extends BaseSiteFactory {
 			throw Utilities.newCoreException(Policy.bind("SiteURLFactory.UnableToAccessSiteStream", url == null ? "" : url.toExternalForm()), ISite.SITE_ACCESS_EXCEPTION, e);
 			//$NON-NLS-1$
 		} finally {
-			try {
-				siteStream.close();
-			} catch (Exception e) {
+			if (siteStream != null) {
+				try {
+					siteStream.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 		return site;

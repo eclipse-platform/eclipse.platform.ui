@@ -275,7 +275,7 @@ public class Feature extends FeatureModel implements IFeature {
 			SubProgressMonitor subMonitor = null;
 
 			// start log
-			recoveryLog.open(recoveryLog.START_INSTALL_LOG);
+			recoveryLog.open(ErrorRecoveryLog.START_INSTALL_LOG);
 
 			// Start the installation tasks			
 			handler.installInitiated();
@@ -397,7 +397,7 @@ public class Feature extends FeatureModel implements IFeature {
 							}
 						}
 						// close the log
-						recoveryLog.close(recoveryLog.END_INSTALL_LOG);
+						recoveryLog.close(ErrorRecoveryLog.END_INSTALL_LOG);
 					} else {
 						consumer.abort();
 					}
@@ -405,7 +405,7 @@ public class Feature extends FeatureModel implements IFeature {
 				handler.installCompleted(success);
 				// if abort is done, no need for the log to stay
 				recoveryLog.delete();
-			} catch (Exception e) {
+			} catch (CoreException e) {
 				newException = e;
 			}
 

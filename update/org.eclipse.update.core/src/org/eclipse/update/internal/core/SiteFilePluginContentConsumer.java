@@ -32,9 +32,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	/*
 	 * Constructor
 	 */
-	public SiteFilePluginContentConsumer(
-		IPluginEntry pluginEntry,
-		ISite site) {
+	public SiteFilePluginContentConsumer(IPluginEntry pluginEntry, ISite site) {
 		this.pluginEntry = pluginEntry;
 		this.site = site;
 		installedFiles = new ArrayList();
@@ -43,79 +41,56 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	/*
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
-	public void store(
-		ContentReference contentReference,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
 		InputStream inStream = null;
 		String pluginPath = null;
 
 		if (closed) {
-			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFilePluginContentConsumer",new Exception());
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
 		try {
-			URL newURL =
-				new URL(
-					site.getURL(),
-					Site.DEFAULT_PLUGIN_PATH
-						+ pluginEntry.getVersionedIdentifier().toString());
+			URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
 			pluginPath = newURL.getFile();
 			String contentKey = contentReference.getIdentifier();
 			inStream = contentReference.getInputStream();
-			pluginPath += pluginPath.endsWith(File.separator)
-				? contentKey
-				: File.separator + contentKey;
+			pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 
 			// error recovery
 			if (pluginPath.endsWith("plugin.xml")) {
 				oldPath = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(oldPath);
 				if (localFile.exists()) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"UpdateManagerUtils.FileAlreadyExists",
-							new Object[] { localFile }),
-						null);
+					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
 				}
-				pluginPath =
-					ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
+				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				newPath = pluginPath;
-				ErrorRecoveryLog.getLog().appendPath(
-					ErrorRecoveryLog.PLUGIN_ENTRY,
-					pluginPath);
+				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.PLUGIN_ENTRY, pluginPath);
 			}
 			if (pluginPath.endsWith("fragment.xml")) {
 				oldPath = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(oldPath);
 				if (localFile.exists()) {
-					throw Utilities.newCoreException(
-						Policy.bind(
-							"UpdateManagerUtils.FileAlreadyExists",
-							new Object[] { localFile }),
-						null);
+					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
 				}
-				pluginPath =
-					ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
+				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				newPath = pluginPath;
-				ErrorRecoveryLog.getLog().appendPath(
-					ErrorRecoveryLog.FRAGMENT_ENTRY,
-					pluginPath);
+				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.FRAGMENT_ENTRY, pluginPath);
 			}
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
-			UpdateManagerUtils.checkPermissions(contentReference,pluginPath); // 20305
+			UpdateManagerUtils.checkPermissions(contentReference, pluginPath); // 20305
 			installedFiles.add(pluginPath);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(
-				Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath),
-				e);
+			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e);
 			//$NON-NLS-1$
 		} finally {
-			try {
-				// close stream
-				inStream.close();
-			} catch (Exception e) {
+			if (inStream != null) {
+				try {
+					// close stream
+					inStream.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 	}
@@ -126,15 +101,13 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void close() throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn("Attempt to close a closed SiteFilePluginContentConsumer",new Exception());
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
 		if (newPath != null) {
 			// rename file 
-			ErrorRecoveryLog.getLog().appendPath(
-				ErrorRecoveryLog.RENAME_ENTRY,
-				newPath);
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);
 			File fileToRename = new File(newPath);
 			boolean sucess = false;
 			if (fileToRename.exists()) {
@@ -142,11 +115,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg =
-					Policy.bind(
-						"ContentConsumer.UnableToRename",
-						newPath,
-						oldPath);
+				String msg = Policy.bind("ContentConsumer.UnableToRename", newPath, oldPath);
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -162,7 +131,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFilePluginContentConsumer",new Exception());
+			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception());
 			return;
 		}
 
@@ -170,9 +139,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 		// delete plugin.xml first
 		if (oldPath != null) {
-			ErrorRecoveryLog.getLog().appendPath(
-				ErrorRecoveryLog.DELETE_ENTRY,
-				oldPath);
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.DELETE_ENTRY, oldPath);
 			File fileToRemove = new File(oldPath);
 
 			if (fileToRemove.exists()) {
@@ -180,9 +147,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			}
 		}
 
-		if(!sucess){
-			String msg = Policy.bind("Unable to delete",oldPath);
-			UpdateManagerPlugin.log(msg,null);
+		if (!sucess) {
+			String msg = Policy.bind("Unable to delete", oldPath);
+			UpdateManagerPlugin.log(msg, null);
 		} else {
 			// remove the plugin files;
 			Iterator iter = installedFiles.iterator();
@@ -195,14 +162,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 			// remove the plugin directory if empty
 			try {
-				URL newURL =
-					new URL(
-						site.getURL(),
-						Site.DEFAULT_PLUGIN_PATH
-							+ pluginEntry.getVersionedIdentifier().toString());
+				URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
 				String pluginPath = newURL.getFile();
-				UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(
-					new File(pluginPath));
+				UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(new File(pluginPath));
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(e.getMessage(), e);
 			}

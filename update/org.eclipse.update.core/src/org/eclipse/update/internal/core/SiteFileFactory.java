@@ -131,7 +131,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			try {
 				if (siteStream != null)
 					siteStream.close();
-			} catch (Exception e) {
+			} catch (IOException e) {
 			}
 		}
 		return site;

@@ -55,9 +55,7 @@ public class Writer {
 	 * 
 	 */
 	 public void close(){
-	 	try{
 	 		w.close();
-	 	} catch (Exception e){}
 	 }
 
 	/*
