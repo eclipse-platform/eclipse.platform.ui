@@ -13,6 +13,7 @@ package org.eclipse.team.core.subscribers;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
@@ -148,20 +149,47 @@ public class ActiveChangeSet extends ChangeSet {
 	            while (tokenizer.hasMoreTokens()) {
 	                String next = tokenizer.nextToken();
 	                if (next.trim().length() > 0) {
-	                    IResource resource = root.findMember(next);
-	                    if (resource != null) {
-	                        try {
-	                            addResource(resource);
-	                        } catch (TeamException e) {
-	                            TeamPlugin.log(e);
-	                        }
-	                    }
+	                    IResource resource = getResource(root, next);
+	                    try {
+	                        // Only include the resource if it is out-of-sync
+                            if (resource != null && manager.getSubscriber().getSyncInfo(resource) != null) {
+                                try {
+                                    addResource(resource);
+                                } catch (TeamException e) {
+                                    TeamPlugin.log(e);
+                                }
+                            }
+                        } catch (TeamException e) {
+                            // Log and continue
+                            TeamPlugin.log(e);
+                        }
 	                }
 	            }
             } finally {
                 syncInfoSet.endInput(null);
             }
         }
+    }
+
+    private IResource getResource(IWorkspaceRoot root, String next) {
+        IResource resource = root.findMember(next);
+        if (resource == null) {
+            // May be an outgoing deletion
+            Path path = new Path(next);
+            if (next.charAt(next.length()-1) == Path.SEPARATOR) {
+                if (path.segmentCount() == 1) {
+                    // resource is a project
+                    resource = root.getProject(path.lastSegment());
+                } else {
+                    // resource is a folder
+                    resource = root.getFolder(path);
+                }
+            } else {
+                // resource is a file
+                resource = root.getFile(path);
+            }
+        }
+        return resource;
     }
 
     /**
