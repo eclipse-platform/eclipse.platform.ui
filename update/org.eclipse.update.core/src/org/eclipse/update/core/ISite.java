@@ -17,4 +17,6 @@ public interface ISite extends IPluginContainer {
 	void addSiteChangedListener(ISiteChangedListener listener);
 	void removeSiteChangedListener(ISiteChangedListener listener);
 	URL getURL();
+	URL getInfoURL();
+	ICategory[] getCategories();
 }

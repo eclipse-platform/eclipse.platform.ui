@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site name="Real Name of the Site">
+  <handler name="Name of Site Handler">id="id.of.the.class.to.handle.the.site"</handler>
+  <feature name="Name of feature">id="id.of.the.feature"</feature>
+  <feature name="Another Name of feature">id="id2.of.the.feature"</feature>
+</site>

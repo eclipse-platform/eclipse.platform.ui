@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.eclipse.update.internal.core.DefaultFeatureParser;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an I Site
@@ -16,18 +17,21 @@ import java.util.List;
 
 
 public abstract class AbstractFeature implements IFeature {
-
-
-	private VersionedIdentifier versionIdentifier;
+
+private VersionedIdentifier versionIdentifier;
 	private ISite site;
 	private String label;
-	private URL updateURL;
+	private URL url;
+	private IInfo updateInfo;
 	private URL infoURL;
-	private URL[] discoveryURLs;	
+	private List discoveryInfos;	
 	private String provider;
-	private String description;
+	private IInfo description;
+	private IInfo copyright;
+	private IInfo license;
 	private String[] contentReferences;
 	private List pluginEntries;
+	private boolean isInitialized = false;
 	
 	
 	/**
@@ -36,12 +40,16 @@ public abstract class AbstractFeature implements IFeature {
 	public AbstractFeature(IFeature sourceFeature, ISite targetSite){
 		this(sourceFeature.getIdentifier(),targetSite);
 		this.label 			= sourceFeature.getLabel();
-		this.updateURL 		= sourceFeature.getUpdateURL();
+		this.url			= sourceFeature.getURL();
+		this.updateInfo 	= sourceFeature.getUpdateInfo();
 		this.infoURL		= sourceFeature.getInfoURL();
-		this.discoveryURLs	= sourceFeature.getDiscoveryURLs();
+		this.setDiscoveryInfos(sourceFeature.getDiscoveryInfos());
 		this.provider 		= sourceFeature.getProvider();
 		this.description 	= sourceFeature.getDescription();
+		this.copyright      = sourceFeature.getCopyright();
+		this.license		= sourceFeature.getLicense();
 		this.pluginEntries  = Arrays.asList(sourceFeature.getPluginEntries());
+		this.isInitialized 	= true;
 	}
 	
 	/**
@@ -63,6 +71,7 @@ public abstract class AbstractFeature implements IFeature {
 	 * @see IFeature#getSite()
 	 */
 	public ISite getSite() {
+		if (!isInitialized)init();
 		return site;
 	}
 
@@ -70,43 +79,89 @@ public abstract class AbstractFeature implements IFeature {
 	 * @see IFeature#getLabel()
 	 */
 	public String getLabel() {
+		if (!isInitialized)init();
 		return label;
+	}
+	
+	/**
+	 * @see IFeature#getURL()
+	 * Do not initialize. Initialization will not populate the url.
+	 * It has to be set at creation time or using the set method 
+	 * Usually done from teh site.
+	 */
+	public URL getURL() {
+		return url;
+	}
+	
+	/**
+	 * Sets the infoURL
+	 * @param infoURL The infoURL to set
+	 */
+	public void setInfoURL(URL infoURL) {
+		this.infoURL = infoURL;
 	}
 
 	/**
-	 * @see IFeature#getUpdateURL()
+	 * @see IFeature#getUpdateInfo()
 	 */
-	public URL getUpdateURL() {
-		return updateURL;
+	public IInfo getUpdateInfo() {
+		if (!isInitialized)init();		
+		return updateInfo;
 	}
 
 	/**
 	 * @see IFeature#getInfoURL()
 	 */
 	public URL getInfoURL() {
+		if (!isInitialized)init();		
 		return infoURL;
 	}
 
 	/**
-	 * @see IFeature#getDiscoveryURLs()
+	 * @see IFeature#getDiscoveryInfos()
 	 */
-	public URL[] getDiscoveryURLs() {
-		return discoveryURLs;
+	public IInfo[] getDiscoveryInfos() {
+		if (!isInitialized)init();		
+		
+		IInfo[] result = null;
+		// FIXME:
+		if (!discoveryInfos.isEmpty()){
+			result = (IInfo[])discoveryInfos.toArray(new IInfo[discoveryInfos.size()]);
+		}
+		return result;
 	}
 
 	/**
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
+		if (!isInitialized)init();		
 		return provider;
 	}
 
 	/**
 	 * @see IFeature#getDescription()
 	 */
-	public String getDescription() {
+	public IInfo getDescription() {
+		if (!isInitialized)init();		
 		return description;
 	}
+	
+	/**
+	 * @see IFeature#getCopyright()
+	 */
+	public IInfo getCopyright() {
+		if (!isInitialized)init();		
+		return copyright;
+	}
+	
+	/**
+	 * @see IFeature#getLicense()
+	 */
+	public IInfo getLicense() {
+		if (!isInitialized)init();		
+		return license;
+	}		
 
 	/**
 	 * Sets the site
@@ -123,30 +178,47 @@ public abstract class AbstractFeature implements IFeature {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
+	
 	/**
-	 * Sets the updateURL
-	 * @param updateURL The updateURL to set
+	 * Sets the url
+	 * @param url The url to set
 	 */
-	public void setUpdateURL(URL updateURL) {
-		this.updateURL = updateURL;
+	public void setURL(URL url) {
+		this.url = url;
 	}
 
 	/**
-	 * Sets the infoURL
-	 * @param infoURL The infoURL to set
+	 * Sets the updateInfo
+	 * @param updateInfo The updateInfo to set
 	 */
-	public void setInfoURL(URL infoURL) {
-		this.infoURL = infoURL;
+	public void setUpdateInfo(IInfo updateInfo) {
+		this.updateInfo = updateInfo;
 	}
 
+	
+
 	/**
-	 * Sets the discoveryURLs
-	 * @param discoveryURLs The discoveryURLs to set
+	 * Sets the discoveryInfos
+	 * @param discoveryInfos The discoveryInfos to set
 	 */
-	public void setDiscoveryURLs(URL[] discoveryURLs) {
-		this.discoveryURLs = discoveryURLs;
+	public void setDiscoveryInfos(IInfo[] discoveryInfos) {
+		this.discoveryInfos = (new ArrayList());
+		for (int i=0; i<discoveryInfos.length; i++){
+			this.discoveryInfos.add(discoveryInfos[i]);
+		}
 	}
+	
+	
+	
+	/**
+	 * Adds a discoveryInfo
+	 * @param discoveryInfo The discoveryInfo to add
+	 */
+	public void addDiscoveryInfo(IInfo discoveryInfo) {
+		if (discoveryInfos == null) discoveryInfos = new ArrayList(0);
+		discoveryInfos.add(discoveryInfo);
+	}
+	
 
 	/**
 	 * Sets the provider
@@ -160,8 +232,24 @@ public abstract class AbstractFeature implements IFeature {
 	 * Sets the description
 	 * @param description The description to set
 	 */
-	public void setDescription(String description) {
+	public void setDescription(IInfo description) {
 		this.description = description;
+	}
+	
+	/**
+	 * Sets the copyright
+	 * @param copyright The copyright to set
+	 */
+	public void setCopyright(IInfo copyright) {
+		this.copyright = copyright;
+	}
+	
+	/**
+	 * Sets the license
+	 * @param license The license to set
+	 */
+	public void setLicense(IInfo license) {
+		this.license = license;
 	}
 
 	/**
@@ -262,6 +350,25 @@ public abstract class AbstractFeature implements IFeature {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/** 
+	 * initialize teh feature by reading the feature.xml if it exists
+	 */
+	private void init(){
+		//TODO:
+		if (url!=null){ 
+			try {
+			DefaultFeatureParser parser = new DefaultFeatureParser(getFeatureInputStream(),this);
+			} catch (IOException e){
+				//FIXME:
+				e.printStackTrace();
+			} catch (org.xml.sax.SAXException e){
+				//FIXME:
+				e.printStackTrace();
+			}
+		}
+	} 
 /**
  * This method also closes both streams.
  * Taken from FileSystemStore
@@ -311,12 +418,18 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()
+	 * Does not return null
 	 */
-	public IPluginEntry[] getPluginEntries() {
-		
-		//FIXME: not pretty, see setter
-		if (pluginEntries==null) return null;
-		return (IPluginEntry[])(pluginEntries.toArray(new IPluginEntry[pluginEntries.size()]));
+	public IPluginEntry[] getPluginEntries() {	
+		IPluginEntry[] result = null;
+		//FIXME: 
+		// especially teh ' does nto return null'
+		if (!pluginEntries.isEmpty()) {
+			result = (IPluginEntry[])(pluginEntries.toArray(new IPluginEntry[pluginEntries.size()]));
+		} else {
+			result = new IPluginEntry[0];
+		}
+		return result;
 	}
 
 
@@ -368,7 +481,50 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 	/**
 	 * 
 	 */
+	protected abstract InputStream getFeatureInputStream() throws IOException ; 
+	
+	/**
+	 * 
+	 */
 	protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
 
+	
+
+	
+	/**
+	 * Sets the updateURL
+	 * @param updateURL The updateURL to set
+	 * @deprecated use setUpdateInfo
+	 */
+	public void setUpdateURL(URL updateURL) {
+		setUpdateInfo(new org.eclipse.update.internal.core.Info(updateURL));
+	}
+	
+	/**
+	 * @deprecated use getUpdateInfo().getURL()
+	 */
+	public URL getUpdateURL() {
+		return getUpdateInfo().getURL();
+	}
+	
+	/**
+	 * @deprecated use getDiscoveryInfos and obtain the URL for each
+	 */
+	public URL[] getDiscoveryURLs() {
+		return new URL[0];
+	}
+	
+	/**
+	 * Sets the discoveryURLs
+	 * @param discoveryURLs The discoveryURLs to set
+	 * @deprecated use setDiscoveryInfos
+	 */
+	public void setDiscoveryURLs(URL[] discoveryURLs) {
+		//
+	}
+	
+	
+	
+	
 }
 

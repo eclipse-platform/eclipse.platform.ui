@@ -14,11 +14,14 @@ public interface IFeature extends IPluginContainer {
 	ISite getSite();
 	
 	String getLabel();
-	URL getUpdateURL();
+	URL getURL();
+	IInfo getUpdateInfo();
 	URL getInfoURL();
-	URL [] getDiscoveryURLs();
+	IInfo [] getDiscoveryInfos();
 	String getProvider();
-	String getDescription();
+	IInfo getDescription();
+	IInfo getCopyright();
+	IInfo getLicense();
 	
 	boolean isExecutable();
 	boolean isInstallable();

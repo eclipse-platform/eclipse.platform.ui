@@ -1,9 +1,9 @@
 package org.eclipse.update.core;
-
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
+
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,40 +12,45 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.internal.core.DefaultSiteParser;
-
-
+
+
 public abstract class AbstractSite implements ISite {
-
+
 	private static final String SITE_XML= "site.xml";
 	private boolean isManageable = false;
 	private DefaultSiteParser parser;
 	
 	/**
-	 * teh tool will create the directories on the file 
+	 * the tool will create the directories on the file 
 	 * system if needed.
 	 */
 	public static boolean CREATE_PATH = true;
-
+
 	private ListenersList listeners = new ListenersList();
 	private URL siteURL;
+	private URL infoURL;
 	private List features;
-
+	private List categories;
+	private List archives;
+
 	/**
 	 * Constructor for AbstractSite
 	 */
 	public AbstractSite(URL siteReference) {
 		super();
 		this.siteURL = siteReference;
-		init();
+		// initializeSite();
+		// FIXME: should I initialize now or lazyly do it ?
+		// Should I get only the name of teh site first ?
 	}
 	
 	/**
 	 * Initializes the site by reading the site.xml file
 	 */
-	private void init(){
+	private void initializeSite(){
 		InputStream inStream = null;
 		try {
-			URL siteXml = new URL(siteURL,"site.xml");
+			URL siteXml = new URL(siteURL,SITE_XML);
 			parser = new DefaultSiteParser(siteXml.openStream(),this);
 			isManageable = true;		 	
 		} catch (org.xml.sax.SAXException e){
@@ -88,7 +93,7 @@ public abstract class AbstractSite implements ISite {
 			listeners.remove(listener);
 		}
 	}	
-
+
 	/**
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
@@ -97,6 +102,12 @@ public abstract class AbstractSite implements ISite {
 		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
 		sourceFeature.install(localFeature);
 		this.addFeature(localFeature);
+		
+		// notify listeners
+		ISiteChangedListener[] siteListeners = (ISiteChangedListener[])listeners.getListeners();
+		for (int i =0; i<siteListeners.length;i++){
+			siteListeners[i].featureInstalled(localFeature);
+		}
 	}
 	
 	/**
@@ -104,20 +115,26 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public void remove(IFeature feature, IProgressMonitor monitor)
 		throws CoreException {
+			
+		// notify listeners
+		ISiteChangedListener[] siteListeners = (ISiteChangedListener[])listeners.getListeners();
+		for (int i =0; i<siteListeners.length;i++){
+			siteListeners[i].featureUninstalled(feature);
+		}
 	}	
-
+
 	/**
 	 * 
 	 */
 	public abstract AbstractFeature createExecutableFeature(IFeature sourceFeature);
-
+
 	/**
 	 *
 	 */
 	public abstract InputStream getInputStream(
 		IFeature sourceFeature,
 		String streamKey);
-
+
 	/**
 	 * Gets the siteURL
 	 * @return Returns a URL
@@ -125,7 +142,7 @@ public abstract class AbstractSite implements ISite {
 	public URL getURL() {
 		return siteURL;
 	}
-
+
 	/**
 	* This method also closes both streams.
 	* Taken from FileSystemStore
@@ -158,7 +175,7 @@ public abstract class AbstractSite implements ISite {
 	public IFeature[] getFeatures() {
 		IFeature[] result = null;
 		if (isManageable){
-			if (features==null) initializeFeatures();
+			if (features==null) initializeSite();
 			//FIXME: I do not like this pattern.. List or Array ???
 			if (!features.isEmpty()){
 				result = (IFeature[])features.toArray(new IFeature[features.size()]);
@@ -168,21 +185,54 @@ public abstract class AbstractSite implements ISite {
 	}
 	
 	/**
-	 * Read the Features from the XML file
-	 */
-	private void initializeFeatures(){
-		features = parser.getFeatures();
-	}
-	
-	/**
 	 * adds a feature
+	 * The feature is considered already installed. It does not install it.
 	 * @param feature The feature to add
 	 */
-	private void addFeature(IFeature feature) {
+	public void addFeature(IFeature feature) {
 		if (features==null){
 			features = new ArrayList(0);
 		}
 		this.features.add(feature);
 	}
+
+	/**
+	 * @see ISite#getInfoURL()
+	 */
+	public URL getInfoURL() {
+		return infoURL;
+	}
+
+	/**
+	 * Sets the infoURL
+	 * @param infoURL The infoURL to set
+	 */
+	public void setInfoURL(URL infoURL) {
+		this.infoURL = infoURL;
+	}
+
+	/**
+	 * @see ISite#getCategories()
+	 */
+	public ICategory[] getCategories() {
+		ICategory[] result = null;
+		if (categories==null) initializeSite();
+		//FIXME: I do not like this pattern.. List or Array ???
+		if (!categories.isEmpty()){
+			result = (ICategory[])categories.toArray(new ICategory[categories.size()]);
+		}
+		return result;
+	}
+	
+	/**
+	 * adds a category
+	 * @param category The category to add
+	 */
+	public void addCategory(ICategory category) {
+		if (categories==null){
+			categories = new ArrayList(0);
+		}
+		this.categories.add(category);
+	}	
 
 }

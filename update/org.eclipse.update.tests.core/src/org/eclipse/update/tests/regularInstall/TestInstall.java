@@ -21,7 +21,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	
 	
 	private IFeature getFeature1(ISite site){
-		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.feature1","1.0.0");
+		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature1","1.0.0");
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
 		PluginEntry pluginEntry= new PluginEntry();
 		VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature1.plugin1","1.1.1");
@@ -53,7 +53,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 
 	private IFeature getFeature2(ISite site){
-		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.feature2","1.0.0");
+		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature2","1.0.0");
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
 		PluginEntry pluginEntry= new PluginEntry();
 		VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature2.plugin2","2.2.2");

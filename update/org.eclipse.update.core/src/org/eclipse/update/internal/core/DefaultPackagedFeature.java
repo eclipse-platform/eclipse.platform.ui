@@ -1,17 +1,21 @@
 package org.eclipse.update.internal.core;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import org.eclipse.update.core.AbstractFeature;
+import org.eclipse.update.core.Assert;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.VersionedIdentifier;
 
 public class DefaultPackagedFeature extends AbstractFeature {
@@ -107,6 +111,58 @@ public class DefaultPackagedFeature extends AbstractFeature {
 		}
 		return result;
 	}
+
+	/**
+	 * @see AbstractFeature#getFeatureInputStream()
+	 */
+	public InputStream getFeatureInputStream() throws IOException {
+		// we know the feature url is pointing at the JAR
+		// download the JAR in the TEMP dir and get the feature.xml
+		
+		
+		// optmization, may be private to implementation
+		// copy *blobs* in TEMP space
+		InputStream result = null;
+		InputStream sourceContentReferenceStream = getURL().openStream();
+		if (sourceContentReferenceStream!=null){
+			String newFile = SiteManager.getTempSite().getURL().getPath()+getIdentifier().toString()+".jar";
+			FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
+			transferStreams(sourceContentReferenceStream,localContentReferenceStream);
+			this.setURL(new URL("file:///"+newFile));				
+		} else {
+			throw new IOException("Couldn\'t find the file: "+getURL().toExternalForm());
+		}
+		return getURL().openStream();
+	}
+
+/**
+ * This method also closes both streams.
+ * Taken from FileSystemStore
+ */
+private void transferStreams(InputStream source, OutputStream destination) throws IOException {
+	
+	Assert.isNotNull(source);
+	Assert.isNotNull(destination);
+	
+	try {
+		byte[] buffer = new byte[8192];
+		while (true) {
+			int bytesRead = source.read(buffer);
+			if (bytesRead == -1)
+				break;
+			destination.write(buffer, 0, bytesRead);
+		}
+	} finally {
+		try {
+			source.close();
+		} catch (IOException e) {
+		}
+		try {
+			destination.close();
+		} catch (IOException e) {
+		}
+	}
+}
 
 }
 

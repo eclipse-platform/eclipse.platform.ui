@@ -29,7 +29,7 @@ public class SiteManager {
 	/**
 	 * return the local site where the feature will be temporary transfered
 	 */
-	/* package */ static ISite getTempSite(){
+	public static ISite getTempSite(){
 		if (TEMP_SITE==null){
 			try {
 			TEMP_SITE = new FileSite(new URL("file:///"+System.getProperty("java.io.tmpdir")));

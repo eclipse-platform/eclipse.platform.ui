@@ -46,5 +46,14 @@ public class DefaultExecutableFeature extends AbstractFeature {
 		return null;
 	}
 
+	/**
+	 * @see AbstractFeature#getFeatureInputStream()
+	 */
+	public InputStream getFeatureInputStream() {
+		// TODO:
+		// the feature url is pointing at the directory, teh feature.xml is inside
+		return null;
+	}
+
 }
 
