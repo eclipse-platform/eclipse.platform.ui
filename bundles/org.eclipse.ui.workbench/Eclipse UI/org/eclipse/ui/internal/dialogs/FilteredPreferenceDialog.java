@@ -458,8 +458,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			}
 		};
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		if (hasGroups())
-		    styleBits |= SWT.BORDER;
+//		if (hasGroups())
+//		    styleBits |= SWT.BORDER;
 		
 		FilteredTree filteredTree = new FilteredTree(parent, styleBits, filter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));

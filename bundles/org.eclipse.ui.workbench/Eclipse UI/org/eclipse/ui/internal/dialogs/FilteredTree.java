@@ -17,6 +17,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -77,6 +78,11 @@ public class FilteredTree extends Composite {
         data = new GridData(GridData.FILL_BOTH);
         treeViewer.getControl().setLayoutData(data);
         treeViewer.addFilter(patternFilter);
+        
+        Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridData data2 = new GridData(GridData.FILL_HORIZONTAL);
+        sep.setLayoutData(data2);
+        
     }
 
     /**
