@@ -1239,11 +1239,16 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
 	 */
 	public void updateMessage() {
-		String message = currentPage.getMessage();
+		String message = null;
+		String errorMessage = null;
+		if(currentPage != null){
+			message = currentPage.getMessage();
+			errorMessage = currentPage.getErrorMessage();
+		}
 		int messageType = IMessageProvider.NONE;
 		if (message != null && currentPage instanceof IMessageProvider)
 			messageType = ((IMessageProvider) currentPage).getMessageType();
-		String errorMessage = currentPage.getErrorMessage();
+
 		if (errorMessage != null) {
 			message = errorMessage;
 			messageType = IMessageProvider.ERROR;
@@ -1313,6 +1318,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
+		if(currentPage == null)
+			return;
 		messageArea.showTitle(currentPage.getTitle(), currentPage.getImage());
 	}
 
