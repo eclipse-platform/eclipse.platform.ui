@@ -124,8 +124,8 @@ public class WebappManager {
 					AppserverPlugin.getID(),
 					IStatus.OK,
 					AppserverResources.getString(
-						"Appserver.cannotResolvePlugin",
-						pluginId),
+						"Appserver.cannotFindPath",
+						pluginId, path.toOSString()),
 					null));
 		}
 
@@ -139,8 +139,8 @@ public class WebappManager {
 					AppserverPlugin.getID(),
 					IStatus.OK,
 					AppserverResources.getString(
-						"Appserver.cannotResolvePlugin",
-						pluginId),
+						"Appserver.cannotResolvePath",
+						pluginId, path.toOSString()),
 					ioe));
 		}
 	}
