@@ -16,6 +16,7 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -52,12 +53,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class RenderingViewPane extends AbstractMemoryViewPane implements IMemoryRenderingListener{
 
-	public static final String RENDERING_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.RenderingViewPane";
+	public static final String RENDERING_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.RenderingViewPane"; //$NON-NLS-1$
 	
-	private static final String VIEW_TAB_FACTORY = "viewTabFactory";
-	private static final String RENDERER = "renderer";
-	private static final String RENDERING_ID = "renderingId";
-	private static final String VALUE = "value";
+	private static final String VIEW_TAB_FACTORY = "viewTabFactory"; //$NON-NLS-1$
+	private static final String RENDERER = "renderer"; //$NON-NLS-1$
+	private static final String VALUE = "value"; //$NON-NLS-1$
 	
 	private Hashtable fTabFolderForMemoryBlock = new Hashtable();
 	private Hashtable fMemoryBlockFromTabFolder = new Hashtable();
@@ -440,13 +440,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		
 		if (viewTabFactory != null)
 		{	
-			final IMemoryBlock memory = memoryblk;
-			IMemoryViewTab oldViewTab = null;
-			
 			// disable current view tab
 			if (getTopMemoryTab() != null)
 			{	
-				oldViewTab = getTopMemoryTab();
 				getTopMemoryTab().setEnabled(false);
 			}
 			
@@ -483,7 +479,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			// the menu manager gets disposed when the view tab is disposed
 			MenuManager menuMgr = createContextMenuManager();
 			
-			AbstractMemoryRenderer renderer = (AbstractMemoryRenderer)getRenderer(renderingId);
+			AbstractMemoryRenderer renderer = getRenderer(renderingId);
 			IMemoryViewTab viewTab = viewTabFactory.createViewTab(memoryblk, tab, menuMgr, rendering, renderer);
 			
 			if (viewTab != null)
@@ -513,7 +509,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 			// log the error
 			Status stat = new Status(
-					Status.ERROR,DebugUIPlugin.getUniqueIdentifier(),
+					IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),
 					DebugException.INTERNAL_ERROR, DebugUIMessages.getString("RenderingViewPane.NoViewTabFactory") + renderingId, null  //$NON-NLS-1$
 			);
 			
@@ -646,13 +642,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				
 				if (obj instanceof IMemoryViewTabFactory)
 					return (IMemoryViewTabFactory)obj;
-				else
-					return null;
+                return null;
 			}
-			else
-			{	
-				return null;
-			}
+            return null;
 		} catch (CoreException e1) {
 			return null;
 		}
@@ -689,13 +681,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				
 				if (obj instanceof AbstractMemoryRenderer)
 					return (AbstractMemoryRenderer)obj;
-				else
-					return null;
+                return null;
 			}
-			else
-			{	
-				return null;
-			}
+            return null;
 		} catch (CoreException e1) {
 			return null;
 		}
@@ -707,7 +695,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	private void setRenderingSelection(IMemoryViewTab viewTab) {
 		if(viewTab != null)
 		 {
-			String renderingId = viewTab.getRenderingId();
 		 	IMemoryRendering rendering = viewTab.getRendering();
 		 	
 		 	if (rendering != null)
@@ -771,8 +758,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 		
 		// find the folder associated with the given IMemoryBlockRetrieval
-		IMemoryBlockRetrieval retrieve = (IMemoryBlockRetrieval)((IDebugElement)element).getAdapter(IMemoryBlockRetrieval.class);
-		IDebugTarget debugTarget = ((IDebugElement)element).getDebugTarget();
+		IMemoryBlockRetrieval retrieve = (IMemoryBlockRetrieval)element.getAdapter(IMemoryBlockRetrieval.class);
+		IDebugTarget debugTarget = element.getDebugTarget();
 		
 		// if IMemoryBlockRetrieval is null, use debugtarget
 		if (retrieve == null)
@@ -854,7 +841,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 */
 	public void widgetSelected(SelectionEvent e) {
 		
-		Object selectedItem = e.item.getData();
 		if (getTopMemoryTab() == null)
 			return;
 		
@@ -877,10 +863,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (getTopMemoryTab() != null)
 			if (getTopMemoryTab().getRendering() != null)
 				return getTopMemoryTab().getRendering();
-			else
-				return new Object();
-		else
-			return new Object();
+		return new Object();
 	}
 
 	/* (non-Javadoc)
@@ -941,8 +924,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		return RENDERING_VIEW_PANE_ID;
 	}
 	public void restoreViewPane() {
-		TabFolder tabFolder = (TabFolder)fStackLayout.topControl;
-
+		
 		IMemoryBlock memoryBlock = null;
 		// get current selection from memory view
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
@@ -1081,9 +1063,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			}		
 			return null;
 		}
-		else
-		{	
-			return null;
-		}
+        return null;
 	}
 }

@@ -29,10 +29,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	
-	private boolean fUseExisting = true;
-	private AddMemoryRenderingAction newBlock;
-	private AddMemoryRenderingAction existingBlock;
-	
 	public static final String PREFIX = "AddMemoryRenderingAction."; //$NON-NLS-1$
 	public static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
 	public static final String ADD_RENDERING_FAILED = PREFIX + "add_rendering_failed"; //$NON-NLS-1$
@@ -42,7 +38,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	{
 		super(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings"), AS_PUSH_BUTTON); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context");
+		WorkbenchHelp.setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -69,8 +65,8 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 				return;
 			
 			// ask for debug target and memory block retrieval
-			IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-			IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
+			IDebugTarget debugTarget = elem.getDebugTarget();
+			IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)elem.getAdapter(IMemoryBlockRetrieval.class);
 			
 			if (standardMemRetrieval == null)
 			{	
@@ -109,7 +105,6 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		// if not debug element
 		if (!(elem instanceof IDebugElement))
 			return null;
-		else
-			return (IDebugElement)elem;
+        return (IDebugElement)elem;
 	}
 }
