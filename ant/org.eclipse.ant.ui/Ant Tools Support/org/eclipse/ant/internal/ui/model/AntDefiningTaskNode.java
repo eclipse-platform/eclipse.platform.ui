@@ -35,8 +35,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
 
 public class AntDefiningTaskNode extends AntTaskNode {
-	
-    private boolean fNeedsToBeConfigured= true;
     private String fIdentifier= null;
     
     public AntDefiningTaskNode(Task task, Attributes attributes) {
@@ -75,7 +73,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 	 * Execute the defining task.
 	 */
 	public boolean configure(boolean validateFully) {
-        if (!fNeedsToBeConfigured) {
+        if (fConfigured) {
             return false;
         }
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
@@ -99,7 +97,13 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			} catch (BuildException be) {
                 ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
 				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
-			}
+			} catch (LinkageError e) {
+                //A classpath problem with the definer. Possible causes are having multiple
+                //versions of the same JAR on the Ant runtime classpath (either explictly or via the plugin 
+                //classloaders. See bug 71888
+                ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
+                handleBuildException(new BuildException(AntModelMessages.getString("AntDefiningTaskNode.0")), AntEditorPreferenceConstants.PROBLEM_CLASSPATH); //$NON-NLS-1$
+            } 
 		}
 		return false;
 	}
@@ -170,6 +174,6 @@ public class AntDefiningTaskNode extends AntTaskNode {
     }
 
     protected void setNeedsToBeConfigured(boolean configure) {
-       fNeedsToBeConfigured= configure;
+       fConfigured= !configure;
     }
 }

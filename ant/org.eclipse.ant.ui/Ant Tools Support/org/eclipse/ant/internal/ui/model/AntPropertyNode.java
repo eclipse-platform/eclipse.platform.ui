@@ -92,7 +92,14 @@ public class AntPropertyNode extends AntTaskNode {
 			fConfigured= true;
 		} catch (BuildException be) {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
-		} finally {
+		} catch (LinkageError le) { 
+            //A classpath problem with the property task. Known cause: 
+            //<property name= "hey" refId= "classFileSetId"/> where
+            //classFileSetId refs a ClassFileSet which is an optional type that requires
+            //BCEL JAR. Currently it is not possible to set these types of properties within the Ant Editor.
+            //see bug 71888
+            handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.0")), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
+        } finally {
 			getProjectNode().setCurrentConfiguringProperty(null);
 		}
 		return false;
