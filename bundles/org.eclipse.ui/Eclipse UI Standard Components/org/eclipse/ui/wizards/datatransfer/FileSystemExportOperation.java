@@ -122,7 +122,8 @@ protected int countSelectedResources() throws CoreException {
 protected void createLeadupDirectoriesFor(IResource resource) {
 	IPath resourcePath = resource.getFullPath().removeLastSegments(1);
 
-	// ie.- create from project+1 level
+	// If there is more than one segment (the name) add in the
+	//parent segments
 	if (resourcePath.segmentCount() > 1) {
 		for (int i = 0; i < resourcePath.segmentCount(); i++) {
 			path = path.append(resourcePath.segment(i));
