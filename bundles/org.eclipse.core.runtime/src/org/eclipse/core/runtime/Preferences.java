@@ -243,6 +243,13 @@ public class Preferences {
 	 * emitter.removePropertyChangeListener(listener);
 	 * </pre>
 	 * </p>
+	 * <p>
+	 * <em>Note:</em> Depending on the means in which the property
+	 * values changed, the old and new values for the property can 
+	 * be either typed, a string representation of the value, or <code>null</code>.
+	 * Clients who wish to behave properly in all cases should all
+	 * three cases in their implementation of the property change listener.
+	 * </p>
 	 */
 	public interface IPropertyChangeListener extends EventListener {
 
@@ -415,7 +422,13 @@ public class Preferences {
 	/**
 	 * Adds a property change listener to this preference object.
 	 * Has no affect if the identical listener is already registered.
-	 *
+	 * <p>
+	 * <em>Note:</em> Depending on the means in which the property
+	 * values changed, the old and new values for the property can 
+	 * be either typed, a string representation of the value, or <code>null</code>.
+	 * Clients who wish to behave properly in all cases should all
+	 * three cases in their implementation of the property change listener.
+	 * </p>
 	 * @param listener a property change listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
