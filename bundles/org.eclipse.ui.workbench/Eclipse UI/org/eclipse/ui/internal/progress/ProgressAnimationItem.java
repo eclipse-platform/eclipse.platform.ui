@@ -218,12 +218,6 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		
 		toolbar= new ToolBar(top, SWT.FLAT);
 		toolbar.setVisible(false);
-		if ("gtk".equals(SWT.getPlatform())) {	//$NON-NLS-1$
-			// workaround for an SWT problem; see #62883
-			gd= new GridData(GridData.FILL_VERTICAL);
-			gd.widthHint= 23;
-			toolbar.setLayoutData(gd);
-		}
 		
 		toolButton= new ToolItem(toolbar, SWT.NONE);
 		toolButton.addSelectionListener(new SelectionAdapter() {
