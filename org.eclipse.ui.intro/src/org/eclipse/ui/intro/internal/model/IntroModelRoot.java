@@ -152,7 +152,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         IConfigurationElement[] presentationElements = getCfgElement()
                 .getChildren(IntroPartPresentation.TAG_PRESENTATION);
 
-        IConfigurationElement presentationElement = ModelUtil
+        IConfigurationElement presentationElement = ModelLoaderUtil
                 .validateSingleContribution(presentationElements,
                         IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
@@ -165,7 +165,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void loadPages(Document dom, IPluginDescriptor pd) {
         String homePageId = getPresentation().getHomePageId();
-        Element[] pages = ModelUtil.getElementsByTagName(dom,
+        Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
@@ -189,7 +189,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Loads all shared divs defined in this config, from the DOM.
      */
     private void loadSharedDivs(Document dom, IPluginDescriptor pd) {
-        Element[] divs = ModelUtil.getElementsByTagName(dom, IntroDiv.TAG_DIV);
+        Element[] divs = ModelLoaderUtil.getElementsByTagName(dom,
+                IntroDiv.TAG_DIV);
         for (int i = 0; i < divs.length; i++) {
             IntroDiv div = new IntroDiv(divs[i], pd);
             div.setParent(this);
@@ -233,7 +234,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // Now load all pages and shared divs from this config extension
             // only if we resolved this extension. No point adding pages that
             // will never be referenced.
-            Element[] pages = ModelUtil.getElementsByTagName(dom,
+            Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                     IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
@@ -257,11 +258,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @return
      */
     private Element loadExtensionContent(Document dom, IPluginDescriptor pd) {
-        Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
+        Element[] extensionContents = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroExtensionContent.TAG_CONTAINER_EXTENSION);
         // There should only be one container extension.
-        Element extensionContentElement = ModelUtil.validateSingleContribution(
-                extensionContents, IntroExtensionContent.ATT_PATH);
+        Element extensionContentElement = ModelLoaderUtil
+                .validateSingleContribution(extensionContents,
+                        IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
             // no extensionContent defined.
             return null;
@@ -486,9 +488,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
      */
-    protected static String resolveURL(String url, IConfigurationElement element) {
-        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
+    protected static String resolveURL(String url, String pluginId) {
+        IPluginDescriptor pluginDesc = null;
+        if (pluginId != null)
+            // if pluginId is not null, use it.
+            pluginDesc = Platform.getPlugin(pluginId).getDescriptor();
+
         return resolveURL(url, pluginDesc);
     }
 
@@ -502,6 +507,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
      */
+    protected static String resolveURL(String url, IConfigurationElement element) {
+        IPluginDescriptor pluginDesc = element.getDeclaringExtension()
+                .getDeclaringPluginDescriptor();
+        return resolveURL(url, pluginDesc);
+    }
+
+    /**
+     * @see resolveURL(String url, IConfigurationElement element)
+     */
     protected static String resolveURL(String url, IPluginDescriptor pd) {
         // quick exit
         if (url == null)
@@ -510,7 +524,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (parser.hasProtocol())
             return url;
         else
-            // make plugin relative url
+            // make plugin relative url. Only now we need the pd.
             return getPluginLocation(url, pd);
     }
 

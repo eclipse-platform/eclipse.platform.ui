@@ -168,18 +168,18 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
                 implementation.init(introPart);
                 implementation.createPartControl(parent);
                 Logger.logInfo("Loaded config implementation from: "
-                        + ModelUtil.getLogString(
+                        + ModelLoaderUtil.getLogString(
                                 implementationElement, "class"));
                 break;
             } catch (SWTError e) {
                 Logger.logError("Failed to create implementation from: "
-                        + ModelUtil.getLogString(
+                        + ModelLoaderUtil.getLogString(
                                 implementationElement, "class"), e);
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
                 Logger.logError("Failed to create implementation from: "
-                        + ModelUtil.getLogString(
+                        + ModelLoaderUtil.getLogString(
                                 implementationElement, "class"), e);
                 implementation = null;
                 implementationElement = null;

@@ -73,7 +73,7 @@ public class CustomizableIntroPart extends IntroPart {
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
                     "Could not find a valid configuration for Intro Part: "
-                            + ModelUtil.getLogString(
+                            + ModelLoaderUtil.getLogString(
                                     getConfigurationElement(), "id")
                             + "\nCheck Log View for details.", null);
 

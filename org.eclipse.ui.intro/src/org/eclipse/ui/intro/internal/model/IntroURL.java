@@ -63,6 +63,7 @@ public class IntroURL {
     public static final String KEY_PART_ID = "partId";
     public static final String KEY_INPUT = "input";
     public static final String KEY_MESSAGE = "message";
+    public static final String KEY_URL = "url";
 
     private String action = null;
     private Properties parameters = null;
@@ -120,6 +121,10 @@ public class IntroURL {
             // display a Help System Topic.
             showHelpTopic(getParameter(KEY_ID));
 
+        else if (action.equals(OPEN_BROWSER))
+            // display url in external browser
+            openBrowser(getParameter(KEY_URL), getParameter(KEY_PLUGIN_ID));
+
         else if (action.equals(RUN_ACTION))
             // run an Intro action. Get the pluginId and the class keys.
             runAction(getParameter(KEY_PLUGIN_ID), getParameter(KEY_CLASS));
@@ -148,7 +153,8 @@ public class IntroURL {
     private void handleStandbyStateChanged(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = getCustomizableIntroPart(true);
-        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart, true);
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
+                true);
         StandbyPart standbyPart = introPart.getStandbyPart();
 
         // Get the StandbyPartContent that maps to the given partId.
@@ -186,7 +192,8 @@ public class IntroURL {
         // should rely on Workbench api. If the Intro part was not open when
         // this method was called, the following line simply resets the part
         // into standby.
-        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart, standby);
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
+                standby);
     }
 
     /**
@@ -278,6 +285,17 @@ public class IntroURL {
      */
     private void showHelp() {
         WorkbenchHelp.displayHelp();
+    }
+
+    /**
+     * Launch external browser
+     */
+    private void openBrowser(String url, String pluginId) {
+        // no need to decode url because we will create another url from this
+        // url anyway. Resolve the url just in case we are trying to load a
+        // plugin relative file.
+        url = IntroModelRoot.resolveURL(url, pluginId);
+        Util.openBrowser(url);
     }
 
     private void showMessage(String message) {

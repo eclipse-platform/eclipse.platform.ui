@@ -13,7 +13,6 @@ package org.eclipse.ui.intro.internal.parts;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
@@ -57,7 +56,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 parser.getIntroURL().execute();
                 return;
             } else if (parser.hasProtocol()) {
-                Program.launch(introLink.getUrl());
+                Util.openBrowser(introLink.getUrl());
                 return;
             }
             DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "

@@ -171,7 +171,7 @@ public class BaseExtensionPointManager {
         IConfigurationElement[] filteredConfigElements = getConfigurationsFromAttribute(
                 configElements, attributeName, attributeValue);
         // now validate that we got only one.
-        IConfigurationElement config = ModelUtil.validateSingleContribution(
+        IConfigurationElement config = ModelLoaderUtil.validateSingleContribution(
                 filteredConfigElements, attributeName);
         return config;
     }
@@ -213,7 +213,7 @@ public class BaseExtensionPointManager {
                 .getConfigurationElementsFor(CONFIG_EXTENSION);
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];
-            if (!ModelUtil.isValidElementName(element,
+            if (!ModelLoaderUtil.isValidElementName(element,
                     StandbyPartContent.STANDBY_PART_ELEMENT))
                 continue;
             StandbyPartContent standbyPartContent = new StandbyPartContent(

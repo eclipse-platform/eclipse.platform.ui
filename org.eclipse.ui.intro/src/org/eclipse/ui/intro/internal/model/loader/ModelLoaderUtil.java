@@ -21,7 +21,7 @@ import org.w3c.dom.*;
  * Utilities class for help with loading the intro model from the Platform
  * runtime model and from the DOM of content files.
  */
-public class ModelUtil {
+public class ModelLoaderUtil {
 
     /**
      * Utility method to validate an elements name.

@@ -1,24 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.intro.internal.util;
+
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.intro.internal.*;
 
 public class Util {
-
-    private static String newLineSeparator = null;
 
     /**
      * Handle the exception by logging to the Logger. <br>
@@ -79,28 +77,6 @@ public class Util {
         DialogUtil.displayErrorMessage(parent, errorId, e);
     }
 
-    public static void printLayout(String text, Layout layout) {
-        if (layout == null) {
-            System.out.println(text + ": NULL Layout object.");
-            return;
-        }
-        if (layout instanceof FillLayout)
-            printLayout(text, (FillLayout) layout);
-        else
-            System.out.println(text + ": " + layout.toString());
-    }
-
-    public static void printLayout(String text, FillLayout layout) {
-        System.out.print(text + ": ");
-        System.out.print("FillLayout object:");
-        String type = "horizontal";
-        if (layout.type == SWT.VERTICAL)
-            type = "vertical";
-        System.out.print(" type: " + type);
-        System.out.print(" margin height: " + layout.marginHeight);
-        System.out.print(" margin width: " + layout.marginWidth);
-        System.out.println(" spacing: " + layout.spacing);
-    }
 
     /**
      * Utility method that will add a debug listener to the given control. All
@@ -196,4 +172,108 @@ public class Util {
     public static void highlight(Control control, int color) {
         //control.setBackground(control.getDisplay().getSystemColor(color));
     }
+
+
+
+    /**
+     * Launch an external brwoser on the given url.
+     */
+    public static void openBrowser(String href) {
+        // format the href for an html file (file:///<filename.html>
+        // required for Mac only.
+        if (href.startsWith("file:")) { //$NON-NLS-1$
+            href = href.substring(5);
+            while (href.startsWith("/")) { //$NON-NLS-1$
+                href = href.substring(1);
+            }
+            href = "file:///" + href; //$NON-NLS-1$
+        }
+        final String localHref = href;
+
+        final Display display = Display.getCurrent();
+        String platform = SWT.getPlatform();
+
+        if ("win32".equals(platform)) { //$NON-NLS-1$
+            Program.launch(localHref);
+        } else if ("carbon".equals(platform)) { //$NON-NLS-1$
+            try {
+                Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
+            } catch (IOException e) {
+                openBrowserError(display, e);
+            }
+        } else {
+            Thread launcher = new Thread("Intro browser Launcher") {//$NON-NLS-1$
+
+                boolean webBrowserOpened = false;
+                String webBrowser = null;
+
+                public void run() {
+                    try {
+                        if (webBrowserOpened) {
+                            Runtime.getRuntime().exec(
+                                    webBrowser + " -remote openURL("
+                                            + localHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                        } else {
+                            Process p = doOpenBrowser(localHref);
+                            webBrowserOpened = true;
+                            try {
+                                if (p != null)
+                                    p.waitFor();
+                            } catch (InterruptedException e) {
+                                openBrowserError(display, e);
+                            } finally {
+                                webBrowserOpened = false;
+                            }
+                        }
+                    } catch (IOException e) {
+                        openBrowserError(display, e);
+                    }
+                }
+
+                private Process doOpenBrowser(String href) throws IOException {
+                    Process p = null;
+                    if (webBrowser == null) {
+                        try {
+                            webBrowser = "netscape"; //$NON-NLS-1$
+                            p = Runtime.getRuntime().exec(
+                                    webBrowser + "  " + href); //$NON-NLS-1$;
+                        } catch (IOException e) {
+                            p = null;
+                            webBrowser = "mozilla"; //$NON-NLS-1$
+                        }
+                    }
+
+                    if (p == null) {
+                        try {
+                            p = Runtime.getRuntime().exec(
+                                    webBrowser + " " + href); //$NON-NLS-1$;
+                        } catch (IOException e) {
+                            p = null;
+                            throw e;
+                        }
+                    }
+                    return p;
+                }
+            };
+            launcher.start();
+        }
+    }
+
+
+
+    /**
+     * Display an error message if opening an external browser failes.
+     */
+    private static void openBrowserError(final Display display,
+            final Exception e) {
+        display.asyncExec(new Runnable() {
+
+            public void run() {
+                DialogUtil.displayErrorMessage(display.getActiveShell(),
+                        "Failed to launch external browser", e);
+            }
+        });
+    }
+
+
 }
