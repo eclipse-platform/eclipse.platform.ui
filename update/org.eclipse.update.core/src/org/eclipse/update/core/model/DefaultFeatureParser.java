@@ -1071,7 +1071,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		includedFeature.setMatchingRule(rule);
 		
 		// search location
-		String locationName = attributes.getValue("search_location");
+		String locationName = attributes.getValue("search-location");
+		// bug 27030
+		if (locationName==null) locationName = attributes.getValue("search_location");
 		int searchLocation = IUpdateConstants.SEARCH_ROOT;
 		if("both".equalsIgnoreCase(locationName))
 			searchLocation = IUpdateConstants.SEARCH_ROOT & IUpdateConstants.SEARCH_SELF;
