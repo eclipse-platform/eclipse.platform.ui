@@ -89,7 +89,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
     	FormToolkit helpToolkit = new FormToolkit(helpContainer.getDisplay());
     	//helpToolkit.setBackground(helpToolkit.getColors().createColor("bg", 230, 240, 255));
     	contextHelpPart.createControl(helpContainer, helpToolkit);
-    	contextHelpPart.init(contextHelpPart.getForm().getForm().getToolBarManager(), null);
+    	contextHelpPart.init(null, contextHelpPart.getForm().getForm().getToolBarManager(), null);
     	Control contextHelp = contextHelpPart.getControl();
     	ManagedForm contextForm = contextHelpPart.getForm();
     	Action closeAction = new Action() {

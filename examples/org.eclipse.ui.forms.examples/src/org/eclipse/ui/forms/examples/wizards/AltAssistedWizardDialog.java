@@ -38,7 +38,7 @@ public class AltAssistedWizardDialog extends WizardDialog {
 			addToolBar(SWT.FLAT);
 			addStatusLine();
 			helpPart = new ReusableHelpPart(this);
-			helpPart.init(getToolBarManager(), getStatusLineManager());
+			helpPart.init(null, getToolBarManager(), getStatusLineManager());
 			parent.addControlListener(new ControlListener() {
 				public void controlMoved(ControlEvent e) {
 					syncHelpBounds();
