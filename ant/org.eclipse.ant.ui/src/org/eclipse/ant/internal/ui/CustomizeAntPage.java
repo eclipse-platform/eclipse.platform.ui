@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -49,7 +50,7 @@ protected abstract void addButtonsToButtonGroup(Composite parent);
 /**
  * Should be overwritten by subclasses to handle button behaviour.
  */
-protected void buttonPressed(int buttonID) {
+protected void buttonPressed(int buttonId) {
 }
 
 /**
@@ -98,7 +99,13 @@ protected void createTable(Composite parent) {
 	contentProvider = new CustomizeAntContentProvider();
 	tableViewer.setContentProvider(contentProvider);
 	tableViewer.setLabelProvider(new CustomizeAntLabelProvider());
+	tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			tableSelectionChanged((IStructuredSelection)event.getSelection());
+		}
+	});
 }
+
 /**
  * Returns the currently listed objects in the table.  Returns null
  * if this widget has not yet been created or has been disposed.
@@ -111,7 +118,10 @@ public List getContents() {
 }
 protected void removeButtonPressed() {
 	IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
-	tableViewer.remove(selection.toArray());
+	Object[] selected = selection.toArray();
+	for (int i = 0; i < selected.length; i++) {
+		contentProvider.remove(selected[i]);
+	}
 }
 /**
  * Sets the contents of the table on this page.  Has no effect
@@ -121,6 +131,12 @@ public void setInput(List inputs) {
 	if (tableViewer == null || tableViewer.getControl().isDisposed())
 		return;
 	tableViewer.setInput(inputs);
+	tableSelectionChanged((IStructuredSelection)tableViewer.getSelection());
+}
+/**
+ * Subclasses may override to add behaviour when table selection changes.
+ */
+protected void tableSelectionChanged(IStructuredSelection newSelection) {
 }
 
 /**

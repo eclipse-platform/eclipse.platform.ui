@@ -68,11 +68,11 @@ public String getColumnText(Object element, int columnIndex) {
 	}
 	if (element instanceof Task) {
 		Task task = (Task)element;
-		return task.getTaskName() + "(" + task.getClassName() + ")";
+		return task.getTaskName() + " (" + task.getLibrary().getFile()+ ": " + task.getClassName() + ")";
 	}
 	if (element instanceof Type) {
 		Type type = (Type)element;
-		return type.getTypeName() + "(" + type.getClassName() + ")";
+		return type.getTypeName() + " (" + type.getLibrary().getFile()+ ": " + type.getClassName() + ")";
 	}
 	return element.toString();
 }
