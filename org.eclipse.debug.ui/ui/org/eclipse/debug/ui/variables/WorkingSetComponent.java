@@ -111,9 +111,9 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 	}
 
 	/**
-	 * @see IVariableComponent#createContents(Composite, String, IGroupDialogPage)
+	 * @see IVariableComponent#createContents(Composite, String, IVariableComponentContainer)
 	 */
-	public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
 		super.createContents(parent, varTag, page); // Creates the main group and sets the page
 
 		viewer = new TableViewer(mainGroup);

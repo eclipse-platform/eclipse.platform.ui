@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.IGroupDialogPage;
+import org.eclipse.debug.ui.variables.IVariableComponentContainer;
 import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.debug.ui.variables.WorkingSetComponent;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -37,7 +37,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
+public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
 
 	private Button fullBuildButton;
 	private Button autoBuildButton;
@@ -193,7 +193,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.group.IGroupDialogPage#updateValidState()
+	 * @see org.eclipse.ui.externaltools.internal.group.IVariableComponentContainer#updateValidState()
 	 */
 	public void updateValidState() {
 		updateLaunchConfigurationDialog();

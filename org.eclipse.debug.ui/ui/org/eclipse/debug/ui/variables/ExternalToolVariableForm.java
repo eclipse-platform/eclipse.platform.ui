@@ -33,7 +33,7 @@ public class ExternalToolVariableForm {
 	private String variableListLabelText;
 	private ExternalToolVariable[] variables;
 	private IVariableComponent[] components;
-	private IGroupDialogPage dialogPage;
+	private IVariableComponentContainer dialogPage;
 	
 	private Label variableListLabel;
 	private List variableList;
@@ -54,7 +54,7 @@ public class ExternalToolVariableForm {
 		this.components = new IVariableComponent[variables.length];
 	}
 
-	public Composite createContents(Composite parent, IGroupDialogPage page) {
+	public Composite createContents(Composite parent, IVariableComponentContainer page) {
 		Font font = parent.getFont();
 		
 		dialogPage = page;

@@ -132,7 +132,7 @@ public class ExternalToolVariable {
 		/* (non-Javadoc)
 		 * Method declared on IVariableComponent.
 		 */
-		public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
+		public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
 			if (showError) {
 				message = new Label(parent, SWT.NONE);
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

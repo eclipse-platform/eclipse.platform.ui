@@ -43,7 +43,7 @@ public interface IVariableComponent {
 	 * @param varTag the variable tag name to create the controls for
 	 * @param page the dialog page this visual component will be part of
 	 */
-	public void createContents(Composite parent, String varTag, IGroupDialogPage page);
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer page);
 
 	/**
 	 * Returns the variable value as specified by

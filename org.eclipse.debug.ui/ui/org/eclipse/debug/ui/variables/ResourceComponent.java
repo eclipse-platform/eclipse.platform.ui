@@ -55,7 +55,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	/* (non-Javadoc)
 	 * Method declared on IVariableComponent.
 	 */
-	public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
 		super.createContents(parent, varTag, page); // Creates the main group and sets the page
 		
 		createSelectedResourceOption();

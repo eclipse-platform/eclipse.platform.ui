@@ -45,7 +45,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		Composite composite= (Composite)super.createDialogArea(parent);
 		ExternalToolVariable[] variables= DebugUIPlugin.getDefault().getToolVariableRegistry().getVariables();
 		form= new ExternalToolVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
-		form.createContents(composite, new IGroupDialogPage() {
+		form.createContents(composite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
 				VariableSelectionDialog.this.setMessage(errorMessage);

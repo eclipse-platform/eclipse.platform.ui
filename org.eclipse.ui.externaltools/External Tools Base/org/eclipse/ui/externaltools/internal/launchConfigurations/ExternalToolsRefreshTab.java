@@ -17,7 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.variables.ExternalToolVariable;
 import org.eclipse.debug.ui.variables.ExternalToolVariableForm;
-import org.eclipse.debug.ui.variables.IGroupDialogPage;
+import org.eclipse.debug.ui.variables.IVariableComponentContainer;
 import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
@@ -34,7 +34,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
+public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
 
 	private ExternalToolVariableForm variableForm;
 	
@@ -212,14 +212,14 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	}
 	
 	/**
-	 * @see IGroupDialogPage#setErrorMessage(String)
+	 * @see IVariableComponentContainer#setErrorMessage(String)
 	 */
 	public void setErrorMessage(String errorMessage) {
 		super.setErrorMessage(errorMessage);
 	}
 
 	/**
-	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#updateValidState()
+	 * @see org.eclipse.ui.externaltools.group.IVariableComponentContainer#updateValidState()
 	 */
 	public void updateValidState() {
 		updateLaunchConfigurationDialog();

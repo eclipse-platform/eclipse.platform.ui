@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Group;
 public abstract class AbstractVariableComponent implements IVariableComponent {
 	
 	protected Group mainGroup;
-	protected IGroupDialogPage dialogPage;
+	protected IVariableComponentContainer dialogPage;
 	private boolean isValid = true;
 
 	/**
@@ -37,14 +37,14 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	/**
 	 * Returns the dialog page this component is part of
 	 */
-	protected IGroupDialogPage getPage() {
+	protected IVariableComponentContainer getPage() {
 		return dialogPage;
 	}
 
 	/**
-	 * @see IVariableComponent#createContents(Composite, String, IGroupDialogPage)
+	 * @see IVariableComponent#createContents(Composite, String, IVariableComponentContainer)
 	 */
-	public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
 		dialogPage= page;
 		
 		// main composite

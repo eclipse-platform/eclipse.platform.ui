@@ -14,17 +14,17 @@ package org.eclipse.debug.ui.variables;
 import org.eclipse.jface.dialogs.IMessageProvider;
 
 /**
- * Represents the API for a group of visual components
- * to access the dialog page that contains it.
+ * Represents the API for an <code>IVariableComponent</code> to
+ * access the visual component that contains it.
  * 
- * This interface is intended to be used by clients implementing
- * visual components that contain variable-editing components.
+ * This interface is intended to be implemented by clients implementing
+ * visual components that contain <code>IVariableComponent</code>s.
  * @see IVariableComponent
  */
-public interface IGroupDialogPage extends IMessageProvider {
+public interface IVariableComponentContainer extends IMessageProvider {
 	
 	/**
-	 * Sets the error message for this page
+	 * Sets the error message that corresponds to an IVariableComponent.
 	 *
 	 * @param errorMessage the message, or <code>null</code> to clear the
 	 * message
@@ -32,10 +32,9 @@ public interface IGroupDialogPage extends IMessageProvider {
 	public void setErrorMessage(String errorMessage);
 
 	/**
-	 * Updates the page's valid state using the group's
-	 * current valid state. This will cause the dialog's
-	 * buttons dependent on the page's valid state to
-	 * update to reflect the new state.
+	 * Informs this container that it should update it's valid
+	 * state. Typically called when the valid state of the
+	 * contained <code>IVariableComponent</code> changes.
 	 */
 	public void updateValidState();
 }
