@@ -63,6 +63,16 @@ public class ResourceNavigator
 	public static final String NAVIGATOR_VIEW_HELP_ID =
 		INavigatorHelpContextIds.RESOURCE_VIEW;
 
+	/**
+	 * Preference name constant for linking editor switching to navigator selection.
+	 * 
+	 * [Issue: We're cheating here, by referencing a preference which is actually defined
+	 * on the Workbench's preference page.  The Navigator should eventually have its own
+	 * preference page with this preference on it, instead of on the Workbench's.
+	 * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
+	 */
+	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
+
 	// Persistance tags.
 	private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 	private static final String TAG_FILTERS = "filters"; //$NON-NLS-1$
@@ -650,13 +660,12 @@ public class ResourceNavigator
 	}
 
 	/**
-	 * Returns whether the preference to link navigator selection to active
-	 * editor is enabled.  This option is no longer supported, so answer false.
+	 * Returns whether the preference to link navigator selection to active editor is enabled.
 	 * 
 	 * @since 2.0
 	 */
 	protected boolean isLinkingEnabled() {
-		return false;
+		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(LINK_NAVIGATOR_TO_EDITOR);
 	}
 
 	/**

@@ -16,7 +16,6 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>boolean</code>.
 	 * </p>
-	 * @deprecated Workbench no longer supports this setting.
 	 */
 	public static final String LINK_NAVIGATOR_TO_EDITOR =
 		"LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$

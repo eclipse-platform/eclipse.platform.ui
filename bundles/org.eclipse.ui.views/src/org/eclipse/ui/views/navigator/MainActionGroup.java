@@ -39,7 +39,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected ImportResourcesAction importAction;
 	protected ExportResourcesAction exportAction;
 	protected CollapseAllAction collapseAllAction;
-	protected SyncWithEditorAction syncWithEditorAction;
 	
 	protected GotoActionGroup gotoGroup;
 	protected OpenActionGroup openGroup;
@@ -71,10 +70,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		collapseAllAction = new CollapseAllAction(navigator, ResourceNavigatorMessages.getString("CollapseAllAction.title")); //$NON-NLS-1$
 		collapseAllAction.setToolTipText(ResourceNavigatorMessages.getString("CollapseAllAction.toolTip")); //$NON-NLS-1$
 		collapseAllAction.setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
-		syncWithEditorAction = new SyncWithEditorAction(navigator, ResourceNavigatorMessages.getString("SyncWithEditorAction.title")); //$NON-NLS-1$
-		syncWithEditorAction.setToolTipText(ResourceNavigatorMessages.getString("SyncWithEditorAction.toolTip")); //$NON-NLS-1$
-		syncWithEditorAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif")); //$NON-NLS-1$
-		navigator.getSite().getWorkbenchWindow().getPartService().addPartListener(syncWithEditorAction);
 	}
 	
 	/**
@@ -179,9 +174,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.ADD_TASK,
 			addTaskAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.SYNC_EDITOR,
-			syncWithEditorAction);
 			
 		gotoGroup.fillActionBars(actionBars);
 		openGroup.fillActionBars(actionBars);
@@ -191,8 +183,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		
-		toolBar.add(new Separator());
-		toolBar.add(syncWithEditorAction);		
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);		
 	}
