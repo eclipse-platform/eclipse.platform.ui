@@ -15,9 +15,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.WorkbenchEncoding;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -102,15 +105,18 @@ public class IDEEncoding {
 		// set the workspace text file encoding
 		Preferences resourcePrefs = ResourcesPlugin.getPlugin()
 				.getPluginPreferences();
-		if (value == null)
-			resourcePrefs.setToDefault(ResourcesPlugin.PREF_ENCODING);
-		else {
-			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, value);
-			addIDEEncoding(value);
+		if (value != null)
+			addIDEEncoding(value);	
+
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(value, null);
+		} catch (CoreException exception) {
+			ErrorDialog.openError(
+					null,
+					IDEWorkbenchMessages.getString("IDEEditorsPreferencePageEncodingError"),  //$NON-NLS-1$
+					exception.getMessage(),
+					exception.getStatus());
 		}
-
-		ResourcesPlugin.getPlugin().savePluginPreferences();
-
 	}
 
 	/**
