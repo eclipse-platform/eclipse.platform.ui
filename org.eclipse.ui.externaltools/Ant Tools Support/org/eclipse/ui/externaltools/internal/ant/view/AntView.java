@@ -57,6 +57,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.ActivateTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.DeactivateTargetAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.GoToBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
@@ -146,6 +147,7 @@ public class AntView extends ViewPart {
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
 	private ActivateTargetAction activateTargetAction;
+	private GoToBuildFileAction goToBuildFileAction;
 	// TargetsViewer actions
 	private RunActiveTargetsAction runActiveTargetsAction;
 	private DeactivateTargetAction deactivateTargetAction;
@@ -329,6 +331,8 @@ public class AntView extends ViewPart {
 			menu.add(runTargetAction);
 			menu.add(activateTargetAction);
 			menu.add(new Separator());
+			menu.add(goToBuildFileAction);
+			menu.add(new Separator());
 			menu.add(removeProjectAction);
 			menu.add(removeAllAction);
 		} else if (viewer == targetViewer) {
@@ -375,8 +379,8 @@ public class AntView extends ViewPart {
 		runTargetAction = new RunTargetAction(this);
 		updateActions.add(runTargetAction);
 		runActiveTargetsAction = new RunActiveTargetsAction(this);
-		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
 		updateActions.add(runActiveTargetsAction);
+		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
 		activateTargetAction = new ActivateTargetAction(this);
 		updateActions.add(activateTargetAction);
 		deactivateTargetAction = new DeactivateTargetAction(this);
@@ -385,6 +389,8 @@ public class AntView extends ViewPart {
 		updateActions.add(moveUpAction);
 		moveDownAction = new TargetMoveDownAction(this);
 		updateActions.add(moveDownAction);
+		goToBuildFileAction= new GoToBuildFileAction(this);
+		updateActions.add(goToBuildFileAction);
 	}
 	/**
 	 * Create the viewer which displays the active targets
