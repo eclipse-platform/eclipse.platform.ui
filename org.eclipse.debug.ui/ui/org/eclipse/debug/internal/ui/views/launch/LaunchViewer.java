@@ -77,10 +77,7 @@ public class LaunchViewer extends RemoteTreeViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(java.lang.Object)
 	 */
 	public void refresh(Object element) {
-		//@see bug 7965 - Debug view refresh flicker
-		getControl().setRedraw(false);
 		super.refresh(element);
-		getControl().setRedraw(true);
 	}
  
 }

@@ -148,10 +148,7 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
                 //Cancel the job if the tree viewer got closed
                 if (fViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
-                //Prevent extra redraws on deletion and addition
-                fViewer.getControl().setRedraw(false);
                 fViewer.replace(parent, children, offset);
-                fViewer.getControl().setRedraw(true);
                 return Status.OK_STATUS;
             }
         };
@@ -181,9 +178,9 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
                 if (fViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
                 //Prevent extra redraws on deletion and addition
-                fViewer.getControl().setRedraw(false);
+//                fViewer.getControl().setRedraw(false);
                 fViewer.prune(parent, offset);
-                fViewer.getControl().setRedraw(true);
+//                fViewer.getControl().setRedraw(true);
                 return Status.OK_STATUS;
             }
         };
