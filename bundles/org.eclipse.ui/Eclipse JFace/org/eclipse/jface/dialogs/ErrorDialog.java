@@ -169,7 +169,6 @@ protected Control createDialogArea(Composite parent) {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
 	}
 	return composite;
 }

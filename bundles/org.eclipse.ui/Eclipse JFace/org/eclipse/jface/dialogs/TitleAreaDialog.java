@@ -180,7 +180,6 @@ protected Control createDialogArea(Composite parent) {
 	layout.horizontalSpacing = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	composite.setFont(parent.getFont());
 
 	// create the title area
 	createTitleArea(composite);

@@ -250,8 +250,6 @@ protected Control createButtonBar(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_END |
 		GridData.VERTICAL_ALIGN_CENTER);
 	composite.setLayoutData(data);
-
-	composite.setFont(parent.getFont());
 	
 	// Add the buttons to the button bar.
 	createButtonsForButtonBar(composite);
