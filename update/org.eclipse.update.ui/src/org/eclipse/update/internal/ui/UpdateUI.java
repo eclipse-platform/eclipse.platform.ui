@@ -24,7 +24,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -95,7 +94,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	public UpdateLabelProvider getLabelProvider() {

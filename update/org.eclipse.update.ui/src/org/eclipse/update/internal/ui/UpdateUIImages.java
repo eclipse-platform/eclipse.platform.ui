@@ -13,17 +13,13 @@ package org.eclipse.update.internal.ui;
 import java.net.*;
 
 import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Bundle of all images used by the PDE plugin.
  */
 public class UpdateUIImages {
 
-
-	private static final String NAME_PREFIX= UpdateUI.getPluginId()+"."; //$NON-NLS-1$
-
-	private final static URL BASE_URL = UpdateUI.getDefault().getDescriptor().getInstallURL();
-	
 	public final static String ICONS_PATH = "icons/full/"; //$NON-NLS-1$
 
 	/**
@@ -146,15 +142,13 @@ public class UpdateUIImages {
 
 
 	private static URL makeImageURL(String prefix, String name) {
-		String path = prefix + name;
-		URL url = null;
 		try {
-			url = new URL(BASE_URL, path);
+			URL base = UpdateUI.getDefault().getBundle().getEntry(prefix);
+			return new URL(base, name);
 		}
 		catch (MalformedURLException e) {
 			return null;
 		}
-		return url;
 	}
 
 }
