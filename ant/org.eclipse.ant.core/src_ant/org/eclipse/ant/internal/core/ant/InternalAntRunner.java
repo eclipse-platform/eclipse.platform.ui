@@ -78,9 +78,6 @@ import org.eclipse.core.runtime.*;
  */
 public class InternalAntRunner {
 
-	public InternalAntRunner() {
-	}
-
 	protected IProgressMonitor monitor;
 
 	protected List buildListeners;
@@ -568,26 +565,26 @@ public class InternalAntRunner {
 		seconds= seconds % 60;
 		long minutes = seconds / 60;
 		
-		StringBuffer result= new StringBuffer("Total time: ");
+		StringBuffer result= new StringBuffer(InternalAntMessages.getString("InternalAntRunner.Total_time")); //$NON-NLS-1$
 		if (minutes > 0) {
 			result.append(minutes);
 			if (minutes > 1) {
-				result.append(" minutes");
+				result.append(InternalAntMessages.getString("InternalAntRunner._minutes_2")); //$NON-NLS-1$
 			} else {
-				result.append(" minute");
+				result.append(InternalAntMessages.getString("InternalAntRunner._minute_3")); //$NON-NLS-1$
 			}
 		}
 		if (seconds > 0) {
 			result.append(seconds);
 			if (seconds > 1) {
-				result.append(" seconds");
+				result.append(InternalAntMessages.getString("InternalAntRunner._seconds_4")); //$NON-NLS-1$
 			} else {
-				result.append(" second");
+				result.append(InternalAntMessages.getString("InternalAntRunner._second_5")); //$NON-NLS-1$
 			} 
 		}
 		if (seconds == 0 && minutes == 0) {
 			result.append(milliseconds);
-			result.append(" milliseconds");		
+			result.append(InternalAntMessages.getString("InternalAntRunner._milliseconds_6"));		 //$NON-NLS-1$
 		}
 		return result.toString();
 	}
@@ -953,7 +950,7 @@ public class InternalAntRunner {
 		
 		args= getArgument(commands, "-find"); //$NON-NLS-1$
 		if (args != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.find_option_not_yet_implemented_10"), Project.MSG_ERR); //$NON-NLS-1$
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
 			return false;
 		}
 
@@ -1189,11 +1186,6 @@ public class InternalAntRunner {
         msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tproperties_taking_precedence_20")); //$NON-NLS-1$
         msg.append(lSep);
         msg.append("\t-inputhandler <class>\t\t"); //$NON-NLS-1$       	msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_will_handle_input_requests_22")); //$NON-NLS-1$
-        msg.append(lSep);
-        msg.append("\t-find <file>\t\t\t\t\t\t"); //$NON-NLS-1$
-        msg.append(InternalAntMessages.getString("InternalAntRunner.search_for_buildfile_towards_the_root_of_the_24")); //$NON-NLS-1$
-        msg.append(lSep);
-        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tfilesystem_and_use_it_25")); //$NON-NLS-1$
         msg.append(lSep);
 
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
