@@ -32,6 +32,7 @@ public class CVSStatus extends Status {
 	public static final int FAILED_TO_CACHE_SYNC_INFO = -25;
 	public static final int UNMEGERED_BINARY_CONFLICT = -26;
 	public static final int INVALID_LOCAL_RESOURCE_PATH = -27;
+	public static final int RESPONSE_HANDLING_FAILURE = -28;
 	
 	// Path for resource related status
 	private ICVSFolder commandRoot;

@@ -144,7 +144,8 @@ public class UpdateOperation extends SingleCommandOperation {
     private boolean isReportableError(IStatus status) {
         return status.getCode() == CVSStatus.SERVER_ERROR
         	|| status.getCode() == CVSStatus.UNMEGERED_BINARY_CONFLICT
-        	|| status.getCode() == CVSStatus.INVALID_LOCAL_RESOURCE_PATH;
+        	|| status.getCode() == CVSStatus.INVALID_LOCAL_RESOURCE_PATH
+        	|| status.getCode() == CVSStatus.RESPONSE_HANDLING_FAILURE;
     }
 
     /* (non-Javadoc)

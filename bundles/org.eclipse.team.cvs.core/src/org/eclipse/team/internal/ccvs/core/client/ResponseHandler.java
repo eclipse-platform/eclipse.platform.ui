@@ -145,7 +145,7 @@ public abstract class ResponseHandler {
                     path = local.getFullPath().toString();
                 }
                 IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.INVALID_LOCAL_RESOURCE_PATH, Policy.bind("ResponseHandler.0", path, e.getMessage()), e); //$NON-NLS-1$
-                session.addError(status);
+                session.handleResponseError(status);
             } catch (CVSException e1) {
                 CVSProviderPlugin.log(e1);
             }

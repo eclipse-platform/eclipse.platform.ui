@@ -795,15 +795,6 @@ public class Session {
 		file.setContents(in, responseType, true, new NullProgressMonitor());
 	}
 
-	/**
-	 * Report the given error line to any listeners
-     * @param line the error line
-     * @param status the status that indicates any problems encountered parsing the line
-     */
-    public void handleErrorLine(String line, IStatus status) {
-        ConsoleListeners.getInstance().errorLineReceived(this, line, status);
-    }
-
     /**
 	 * Stores the value of the last Mod-time response encountered.
 	 * Valid only for the duration of a single CVS command.
@@ -996,5 +987,25 @@ public class Session {
     
     public Command getCurrentCommand() {
         return currentCommand;
+    }
+
+	/**
+	 * Report the given error line to any listeners
+     * @param line the error line
+     * @param status the status that indicates any problems encountered parsing the line
+     */
+    public void handleErrorLine(String line, IStatus status) {
+        ConsoleListeners.getInstance().errorLineReceived(this, line, status);
+    }
+    
+    /**
+     * An error has occurred while processing responses from the 
+     * server. Place this error is the status that will be returned
+     * from the command and show the error in the console
+     * @param status the status that descibes the error
+     */
+    public void handleResponseError(IStatus status) {
+        addError(status);
+        handleErrorLine(Policy.bind("Session.0", status.getMessage()), status); //$NON-NLS-1$
     }
 }

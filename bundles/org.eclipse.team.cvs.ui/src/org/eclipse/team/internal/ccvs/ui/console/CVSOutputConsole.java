@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -67,6 +68,11 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private boolean visible = false;
 	// Indicates whether the console's streams have been initialized
 	private boolean initialized = false;
+	
+	/*
+	 * Constant used for indenting error status printing
+	 */
+    private static final String NESTING = "   "; //$NON-NLS-1$
 	
 	/**
 	 * Used to notify this console of lifecycle methods <code>init()</code>
@@ -281,22 +287,15 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		}
 		String statusText;
 		if (status != null) {
+		    boolean includeRoot = true;
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				statusText = Policy.bind("Console.resultServerError", status.getMessage(), time); //$NON-NLS-1$
+				includeRoot = false;
 			} else {
 				statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
-			IStatus[] children = status.getChildren();
-			if (children.length == 0) {
-				if (!status.isOK())
-					appendLine(ConsoleDocument.COMMAND, messageLineForStatus(status));
-			} else {
-				for (int i = 0; i < children.length; i++) {
-					if (!children[i].isOK())
-						appendLine(ConsoleDocument.COMMAND, messageLineForStatus(children[i]));
-				}
-			}
+			outputStatus(status, includeRoot, includeRoot ? 0 : 1);
 		} else if (exception != null) {
 			if (exception instanceof OperationCanceledException) {
 				statusText = Policy.bind("Console.resultAborted", time); //$NON-NLS-1$
@@ -304,6 +303,9 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				statusText = Policy.bind("Console.resultException", time); //$NON-NLS-1$
 			}
 			appendLine(ConsoleDocument.COMMAND, statusText);
+			if (exception instanceof CoreException) {
+			    outputStatus(((CoreException)exception).getStatus(), true, 1);
+			}
 		} else {
 			statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
 		}
@@ -311,7 +313,35 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		appendLine(ConsoleDocument.COMMAND, ""); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
+	private void outputStatus(IStatus status, boolean includeParent, int nestingLevel) {
+		if (includeParent && !status.isOK()) {
+            outputStatusMessage(status, nestingLevel);
+            nestingLevel++;
+		}
+		
+		// Include a CoreException in the status
+		Throwable t = status.getException();
+		if (t instanceof CoreException) {
+		    outputStatus(((CoreException)t).getStatus(), true, nestingLevel);
+		}
+		
+		// Include child status
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			outputStatus(children[i], true, nestingLevel);
+		}
+	}
+	
+    private void outputStatusMessage(IStatus status, int nesting) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < nesting; i++) {
+            buffer.append(NESTING);
+        }
+        buffer.append(messageLineForStatus(status));
+        appendLine(ConsoleDocument.COMMAND, buffer.toString());
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {

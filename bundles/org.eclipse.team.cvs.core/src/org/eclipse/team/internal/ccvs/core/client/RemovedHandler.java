@@ -11,13 +11,9 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Handles a "Removed" response from the CVS server.
@@ -59,12 +55,27 @@ class RemovedHandler extends ResponseHandler {
 		// delete then unmanage the file
 		try {
             if (mFile.isReadOnly()) mFile.setReadOnly(false);
-            mFile.delete();
-            mFile.unmanage(null);
+	        mFile.delete();
+	        mFile.unmanage(null);
         } catch (CVSException e) {
-            // Just log and keep going
-            CVSProviderPlugin.log(e);
+            session.handleResponseError(new CVSStatus(IStatus.ERROR, CVSStatus.RESPONSE_HANDLING_FAILURE, Policy.bind("RemovedHandler.0", getPath(mFile)), e)); //$NON-NLS-1$
         }
 	}
+
+    private String getPath(ICVSFile file) {
+        try {
+            IResource resource = file.getIResource();
+            if (resource != null) {
+                return resource.getFullPath().toString();
+            }
+        } catch (CVSException e) {
+            // Ignore
+        }
+        try {
+            return file.getRepositoryRelativePath();
+        } catch (CVSException e1) {
+            return file.getName();
+        }
+    }
 }
 
