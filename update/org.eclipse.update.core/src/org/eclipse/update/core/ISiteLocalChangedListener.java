@@ -4,7 +4,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
-public interface ILocalSiteChangedListener {
+public interface ISiteLocalChangedListener {
 	void currentInstallConfigurationChanged(IInstallConfiguration configuration);
 	void installConfigurationRemoved(IInstallConfiguration configuration);
 }

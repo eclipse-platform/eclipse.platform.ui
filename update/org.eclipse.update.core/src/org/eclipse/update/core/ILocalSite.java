@@ -20,7 +20,7 @@ import java.io.File;
  * on local installation sites and linked sites)
  * </ul>
  */ 
-public interface ISiteLocal {
+public interface ILocalSite {
 	
 	
 	/**
@@ -40,7 +40,7 @@ public interface ISiteLocal {
 	
 	/**
 	 * Returns an array of configuration objects representing the local
-	 * site change history
+	 * site change history. The current configuration is part of the history.
 	 * 
 	 * @return IInstallConfiguration[] configuration history. Returns
 	 * an empty array is there is no history
@@ -59,8 +59,8 @@ public interface ISiteLocal {
 	 */
 	IInstallConfiguration importConfiguration(File importFile);
 	
-	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
-	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
+	void addLocalSiteChangedListener(ISiteLocalChangedListener listener);
+	void removeLocalSiteChangedListener(ISiteLocalChangedListener listener);
 
 }
 

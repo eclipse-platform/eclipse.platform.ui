@@ -8,9 +8,8 @@ package org.eclipse.update.internal.core;
 
 import java.io.PrintWriter;
 
-import org.eclipse.core.internal.plugins.IModel;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ILocalSite;
 
 public class Writer {
 public Writer() {
@@ -28,6 +27,17 @@ public void writeSite(ISite site, PrintWriter w) {
 
 }
 
+
+public void writeSite(ILocalSite site, PrintWriter w) {
+
+	w.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	w.println("");
+	w.println("<!-- File written by Update manager 2.0 -->");
+	w.println("<!-- comments in this file are not preserved -->");
+	w.println("");
+	((SiteLocal)site).write(0,w);
+
+}
 
 /**
  * Method appendEscapedChar.

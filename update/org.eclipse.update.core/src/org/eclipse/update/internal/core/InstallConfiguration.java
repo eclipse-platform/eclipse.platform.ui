@@ -23,6 +23,7 @@ public class InstallConfiguration implements IInstallConfiguration {
 	private ListenersList listeners = new ListenersList();
 	private boolean isCurrent;
 	private URL location;
+	private String label;
 	private List installSites;
 	private List linkedSites;
 	private List features;
@@ -30,8 +31,9 @@ public class InstallConfiguration implements IInstallConfiguration {
 	/*
 	 * default constructor. Create
 	 */
-	public InstallConfiguration(URL location) {
+	public InstallConfiguration(URL location, String label) {
 		this.location = location;
+		this.label = label;
 		this.isCurrent = false;
 	}
 
@@ -174,6 +176,14 @@ public class InstallConfiguration implements IInstallConfiguration {
 		return isCurrent;
 	}
 
+
+	/*
+	 *  @see IInstallConfiguration#setCurrent(boolean)
+	 */
+	public void setCurrent(boolean isCurrent) {
+		this.isCurrent = isCurrent;
+	}
+
 	/*
 	 * @see IInstallConfiguration#addInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
@@ -239,6 +249,36 @@ public class InstallConfiguration implements IInstallConfiguration {
 	 * @see IInstallConfiguration#unconfigure(IFeature)
 	 */
 	public void unconfigure(IFeature feature) {
+	}
+
+		/*
+	 * @see IInstallConfiguration#getURL()
+	 */
+	public URL getURL() {
+		return location;
+	}
+
+	/**
+	 * Sets the URL.
+	 * @param location The URL to set
+	 */
+	public void setURL(URL location) {
+		this.location = location;
+	}
+
+	/*
+	 * @see IInstallConfiguration#getLabel()
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * Sets the label.
+	 * @param label The label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

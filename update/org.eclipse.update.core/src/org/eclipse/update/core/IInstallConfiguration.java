@@ -1,6 +1,7 @@
 package org.eclipse.update.core;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Date;
 
 /*
@@ -19,6 +20,14 @@ public interface IInstallConfiguration {
 	 * @return boolean
 	 */
 	public boolean isCurrent();
+	
+	/**
+	 *  Change the 
+	 * 
+	 */
+	//FIXME : javadoc
+	void setCurrent(boolean isCurrent);
+	
 	
 	/**
 	 * Returns an array of features configured through this configuration.
@@ -124,6 +133,17 @@ public interface IInstallConfiguration {
 	 * Unconfigure the feature from the execution path
 	 */
 	void unconfigure(IFeature feature);
+	
+	/**
+	 * returns the URL of where the configuration is declared
+	 * The URL points to teh exact XML file
+	 */
+	URL getURL();
+	
+	/**
+	 * returns the label of the configuration
+	 */
+	String getLabel();
 
 }
 

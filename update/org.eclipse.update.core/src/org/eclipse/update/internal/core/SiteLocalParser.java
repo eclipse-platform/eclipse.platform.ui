@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IInfo;
-import org.eclipse.update.core.ISiteLocal;
+import org.eclipse.update.core.ILocalSite;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,7 +45,7 @@ public class SiteLocalParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public SiteLocalParser(InputStream siteStream, ISiteLocal site) throws IOException, SAXException, CoreException {
+	public SiteLocalParser(InputStream siteStream, ILocalSite site) throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
@@ -134,7 +134,9 @@ public class SiteLocalParser extends DefaultHandler {
 
 		// url
 		URL url = UpdateManagerUtils.getURL(site.getLocation(), attributes.getValue("url"), null);
-		InstallConfiguration config = new InstallConfiguration(url);
+		String label = attributes.getValue("label");
+		label = UpdateManagerUtils.getResourceString(label, bundle);
+		InstallConfiguration config = new InstallConfiguration(url,label);
 		// add the config
 		site.addConfiguration(config);
 

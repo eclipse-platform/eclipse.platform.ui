@@ -25,7 +25,7 @@ public class SiteManager {
 	 * 
 	 * @return the local site
 	 */	
-	public static ISiteLocal getLocalSite() throws CoreException{
+	public static ILocalSite getLocalSite() throws CoreException{
 		return InternalSiteManager.getLocalSite();
 	}
 	

@@ -45,7 +45,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	public void testLocalSite() throws Exception {
 		
 		
-		ISiteLocal site = SiteManager.getLocalSite();
+		ILocalSite site = SiteManager.getLocalSite();
 		ISite[] instSites = site.getCurrentConfiguration().getInstallSites();
 		assertTrue(instSites.length>0);
 		System.out.println("Local Site:"+instSites[0].getURL().toExternalForm());
