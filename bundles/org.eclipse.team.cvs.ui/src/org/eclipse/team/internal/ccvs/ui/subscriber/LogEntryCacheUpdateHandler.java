@@ -15,8 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -34,18 +32,36 @@ import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryC
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This class wraps a LogEntryCache in order to clear entries once they are no longer
  * in the subscriber.
  */
 public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
-
+   
     private static final int REMOVAL = 1;
     private static final int CHANGE = 2;
     private static final int FETCH_REQUEST = 3;
+    private static final int PAUSE = 4;
+    
+    /*
+     * Lock used to ensure that fetches are queued when the job is
+     * a non-system job.
+     */
+    private final Object queueLock = new Object();
+    
+    /*
+     * Exception used to stop processing so the job can be restarted as a non-system job
+     */
+    private static final OperationCanceledException PAUSE_EXCEPTION = new OperationCanceledException();
+    
+    /*
+     * Contants for configuring how long to wait for the job to be paused
+     * when a fetch is required and the job needs to be converted to a non-system
+     * job. If the wait time is elapsed, an exception is thrown.
+     */
+    private static final int WAIT_INCREMENT = 10;
+    private static final int MAX_WAIT = 1000;
     
     /*
      * Set that keeps track of all resource for which we haved fetched log entries
@@ -126,7 +142,6 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
         protected void change(IResource resource, int depth) {
             queueEvent(new ResourceEvent(resource, CHANGE, depth), false /* do not put in on the front of the queue*/); 
         }
-        
     }
     
     /*
@@ -200,6 +215,9 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
         		break;
         	case FETCH_REQUEST:
         	    fetches.add(event);
+        	    break;
+        	case PAUSE:
+        	    throw PAUSE_EXCEPTION;
         }
         
     }
@@ -348,11 +366,48 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
 
     /**
-     * Queue a request to fetch log entries for the given SyncInfo nodes
+     * Queue a request to fetch log entries for the given SyncInfo nodes.
+     * The event handler must be a non-system job when revision histories 
+     * are fetched.
      * @param infos the nodes whose log entries are to be fetched
      */
-    public void fetch(SyncInfo[] infos) {
-        queueEvent(new FetchRequest(infos), false /* don't place at the end */);
+    public void fetch(SyncInfo[] infos) throws CVSException {
+        synchronized(queueLock) {
+	        Job job = getEventHandlerJob();
+	        if (job.isSystem() && job.getState() != Job.NONE) {
+	            // queue an event to pause the processor
+	            super.queueEvent(new Event(PAUSE), true /* put on the front of the queue */);
+	            int count = 0;
+	            while (job.getState() != Job.NONE && count < MAX_WAIT) {
+	                count += WAIT_INCREMENT;
+	                try {
+                        Thread.sleep(WAIT_INCREMENT); // Wait a little while
+                    } catch (InterruptedException e) {
+                        // Ignore
+                    }
+	            }
+	            if (job.getState() != Job.NONE) {
+	                // The job never completed in the time aloted so throw an exception
+	                throw new CVSException(Policy.bind("LogEntryCacheUpdateHandler.2")); //$NON-NLS-1$
+	            }
+	        }
+	        // Queue the event even if the job didn't stop in the time aloted
+	        queueEvent(new FetchRequest(infos), false /* don't place at the end */);
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.BackgroundEventHandler#queueEvent(org.eclipse.team.internal.core.BackgroundEventHandler.Event, boolean)
+     */
+    protected synchronized void queueEvent(Event event, boolean front) {
+        // Override to snure that queues by this handler are serialized
+        synchronized(queueLock) {
+            Job job = getEventHandlerJob();
+            if (job.getState() == Job.NONE) {
+                job.setSystem(event.getType() != FETCH_REQUEST); 
+            }
+            super.queueEvent(event, front);
+        }
     }
     
     /*

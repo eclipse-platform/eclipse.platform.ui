@@ -16,8 +16,10 @@ import java.util.Date;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
@@ -171,7 +173,11 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
     protected void add(SyncInfo[] infos) {
         LogEntryCacheUpdateHandler handler = getLogEntryHandler();
         if (handler != null)
-            handler.fetch(infos);
+            try {
+                handler.fetch(infos);
+            } catch (CVSException e) {
+                getConfiguration().getSyncInfoSet().addError(new TeamStatus(IStatus.ERROR, CVSUIPlugin.ID, 0, e.getMessage(), e, null));
+            }
     }
 
     /* (non-Javadoc)
