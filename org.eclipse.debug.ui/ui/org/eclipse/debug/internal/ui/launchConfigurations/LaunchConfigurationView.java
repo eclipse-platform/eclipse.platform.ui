@@ -21,8 +21,6 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -32,7 +30,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -54,11 +51,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CreateLaunchConfigurationAction fCreateAction;
 	private DeleteLaunchConfigurationAction fDeleteAction;
 	private DuplicateLaunchConfigurationAction fDuplicateAction;
-
-	/**
-	 * Manager for working set related a actions.
-	 */
-	private LaunchConfigurationWorkingSetActionManager fWorkingSetActionManager;
 	
 	/**
 	 * Constructs a launch configuration view for the given launch group
@@ -89,18 +81,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		treeViewer.expandAll();
 		getLaunchManager().addLaunchConfigurationListener(this);
-
-		IPropertyChangeListener titleUpdater= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				String property= event.getProperty();
-				if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
-					// TODO: tooltip
-					//updateTreeLabelTooltip();
-				}
-			}
-		};		
-		setWorkingSetActionManager(new LaunchConfigurationWorkingSetActionManager(treeViewer, parent.getShell(), titleUpdater));
-		
 		return treeViewer;
 	}
 
@@ -136,7 +116,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		menu.add(fDuplicateAction);
 		menu.add(fDeleteAction);
 		menu.add(new Separator());
-		getWorkingSetActionManager().contributeToMenu(menu);
 	}
 
 	/**
@@ -158,7 +137,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		getWorkingSetActionManager().dispose();
 		fCreateAction.dispose();
 		fDeleteAction.dispose();
 		fDuplicateAction.dispose();
@@ -271,14 +249,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		return fViewer;
 	}
 	
-	private void setWorkingSetActionManager(LaunchConfigurationWorkingSetActionManager actionManager) {
-		fWorkingSetActionManager = actionManager;
-	}
-
-	protected LaunchConfigurationWorkingSetActionManager getWorkingSetActionManager() {
-		return fWorkingSetActionManager;
-	}
-
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}

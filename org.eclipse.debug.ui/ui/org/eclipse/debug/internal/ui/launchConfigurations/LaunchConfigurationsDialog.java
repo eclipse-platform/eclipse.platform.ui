@@ -72,7 +72,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -349,7 +348,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	protected void initializeContent() {
-		initializeWorkingSet();
 		doInitialTreeSelection();
 		IStatus status = getInitialStatus();
 		if (status != null) {
@@ -374,20 +372,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				sashWeights = DEFAULT_SASH_WEIGHTS;
 			}
 			getSashForm().setWeights(sashWeights);
-		}
-	}
-	
-	/**
-	 * Retrieve the last working set in use and apply it to the tree.
-	 */
-	private void initializeWorkingSet() {
-		IDialogSettings settings = getDialogSettings();
-		String workingSetName = settings.get(IDebugPreferenceConstants.DIALOG_WORKING_SET);
-		if (workingSetName != null) {
-			IWorkingSet workingSet = getWorkingSetManager().getWorkingSet(workingSetName);
-			if (workingSet != null) {
-				getWorkingSetActionManager().setWorkingSet(workingSet, true);
-			}
 		}
 	}
 
@@ -450,27 +434,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Store the current working set.
-	 */
-	private void persistWorkingSet() {
-		if (getWorkingSetActionManager() != null) {
-			IDialogSettings settings = getDialogSettings();
-			IWorkingSet workingSet = getWorkingSetActionManager().getWorkingSet();
-			String name = ""; //$NON-NLS-1$
-			if (workingSet != null) {
-				name = workingSet.getName();
-			}
-			settings.put(IDebugPreferenceConstants.DIALOG_WORKING_SET, name);
-		}		
-	}
-	
-	/**
 	 * @see Window#close()
 	 */
 	public boolean close() {
 		persistShellGeometry();
 		persistSashWeights();
-		persistWorkingSet();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
 		getTabViewer().dispose();
@@ -661,8 +629,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getTreeLabel().setLayoutData(gd);
 		getTreeLabel().setFont(font);
 		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
-		// TODO: tooltip		
-		//updateTreeLabelTooltip();
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
@@ -1536,34 +1502,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void setDefaultMessage() {
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_type_of_configuration_to_create,_and_press___new__51")); //$NON-NLS-1$		
-	}
-	
-	/**
-	 * Set the tooltip of the config tree label based on the current working set in effect.
-	 */
-	private void updateTreeLabelTooltip() {
-		LaunchConfigurationWorkingSetActionManager mgr = getWorkingSetActionManager();
-		if (mgr != null) {
-			IWorkingSet workingSet = mgr.getWorkingSet();
-			if (workingSet != null) {
-				String newTooltip = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Working_Set__{0}_1"), new String[] {workingSet.getName()} ); //$NON-NLS-1$
-				getTreeLabel().setToolTipText(newTooltip);
-				return;
-			}
-		}
-		
-		// No working set, so don't show a tooltip
-		getTreeLabel().setToolTipText(null);
-	}
-	
-	/**
-	 * Returns the working set action manager
-	 */
-	private LaunchConfigurationWorkingSetActionManager getWorkingSetActionManager() {
-		if (fLaunchConfigurationView != null) {
-			return fLaunchConfigurationView.getWorkingSetActionManager();
-		}
-		return null;
 	}
 	
 	/**

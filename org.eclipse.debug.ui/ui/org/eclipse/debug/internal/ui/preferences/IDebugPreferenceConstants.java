@@ -98,7 +98,6 @@ public interface IDebugPreferenceConstants {
 	public static final String DIALOG_HEIGHT = IDebugUIConstants.PLUGIN_ID + ".DIALOG_HEIGHT"; //$NON-NLS-1$
 	public static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	public static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-	public static final String DIALOG_WORKING_SET = IDebugUIConstants.PLUGIN_ID + ".DIALOG_WORKING_SET"; //$NON-NLS-1$
 	
 }
 
