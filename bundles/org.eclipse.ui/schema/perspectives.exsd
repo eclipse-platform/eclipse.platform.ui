@@ -98,7 +98,7 @@ with this perspective.
    <element name="description" type="string">
       <annotation>
          <documentation>
-            an optional subelement whose body should contain text providing short description of the perspective.
+            an optional subelement whose body should contain text providing a short description of the perspective.
          </documentation>
       </annotation>
    </element>
