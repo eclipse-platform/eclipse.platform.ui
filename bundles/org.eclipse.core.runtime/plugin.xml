@@ -13,7 +13,7 @@
   </runtime>
 
   <requires>
-    <import plugin="org.apache.xerces" version="4.0.7" match="equivalent"/>
+    <import plugin="org.apache.xerces" version="4.0.13" match="equivalent"/>
   </requires>
 
   <extension-point name="%applicationsName" id="applications" schema="schema/applications.mxsd"/>
