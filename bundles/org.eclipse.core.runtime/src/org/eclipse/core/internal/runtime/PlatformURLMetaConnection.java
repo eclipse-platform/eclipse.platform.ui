@@ -5,6 +5,7 @@ import java.net.URL;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class PlatformURLMetaConnection extends PlatformURLConnection {

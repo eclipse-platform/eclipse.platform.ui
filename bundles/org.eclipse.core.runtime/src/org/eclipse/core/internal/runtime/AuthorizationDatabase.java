@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A database that remembers information, such as usernames and

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Implementation of API type IJobManager

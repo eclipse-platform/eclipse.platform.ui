@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 /**

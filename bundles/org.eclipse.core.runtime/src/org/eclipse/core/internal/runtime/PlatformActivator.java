@@ -24,6 +24,7 @@ import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.service.systembundle.EntryLocator;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.url.URLConstants;

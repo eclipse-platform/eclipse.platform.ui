@@ -4,8 +4,8 @@ import java.io.*;
 import java.net.URL;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.runtime.NLS;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 
 public class PlatformURLConfigConnection extends PlatformURLConnection {
 	private static boolean isRegistered = false;

@@ -12,6 +12,7 @@ package org.eclipse.core.internal.jobs;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Responsible for notifying all job listeners about job lifecycle events.  Uses a

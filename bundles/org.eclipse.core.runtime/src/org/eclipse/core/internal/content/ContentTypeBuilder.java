@@ -14,6 +14,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * This class is a sidekick for ContentTypeManager that provides mechanisms for 

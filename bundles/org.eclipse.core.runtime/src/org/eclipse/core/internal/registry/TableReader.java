@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.HashMap;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class TableReader {

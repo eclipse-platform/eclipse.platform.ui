@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class PlatformURLFragmentConnection extends PlatformURLConnection {

@@ -11,6 +11,7 @@ package org.eclipse.core.internal.runtime;
 
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 /**

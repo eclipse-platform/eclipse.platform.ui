@@ -13,6 +13,7 @@ package org.eclipse.core.internal.preferences;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**

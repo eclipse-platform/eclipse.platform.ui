@@ -9,7 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 // Runtime plugin message catalog
 public class Messages extends NLS {

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Reads a structured log from disk and reconstructs status and exception objects.

@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 import org.xml.sax.InputSource;

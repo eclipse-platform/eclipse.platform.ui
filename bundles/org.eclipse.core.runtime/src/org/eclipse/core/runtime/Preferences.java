@@ -17,6 +17,7 @@ import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A table of preference settings, mapping named properties to values. Property

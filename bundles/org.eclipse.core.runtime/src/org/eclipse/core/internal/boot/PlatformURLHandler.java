@@ -15,7 +15,7 @@ import java.lang.reflect.Constructor;
 import java.net.*;
 import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.Messages;
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 
 /**

@@ -16,6 +16,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;

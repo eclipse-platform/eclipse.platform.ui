@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A content describer for binary formats that present some 

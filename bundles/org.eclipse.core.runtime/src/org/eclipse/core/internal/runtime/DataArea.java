@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class DataArea {

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.boot;
 import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.internal.runtime.Messages;
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Platform URL support

@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * <p>
