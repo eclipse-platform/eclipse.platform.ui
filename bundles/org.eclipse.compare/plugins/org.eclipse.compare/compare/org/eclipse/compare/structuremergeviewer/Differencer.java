@@ -485,8 +485,10 @@ public class Differencer {
 	 * @param input the object for which to return children
 	 */
 	protected Object[] getChildren(Object input) {
+		// fix for PR 1GF2JX7: ITPUI:ALL - Compare wrong for empty folders
 		if (input instanceof IStructureComparator)
 			return ((IStructureComparator)input).getChildren();
+		// end of fix
 		return null;
 	}
 	
