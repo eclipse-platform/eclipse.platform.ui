@@ -22,7 +22,6 @@ public abstract class InternalJob implements Comparable {
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
 
-	private boolean asyncFinish = false;
 	private final int jobNumber = nextJobNumber++;
 	private List listeners;
 	private IProgressMonitor monitor;
@@ -57,10 +56,6 @@ public abstract class InternalJob implements Comparable {
 		return (int) (((InternalJob) otherJob).startTime - startTime);
 	}
 	protected void done(IStatus result) {
-		//ignore if not registered for asynchronous finish
-		if (!asyncFinish)
-			return;
-		asyncFinish = false;
 		manager.endJob((Job)this, result);
 	}
 	/**
@@ -109,9 +104,6 @@ public abstract class InternalJob implements Comparable {
 	protected void schedule(long delay) {
 		manager.schedule(this, delay);
 	}
-	void setAsyncFinish() {
-		asyncFinish = true;
-	}
 	final void setMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 	}
@@ -131,7 +123,7 @@ public abstract class InternalJob implements Comparable {
 		return manager.sleep(this);
 	}
 	public String toString() {
-		return "Job(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
+		return getClass().getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 	protected void wakeUp() {
 		manager.wakeUp(this);

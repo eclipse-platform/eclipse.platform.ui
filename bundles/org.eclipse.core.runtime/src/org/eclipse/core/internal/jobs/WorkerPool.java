@@ -44,9 +44,7 @@ class WorkerPool {
 		this.manager = manager;
 		running = true;
 	}
-	protected void debug(String msg) {
-		System.out.println("[" + Thread.currentThread() + "]" + msg); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+
 	protected synchronized void endJob(Job job, IStatus result) {
 		busyThreads--;
 		manager.endJob(job, result);
@@ -54,7 +52,7 @@ class WorkerPool {
 	protected synchronized void endWorker(Worker worker) {
 		threads.remove(worker);
 		if (JobManager.DEBUG)
-			debug("worker removed from pool: " + worker); //$NON-NLS-1$
+		JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	/**
 	 * Notfication that a job has been added to the queue.  Wake a worker,
@@ -64,7 +62,7 @@ class WorkerPool {
 		//if there is a sleeping thread, wake it up
 		if (sleepingThreads > 0) {
 			if (JobManager.DEBUG)
-				debug("notifiying a worker"); //$NON-NLS-1$
+				JobManager.debug("notifiying a worker"); //$NON-NLS-1$
 			notify();
 			return;
 		}
@@ -75,7 +73,7 @@ class WorkerPool {
 			Worker worker = new Worker(this);
 			threads.add(worker);
 			if (JobManager.DEBUG)
-				debug("worker added to pool: " + worker); //$NON-NLS-1$
+				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			//threads are considered busy until they start their first job, this ensures
 			//that if several jobs are queued at once, enough threads will be started
@@ -94,12 +92,12 @@ class WorkerPool {
 	private synchronized void sleep(long duration) {
 		sleepingThreads++;
 		if (JobManager.DEBUG)
-			debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			JobManager.debug("worker sleeping for: " + duration + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
 		try {
 			wait(duration);
 		} catch (InterruptedException e) {
 			if (JobManager.DEBUG)
-				debug("worker interrupted while waiting... :-|"); //$NON-NLS-1$
+				JobManager.debug("worker interrupted while waiting... :-|"); //$NON-NLS-1$
 		} finally {
 			sleepingThreads--;
 		}
@@ -132,7 +130,7 @@ class WorkerPool {
 				sleep(Math.min(hint, BEST_BEFORE));
 			job = manager.startJob();
 			//if we were already idle, and there are still no new jobs, then the thread can expire
-			if (job == null && idle && (System.currentTimeMillis()-idleStart > BEST_BEFORE))
+			if (job == null && idle && (System.currentTimeMillis() - idleStart > BEST_BEFORE))
 				break;
 		}
 		if (job != null)

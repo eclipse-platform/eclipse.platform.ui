@@ -80,6 +80,9 @@ public class JobManager implements IJobManager {
 			instance.doShutdown();
 		instance = null;
 	}
+	public static void debug(String msg) {
+		System.out.println("[" + Thread.currentThread() + "]" + msg); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 	private JobManager() {
 		instance = this;
 		synchronized (lock) {
@@ -202,10 +205,10 @@ public class JobManager implements IJobManager {
 		InternalJob blocked = null;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
-			if (result == Job.ASYNC_FINISH) {
-				internalJob.setAsyncFinish();
+			if (result == Job.ASYNC_FINISH)
 				return;
-			}
+			if (JobManager.DEBUG)
+				JobManager.debug("JobManager.endJob: " + job); //$NON-NLS-1$
 			internalJob.setState(Job.NONE);
 			internalJob.setMonitor(null);
 			running.remove(job);
