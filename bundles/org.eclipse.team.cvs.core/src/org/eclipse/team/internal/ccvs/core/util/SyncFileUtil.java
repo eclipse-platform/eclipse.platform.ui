@@ -3,7 +3,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,17 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class SyncFileUtil {
 
-	// CVS meta files located in CVS sub-directory of folders that are managed by CVS. These 
-	// files contain the workspace revision information for the resources that have been
-	// checked out into a CVS workspace. See the CVS documentation for more details.
+	// All possible files available in the CVS subdir
+	
 	public static final String REPOSITORY = "Repository";
 	public static final String ROOT = "Root";
 	public static final String STATIC = "Entries.Static";	
@@ -35,6 +36,10 @@ public class SyncFileUtil {
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
 	private static final String FOLDER_TAG="D";
+	
+	// Command characters found in the Entries.log file
+	private static final String ADD_TAG="A ";
+	private static final String REMOVE_TAG="R ";
 
 	/**
 	 * Reads the CVS/Entry and CVS/Permissions files for the given folder. If the folder does not have a 
@@ -88,6 +93,56 @@ public class SyncFileUtil {
 		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
+	public static void writeResourceSync(File file, ResourceSyncInfo info) throws CVSException {
+		writeEntriesLog(file, info, ADD_TAG);
+	}
+	
+	/**
+	 * Append to Entries.log file
+	 */
+	private static void writeEntriesLog(File file, ResourceSyncInfo info, String prefix) throws CVSException {
+		FileOutputStream out = null;
+		try {
+			File entriesLogFile = new File(getCVSSubdirectory(file.getParentFile()), ENTRIES_LOG);
+			if(!entriesLogFile.exists()) {
+				entriesLogFile.createNewFile();
+			}
+			String line = prefix + info.getEntryLine(true) +"\n";
+			out = new FileOutputStream(entriesLogFile.getAbsolutePath(), true);
+			out.write(line.getBytes());
+		} catch(IOException e) {
+			throw new CVSException(IStatus.ERROR, 0, "Error writing to Entries.log.", e);
+		} finally {
+			try {
+				if(out!=null) {
+					out.close();
+				}
+			} catch(IOException e) {
+				throw new CVSException(IStatus.ERROR, 0, "Cannot close Entries.log.", e);
+			}
+		}
+	}
+	
+	/**
+	 * Delete this file from Entries/Permissions file
+	 */
+	public static void deleteSync(File file) throws CVSException {
+		if(file.isDirectory()) {
+			writeEntriesLog(file, new ResourceSyncInfo(file.getName()), REMOVE_TAG);		
+		} else {
+			writeEntriesLog(file, new ResourceSyncInfo(file.getName(), "0", "", "", null, ""), REMOVE_TAG);		
+		}
+	}
+	
+	public static boolean isMetaFile(File file) {
+		File parent = file.getParentFile();
+		if(parent!=null&&parent.getName().equals("CVS")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * Writes the given resource sync infos into the CVS/Entry and CVS/Permissions files.
 	 */
@@ -139,6 +194,16 @@ public class SyncFileUtil {
 		return new FolderSyncInfo(repo, root, cvsTag, isStatic);		
 	}
 	
+	public static File[] getEntrySyncFiles(File folder) {
+		File cvsSubDir = getCVSSubdirectory(folder);
+		return new File[] { new File(cvsSubDir, ENTRIES), new File(cvsSubDir, PERMISSIONS) };
+	}
+	
+	public static File[] getFolderSyncFiles(File folder) {
+		File cvsSubDir = getCVSSubdirectory(folder);
+		return new File[] { new File(cvsSubDir, ROOT), new File(cvsSubDir, REPOSITORY), new File(cvsSubDir, STATIC), new File(cvsSubDir, TAG) };
+	}
+	
 	public static void writeFolderConfig(File parent, FolderSyncInfo info) throws CVSException {
 		
 		if(!getCVSSubdirectory(parent).exists()) {
@@ -147,11 +212,7 @@ public class SyncFileUtil {
 
 		writeLine(parent, ROOT, info.getRoot());
 		if (info.getTag() != null) {
-			String tagString = info.getTag().toEntryLineFormat(false);
-			if (tagString.length() > 0)
-				writeLine(parent, TAG, tagString);
-			else
-				writeLine(parent, TAG, null);
+			writeLine(parent, TAG, info.getTag().toEntryLineFormat(false));
 		} else {
 			writeLine(parent, TAG, null);
 		}
@@ -161,20 +222,6 @@ public class SyncFileUtil {
 			writeLine(parent, STATIC, null);
 		}
 		writeLine(parent, REPOSITORY, info.getRepository());
-	}
-	
-	public static File[] getEntrySyncFiles(File folder) {
-		File cvsSubDir = getCVSSubdirectory(folder);
-		return new File[] { new File(cvsSubDir, ENTRIES), new File(cvsSubDir, PERMISSIONS) };
-	}
-	
-	public static File[] getFolderSyncFiles(File folder) {
-		File cvsSubDir = getCVSSubdirectory(folder);
-		return new File[] {new File(cvsSubDir, ROOT), new File(cvsSubDir, REPOSITORY), new File(cvsSubDir, STATIC), new File(cvsSubDir, TAG)};
-	}	
-	
-	public static File getCVSSubdirectory(File folder) {
-		return new File(folder, "CVS");
 	}
 						
 	protected static void setContents(File parent, String filename, String[] contents) throws CVSException {
@@ -216,25 +263,53 @@ public class SyncFileUtil {
 		} else {
 			return null;
 		} 
+	}	
+	
+	public static File getCVSSubdirectory(File folder) {
+		return new File(folder, "CVS");
 	}
 	
-	/**
-	 * To be compatible with other CVS clients meta files must be written with lines
-	 * terminating with a carriage return only.
-	 */
-	private static void writeLines(File file, String[] content) throws CVSException {
+	public static void mergeEntriesLogFiles(File root) throws CVSException {
 		
-		BufferedWriter fileWriter;
+		File logEntriesFile = new File(getCVSSubdirectory(root), ENTRIES_LOG);
+		File entriesFile = new File(getCVSSubdirectory(root), ENTRIES);
 
-		try {
-			fileWriter = new BufferedWriter(new FileWriter(file));
-			for (int i = 0; i<content.length; i++) {
-				fileWriter.write(content[i] + "\n");				
-			}
-			fileWriter.close();
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
+		if (!logEntriesFile.exists()) {
+			// If we do not have an Entries.Log file we are done because there is nothing
+			// to merge (this includes the case where we do not have CVSDirectory)
+			return;
 		}
+		
+		// The map contains the name of the resource as the key and the entryLine as the 
+		// value
+		// "new ResourceSyncInfo(entryLine,null)).getName()" ist used to parse the name 
+		// out of the entryLine and shoud maybe be replaced sometime
+		
+		Map mergedEntries = new HashMap();
+
+		if(entriesFile.exists()) {
+			String[] entries = readLines(entriesFile);
+			for (int i = 0; i < entries.length; i++) {
+				if (!FOLDER_TAG.equals(entries[i])) {
+					mergedEntries.put((new ResourceSyncInfo(entries[i],null, null)).getName(),entries[i]);
+				}
+			}
+		}
+		
+		String[] logEntries = readLines(logEntriesFile);
+		for (int i = 0; i < logEntries.length; i++) {
+			
+			if (logEntries[i].startsWith(ADD_TAG)) {
+				String newEntry = logEntries[i].substring(ADD_TAG.length());
+				mergedEntries.put((new ResourceSyncInfo(newEntry,null, null)).getName(),newEntry);		
+			} else if (logEntries[i].startsWith(REMOVE_TAG)) {
+				String newEntry = logEntries[i].substring(REMOVE_TAG.length());
+				mergedEntries.remove((new ResourceSyncInfo(newEntry,null, null)).getName());
+			}
+		}
+		
+		writeLines(entriesFile,(String[]) mergedEntries.values().toArray(new String[mergedEntries.size()]));
+		logEntriesFile.delete();
 	}
 	
 	public static String[] readLines(File file) throws CVSException {
@@ -253,60 +328,24 @@ public class SyncFileUtil {
 		}
 			
 		return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
-	}			
+	}
 	
-	public static void mergeEntriesLogFiles(File root) throws CVSException {
+		/**
+	 * To be compatible with other CVS clients meta files must be written with lines
+	 * terminating with a carriage return only.
+	 */
+	private static void writeLines(File file, String[] content) throws CVSException {
 		
-		String FOLDER_TAG="D";
-		String ADD_TAG="A ";
-		String REMOVE_TAG="R ";
-		
-		File[] dirs = root.listFiles(new FileFilter() {
-				public boolean accept(File file) {
-					return file.isDirectory() && !file.getName().equals("CVS");
-				}
-			});
-		
-		//for (int i = 0; i < dirs.length; i++) {
-		//	mergeEntriesLogFiles(dirs[i]);
-		//}
+		BufferedWriter fileWriter;
 
-		File logEntriesFile = new File(getCVSSubdirectory(root), ENTRIES_LOG);
-		File entriesFile = new File(getCVSSubdirectory(root), ENTRIES);
-
-		if (!logEntriesFile.exists()) {
-			// If we do not have an Entries.Log file we are done because there is nothing
-			// to merge (this includes the case where we do not have CVSDirectory)
-			return;
-		}
-		
-		// The map contains the name of the resource as the key and the entryLine as the 
-		// value
-		// "new ResourceSyncInfo(entryLine,null)).getName()" ist used to parse the name 
-		// out of the entryLine and shoud maybe be replaced sometime
-		
-		Map mergedEntries = new HashMap();
-
-		String[] entries = readLines(entriesFile);
-		for (int i = 0; i < entries.length; i++) {
-			if (!FOLDER_TAG.equals(entries[i])) {
-				mergedEntries.put((new ResourceSyncInfo(entries[i],null, null)).getName(),entries[i]);
+		try {
+			fileWriter = new BufferedWriter(new FileWriter(file));
+			for (int i = 0; i<content.length; i++) {
+				fileWriter.write(content[i] + "\n");				
 			}
+			fileWriter.close();
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
 		}
-		
-		String[] logEntries = readLines(logEntriesFile);
-		for (int i = 0; i < logEntries.length; i++) {
-			
-			if (logEntries[i].startsWith(ADD_TAG)) {
-				String newEntry = logEntries[i].substring(ADD_TAG.length());
-				mergedEntries.put((new ResourceSyncInfo(newEntry,null, null)).getName(),newEntry);		
-			} else if (logEntries[i].startsWith(REMOVE_TAG)) {
-				String newEntry = logEntries[i].substring(REMOVE_TAG.length());
-				mergedEntries.remove((new ResourceSyncInfo(newEntry,null, null)).getName());
-			}
-		}
-		
-		writeLines(entriesFile,(String[]) mergedEntries.values().toArray(new String[mergedEntries.size()]));
-		logEntriesFile.delete();
 	}
 }

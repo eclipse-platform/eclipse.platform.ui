@@ -56,11 +56,12 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProvider implements ICVSProvider {
@@ -373,17 +374,11 @@ public class CVSProvider implements ICVSProvider {
 	/*
 	 * @see ICVSProvider#importAndCheckout(IProject, Properties, IProgressMonitor)
 	 */
-	public void createModule(
-		IProject project,
-		Properties configuration,
-		IProgressMonitor monitor)
-		throws TeamException {
-			
+	public void createModule(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException {
 		CVSRepositoryLocation location = buildRepository(configuration, false);
 		boolean alreadyExists = isCached(location);
 		addToCache(location);
 		try {
-
 			// Get the import properties
 			String message = configuration.getProperty("message"); //$NON-NLS-1$
 			if (message == null)
@@ -421,7 +416,6 @@ public class CVSProvider implements ICVSProvider {
 			// Set the folder sync info of the project to point to the remote module
 			ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
 			folder.setFolderSyncInfo(new FolderSyncInfo(moduleName, location.getLocation(), null, false));
-			Synchronizer.getInstance().save(monitor);
 
 			// Register the project with Team
 			// (unless the project already has the proper nature from the project meta-information)
@@ -438,6 +432,8 @@ public class CVSProvider implements ICVSProvider {
 			if ( ! alreadyExists)
 				disposeRepository(location);
 			throw e;
+		} finally {
+			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), Policy.subMonitorFor(monitor, 5));
 		}
 		// We succeeded so we should cache the password ...
 		location.updateCache();
@@ -500,7 +496,6 @@ public class CVSProvider implements ICVSProvider {
 			// Only set the info if there is none.
 			info = new FolderSyncInfo(remotePath, location.getLocation(), tag, false);
 			folder.setFolderSyncInfo(info);
-			Synchronizer.getInstance().save(monitor);
 		}
 		
 		// Register the project with Team
@@ -510,6 +505,8 @@ public class CVSProvider implements ICVSProvider {
 				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
 		} catch (CoreException e) {
 			throw wrapException(e);
+		} finally {
+			CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), Policy.subMonitorFor(monitor, 5));
 		}
 	}
 	

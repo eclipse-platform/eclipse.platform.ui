@@ -27,8 +27,10 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
@@ -187,6 +189,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							// Create the remote module for the project
 							CVSProviderPlugin.getProvider().createModule(project, getProperties(), new SubProgressMonitor(monitor, 50));
 						}
+						CVSDecorator.refresh(project);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {

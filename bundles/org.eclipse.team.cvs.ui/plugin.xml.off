@@ -63,6 +63,7 @@
 				label="%CVSGroupMenu.label">
 				<separator name="nativeGroup"/>
 				<separator name="enhancedGroup"/>
+				<separator name="disconnectGroup"/>
 			</menu>
 			<action 
 				id="org.eclipse.team.ccvs.ui.tag"
@@ -152,6 +153,12 @@
 				tooltip="%ReplaceWithTagAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.unmanage"
+				label="%UnmanageFolder.label"
+				tooltip="%UnmanageFolder.tooltip"
+				menubarPath="cvs.main/disconnectGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IFileContributions"

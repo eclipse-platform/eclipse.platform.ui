@@ -20,7 +20,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListen
 import org.eclipse.team.internal.ccvs.core.resources.CVSFileNotFoundException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 
 /**
  * Abstract base class for the commands which implements the ICommand 
@@ -267,7 +267,26 @@ public abstract class Command {
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask("", 100 * resources.length);
 			for (int i = 0; i < resources.length; i++) {
-				Synchronizer.getInstance().reload(resources[i], Policy.subMonitorFor(monitor, 100));				
+				if(resources[i] instanceof LocalResource && resources[i].exists()) {
+					CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/**
+	 * Reload the sync info for all arguments this command will be running on.
+	 */
+	private void saveSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask("", 100 * resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				if(resources[i] instanceof LocalResource) {
+					CVSProviderPlugin.getSynchronizer().save(((LocalResource)resources[i]).getLocalFile(), Policy.subMonitorFor(monitor, 100));				
+				}
 			}
 		} finally {
 			monitor.done();
@@ -280,6 +299,7 @@ public abstract class Command {
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
 		IProgressMonitor monitor)
 		throws CVSException {
+		ICVSResource[] resources = null;
 		try {
 			session.setNoLocalChanges(DO_NOT_CHANGE.isElementOf(globalOptions));
 			session.setModTime(null);
@@ -290,7 +310,7 @@ public abstract class Command {
 	
 			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
 			// and not the cached values. Allow 10% of work.
-			ICVSResource[] resources = computeWorkResources(session, arguments);
+			resources = computeWorkResources(session, arguments);
 			reloadSyncInfo(resources, Policy.subMonitorFor(monitor, 10));
 			Policy.checkCanceled(monitor);
 	
@@ -319,15 +339,16 @@ public abstract class Command {
 			// Processing responses contributes 70% of work.
 			IStatus status = processResponses(session, listener, Policy.subMonitorFor(monitor, 70));
 
-			// Finished adds last 10% of work.
-			commandFinished(session, globalOptions, localOptions, resources, monitor,
+			// Finished adds last 5% of work.
+			commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
 				status.getCode() != CVSException.SERVER_ERROR);
-			monitor.worked(10);
+			monitor.worked(5);
 			return status;
 		} finally {
-			// This will automatically persist any changes that were made to the
-			// sync info while running a command.
-			Synchronizer.getInstance().save(monitor);
+			// Give the synchronizer a chance to persist any pending changes.
+			if(resources!=null) {
+				saveSyncInfo(resources, Policy.subMonitorFor(monitor, 5));
+			}
 			monitor.done();
 		}
 	}

@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /**
  * The CVS analog of a directory. CVS folders have access to synchronization information
@@ -24,6 +25,7 @@ public interface ICVSFolder extends ICVSResource {
 	 *   <li> does not exist() but is managed (deleted folder)
 	 *   <li> exist() and isManaged() (normal registered file)
 	 * </ul>
+	 * If the folder does not exist then a zero length array is returned.
 	 */
 	ICVSFolder[] getFolders() throws CVSException;
 	

@@ -11,10 +11,10 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
@@ -67,7 +67,6 @@ public class CommandsTest extends JUnitTestCase {
 	public void tearDown() throws CVSException {
 		FileUtil.deepDelete(ioFolder1);
 		FileUtil.deepDelete(ioFolder2);
-		Synchronizer.getInstance().clear();
 	}
 	
 	public CommandsTest() {

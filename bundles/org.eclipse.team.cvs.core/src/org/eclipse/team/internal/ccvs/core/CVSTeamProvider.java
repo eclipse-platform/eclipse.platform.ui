@@ -49,7 +49,6 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
@@ -59,8 +58,10 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 
@@ -123,14 +124,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
-		// We want to clear the sync info for the project without deleting the CVS directories
-		// unmanage() does this
-		try {
-			managedProject.unmanage();
-		} catch (CVSException e) {
-			throw new CoreException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSTeamProvider.deconfigureProblem", new Object[] {project.getName()}), e));
-		}
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 	
 	/**
@@ -550,11 +543,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		};
 		
 		for (int i = 0; i < resources.length; i++) {
-			getChild(resources[i]).accept(visitor);
+			IResource resource = resources[i];
+			getChild(resource).accept(visitor);
+			CVSProviderPlugin.getSynchronizer().save(resource.getLocation().toFile(), progress);
 		}
-
-		Synchronizer.getInstance().save(progress);
-		
+				
 		// Perform an update, ignoring any local file modifications
 		update(resources, depth, null, true, progress);
 	}
@@ -880,7 +873,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				}
 			};
 		});
-		Synchronizer.getInstance().save(new NullProgressMonitor());
+		CVSProviderPlugin.getSynchronizer().save(project.getLocation().toFile(), new NullProgressMonitor());
 		return;
 	}
 	
@@ -1034,26 +1027,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return new CVSStatus(IStatus.OK, "OK");
 	}
 	
-	/**
-	 * Call this method to refresh both the local CVS sync information (e.g. the files in the CVS subdirectories) and the
-	 * contents of the files. This is useful when a command line client is invoked outside of the workbench and the user
-	 * would like to continue working in the workbench with the modified state.
-	 * 
-	 * @param resources to be refreshed deep
-	 * @param progress a progress monitor to indicate the duration of the operation, or <code>null</code> if 
-	 * progress reporting is not required.
-	 */
-	public void refreshFromLocal(IResource[] resources, IProgressMonitor monitor) throws CVSException {
-		for (int i = 0; i < resources.length; i++) {
-			Synchronizer.getInstance().reload(new LocalFolder(resources[i].getLocation().toFile()),monitor);
-			try {
-				resources[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			} catch(CoreException e) {
-				throw new CVSException("Problems encountered refreshing from the local file system", e);
-			}
-		}
-	}
-
 	/*
 	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
 	 */

@@ -7,8 +7,9 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -143,14 +144,14 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#getSyncInfo()
 	 */
 	public ResourceSyncInfo getSyncInfo() throws CVSException {
-		return Synchronizer.getInstance().getResourceSync(ioResource);
+		return CVSProviderPlugin.getSynchronizer().getResourceSync(ioResource);
 	}
 
 	/*
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
 	public void setSyncInfo(ResourceSyncInfo info) throws CVSException {
-		Synchronizer.getInstance().setResourceSync(ioResource, info);		
+		CVSProviderPlugin.getSynchronizer().setResourceSync(ioResource, info);		
 	}
 	
 	/*

@@ -18,17 +18,23 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.sync.ISyncProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProviderPlugin extends Plugin {
 
 	private static CVSProviderPlugin instance;
+	
+	private static ICVSSynchronizer synchronizer;
+	
 	/** 
 	 * Int used for the communications timeout on server connections (in seconds)
 	 */
@@ -145,7 +151,9 @@ public class CVSProviderPlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
-		Synchronizer.startup();
+
+		synchronizer = new FileSystemSynchronizer();
+
 		CVSProvider.startup();
 		ProjectDescriptionManager.initializeChangeListener();
 	}
@@ -156,6 +164,13 @@ public class CVSProviderPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		CVSProvider.shutdown();
+	}
+
+	/**
+	 * Returns the synchronizer reponsible for managing the CVS meta information.
+	 */
+	public static ICVSSynchronizer getSynchronizer() {
+		return synchronizer;
 	}
 	
 	/*

@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,9 +16,10 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -264,7 +264,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		Synchronizer.getInstance().deleteResourceSync(ioResource);
+		CVSProviderPlugin.getSynchronizer().deleteResourceSync(ioResource);
 	}
 }
-

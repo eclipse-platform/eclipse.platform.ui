@@ -16,7 +16,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class CVSFilePropertiesPage extends PropertyPage {

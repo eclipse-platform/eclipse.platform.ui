@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
@@ -18,6 +19,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class CVSRemoteSyncElement extends RemoteSyncElement {
@@ -217,13 +219,13 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			} else {
 				// We have conflicting deletions. Clear the sync info
 				local.setSyncInfo(null);
-				Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+				CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 				return;
 			}
 		}
 		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
 		local.setSyncInfo(info);
-		Synchronizer.getInstance().save(Policy.monitorFor(monitor));
+		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 	}
 	
 	/*
@@ -243,11 +245,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		} else if (outgoing) {
 			// For now, just unmanage the local resource so the remote change can be loaded with an update
 			Session.getManagedResource(getLocal()).unmanage();
-			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		} else {
 			// For now, just unmanage the local resource so the remote change can be loaded with an update
 			Session.getManagedResource(getLocal()).unmanage();
-			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		}
 	}
 	
@@ -293,6 +293,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
 		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), localInfo.getIsStatic()));
-		Synchronizer.getInstance().save(Policy.monitorFor(monitor));
-	 }
+		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
+	 }	 	
 }

@@ -25,13 +25,14 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUIPlugin;
 
@@ -82,6 +83,8 @@ public class CVSDecorationRunnable implements Runnable {
 		while (true) {
 			// will block if there are no resources to be decorated
 			IResource resource = notifier.next();
+
+			System.out.println("Decorating: " + resource.getFullPath());
 
 			// it is possible that the resource to be decorated is no longer associated
 			// with a CVS provider. This could happen if the team nature was removed

@@ -10,17 +10,12 @@ import java.io.FileFilter;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 
 /**
  * Implements the ICVSFolder interface on top of an 
@@ -40,10 +35,14 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 */
 	public ICVSFolder[] getFolders() throws CVSException {
 		
+		if(!getLocalFile().exists()) {
+			return new ICVSFolder[0];
+		}
+		
 		final Set folders = new HashSet();
 		final FileNameMatcher matcher = FileNameMatcher.getIgnoreMatcherFor(ioResource);
 		
-		ResourceSyncInfo[] syncDirs = Synchronizer.getInstance().members(ioResource);
+		ResourceSyncInfo[] syncDirs = CVSProviderPlugin.getSynchronizer().members(ioResource);
 		for (int i = 0; i < syncDirs.length; i++) {
 			if(syncDirs[i].isDirectory()) {
 				folders.add((new LocalFolder(new File(ioResource, syncDirs[i].getName()))));
@@ -67,10 +66,14 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 */
 	public ICVSFile[] getFiles() throws CVSException {
 		
+		if(!getLocalFile().exists()) {
+			return new ICVSFile[0];
+		}
+		
 		final Set files = new HashSet();
 		final FileNameMatcher matcher = FileNameMatcher.getIgnoreMatcherFor(ioResource);
 		
-		ResourceSyncInfo[] syncDirs = Synchronizer.getInstance().members(ioResource);
+		ResourceSyncInfo[] syncDirs = CVSProviderPlugin.getSynchronizer().members(ioResource);
 		for (int i = 0; i < syncDirs.length; i++) {
 			if(!syncDirs[i].isDirectory()) {
 				files.add((new LocalFile(new File(ioResource, syncDirs[i].getName()))));
@@ -218,14 +221,14 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 * @see ICVSFolder#getFolderInfo()
 	 */
 	public FolderSyncInfo getFolderSyncInfo() throws CVSException {
-		return Synchronizer.getInstance().getFolderSync(ioResource);
+		return CVSProviderPlugin.getSynchronizer().getFolderSync(ioResource);
 	}
 
 	/*
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
-		Synchronizer.getInstance().setFolderSync(ioResource, folderInfo);
+		CVSProviderPlugin.getSynchronizer().setFolderSync(ioResource, folderInfo);
 	}
 
 	/*
@@ -233,9 +236,8 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 */
 	public boolean isCVSFolder() {
 		try {
-			return Synchronizer.getInstance().getFolderSync(ioResource) != null;
+			return CVSProviderPlugin.getSynchronizer().getFolderSync(ioResource) != null;
 		} catch(CVSException e) {
-			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Path.EMPTY, "CVS error getting folder sync info", e));
 			return false;
 		}
 	}
@@ -244,6 +246,6 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		Synchronizer.getInstance().deleteFolderSync(ioResource, new NullProgressMonitor());
+		CVSProviderPlugin.getSynchronizer().deleteFolderSync(ioResource, new NullProgressMonitor());
 	}
 }

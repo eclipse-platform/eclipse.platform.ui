@@ -9,7 +9,6 @@ import java.util.GregorianCalendar;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class BasicTest extends JUnitTestCase {

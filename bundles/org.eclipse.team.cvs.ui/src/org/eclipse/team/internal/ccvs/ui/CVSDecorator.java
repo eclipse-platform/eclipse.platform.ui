@@ -6,32 +6,30 @@ package org.eclipse.team.internal.ccvs.ui;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.ui.TeamUIPlugin;
 
 /**
  * Classes registered with the workbench decoration extension point. The <code>CVSDecorationRunnable</code> class
@@ -48,7 +46,7 @@ import org.eclipse.team.ui.TeamUIPlugin;
  * the queue used between the decorator and the decorator runnable such that priority can be
  * given to visible elements when decoration requests are made.]
  */
-public class CVSDecorator extends TeamResourceDecorator implements IDecorationNotifier {
+public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
 
 	// Resources that need an icon and text computed for display to the user, no order
 	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
@@ -62,6 +60,8 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 	public CVSDecorator() {
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
 		decoratorUpdateThread.start();
+		
+		TeamPlugin.getManager().addResourceStateChangeListener(this);
 	}
 
 	public String decorateText(String text, Object o) {
@@ -139,10 +139,6 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 	/*
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		//System.out.println(">> Resource Change Event");
-		processDelta(event.getDelta());
-	}
 
 	/*
 	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
@@ -151,15 +147,24 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 		// add depth first so that update thread processes parents first.
 		//System.out.println(">> State Change Event");
 		List resources = new ArrayList();
+		List noProviderResources = new ArrayList();
 		for (int i = 0; i < changedResources.length; i++) {
 			// ignore subtrees that aren't associated with a provider, this can happen on import
 			// of a new project to CVS.
 			if (getCVSProviderFor(changedResources[i]) == null) {
-				continue;
+				noProviderResources.add(changedResources[i]);
 			}
 			resources.addAll(computeParents(changedResources[i]));
 		}
 		addResourcesToBeDecorated((IResource[]) resources.toArray(new IResource[resources.size()]));
+		if(!noProviderResources.isEmpty()) {
+			List events = new ArrayList();
+			for (Iterator it = resources.iterator(); it.hasNext();) {
+				IResource element = (IResource) it.next();
+				events.add(new LabelProviderChangedEvent(this, element));
+			}
+			postLabelEvents((LabelProviderChangedEvent[]) events.toArray(new LabelProviderChangedEvent[events.size()]));
+		}
 	}
 
 	public static void refresh() {
@@ -183,7 +188,7 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 					return true;
 				}
 			});
-			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));
+			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));	
 		} catch (CoreException e) {
 		}
 	}
@@ -197,52 +202,7 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 		}
 		return resources;
 	}
-
-	private void processDelta(IResourceDelta delta) {
-		final LinkedList events = new LinkedList();
-		try {
-			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					IResource resource = delta.getResource();
-					int type = resource.getType();
-
-					// skip workspace root
-					if (type == IResource.ROOT) {
-						return true;
-					}
-
-					// ignore subtrees that aren't associated with a provider
-					CVSTeamProvider p = getCVSProviderFor(resource);
-					if (p == null) {
-						return false;
-					}
-
-					// don't care about deletions
-					if (delta.getKind() == IResourceDelta.REMOVED) {
-						return false;
-					}
-
-					// handle .cvsignore changes that affect the state of peer files
-					if (resource.getName().equals(".cvsignore") && type == IResource.FILE) {
-						addResourcesToBeDecorated(resource.getParent().members());
-					}
-
-					// ignore subtrees that are ignored by team
-					if (!p.hasRemote(resource)) {
-						return false;
-					}
-					// chances are the team outgoing bit needs to be updated
-					// if any child has changed.
-					events.addFirst(resource);
-					return true;
-				}
-			});
-		} catch (CoreException e) {
-			TeamUIPlugin.log(e.getStatus());
-		}
-		addResourcesToBeDecorated((IResource[]) events.toArray(new IResource[events.size()]));
-	}
-
+	
 	private synchronized void addResourcesToBeDecorated(IResource[] resources) {
 		if (resources.length > 0) {
 			for (int i = 0; i < resources.length; i++) {
@@ -264,4 +224,40 @@ public class CVSDecorator extends TeamResourceDecorator implements IDecorationNo
 		}
 		return (CVSTeamProvider) p;
 	}
+	
+	/**
+	 * Returns the resource for the given input object, or
+	 * null if there is no resource associated with it.
+	 * 
+	 * @param object  the object to find the resource for
+	 * @return the resource for the given object, or null
+	 */
+	private IResource getResource(Object object) {
+		if (object instanceof IResource) {
+			return (IResource)object;
+		}
+		if (object instanceof IAdaptable) {
+			return (IResource)((IAdaptable)object).getAdapter(IResource.class);
+		}
+		return null;
+	}
+
+	/**
+	 * Post the label events to the UI thread
+	 * 
+	 * @param events  the events to post
+	 */
+	private void postLabelEvents(final LabelProviderChangedEvent[] events) {
+		// now post the change events to the UI thread
+		// now post the change events to the UI thread
+		if (events.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					for (int i = 0; i < events.length; i++) {
+						fireLabelProviderChanged(events[i]);
+					}
+				}
+			});
+		}
+	} 
 }

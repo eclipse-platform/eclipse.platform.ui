@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /**
  * This class provides the implementation of ICVSRemoteFolder

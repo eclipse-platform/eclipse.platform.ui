@@ -6,12 +6,12 @@ package org.eclipse.team.tests.ccvs.core.cvsresources;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
@@ -21,16 +21,18 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -98,68 +100,35 @@ public class SynchronizerTest extends EclipseTest {
 		File folder1File = folder1.getLocation().toFile();
 		File folder2File = folder2.getLocation().toFile();
 		File projectFile = project.getLocation().toFile();
+		ICVSResource cvsProject = new LocalFolder(projectFile);
 		
 		// 1.
-		
+				
 		try {
-			Synchronizer.getInstance().setFolderSync(new File("dummy"), new FolderSyncInfo("repo", "root", null, false));
+			CVSProviderPlugin.getSynchronizer().setFolderSync(new File("dummy"), new FolderSyncInfo("repo", "root", null, false));
 			fail();
-		} catch(CVSException e) {
+		} catch(Exception e) {
 		}
 		
 		// 2. 
 		
 		FolderSyncInfo info = new FolderSyncInfo("repo", "root", null, false);
-		Synchronizer.getInstance().setFolderSync(folder1File, info);
-		
-		// info was stored in cache correctly
-		assertTrue(Synchronizer.getInstance().getFolderSync(folder1File).equals(info));
-		// nothing should be on the disk yet
-		assertTrue(!(getSyncFile(folder1File, SyncFileUtil.REPOSITORY).exists()));
-		assertTrue(!(getSyncFile(folder1File, SyncFileUtil.ROOT).exists()));
-		assertTrue(new LocalFolder(folder1File).isCVSFolder());
-		assertTrue(!(new LocalFolder(folder1File).isManaged()));
-		
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		
-		// repo and root files should exist but not the others
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.REPOSITORY).exists());
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.ROOT).exists());
-		assertTrue(!(getSyncFile(folder1File, SyncFileUtil.TAG).exists()));
-		assertTrue(!(getSyncFile(folder1File, SyncFileUtil.STATIC).exists()));
-		assertTrue(new LocalFolder(folder1File).isCVSFolder());
+		CVSProviderPlugin.getSynchronizer().setFolderSync(projectFile, info);
+		assertTrue(CVSProviderPlugin.getSynchronizer().getFolderSync(projectFile).equals(info));
+		assertTrue(CVSProviderPlugin.getSynchronizer().members(projectFile).length == 0);
 		
 		// 3.
 		
 		info = new FolderSyncInfo("repo", "root", new CVSTag("v1", CVSTag.BRANCH), true);
-		Synchronizer.getInstance().setFolderSync(folder1File, info);
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		
-		// repo and root files should exist but not the others
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.REPOSITORY).exists());
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.ROOT).exists());
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.TAG).exists());
-		assertTrue(getSyncFile(folder1File, SyncFileUtil.STATIC).exists());
-		
-		assertTrue(!(new File(folder1File.getParentFile(), "CVS").exists()));
-		
+		CVSProviderPlugin.getSynchronizer().setFolderSync(folder1File, info);
+		assertTrue(CVSProviderPlugin.getSynchronizer().getFolderSync(folder1File).equals(info));
+		assertTrue(CVSProviderPlugin.getSynchronizer().members(projectFile).length == 1);
+						
 		// 4. 
 		
-		Synchronizer.getInstance().setFolderSync(projectFile, info);
-		Synchronizer.getInstance().setFolderSync(folder2File, info);
-		
-		// sub folder must be added to parent and relevant folder sync must exist
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().clear();
-		
-		assertTrue(getSyncFile(projectFile, SyncFileUtil.REPOSITORY).exists());
-		assertTrue(getSyncFile(projectFile, SyncFileUtil.ROOT).exists());
-		assertTrue(getSyncFile(projectFile, SyncFileUtil.TAG).exists());
-		assertTrue(getSyncFile(projectFile, SyncFileUtil.STATIC).exists());
-
-		assertTrue(Synchronizer.getInstance().getFolderSync(projectFile).equals(info));
-		Synchronizer.getInstance().reload(new LocalFolder(projectFile), new NullProgressMonitor());
-		assertTrue(Synchronizer.getInstance().members(projectFile)[0].getName().equals(folder2File.getName()));
+		CVSProviderPlugin.getSynchronizer().setFolderSync(folder2File, info);
+		assertTrue(CVSProviderPlugin.getSynchronizer().getFolderSync(folder2File).equals(info));
+		assertTrue(CVSProviderPlugin.getSynchronizer().members(projectFile).length == 2);
 	}
 
 	public void testDeleteListener() throws CoreException, CVSException, TeamException {
@@ -220,7 +189,7 @@ public class SynchronizerTest extends EclipseTest {
 		assertTrue(cvsNewFile.getSyncInfo().equals(fileInfo));
 		assertTrue(cvsNewFolder.getSyncInfo().equals(folderInfo));
 		
-		Synchronizer.getInstance().save(new NullProgressMonitor());
+		save(cvsProject);
 		
 		assertTrue(cvsNewFile.getSyncInfo().equals(fileInfo));
 		assertTrue(cvsNewFolder.getSyncInfo().equals(folderInfo));
@@ -253,7 +222,7 @@ public class SynchronizerTest extends EclipseTest {
 		appendLineToFile(getSyncFile(project.getLocation().toFile(), SyncFileUtil.ENTRIES), fileInfo.getEntryLine(true));
 		appendLineToFile(getSyncFile(project.getLocation().toFile(), SyncFileUtil.ENTRIES), folderInfo.getEntryLine(true));
 		
-		Synchronizer.getInstance().reload(cvsProject, new NullProgressMonitor());
+		reload(cvsProject);
 		
 		assertTrue(cvsNewFile.getSyncInfo().equals(fileInfo));
 		assertTrue(cvsNewFolder.getSyncInfo().equals(folderInfo));		
@@ -265,18 +234,20 @@ public class SynchronizerTest extends EclipseTest {
 		IFolder folder2a = folder2.getFolder("folder2a");
 		ICVSFolder folder2aFile = new LocalFolder(folder2a.getLocation().toFile());
 		ICVSFolder folder2File = new LocalFolder(folder2.getLocation().toFile());
-		folder2File.delete();
-		Synchronizer.getInstance().reload(folder2File,new NullProgressMonitor());
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		assertTrue(!folder2File.exists());
+		
+		folder2File.unmanage();
+		assertTrue(folder2File.exists());
 		assertTrue(folder2File.getSyncInfo()==null);
 		assertTrue(folder2aFile.getSyncInfo()==null);
-		
-		// 3. reload should delete cache if entries not found
-		cvsProject.delete();
-		Synchronizer.getInstance().reload(cvsProject,new NullProgressMonitor());
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		assertTrue(!cvsProject.exists());
+		assertTrue(folder2File.getFolderSyncInfo()==null);
+		assertTrue(folder2File.getFolderSyncInfo()==null);
 	}
-
+	
+	protected void reload(ICVSResource resource) throws CVSException {
+		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resource).getLocalFile(), new NullProgressMonitor());
+	}
+	
+	protected void save(ICVSResource resource) throws CVSException {
+		CVSProviderPlugin.getSynchronizer().save(((LocalResource)resource).getLocalFile(), new NullProgressMonitor());
+	}
 }

@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /**
  * The CVS analog of file system files and directories. These are handles to

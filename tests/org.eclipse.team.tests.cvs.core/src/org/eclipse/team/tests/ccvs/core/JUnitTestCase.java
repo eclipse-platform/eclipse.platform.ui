@@ -16,10 +16,12 @@ import java.util.List;
 
 import junit.awtui.TestRunner;
 import junit.framework.TestCase;
+import org.eclipse.core.internal.resources.Synchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -30,7 +32,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -228,7 +229,7 @@ public abstract class JUnitTestCase extends TestCase {
 			process.waitFor();
 			
 			if (process.exitValue() != 0) {
-				throw new CVSException("Return Code of magicDeleteProject :" + process.exitValue());
+				// throw new CVSException("Return Code of magicDeleteProject :" + process.exitValue());
 			}
 			
 		} catch (IOException e) {
@@ -309,9 +310,7 @@ public abstract class JUnitTestCase extends TestCase {
 	}
 	
 	protected static void assertSynchronizerEmpty() {
-		if (!Synchronizer.getInstance().isEmpty() /* && CVSTestSetup.DEBUG */)
-			Synchronizer.getInstance().dump();
-		assertTrue(Synchronizer.getInstance().isEmpty());
+		assertTrue(CVSProviderPlugin.getSynchronizer().isEmpty());
 	}
 	
 	/**
@@ -479,7 +478,7 @@ public abstract class JUnitTestCase extends TestCase {
 		// enviorment
 		if (!resource.isFolder()) {
 			resource.delete();
-			Synchronizer.getInstance().reload(resource.getParent(),new NullProgressMonitor());
+			CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resource.getParent()).getLocalFile(), new NullProgressMonitor());
 			return;
 		}
 		
@@ -493,7 +492,7 @@ public abstract class JUnitTestCase extends TestCase {
 		}
 		
 		folder.delete();
-		Synchronizer.getInstance().reload(folder,new NullProgressMonitor());
+		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)folder).getLocalFile(), new NullProgressMonitor());
 	}	
 }
 

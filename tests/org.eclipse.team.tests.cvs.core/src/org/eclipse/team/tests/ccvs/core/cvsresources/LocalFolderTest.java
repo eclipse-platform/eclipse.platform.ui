@@ -10,14 +10,14 @@ import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.NotCVSFolderException;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class LocalFolderTest extends JUnitTestCase {
@@ -102,7 +102,7 @@ public class LocalFolderTest extends JUnitTestCase {
 	
 	public void tearDown() throws CVSException {
 		folder1.delete();
-		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
+		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)folder1).getLocalFile(), new NullProgressMonitor());
 		assertSynchronizerEmpty();
 		assertTrue(!folder1.exists());
 	}
@@ -133,7 +133,7 @@ public class LocalFolderTest extends JUnitTestCase {
 		try {
 			folder2.setFolderSyncInfo(folderInfo1);
 			fail();
-		} catch (CVSException e) {			
+		} catch (Exception e) {			
 		}		
 				
 		resultFolders = folder1.getFolders();
@@ -302,7 +302,7 @@ public class LocalFolderTest extends JUnitTestCase {
 		assertTrue(folder.getFolderSyncInfo().equals(info));		
 		
 		folder.delete();
-		Synchronizer.getInstance().reload(folder, new NullProgressMonitor());
+		reload(folder);
 	}
 	
 	public void testFolderInfo() throws CVSException {
@@ -380,25 +380,18 @@ public class LocalFolderTest extends JUnitTestCase {
 	
 	public void testSimpleResourceSyncInfo() throws Exception {
 		
-		// ?? Is this an requirment or is it not ?
-		// assertEquals(file1a.getSyncInfo(),fileInfo1);
-		
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		assertEquals(file1a.getSyncInfo(),fileInfo1);
+		assertEquals(file1a.getSyncInfo(), fileInfo1);
 		
 		file1a.setSyncInfo(new ResourceSyncInfo(entryLineExtra2,null,null));
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
+		
 		assertEquals(file1.getSyncInfo().getEntryLine(true),entryLineExtra2);
 		
 		file1a.setSyncInfo(new ResourceSyncInfo(entryLineExtra1,null,null));
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
+		
 		assertEquals(file1.getSyncInfo().getEntryLine(true),entryLineExtra1);
 		
 		file1a.setSyncInfo(new ResourceSyncInfo(entryLineExtra2,null,null));
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(file1a.getParent(),new NullProgressMonitor());
+		
 		assertEquals(file1.getSyncInfo().getEntryLine(true),entryLineExtra2);	
 	}
 	
@@ -408,15 +401,12 @@ public class LocalFolderTest extends JUnitTestCase {
 		assertEquals(folder1.getFolderSyncInfo().getRoot(),root2);		
 		assertEquals(folder1.getFolderSyncInfo().getIsStatic(),true);
 
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
+		reload(folder1);
 		assertEquals(folder1.getFolderSyncInfo().getRepository(),repo2);		
 		assertEquals(folder1.getFolderSyncInfo().getRoot(),root2);		
 		assertEquals(folder1.getFolderSyncInfo().getIsStatic(),true);	
 
 		folder1.setFolderSyncInfo(folderInfo1);
-		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(folder1a,new NullProgressMonitor());
 		assertEquals(folder1a.getFolderSyncInfo().getRepository(),repo);		
 		assertEquals(folder1a.getFolderSyncInfo().getRoot(),root);	
 		assertEquals(folder1a.getFolderSyncInfo().getIsStatic(),false);		
@@ -425,14 +415,13 @@ public class LocalFolderTest extends JUnitTestCase {
 	public void testSyncIsCvsFolder() throws Exception {
 		
 		folder1.delete();
-		Synchronizer.getInstance().reload(folder1, new NullProgressMonitor());
+		reload(folder1);
 		assertEquals(false,folder1.isCVSFolder());
 		
 		folder1.mkdir();
 		assertEquals(false,folder1.isCVSFolder());
 		
 		folder1.setFolderSyncInfo(folderInfo1);
-		Synchronizer.getInstance().save(new NullProgressMonitor());
 		assertEquals(true,folder1.isCVSFolder());
 		assertEquals(false,folder1.isManaged());
 		
@@ -443,7 +432,6 @@ public class LocalFolderTest extends JUnitTestCase {
 		assertEquals(false,folder2.isManaged());
 
 		folder2.setFolderSyncInfo(folderInfo2);
-		Synchronizer.getInstance().save(new NullProgressMonitor());
 		assertEquals(true,folder2.isCVSFolder());
 		assertEquals(true,folder2.isManaged());
 	}
@@ -479,4 +467,12 @@ public class LocalFolderTest extends JUnitTestCase {
 		} catch (Exception e) {
 		}		
 	}		
+	
+	protected void reload(ICVSResource resource) throws CVSException {
+		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)resource).getLocalFile(), new NullProgressMonitor());
+	}
+	
+	protected void save(ICVSResource resource) throws CVSException {
+		CVSProviderPlugin.getSynchronizer().save(((LocalResource)resource).getLocalFile(), new NullProgressMonitor());
+	}
 }

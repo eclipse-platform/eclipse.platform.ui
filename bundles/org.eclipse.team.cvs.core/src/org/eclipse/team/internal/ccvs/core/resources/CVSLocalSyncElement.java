@@ -17,6 +17,7 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.LocalSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 public class CVSLocalSyncElement extends LocalSyncElement {
 

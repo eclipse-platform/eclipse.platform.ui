@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
  
@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 
@@ -43,40 +41,31 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 			listener = new IResourceChangeListener() {
 				public void resourceChanged(IResourceChangeEvent event) {
 					try {
-						if (event.getType() == IResourceChangeEvent.PRE_DELETE) {
-							// We add the removal in the pre-delete.
-							// It will be forwarded when we get the post change
-							IResource resource = event.getResource();
+						IResourceDelta root = event.getDelta();
+						IResourceDelta[] projectDeltas = root.getAffectedChildren();
+						for (int i = 0; i < projectDeltas.length; i++) {							
+							IResourceDelta delta = projectDeltas[i];
+							IResource resource = delta.getResource();
 							ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
-							if (provider instanceof CVSTeamProvider)
-								addRemoval(resource.getProject(), resource);
-						} else {
-							IResourceDelta root = event.getDelta();
-							IResourceDelta[] projectDeltas = root.getAffectedChildren();
-							for (int i = 0; i < projectDeltas.length; i++) {							
-								IResourceDelta delta = projectDeltas[i];
-								IResource resource = delta.getResource();
-								ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
-	
-								// if a project is moved the originating project will not be associated with the CVS provider
-								// however listeners will probably still be interested in the move delta.	
-								if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
-									IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-									provider = TeamPlugin.getManager().getProvider(destination);
-								}
-								
-								if (provider instanceof CVSTeamProvider) {
-									delta.accept(visitor);
-								}
+
+							// if a project is moved the originating project will not be associated with the CVS provider
+							// however listeners will probably still be interested in the move delta.	
+							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
+								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
+								provider = TeamPlugin.getManager().getProvider(destination);
 							}
-							visitor.handle();
+							
+							if (provider instanceof CVSTeamProvider) {
+								delta.accept(visitor);
+							}
 						}
+						visitor.handle();
 					} catch (CoreException e) {
 						Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);
 					}
 				}
 			};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 		return visitor;
 	}
 	
@@ -161,6 +150,8 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		
 		handleChanged(changes);
 		changes.clear();
+		
+		finished();
 	}
 	
 	/**
@@ -176,13 +167,8 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		Iterator i = additions.keySet().iterator();
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
-			Iterator j = ((List)additions.get(project)).iterator();
-			while (j.hasNext()) {
-				IResource resource = (IResource)j.next();
-				handleAdded(project,resource);
-				//System.out.println(resource.toString());
-			}
+			ArrayList resources = (ArrayList)additions.get(project);
+			handleAdded((IResource[])resources.toArray(new IResource[additions.size()]));		
 		}			
 	}
 
@@ -199,13 +185,8 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		Iterator i = changes.keySet().iterator();
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
-			Iterator j = ((List)changes.get(project)).iterator();
-			while (j.hasNext()) {
-				IResource resource = (IResource)j.next();
-				handleChanged(project,resource);
-				//System.out.println(resource.toString());
-			}
+			ArrayList resources = (ArrayList)changes.get(project);
+			handleChanged((IResource[])resources.toArray(new IResource[changes.size()]));
 		}			
 	}
 
@@ -221,29 +202,26 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		Iterator i = removals.keySet().iterator();
 		while (i.hasNext()) {
 			IProject project = (IProject)i.next();
-			ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
-			Iterator j = ((List)removals.get(project)).iterator();
-			while (j.hasNext()) {
-				IResource resource = (IResource)j.next();
-				handleRemoved(project,resource);
-				//System.out.println(resource.toString());
-			}
+			ArrayList resources = (ArrayList)removals.get(project);
+			handleRemoved((IResource[])resources.toArray(new IResource[removals.size()]));
 		}
 	}
 	
 	/**
 	 * React on every addition
 	 */
-	protected abstract void handleAdded(IProject project,IResource resource);
+	protected abstract void handleAdded(IResource[] resources);
 	
 	/**
 	 * React on every removal
 	 */
-	protected abstract void handleRemoved(IProject project,IResource resource);
+	protected abstract void handleRemoved(IResource[] resources);
 	
 	/**
 	 * React on every change
 	 */
-	protected abstract void handleChanged(IProject project,IResource resource);
+	protected abstract void handleChanged(IResource[] resources);
 	
+	protected abstract void finished();
 }
+

@@ -13,12 +13,13 @@ import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 
@@ -67,7 +68,7 @@ public class LocalFileTest extends JUnitTestCase {
 	
 	public void tearDown() throws CVSException {
 		folder1.delete();
-		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
+		CVSProviderPlugin.getSynchronizer().reload(((LocalResource)folder1).getLocalFile(), new NullProgressMonitor());
 		assertSynchronizerEmpty();			
 		assertTrue(!folder1.exists());
 	}
