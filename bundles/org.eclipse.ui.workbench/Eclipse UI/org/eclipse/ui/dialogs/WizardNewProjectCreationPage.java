@@ -38,7 +38,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
 	// initial value stores
 	private String initialProjectFieldValue;
-	private IPath initialLocationFieldValue;
+	private String initialLocationFieldValue;
 	
 	// the value the user has entered
 	private String customLocationFieldValue;
@@ -73,7 +73,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 public WizardNewProjectCreationPage(String pageName) {
 	super(pageName);
 	setPageComplete(false);
-	initialLocationFieldValue = Platform.getLocation();
 	customLocationFieldValue = ""; //$NON-NLS-1$
 }
 /** (non-Javadoc)
@@ -213,7 +212,10 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
-	locationPathField.setText(initialLocationFieldValue.toOSString());
+	if(initialLocationFieldValue == null)
+		locationPathField.setText(Platform.getLocation().toOSString());
+	else
+		locationPathField.setText(initialLocationFieldValue);
 	locationPathField.addListener(SWT.Modify, locationModifyListener);
 }
 /**
@@ -227,7 +229,7 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
  */
 public IPath getLocationPath() {
 	if (useDefaults)
-		return initialLocationFieldValue;
+		return Platform.getLocation();
 		
 	return new Path(getProjectLocationFieldValue());
 }
@@ -313,7 +315,7 @@ public void setInitialProjectName(String name) {
 		initialProjectFieldValue = null;
 	else{
 		initialProjectFieldValue = name.trim();
-		initialLocationFieldValue = new Path(getDefaultLocationForName(initialProjectFieldValue));
+		initialLocationFieldValue = getDefaultLocationForName(initialProjectFieldValue);
 	}
 }
 /**
