@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -219,7 +220,7 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		data.horizontalSpan = 1;
 		cvsTagTreeLabel.setLayoutData(data);
 		
-		Table table = new Table(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
+		final Table table = new Table(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
@@ -235,6 +236,32 @@ public class TagConfigurationDialog extends TitleAreaDialog {
 		cvsTagTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateEnablements();
+			}
+		});
+		
+		Composite selectComp = new Composite(comp, SWT.NONE);
+		GridLayout selectLayout = new GridLayout(2, true);
+		selectLayout.marginHeight = selectLayout.marginWidth = 0;
+		selectComp.setLayout(selectLayout);
+		selectComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button selectAllButton = new Button(selectComp, SWT.PUSH);
+		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectAllButton.setText(Policy.bind("ReleaseCommentDialog.selectAll"));
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int nItems = table.getItemCount();
+				for (int j=0; j<nItems; j++)
+					table.getItem(j).setChecked(true);
+			}
+		});
+		Button deselectAllButton = new Button(selectComp, SWT.PUSH);
+		deselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		deselectAllButton.setText(Policy.bind("ReleaseCommentDialog.deselectAll"));
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int nItems = table.getItemCount();
+				for (int j=0; j<nItems; j++)
+					table.getItem(j).setChecked(false);
 			}
 		});
 		
