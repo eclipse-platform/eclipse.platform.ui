@@ -97,7 +97,15 @@ public class CVSDecorationRunnable implements Runnable {
 			if(!resource.exists() || provider==null || !(provider instanceof CVSTeamProvider)) {
 				continue;
 			}
-
+			
+			ICVSResource cvsResource;
+			if (resource.getType() == IResource.FILE) {
+				cvsResource = new LocalFile(resource.getLocation().toFile());
+			} else {
+				cvsResource = new LocalFolder(resource.getLocation().toFile());
+			}
+			if (cvsResource.isIgnored()) continue;
+		
 			// determine a if resource has outgoing changes (e.g. is dirty).
 			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 			boolean isDirty = false;
