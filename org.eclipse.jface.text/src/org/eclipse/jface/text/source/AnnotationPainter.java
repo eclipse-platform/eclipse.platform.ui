@@ -282,10 +282,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/*
-	 * @see ITextPresentationListener#applyTextPresentation(TextPresentation, IRegion)
+	 * @see ITextPresentationListener#applyTextPresentation(TextPresentation)
 	 * @since 3.0
 	 */
-	public synchronized void applyTextPresentation(TextPresentation tp, IRegion region) {
+	public synchronized void applyTextPresentation(TextPresentation tp) {
+		IRegion region= tp.getExtent();
+		
 		for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
 
 			Decoration pp = (Decoration)iter.next();

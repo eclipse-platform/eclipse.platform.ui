@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.swt.custom.StyleRange;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -417,8 +419,13 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 */
 	private TextPresentation createPresentation(IRegion damage, IDocument document) { 
 		try {
+			if (fRepairers == null || fRepairers.isEmpty()) {
+				TextPresentation presentation= new TextPresentation(damage, 1);
+				presentation.setDefaultStyleRange(new StyleRange(damage.getOffset(), damage.getLength(), null, null));
+				return presentation;
+			}
 			
-			TextPresentation presentation= new TextPresentation(1000);
+			TextPresentation presentation= new TextPresentation(damage, 1000);
 			
 			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength());
 			for (int i= 0; i < partitioning.length; i++) {
@@ -447,6 +454,12 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @return the damaged caused by the change
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
+		
+		if (fDamagers == null || fDamagers.isEmpty()) {
+			int length= Math.max(e.getLength(), e.getText().length());
+			length= Math.min(e.getDocument().getLength() - e.getOffset(), length);
+			return new Region(e.getOffset(), length);
+		}
 		
 		IRegion damage= null;
 		
@@ -527,7 +540,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	private void processDamage(IRegion damage, IDocument document) {
 		if (damage != null && damage.getLength() > 0) {
 			TextPresentation p= createPresentation(damage, document);
-			if (p != null && !p.isEmpty())
+			if (p != null)
 				applyTextRegionCollection(p);
 		}
 	}

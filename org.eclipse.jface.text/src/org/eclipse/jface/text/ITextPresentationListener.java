@@ -31,7 +31,6 @@ public interface ITextPresentationListener {
 	 * ignored.
 	 *
 	 * @param textPresentation the current text presentation	
-	 * @param the region which is about to be drawn
 	 */
-	public void applyTextPresentation(TextPresentation textPresentation, IRegion region);
+	public void applyTextPresentation(TextPresentation textPresentation);
 }

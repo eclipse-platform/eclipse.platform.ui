@@ -30,6 +30,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 
@@ -98,7 +99,10 @@ public class SourceViewerConfiguration {
 	 * @return the presentation reconciler or <code>null</code> if presentation reconciling should not be supported
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		return null;
+		PresentationReconciler reconciler= new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+
+		return reconciler;
 	}
 	
 	/**

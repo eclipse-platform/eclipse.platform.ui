@@ -383,7 +383,7 @@ public class TextPresentation {
 			int defaultEnd= fDefaultRange.start + fDefaultRange.length;
 			int end= range.start + range.length;
 			if (end > defaultEnd)
-				range.length -= (defaultEnd - end);
+				range.length -= (end - defaultEnd);
 		}
 	}
 	

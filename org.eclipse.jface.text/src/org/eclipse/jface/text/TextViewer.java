@@ -4001,25 +4001,28 @@ public class TextViewer extends Viewer implements
 		if (presentation == null || !redraws())
 			return;
 			
-		if (presentation.isEmpty() || fTextWidget == null)
+		if (fTextWidget == null)
 			return;
-					
-		if (controlRedraw)
-			fTextWidget.setRedraw(false);
+
 
 		/*
 		 * Call registered text presentation listeners
 		 * and let them apply their presentation.
 		 */
 		if (fTextPresentationListeners != null) {
-			IRegion region= presentation.getCoverage();
 			ArrayList listeners= new ArrayList(fTextPresentationListeners);
 			for (int i= 0, size= listeners.size(); i < size; i++) {
 				ITextPresentationListener listener= (ITextPresentationListener)listeners.get(i);
-				listener.applyTextPresentation(presentation, region);
+				listener.applyTextPresentation(presentation);
 			}
 		}
 		
+		if (presentation.isEmpty())
+			return;
+		
+		if (controlRedraw)
+			fTextWidget.setRedraw(false);
+
 		if (fReplaceTextPresentation)
 			applyTextPresentation(presentation);
 		else
