@@ -13,7 +13,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 /**
@@ -39,7 +39,7 @@ public class AntStorageDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new DefaultPartitioner(
+		return new FastPartitioner(
 				new AntEditorPartitionScanner(), new String[]{
 						AntEditorPartitionScanner.XML_TAG,
 						AntEditorPartitionScanner.XML_COMMENT,

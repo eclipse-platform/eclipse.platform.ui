@@ -14,7 +14,7 @@ import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 
 /**
  * The document setup participant for Ant.
@@ -43,7 +43,7 @@ public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new DefaultPartitioner(
+		return new FastPartitioner(
 				new AntEditorPartitionScanner(), new String[]{
 						AntEditorPartitionScanner.XML_TAG,
 						AntEditorPartitionScanner.XML_COMMENT, 
