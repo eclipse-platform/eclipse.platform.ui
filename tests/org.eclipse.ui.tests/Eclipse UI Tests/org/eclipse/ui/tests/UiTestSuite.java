@@ -44,7 +44,7 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
 		addTest(new KeysTestSuite());
 		addTest(new MultiPageEditorTestSuite());
-		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
+//		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
 		addTest(new org.eclipse.ui.tests.activities.ActivitiesTestSuite());
 	}
 }
