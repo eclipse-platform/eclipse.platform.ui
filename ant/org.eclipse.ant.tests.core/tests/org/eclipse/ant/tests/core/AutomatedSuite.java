@@ -11,7 +11,6 @@ import java.util.Enumeration;
 
 import junit.framework.*;
 
-import org.eclipse.ant.tests.core.testplugin.TestPluginLauncher;
 import org.eclipse.ant.tests.core.tests.*;
 import org.eclipse.swt.widgets.Display;
 
@@ -53,10 +52,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TaskTests.class));
 		addTest(new TestSuite(TypeTests.class));
 	}
-	
-	public static void main(String[] args) {
-		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), AutomatedSuite.class, args);
-	}		
 
 	/**
 	 * Runs the tests and collects their result in a TestResult.
