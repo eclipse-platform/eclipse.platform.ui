@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -28,6 +29,8 @@ public class ProgressAnimationItem extends AnimationItem {
 
 	ProgressBar bar;
 	MouseListener mouseListener;
+	StackLayout layout;
+	Composite top;
 
 	/**
 	 * Create an instance of the receiver in the supplied region.
@@ -52,9 +55,16 @@ public class ProgressAnimationItem extends AnimationItem {
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#createAnimationItem(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createAnimationItem(Composite parent) {
-		bar = new ProgressBar(parent,SWT.HORIZONTAL | SWT.INDETERMINATE);
+		
+		top = new Composite(parent,SWT.NULL);
+		layout = new StackLayout();
+		top.setLayout(layout);
+		
+		bar = new ProgressBar(top,SWT.HORIZONTAL | SWT.INDETERMINATE);
 		bar.addMouseListener(mouseListener);
-		return bar;
+		
+		layout.topControl = null;
+		return top;
 	}
 
 	/*
@@ -63,7 +73,7 @@ public class ProgressAnimationItem extends AnimationItem {
 	 * @see org.eclipse.ui.internal.progress.AnimationItem#getControl()
 	 */
 	public Control getControl() {
-		return bar;
+		return top;
 	}
 
 	/*
@@ -76,7 +86,8 @@ public class ProgressAnimationItem extends AnimationItem {
 		if(bar.isDisposed())
 			return;
 		
-		bar.setVisible(false);
+		layout.topControl = null;
+		top.layout();
 	}
 
 	/*
@@ -88,7 +99,8 @@ public class ProgressAnimationItem extends AnimationItem {
 		super.animationStart();
 		if(bar.isDisposed())
 			return;
-		bar.setVisible(true);
+		layout.topControl = bar;
+		top.layout();
 	}
 
 
