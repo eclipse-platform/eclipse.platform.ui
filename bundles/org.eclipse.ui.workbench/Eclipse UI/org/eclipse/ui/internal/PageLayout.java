@@ -60,7 +60,9 @@ public class PageLayout implements IPageLayout {
 	private IPerspectiveDescriptor descriptor;
 	private LayoutPart editorFolder;
 	private boolean editorVisible = true;
+	private boolean fixed;
 	private ArrayList fastViews = new ArrayList(3);
+	private ArrayList fixedViews = new ArrayList(3);
 	private Map mapFastViewToWidthRatio = new HashMap(10);
 	private Map mapIDtoFolder = new HashMap(10);
 	private Map mapIDtoPart = new HashMap(10);
@@ -70,7 +72,8 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showInPartIds = new ArrayList(3);
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ViewFactory viewFactory;
-
+	private String theme;
+	
 	/**
 	 * Constructs a new PageLayout for other purposes.
 	 */
@@ -151,6 +154,19 @@ public class PageLayout implements IPageLayout {
 				WorkbenchPlugin.log(e.getMessage());
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageLayout#addFixedView(java.lang.String, int, float, java.lang.String)
+	 */
+	public void addFixedView(		
+			String viewId,
+			int relationship,
+			float ratio,
+			String refId) {
+		addView(viewId, relationship, ratio, refId);
+		if (!fixedViews.contains(viewFactory.getView(viewId)))
+			fixedViews.add(viewFactory.getView(viewId));
 	}
 
 	/**
@@ -259,7 +275,6 @@ public class PageLayout implements IPageLayout {
 			return;
 
 		try {
-
 			// Create the part.
 			LayoutPart newPart = createView(viewId);
 			if (newPart == null) {
@@ -270,6 +285,10 @@ public class PageLayout implements IPageLayout {
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
+		
+		// add view to fixed list if we are a fixed layout
+		if (fixed && !fixedViews.contains(viewFactory.getView(viewId)))
+			fixedViews.add(viewFactory.getView(viewId));
 	}
 
 	/**
@@ -289,7 +308,7 @@ public class PageLayout implements IPageLayout {
 
 		return false;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#createFolder(java.lang.String, int, float, java.lang.String)
 	 */
@@ -305,8 +324,10 @@ public class PageLayout implements IPageLayout {
 				viewFactory);
 
 		// Create the folder.
-		PartTabFolder folder = new PartTabFolder();
+		PartTabFolder folder = new PartTabFolder(rootLayoutContainer.page);
 		folder.setID(folderId);
+		// @issue should the folder capture the current theme?
+		folder.setTheme(theme);
 		addPart(folder, folderId, relationship, ratio, refId);
 
 		// Create a wrapper.
@@ -329,7 +350,7 @@ public class PageLayout implements IPageLayout {
 		// Create the folder.
 		ContainerPlaceholder folder = new ContainerPlaceholder(null);
 		folder.setContainer(rootLayoutContainer);
-		folder.setRealContainer(new PartTabFolder());
+		folder.setRealContainer(new PartTabFolder(rootLayoutContainer.page));
 		folder.setID(folderId);
 		addPart(folder, folderId, relationship, ratio, refId);
 
@@ -354,7 +375,8 @@ public class PageLayout implements IPageLayout {
 				viewFactory.getViewRegistry().find(partID);
 			if (WorkbenchActivityHelper.filterItem(viewDescriptor))
 				return null;
-			return LayoutHelper.createView(getViewFactory(), partID);
+			// @issue view should refer to current perspective for theme setting
+			return LayoutHelper.createView(getViewFactory(), partID, theme);
 		}
 	}
 
@@ -390,6 +412,14 @@ public class PageLayout implements IPageLayout {
 		return -1;
 	}
 
+	/**
+	 * @return <code>ArrayList</code>
+	 */
+	/*package*/
+	ArrayList getFixedViews() {
+		return fixedViews;
+	}
+	
 	/**
 	 * @return <code>ArrayList</code>
 	 */
@@ -528,6 +558,20 @@ public class PageLayout implements IPageLayout {
 	public void setEditorReuseThreshold(int openEditors) {
 		//no-op
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageLayout#setFixed(boolean)
+	 */
+	public void setFixed(boolean fixed) { 
+		this.fixed = fixed;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageLayout#getFixed()
+	 */
+	public boolean isFixed() {
+		return fixed;
+	}
 
 	/**
 	 * Map the folder part containing the given view ID.
@@ -587,7 +631,7 @@ public class PageLayout implements IPageLayout {
 		// a new folder and add the new view.
 		LayoutPart refPart = getRefPart(refId);
 		if (refPart != null) {
-			PartTabFolder newFolder = new PartTabFolder();
+			PartTabFolder newFolder = new PartTabFolder(rootLayoutContainer.page);
 			rootLayoutContainer.replace(refPart, newFolder);
 			newFolder.add(refPart);
 			newFolder.add(newPart);
@@ -614,6 +658,12 @@ public class PageLayout implements IPageLayout {
 
 		// Create the placeholder.
 		PartPlaceholder newPart = new PartPlaceholder(viewId);
+		
+		LayoutPart refPart = getRefPart(refId);
+		if (refPart != null) {
+			newPart.setContainer(refPart.getContainer());
+		}		
+		
 		stackPart(newPart, viewId, refId);
 	}
 
@@ -635,9 +685,18 @@ public class PageLayout implements IPageLayout {
 				stackPlaceholder(viewId, refId);
 				LayoutHelper.addViewActivator(this, viewId);
 			}
-			stackPart(newPart, viewId, refId);
+			else
+				stackPart(newPart, viewId, refId);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
+	}
+	
+	void setTheme(String theme) {
+		this.theme = theme;
+	}
+	
+	String getTheme() {
+		return this.theme;
 	}
 }

@@ -114,10 +114,10 @@ public abstract class WorkbenchAdvisor {
 	
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
-	 * operation is supposed to fill (or describe) the workbench window's tool
+	 * operation is supposed to fill (or describe) the workbench window's cool
 	 * bar.
 	 */
-	public static final int FILL_TOOL_BAR = 0x04;
+	public static final int FILL_COOL_BAR = 0x04;
 
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
@@ -479,24 +479,6 @@ public abstract class WorkbenchAdvisor {
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
 		// default: not an application menu
 		return false;
-	}
-	
-	/**
-	 * Returns the default input for newly created workbench pages.
-	 * <p>
-	 * The default implementation returns <code>null</code>.
-	 * Subclasses may override.
-	 * </p>
-	 * 
-	 * @return the default input for a new workbench window page, or
-	 * <code>null</code> if none
-	 * @deprecated This method has been renamed getDefaultPageInput.
-	 * It has been marked final as advanced wiarning, and
-	 * will be removed entirely by M7.
-	 */
-	public final IAdaptable getDefaultWindowInput() {
-		// default: no input
-		return null;
 	}
 	
 	/**

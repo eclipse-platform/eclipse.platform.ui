@@ -18,23 +18,28 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
 import org.eclipse.ui.internal.commands.ws.WorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPartSiteContextSupport;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -58,6 +63,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  */
 public class PartSite implements IWorkbenchPartSite {
 
+    private IWorkbenchPartReference partReference;
 	private IWorkbenchPart part;
 	private IWorkbenchPage page;
 	private PartPane pane;
@@ -73,7 +79,8 @@ public class PartSite implements IWorkbenchPartSite {
 	/**
 	 * EditorContainer constructor comment.
 	 */
-	public PartSite(IWorkbenchPart part, IWorkbenchPage page) {
+	public PartSite(IWorkbenchPartReference ref, IWorkbenchPart part, IWorkbenchPage page) {
+	    this.partReference = ref;
 		this.part = part;
 		this.page = page;
 		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
@@ -136,6 +143,12 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IWorkbenchPart getPart() {
 		return part;
+	}
+	/**
+	 * Returns the part reference.
+	 */
+	public IWorkbenchPartReference getPartReference() {
+		return partReference;
 	}
 	/**
 	 * Returns the part registry plugin ID.  It cannot be <code>null</code>.
@@ -327,7 +340,6 @@ public class PartSite implements IWorkbenchPartSite {
 			return getSiteProgressService();
 		return null;
 	}
-	
 	/**
 	 * Get a progress service for the receiver.
 	 * @return

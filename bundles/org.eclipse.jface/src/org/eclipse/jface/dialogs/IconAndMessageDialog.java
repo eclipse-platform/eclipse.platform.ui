@@ -68,7 +68,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 		// create message
 		if (message != null) {
-			messageLabel = new Label(composite, SWT.WRAP);
+			messageLabel = new Label(composite, getMessageLabelStyle());
 			messageLabel.setText(message);
 			GridData data =
 				new GridData(
@@ -91,7 +91,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 */
 	protected int getMessageLabelStyle() {
 		return SWT.WRAP;
-	}	/*
+	}
+
+	/*
 	 * @see Dialog.createButtonBar()
 	 */
 	protected Control createButtonBar(Composite parent) {

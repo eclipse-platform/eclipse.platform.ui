@@ -822,7 +822,7 @@ public class PerspectivePresentation {
 					LayoutPart visiblePart =
 						((PartTabFolder) part).getVisiblePart();
 					// create a new folder and add the children to it
-					PartTabFolder folder = new PartTabFolder();
+					PartTabFolder folder = new PartTabFolder(page);
 					sashContainer.add(
 						folder,
 						relativePosition,
@@ -853,7 +853,7 @@ public class PerspectivePresentation {
 				derefPart(part);
 
 				// Create a new folder and add both items
-				PartTabFolder folder = new PartTabFolder();
+				PartTabFolder folder = new PartTabFolder(page);
 				sashContainer.add(
 					folder,
 					relativePosition,
@@ -1359,7 +1359,7 @@ public class PerspectivePresentation {
 			folder.add(newPart);
 		} else if (newContainer instanceof RootLayoutContainer) {
 			// Create a new folder and add both items
-			PartTabFolder folder = new PartTabFolder();
+			PartTabFolder folder = new PartTabFolder(page);
 			((RootLayoutContainer) newContainer).replace(refPart, folder);
 			folder.add(refPart);
 			folder.add(newPart);

@@ -10,36 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.io.File;
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-
-
-
 
 /**
  * Prefence dialog for the workbench including the ability 
@@ -50,31 +36,16 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * The Load button id.
 	 */
 	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
-	/** 
-	 * The Load dialogs settings key
-	 */
-	private final static String LOAD_SETTING = "WorkbenchPreferenceDialog.load";	//$NON-NLS-1$
 
 	/**
 	 * The Save button id.
 	 */
 	private final static int SAVE_ID = IDialogConstants.CLIENT_ID + 2;
 	/** 
-	 * The Save dialogs settings key
+	 * The dialog settings key for the last used import/export path.
 	 */
-	private final static String SAVE_SETTING = "WorkbenchPreferenceDialog.save"; //$NON-NLS-1$
-	
-	/**
-	 * The extension for preferences files
-	 */
-	private final static String PREFERENCE_EXT = "epf"; //$NON-NLS-1$
-	
-	/**
-	 * The extensions for the file dialogs
-	 */
-	private final static String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {"*."+PREFERENCE_EXT, "*.*"}; //$NON-NLS-2$ //$NON-NLS-1$
-    
-  
+	final static String FILE_PATH_SETTING = "PreferenceImportExportFileSelectionPage.filePath"; //$NON-NLS-1$
+	 
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
 	 * manager.
@@ -125,137 +96,58 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * Handle a request to load preferences
 	 */
 	protected void loadPressed() {
-		// Get the file to load
-		String lastFilename = WorkbenchPlugin.getDefault().getDialogSettings().get(LOAD_SETTING);
-		FileDialog d = new FileDialog(getShell(), SWT.OPEN);
-		d.setFileName(lastFilename);
-		d.setFilterExtensions(DIALOG_PREFERENCE_EXTENSIONS);
-		String filename = d.open();
-		if (filename == null)
-			return;
-		// Append the default filename if none was specifed	and such a file does not exist
-		IPath path = new Path(filename);
-		if (path.getFileExtension() == null) {
-			if (!path.toFile().exists()) {
-				path = path.addFileExtension(PREFERENCE_EXT);			
-				filename = path.toOSString();
-			}
-		}
+		PreferenceImportExportWizard wizard = new PreferenceImportExportWizard(false, this);
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings wizardSettings = workbenchSettings.getSection(FILE_PATH_SETTING); //$NON-NLS-1$
+		if (wizardSettings == null)
+			wizardSettings = workbenchSettings.addNewSection(FILE_PATH_SETTING); //$NON-NLS-1$
+		wizard.setDialogSettings(wizardSettings);
 
-		WorkbenchPlugin.getDefault().getDialogSettings().put(LOAD_SETTING, filename);
-			
-		// Verify the file
-		IStatus status = Preferences.validatePreferenceVersions(path);		
-		if (status.getSeverity() == IStatus.ERROR) {
-			// Show the error and about
-			ErrorDialog.openError(
-				getShell(), 
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyErrorMessage", new Object[]{filename}), //$NON-NLS-1$
-				status);
-			return;	
-		}
-		if (status.getSeverity() == IStatus.WARNING) {
-			// Show the warning and give the option to continue
-			int result = PreferenceErrorDialog.openError(
-				getShell(), 
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", new Object[]{filename}), //$NON-NLS-1$
-				status);
-			if (result != Window.OK)
-				return;	
-		}
-		// Load file
-		try {
-			Preferences.importPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(
-				getShell(), 
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.loadErrorMessage", new Object[]{filename}), //$NON-NLS-1$
-				e.getStatus());
-			return;	
-		}
+		Shell parent = getShell();
+		WizardDialog dialog = new WizardDialog(parent, wizard);
+		dialog.create();
+		Shell shell = dialog.getShell();
+		shell.setSize(Math.max(500, shell.getSize().x), 500);
+		Point childSize = shell.getSize();
+		Point parentSize = parent.getSize();
+		Point childLocation = new Point((parentSize.x - childSize.x) / 2, (parentSize.y - childSize.y) / 2);
+		shell.setLocation(parent.toDisplay(childLocation));
+		// TODO Provide a help context ID and content.
+		//WorkbenchHelp.setHelp(shell, IHelpContextIds.IMPORT_WIZARD);
+		int returnCode = dialog.open();
 		
-		MessageDialog.openInformation(
-			getShell(),
-			WorkbenchMessages.getString("WorkbenchPreferenceDialog.loadTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("WorkbenchPreferenceDialog.loadMessage", new Object[]{filename})); //$NON-NLS-1$
-			
-		// Close the dialog since it shows an invalid state
-		close();
+		/* All my values are messed up.  Reboot.  (oh, windows, you have taught 
+		 * us well.)
+		 */
+		if (returnCode == Window.OK) {
+			close();
+		}
 	}
 			
 	/**
 	 * Handle a request to save preferences
 	 */
 	protected void savePressed() {
-		// Get the file to save
-		String lastFilename = WorkbenchPlugin.getDefault().getDialogSettings().get(SAVE_SETTING);
-		FileDialog d = new FileDialog(getShell(), SWT.SAVE);
-		d.setFileName(lastFilename);
-		d.setFilterExtensions(DIALOG_PREFERENCE_EXTENSIONS);
-		String filename = d.open();
-		if (filename == null)
-			return;
-		// Append the default filename if none was specifed	
-		IPath path = new Path(filename);
-		if (path.getFileExtension() == null) {
-			path = path.addFileExtension(PREFERENCE_EXT);			
-			filename = path.toOSString();
-		}
-			
-		WorkbenchPlugin.getDefault().getDialogSettings().put(SAVE_SETTING, filename);
-		
-		// See if the file already exists
-		File file = path.toFile();
-		if(file.exists()) {
-			if(!MessageDialog.openConfirm(
-				getShell(),
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.existsErrorMessage", new Object[]{filename}))) //$NON-NLS-1$
-					return;
-		}			
+		PreferenceImportExportWizard wizard = new PreferenceImportExportWizard(true, this);
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings wizardSettings = workbenchSettings.getSection(FILE_PATH_SETTING); //$NON-NLS-1$
+		if (wizardSettings == null)
+			wizardSettings = workbenchSettings.addNewSection("ExportPreferencesWizard"); //$NON-NLS-1$
+		wizard.setDialogSettings(wizardSettings);
+		wizard.setForcePreviousAndNextButtons(true);
 
-		// Save all the pages and give them a chance to abort
-		Iterator nodes = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
-		while (nodes.hasNext()) {
-			IPreferenceNode node = (IPreferenceNode) nodes.next();
-			IPreferencePage page = node.getPage();
-			if (page != null) {
-				if(!page.performOk())
-					return;
-			}
-		}
-
-		long lastModified = file.lastModified();
-		// Save to file
-		try {
-			Preferences.exportPreferences(path); 
-		} catch (CoreException e) {
-			ErrorDialog.openError(
-				getShell(), 
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.saveErrorMessage", new Object[]{filename}), //$NON-NLS-1$
-				e.getStatus());
-				return;
-		}
-		// See if we actually created a file (there where preferences to export).
-		if(file.exists() && file.lastModified() != lastModified) {
-			MessageDialog.openInformation(
-				getShell(),
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("WorkbenchPreferenceDialog.saveMessage", new Object[]{filename})); //$NON-NLS-1$
-		} else {
-			MessageDialog.openError(
-				getShell(),
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.noPreferencesMessage")); //$NON-NLS-1$
-		}			
-		
-		
-		// Close since we have "performed Ok" and cancel is no longer valid
-		close();	
+		Shell parent = getShell();
+		WizardDialog dialog = new WizardDialog(parent, wizard);
+		dialog.create();
+		Shell shell = dialog.getShell();
+		shell.setSize(Math.max(500, shell.getSize().x), 500);
+		Point childSize = shell.getSize();
+		Point parentSize = parent.getSize();
+		Point childLocation = new Point((parentSize.x - childSize.x) / 2, (parentSize.y - childSize.y) / 2);
+		shell.setLocation(parent.toDisplay(childLocation));
+		// TODO Provide a help context ID and content.
+		//WorkbenchHelp.setHelp(shell, IHelpContextIds.EXPORT_WIZARD);
+		dialog.open();	
 	} 
 }
 

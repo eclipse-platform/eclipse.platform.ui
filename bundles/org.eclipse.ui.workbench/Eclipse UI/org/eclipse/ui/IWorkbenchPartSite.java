@@ -14,7 +14,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
- * The primary interface between a workbench part and the outside world.
+ * The primary interface between a workbench part and the workbench.
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
@@ -30,7 +30,6 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
  *
  * @return the registry extension id
  */
-	
 public String getId();
 /**
  * Returns the unique identifier of the plug-in that defines this workbench

@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 class ProgressFloatingWindow extends AssociatedWindow {
 	TableViewer viewer;
 	WorkbenchWindow window;
-	private int maxSize = 500;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -50,7 +49,12 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			Control associatedControl) {
 		super(workbenchWindow.getShell(), associatedControl);
 		this.window = workbenchWindow;
-		setShellStyle(SWT.RESIZE);
+		
+		//Workaround for Bug 50917
+		if("carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+			setShellStyle(SWT.NO_TRIM | SWT.ON_TOP );
+		else
+			setShellStyle(SWT.NO_TRIM);
 	}
 	/*
 	 * (non-Javadoc)
@@ -98,7 +102,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		setBackground(viewer.getControl());
 		FormData tableData = new FormData();
 		tableData.left = new FormAttachment(0);
-		tableData.right = new FormAttachment(100);
+		tableData.right = new FormAttachment(buttonBar,0);
 		tableData.top = new FormAttachment(0);
 		viewer.getTable().setLayoutData(tableData);
 		initContentProvider();
@@ -112,7 +116,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	private LabelProvider viewerLabelProvider() {
 		return new LabelProvider() {
-			private String ellipsis = "...";
+			private String ellipsis = ProgressMessages.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -170,8 +174,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		size.y += 5;
 		int maxSize = getMaximumSize(viewer.getTable().getDisplay());
 		if (size.x > maxSize)
-			;
-		size.x = maxSize;
+			size.x = maxSize;
 		getShell().setSize(size);
 		moveShell(getShell());
 		setRegion();
@@ -294,7 +297,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 		
-		minimize.setToolTipText("Close progress window");
+		minimize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.CloseToolTip")); //$NON-NLS-1$
 		
 		ToolItem maximize = new ToolItem(buttonBar, SWT.NONE);
 		maximize
@@ -310,7 +313,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 		
-		maximize.setToolTipText("Open progress view");
+		maximize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.OpenToolTip")); //$NON-NLS-1$
 		
 		FormData barData = new FormData();
 		barData.right = new FormAttachment(100);

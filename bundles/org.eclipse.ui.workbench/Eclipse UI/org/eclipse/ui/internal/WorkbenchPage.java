@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-//for dynamic UI - add import HashMap
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,7 +87,7 @@ import org.eclipse.ui.part.MultiEditor;
 /**
  * A collection of views and editors in a workbench.
  */
-public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenchPage {
+public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbenchPage {
 	private WorkbenchWindow window;
 	private IAdaptable input;
 	private IWorkingSet workingSet;
@@ -494,6 +493,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		}
 
 		// Notify listeners.
+		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -686,38 +686,46 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		}
 	}
 	/**
-	 * Opens a view.
+	 * Shows a view.
 	 * 
 	 * Assumes that a busy cursor is active.
 	 */
-	private IViewPart busyShowView(String viewID, boolean activate)
+	private IViewPart busyShowView(
+			String viewID, 
+			String secondaryID, 
+			int mode)
 		throws PartInitException {
 		Perspective persp = getActivePerspective();
 		if (persp == null)
 			return null;
 
 		// If this view is already visible just return.
-		IViewReference ref = persp.findView(viewID);
+		IViewReference ref = persp.findView(viewID, secondaryID);
 		IViewPart view = null;
 		if (ref != null)
 			view = ref.getView(true);
 		if (view != null) {
-			if (activate)
+			if (mode == VIEW_ACTIVATE)			
 				activate(view);
+			else if (mode == VIEW_VISIBLE)
+				bringToTop(view);
 			return view;
 		}
 
 		// Show the view.
-		view = persp.showView(viewID);
+		view = persp.showView(viewID, secondaryID);
 		if (view != null) {
 			zoomOutIfNecessary(view);
-			if (activate)
+			if (mode == VIEW_ACTIVATE)			
 				activate(view);
+			else if (mode == VIEW_VISIBLE)
+				bringToTop(view);
 			window.firePerspectiveChanged(
 				this,
 				getPerspective(),
 				CHANGE_VIEW_SHOW);
-			
+			// Just in case view was fast.
+			window.getFastViewBar().update(true);
 		}
 		return view;
 	}
@@ -1234,14 +1242,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
+	 * @see org.eclipse.ui.IWorkbenchPage
 	 */
 	public IViewReference findViewReference(String viewId) {
+	    return findViewReference(viewId, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage
+	 */
+	public IViewReference findViewReference(String viewId, String secondaryId) {
 		Perspective persp = getActivePerspective();
 		if (persp == null)
 			return null;
-		return persp.findView(viewId);
+		return persp.findView(viewId, secondaryId);
 	}
+
 	/**
 	 * Fire part activation out.
 	 */
@@ -1674,7 +1690,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 			hideView((IViewPart) part);
 		} else {
 			hideView(getActivePerspective(), ref);
-		}
+		}		
 	}
 	/**
 	 * See IPerspective
@@ -1729,6 +1745,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 
 		// Notify interested listeners
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
+
+		// Just in case view was fast.
+		window.getFastViewBar().update(true);
 
 		//if it was the last part, close the perspective
 		lastPartClosePerspective();
@@ -1808,6 +1827,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		Perspective persp = getActivePerspective();
 		if (persp != null)
 			return persp.isFastView(ref);
+		else
+			return false;
+	}
+	/**
+	 * Returns whether the view is fixed.
+	 */
+	public boolean isFixedView(IViewReference ref) {
+		Perspective persp = getActivePerspective();
+		if (persp != null)
+			return persp.isFixedView(ref);
+		else
+			return false;
+	}
+	/**
+	 * Returns whether the layout of the active
+	 * perspective is fixed.
+	 */
+	public boolean isFixedLayout() {
+		Perspective persp = getActivePerspective();
+		if (persp != null)
+			return persp.isFixedLayout();
 		else
 			return false;
 	}
@@ -2134,6 +2174,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		persp.removeFastView(ref);
 
 		// Notify listeners.
+		window.getFastViewBar().update(true);
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -2778,21 +2819,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	/**
 	 * See IWorkbenchPage.
 	 */
-	public IViewPart showView(final String viewID) throws PartInitException {
-		return showView(viewID, true);
+	public IViewPart showView(String viewID) throws PartInitException {
+		return showView(viewID, null, VIEW_ACTIVATE);
 	}
-
-	/**
-	 * See IWorkbenchPage.
-	 */
-	private IViewPart showView(final String viewID, final boolean activate)
-		throws PartInitException {
+	
+	public IViewPart showView(
+			final String viewID, 
+			final String secondaryID, 
+			final int mode) throws PartInitException {
+		
+		if (!certifyMode(mode)) 
+			throw new IllegalArgumentException(WorkbenchMessages.getString("WorkbenchPage.IllegalViewMode")); //$NON-NLS-1$
+		
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					result[0] = busyShowView(viewID, activate);
+					result[0] = busyShowView(viewID, secondaryID, mode);
 				} catch (PartInitException e) {
 					result[0] = e;
 				}
@@ -2804,6 +2848,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 			throw (PartInitException) result[0];
 		else
 			throw new PartInitException(WorkbenchMessages.getString("WorkbenchPage.AbnormalWorkbenchCondition")); //$NON-NLS-1$
+	}
+	/**
+	 * @param mode the mode to test
+	 * @return whether the mode is recognized
+	 * @since 3.0
+	 */
+	private boolean certifyMode(int mode) {
+		switch(mode) {
+			case VIEW_ACTIVATE:
+			case VIEW_VISIBLE:
+			case VIEW_CREATE:
+				return true;
+			default:
+				return false;
+		}
 	}
 	/**
 	 * Toggles the visibility of a fast view. If the view is active it is
@@ -3340,6 +3399,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	 * @see org.eclipse.ui.IWorkbenchPage#createView(java.lang.String)
 	 */
 	public IViewPart createView(String viewId) throws PartInitException {		
-		return showView(viewId, false);		
+		return showView(viewId);		
 	}	
 }

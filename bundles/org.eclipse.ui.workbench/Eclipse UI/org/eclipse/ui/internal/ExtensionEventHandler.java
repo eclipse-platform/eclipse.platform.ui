@@ -13,19 +13,22 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -44,6 +47,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.ActionSetRegistryReader;
@@ -54,6 +59,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistryReader;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
+import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -65,7 +72,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	private static final String TAG_PART="part";//$NON-NLS-1$
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
-	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation";
+	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation"; //$NON-NLS-1$
 
 	IWorkbench workbench;
 	
@@ -117,13 +124,14 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			ext = extDelta.getExtension();
 			asyncAppear(display, extPt, ext);
 		}
-		iter = revokeList.iterator();
-		while(iter.hasNext()) {
-			extDelta = (IExtensionDelta) iter.next();
-			extPt = extDelta.getExtensionPoint();
-			ext = extDelta.getExtension();
-			asyncRevoke(display, extPt, ext);
-		}	
+		// Suspend support for removing a plug-in until this is more stable
+//		iter = revokeList.iterator();
+//		while(iter.hasNext()) {
+//			extDelta = (IExtensionDelta) iter.next();
+//			extPt = extDelta.getExtensionPoint();
+//			ext = extDelta.getExtension();
+//			asyncRevoke(display, extPt, ext);
+//		}	
 	}
 	private void asyncAppear(Display display, final IExtensionPoint extpt, final IExtension ext) {
 		Runnable run = new Runnable() {
@@ -161,6 +169,10 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadPerspective(ext);
 			return;
 		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS)) {
+			loadPerspectiveExtensions(ext);
+			return;
+		}
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SETS)) {
 			loadActionSets(ext);
 			return;
@@ -173,7 +185,86 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadWorkingSets(ext);
 			return;
 		}
-				
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_POPUP_MENU)) {
+			loadPopupMenu(ext);
+			return;
+		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
+			loadPreferencePages(ext);
+			return;
+		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PROPERTY_PAGES)) {
+			loadPropertyPages(ext);
+			return;
+		}		
+	}
+	
+	private void loadPropertyPages(IExtension ext) {
+		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
+		PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(manager);
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
+		}
+	}
+
+	private void loadPreferencePages(IExtension ext) {
+		PreferenceManager manager = workbench.getPreferenceManager();
+		List nodes = manager.getElements(PreferenceManager.POST_ORDER);
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			WorkbenchPreferenceNode node = PreferencePageRegistryReader.createNode(workbench, elements[i]);
+			if (node == null)
+				continue;
+			String category = node.getCategory();
+			if (category == null) {
+				manager.addToRoot(node);
+			}
+			else {
+				WorkbenchPreferenceNode parent = null;
+				for (Iterator j = nodes.iterator(); j.hasNext();) {
+					WorkbenchPreferenceNode element = (WorkbenchPreferenceNode) j.next();
+					if (category.equals(element.getId())) {
+						parent = element;
+						break;
+					}
+				}
+				if (parent == null) {
+					//Could not find the parent - log
+					WorkbenchPlugin.log("Invalid preference page path: " + category); //$NON-NLS-1$
+					manager.addToRoot(node);
+				}
+				else {
+					parent.add(node);
+				}				
+			}
+		}
+	}
+
+	/**
+	 * TODO: object contributions are easy to update, but viewer contributions are not because they're 
+	 * statically cached in anonymous PopupMenuExtenders.  Currently you will be prompted to restart in 
+	 * the case of a viewer contribtion. 
+	 * 
+	 * We can implement this refresh by keeping a weak set of references to PopupMenuExtenders and 
+	 * iterating over them on a delta.  We add a method to PopupMenuExtender that will supply an extension
+	 * to the underlying staticActionBuilder for processing. 
+	 */
+	private void loadPopupMenu(IExtension ext) {
+		ObjectActionContributorManager oMan = ObjectActionContributorManager.getManager();
+		ObjectActionContributorReader oReader = new ObjectActionContributorReader();
+		oReader.setManager(oMan);
+		IConfigurationElement[] elements = ext.getConfigurationElements();
+		boolean restartNeeded = false;
+		// takes care of object contributions
+		for (int i = 0; i < elements.length; i++) {
+			oReader.readElement(elements[i]);
+			if (elements[i].getName().equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE))
+				restartNeeded = true;	
+		}
+
+		if (restartNeeded) 
+			restartPrompt(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_view_contributions")); //$NON-NLS-1$
 	}
 
 	private void revoke(IExtensionPoint extPt, IExtension ext) {
@@ -298,7 +389,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
 //							}
 							((WorkbenchPage)pages[j]).hideView(viewRef);
-							((WorkbenchPage)pages[j]).getViewFactory().releaseView(id);
+							((WorkbenchPage)pages[j]).getViewFactory().releaseView(viewRef);
 						}
 						viewsRemoved.add(id);
 						((ViewRegistry)vReg).remove(id);
@@ -340,7 +431,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		IContributionItem[] items = menuManager.getItems();
 		menuManager = null;
 		for(int i=0; i<items.length; i++)
-			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("&Window")) {
+			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("&Window")) { //$NON-NLS-1$
 				menuManager = (MenuManager)items[i];
 				break;
 			}
@@ -349,7 +440,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		items = menuManager.getItems();
 		menuManager = null;
 		for(int i=0; i<items.length; i++)
-			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("Show &View")) {
+			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("Show &View")) { //$NON-NLS-1$
 				menuManager = (MenuManager)items[i];
 				break;
 			}
@@ -574,6 +665,39 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		}
 	}
 
+	private void loadPerspectiveExtensions(IExtension ext) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null)
+			return;
+	
+		// Get the current perspective.
+		IPerspectiveDescriptor persp = page.getPerspective();
+		if (persp == null)
+			return;
+		String currentId = persp.getId();
+		IConfigurationElement[] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			// If any of these refer to the current perspective, output
+			// a message saying this perspective will need to be reset
+			// in order to see the changes.  For any other case, the
+			// perspective extension registry will be rebuilt anyway so
+			// just ignore it.
+			String id = elements[i].getAttribute(ATT_TARGET_ID);
+			if (id == null)
+				continue;
+			if (id.equals(currentId)) {
+				// Display message
+				MessageDialog.openInformation(window.getShell(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtensionTitle"), //$NON-NLS-1$
+						ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension"));  //$NON-NLS-1$
+				// don't bother outputing this message more than once.
+				break;
+			}
+		}
+	}
+
 	private void restorePerspectiveState(MultiStatus result, String id){
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		IMemento memento;
@@ -721,7 +845,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 						IViewReference viewRef = viewFactory.getView(id);
 						if (viewRef != null) {
 							((WorkbenchPage)pages[j]).hideView(viewRef);
-							((WorkbenchPage)pages[j]).getViewFactory().releaseView(id);
+							((WorkbenchPage)pages[j]).getViewFactory().releaseView(viewRef);
 						}
 					}
 				}
@@ -790,6 +914,18 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 						((WorkbenchPage)pages[j]).hideActionSet(id);
 				}
 			}
+		}
+	}
+	
+	private void restartPrompt(String message) {
+		Shell parentShell = null;
+		IWorkbenchWindow window =workbench.getActiveWorkbenchWindow();
+		if (window != null)
+			parentShell = window.getShell();
+
+		message +=  ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_restart"); //$NON-NLS-1$
+		if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.restart_workbench"), message)) { //$NON-NLS-1$
+			workbench.restart();
 		}
 	}
 }

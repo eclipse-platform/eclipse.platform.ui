@@ -72,7 +72,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  */
-public class WorkbenchKeyboard {
+public final class WorkbenchKeyboard {
 
     /**
      * Whether the keyboard should kick into debugging mode. This causes real
@@ -110,6 +110,7 @@ public class WorkbenchKeyboard {
      */
     private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(WorkbenchKeyboard.class.getName());
+
     static {
         initializeOutOfOrderKeys();
     }
@@ -126,23 +127,27 @@ public class WorkbenchKeyboard {
      */
     public static List generatePossibleKeyStrokes(Event event) {
         final List keyStrokes = new ArrayList(3);
+
         /*
          * If this is not a keyboard event, then there are no key strokes. This
          * can happen if we are listening to focus traversal events.
          */
         if ((event.stateMask == 0) && (event.keyCode == 0)
                 && (event.character == 0)) { return keyStrokes; }
+
         // Add each unique key stroke to the list for consideration.
         final int firstAccelerator = SWTKeySupport
                 .convertEventToUnmodifiedAccelerator(event);
         keyStrokes.add(SWTKeySupport
                 .convertAcceleratorToKeyStroke(firstAccelerator));
+
         final int secondAccelerator = SWTKeySupport
                 .convertEventToUnshiftedModifiedAccelerator(event);
         if (secondAccelerator != firstAccelerator) {
             keyStrokes.add(SWTKeySupport
                     .convertAcceleratorToKeyStroke(secondAccelerator));
         }
+
         final int thirdAccelerator = SWTKeySupport
                 .convertEventToModifiedAccelerator(event);
         if ((thirdAccelerator != secondAccelerator)
@@ -150,6 +155,7 @@ public class WorkbenchKeyboard {
             keyStrokes.add(SWTKeySupport
                     .convertAcceleratorToKeyStroke(thirdAccelerator));
         }
+
         return keyStrokes;
     }
 
@@ -161,6 +167,7 @@ public class WorkbenchKeyboard {
         // Get the key strokes which should be out of order.
         String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
         outOfOrderKeys = KeySequence.getInstance();
+
         try {
             outOfOrderKeys = KeySequence.getInstance(keysText);
         } catch (ParseException e) {
@@ -230,6 +237,7 @@ public class WorkbenchKeyboard {
                         + ", character = 0x" //$NON-NLS-1$
                         + Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
             }
+
             filterKeySequenceBindings(event);
         }
     };
@@ -323,6 +331,7 @@ public class WorkbenchKeyboard {
      */
     public WorkbenchKeyboard(Workbench associatedWorkbench,
             ICommandManager associatedCommandManager) {
+
         workbench = associatedWorkbench;
         state = new KeyBindingState(associatedWorkbench);
         commandManager = associatedCommandManager;
@@ -393,12 +402,15 @@ public class WorkbenchKeyboard {
                     .println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
                             + commandId + "')"); //$NON-NLS-1$
         }
+
         // Reset the key binding state (close window, clear status line, etc.)
         resetState();
+
         // Dispatch to the handler.
         Map actionsById = ((CommandManager) commandManager).getActionsById();
         org.eclipse.ui.commands.IHandler action = (org.eclipse.ui.commands.IHandler) actionsById
                 .get(commandId);
+
         if (DEBUG && DEBUG_VERBOSE) {
             if (action == null) {
                 System.out.println("KEYS >>>     action  = null"); //$NON-NLS-1$
@@ -409,6 +421,7 @@ public class WorkbenchKeyboard {
                         + action.isEnabled());
             }
         }
+
         if (action != null && action.isEnabled()) {
             try {
                 action.execute(event);
@@ -419,6 +432,7 @@ public class WorkbenchKeyboard {
                         WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
             }
         }
+
         return (action != null);
     }
 
@@ -447,13 +461,14 @@ public class WorkbenchKeyboard {
          * bindings.
          */
         if ((event.keyCode & SWT.MODIFIER_MASK) != 0) return;
+
         /*
          * There are three classes of shells: fully-managed, partially-managed,
          * and unmanaged. An unmanaged shell is a shell with no parent that has
          * not registered; it gets no key bindings. A partially-managed shell
          * is either a shell with a parent, or it is a shell with no parent
          * that has registered for partial service; it gets dialog key
-         * bindings. A fully0managed shell has no parent and has registered for
+         * bindings. A fully-managed shell has no parent and has registered for
          * full service; they get all key bindings.
          */
         boolean dialogOnly = false;
@@ -469,13 +484,17 @@ public class WorkbenchKeyboard {
                     // There is no parent shell. The shell is unmanaged.
                     return;
                 }
+
             } else if (dialog.booleanValue()) {
                 // The window is managed, but requested partial management.
                 dialogOnly = true;
+
             } else {
                 // The window is fully-managed; leave dialogOnly=false.
+
             }
         }
+
         // Allow special key out-of-order processing.
         List keyStrokes = generatePossibleKeyStrokes(event);
         if (isOutOfOrderKey(keyStrokes)) {
@@ -496,13 +515,16 @@ public class WorkbenchKeyboard {
                             this, dialogOnly));
                 }
             }
+
             /*
              * Otherwise, we count on a key down arriving eventually. Expecting
              * out of order handling on Ctrl+Tab, for example, is a bad idea
              * (stick to keys that are not window traversal keys).
              */
+
         } else {
             processKeyEvent(keyStrokes, event, dialogOnly);
+
         }
     }
 
@@ -544,10 +566,12 @@ public class WorkbenchKeyboard {
         // Record the starting time.
         startTime = System.currentTimeMillis();
         final long myStartTime = startTime;
+
         // Update the state.
         state.setCurrentSequence(sequence);
         state.setAssociatedWindow(workbench.getActiveWorkbenchWindow());
-        // After 1s, open a shell displaying the possible completions.
+
+        // After some time, open a shell displaying the possible completions.
         final IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         if (store.getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST)) {
@@ -608,11 +632,13 @@ public class WorkbenchKeyboard {
         if (multiKeyAssistShell != null) {
             multiKeyAssistShell.close();
         }
+
         // Get the status line. If none, then abort.
         StatusLineContributionItem statusLine = state.getStatusLine();
         if (statusLine == null) { return; }
         Point statusLineLocation = statusLine.getDisplayLocation();
         if (statusLineLocation == null) { return; }
+
         // Set up the shell.
         multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
         GridLayout layout = new GridLayout();
@@ -621,6 +647,7 @@ public class WorkbenchKeyboard {
         multiKeyAssistShell.setLayout(layout);
         multiKeyAssistShell.setBackground(display
                 .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+
         // Get the list of items.
         Map partialMatches = new TreeMap(new Comparator() {
 
@@ -644,6 +671,7 @@ public class WorkbenchKeyboard {
                 partialMatchItr.remove();
             }
         }
+
         // Layout the partial matches.
         if (partialMatches.isEmpty()) {
             Label noMatchesLabel = new Label(multiKeyAssistShell, SWT.NULL);
@@ -651,6 +679,7 @@ public class WorkbenchKeyboard {
                     "NoMatches.Message")); //$NON-NLS-1$
             noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
             noMatchesLabel.setBackground(multiKeyAssistShell.getBackground());
+
         } else {
             // Layout the table.
             final Table completionsTable = new Table(multiKeyAssistShell,
@@ -671,7 +700,7 @@ public class WorkbenchKeyboard {
                 String commandId = (String) entry.getValue();
                 ICommand command = commandManager.getCommand(commandId);
                 try {
-                    String[] text = {sequence.format(), command.getName()};
+                    String[] text = { sequence.format(), command.getName()};
                     TableItem item = new TableItem(completionsTable, SWT.NULL);
                     item.setText(text);
                     commands.add(command);
@@ -698,7 +727,9 @@ public class WorkbenchKeyboard {
                     // Do nothing
                 }
             });
+
         }
+
         // Size the shell.
         multiKeyAssistShell.pack();
         Point assistShellSize = multiKeyAssistShell.getSize();
@@ -709,6 +740,7 @@ public class WorkbenchKeyboard {
             assistShellSize.y = MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT;
         }
         multiKeyAssistShell.setSize(assistShellSize);
+
         // Position the shell.
         Point assistShellLocation = new Point(statusLineLocation.x,
                 statusLineLocation.y - assistShellSize.y);
@@ -726,6 +758,7 @@ public class WorkbenchKeyboard {
             assistShellLocation.y = displayBottomEdge - assistShellSize.y;
         }
         multiKeyAssistShell.setLocation(assistShellLocation);
+
         // If the shell loses focus, it should be closed.
         multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
 
@@ -733,6 +766,7 @@ public class WorkbenchKeyboard {
                 closeMultiKeyAssistShell();
             }
         });
+
         // Open the shell.
         register(multiKeyAssistShell, false);
         multiKeyAssistShell.open();
@@ -763,8 +797,10 @@ public class WorkbenchKeyboard {
                             + potentialKeyStrokes + ", dialogOnly = " //$NON-NLS-1$
                             + dialogOnly + ")"); //$NON-NLS-1$
         }
+
         // TODO Add proper dialog support
         if (dialogOnly) { return false; }
+
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
                 .hasNext();) {
@@ -773,18 +809,23 @@ public class WorkbenchKeyboard {
             if (isPartialMatch(sequenceAfterKeyStroke)) {
                 incrementState(sequenceAfterKeyStroke);
                 return true;
+
             } else if (isPerfectMatch(sequenceAfterKeyStroke)) {
                 String commandId = getPerfectMatch(sequenceAfterKeyStroke);
                 return (executeCommand(commandId, event) || sequenceBeforeKeyStroke
                         .isEmpty());
+
             } else if ((multiKeyAssistShell != null)
                     && ((event.keyCode == SWT.ARROW_DOWN)
                             || (event.keyCode == SWT.ARROW_UP)
                             || (event.keyCode == SWT.ARROW_LEFT)
                             || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR))) { 
             // We don't want to swallow keyboard navigation keys.
-            return false; }
+            return false; 
+
+            }
         }
+
         resetState();
         return false;
     }

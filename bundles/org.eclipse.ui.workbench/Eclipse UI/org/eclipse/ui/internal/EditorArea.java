@@ -350,7 +350,7 @@ public void updateTabList() {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
-	 */
+	 */ 
 	public int getType() {
 		return EDITOR;
 	}

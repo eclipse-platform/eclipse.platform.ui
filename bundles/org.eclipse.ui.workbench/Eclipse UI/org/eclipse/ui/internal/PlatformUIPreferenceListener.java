@@ -22,7 +22,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 
@@ -77,21 +76,8 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 					PreferenceConverter.readFontData((String) newValue);
 			else
 				newSetting = (FontData[]) newValue;
-			
-			//Do not update for null setting
-			if(newSetting == null)
-				return;
 				
 			JFaceResources.getFontRegistry().put(propertyName, newSetting);
-		}
-		
-		//Update the workbench windows if we get the small font
-		if(propertyName.equals(PerspectiveBarManager.SMALL_FONT)){
-			IWorkbenchWindow[] windows =  PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				WorkbenchWindow window = (WorkbenchWindow) windows[i];
-				window.getPerspectiveBar().updateFont();
-			}
 		}
 	}
 

@@ -515,7 +515,7 @@ public class EditorManager {
 			descArray[i] = innerDesc;
 			partArray[i] = createPart(descArray[i]);
 			refArray[i] = new Editor();
-			createSite(partArray[i],descArray[i],inputArray[i]);
+			createSite(ref, partArray[i],descArray[i],inputArray[i]);
 			((Editor)refArray[i]).setPart(partArray[i]);			
 		}
 		part.setChildren(partArray);
@@ -560,8 +560,8 @@ public class EditorManager {
 	/*
 	 * Create the site and initialize it with its action bars.
 	 */
-	private void createSite(final IEditorPart part, final EditorDescriptor desc, final IEditorInput input) throws PartInitException {
-		EditorSite site = new EditorSite(part, page, desc);
+	private void createSite(final IEditorReference ref, final IEditorPart part, final EditorDescriptor desc, final IEditorInput input) throws PartInitException {
+		EditorSite site = new EditorSite(ref, part, page, desc);
 		final String label = part.getTitle();
 		try {
 			UIStats.start(UIStats.INIT_PART,label);
@@ -629,7 +629,7 @@ public class EditorManager {
 			UIStats.end(UIStats.CREATE_PART,label);
 		}
 		// Open the instance.
-		createSite(editor, desc, input);
+		createSite(ref, editor, desc, input);
 		((Editor)ref).setPart(editor);
 		createEditorTab(ref, desc, input, setVisible);
 	}
@@ -683,7 +683,7 @@ public class EditorManager {
 		if (cEditor == null) {
 			return null;
 		} else {				
-			createSite(cEditor, desc, input);
+			createSite(ref, cEditor, desc, input);
 			((Editor)ref).setPart(cEditor);
 			createEditorTab(ref, desc, input, true);
 			return ref;

@@ -14,28 +14,6 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.custom.ViewForm2;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -43,17 +21,42 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ViewForm2;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
-
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * Provides support for a title bar where the
@@ -67,8 +70,10 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  * part.
  */
 public class ViewPane extends PartPane implements IPropertyListener {
+	private CLabel titleLabel;
 
 	private boolean fast = false;
+		private boolean showFocus = false;
 	// toolbars can be locked (i.e. part of the view form and 
 	// positioned inside it, or not locked (embedded in a floating
 	// toolbar that is not part of the view form
@@ -90,6 +95,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
 	private boolean showMenuButton = false;
+	private String theme;
 
 	//Created in o.e.ui.Perspective, disposed there.
 	private Sash fastViewSash;
@@ -215,6 +221,22 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				});
 			}
 
+			if (isCloseable()) {
+				ToolItem closeButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				// Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+				Image hoverImage =
+					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
+				closeButton.setDisabledImage(hoverImage);
+				// PR#1GE56QT - Avoid creation of unnecessary image.
+				closeButton.setImage(hoverImage);
+				// closeButton.setHotImage(hoverImage);
+				closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
+				closeButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						doHide();
+		}
+				});
+	}
 		}
 	}
 
@@ -227,6 +249,17 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		super(ref, page);
 		fast = ref.isFastView();
 	}
+	/**
+	 * Constructs a view pane for a view part with a theme id.
+	 * 
+	 * @issue the theme should be obtained from the current perspective as needed, 
+	 *   not bound to the view, since the view may be shared across multiple perspectives
+	 */
+	public ViewPane(IViewReference ref, WorkbenchPage page, String theme) {
+		this(ref, page);
+		this.theme = theme;
+	}
+
 	/**
 	 * Create control. Add the title bar.
 	 */
@@ -366,7 +399,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// See also similar restrictions in addMoveItems method
 		// No need to worry about fast views as they do not
 		// register for D&D operations
-		return !isZoomed();
+		return isMoveable() && !overImage(p.x) && !isZoomed();
 	}
 
 	/**
@@ -382,6 +415,18 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		floatingWindow = new ToolbarFloatingWindow(getWorkbenchWindow().getShell(), this.getControl(), AssociatedWindow.TRACK_OUTER_TOP_RHS);
 		return floatingWindow;
 	}
+	
+		/*
+	 * Return true if <code>x</code> is over the label image.
+	 */
+	private boolean overImage(int x) {
+		if (titleLabel.getImage() == null) {
+			return false;
+		} else {
+			return x < titleLabel.getImage().getBounds().width;
+		}
+	}
+	
 	/**
 	 * Create a title bar for the pane.
 	 * 	- the view icon and title to the far left
@@ -390,10 +435,35 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	protected void createTitleBar() {
 		// Only do this once.
-		if (viewToolBar != null)
+		if (titleLabel != null)
 			return;
 
+		// Title.   
+		titleLabel = new CLabel(control, SWT.SHADOW_NONE);
+		if (getTitleFont() != null)
+			titleLabel.setFont(getTitleFont());
+		titleLabel.setAlignment(SWT.LEFT);
+		titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents(), isGradientVertical());
+		titleLabel.setForeground(getNormalForeground());
+		titleLabel.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				if ((e.button == 1) && overImage(e.x))
+					showPaneMenu();
+			}
+			public void mouseDoubleClick(MouseEvent event) {
+				doZoom();
+			}
+		});
+		// Listen for popup menu mouse event
+		titleLabel.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.type == SWT.MenuDetect) {
+					showPaneMenu(titleLabel, new Point(event.x, event.y));
+				}
+			}
+		});
 		updateTitles();
+		control.setTopLeft(titleLabel);
 
 		// Listen to title changes.
 		getPartReference().addPropertyListener(this);
@@ -479,6 +549,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		 * containing the titleLabel will also disappear (disposing of the 
 		 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
 		 */
+		titleLabel = null;
+
 		if (isvMenuMgr != null)
 			isvMenuMgr.dispose();
 		if (isvToolBarMgr != null)
@@ -519,7 +591,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Returns the drag control.
 	 */
 	public Control getDragHandle() {
-		return viewToolBar;
+		return titleLabel;
 	}
 	/**
 	 * @see ViewActionBars
@@ -683,12 +755,29 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Shows the pane menu (system menu) for this pane.
 	 */
 	public void showPaneMenu() {
+		// If this is a fast view, it may have been minimized. Do nothing in this case.
+		if (isFastView() && (page.getActiveFastView() != getViewReference()))
+			return;
+		Rectangle bounds = titleLabel.getBounds();
+		showPaneMenu(titleLabel, titleLabel.toDisplay(new Point(0, bounds.height)));
 	}
 	/**
 	 * Return true if this view is a fast view.
 	 */
 	private boolean isFastView() {
 		return page.isFastView(getViewReference());
+	}
+	/**
+	 * Return true if this view can be closed or is fixed.
+	 */
+	boolean isCloseable() {
+		return !page.isFixedView(getViewReference());
+	}
+	/**
+	 * Return true if the view may be moved.
+	 */
+	boolean isMoveable() {
+		return !page.isFixedLayout();
 	}
 	/**
 	 * Finds and return the sashes around this part.
@@ -713,6 +802,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Add the Fast View menu item to the view title menu.
 	 */
 	protected void addFastViewMenuItem(Menu parent, boolean isFastView) {
+		if (isMoveable() && isCloseable()) {
 		// add fast view item
 		MenuItem item = new MenuItem(parent, SWT.CHECK);
 		item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
@@ -736,6 +826,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			});
 			item.setEnabled(true);
 		}
+	}
 	}
 	/**
 	 * Add the View and Tab Group items to the Move menu.
@@ -826,6 +917,234 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Update the title attributes.
 	 */
 	public void updateTitles() {
+		IViewReference ref = getViewReference();
+		if (titleLabel != null && !titleLabel.isDisposed()) {
+			boolean changed = false;
+
+			// only update if text or image has changed 
+			String text = ref.getTitle();
+			if (text == null)
+				text = ""; //$NON-NLS-1$
+			if (!text.equals(titleLabel.getText())) {
+				titleLabel.setText(text);
+				changed = true;
+			}
+			Image image = ref.getTitleImage();
+			if (image != titleLabel.getImage()) {
+				titleLabel.setImage(image);
+				changed = true;
+			}
+			// only relayout if text or image has changed
+			if (changed) {
+				((Composite) getControl()).layout();
+			}
+
+			String tooltip = ref.getTitleToolTip();
+			if (!(tooltip == null
+				? titleLabel.getToolTipText() == null
+				: tooltip.equals(titleLabel.getToolTipText()))) {
+				titleLabel.setToolTipText(ref.getTitleToolTip());
+				changed = true;
+			}
+
+			if (changed) {
+				// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
+				titleLabel.update();
+
+				// notify the page that this view's title has changed
+				// in case it needs to update its fast view button
+				page.updateTitle(ref);
+			}
+		}
+	}
+
+	private Color[] getNormalGradient() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientColors(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_NORMAL);
+		}
+		return null;
+	}
+
+	private int[] getNormalGradientPercents() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_NORMAL);
+		}
+		return null;
+	}
+
+	private Color getNormalForeground() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewColor(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_NORMAL);
+		}
+		return null;
+	}
+
+	private Color[] getActiveGradient() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientColors(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_ACTIVE);
+		}
+		return WorkbenchColors.getActiveViewGradient();
+	}
+
+	private int[] getActiveGradientPercents() {
+		if (theme != null)
+			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE);
+		else
+			return WorkbenchColors.getActiveViewGradientPercents();
+	}
+
+	private Color getActiveForeground() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewColor(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
+		}
+		return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+	}
+
+	private Color[] getDeactivatedGradient() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientColors(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED);
+		}
+		return WorkbenchColors.getDeactivatedViewGradient();
+	}
+
+	private int[] getDeactivatedGradientPercents() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientPercents(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED);
+		}
+		return WorkbenchColors.getDeactivatedViewGradientPercents();
+	}
+
+	private Color getDeactivatedForeground() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewColor(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);
+		}
+		return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+	}
+
+	private int getGradientDirection() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewGradientDirection(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_DIRECTION);
+		}
+		return SWT.HORIZONTAL;
+	}
+
+	private boolean isGradientVertical() {
+	    return getGradientDirection() == SWT.VERTICAL;
+	}
+	
+	private Font getTitleFont() {
+		if (theme != null) {
+			return WorkbenchThemeManager.getInstance().getViewFont(
+				theme,
+				IThemeDescriptor.VIEW_TITLE_FONT);
+		}
+		return null;
+	}
+
+	/**
+	 * Answer the SWT widget style.
+	 */
+	int getStyle() {
+		if (theme == null) {
+			return super.getStyle();
+		}
+		// @issue even if there is a style, it may still be a function of whether the
+		//   container allows a border
+		return WorkbenchThemeManager.getInstance().getViewBorderStyle(
+			theme,
+			IThemeDescriptor.VIEW_BORDER_STYLE);
+	}
+
+	/**
+	 * Sets the theme.
+	 * 
+	 * @param theme the theme id
+	 */
+	void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#setImage(org.eclipse.swt.widgets.TabItem, org.eclipse.swt.graphics.Image)
+	 */
+	void setImage(CTabItem item, Image image) {
+		titleLabel.setImage(image);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addCloseMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addCloseMenuItem(Menu menu) {
+		if(isCloseable())
+			super.addCloseMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addMaximizeMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addMaximizeMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addMaximizeMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addMoveMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addMoveMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addMoveMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addPinEditorItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addPinEditorItem(Menu parent) {
+		if(isMoveable() && isCloseable())
+			super.addPinEditorItem(parent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addRestoreMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addRestoreMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addRestoreMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#addSizeMenuItem(org.eclipse.swt.widgets.Menu)
+	 */
+	protected void addSizeMenuItem(Menu menu) {
+		if(isMoveable())
+			super.addSizeMenuItem(menu);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartPane#doZoom()
+	 */
+	protected void doZoom() {
+		if (isMoveable())
+			super.doZoom();
 	}
 
 	/* (non-Javadoc)

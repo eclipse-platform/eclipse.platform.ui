@@ -22,7 +22,21 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -47,22 +61,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.window.ColorSchemeService;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -88,7 +86,6 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
@@ -96,6 +93,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
+import org.eclipse.ui.internal.progress.AnimationManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -109,6 +107,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
+	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
@@ -122,6 +121,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
+	private Menu fastViewBarMenu;
+	private MenuItem restoreItem;
 	
 	//private PerspectiveBarManager newBar;
 	
@@ -150,6 +151,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @since 3.0
 	 */
 	private WorkbenchWindowConfigurer windowConfigurer = null;
+
+	// constants for shortcut bar group ids 
+	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
+	static final String GRP_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
+	static final String GRP_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 
 	// static fields for inner classes.
 	static final int VGAP = 0;
@@ -221,7 +227,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private static final int FILL_ALL_ACTION_BARS =
 		WorkbenchAdvisor.FILL_MENU_BAR
-			| WorkbenchAdvisor.FILL_TOOL_BAR
+			| WorkbenchAdvisor.FILL_COOL_BAR
 			| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
@@ -253,6 +259,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// let the application do further configuration
 		getAdvisor().preWindowOpen(getWindowConfigurer());
+		
+		// set the shell style
+		setShellStyle(getWindowConfigurer().getShellStyle());
+		
 		// Fill the action bars	
 		getAdvisor().fillActionBars(
 			this,
@@ -1063,9 +1073,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						} else {
 							newItem = new Separator();
 						}
-					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER))) {
+					} else if (id != null) {
+					    if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
 						newItem = new GroupMarker(id);
-					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION))) {
+
+					    } else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION) 
+					            || type.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
 
 						// Get Width and height
 						Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
@@ -1073,13 +1086,23 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						// Look for the object in the current cool bar manager
 						IContributionItem oldItem = coolBarMgr.find(id);
 						// If a tool bar contribution item already exists for this id then use the old object
-						if (oldItem instanceof ToolBarContributionItem) {
-							newItem = (ToolBarContributionItem) oldItem;
+					        if (oldItem != null) {
+					            newItem = oldItem;
 						} else {
 							newItem =
 								new ToolBarContributionItem(
 										new ToolBarManager(coolBarMgr.getStyle()),
 										id);
+					            if (type.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
+					                ToolBarContributionItem newToolBarItem = (ToolBarContributionItem) newItem;
+					                if (height != null) {
+					                    newToolBarItem.setCurrentHeight(height.intValue());
+					                }
+					                if (width != null) {
+					                    newToolBarItem.setCurrentWidth(width.intValue());
+					                }
+					                newItem = new PlaceholderContributionItem(newToolBarItem);
+					            }
 							// make it invisible by default
 							newItem.setVisible(false);
 							// Need to add the item to the cool bar manager so that its canonical order can be preserved
@@ -1095,12 +1118,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							}
 						}
 						// Set the current height and width
-						if (width != null) {
+					        if ((width != null) && (newItem instanceof ToolBarContributionItem)) {
 							((ToolBarContributionItem) newItem).setCurrentWidth(width.intValue());
 						}
-						if (height != null) {
+					        if ((height != null) && (newItem instanceof ToolBarContributionItem)) {
 							((ToolBarContributionItem) newItem).setCurrentHeight(height.intValue());
 						}
+					}
 					}
 					// Add new item into cool bar manager
 					if (newItem != null) {
@@ -1510,19 +1534,40 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							IWorkbenchConstants.TAG_ITEM_TYPE,
 							IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
 				} else {
-					// Assume that it is a ToolBarContributionItem
+				    if (item instanceof PlaceholderContributionItem) {
 					coolItemMem.putString(
 							IWorkbenchConstants.TAG_ITEM_TYPE,
+				                IWorkbenchConstants.TAG_TYPE_PLACEHOLDER);
+				    } else {
+				        // Store the identifier.
+				        coolItemMem.putString(
+				                IWorkbenchConstants.TAG_ITEM_TYPE,
 							IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
-					ToolBarContributionItem tbItem = (ToolBarContributionItem) item;
-					tbItem.saveWidgetState();
-					coolItemMem.putInteger(
-							IWorkbenchConstants.TAG_ITEM_X,
-							tbItem.getCurrentWidth());
-					coolItemMem.putInteger(
-							IWorkbenchConstants.TAG_ITEM_Y,
-							tbItem.getCurrentHeight());
 				}
+					
+					/* Retrieve a reasonable approximation of the height and
+					 * width, if possible.
+					 */
+					final int height;
+					final int width;
+					if (item instanceof ToolBarContributionItem) {
+					    ToolBarContributionItem toolBarItem = (ToolBarContributionItem) item;
+					    toolBarItem.saveWidgetState();
+					    height = toolBarItem.getCurrentHeight();
+					    width = toolBarItem.getCurrentWidth();
+					} else if (item instanceof PlaceholderContributionItem) {
+					    PlaceholderContributionItem placeholder = (PlaceholderContributionItem) item;
+					    height = placeholder.getHeight();
+					    width = placeholder.getWidth();
+					} else {
+					    height = -1;
+					    width = -1;
+			}
+					
+					// Store the height and width.
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X, width);
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y, height); 
+		}
 			}
 		}
 		
@@ -1636,7 +1681,50 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Get the action for the tool item.
 		Object data = toolItem.getData();
 
-		if (!(data instanceof PerspectiveBarContributionItem))
+		// If the tool item is an icon for a fast view
+		if (data instanceof ShowFastViewContribution) {
+			// The fast view bar menu is created lazily here.
+			if (fastViewBarMenu == null) {
+				Menu menu = new Menu(toolBar);
+				MenuItem closeItem = new MenuItem(menu, SWT.NONE);
+				closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+				closeItem.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+						if (toolItem != null && !toolItem.isDisposed()) {
+							IViewReference ref =
+								(IViewReference) toolItem.getData(
+									ShowFastViewContribution.FAST_VIEW);
+							getActiveWorkbenchPage().hideView(ref);
+						}
+					}
+				});
+				restoreItem = new MenuItem(menu, SWT.CHECK);
+				restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
+				restoreItem.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+						if (toolItem != null && !toolItem.isDisposed()) {
+							IViewReference ref =
+								(IViewReference) toolItem.getData(
+									ShowFastViewContribution.FAST_VIEW);
+							getActiveWorkbenchPage().removeFastView(ref);
+						}
+					}
+				});
+				fastViewBarMenu = menu;
+			}
+			restoreItem.setSelection(true);
+			fastViewBarMenu.setData(toolItem);
+
+			// Show popup menu.
+			if (fastViewBarMenu != null) {
+				fastViewBarMenu.setLocation(pt.x, pt.y);
+				fastViewBarMenu.setVisible(true);
+			}
+		}
+
+		if (!(data instanceof ActionContributionItem))
 			return;
 		
 			// The perspective bar menu is created lazily here.
@@ -1844,12 +1932,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
 			IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
 	}
+
 	/**
 	 * Create the progress indicator for the receiver.
 	 * @param shell	the parent shell
 	 */
 	private void createProgressIndicator(Shell shell) {
-		if (showProgressIndicator()) {
+		if (getWindowConfigurer().getShowProgressIndicator()) {
 			animationItem = new AnimationItem(this);
 			animationItem.createControl(shell);
 		}
@@ -2067,12 +2156,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * Toggle the floating window in the receiver.
 	 */
 	public void toggleFloatingWindow(){
-		animationItem.toggleFloatingWindow();
-	}	/**
-	 * @return Returns the animationItem.
-	 */
-	public AnimationItem getAnimationItem() {
-		return animationItem;
+		AnimationManager.getInstance().toggleFloatingWindow();
 	}
 
 	/* package */ public int getFastViewBarSide() {

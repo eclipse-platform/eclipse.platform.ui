@@ -30,6 +30,12 @@ public class StatusLineContributionItem extends ContributionItem {
 
 	private int charWidth;
 	private CLabel label;
+	/**
+	 * The composite into which this contribution item has been placed. This
+	 * will be <code>null</code> if this instance has not yet been
+	 * initialized.
+	 */
+	private Composite statusLine = null;
 	private String text = Util.ZERO_LENGTH_STRING;
 	private int widthHint = -1;
 
@@ -44,17 +50,13 @@ public class StatusLineContributionItem extends ContributionItem {
 	}
 
 	public void fill(Composite parent) {
-		label = new CLabel(parent, SWT.NONE); //SWT.SHADOW_IN);
+		statusLine = parent;
+		label = new CLabel(statusLine, SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-//		Color[] colors = new Color[2];
-//		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-//		colors[1] = label.getBackground();
-//		int[] gradient = new int[] { JFaceColors.STATUS_PERCENT };
-//		label.setBackground(colors, gradient);
 
 		if (widthHint < 0) {
-			GC gc = new GC(parent);
-			gc.setFont(parent.getFont());
+			GC gc = new GC(statusLine);
+			gc.setFont(statusLine.getFont());
 			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
 			gc.dispose();
 		}
@@ -72,12 +74,13 @@ public class StatusLineContributionItem extends ContributionItem {
 	 *         not yet initialized.
 	 */
 	public Point getDisplayLocation() {
-		if ((label != null)) {
-			return label.getLocation();
+		if ((label != null) && (statusLine != null)) {
+			return statusLine.toDisplay(label.getLocation());
 		}
 
 		return null;
 	}
+
 	public String getText() {
 		return text;
 	}

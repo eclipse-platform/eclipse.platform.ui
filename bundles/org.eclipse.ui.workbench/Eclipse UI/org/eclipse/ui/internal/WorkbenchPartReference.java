@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal;
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * 
@@ -28,7 +30,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	private String title;
 	private String tooltip;
 	private Image image;
-	private ImageDescriptor imageDescritor;
+	private ImageDescriptor imageDescriptor;
 	private ListenerList propChangeListeners = new ListenerList(2);		
 	
 	public WorkbenchPartReference() {
@@ -37,23 +39,23 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		this.id = id;
 		this.title = title;
 		this.tooltip = tooltip;
-		this.imageDescritor = desc;
+		this.imageDescriptor = desc;
 	}
 	public void releaseReferences() {
 		id = null;
 		tooltip = null;
 		title = null;
-		if(image != null && imageDescritor != null) {
+		if(image != null && imageDescriptor != null) {
 			//make sure part has inc. the reference count.
 			if(part != null)
 				part.getTitleImage();
 			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-			image = (Image)imageCache.get(imageDescritor);
+			image = (Image)imageCache.get(imageDescriptor);
 			if(image != null) {
-				imageCache.removeRef(imageDescritor);
+				imageCache.removeRef(imageDescriptor);
 			}
 			image = null;
-			imageDescritor = null;
+			imageDescriptor = null;
 		}
 	}
 	/**
@@ -101,16 +103,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			return part.getTitleImage();
 		if(image != null)
 			return image;
-		if(imageDescritor == null)
+		if(imageDescriptor == null)
 			return null;
 		ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-		image = (Image)imageCache.get(imageDescritor);
+		image = (Image)imageCache.get(imageDescriptor);
 		if(image != null) {
-			imageCache.addRef(imageDescritor);
+			imageCache.addRef(imageDescriptor);
 			return image;
 		}
-		image = imageDescritor.createImage();
-		imageCache.put(imageDescritor,image);
+		image = imageDescriptor.createImage();
+		imageCache.put(imageDescriptor,image);
 		return image;		
 	}	
 	public void setPart(IWorkbenchPart part) {
@@ -146,14 +148,14 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 		return result;
 	}	
 	public void dispose() {
-		if(image != null && imageDescritor != null) {
+		if(image != null && imageDescriptor != null) {
 			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 			if(image != null) {
-				int count = imageCache.removeRef(imageDescritor);
+				int count = imageCache.removeRef(imageDescriptor);
 				if(count <= 0)
 					image.dispose();				
 			}
-			imageDescritor = null;
+			imageDescriptor = null;
 			image = null;
 		}
 		if(part != null)

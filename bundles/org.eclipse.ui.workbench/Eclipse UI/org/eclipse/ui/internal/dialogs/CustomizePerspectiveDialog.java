@@ -634,7 +634,7 @@ public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	
 	// Fill current actionBars in the "fake" workbench actionbars
 	window.fillActionBars(customizeWorkbenchActionBars, 
-		WorkbenchAdvisor.FILL_PROXY | WorkbenchAdvisor.FILL_MENU_BAR | WorkbenchAdvisor.FILL_TOOL_BAR );
+		WorkbenchAdvisor.FILL_PROXY | WorkbenchAdvisor.FILL_MENU_BAR | WorkbenchAdvisor.FILL_COOL_BAR );
 	
 	initializeActionSetInput();
 	initializeShortcutMenuInput();

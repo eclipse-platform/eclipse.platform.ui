@@ -96,14 +96,14 @@ public interface IWorkbenchWindowConfigurer {
 	public void setShowTitleBar(boolean show);
 
 	/**
-	 * Returns whether the underlying workbench window has a title bar.
+	 * Returns whether the underlying workbench window has a menu bar.
 	 * <p>
 	 * The initial value is controlled by the preference
 	 * {@link IWorkbenchPreferences#SHOULD_SHOW_MENU_BAR IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR}
 	 * </p>
 	 * 
-	 * @return <code>true</code> for a title bar, and <code>false</code>
-	 * for no title bar
+	 * @return <code>true</code> for a menu bar, and <code>false</code>
+	 * for no menu bar
 	 */
 	public boolean getShowMenuBar();
 
@@ -178,6 +178,44 @@ public interface IWorkbenchWindowConfigurer {
 	 */
 	public void setShowStatusLine(boolean show);
 	
+	/**
+	 * Returns whether the underlying workbench window has a progress indicator.
+	 * <p>
+	 * The initial value is controlled by the preference
+	 * {@link IWorkbenchPreferences#SHOULD_SHOW_PROGRESS_INDICATOR IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR}
+	 * </p>
+	 * 
+	 * @return <code>true</code> for a progress indicator, and <code>false</code>
+	 * for no progress indicator
+	 */
+	public boolean getShowProgressIndicator();
+	
+	/**
+	 * Sets whether the underlying workbench window has a progress indicator.
+	 * 
+	 * @param show <code>true</code> for a progress indicator, and <code>false</code>
+	 * for no progress indicator
+	 */
+	public void setShowProgressIndicator(boolean show);
+
+	/**
+	 * Returns the style bits to use for the window's shell when it is created.
+	 * The default is <code>SWT.SHELL_TRIM</code>.
+	 *
+	 * @return the shell style bits
+	 */
+	public int getShellStyle();
+
+	/**
+	 * Sets the style bits to use for the window's shell when it is created.
+	 * This method has no effect after the shell is created.
+	 * That is, it must be called within the <code>preWindowOpen</code>
+	 * callback on <code>WorkbenchAdvisor</code>.
+	 *
+	 * @param newShellStyle the new shell style bits
+	 */
+	public void setShellStyle(int shellStyle);
+
 	/**
 	 * Returns the data associated with this workbench window at the given key.
 	 * 

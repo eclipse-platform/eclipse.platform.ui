@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * the progress API.
  */
 class ProgressManagerUtil {
-	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView";
+	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	/**
 	 * Return a status for the exception.
 	 * 

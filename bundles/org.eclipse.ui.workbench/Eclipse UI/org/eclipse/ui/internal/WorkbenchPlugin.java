@@ -28,6 +28,12 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -38,10 +44,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -50,6 +53,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
@@ -63,7 +68,9 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.themes.IThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -91,6 +98,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
+	// Theme registry
+	private ThemeRegistry themeRegistry;
 	// Manager for working sets (IWorkingSet)
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
@@ -147,29 +156,29 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		try {
-		// If plugin has been loaded create extension.
-		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
-			return element.createExecutableExtension(classAttribute);
-		} else {
-			final Object[] ret = new Object[1];
-			final CoreException[] exc = new CoreException[1];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						ret[0] = element.createExecutableExtension(classAttribute);
-					} catch (CoreException e) {
-						exc[0] = e;
+			// If plugin has been loaded create extension.
+			// Otherwise, show busy cursor then create extension.
+			IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			if (plugin.isPluginActivated()) {
+				return element.createExecutableExtension(classAttribute);
+			} else {
+				final Object[] ret = new Object[1];
+				final CoreException[] exc = new CoreException[1];
+				BusyIndicator.showWhile(null, new Runnable() {
+					public void run() {
+						try {
+							ret[0] = element.createExecutableExtension(classAttribute);
+						} catch (CoreException e) {
+							exc[0] = e;
+						}
 					}
-				}
-			});
-			if (exc[0] != null)
-				throw exc[0];
-			else
-				return ret[0];
+				});
+				if (exc[0] != null)
+					throw exc[0];
+				else
+					return ret[0];
+			}
 		}
-	}
 		catch (CoreException core) {
 			throw core;			
 		}
@@ -351,6 +360,26 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			sharedImages = new SharedImages();
 		return sharedImages;
 	}
+
+	/**
+	 * Returns the theme registry for the workbench.
+	 * 
+	 * @return the theme registry
+	 */
+	public IThemeRegistry getThemeRegistry() {
+		if (themeRegistry == null) {
+			try {
+				themeRegistry = new ThemeRegistry();
+				ThemeRegistryReader reader = new ThemeRegistryReader();
+				reader.readThemes(Platform.getPluginRegistry(), themeRegistry);
+			} catch (CoreException e) {
+				// cannot safely show a dialog so log it
+				WorkbenchPlugin.log("Unable to read theme registry.", e.getStatus()); //$NON-NLS-1$
+			}
+		}
+		return themeRegistry;
+	}
+	
 	/**
 	 * Answer the view registry.
 	 */
@@ -386,15 +415,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// new generic workbench preferences
 		store.setDefault(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, false);
-		
-		store.setDefault(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS, false);
-		store.setDefault(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR, true);
-		
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);
 			
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
@@ -407,7 +433,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SELECT_ON_HOVER, false);
 		store.setDefault(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
-		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
+		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
@@ -421,8 +447,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
+		store.setDefault(IPreferenceConstants.SHOW_FLOATING_PROGRESS,true);
 		
-		store.setDefault(JFacePreferences.USE_DEFAULT_THEME, true);
 		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
@@ -431,21 +457,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Set the default active hyperlink line colour to blue
 		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
 		
-		//Set the default inactive tab background, if this value is the default then it is queried
-		// from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
-		//Set the default inactive tab foreground, if this value is the default then it is queried
-		// from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
-		//Set the default tab background, if this value is the default then it is queried
-		//from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_BACKGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
-		//Set the default tab foreground, if this value is the default then it is queried
-		// from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
 		
-		
-
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable single click
@@ -456,7 +468,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
 		//Temporary option to turn off the dialog font
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
-		store.setDefault(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR, true); //$NON-NLS-1$	
 
 		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
 		FontRegistry registry = JFaceResources.getFontRegistry();
@@ -464,7 +475,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.BANNER_FONT, registry, store);
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
-		
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
@@ -474,9 +484,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		FontData[] fontData = registry.getFontData(fontKey);
 		PreferenceConverter.setDefault(store, fontKey, fontData);
 	}
-
-	
-	
 	/**
 	 * Log the given status to the ISV log.
 	 *
@@ -506,7 +513,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 
 	public static void log(String message) {
-		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+		getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, message, null));
 		System.err.println(message);
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}

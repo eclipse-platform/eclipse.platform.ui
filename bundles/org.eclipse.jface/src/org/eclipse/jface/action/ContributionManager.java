@@ -363,6 +363,36 @@ public void removeAll() {
 	dynamicItems = 0;
 	markDirty();
 }
+
+/**
+ * Replaces the item of the given identifier with another contribution item.
+ * This can be used, for example, to replace large contribution items with
+ * placeholders to avoid memory leaks.  If the identifier cannot be found in the
+ * current list of items, then this does nothing.
+ * @param identifier The identifier to look for in the list of contributions;
+ * should not be <code>null</code>.
+ * @param replacementItem The contribution item to replace the old item; must
+ * not be <code>null</code>.  Use {@link org.eclipse.jface.action.ContributionManager#remove(java.lang.String) remove} if that is what you want to do.
+ * @return <code>true</code> if the given identifier can be; <code>
+ * @since 3.0
+ */
+public boolean replaceItem(final String identifier, final IContributionItem replacementItem) {    
+    final int index = indexOf(identifier);
+    if (index < 0) {
+        return false; // couldn't find the item.
+    }
+    
+    // Remove the old item.
+	final IContributionItem oldItem = (IContributionItem) contributions.get(index);
+	itemRemoved(oldItem);
+	
+	// Add the new item.
+	contributions.set(index, replacementItem);
+	itemAdded(replacementItem); // throws NPE if (replacementItem == null)
+	
+	return true; // success
+}
+
 /**
  * Sets whether this manager is dirty. When dirty, the list of contributions 
  * is not accurately reflected in the corresponding widgets.

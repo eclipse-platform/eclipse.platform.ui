@@ -1,8 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 
 /**
  * An instance of this interface provides support for managing commands at the
@@ -61,16 +70,6 @@ public interface IWorkbenchCommandSupport {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	ICompoundCommandHandlerService getCompoundCommandHandlerService();
-
-	/**
-	 * An accessor for the keyboard interface this workbench is using. This can
-	 * be used by external class to get a reference with which they can
-	 * simulate key presses in the key binding architecture. This is used for
-	 * testing purposes currently.
-	 * 
-	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
-	 */
-	public WorkbenchKeyboard getKeyboard();
 
 	/**
 	 * Tests whether the global key binding architecture is currently active.

@@ -88,7 +88,9 @@ public class FolderLayout implements IFolderLayout {
 
 				ViewPane newPart = LayoutHelper.createView(
 						pageLayout.getViewFactory(),
-						viewId);
+						viewId,
+						// @issue view should refer to current perspective for theme setting
+						pageLayout.getTheme());
 				linkPartToPageLayout(viewId, newPart);
 				folder.add(newPart);
 			}
@@ -96,6 +98,20 @@ public class FolderLayout implements IFolderLayout {
 			// cannot safely open the dialog so log the problem
 			WorkbenchPlugin.log(e.getMessage());
 		}
+		
+		// if page layout is fixed, add to fixed view list
+		if (pageLayout.isFixed() && 
+				!pageLayout.getFixedViews().contains(viewFactory.getView(viewId)))
+			pageLayout.getFixedViews().add(viewFactory.getView(viewId));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IFolderLayout#addFixedView(java.lang.String)
+	 */
+	public void addFixedView(String viewId) {
+		addView(viewId);
+		if (!pageLayout.getFixedViews().contains(viewFactory.getView(viewId)))
+			pageLayout.getFixedViews().add(viewFactory.getView(viewId));		
 	}
 
 	/**

@@ -12,7 +12,7 @@ package org.eclipse.ui;
 
 
 /**
- * The primary interface between an editor part and the outside world.
+ * The primary interface between an editor part and the workbench.
  * <p>
  * The workbench exposes its implemention of editor part sites via this 
  * interface, which is not intended to be implemented or extended by clients.

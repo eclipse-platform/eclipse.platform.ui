@@ -78,4 +78,11 @@ public String getAccelerator();
  */
 public float getFastViewWidthRatio(); 
 
+/**
+ * Returns whether this view allows multiple instances.
+ * 
+ * @since 3.0
+ */
+public boolean getAllowMultiple();
+
 }

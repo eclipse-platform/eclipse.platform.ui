@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
@@ -23,9 +24,15 @@ public class ViewSite extends PartSite
 /**
  * Creates a new ViewSite.
  */
-public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
-	super(view, page);
+public ViewSite(IViewReference ref, IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
+	super(ref, view, page);
 	setConfigurationElement(desc.getConfigurationElement());
+}
+/**
+ * Returns the secondary id or <code>null</code>.
+ */
+public String getSecondaryId() {
+    return ((IViewReference) getPartReference()).getSecondaryId();
 }
 /**
  * Returns the view.

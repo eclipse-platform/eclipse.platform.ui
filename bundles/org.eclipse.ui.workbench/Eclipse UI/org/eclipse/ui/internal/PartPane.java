@@ -21,6 +21,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem2;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -29,6 +31,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -52,11 +55,9 @@ import org.eclipse.ui.part.WorkbenchPart;
  * and editor panes.
  */
 public abstract class PartPane extends LayoutPart
-	implements Listener, IWorkbenchDragSource
+	implements Listener
 {
-	
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
-
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
@@ -74,62 +75,15 @@ public abstract class PartPane extends LayoutPart
 			return true;
 		}
 		public void fill(Menu menu, int index) {
-			MenuItem item; 
-		
-			// Get various view states.
-			final boolean isFastView = (page.getActiveFastView() == partReference);
-			final boolean isZoomed = page.isZoomed();
-			boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
-		
-			// add restore item
-			item = new MenuItem(menu, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (isZoomed)
-						doZoom();
-				}
-			});
-			item.setEnabled(isZoomed);
-			
-			//Add move menu
-			item = new MenuItem(menu, SWT.CASCADE);
-			item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
-			Menu moveMenu = new Menu(menu);
-			item.setMenu(moveMenu);
-			addMoveItems(moveMenu);
-			
-			//Add size menu
-			item = new MenuItem(menu, SWT.CASCADE);
-			item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
-			Menu sizeMenu = new Menu(menu);
-			item.setMenu(sizeMenu);
-			addSizeItems(sizeMenu);
-			
+			// add view context menu items
+			final boolean isFastView = (page.getActiveFastView() == partReference);			
+			addRestoreMenuItem(menu);
+			addMoveMenuItem(menu);
+			addSizeMenuItem(menu);			
 			addFastViewMenuItem(menu,isFastView);
-		
-			// add maximize item
-			item = new MenuItem(menu, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					doZoom();
-				}
-			});
-			item.setEnabled(!isZoomed && canZoom);
-		
-			addPinEditorItem(menu);
-			
-			new MenuItem(menu, SWT.SEPARATOR);
-			
-			// add close item
-			item = new MenuItem(menu, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					doHide();
-				}
-			});			
+			addMaximizeMenuItem(menu);		
+			addPinEditorItem(menu);						
+			addCloseMenuItem(menu);	
 		}
 	}
 	
@@ -190,6 +144,64 @@ protected void createChildControl() {
 	page.addPart(partReference);
 	page.firePartOpened(part[0]);	
 }
+
+protected void addRestoreMenuItem (Menu menu) {
+	// add restore item
+	MenuItem item = new MenuItem(menu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			if (isZoomed())
+				doZoom();
+		}
+	});
+	item.setEnabled(isZoomed());
+}
+
+protected void addMoveMenuItem (Menu menu) {
+	//Add move menu
+	MenuItem item = new MenuItem(menu, SWT.CASCADE);
+	item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
+	Menu moveMenu = new Menu(menu);
+	item.setMenu(moveMenu);
+	addMoveItems(moveMenu);
+	
+}
+
+protected void addSizeMenuItem (Menu menu) {
+	//Add size menu
+	MenuItem item = new MenuItem(menu, SWT.CASCADE);
+	item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
+	Menu sizeMenu = new Menu(menu);
+	item.setMenu(sizeMenu);
+	addSizeItems(sizeMenu);
+}
+
+protected void addMaximizeMenuItem (Menu menu) {
+	// add maximize item
+	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+	MenuItem item = new MenuItem(menu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doZoom();
+		}
+	});
+	item.setEnabled(!isZoomed() && canZoom);
+}
+
+protected void addCloseMenuItem (Menu menu) {
+	// add close item
+	new MenuItem(menu, SWT.SEPARATOR);
+	MenuItem item = new MenuItem(menu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHide();
+		}
+	});		
+}
+
 /**
  * 
  */
@@ -292,6 +304,13 @@ public int getMinimumHeight() {
 	// account for the borders
 	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
 	
+	/* add +1 for highlight line. ViewForm adds this *inside* client area
+	 * even though it's arguably an inset; see ViewForm.layout for details.
+	 */
+	if (top) {
+		topHeight += 1;
+	}
+	
 	return topHeight;
 }
 
@@ -385,6 +404,9 @@ public void setWorkbenchPage(WorkbenchPage workbenchPage) {
  * Set whether the pane is zoomed or not
  */
 public void setZoomed(boolean isZoomed) {
+	if (this.isZoomed == isZoomed)
+		return; // do nothing if we're already in the right state.
+	
 	this.isZoomed = isZoomed;
 	
 	final Object[] listeners = getPropertyListeners().getListeners();
@@ -396,7 +418,6 @@ public void setZoomed(boolean isZoomed) {
 			((IPropertyChangeListener)listeners[i]).propertyChange(event);
 	}
 }
-
 /**
  * Informs the pane that it's window shell has
  * been activated.
@@ -411,7 +432,12 @@ public void setZoomed(boolean isZoomed) {
  * Indicate focus in part.
  */
 public abstract void showFocus(boolean inFocus);
-
+/**
+ * @see IPartDropTarget::targetPartFor
+ */
+public LayoutPart targetPartFor(LayoutPart dragSource) {
+	return this;
+}
 
 /**
  * Show a title label menu for this pane.
@@ -424,13 +450,13 @@ public abstract void showViewMenu();
 /**
  * Show a title label menu for this pane.
  */
-final public void showPaneMenu(Control parent, Point point) {
+final protected void showPaneMenu(Control parent, Point point) {
 	if(paneMenuManager == null) {
 		paneMenuManager = new MenuManager();
 		paneMenuManager.add(new PaneContribution());			
 	}
-	
 	Menu aMenu = paneMenuManager.createContextMenu(parent);
+	// open menu    
 	aMenu.setLocation(point.x, point.y);
 	aMenu.setVisible(true);
 }
@@ -556,7 +582,16 @@ public IJobChangeListener getJobChangeListener(){
 				folder.showBusy(PartPane.this);
 		}
 	};
+	
 }
-
-
+	
+	/**
+	 * Set the image to image. item is used for future work where 
+	 * the tab item may be updated.
+	 * @param item
+	 * @param image
+	 */
+	void setImage(CTabItem2 item, Image image){
+		//Do nothing by default
+	}
 }

@@ -14,16 +14,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -50,6 +53,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private WorkbenchWindow window;
 
+	/**
+	 * The shell style bits to use when the window's shell is being created.
+	 */
+	private int shellStyle = SWT.SHELL_TRIM;
+	
 	/**
 	 * The window title to set when the window's shell has been created,
 	 * or <code>null</code> if there is none to set.
@@ -81,6 +89,11 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private boolean showTitleBar = true;
 
+	/**
+	 * Whether the workbench window should have a progress indicator.
+	 */
+	private boolean showProgressIndicator = true;
+	
 	/**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
 	 * value type: <code>Object</code>).
@@ -183,6 +196,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/* package */ void init() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		showMenuBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR);
+		showProgressIndicator = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR);
 		showShortcutBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR);
 		showStatusLine = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE);
 		showTitleBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR);
@@ -267,7 +281,19 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowMenuBar(boolean show) {
 		showMenuBar = show;
-		// @issue need to be able to reconfigure after window's controls created
+		WorkbenchWindow win = (WorkbenchWindow) getWindow();
+		Shell shell = win.getShell();
+		if (shell != null) {
+			boolean showing = shell.getMenuBar() != null;
+			if (show != showing) {
+				if (show) {
+					shell.setMenuBar(win.getMenuBarManager().getMenu());
+				}
+				else {
+					shell.setMenuBar(null);
+				}
+			}
+		}
 	}
 
 	/* (non-javadoc)
@@ -315,6 +341,23 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		// @issue need to be able to reconfigure after window's controls created
 	}
 	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public boolean getShowProgressIndicator() {
+        return showProgressIndicator;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShowProgressIndicator(boolean show) {
+        showProgressIndicator = show;
+		// @issue need to be able to reconfigure after window's controls created
+    }
+    
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getData
 	 */
@@ -414,4 +457,20 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		getActionBarConfigurer();
 		return actionBarConfigurer.containsCoolItem(id);
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public int getShellStyle() {
+        return shellStyle;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShellStyle(int shellStyle) {
+        this.shellStyle = shellStyle;
+    }
 }

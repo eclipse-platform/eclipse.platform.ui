@@ -11,12 +11,11 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The <code>EditorsDropDownAction</code> is used to show the
- * editors drop-down. 
+ * editors drop-down.
  */
 public class EditorsDropDownAction extends Action {
 	private IWorkbenchWindow window;
@@ -37,5 +36,16 @@ public class EditorsDropDownAction extends Action {
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
-	public void run() {}
+	public void run() {
+		/*
+		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+		if (page != null) {
+			EditorArea editorArea = (EditorArea) page.getEditorPresentation().getLayoutPart();
+			EditorWorkbook workbook = editorArea.getActiveWorkbook();
+			if (workbook instanceof DropDownEditorWorkbook2) {
+				((DropDownEditorWorkbook2) workbook).dropDown();
+			}
+		}
+		*/
+	}
 }

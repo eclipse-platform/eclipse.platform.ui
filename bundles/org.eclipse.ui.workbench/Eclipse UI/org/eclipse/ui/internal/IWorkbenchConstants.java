@@ -38,6 +38,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
 	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
+	public static final String PL_THEMES ="themes"; //$NON-NLS-1$
 		
 	/**
 	 * @deprecated
@@ -139,6 +140,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
+	public static final String TAG_FIXED_VIEWS = "fixedViews"; //$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
 	public static final String TAG_SINGLETON="singleton"; //$NON-NLS-1$
 	public static final String TAG_EDITOR_REUSE_THRESHOLD="editorReuseThreshold"; //$NON-NLS-1$
@@ -158,6 +160,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_TYPE_SEPARATOR = "typeSeparator";	//$NON-NLS-1$
 	public static final String TAG_TYPE_GROUPMARKER = "typeGroupMarker";	//$NON-NLS-1$
 	public static final String TAG_TYPE_TOOLBARCONTRIBUTION = "typeToolBarContribution"; //$NON-NLS-1$
+	public static final String TAG_TYPE_PLACEHOLDER = "typePlaceholder"; //$NON-NLS-1$
 	public static final String TAG_COOLITEM = "coolItem";	//$NON-NLS-1$
 	public static final String TAG_INDEX = "index";	//$NON-NLS-1$
 	public static final String TAG_PINNED = "pinned";	//$NON-NLS-1$
@@ -179,4 +182,6 @@ public interface IWorkbenchConstants {
 	
 	//Fonts
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
+	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
+	public static final String TAG_FIXED = "fixed";//$NON-NLS-1$	
 }

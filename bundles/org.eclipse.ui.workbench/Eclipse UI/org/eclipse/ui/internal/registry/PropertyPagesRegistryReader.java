@@ -105,8 +105,10 @@ private void processPageElement(IConfigurationElement element) {
 }
 /**
  * Reads the next contribution element.
+ * 
+ * public for dynamic UI
  */
-protected boolean readElement(IConfigurationElement element) {
+public boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_PAGE)) {
 		processPageElement(element);
 		readElementChildren(element);
