@@ -28,6 +28,10 @@ public class JobChangeEvent implements IJobChangeEvent {
 	 * or <code>-1</code> if not applicable for this type of event.
 	 */
 	long delay = -1;
+	/**
+	 * Whether this job is being immediately rescheduled.
+	 */
+	boolean reschedule = false;
 
 	/**
 	 * @return

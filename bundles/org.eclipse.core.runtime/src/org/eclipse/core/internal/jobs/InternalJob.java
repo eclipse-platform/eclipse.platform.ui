@@ -329,7 +329,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job#schedule(long)
 	 */
 	protected void schedule(long delay) {
-		manager.schedule(this, delay);
+		manager.schedule(this, delay, false);
 	}
 	/* (non-Javadoc)
 	 * @see Job#setName(String)

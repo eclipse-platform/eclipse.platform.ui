@@ -191,7 +191,7 @@ public class JobManager implements IJobManager {
 			return false;
 		}
 		//only notify listeners if the job was waiting or sleeping
-		jobListeners.done((Job) job, Status.CANCEL_STATUS);
+		jobListeners.done((Job) job, Status.CANCEL_STATUS, false);
 		return true;
 	}
 
@@ -420,11 +420,12 @@ public class JobManager implements IJobManager {
 		for (int i = 0; i < blockedJobCount; i++)
 			pool.jobQueued(blocked);
 		//notify listeners outside sync block
+		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE;
 		if (notify)
-			jobListeners.done((Job) job, result);
+			jobListeners.done((Job) job, result, reschedule);
 		//finally reschedule the job if requested and we are still active
-		if (active && rescheduleDelay > InternalJob.T_NONE)
-			job.schedule(rescheduleDelay);
+		if (reschedule)
+			schedule(job, rescheduleDelay, reschedule);
 	}
 
 	/* (non-Javadoc)
@@ -582,12 +583,17 @@ public class JobManager implements IJobManager {
 			listener = new JobChangeAdapter() {
 				//update the list of jobs if new ones are added during the join
 				public void scheduled(IJobChangeEvent event) {
+					//don't add to list if job is being rescheduled
+					if (((JobChangeEvent)event).reschedule)
+						return;
 					Job job = event.getJob();
 					if (job.belongsTo(family))
 						jobs.add(job);
 				}
 				public void done(IJobChangeEvent event) {
-					jobs.remove(event.getJob());
+					//don't remove from list if job is being rescheduled
+					if (!((JobChangeEvent)event).reschedule)
+						jobs.remove(event.getJob());
 				}
 			};
 			addJobChangeListener(listener);
@@ -770,7 +776,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#schedule(long)
 	 */
-	protected void schedule(InternalJob job, long delay) {
+	protected void schedule(InternalJob job, long delay, boolean reschedule) {
 		if (!active)
 			throw new IllegalStateException("Job manager has been shut down."); //$NON-NLS-1$
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
@@ -789,7 +795,7 @@ public class JobManager implements IJobManager {
 				return;
 		}
 		//notify listeners outside sync block
-		jobListeners.scheduled((Job) job, delay);
+		jobListeners.scheduled((Job) job, delay, reschedule);
 		//schedule the job
 		doSchedule(job, delay);
 		//call the pool outside sync block to avoid deadlock

@@ -180,16 +180,20 @@ class JobListeners {
 		doNotify(awake, newEvent(job));
 	}
 
-	public void done(Job job, IStatus result) {
-		doNotify(done, newEvent(job, result));
+	public void done(Job job, IStatus result, boolean reschedule) {
+		JobChangeEvent event = newEvent(job, result);
+		event.reschedule = reschedule;
+		doNotify(done, event);
 	}
 
 	public void running(Job job) {
 		doNotify(running, newEvent(job));
 	}
 
-	public void scheduled(Job job, long delay) {
-		doNotify(scheduled, newEvent(job, delay));
+	public void scheduled(Job job, long delay, boolean reschedule) {
+		JobChangeEvent event = newEvent(job, delay);
+		event.reschedule = reschedule;
+		doNotify(scheduled, event);
 	}
 
 	public void sleeping(Job job) {
