@@ -324,7 +324,7 @@ public class OperationsManager implements IAdaptable {
 //		fireObjectChanged(job, null);
 //	}
 
-	private void ensureUnique(
+	public void ensureUnique(
 		IInstallConfiguration config,
 		IFeature feature,
 		IConfiguredSite targetSite)
@@ -356,7 +356,7 @@ public class OperationsManager implements IAdaptable {
 		}
 	}
 
-	private void configure(IInstallConfiguration config, IFeature feature)
+	public void configure(IInstallConfiguration config, IFeature feature)
 		throws CoreException {
 		IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
 		if (site != null) {
@@ -364,7 +364,7 @@ public class OperationsManager implements IAdaptable {
 		}
 	}
 
-	private boolean unconfigure(IInstallConfiguration config, IFeature feature)
+	public boolean unconfigure(IInstallConfiguration config, IFeature feature)
 		throws CoreException {
 		IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
 		if (site != null) {
@@ -385,6 +385,7 @@ public class OperationsManager implements IAdaptable {
 	 * @throws CoreException
 	 */
 	public boolean toggleFeatureState(
+		IInstallConfiguration config,
 		IConfiguredSite site,
 		IFeature feature,
 		boolean isConfigured,
@@ -393,9 +394,9 @@ public class OperationsManager implements IAdaptable {
 
 		PendingOperation toggleOperation = null;
 		if (isConfigured)
-			toggleOperation = new UnconfigOperation(site, feature);
+			toggleOperation = new UnconfigOperation(config, site, feature);
 		else
-			toggleOperation = new ConfigOperation(site, feature);
+			toggleOperation = new ConfigOperation(config, site, feature);
 
 		toggleOperation.execute(null); // no progress monitor needed
 	

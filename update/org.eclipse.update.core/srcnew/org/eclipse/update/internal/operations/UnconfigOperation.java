@@ -19,15 +19,24 @@ import org.eclipse.update.core.*;
  * UnconfigOperation
  */
 public class UnconfigOperation extends PendingOperation {
+	private IInstallConfiguration config;
 	private IConfiguredSite site;
 	
-	public UnconfigOperation(IConfiguredSite site, IFeature feature) {
+	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
 		super(feature, UNCONFIGURE);
+		this.config = config;
 		this.site = site;
 	}
 	
 	public void execute(IProgressMonitor pm) throws CoreException {
-		site.unconfigure(feature);		
+		PatchCleaner2 cleaner = new PatchCleaner2(site, feature);
+		boolean result = site.unconfigure(feature);
+		cleaner.dispose();
+
+		markProcessed();
+		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
+		
+		// should we throw an exception when result == false ?
 	}
 	
 	public void undo() throws CoreException{

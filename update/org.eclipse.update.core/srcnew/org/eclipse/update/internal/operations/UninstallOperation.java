@@ -18,7 +18,7 @@ import org.eclipse.update.core.*;
  * Configure a feature.
  * ConfigOperation
  */
-public class InstallOperation extends PendingOperation {
+public class UninstallOperation extends PendingOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private IInstallConfiguration config;
@@ -26,7 +26,7 @@ public class InstallOperation extends PendingOperation {
 	private IFeatureReference[] optionalFeatures;
 	private IVerificationListener verifier;
 
-	public InstallOperation(IFeature feature) {
+	public UninstallOperation(IFeature feature) {
 		super(feature, INSTALL);
 
 		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
@@ -52,34 +52,26 @@ public class InstallOperation extends PendingOperation {
 
 	public void execute(IProgressMonitor pm) throws CoreException {
 
-		if (optionalFeatures == null)
-			targetSite.install(feature, verifier, pm);
-		else
-			targetSite.install(feature, optionalFeatures, verifier, pm);
+		//find the  config site of this feature
+//			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
+//			if (site != null) {
+//				site.remove(feature, monitor);
+//			} else {
+//				// we should do something here
+//				String message =
+//					UpdateManager.getFormattedMessage(
+//						KEY_UNABLE,
+//						feature.getLabel());
+//				IStatus status =
+//					new Status(
+//						IStatus.ERROR,
+//						UpdateManager.getPluginId(),
+//						IStatus.OK,
+//						message,
+//						null);
+//				throw new CoreException(status);
+//			}
 
-		if (oldFeature != null && isOptionalDelta()) {
-			boolean oldSuccess = UpdateManager.getOperationsManager().unconfigure(config, oldFeature);
-			if (!oldSuccess) {
-				if (!UpdateManager.isNestedChild(config, oldFeature)) {
-					// "eat" the error if nested child
-					String message =
-						UpdateManager.getFormattedMessage(
-							KEY_OLD,
-							oldFeature.getLabel());
-					IStatus status =
-						new Status(
-							IStatus.ERROR,
-							UpdateManager.getPluginId(),
-							IStatus.OK,
-							message,
-							null);
-					throw new CoreException(status);
-				}
-			}
-		}
-		if (oldFeature == null) {
-			UpdateManager.getOperationsManager().ensureUnique(config, feature, targetSite);
-		}
 
 		markProcessed();
 		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
