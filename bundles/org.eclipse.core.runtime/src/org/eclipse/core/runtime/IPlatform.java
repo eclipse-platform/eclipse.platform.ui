@@ -364,9 +364,9 @@ public interface IPlatform {
 	 * and any other such data needed by plug-ins.
 	 * 
 	 * @return the path indicating the directory containing the configuration 
-	 * metadata for this running Eclipse.
+	 * location for this running Eclipse.
 	 */
-	public IPath getConfigurationMetadataLocation();
+	public IPath getConfigurationLocation();
 	
 	/**
 	 * Takes down the splash screen if one was put up.

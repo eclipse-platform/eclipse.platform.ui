@@ -85,7 +85,7 @@ public class DataArea {
 	}
 	protected IPath getTemporaryLogLocation() {
 		if (tmpLog == null)
-			tmpLog = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(Long.toString(System.currentTimeMillis()) + F_LOG);
+			tmpLog = InternalPlatform.getDefault().getConfigurationLocation().append(Long.toString(System.currentTimeMillis()) + F_LOG);
 		return tmpLog;
 	}
 	private void copyOldLog(IPath from, IPath to) {
@@ -266,7 +266,7 @@ public class DataArea {
 		if (keyring != null && new File(keyringFile).lastModified()==keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
-			keyringFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(F_KEYRING).toOSString();
+			keyringFile = InternalPlatform.getDefault().getConfigurationLocation().append(F_KEYRING).toOSString();
 		}
 		try {
 			keyring = new AuthorizationDatabase(keyringFile, password);

@@ -31,7 +31,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
 	private ServiceReference urlServiceReference;
-	private static File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile();
+	private static File cacheFile = InternalPlatform.getDefault().getConfigurationLocation().append(".registry").toFile();
 
 	public static BundleContext getContext() {
 		return context;

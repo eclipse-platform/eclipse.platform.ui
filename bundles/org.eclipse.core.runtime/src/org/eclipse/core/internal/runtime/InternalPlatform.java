@@ -1156,7 +1156,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
-	public IPath getConfigurationMetadataLocation() {
+	public IPath getConfigurationLocation() {
 		if (configMetadataLocation == null)
 			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area")); //$NON-NLS-1$
 		return configMetadataLocation;
