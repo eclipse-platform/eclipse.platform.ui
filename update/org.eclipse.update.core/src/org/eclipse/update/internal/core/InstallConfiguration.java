@@ -124,11 +124,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
 
 		if (configSite.isNativelyLinked()) {
-			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.AlreadyNativelyLinked"), null); //$NON-NLS-1$
 		}
 		
 		if (configSite.isProductSite()) {
-			throw Utilities.newCoreException("InstallConfiguration.AlreadyProductSite", null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.AlreadyProductSite"), null); //$NON-NLS-1$
 		}
 		
 		if (site != null) {
