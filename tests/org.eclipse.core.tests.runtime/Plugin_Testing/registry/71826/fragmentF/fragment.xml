@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment
+   id="71826F"
+   name="Test71826 Plug-in"
+   version="1.0.0"
+
+   plugin-id="71826A"
+   plugin-version="1.0.0">
+  
+  	<extension point="71826A.xptE" id="F1">
+	</extension>
+
+</fragment>
