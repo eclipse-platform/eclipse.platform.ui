@@ -4,7 +4,7 @@
   name = "%pluginName"
   id="org.eclipse.ant.ui"
   version = "2.1"
-  provider-name = "Object Technology International, Inc."
+  provider-name = "%providerName"
   class="org.eclipse.ant.internal.ui.AntUIPlugin">
 
   <requires>

@@ -3,7 +3,7 @@
    id="org.eclipse.ant.core"
    name="%pluginName"
    version="2.3"
-   provider-name="Object Technology International, Inc."
+   provider-name="%providerName"
    class="org.eclipse.ant.core.AntCorePlugin">
 
    <requires>
