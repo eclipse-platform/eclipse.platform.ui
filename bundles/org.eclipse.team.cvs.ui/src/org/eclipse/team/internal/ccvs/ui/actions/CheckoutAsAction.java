@@ -6,27 +6,21 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -34,40 +28,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * -Works only for remote folders
  * -Does not prompt for project name; uses folder name instead
  */
-public class CheckoutAsAction extends TeamAction {
-	/**
-	 * Returns the selected remote folders
-	 */
-	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof ICVSRemoteFolder) {
-					if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions())) {
-						resources.add(next);
-					}
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
-					if (adapter instanceof ICVSRemoteFolder) {
-						if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions())) {
-							resources.add(adapter);
-						}
-						continue;
-					}
-				}
-			}
-		}
-		if (resources != null && !resources.isEmpty()) {
-			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
-		}
-		return new ICVSRemoteFolder[0];
-	}
+public class CheckoutAsAction extends AddToWorkspaceAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -102,19 +63,16 @@ public class CheckoutAsAction extends TeamAction {
 					}
 
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(dialog.getValue());
-					if (project.exists()) {
-						// Make sure the user understands they will overwrite the project.
-						final boolean[] confirm = new boolean[] { false };
-						shell.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite")); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-						if (!confirm[0]) return;
+					
+					PromptingDialog prompt = new PromptingDialog(getShell(), new IResource[] {project}, 
+																  getOverwriteLocalAndFileSystemPrompt(), 
+																  Policy.bind("ReplaceWithAction.confirmOverwrite"));
+					IResource[] resources = prompt.promptForMultiple();
+					if(resources.length != 0) {				
+						monitor.beginTask(null, 100);
+						monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, project.getName())); //$NON-NLS-1$
+						CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 100));
 					}
-					monitor.beginTask(null, 100);
-					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, project.getName())); //$NON-NLS-1$
-					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

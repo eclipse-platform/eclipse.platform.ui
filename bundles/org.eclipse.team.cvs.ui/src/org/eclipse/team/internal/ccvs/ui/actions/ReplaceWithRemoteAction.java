@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -20,31 +19,26 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
+import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class ReplaceWithRemoteAction extends ReplaceWithAction {
+public class ReplaceWithRemoteAction extends TeamAction {
 	public void run(IAction action) {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					// Check if any resource is dirty.
-					setConfirmOverwrite(true);
-					IResource[] candidateResources = getSelectedResources();
-					List targetResources = new ArrayList();
-					for (int i = 0; i < candidateResources.length; i++) {
-						IResource resource = candidateResources[i];
-						if (CVSDecorator.isDirty(resource) && getConfirmOverwrite()) {
-							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) { //$NON-NLS-1$
-								targetResources.add(resource);
-							}
-						} else {
-							targetResources.add(resource);
-						}						
+					PromptingDialog dialog = new PromptingDialog(getShell(), getSelectedResources(), 
+															   PromptingDialog.getOverwriteLocalChangesPrompt(),
+															   Policy.bind("ReplaceWithAction.confirmOverwrite"));
+					IResource[] resources = dialog.promptForMultiple();
+					if(resources.length == 0) {
+						// nothing to do
+						return;
 					}
 					// Do the replace
-					Hashtable table = getProviderMapping((IResource[])targetResources.toArray(new IResource[targetResources.size()]));
+					Hashtable table = getProviderMapping(resources);
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
 					monitor.setTaskName(Policy.bind("ReplaceWithRemoteAction.replacing")); //$NON-NLS-1$

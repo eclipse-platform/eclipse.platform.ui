@@ -13,35 +13,30 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
@@ -57,27 +52,27 @@ public class TagAction extends TeamAction {
 	public void run(IAction action) {
 		final List messages = new ArrayList();
 		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					final IResource[] resources = getSelectedResources();
-					boolean isAnyDirty = false;
-					for (int i = 0; i < resources.length; i++) {
-						if(CVSDecorator.isDirty(resources[i])) { 
-							isAnyDirty = true;
+					
+					IPromptCondition condition = new IPromptCondition() {
+						public boolean needsPrompt(IResource resource) {
+							return CVSDecorator.isDirty(resource);
 						}
+						public String promptMessage(IResource resource) {
+							return Policy.bind("TagAction.uncommittedChanges", resource.getName());
+						}
+					};
+
+					PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(), 
+																  condition, 
+																  Policy.bind("TagAction.uncommittedChangesTitle"));
+					IResource[] resources = prompt.promptForMultiple();
+					if(resources.length == 0) {
+						// nothing to do
+						return;						
 					}
 					
-					// Confirm tagging with locally modified resources
-					if (isAnyDirty) {
-						final Shell shell = getShell();
-						final boolean[] result = new boolean[] { false };
-						shell.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								result[0] = MessageDialog.openConfirm(getShell(), Policy.bind("TagAction.uncommittedChangesTitle"), Policy.bind("TagAction.uncommittedChanges")); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-						if (!result[0]) return;
-					}
 					final String[] result = new String[1];
 					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -85,7 +80,7 @@ public class TagAction extends TeamAction {
 						}
 					});
 					if (result[0] == null) return;
-					Hashtable table = getProviderMapping();
+					Hashtable table = getProviderMapping(resources);
 					Set keySet = table.keySet();
 					monitor.beginTask(null, keySet.size() * 1000);
 					Iterator iterator = keySet.iterator();

@@ -17,9 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -29,15 +27,16 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
+import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for replace with tag.
  */
-public class ReplaceWithTagAction extends ReplaceWithAction {
+public class ReplaceWithTagAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -50,26 +49,14 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				final IResource[] resources = getSelectedResources();
-				boolean isAnyDirty = false;
-				for (int i = 0; i < resources.length; i++) {
-					if(CVSDecorator.isDirty(resources[i])) { 
-						isAnyDirty = true;
-					}
+				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(), 
+																  PromptingDialog.getOverwriteLocalChangesPrompt(), 
+																  Policy.bind("ReplaceWithAction.confirmOverwrite"));
+				final IResource[] resources = prompt.promptForMultiple();
+				if(resources.length == 0) {
+					// nothing to do
+					return;
 				}
-				
-				// Confirm overwrite of locally modified resources
-				if (isAnyDirty) {
-					final Shell shell = getShell();
-					final boolean[] result = new boolean[] { false };
-					shell.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges")); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					});
-					if (!result[0]) return;
-				}
-				
 				// show the tags for the projects of the selected resources
 				IProject[] projects = new IProject[resources.length];
 				for (int i = 0; i < resources.length; i++) {
