@@ -214,6 +214,9 @@ private void createPage(EditorPane editorPane) {
 	editorPane.createControl(parent);
 	editorPane.setContainer(this);
 	enableDrop(editorPane);
+	// Update tab to be in-sync after creation of
+	// pane's control since prop listener was not on
+	updateEditorTab(editorPart);
 	editorPart.addPropertyListener(this);
 
 	// When first editor added, also enable workbook for
