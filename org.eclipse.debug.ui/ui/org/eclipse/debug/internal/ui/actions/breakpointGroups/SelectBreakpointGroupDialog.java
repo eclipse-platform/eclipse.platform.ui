@@ -17,7 +17,6 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -43,9 +42,9 @@ class SelectBreakpointGroupDialog extends InputDialog {
         super(view.getViewSite().getShell(), dialogTitle, dialogMessage, initialValue, validator);
         fView= view;
     }
-    
-    /**
-	 * @see Dialog#createDialogArea(Composite)
+  
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite area= (Composite) super.createDialogArea(parent);
