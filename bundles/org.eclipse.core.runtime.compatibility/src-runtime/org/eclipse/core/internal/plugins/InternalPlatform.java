@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.model.PluginRegistryModel;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
+
+/**
+ * @deprecated Marking as deprecated to remove the warnings
+ */
 public class InternalPlatform {
 	private static IPluginRegistry registry = null;
 
@@ -48,15 +52,35 @@ public class InternalPlatform {
 			throw new CoreException(result);
 	}
 
+
 	/**
-	 * @see Platform#parsePlugins
+	 * Convenience method equivalent to parsePlugins(URL[], Factory, boolean) where debug is set to false.
+	 * @see #parsePlugins(URL[], Factory, boolean)
 	 */
 	public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory) {
 		return parsePlugins(pluginPath, factory, false);
 	}
 
 	/**
-	 * @see Platform#parsePlugins
+	 * Returns a plug-in registry containing all of the plug-ins discovered
+	 * on the given plug-in path.  Any problems encountered are added to
+	 * the status managed by the supplied factory.
+	 * <p>
+	 * The given plug-in path is the list of locations in which to look for plug-ins.
+	 * If an entry identifies a directory (i.e., ends in a '/'), this method
+	 * attempts to scan all sub-directories for plug-ins.  Alternatively, an
+	 * entry may identify a particular plug-in manifest (<code>plugin.xml</code>) file.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> this method does not affect the running platform.  It is intended
+	 * for introspecting installed plug-ins on this and other platforms.  The returned
+	 * registry is <b>not</b> the same as the platform's registry.
+	 * </p>
+	 *
+	 * @param pluginPath the list of locations in which to look for plug-ins
+	 * @param factory the factory to use to create runtime model objects
+	 * @param debug turn the debug information on or off
+	 * @return the registry of parsed plug-ins
 	 */
 	public synchronized static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory, boolean debug) {
 		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
