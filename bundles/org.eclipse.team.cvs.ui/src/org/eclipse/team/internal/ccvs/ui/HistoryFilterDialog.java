@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 13100
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -208,46 +209,67 @@ public class HistoryFilterDialog extends Dialog {
 		}
 		Date fromDate = null, toDate = null;
 
-		if ((fromMonthCombo.getSelectionIndex() > 0)
-			&& (toMonthCombo.getSelectionIndex() > 0)
-			&& (fromDayCombo.getSelectionIndex() > 0)
-			&& (toDayCombo.getSelectionIndex() > 0)
-			&& (fromYearCombo.getText().length() > 0)
-			&& (toYearCombo.getText().length() > 0)) {
+        boolean fromSet=
+            (fromDayCombo.getSelectionIndex() > 0)
+                && (fromMonthCombo.getSelectionIndex() > 0);
+        boolean toSet=
+            (toDayCombo.getSelectionIndex() > 0)
+                && (toMonthCombo.getText().length() > 0);
+        
+        if (fromSet || toSet) {
+            Calendar calendar = Calendar.getInstance();
+            fromDate = getFromDate(calendar, fromSet);            
+            toDate = getToDate(calendar, toSet);
+        }
 
-			//set the calendar with the user input
-			//set the hours, minutes and seconds to 00
-			//so as to cover the whole day
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(
-				Integer.parseInt(String.valueOf(fromYearCombo.getText())),
-				fromMonthCombo.getSelectionIndex() - 1,
-				Integer.parseInt(String.valueOf(fromDayCombo.getText())),
-				00, 00, 00);
-			fromDate = calendar.getTime();
+        //create the filter
+        historyFilter = new HistoryFilter(
+            historyView,
+            author.getText(),
+            comment.getText(),
+            fromDate,
+            toDate,
+            orRadio.getSelection());
+                
+        super.buttonPressed(buttonId);
+    }
 
-			//set the calendar with the user input
-			//set the hours, minutes and seconds to 23, 59, 59
-			//so as to cover the whole day
-			calendar.set(
-				Integer.parseInt(String.valueOf(toYearCombo.getText())),
-				toMonthCombo.getSelectionIndex() - 1,
-				Integer.parseInt(String.valueOf(toDayCombo.getText())),
-				23, 59, 59);
-			toDate = calendar.getTime();
-		}
+    //either user input or the smallest date available
+    private Date getFromDate(Calendar calendar, boolean fromSet) {
+        if (fromSet) {
+            calendar.set(Calendar.YEAR, Integer.parseInt(String.valueOf(fromYearCombo.getText())));
+            calendar.set(Calendar.MONTH, fromMonthCombo.getSelectionIndex() - 1);
+            calendar.set(Calendar.DATE, Integer.parseInt(String.valueOf(fromDayCombo.getText())));
+        } else {
+            calendar.set(Calendar.YEAR, Integer.parseInt(String.valueOf(fromYearCombo.getItem(fromYearCombo.getItemCount() - 1))));
+            calendar.set(Calendar.MONTH, 0);
+            calendar.set(Calendar.DATE, 1);
+        }
 
-		//create the filter
-		historyFilter = new HistoryFilter(
-			historyView,
-			author.getText(),
-			comment.getText(),
-			fromDate,
-			toDate,
-			orRadio.getSelection());
-				
-		super.buttonPressed(buttonId);
-	}
+        //set the hours, minutes and seconds to 00
+        //so as to cover the whole day
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime();
+    }
+
+    //either user input or today
+    private Date getToDate(Calendar calendar, boolean toSet) {
+        if (toSet) { 
+            calendar.set(Calendar.YEAR, Integer.parseInt(String.valueOf(toYearCombo.getText())));
+            calendar.set(Calendar.MONTH, toMonthCombo.getSelectionIndex() - 1);
+            calendar.set(Calendar.DATE, Integer.parseInt(String.valueOf(toDayCombo.getText())));
+        } else
+            calendar.setTimeInMillis(System.currentTimeMillis());
+
+        //set the hours, minutes and seconds to 23, 59, 59
+        //so as to cover the whole day
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        return calendar.getTime();
+    }
 
 	/**
 	 * Returns the filter that was created from the provided
