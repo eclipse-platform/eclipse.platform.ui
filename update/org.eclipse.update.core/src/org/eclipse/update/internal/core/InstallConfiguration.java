@@ -784,7 +784,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 	
 	/**
-	 * @return true if changes were applied
+	 * @return true if restart is needed
 	 */
 	private boolean applyChanges(IPlatformConfiguration runtimeConfig) {
 		URL[] newBundlePaths = runtimeConfig.getPluginPath();
@@ -806,12 +806,12 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			if (!(newMap.get(location) != null || newMap.get(location+'/') != null)) {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 					UpdateCore.debug("Bundle " + location + " has been removed");
-				return false;
+				return true;
 			}
 		}
 			
 		ConfigurationActivator configurator = ConfigurationActivator.getConfigurator();
 		configurator.installBundles();
-		return true;
+		return false;
 	}
 }
