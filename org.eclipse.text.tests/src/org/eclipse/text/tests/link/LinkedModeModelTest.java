@@ -390,6 +390,60 @@ public class LinkedModeModelTest extends TestCase {
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
 	
+	public void testOverlappingUpdate() throws BadLocationException {
+		// a change partially touches a linked position, but also "in-between" text
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "MARGARETE");
+		LinkedModeModel env= new LinkedModeModel();
+		final boolean[] isExit= { false } ;
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
+				isExit[0]= true;
+			}
+		});
+		env.addGroup(group1);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(7, 6, "INE-PLANTA");
+		
+		assertEquals(group1, "MARGARINE-PLANTA");
+		assertFalse(isExit[0]);
+		assertEquals("	MARGARINE-PLANTA" + 
+				"Versprich mir, Heinrich!", doc1.get(0, 41));
+//		assertUnchanged(group1); // would fail, since it was changed outside
+	}
+	
+	public void testOverlappingDelete() throws BadLocationException {
+		// a change partially touches a linked position, but also "in-between" text
+		IDocument doc1= new Document(GARTEN1);
+		
+		// set up linked mode
+		LinkedPositionGroup group1= new LinkedPositionGroup();
+		createLinkedPositions(group1, doc1, "MARGARETE");
+		LinkedModeModel env= new LinkedModeModel();
+		final boolean[] isExit= { false } ;
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
+				isExit[0]= true;
+			}
+		});
+		env.addGroup(group1);
+		env.forceInstall();
+		
+		// edit the document
+		doc1.replace(7, 6, "");
+		
+		assertEquals(group1, "MARGAR");
+		assertFalse(isExit[0]);
+		assertEquals("	MARGAR" + 
+				"Versprich mir, Heinrich!", doc1.get(0, 31));
+//		assertUnchanged(group1); // would fail, since it was changed outside
+	}
+	
 	public void testIllegalChange1() throws BadLocationException {
 		// linked mode does not exit if the documents change outside the linked
 		// positions, but it does exit if a change invalidates the constraints
