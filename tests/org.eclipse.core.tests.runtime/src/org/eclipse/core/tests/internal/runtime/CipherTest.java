@@ -32,24 +32,69 @@ public static Test suite() {
 }
 public void test1(){
 	try {
-		String password = "testing";
-		byte[] data = "This is a test!".getBytes("UTF8");
-
-		Cipher cipher = new Cipher(Cipher.ENCRYPT_MODE, "testing");
-		byte[] encryptedData = cipher.cipher(data);
-		assertEquals("00", data.length, encryptedData.length);
-		for(int i = 0; i < data.length; ++i){
-			assertTrue("01."+i, data[i] != encryptedData[i]);
-		}
-	
-		cipher = new Cipher(cipher.DECRYPT_MODE, password);
-		byte[] decryptedData = cipher.cipher(encryptedData);
-		assertEquals("02", data.length, decryptedData.length);
-		for(int i = 0; i < data.length; ++i){
-			assertEquals("03."+i, data[i], decryptedData[i]);
+		String[] passwords = getPasswords();
+		String[] messages = getMessages();
+		for (int i = 0; i < messages.length; i++) {
+			byte[] data = messages[i].getBytes();
+			for (int j = 0; j < passwords.length; j++) {
+				doCipherTest(passwords[j], data);
+			}
 		}
 	} catch(Exception e){
-		assertTrue("04", false);
+		fail("04", e);
+	}
+}
+protected String[] getMessages() {
+	return new String[] {
+		"This is a test a test!",
+		"",
+		"a",
+		getLongMessage(),
+		getVeryLongMessage(),
+	};
+}
+protected String getLongMessage() {
+	return "This is a test!This is a test!This is a test!This is a test!This is a test!"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"This is a very long message that contains quite a lot of bytes and thus" +
+		"may prove to make for a more interesting test case than the far simpler" +
+		"(and admittedly mundane) messages that are also included in this test"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences"+
+		"este e' o meu conteudo (portuguese)there is no imagination for more sentences";
+}
+protected String[] getPasswords() {
+	return new String[] {
+		"",
+		"password",
+		"a",
+		"This is a very long password that contains quite a lot of bytes and thus" +
+		"may prove to make for a more interesting test case than the far simpler" +
+		"(and admittedly mundane) passwords that are also included in this array",
+	};
+}
+protected String getVeryLongMessage() {
+	StringBuffer message = new StringBuffer(1000);
+	while (message.length() < 5000) {
+		message.append(getLongMessage());
+	}
+	return message.toString();
+}
+protected void doCipherTest(String password, byte[] data) throws Exception {
+	Cipher cipher = new Cipher(Cipher.ENCRYPT_MODE, password);
+	byte[] encryptedData = cipher.cipher(data);
+	assertEquals("00", data.length, encryptedData.length);
+	
+	cipher = new Cipher(cipher.DECRYPT_MODE, password);
+	byte[] decryptedData = cipher.cipher(encryptedData);
+	assertEquals("02", data.length, decryptedData.length);
+	for(int i = 0; i < data.length; ++i){
+		assertEquals("03."+i, data[i], decryptedData[i]);
 	}
 }
 }
