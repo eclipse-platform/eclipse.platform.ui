@@ -91,7 +91,7 @@ public final class Util {
 		try {
 			return marker.isSubtypeOf(IMarker.BOOKMARK) || 
 				   (marker.isSubtypeOf(IMarker.TASK) && 
-				   marker.getAttribute(IMarker.USER_EDITABLE, false));
+				   marker.getAttribute(IMarker.USER_EDITABLE, true));
 		}
 		catch (CoreException e) {
 			return false;
