@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.ui.internal.views;
+package org.eclipse.ui.internal.views.contentoutline;
 
 import org.eclipse.osgi.util.NLS;
 
