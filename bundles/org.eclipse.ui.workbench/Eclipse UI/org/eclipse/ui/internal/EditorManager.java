@@ -270,9 +270,10 @@ public class EditorManager {
 	 * See IWorkbenchPage#getFocusEditor
 	 */
 	public IEditorPart getVisibleEditor() {
-		if(editorPresentation.getVisibleEditor() == null)
+		IEditorReference ref = editorPresentation.getVisibleEditor();
+		if(ref == null)
 			return null;
-		return (IEditorPart)editorPresentation.getVisibleEditor().getPart(true);
+		return (IEditorPart)ref.getPart(true);
 	}
 	/**
 	 * Answer true if save is needed in any one of the editors.
