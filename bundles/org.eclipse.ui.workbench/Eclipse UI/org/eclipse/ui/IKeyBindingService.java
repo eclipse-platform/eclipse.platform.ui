@@ -48,7 +48,7 @@ public interface IKeyBindingService {
     /**
      * Sets the active accelerator scope ids.
      * 
-     * @param ids
+     * @param scopes
      *            the active accelerator scope ids.
      */
     void setScopes(String[] scopes);
