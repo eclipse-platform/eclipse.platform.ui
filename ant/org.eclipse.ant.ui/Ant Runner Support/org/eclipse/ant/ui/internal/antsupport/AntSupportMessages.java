@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class AntSupportMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.AntSupportMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.ui.internal.antsupport.AntSupportMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

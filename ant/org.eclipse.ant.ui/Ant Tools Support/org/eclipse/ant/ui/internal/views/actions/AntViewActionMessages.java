@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.ant.internal.views.actions;
+package org.eclipse.ant.ui.internal.views.actions;
 
 
 import java.util.MissingResourceException;
@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class AntViewActionMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.view.actions.AntViewActionMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.ui.internal.views.actions.AntViewActionMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

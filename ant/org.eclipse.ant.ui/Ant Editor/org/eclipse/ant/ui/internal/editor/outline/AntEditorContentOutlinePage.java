@@ -53,7 +53,7 @@ import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
-import org.eclipse.ui.ant.internal.views.actions.AntOpenWithMenu;
+import org.eclipse.ant.ui.internal.views.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;

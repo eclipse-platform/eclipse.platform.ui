@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class AntPreferencesMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.ui.internal.preferences.AntPreferencesMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

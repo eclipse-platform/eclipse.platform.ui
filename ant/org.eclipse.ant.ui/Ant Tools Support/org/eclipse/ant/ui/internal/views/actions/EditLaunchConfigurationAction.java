@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.ant.internal.views.actions;
+package org.eclipse.ant.ui.internal.views.actions;
 
 
 import java.util.Iterator;

@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class AntLaunchConfigurationMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchConfigurationMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchConfigurationMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);
