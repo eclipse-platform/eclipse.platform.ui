@@ -105,7 +105,13 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			process = DebugPlugin.newProcess(launch, p, location.toOSString());
 		}
 		
-		if (!ExternalToolsUtil.isBackground(configuration)) {
+		if (ExternalToolsUtil.isBackground(configuration)) {
+			// refresh resources after process finishes
+			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
+				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
+				refresher.startBackgroundRefresh();
+			}				
+		} else {
 			// wait for process to exit
 			while (!process.isTerminated()) {
 				try {
@@ -118,13 +124,11 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 				}
 			}
 			
+			// refresh resources
+			ExternalToolsUtil.refreshResources(configuration, resourceContext, monitor);
 		}
 		
-		// refresh resources
-		if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
-			BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process, resourceContext);
-			refresher.startBackgroundRefresh();
-		}		
+	
 	}
 	
 }
