@@ -12,11 +12,7 @@ import java.util.List;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
@@ -53,21 +49,21 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		return false;
 	}
 	/**
-	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
 		return getViewer() != null && element instanceof IDebugElement;
 	}
 
 	/**
-	 * @see ControlActionDelegate#doAction(Object)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element, StringBuffer buffer) {
 		append(element, buffer, (ILabelProvider)getViewer().getLabelProvider(), 0);
 	}
 	
 	/**
-	 * @see ControlActionDelegate#doAction(Object)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) {
 		StringBuffer buffer= new StringBuffer();
@@ -99,13 +95,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 				append(de, buffer, lp, indent + 1);
 			}
 		}
-	}
-
-	/**
-	 * @see ControlActionDelegate#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
 	}
 	
 	protected Object getParent(Object e) {
@@ -182,40 +171,18 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		}
 		return walkHierarchy(parent, elements);		
 	}
-
-	/**
-	 * @see ControlActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) { 	
-		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_COPY));
-		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY));
-		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY));
-	}
 	
 	protected boolean shouldAppendChildren(Object e) {
 		return e instanceof IDebugTarget || e instanceof IThread;
 	}
 	
 	/**
-	 * @see ControlActionDelegate#getStatusMessage()
+	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("CopyToClipboardActionDelegate.Copy_failed"); //$NON-NLS-1$
 	}
-
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
-		return ActionMessages.getString("CopyToClipboardActionDelegate.Copy_to_Clipboard_2"); //$NON-NLS-1$
-	}
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return ActionMessages.getString("CopyToClipboardActionDelegate.&Copy_Stack_3"); //$NON-NLS-1$
-	}
-	
+			
 	protected ContentViewer getViewer() {
 		return fViewer;
 	}

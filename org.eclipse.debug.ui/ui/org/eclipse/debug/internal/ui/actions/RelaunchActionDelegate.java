@@ -11,19 +11,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
 	/**
-	 * @see ControlActionDelegate#doAction(Object)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) {
 		if (object instanceof IDebugElement) {
@@ -122,7 +117,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	}
 	
 	/**
-	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
@@ -152,38 +147,11 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			return false;
 		}	
 	}
-	
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.RELAUNCH_ACTION;
-	}
-	
-	/**
-	 * @see ControlActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) {
-		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RELAUNCH));
-		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH));
-		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH));
-	}
 			
 	/**
-	 * @see ControlActionDelegate#getStatusMessage()
+	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("RelaunchActionDelegate.Launch_failed_2"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
-		return ActionMessages.getString("RelaunchActionDelegate.Relaunch_3"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return ActionMessages.getString("RelaunchActionDelegate.Re&launch_4"); //$NON-NLS-1$
 	}
 }

@@ -37,12 +37,18 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
 		return StructuredSelection.EMPTY;
 	}
 	
+	/**
+	 * @see AbstractDebugActionDelegate#init(IViewPart)
+	 */
 	public void init(IViewPart view) {
 		super.init(view);
 		//listen to selections in the launch view
 		getWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 	
+	/**
+	 * @see AbstractDebugActionDelegate#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);	

@@ -12,16 +12,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
 
 public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegate {
 
 	/**
-	 * @see ControlActionDelegate#doAction(Object)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) throws DebugException {
 		try {
@@ -44,7 +39,7 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	}
 
 	/**
-	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
 		if (element instanceof ITerminate) {
@@ -55,53 +50,25 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 		}
 		return false;
 	}	
-	
-	/**
-	 * @see ControlActionDelegate#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.TERMINATE_AND_REMOVE_ACTION;
-	}
 
 	/**
-	 * @see ControlActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) {
-		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_AND_REMOVE));
-		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE));
-		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE));
-	}	
-	/**
-	 * @see ControlActionDelegate#getStatusMessage()
+	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_remove_failed_1"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Exceptions_occurred_attempting_to_terminate_and_remove_2"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return getToolTipText();
-	}
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
 		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_Remove;_3"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Ter&minate_and_Remove_4"); //$NON-NLS-1$
 	}
 }

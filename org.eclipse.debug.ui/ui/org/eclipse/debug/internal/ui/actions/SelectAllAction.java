@@ -23,19 +23,6 @@ public abstract class SelectAllAction extends AbstractListenerActionDelegate {
 	}
 
 	/**
-	 * @see AbstractDebugActionDelegate#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return null;
-	}
-
-	/**
-	 * @see AbstractDebugActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) {
-	}
-
-	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {

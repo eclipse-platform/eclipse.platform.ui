@@ -101,7 +101,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * event. This is necessary because the XML currently only
 	 * supports setting the enabled icon. 
 	 * <p>
-	 * ControlActionDelegates come in 2 flavors: IViewActionDelegate, 
+	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
 	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
 	 * <ul>
@@ -179,18 +179,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected abstract boolean isEnabledFor(Object element);
 	
 	/**
-	 * Returns this action's help context id. Default is to return null.
-	 */
-	protected String getHelpContextId() {
-		return null;
-	}
-	
-	/**
-	 * Set the enabled, disabled & hover icons for this action delegate
-	 */
-	protected abstract void setActionImages(IAction action);
-	
-	/**
 	 * Returns the String to use as an error dialog title for
 	 * a failed action. Default is to return null.
 	 */
@@ -211,18 +199,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected String getStatusMessage(){
 		return ""; //$NON-NLS-1$
 	}
-	/**
-	 * Returns the text for this action. Default is to return null.
-	 */
-	protected String getText(){
-		return null;
-	}
-	/**
-	 * Returns the tool tip text for this action. Default is to return null.
-	 */
-	protected String getToolTipText(){
-		return null;
-	}
+
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
@@ -243,7 +220,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Initialize this delegate, updating this delegate's
 	 * presentation.
-	 * As well all of the flavors of ControlActionDelegates need to 
+	 * As well, all of the flavors of AbstractDebugActionDelegates need to 
 	 * have the initial enabled state set with a call to update(IAction, ISelection).
 	 * 
 	 * @param action the presentation for this action
@@ -252,7 +229,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
 			setAction(action);
-			setActionImages(action);
 			update(action, selection);
 			setInitialized(true);
 			return true;

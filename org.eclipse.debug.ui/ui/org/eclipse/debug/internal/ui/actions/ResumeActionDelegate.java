@@ -8,17 +8,12 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 
 	/**
-	 * @see ControlActionDelegate#doAction(Object)
+	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) throws DebugException {
 		IDebugElement element= (IDebugElement)object;
@@ -31,14 +26,14 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
 		return element instanceof ISuspendResume && ((ISuspendResume) element).canResume();
 	}
 
 	/**
-	 * @see ControlActionDelegate#getEnableStateForSelection(IStructuredSelection)
+	 * @see AbstractDebugActionDelegate#getEnableStateForSelection(IStructuredSelection)
 	 */
 	protected boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
 		if (selection.size() == 1) {
@@ -47,52 +42,25 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 			return false;
 		}
 	}
-	
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.RESUME_ACTION;
-	}
 
 	/**
-	 * @see ControlActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) {	
-		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RESUME));
-		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME));
-		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME));
-	}	
-	/**
-	 * @see ControlActionDelegate#getStatusMessage()
+	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("ResumeActionDelegate.Resume_failed._1"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString("ResumeActionDelegate.Exceptions_occurred_attempting_to_resume._2"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return getToolTipText();
-	}
-
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
 		return ActionMessages.getString("ResumeActionDelegate.Resume_3"); //$NON-NLS-1$
 	}
-
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return ActionMessages.getString("ResumeActionDelegate.&Resume_4"); //$NON-NLS-1$
-	}
-	
-	}
+}

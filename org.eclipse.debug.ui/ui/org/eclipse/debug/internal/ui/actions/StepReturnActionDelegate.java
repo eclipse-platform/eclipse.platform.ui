@@ -7,11 +7,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
 
 public class StepReturnActionDelegate extends StepActionDelegate {
 
@@ -28,54 +23,25 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	protected void stepAction(IStep element) throws DebugException {
 		element.stepReturn();
 	}
-	
-	/** 
-	 * @see ControlActionDelegate#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.STEP_RETURN_ACTION;
-	}
 
 	/**
-	 * @see ControlActionDelegate#setActionImages(IAction)
-	 */
-	protected void setActionImages(IAction action) {		
-		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPRETURN));
-		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPRETURN));
-		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPRETURN));
-	}
-	/**
-	 * @see ControlActionDelegate#getStatusMessage()
+	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return ActionMessages.getString("StepReturnActionDelegate.Run_to_return_failed._1"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString("StepReturnActionDelegate.Exceptions_occurred_attempting_to_run_to_return_of_the_frame._2"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return getToolTipText();
-	}
-	
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
 		return ActionMessages.getString("StepReturnActionDelegate.Run_to_Return_3"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return ActionMessages.getString("StepReturnActionDelegate.R&un_to_return_4"); //$NON-NLS-1$
-	}
+	}	
 }
