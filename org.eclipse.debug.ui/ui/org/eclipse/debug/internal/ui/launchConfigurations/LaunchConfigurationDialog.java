@@ -668,7 +668,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}				
 		
 		// Otherwise, if there's already a config with the same name, complain
-		if (getLaunchConfiguration().getOriginal() == null && getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
