@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -81,9 +82,9 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		useDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				toggleUseDefaultClasspath();
+				updateTargetsTab();
 				updateLaunchConfigurationDialog();
 			}
-
 		});
 	}
 
@@ -131,7 +132,9 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			antClasspathBlock.setAntTableInput(antURLs);
 			antClasspathBlock.setTablesEnabled(true);
 		}
-
+		if (!(configuration instanceof ILaunchConfigurationWorkingCopy)) {
+			updateTargetsTab();
+		}
 		toggleUseDefaultClasspath();
 	}
 
@@ -257,6 +260,20 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
+		updateTargetsTab();
 		updateLaunchConfigurationDialog();
+	}
+
+	private void updateTargetsTab() {
+		//the classpath has changed...set the targets tab to 
+		//need to be recomputed
+		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof AntTargetsTab) {
+				((AntTargetsTab)tab).setDirty(true);
+				break;
+			}
+		}
 	}
 }
