@@ -3,7 +3,8 @@
 	<name>org.eclipse.core.runtime</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.runtime.compatibility</project>
+		<project>org.eclipse.core.runtime.osgi</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

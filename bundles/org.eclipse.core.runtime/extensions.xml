@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+
+   <extension-point id="applications" name="%applicationsName" schema="schema/applications.mxsd"/>
+   <extension-point id="urlHandlers" name="%handlersName" schema="schema/urlHandlers.mxsd"/>
+   <extension-point id="applicationShutdownHook" name="%shutdownHook"/>
+
+</bundle>

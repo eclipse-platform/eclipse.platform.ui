@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" sourcepath="C:/eclipse/dev/i1121/eclipse/plugins/org.eclipse.platform.source_3.0.0/src/org.eclipse.core.runtime_3.0.0/runtimesrc.zip" kind="lib" path="runtime.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="src" path="/org.eclipse.core.runtime.osgi"/>
+	<classpathentry exported="true" kind="src" path="/org.eclipse.core.runtime.compatibility"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
