@@ -44,7 +44,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * @see ILaunchManager
  */
 
-public class Launch extends PlatformObject implements ILaunch, IDisconnect {
+public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILaunchListener, ILaunchConfigurationListener {
 	
 	/**
 	 * The debug targets associated with this
@@ -102,6 +102,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect {
 		setSourceLocator(locator);
 		setLaunchMode(mode);
 		fSuppressChange = false;
+		getLaunchManager().addLaunchListener(this);
+		getLaunchManager().addLaunchConfigurationListener(this);
 	}	
 	
 	/**
@@ -394,8 +396,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect {
 	 */
 	protected void fireChanged() {
 		if (!fSuppressChange) {
-			((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).fireUpdate(this, LaunchManager.CHANGED);
-			((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.CHANGED);
+			((LaunchManager)getLaunchManager()).fireUpdate(this, LaunchManager.CHANGED);
+			((LaunchManager)getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.CHANGED);
 		}
 	}
 
@@ -433,6 +435,74 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect {
 			getDebugTarget().isDisconnected();
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
+		if (this.equals(launch)) {
+			getLaunchManager().removeLaunchListener(this);
+			getLaunchManager().removeLaunchConfigurationListener(this);
+		}
+	}
+
+	/**
+	 * Returns the launch manager.
+	 * 
+	 * @return the launch manager.
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * If the launch configuration this launch is associated with is
+	 * moved, update the underlying handle to the new location.
+	 *  
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
+		if (from != null && from.equals(getLaunchConfiguration())) {
+			setLaunchConfiguration(configuration);
+			fireChanged();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * Update the launch configuration associated with this launch if the
+	 * underlying configuration is deleted.
+	 * 
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		if (configuration.equals(getLaunchConfiguration())) {
+			if (getLaunchManager().getMovedTo(configuration) == null) {
+				setLaunchConfiguration(null);
+				fireChanged();
+			}
+		}
 	}
 
 }
