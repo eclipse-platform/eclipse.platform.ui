@@ -75,16 +75,16 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	pathLabel.setLayoutData(gd);
 	
 	// path value label
-	Label pathValueLabel = new Label(basicInfoComposite, SWT.WRAP);
-	pathValueLabel.setText(resource.getFullPath().toString());
+	Text pathValueText = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
+	pathValueText.setText(resource.getFullPath().toString());
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
-	pathValueLabel.setLayoutData(gd);
+	pathValueText.setLayoutData(gd);
 	
 	//The group for types
 	Label typeTitle = new Label(basicInfoComposite, SWT.LEFT);
 	typeTitle.setText(TYPE_TITLE);
-	Label typeValue = new Label(basicInfoComposite, SWT.LEFT);
+	Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 	typeValue.setText(getTypeString(resource));
 
 	//The group for location
@@ -93,7 +93,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	gd = new GridData();
 	gd.verticalAlignment = SWT.TOP;
 	locationTitle.setLayoutData(gd);
-	Label locationValue = new Label(basicInfoComposite, SWT.WRAP);
+	Text locationValue = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
 	locationValue.setText(getLocationText(resource));
 	gd = new GridData();
 	gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
@@ -103,7 +103,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 		//The group for size
 		Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
 		sizeTitle.setText(SIZE_TITLE);
-		Label sizeValue = new Label(basicInfoComposite, SWT.LEFT);
+		Text sizeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 		sizeValue.setText(MessageFormat.format(BYTES_LABEL, new Object[] {getSizeString((IFile) resource)}));
 	}
 
@@ -181,8 +181,8 @@ private void createStateGroup(Composite parent, IResource resource) {
 	timeStampLabel.setText(TIMESTAMP_TITLE);
 
 	// path value label
-	Label timeStampValueLabel = new Label(composite, SWT.NONE);
-	timeStampValueLabel.setText(getDateStringValue(resource));
+	Text timeStampValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+	timeStampValue.setText(getDateStringValue(resource));
 
 	createEditableButton(composite);
 }
