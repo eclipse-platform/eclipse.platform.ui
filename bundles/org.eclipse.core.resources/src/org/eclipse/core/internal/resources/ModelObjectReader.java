@@ -91,9 +91,9 @@ public Object read(InputStream input) {
 	return null;
 }
 public Object read(IPath location) throws IOException {
-	FileInputStream file = null;
+	InputStream file = null;
 	try {
-		file = new FileInputStream(location.toFile());
+		file = new BufferedInputStream(new FileInputStream(location.toFile()));
 		return read(file);
 	} finally {
 		if (file != null)
