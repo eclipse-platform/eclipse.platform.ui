@@ -21,11 +21,16 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -159,26 +164,37 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		column2.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Description_6")); //$NON-NLS-1$
 		
 		fTableViewer = new CheckboxTableViewer(table);
-		fTableViewer.setSorter(new ViewerSorter() {});
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
 		fTableViewer.setContentProvider(new AntTargetContentProvider());
 		
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TableItem item = (TableItem)e.item;
-				int index = fTableViewer.getTable().indexOf(item);
-				Object element = fAllTargets[index];
-				if (fTableViewer.getChecked(element)) {
-					if (!fOrderedTargets.contains(element)) {
-						fOrderedTargets.add(element);
-					}
-				} else {
-					fOrderedTargets.remove(element);
+		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection selection= event.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ss= (IStructuredSelection)selection;
+					Object element= ss.getFirstElement();
+					boolean checked= !fTableViewer.getChecked(element);
+					fTableViewer.setChecked(element, checked);
+					updateOrderedTargets(element , checked);
 				}
-				updateSelectionCount();
-				updateLaunchConfigurationDialog();
 			}
 		});
+		
+		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateOrderedTargets(event.getElement(), event.getChecked());
+			}
+		});
+	}
+	
+	private void updateOrderedTargets(Object element , boolean checked) {
+		if (checked) {
+			 fOrderedTargets.add(element);
+		} else {
+			fOrderedTargets.remove(element);
+		}	 
+		updateSelectionCount();
+		updateLaunchConfigurationDialog();	
 	}
 	
 	private void updateSelectionCount() {
@@ -232,7 +248,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					public int compare(Object o1, Object o2) {
 						TargetInfo t1= (TargetInfo)o1;
 						TargetInfo t2= (TargetInfo)o2;
-						return t1.getName().compareTo(t2.getName());
+						return t1.getName().compareToIgnoreCase(t2.getName());
 					}
 					public boolean equals(Object obj) {
 						return false;
