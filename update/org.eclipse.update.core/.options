@@ -1,7 +1,8 @@
 org.eclipse.update.core/debug=true
-org.eclipse.update.core/debug/warning=true
-org.eclipse.update.core/debug/parsing=true
-org.eclipse.update.core/debug/install=true
-org.eclipse.update.core/debug/configuration=true
-org.eclipse.update.core/debug/type=true
-org.eclipse.update.core/debug/web=true
+org.eclipse.update.core/debug/warning=false
+org.eclipse.update.core/debug/parsing=fasle
+org.eclipse.update.core/debug/install=false
+org.eclipse.update.core/debug/configuration=false
+org.eclipse.update.core/debug/type=false
+org.eclipse.update.core/debug/web=false
+org.eclipse.update.core/debug/installHandler=false
