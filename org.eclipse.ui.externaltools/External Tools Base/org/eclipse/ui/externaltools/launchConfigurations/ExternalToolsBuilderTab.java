@@ -6,6 +6,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,6 +25,15 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	private Button fullBuildButton;
 	private Button autoBuildButton;
 	private Button incrementalBuildButton;
+	
+	private SelectionListener fSelectionListener= new SelectionAdapter() {
+		/**
+		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		public void widgetSelected(SelectionEvent e) {
+			updateLaunchConfigurationDialog();
+		}
+	};
 
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
@@ -36,10 +48,10 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	
 	private void createBuildScheduleComponent(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText("Run this builder for:");
-		fullBuildButton= createButton(parent, "&Full builds", "Runs whenever a full build is invoked. The \"Rebuild All\" action causes a full build.");
-		incrementalBuildButton= createButton(parent, "&Incremental builds", "Runs whenever an incremental build is invoked. The \"Build All\" action causes an incremental build.");
-		autoBuildButton= createButton(parent, "&Auto builds (Not recommended)", "Runs whenever a resource in the workspace is modified if autobuilding is enabled. Enabling this option will cause the builder to run very often and is not recommended.");
+		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
+		fullBuildButton= createButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full")); //$NON-NLS-1$ //$NON-NLS-2$
+		incrementalBuildButton= createButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc")); //$NON-NLS-1$ //$NON-NLS-2$
+		autoBuildButton= createButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -49,6 +61,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		Button button= new Button(parent, SWT.CHECK);
 		button.setText(text);
 		button.setToolTipText(tooltipText);
+		button.addSelectionListener(fSelectionListener);
 		return button;
 	}
 
@@ -56,9 +69,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		fullBuildButton.setSelection(true);
-		incrementalBuildButton.setSelection(true);
-		autoBuildButton.setSelection(false);
+		StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
+		buffer.append(',');
+		buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
+		buffer.append(','); 
+		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 	}
 
 	/**
@@ -67,9 +82,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		
+		fullBuildButton.setSelection(false);
+		incrementalBuildButton.setSelection(false);
+		autoBuildButton.setSelection(false);
+		
 		String buildKindString= null;
 		try {
-			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "");
+			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""); //$NON-NLS-1$
 		} catch (CoreException e) {
 		}
 		int buildTypes[]= ExternalToolBuilder.buildTypesToArray(buildKindString);
@@ -111,7 +131,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Build Options";
+		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Build_Options_9"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -120,5 +140,4 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
 	}
-
 }

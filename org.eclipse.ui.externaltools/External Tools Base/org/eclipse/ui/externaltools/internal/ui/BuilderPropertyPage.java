@@ -175,9 +175,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 				if (config != null) {
 					if (!config.exists()) {
-						IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format("Builder launch configuration {0} no longer exists", new String[]{config.getLocation().toOSString()}), null); 	
+						IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.Exists"), new String[]{config.getLocation().toOSString()}), null); 	 //$NON-NLS-1$
 						ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
-										MessageFormat.format("External Tool Builder {0} Not Added", new String[]{config.getName()}), 
+										MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.External_Tool_Builder_{0}_Not_Added_2"), new String[]{config.getName()}),  //$NON-NLS-1$
 										status);
 						userHasMadeChanges= true;
 					} else {
@@ -338,7 +338,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		newButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
-		copyButton = createButton(buttonArea, "&Copy...");
+		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
@@ -436,8 +436,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), debugModelPresentation);
-		dialog.setTitle("Copy configuration");
-		dialog.setMessage("&Choose a configuration to copy:");
+		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Copy_configuration_4")); //$NON-NLS-1$
+		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.&Choose_a_configuration_to_copy__5")); //$NON-NLS-1$
 		dialog.setElements(configurations.toArray());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
@@ -474,7 +474,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ILaunchConfiguration duplicateConfiguration(ILaunchConfiguration config) throws CoreException {
 		Map attributes= null;
 		attributes= config.getAttributes();
-		String newName= config.getName() + " [Builder]";
+		String newName= config.getName() + ExternalToolsUIMessages.getString("BuilderPropertyPage._[Builder]_6"); //$NON-NLS-1$
 		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
 		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(), newName);
@@ -549,7 +549,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
-			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
+			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(ExternalToolsUIMessages.getString("BuilderPropertyPage.New_Builder_7")); //$NON-NLS-1$
 			workingCopy = type.newInstance(getBuilderFolder(), name);		
 			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
 			
@@ -613,8 +613,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), debugModelPresentation);
 		dialog.setElements(externalToolTypes.toArray());
 		dialog.setMultipleSelection(false);
-		dialog.setTitle("Choose configuration type");
-		dialog.setMessage("Choose an external tool type to create");
+		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Choose_configuration_type_8")); //$NON-NLS-1$
+		dialog.setMessage(ExternalToolsUIMessages.getString("BuilderPropertyPage.Choose_an_external_tool_type_to_create_9")); //$NON-NLS-1$
 		dialog.open();
 		Object result[] = dialog.getResult();
 		if (result == null || result.length == 0) {
@@ -725,10 +725,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return true;
 		}
 		// Warn the user that editing an old config will cause storage migration.
-		return MessageDialogWithToggle.openQuestion(getShell(), "Migrate project builder",
-			"This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by installations running versions 2.0 or earlier of the org.eclipse.ui.externaltools plugin.\n\nProceed with migration?",
+		return MessageDialogWithToggle.openQuestion(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Migrate_project_builder_10"), //$NON-NLS-1$
+			ExternalToolsUIMessages.getString("BuilderPropertyPage.Not_Support"), //$NON-NLS-1$
 			IPreferenceConstants.PROMPT_FOR_MIGRATION,
-			"&Always prompt before migrating project builders",
+			ExternalToolsUIMessages.getString("BuilderPropertyPage.Prompt"), //$NON-NLS-1$
 			ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -853,7 +853,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 					newCommand = project.getDescription().newCommand();
 					data = toBuildCommand(((ILaunchConfiguration) data), newCommand);
 				} catch (CoreException exception) {
-					MessageDialog.openError(getShell(), "Command error", "An error occurred while saving the project's build commands");
+					MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 				}
 			}
