@@ -116,7 +116,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 		if (commandListener == null)
 			throw new NullPointerException();
 		if (commandListeners == null)
-			commandListeners = new ArrayList();
+			commandListeners = new ArrayList(1);
 		if (!commandListeners.contains(commandListener))
 			commandListeners.add(commandListener);
 	}
