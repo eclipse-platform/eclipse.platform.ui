@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.actions.AddBuildFilesAction;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
-import org.eclipse.ant.internal.ui.views.actions.EditLaunchConfigurationAction;
 import org.eclipse.ant.internal.ui.views.actions.FilterInternalTargetsAction;
 import org.eclipse.ant.internal.ui.views.actions.RefreshBuildFilesAction;
 import org.eclipse.ant.internal.ui.views.actions.RemoveAllAction;
@@ -149,7 +148,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private FilterInternalTargetsAction filterInternalTargetsAction;
 	// Context-menu-only actions
 	private AntOpenWithMenu openWithMenu;
-	private EditLaunchConfigurationAction editConfigAction;
+	private RunTargetAction editConfigAction;
 
 	/**
 	 * The given build file has changed. Refresh the view to pick up any
@@ -258,7 +257,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		removeAllAction = new RemoveAllAction(this);
 		updateProjectActions.add(removeAllAction);
 		
-		runTargetAction = new RunTargetAction(this);
+		runTargetAction = new RunTargetAction(this, false);
 		updateProjectActions.add(runTargetAction);
 		
 		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
@@ -268,7 +267,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		openWithMenu= new AntOpenWithMenu(this.getViewSite().getPage());
 		
-		editConfigAction= new EditLaunchConfigurationAction(this);
+		editConfigAction= new RunTargetAction(this, true);
 		updateProjectActions.add(editConfigAction);
 		
 		filterInternalTargetsAction= new FilterInternalTargetsAction(this);

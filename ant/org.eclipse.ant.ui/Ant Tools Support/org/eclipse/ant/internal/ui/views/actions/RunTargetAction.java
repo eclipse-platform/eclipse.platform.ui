@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,18 +41,30 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class RunTargetAction extends Action implements IUpdate {
 	
 	private AntView view;
+	private boolean showDialog;
 	
 	/**
 	 * Creates a new <code>RunTargetAction</code> which will execute
 	 * targets in the given view.
 	 * @param view the Ant view whose selection this action will use when
 	 * determining which target to run.
+	 * @param showDialog whether or not to display the launch configuration dialog to edit the
+	 * associated launch configuration
 	 */
-	public RunTargetAction(AntView view) {
-		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN)); //$NON-NLS-1$
+	public RunTargetAction(AntView view, boolean showDialog) {
+		
+		if (showDialog) {
+			setText(AntViewActionMessages.getString("RunTargetAction.4")); //$NON-NLS-1$
+			setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TAB_ANT_TARGETS));
+			WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
+		} else {
+			setText(AntViewActionMessages.getString("RunTargetAction.Run_1")); //$NON-NLS-1$
+			setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN));
+			WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
+		}
 		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
 		this.view= view;
-		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
+		this.showDialog= showDialog;
 	}
 
 	/**
@@ -83,6 +95,7 @@ public class RunTargetAction extends Action implements IUpdate {
 			return;
 		}
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
+		shortcut.setShowDialog(showDialog);
 		shortcut.launch(file, ILaunchManager.RUN_MODE, target.getName());
 	}
 
@@ -139,5 +152,4 @@ public class RunTargetAction extends Action implements IUpdate {
 		}
 		return null;
 	}
-
 }
