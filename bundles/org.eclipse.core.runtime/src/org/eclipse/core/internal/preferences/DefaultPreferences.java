@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 /**
  * @since 3.0
@@ -29,7 +28,6 @@ public class DefaultPreferences extends EclipsePreferences {
 	private static Set loadedNodes = new HashSet();
 	private static final String ELEMENT_INITIALIZER = "initializer"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
-	private static boolean initialized = false;
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private static final IPath NL_DIR = new Path("$nl$"); //$NON-NLS-1$
@@ -62,9 +60,6 @@ public class DefaultPreferences extends EclipsePreferences {
 
 		if (parent instanceof DefaultPreferences)
 			this.plugin = ((DefaultPreferences) parent).plugin;
-
-		// get the children
-		initializeChildren();
 
 		// cache the segment count
 		String path = absolutePath();
@@ -282,24 +277,6 @@ public class DefaultPreferences extends EclipsePreferences {
 			loadLevel = node;
 		}
 		return loadLevel;
-	}
-
-	protected void initializeChildren() {
-		if (initialized || parent == null)
-			return;
-		try {
-			synchronized (this) {
-				BundleContext context = InternalPlatform.getDefault().getBundleContext();
-				Bundle[] bundles = context.getBundles();
-				for (int i = 0; i < bundles.length; i++) {
-					String childName = bundles[i].getSymbolicName();
-					if (childName != null)
-						addChild(childName, null);
-				}
-			}
-		} finally {
-			initialized = true;
-		}
 	}
 
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
