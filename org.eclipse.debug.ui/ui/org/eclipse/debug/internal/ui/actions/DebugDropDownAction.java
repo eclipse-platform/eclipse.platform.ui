@@ -41,7 +41,5 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	public LaunchConfigurationHistoryElement[] getFavorites() {
 		return DebugUIPlugin.getDefault().getDebugFavorites();
 	}	
-	
-	
 }
 
