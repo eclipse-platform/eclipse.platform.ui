@@ -1484,7 +1484,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
                 .create(window);
         
-        searchComboItem = ContributionItemFactory.HELP_SEARCH_COMBO.create(window);
+        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
     }
 
     /**
