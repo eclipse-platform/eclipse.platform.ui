@@ -41,6 +41,7 @@ public class Symmetria {
 		int depth,
 		IProgressMonitor progress) throws TeamException {
 
+		progress = Policy.monitorFor(progress);
 		progress.beginTask(null, 100);
 		try {
 			IResource localResource = resourceState.getLocal();

@@ -199,6 +199,7 @@ public abstract class ResourceState {
 	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
 	public void checkin(IProgressMonitor progress) throws TeamException {
+		progress = Policy.monitorFor(progress);
 		progress.beginTask(null, 100);
 		try {
 			// The resource must be checked out before it can be checked in.
