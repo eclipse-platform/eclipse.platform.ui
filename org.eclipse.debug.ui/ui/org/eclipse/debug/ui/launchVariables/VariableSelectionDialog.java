@@ -71,20 +71,35 @@ public class VariableSelectionDialog extends SelectionDialog {
 		createVariableFormComposite(composite);
 		return composite;
 	}
-	
+	/**
+	 * Adds the context variable composite to the dialog,
+	 * replacing the simple variable composite.
+	 */
 	protected void addVariableFormComposite() {
 		if (simpleVariableComposite != null) {
 			simpleVariableComposite.dispose();
 		}
 		createVariableFormComposite((Composite) getDialogArea());
-		getDialogArea().redraw();
+		redraw();
 	}
 	
+	/**
+	 * Adds the simple variable composite to the dialog,
+	 * replacing the context variable composite.
+	 */
 	protected void addSimpleVariableComposite() {
 		if (contextVariableComposite != null) {
 			contextVariableComposite.dispose();
 		} 
 		createSimpleVariableComposite((Composite) getDialogArea());
+		redraw();
+	}
+	
+	/**
+	 * Redraws the dialog area.
+	 */
+	private void redraw() {
+		((Composite) getDialogArea()).layout(true);
 		getDialogArea().redraw();
 	}
 	
