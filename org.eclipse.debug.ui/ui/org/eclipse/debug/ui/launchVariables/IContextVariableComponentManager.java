@@ -10,26 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchVariables;
 
-
-import org.eclipse.core.resources.IResource;
-
-/**
- * Expands a workspace variable into the desired
- * result format.
- */
-public class WorkspaceExpander extends ResourceExpander {
-
-	/**
-	 * Create an instance
-	 */
-	public WorkspaceExpander() {
-		super();
-	}
-
-	/**
-	 * @see ResourceExpander#expandUsingContext(ExpandVariableContext)
-	 */
-	protected IResource expandUsingContext(ExpandVariableContext context) {
-		return getWorkspaceRoot();
-	}
+public interface IContextVariableComponentManager {
+	public IVariableComponent getComponent(String variableName);
 }

@@ -143,7 +143,7 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 				try {
 					initializer= (IVariableInitializer) element.createExecutableExtension(ATTR_INITIALIZER_CLASS);
 				} catch (CoreException e) {
-					DebugPlugin.logMessage(MessageFormat.format("Failed to load launch configuration breakpoint initializer: {0}", new String[] {element.getAttribute(ATTR_INITIALIZER_CLASS)}), e); //$NON-NLS-1$
+					DebugPlugin.logMessage(MessageFormat.format("Failed to load launch variable initializer: {0}", new String[] {element.getAttribute(ATTR_INITIALIZER_CLASS)}), e); //$NON-NLS-1$
 				}
 			}
 			String initialValue= element.getAttribute(ATTR_INITIAL_VALUE);

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -117,7 +118,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			ILaunchConfiguration config = (ILaunchConfiguration) inputElement;
 			Map m;
 			try {
-				m = config.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+				m = config.getAttribute(VariableUtil.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Error reading configuration", e)); //$NON-NLS-1$
 				return elements;
@@ -359,9 +360,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			map.put(var.getName(), var.getValue());
 		} 
 		if (map.size() == 0) {
-			configuration.setAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+			configuration.setAttribute(VariableUtil.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		} else {
-			configuration.setAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, map);
+			configuration.setAttribute(VariableUtil.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
 	}
 

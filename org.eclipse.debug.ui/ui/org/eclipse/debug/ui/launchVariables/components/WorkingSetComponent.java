@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.components;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -16,6 +16,9 @@ import java.io.StringWriter;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
+import org.eclipse.debug.ui.launchVariables.IVariableConstants;
+import org.eclipse.debug.ui.launchVariables.expanders.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.WizardDialog;

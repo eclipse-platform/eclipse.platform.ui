@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui.launchVariables;
 
 
+import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.KeyAdapter;
@@ -159,9 +161,10 @@ public class LaunchConfigurationVariableForm {
 	 * can be layout properly.
 	 */
 	private void createVariableComponents() {
+		IContextVariableComponentManager manager = DebugUIPlugin.getDefault().getVariableComponentManager();
 		for (int i = 0; i < variables.length; i++) {
 			IContextLaunchVariable var = variables[i];
-			components[i] = var.getComponent();
+			components[i] = manager.getComponent(var.getName());
 			components[i].createContents(variableComposite, var.getName(), dialogPage);
 		}
 	}

@@ -200,30 +200,38 @@
 		<variable
 			name="workspace"
 			description="%workspace.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.WorkspaceExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkspaceExpander">
 		</variable>
 		<variable
 			name="project"
 			description="%project.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.ProjectExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander">
 		</variable>
 		<variable
 			name="container"
 			description="%container.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.ContainerExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander">
 		</variable>
 		<variable
 			name="resource"
 			description="%resource.description"
-			componentClass="org.eclipse.debug.ui.launchVariables.ResourceComponent"
-			expanderClass="org.eclipse.debug.ui.launchVariables.ResourceExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander">
 		</variable>
 		<variable
 			name="working_set"
 			description="%working_set.description"
-			componentClass="org.eclipse.debug.ui.launchVariables.WorkingSetComponent"
-			expanderClass="org.eclipse.debug.ui.launchVariables.WorkingSetExpander">
+			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander">
 		</variable>
+	</extension>
+	<extension point="org.eclipse.debug.ui.launchVariableComponents">
+		<component
+			variableName="resource"
+			componentClass="org.eclipse.debug.ui.launchVariables.components.ResourceComponent">
+		</component>
+		<component
+			variableName="working_set"
+			componentClass="org.eclipse.debug.ui.launchVariables.components.WorkingSetComponent">
+		</component>
 	</extension>
 	
 	<extension point = "org.eclipse.debug.core.launchConfigurationComparators">

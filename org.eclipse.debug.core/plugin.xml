@@ -28,6 +28,7 @@
    <extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName" schema="schema/sourceLocators.exsd"/>
    <extension-point id="statusHandlers" name="%statusHandlerExtensionPointName" schema="schema/statusHandlers.exsd"/>
    <extension-point id="simpleLaunchVariables" name="%simpleLaunchVariablesName"/>
+   <extension-point id="contextLaunchVariables" name="%contextLaunchVariablesName" scheme="schema/contextLaunchVariables.exsd"/>
 
 <!-- Extensions -->
    <extension

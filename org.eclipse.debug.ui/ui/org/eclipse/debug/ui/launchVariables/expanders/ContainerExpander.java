@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.expanders;
 
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.debug.core.variables.ExpandVariableContext;
 
 /**
  * Expands a resource's container type variable into the desired

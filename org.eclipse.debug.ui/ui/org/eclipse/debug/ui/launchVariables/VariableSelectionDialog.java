@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchVariables;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.variables.IContextLaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -44,7 +45,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
-		IContextLaunchVariable[] variables= DebugUIPlugin.getDefault().getContextVariableRegistry().getVariables();
+		IContextLaunchVariable[] variables= DebugPlugin.getDefault().getContextVariableRegistry().getVariables();
 		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
 		form.createContents(composite, new IVariableComponentContainer() {
 			

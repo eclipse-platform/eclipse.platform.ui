@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
-import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.ContextLaunchVariableRegistry;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**

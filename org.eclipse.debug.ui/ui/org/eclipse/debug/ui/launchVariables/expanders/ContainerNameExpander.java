@@ -8,31 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.expanders;
 
-import org.eclipse.core.resources.IProject;
+
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.ExpandVariableContext;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
- * Extracts the project name from a variable context
+ * Extracts the container name from a variable context.
+ * @since 3.0
  */
-public class ProjectNameExpander extends DefaultVariableExpander {
+public class ContainerNameExpander extends DefaultVariableExpander {
 
 	/**
-	 * Returns the name of the project in the given context or
-	 * <code>null</code> if there is no project in the context.
+	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource= context.getSelectedResource();
 		if (resource != null) {
-			IProject project= resource.getProject();
-			if (project != null) {
-				return project.getName();
+			IContainer parent= resource.getParent();
+			if (parent != null) {
+				return parent.getName();
 			}
+			throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ContainerNameExpander.No_container_could_be_determined_for_the_selected_resource._1")); //$NON-NLS-1$
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ProjectNameExpander.No_resource_selected._1")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ContainerNameExpander.No_resource_selected._2")); //$NON-NLS-1$
 		return null;
 	}
+
 }

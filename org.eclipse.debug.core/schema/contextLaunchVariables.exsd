@@ -54,17 +54,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="description" type="string">
+         <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
                   
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="componentClass" type="string">
-            <annotation>
-               <documentation>
-                  specifies a class which implements &lt;samp&gt;IVariableComponent&lt;/samp&gt;, that allows the user to select arguments for the variable.
                </documentation>
             </annotation>
          </attribute>

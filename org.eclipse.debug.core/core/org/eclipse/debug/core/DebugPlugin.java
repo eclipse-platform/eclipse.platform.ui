@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.variables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -117,7 +119,15 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String EXTENSION_POINT_SIMPLE_LAUNCH_VARIABLES= "simpleLaunchVariables"; //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_SIMPLE_LAUNCH_VARIABLES= "simpleLaunchVariables"; //$NON-NLS-1$
+
+	/**
+	 * Simple identifier constant (value <code>"contextLaunchVariables"</code>) for the
+	 * context launch variables extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES = "contextLaunchVariables"; //$NON-NLS-1$
 		
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -157,9 +167,14 @@ public class DebugPlugin extends Plugin {
 	private LaunchManager fLaunchManager;
 	
 	/**
-	 * The singleton variable registry.
+	 * The singleton simple variable registry.
 	 */
-	private SimpleVariableRegistry fVariableRegistry;
+	private SimpleVariableRegistry fSimpleVariableRegistry;
+	
+	/**
+	 * The singleton context variable registry.
+	 */
+	private IContextLaunchVariableRegistry fContextVariableRegistry;
 
 	/**
 	 * The collection of debug event listeners.
@@ -353,10 +368,20 @@ public class DebugPlugin extends Plugin {
 	 * @return the registry of simple launch variables
 	 */
 	public ISimpleVariableRegistry getSimpleVariableRegistry() {
-		if (fVariableRegistry == null) {
-			fVariableRegistry = new SimpleVariableRegistry();
+		if (fSimpleVariableRegistry == null) {
+			fSimpleVariableRegistry = new SimpleVariableRegistry();
 		}
-		return fVariableRegistry;
+		return fSimpleVariableRegistry;
+	}
+	
+	/**
+	 * Returns the registry of context launch variables.
+	 */
+	public IContextLaunchVariableRegistry getContextVariableRegistry() {
+		if (fContextVariableRegistry == null) {
+			fContextVariableRegistry = new ContextLaunchVariableRegistry();
+		}
+		return fContextVariableRegistry;
 	}
 	
 	/**
@@ -448,8 +473,8 @@ public class DebugPlugin extends Plugin {
 		if (fEventListeners != null) {
 			fEventListeners.removeAll();
 		}
-		if (fVariableRegistry != null) {
-			fVariableRegistry.storeVariables();
+		if (fSimpleVariableRegistry != null) {
+			fSimpleVariableRegistry.storeVariables();
 		}
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);

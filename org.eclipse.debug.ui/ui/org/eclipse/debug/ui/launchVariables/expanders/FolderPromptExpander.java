@@ -9,7 +9,7 @@
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.expanders;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.DirectoryDialog;

@@ -8,16 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.externaltools.internal.variables;
+package org.eclipse.debug.core.variables;
 
-import org.eclipse.debug.core.variables.DefaultVariableExpander;
-import org.eclipse.debug.core.variables.ExpandVariableContext;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
-
-
-public class BuildTypeExpander extends DefaultVariableExpander {
-
-	public String getText(String varTag, String varValue, ExpandVariableContext context) {
-		return ExternalToolBuilder.getBuildType();
-	}
+/**
+ * @since 3.0
+ */
+public interface IContextLaunchVariable {
+	/**
+	 * Returns the object that can expand the variable.
+	 */
+	public IVariableExpander getExpander();
+	/**
+	 * Returns the variable's description or <code>null</code> if none
+	 * is specified.
+	 */
+	public String getDescription();
+	/**
+	 * Returns the variable's name.
+	 */
+	public String getName();
 }

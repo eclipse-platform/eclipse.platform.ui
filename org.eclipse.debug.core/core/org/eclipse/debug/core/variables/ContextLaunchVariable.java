@@ -8,26 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.core.variables;
 
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Abtract representation of launch configuration variables.
  * @since 3.0
  */
 public class ContextLaunchVariable implements IContextLaunchVariable {
-	private static final IVariableComponent defaultComponent = new DefaultVariableComponent(false);
 	
 	private String tag;
 	private String description;
@@ -74,24 +66,9 @@ public class ContextLaunchVariable implements IContextLaunchVariable {
 		try {
 			return element.createExecutableExtension(attributeName);
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugPlugin.log(e.getStatus());
 			return null;
 		}
-	}
-	
-	/**
-	 * @see IContextLaunchVariable#getComponent()
-	 */
-	public final IVariableComponent getComponent() {
-		String className = element.getAttribute(ContextLaunchVariableRegistry.TAG_COMPONENT_CLASS);
-		if (className == null || className.trim().length() == 0)
-			return defaultComponent;
-			
-		Object component = createObject(ContextLaunchVariableRegistry.TAG_COMPONENT_CLASS);
-		if (component == null)
-			return new DefaultVariableComponent(true);
-		else
-			return (IVariableComponent)component;
 	}
 	
 	/**
@@ -106,42 +83,5 @@ public class ContextLaunchVariable implements IContextLaunchVariable {
 	 */
 	public final String getName() {
 		return tag;
-	}
-
-
-	/**
-	 * Default variable component implementation which does not
-	 * allow variable value editing visually.
-	 */	
-	protected static final class DefaultVariableComponent extends AbstractVariableComponent {
-		private boolean showError = false;
-		private Label message = null;
-		
-		public DefaultVariableComponent(boolean showError) {
-			super();
-			this.showError = showError;
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public Control getControl() {
-			return message;
-		}
-				
-		/* (non-Javadoc)
-		 * Method declared on IVariableComponent.
-		 */
-		public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
-			container= page;
-			if (showError) {
-				message = new Label(parent, SWT.NONE);
-				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-				message.setLayoutData(data);
-				message.setFont(parent.getFont());
-				message.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationVariable.Problem_displaying_UI")); //$NON-NLS-1$
-				message.setForeground(JFaceColors.getErrorText(message.getDisplay()));
-			}
-		}
 	}
 }

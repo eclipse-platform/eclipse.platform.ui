@@ -10,7 +10,7 @@
  *     Tomasz Stanczak - Fix for Bug 29504
  *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243)
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.core.variables;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,13 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Utility for dealing with variables
@@ -46,6 +44,13 @@ public class VariableUtil {
 	 */
 	private static final char ARG_DELIMITER = ' '; //$NON-NLS-1$
 	private static final char ARG_DBL_QUOTE = '"'; //$NON-NLS-1$
+	/**
+	 * Launch configuration attribute - a map of variables passed into
+	 * Runtime.exec(...) when a launch configuration is launched.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".environmentVariables"; //$NON-NLS-1$
 	
 	/**
 	 * Structure to represent a variable definition within a
@@ -163,18 +168,19 @@ public class VariableUtil {
 	 * Expands all the variables found in the given string.
 	 * 
 	 * @param argument the string whose variables should be expanded
-	 * @param context the context to use for expanding variables
+	 * @param context the context to use for expanding variables or
+	 * <code>null</code> if none.
 	 * @param status multi status to report any problems expanding variables
 	 * @return the argument text with all variables expanded, or <code>null</code> if not possible
 	 */
-	public static String expandVariables(String argument, MultiStatus status) {
+	public static String expandVariables(String argument, MultiStatus status, ExpandVariableContext context) {
 		StringBuffer buffer = new StringBuffer();
 		int start = 0;
 		VariableDefinition varDef= extractVariableDefinition(argument, start);
 		while (varDef.start > -1) {
 			if (varDef.end == -1 || varDef.name == null || varDef.name.length() == 0) {
 				// Invalid variable format
-				status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.Invalid_variable_format__{0}_1"), new String[] {argument.substring(varDef.start)}), null)); //$NON-NLS-1$
+				status.merge(newErrorStatus(MessageFormat.format("Invalid variable format: {0}", new String[] {argument.substring(varDef.start)}), null));
 				return null;
 			}
 			// Copy text between start and variable.			
@@ -183,12 +189,15 @@ public class VariableUtil {
 			}
 			start = varDef.end;
 			// Look up the context variable if it exists
-			ContextLaunchVariableRegistry registry = DebugUIPlugin.getDefault().getContextVariableRegistry();
+			IContextLaunchVariableRegistry registry = DebugPlugin.getDefault().getContextVariableRegistry();
 			IContextLaunchVariable contextVariable = registry.getVariable(varDef.name);
 			if (contextVariable != null) {
 				String text = null;
+				if (context == null) {
+					context= new ExpandVariableContext(null);
+				}
 				try {
-					text= contextVariable.getExpander().getText(varDef.name, varDef.argument, VariableContextManager.getDefault().getVariableContext());
+					text= contextVariable.getExpander().getText(varDef.name, varDef.argument, context);
 				} catch (CoreException exception) {
 					status.merge(exception.getStatus());
 					return null;
@@ -198,7 +207,7 @@ public class VariableUtil {
 				// If no context variable found, look up a simple variable
 				ISimpleLaunchVariable simpleVariable= DebugPlugin.getDefault().getSimpleVariableRegistry().getVariable(varDef.name);
 				if (simpleVariable == null) {
-					status.merge(DebugUIPlugin.newErrorStatus(MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.The_variable_named_____{0}_____does_not_exist._2"), new Object[] {varDef.name}), null)); //$NON-NLS-1$
+					status.merge(newErrorStatus(MessageFormat.format("The variable named \"{0}\" does not exist.", new Object[] {varDef.name}), null));
 					return null;
 				}
 				buffer.append(simpleVariable.getText());
@@ -219,11 +228,12 @@ public class VariableUtil {
 	 * Process.exec) in which variable expansion has been performed.
 	 * 
 	 * @param envMap Map of all the environment variables (key=name,value=value)
-	 * @param context the context used to expand the variable
+	 * @param context the context used to expand the variable or <code>null</code>
+	 * if none.
 	 * @param status multi status to report any problems expanding variables
 	 * @return String[] the list of variables in "variable=value" form
 	 */
-	public static String[] expandEnvironment(Map envMap, MultiStatus status) {
+	public static String[] expandEnvironment(Map envMap, MultiStatus status, ExpandVariableContext context) {
 		String[] vars = null;
 		if (envMap != null && envMap.size() > 0) {
 			Map.Entry e;
@@ -232,7 +242,7 @@ public class VariableUtil {
 			int i = 0;
 			while (iter.hasNext()) {
 				e = (Map.Entry) iter.next();
-				vars[i++] = (String) e.getKey() + '=' + expandVariables((String) e.getValue(), status);
+				vars[i++] = (String) e.getKey() + '=' + expandVariables((String) e.getValue(), status, context);
 			}
 		}
 		return vars;
@@ -251,14 +261,14 @@ public class VariableUtil {
 	 * @return the list of individual arguments where some elements in the
 	 * 		list maybe <code>null</code> if problems expanding variable(s).
 	 */
-	public static String[] expandStrings(String sourceString, MultiStatus status) {
+	public static String[] expandStrings(String sourceString, MultiStatus status, ExpandVariableContext context) {
 		if (sourceString == null || sourceString.length() == 0) {
 			return new String[0];
 		}
 	
 		String[] argList = parseStringIntoList(sourceString);
 		for (int i = 0; i < argList.length; i++) {
-			argList[i] = expandVariables(argList[i], status);
+			argList[i] = expandVariables(argList[i], status, context);
 		}
 		
 		return argList;
@@ -362,28 +372,33 @@ public class VariableUtil {
 	 * 
 	 * @param configuration launch configuration
 	 * @param context context used to expand environment variable values
+	 * or <code>null</code> if none
 	 * @return String[] the array of "variable=value" pairs, suitable for
 	 * passing to Process.exec
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
 	 */
-	public static String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
-		Map envMap = configuration.getAttribute(IDebugUIConstants.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
+		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		if (envMap != null) {
-			MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, LaunchConfigurationsMessages.getString("VariableUtil.5"), null); //$NON-NLS-1$
-			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, status);
+			MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, "Could not resolve environment.", null);
+			String[] expandedEnvironment = VariableUtil.expandEnvironment(envMap, status, context);
 			if (status.isOK()) {
 				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
 					return expandedEnvironment;
 				} else {
-					String message = MessageFormat.format(LaunchConfigurationsMessages.getString("VariableUtil.6"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-					throw new CoreException(DebugUIPlugin.newErrorStatus(message, null));
+					String message = MessageFormat.format("Invalid environment specified for the launch configuration named {0}.", new Object[] { configuration.getName()});
+					throw new CoreException(newErrorStatus(message, null));
 				}
 			} else {
 				throw new CoreException(status);
 			}
 		}
 		return null;
+	}
+	
+	public static IStatus newErrorStatus(String message, Throwable exception) {
+		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
 	}
 
 }

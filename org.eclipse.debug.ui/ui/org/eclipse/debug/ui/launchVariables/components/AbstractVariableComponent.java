@@ -8,8 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.components;
 
+import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.IVariableComponent;
+import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

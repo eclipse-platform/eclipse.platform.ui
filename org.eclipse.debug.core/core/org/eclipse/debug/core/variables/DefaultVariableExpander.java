@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.core.variables;
 
 
 import java.text.MessageFormat;
@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Default variable expander implementation. Does nothing.
@@ -41,7 +40,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getResources(String, String, ExpandVariableContext)
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_1"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format("No expander class defined for the variable {0}", new String[] {varTag}));
 		return null;
 	}
 
@@ -49,7 +48,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_1"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format("No expander class defined for the variable {0}", new String[] {varTag}));
 		return null;
 	}
 	
@@ -58,7 +57,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * while expanding the given variable tag.
 	 */
 	public static void throwExpansionException(String varTag, String reason) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.An_error_occurred_attempting_to_expand_the_variable_{0}._{1}_4"), new String[] {varTag, reason}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format("An error occurred attempting to expand the variable {0}. {1}", new String[] {varTag, reason}), null));
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.core.variables;
 
 
 import java.util.SortedMap;
@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Registry for context launch variables.
  * @since 3.0
  */
-public class ContextLaunchVariableRegistry {
+public class ContextLaunchVariableRegistry implements IContextLaunchVariableRegistry {
 	// Format of the variable extension points
 	// <extension point="org.eclipse.debug.ui.launchConfigurationVariables>
 	//		<variable
@@ -45,9 +45,7 @@ public class ContextLaunchVariableRegistry {
 	protected static final String TAG_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String TAG_NAME = "name"; //$NON-NLS-1$
 	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-	protected static final String TAG_COMPONENT_CLASS = "componentClass"; //$NON-NLS-1$
 	protected static final String TAG_EXPANDER_CLASS = "expanderClass"; //$NON-NLS-1$
-
 
 	/**
 	 * Sorted map of variables where the key is the variable tag
@@ -65,7 +63,7 @@ public class ContextLaunchVariableRegistry {
 	protected String pluginId;
 	
 	public ContextLaunchVariableRegistry() {
-		this(DebugUIPlugin.getUniqueIdentifier(), IVariableConstants.EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES);
+		this(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES);
 	}
 	
 	/**
@@ -81,27 +79,26 @@ public class ContextLaunchVariableRegistry {
 	 * Returns the variable for the specified tag, or
 	 * <code>null</code> if none found.
 	 */
-	protected final IContextLaunchVariable findVariable(String tag) {
+	private final IContextLaunchVariable findVariable(String tag) {
 		return (IContextLaunchVariable) variables.get(tag);
 	}
 
 	/**
 	 * Returns the number of variables in the registry.
 	 */
-	public final int getVariableCount() {
+	private final int getVariableCount() {
 		return variables.size();
 	}
 	
-	
 	/**
-	 * Returns the variable for the given tag or <code>null</code> if none.
+	 * @see IContextLaunchVariableRegistry#getVariable(String)
 	 */
 	public IContextLaunchVariable getVariable(String tag) {
 		return findVariable(tag);
 	}
 	
 	/**
-	 * Returns the list of argument variables in the registry.
+	 * @see IContextLaunchVariableRegistry#getVariables()
 	 */
 	public IContextLaunchVariable[] getVariables() {
 		IContextLaunchVariable[] results = new ContextLaunchVariable[getVariableCount()];
@@ -130,15 +127,15 @@ public class ContextLaunchVariableRegistry {
 						boolean valid = true;
 						if (tag == null || tag.length() == 0) {
 							valid = false;
-							DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing tag attribute value for variable element.", null)); //$NON-NLS-1$
+							DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing tag attribute value for variable element.", null)); //$NON-NLS-1$
 						}
 						if (description == null || description.length() == 0) {
 							valid = false;
-							DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing description attribute value for variable element.", null)); //$NON-NLS-1$
+							DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing description attribute value for variable element.", null)); //$NON-NLS-1$
 						}
 						if (className == null || className.length() == 0) {
 							valid = false;
-							DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing expander class attribute value for variable element.", null)); //$NON-NLS-1$
+							DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "Missing expander class attribute value for variable element.", null)); //$NON-NLS-1$
 						}
 
 						if (valid)
@@ -152,7 +149,7 @@ public class ContextLaunchVariableRegistry {
 	/**
 	 * Creates a new variable from the specified information.
 	 */
-	protected IContextLaunchVariable newVariable(String tag, String description, IConfigurationElement element) {
+	private IContextLaunchVariable newVariable(String tag, String description, IConfigurationElement element) {
 		return new ContextLaunchVariable(tag, description, element);
 	}
 	

@@ -13,8 +13,8 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
-import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;

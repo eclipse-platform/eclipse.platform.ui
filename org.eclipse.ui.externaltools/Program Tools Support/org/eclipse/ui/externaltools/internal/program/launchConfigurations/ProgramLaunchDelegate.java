@@ -26,7 +26,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.launchVariables.VariableUtil;
+import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -135,7 +136,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		String[] envp = VariableUtil.getEnvironment(configuration);
+		String[] envp = VariableUtil.getEnvironment(configuration, VariableContextManager.getDefault().getVariableContext());
 		
 		if (monitor.isCanceled()) {
 			return;

@@ -8,28 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.core.variables;
 
-/**
- * @since 3.0
- */
-public interface IContextLaunchVariable {
+public interface IContextLaunchVariableRegistry {
 	/**
-	 * Returns the object that can expand the variable.
+	 * Returns the variable for the given tag or <code>null</code> if none.
 	 */
-	public IVariableExpander getExpander();	
+	public abstract IContextLaunchVariable getVariable(String tag);
 	/**
-	 * Returns the component class to allow
-	 * visual editing of the variable's value.
+	 * Returns the list of argument variables in the registry.
 	 */
-	public IVariableComponent getComponent();
-	/**
-	 * Returns the variable's description or <code>null</code> if none
-	 * is specified.
-	 */
-	public String getDescription();
-	/**
-	 * Returns the variable's name.
-	 */
-	public String getName();
+	public abstract IContextLaunchVariable[] getVariables();
 }

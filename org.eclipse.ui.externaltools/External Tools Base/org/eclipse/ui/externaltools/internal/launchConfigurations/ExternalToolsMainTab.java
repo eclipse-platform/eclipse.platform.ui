@@ -21,13 +21,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
-import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
 import org.eclipse.debug.ui.launchVariables.VariableSelectionDialog;
-import org.eclipse.debug.ui.launchVariables.VariableUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -444,7 +443,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			if (variable.name == null || variable.name.length() == 0) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
 			}
-			ContextLaunchVariableRegistry contextVariableRegistry = DebugUIPlugin.getDefault().getContextVariableRegistry();
+			IContextLaunchVariableRegistry contextVariableRegistry = DebugPlugin.getDefault().getContextVariableRegistry();
 			ISimpleVariableRegistry simpleVariableRegistry= DebugPlugin.getDefault().getSimpleVariableRegistry();
 			if (contextVariableRegistry.getVariable(variable.name) == null && simpleVariableRegistry.getVariable(variable.name) == null) {
 				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$

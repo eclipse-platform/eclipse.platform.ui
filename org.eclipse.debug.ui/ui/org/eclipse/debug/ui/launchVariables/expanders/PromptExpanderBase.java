@@ -9,11 +9,13 @@
  *     Matt Conway - initial implementation
  *     IBM Corporation - integration and code cleanup
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.expanders;
 
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.ExpandVariableContext;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 

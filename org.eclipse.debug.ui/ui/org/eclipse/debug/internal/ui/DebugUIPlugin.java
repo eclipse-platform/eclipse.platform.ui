@@ -43,13 +43,14 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
+import org.eclipse.debug.internal.ui.launchVariables.ContextVariableComponentManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.ui.launchVariables.IContextVariableComponentManager;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -118,10 +119,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	private VariablesContentProviderManager fVariablesContentProviderManager;
 	
-	/**
-	 * Collection of launch configuration variables
-	 */
-	private ContextLaunchVariableRegistry contextLaunchVariableRegistry;
+	private ContextVariableComponentManager fVariableComponentManager;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -165,6 +163,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fVariablesContentProviderManager;
 	}
 	
+	public IContextVariableComponentManager getVariableComponentManager() {
+		if (fVariableComponentManager == null) {
+			fVariableComponentManager = new ContextVariableComponentManager();
+		}
+		return fVariableComponentManager;
+	}
+	
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */
@@ -197,16 +202,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fLaunchConfigurationManager = new LaunchConfigurationManager();
 		} 
 		return fLaunchConfigurationManager;
-	}
-
-	/**
-	 * Returns the registry of context launch variables.
-	 */
-	public ContextLaunchVariableRegistry getContextVariableRegistry() {
-		if (contextLaunchVariableRegistry == null) {
-			contextLaunchVariableRegistry = new ContextLaunchVariableRegistry();
-		}
-		return contextLaunchVariableRegistry;
 	}
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {

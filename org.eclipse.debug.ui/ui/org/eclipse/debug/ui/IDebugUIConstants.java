@@ -769,6 +769,14 @@ public interface IDebugUIConstants {
 	 *
 	 * @since 3.0
 	 */
-	public static final String EXTENSION_POINT_VARIABLES_CONTENT_PROVIDERS = "variablesContentProviders";	 //$NON-NLS-1$		
+	public static final String EXTENSION_POINT_VARIABLES_CONTENT_PROVIDERS = "variablesContentProviders";	 //$NON-NLS-1$
+	
+	/**
+	 * Launch variable components extension point identifier (value
+	 * <code>"launchVariableComponents"</code>). The launch variable
+	 * components extension point specifies an <code>IVariableComponent</code>
+	 * for an <code>IContextLaunchVariable</code>.
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$		
 		
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui.launchVariables.expanders;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -16,8 +16,11 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.ExpandVariableContext;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.WorkbenchException;

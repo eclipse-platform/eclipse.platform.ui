@@ -76,11 +76,6 @@ public interface IVariableConstants {
 	 */
 	public static final String VAR_EDITOR_SEL_TEXT = "editor_sel_text"; //$NON-NLS-1$
 	/**
-	 * Extension point to declare launch configuration variables. 
-	 * (value<code>contextLaunchVariables</code>).
-	 */
-	public static final String EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES = "contextLaunchVariables"; //$NON-NLS-1$
-	/**
 	 * XML tag used to designate the root of the persisted IWorkingSet
 	 */
 	public static final String TAG_LAUNCH_CONFIGURATION_WORKING_SET= "launchConfigurationWorkingSet"; //$NON-NLS-1$
