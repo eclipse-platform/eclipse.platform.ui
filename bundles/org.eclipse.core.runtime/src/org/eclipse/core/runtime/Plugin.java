@@ -283,7 +283,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @param descriptor the plug-in descriptor
-	 * @see #getDescriptor
+	 * @see #getDescriptor()
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
@@ -307,7 +307,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
 	 * 
-	 * @param file path relative to plug-in installation location 
+	 * @param path path relative to plug-in installation location 
 	 * @return a URL for the given path or <code>null</code>
 	 */
 	public final URL find(IPath path) {
@@ -398,9 +398,9 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 *
 	 * @return the preference store
-	 * @see #savePluginPreferences
-	 * @see Preferences#setValue
-	 * @see Preferences#setToDefault
+	 * @see #savePluginPreferences()
+	 * @see Preferences#setValue(String, String)
+	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
 	 */
 	public final Preferences getPluginPreferences() {
@@ -439,7 +439,7 @@ public abstract class Plugin implements BundleActivator {
 	 * file in the plug-in's state area. This plug-in must have a preference store
 	 * object.
 	 * 
-	 * @see Preferences#load
+	 * @see Preferences#load(InputStream)
 	 * @since 2.0
 	 */
 	private void loadPluginPreferences() {
@@ -507,8 +507,8 @@ public abstract class Plugin implements BundleActivator {
 	 * Plug-in preferences are <b>not</b> saved automatically on plug-in shutdown.
 	 * </p>
 	 * 
-	 * @see Preferences#store
-	 * @see Preferences#needsSaving
+	 * @see Preferences#store(OutputStream, String)
+	 * @see Preferences#needsSaving()
 	 * @since 2.0
 	 */
 	public final void savePluginPreferences() {

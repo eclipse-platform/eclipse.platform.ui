@@ -19,7 +19,7 @@ package org.eclipse.core.runtime;
  * Clients may implement this interface.
  * </p>
  * 
- * @see Platform#run
+ * @see Platform#run(ISafeRunnable)
  */
 public interface ISafeRunnable {
 	/**
@@ -31,7 +31,7 @@ public interface ISafeRunnable {
 	 *
 	 * @param exception an exception which occurred during processing
 	 *		the body of this runnable (i.e., in <code>run()</code>)
-	 * @see Platform#run
+	 * @see Platform#run(ISafeRunnable)
 	 */
 	public void handleException(Throwable exception);
 	/**
@@ -41,7 +41,7 @@ public interface ISafeRunnable {
 	 *
 	 * @exception Exception if a problem occurred while running this method.
 	 *		The exception will be processed by <code>handleException</code>
-	 * @see Platform#run
+	 * @see Platform#run(ISafeRunnable)
 	 */
 	public void run() throws Exception;
 }

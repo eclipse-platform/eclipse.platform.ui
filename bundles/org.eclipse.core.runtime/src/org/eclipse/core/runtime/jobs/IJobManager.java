@@ -83,7 +83,7 @@ public interface IJobManager {
 	 * all other rules currently active for this thread.
 	 * @throws OperationCanceledException if the supplied monitor reports cancelation
 	 * 	before the rule becomes available.
-	 * @see ISchedulingRule.contains
+	 * @see ISchedulingRule#contains(ISchedulingRule)
 	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor);
 	/**
@@ -122,8 +122,8 @@ public interface IJobManager {
 	 *    }
 	 * </pre>
 	 * 
-	 * @see Job#setProgressGroup
-	 * @see IProgresMonitor
+	 * @see Job#setProgressGroup(IProgressMonitor, int)
+	 * @see IProgressMonitor
 	 * @return A progress monitor
 	 */
 	public IProgressMonitor createProgressGroup();
@@ -146,7 +146,7 @@ public interface IJobManager {
 	 * @param rule the rule to end applying in this thread
 	 * @throws IllegalArgumentException if this method is called on a rule for which
 	 * there is no matching begin, or that does not match the most recent begin.
-	 * @see ISchedulingRule#contains
+	 * @see ISchedulingRule#contains(ISchedulingRule)
 	 */
 	public void endRule(ISchedulingRule rule);
 	/**

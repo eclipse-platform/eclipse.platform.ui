@@ -150,7 +150,7 @@ public class Preferences {
 	 * Clients cannot instantiate or subclass this class.
 	 * </p>
 	 *
-	 * @see #addPropertyChangeListener
+	 * @see Preferences#addPropertyChangeListener(IPropertyChangeListener)
 	 * @see Preferences.IPropertyChangeListener
 	 */
 	public static class PropertyChangeEvent extends EventObject {
@@ -300,8 +300,8 @@ public class Preferences {
 	 * <ul>
 	 * <li> The file could not be written.</li>
 	 * </ul>
-	 * @see #importPreferences
-	 * @see #validatePreferenceVersions
+	 * @see #importPreferences(IPath)
+	 * @see #validatePreferenceVersions(IPath)
 	 */
 	public static void exportPreferences(IPath path) throws CoreException {
 		File file = path.toFile();
@@ -362,8 +362,8 @@ public class Preferences {
 	 * <li> The file does not exist.</li>
 	 * <li> The file could not be read.</li>
 	 * </ul>
-	 * @see #exportPreferences
-	 * @see #validatePreferenceVersions
+	 * @see #exportPreferences(IPath)
+	 * @see #validatePreferenceVersions(IPath)
 	 */
 	public static void importPreferences(IPath path) throws CoreException {
 		if (!path.toFile().exists()) {
@@ -405,8 +405,8 @@ public class Preferences {
 	 * The file must have been written by the exportPreferences method.
 	 * </p>
 	 * @param file The absolute filesystem path of the preference file to validate.
-	 * @see #exportPreferences
-	 * @see #importPreferences
+	 * @see #exportPreferences(IPath)
+	 * @see #importPreferences(IPath)
 	 */
 	public static IStatus validatePreferenceVersions(IPath file) {
 		try {
@@ -422,8 +422,8 @@ public class Preferences {
 	 * Use the methods <code>load(InputStream)</code> and
 	 * <code>store(InputStream)</code> to load and store these preferences.
 	 * </p>
-	 * @see #load
-	 * @see #store
+	 * @see #load(InputStream)
+	 * @see #store(OutputStream, String)
 	 */
 	public Preferences() {
 		defaultProperties = new Properties();

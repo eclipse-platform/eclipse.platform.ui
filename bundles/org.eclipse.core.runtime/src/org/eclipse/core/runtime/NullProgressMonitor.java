@@ -35,7 +35,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses may override this method to do interesting
 	 * processing when a task begins.
 	 * 
-	 * @see IProgressMonitor#beginTask
+	 * @see IProgressMonitor#beginTask(String, int)
 	 */
 	public void beginTask(String name, int totalWork) {
 		// do nothing
@@ -45,7 +45,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses may override this method to do interesting
 	 * processing when a task is done.
 	 * 
-	 * @see IProgressMonitor#done
+	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
 		// do nothing
@@ -54,7 +54,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * This implementation does nothing.
 	 * Subclasses may override this method.
 	 * 
-	 * @see IProgressMonitor#internalWorked
+	 * @see IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double work) {
 		// do nothing
@@ -65,8 +65,8 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses which override this method should
 	 * override <code>setCanceled</code> as well.
 	 *
-	 * @see IProgressMonitor#isCanceled
-	 * @see IProgressMonitor#setCanceled
+	 * @see IProgressMonitor#isCanceled()
+	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
 	public boolean isCanceled() {
 		return cancelled;
@@ -76,8 +76,8 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses which override this method should override 
 	 * <code>isCanceled</code> as well.
 	 *
-	 * @see IProgressMonitor#isCanceled
-	 * @see IProgressMonitor#setCanceled
+	 * @see IProgressMonitor#isCanceled()
+	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
 	public void setCanceled(boolean cancelled) {
 		this.cancelled = cancelled;
@@ -87,7 +87,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses may override this method to do something
 	 * with the name of the task.
 	 * 
-	 * @see IProgressMonitor#setTaskName
+	 * @see IProgressMonitor#setTaskName(String)
 	 */
 	public void setTaskName(String name) {
 		// do nothing
@@ -97,7 +97,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses may override this method to do interesting
 	 * processing when a subtask begins.
 	 * 
-	 * @see IProgressMonitor#subTask
+	 * @see IProgressMonitor#subTask(String)
 	 */
 	public void subTask(String name) {
 		// do nothing
@@ -107,7 +107,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Subclasses may override this method to do interesting
 	 * processing when some work has been completed.
 	 * 
-	 * @see IProgressMonitor#worked
+	 * @see IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
 		// do nothing
