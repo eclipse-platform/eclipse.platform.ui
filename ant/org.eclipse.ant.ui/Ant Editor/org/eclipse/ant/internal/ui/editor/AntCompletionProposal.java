@@ -97,6 +97,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 			enteredText = document.get(fReplacementOffset, offset-fReplacementOffset);
 		} catch (BadLocationException e) {
 		}
+		int enteredLength= enteredText.length(); 
 		if (fType == TASK_PROPOSAL && enteredText.startsWith("<")) { //$NON-NLS-1$
 			enteredText= enteredText.substring(1);
 		} else if (fType == PROPERTY_PROPOSAL) {
@@ -122,7 +123,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 		boolean valid= fDisplayString.toLowerCase().startsWith(enteredText.toLowerCase());
 		if (valid) {
-			fReplacementLength++;
+			fReplacementLength= enteredLength;
 		}
 		return valid;
 	}
