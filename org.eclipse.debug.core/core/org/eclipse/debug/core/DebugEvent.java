@@ -45,6 +45,25 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  *		to begin a debug session.</li>
  *	<li><code>TERMINATE</code> - a debug target has terminated and the debug
  *		session has ended.</li>
+ *  <li><code>SUSPEND</code> - a debug target has suspended. Event detail provides
+ *		the reason for the suspension:<ul>
+ *		<li><code>STEP_END</code> - a request to step has completed</li>
+ *		<li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
+ *		<li><code>CLIENT_REQUEST</code> - a client request has caused the target to suspend
+ * 			(i.e. an explicit call to <code>suspend()</code>)</li>
+ * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
+ *		</ul>
+ *	</li>
+ *  <li><code>RESUME</code> - a debug target has resumed. Event detail provides
+ *		the reason for the resume:<ul>
+ *		<li><code>STEP_INTO</code> - a target is being resumed because of a request to step into</li>
+ * 		<li><code>STEP_OVER</code> - a target is being resumed because of a request to step over</li>
+ * 		<li><code>STEP_RETURN</code> - a target is being resumed because of a request to step return</li>
+ *		<li><code>CLIENT_REQUEST</code> - a client request has caused the target to be resumed
+ * 			(i.e. an explicit call to <code>resume()</code>)</li>
+ * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
+ *		</ul>
+ *	</li>
  *	</ul>
  * </li>
  * <li><code>IThread</code>
@@ -268,6 +287,9 @@ public final class DebugEvent extends EventObject {
 			case RESUME:
 				buf.append("RESUME"); //$NON-NLS-1$
 				break;
+			case SUSPEND:
+				buf.append("SUSPEND"); //$NON-NLS-1$
+				break;				
 			case CHANGE:
 				buf.append("CHANGE"); //$NON-NLS-1$
 				break;
