@@ -43,8 +43,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
  *   <li><code>selectionChanged(ISelectionChangedEvent)</code> - passing the selection change event</li>
  * </ul>
  * </p>
+ * @since 3.0
  */
-public abstract class SelectionListenerAction extends Action implements ISelectionChangedListener {
+public abstract class BaseSelectionListenerAction extends Action implements ISelectionChangedListener {
 	/**
 	 * The current selection.
 	 */
@@ -56,7 +57,7 @@ public abstract class SelectionListenerAction extends Action implements ISelecti
 	 * @param text the string used as the text for the action, 
 	 *   or <code>null</code> if there is no text
 	 */
-	protected SelectionListenerAction(String text) {
+	protected BaseSelectionListenerAction(String text) {
 		super(text);
 	}
 		
@@ -74,7 +75,7 @@ public abstract class SelectionListenerAction extends Action implements ISelecti
 	/**
 	 * Notifies this action that the given structured selection has changed.
 	 * <p>
-	 * The <code>SelectionListenerAction</code> implementation of this method
+	 * The <code>BaseSelectionListenerAction</code> implementation of this method
 	 * records the given selection for future reference and calls
 	 * <code>updateSelection</code>, updating the enable state of this action
 	 * based on the outcome. Subclasses should override <code>updateSelection</code>
@@ -89,7 +90,7 @@ public abstract class SelectionListenerAction extends Action implements ISelecti
 	}
 	
 	/**
-	 * The <code>SelectionListenerAction</code> implementation of this 
+	 * The <code>BaseSelectionListenerAction</code> implementation of this 
 	 * <code>ISelectionChangedListener</code> method calls 
 	 * <code>selectionChanged(IStructuredSelection)</code> assuming the selection is
 	 * a structured one. Subclasses should override the <code>updateSelection</code>
@@ -106,7 +107,7 @@ public abstract class SelectionListenerAction extends Action implements ISelecti
 	/**
 	 * Updates this action in response to the given selection.
 	 * <p>
-	 * The <code>SelectionListenerAction</code> implementation of this method
+	 * The <code>BaseSelectionListenerAction</code> implementation of this method
 	 * returns <code>true</code>. Subclasses may extend to react to selection
 	 * changes; however, if the super method returns <code>false</code>, the
 	 * overriding method must also return <code>false</code>.

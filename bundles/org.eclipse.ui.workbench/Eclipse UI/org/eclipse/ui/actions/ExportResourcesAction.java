@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
  * @since 2.0
  */
 public class ExportResourcesAction
-		extends SelectionListenerAction
+		extends BaseSelectionListenerAction
 		implements ActionFactory.IWorkbenchAction {
 
 	private static final int SIZING_WIZARD_WIDTH = 470;
