@@ -33,6 +33,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -70,6 +72,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveUpAction
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -88,9 +91,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	private List restoredTargets = new ArrayList();
 	/**
-	 * The sash form alignment of the view as restored during initialization
+	 * Key used to store the ant view's orientation
 	 */
-	private int restoredOrientation = SWT.HORIZONTAL;
+	private static String ANT_VIEW_ORIENTATION= "AntView.orientationSetting";
+
 	/**
 	 * XML tag used to identify an ant project in storage
 	 */
@@ -156,7 +160,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	// Ant View Actions
 	private AddBuildFileAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
-	private SwitchAntViewOrientation switchOrientationAction;
+	private SwitchAntViewOrientation horizontalOrientationAction;
+	private SwitchAntViewOrientation verticalOrientationAction;
 	// ProjectViewer actions
 	private RunTargetAction runTargetAction;
 	private RemoveProjectAction removeProjectAction;
@@ -298,10 +303,21 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	public void createPartControl(Composite parent) {
 		initializeActions();
 		sashForm = new SashForm(parent, SWT.NONE);
-		sashForm.setOrientation(restoredOrientation);
 		createProjectViewer();
 		createTargetViewer();
 		createToolbarActions();
+		// Must set view orientation after actions have been initialized
+		int orientation;
+		try {
+			orientation= getDialogSettings().getInt(ANT_VIEW_ORIENTATION);
+		} catch (NumberFormatException exception) {
+			orientation= SWT.HORIZONTAL;
+		}		
+		setViewOrientation(orientation);
+	}
+	
+	private IDialogSettings getDialogSettings() {
+		return ExternalToolsPlugin.getDefault().getDialogSettings();
 	}
 
 	/**
@@ -359,7 +375,9 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private void createToolbarActions() {
 		IActionBars actionBars= getViewSite().getActionBars();
 		IMenuManager menuManager= actionBars.getMenuManager();
-		menuManager.add(switchOrientationAction);
+		menuManager.add(horizontalOrientationAction);
+		menuManager.add(verticalOrientationAction);
+		
 		IToolBarManager toolBarMgr = actionBars.getToolBarManager();
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
@@ -402,7 +420,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		updateActions.add(moveDownAction);
 		goToBuildFileAction = new GoToBuildFileAction(this);
 		updateActions.add(goToBuildFileAction);
-		switchOrientationAction= new SwitchAntViewOrientation(this);
+		horizontalOrientationAction= new SwitchAntViewOrientation(this, SWT.HORIZONTAL);
+		verticalOrientationAction= new SwitchAntViewOrientation(this, SWT.VERTICAL);
 	}
 	
 	/**
@@ -646,29 +665,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
-		restoreOrientation(memento);
 		restoreRoot(memento);
 		restoreTargets(memento);
-	}
-	/**
-	 * Retrieves the stored orientation for the view's sash form.
-	 */
-	private void restoreOrientation(IMemento memento) {
-		if (memento == null) {
-			return;
-		}
-		IMemento orientation= memento.getChild(TAG_ORIENTATION);
-		if (orientation == null) {
-			return;
-		}
-		Integer value= orientation.getInteger(KEY_ALIGNMENT);
-		if (value == null) {
-			return;
-		}
-		int alignment= value.intValue();
-		if (alignment == SWT.HORIZONTAL || alignment == SWT.VERTICAL) {
-			restoredOrientation= alignment;
-		}
 	}
 
 	/**
@@ -744,9 +742,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
-		// Save the orientation
-		IMemento orientation= memento.createChild(TAG_ORIENTATION);
-		orientation.putInteger(KEY_ALIGNMENT, sashForm.getOrientation());
 		// Save the projects
 		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
 		ProjectNode project;
@@ -840,15 +835,23 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		}
 	}
+	
 	/**
-	 * Toggles the orientation of the view's sash, between horizontal and
-	 * vertical alignment.
+	 * Sets  the orientation of the view's sash.
+	 * 
+	 * @param orientation the orientation to use. Value must be one of either
+	 * <code>SWT.HORIZONTAL</code> or <code>SWT.VERTICAL</code>
 	 */
-	public void switchViewOrientation() {
-		if (sashForm.getOrientation() == SWT.HORIZONTAL) {
-			sashForm.setOrientation(SWT.VERTICAL);
+	public void setViewOrientation(int orientation) {
+		Assert.isTrue(orientation == SWT.HORIZONTAL || orientation == SWT.VERTICAL, "Invalid orientation set for Ant view");
+		getDialogSettings().put(ANT_VIEW_ORIENTATION, orientation);
+		sashForm.setOrientation(orientation);
+		if (orientation == SWT.HORIZONTAL) {
+			horizontalOrientationAction.setChecked(true);
+			verticalOrientationAction.setChecked(false);
 		} else {
-			sashForm.setOrientation(SWT.HORIZONTAL);
+			horizontalOrientationAction.setChecked(false);
+			verticalOrientationAction.setChecked(true);
 		}
 	}
 }
