@@ -10,30 +10,41 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 /**
- * The ColorSelector is a wrapper for a button that displays
- * a selected Color and allows the user to change the selection.
+ * The <code>ColorSelector</code> is a wrapper for a button that displays
+ * a selected <code>Color</code> and allows the user to change the selection.
  */
 public class ColorSelector {
-
-	Point fExtent;
-	Image fImage;
-	RGB fColorValue;
-	Color fColor;
-	Button fButton;
+	private Button fButton;
+	private Color fColor;
+	private RGB fColorValue;
+	private Point fExtent;
+	private Image fImage;
 
 	/**
 	 * Create a new instance of the reciever and the
-	 * button that it wrappers in the supplied parent Composite
+	 * button that it wrappers in the supplied parent <code>Composite</code>.
+	 * 
 	 * @param parent. The parent of the button.
 	 */
 	public ColorSelector(Composite parent) {
@@ -72,9 +83,8 @@ public class ColorSelector {
 				}
 			}
 		});
-		
-		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter()
-		{
+
+		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
 			 */
@@ -85,8 +95,36 @@ public class ColorSelector {
 	}
 
 	/**
+	 * Compute the size of the image to be displayed.
+	 * 
+	 * @param window - the window used to calculate
+	 * @return <code>Point</code>
+	 */
+
+	private Point computeImageSize(Control window) {
+		GC gc = new GC(window);
+		Font f =
+			JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+		gc.setFont(f);
+		int height = gc.getFontMetrics().getHeight();
+		gc.dispose();
+		Point p = new Point(height * 3 - 6, height);
+		return p;
+	}
+
+	/**
+	 * Get the button control being wrappered by the selector.
+	 * 
+	 * @return <code>Button</code>
+	 */
+	public Button getButton() {
+		return fButton;
+	}
+
+	/**
 	 * Return the currently displayed color.
-	 * @return RGB
+	 * 
+	 * @return <code>RGB</code>
 	 */
 	public RGB getColorValue() {
 		return fColorValue;
@@ -94,6 +132,7 @@ public class ColorSelector {
 
 	/**
 	 * Set the current color value and update the control.
+	 * 
 	 * @param rgb. The new color.
 	 */
 	public void setColorValue(RGB rgb) {
@@ -102,11 +141,13 @@ public class ColorSelector {
 	}
 
 	/**
-	 * Get the button control being wrappered by the selector.
-	 * @return Button
+	 * Set whether or not the button is enabled.
+	 * 
+	 * @param state the enabled state.
 	 */
-	public Button getButton() {
-		return fButton;
+
+	public void setEnabled(boolean state) {
+		getButton().setEnabled(state);
 	}
 
 	/**
@@ -131,30 +172,5 @@ public class ColorSelector {
 		gc.dispose();
 
 		fButton.setImage(fImage);
-	}
-
-	/**
-	 * Compute the size of the image to be displayed.
-	 * @return Point
-	 * @param window - the window used to calculate
-	 */
-
-	private Point computeImageSize(Control window) {
-		GC gc = new GC(window);
-		Font f =
-			JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
-		gc.setFont(f);
-		int height = gc.getFontMetrics().getHeight();
-		gc.dispose();
-		Point p = new Point(height * 3 - 6, height);
-		return p;
-	}
-
-	/**
-	 * Set whether or not the button is enabled.
-	 */
-
-	public void setEnabled(boolean state) {
-		getButton().setEnabled(state);
 	}
 }
