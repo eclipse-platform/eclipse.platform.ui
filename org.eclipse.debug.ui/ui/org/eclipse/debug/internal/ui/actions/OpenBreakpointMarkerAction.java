@@ -11,12 +11,12 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import java.util.Iterator;
-
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
@@ -85,8 +85,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
-			Iterator itr= sel.iterator();
-			breakpoint= (IBreakpoint)itr.next();
+			breakpoint= (IBreakpoint)sel.getFirstElement();
 			input= fgPresentation.getEditorInput(breakpoint);
 			if (input != null) {
 				setEnabled(true);
