@@ -16,8 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 public RefreshLocalTest() {
@@ -28,6 +27,57 @@ public RefreshLocalTest(String name) {
 }
 public static Test suite() {
 	return new TestSuite(RefreshLocalTest.class);
+}
+/**
+ * Test discovery of a linked resource on refresh.
+ */
+public void testDiscoverLinkedResource() {
+	//create a linked resource with local contents missing
+//	IProject project = projects[0];
+//	ensureExistsInWorkspace(project, true);
+//	IPath location = getRandomLocation();
+//	IFile link = project.getFile("Link");
+//	try {
+//		link.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+//	} catch (CoreException e) {
+//		fail("0.99", e);
+//	}
+//
+//	//should not be synchronized (exists in ws, but not in fs)
+//	assertTrue("1.0", !project.isSynchronized(IResource.DEPTH_INFINITE));
+//	assertTrue("1.1", !link.isSynchronized(IResource.DEPTH_ZERO));
+//
+//	//should exist in workspace
+//	assertTrue("1.3", link.exists());
+//	
+//	//refreshing shouldn't get rid of the link
+//	try {
+//		link.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+//	} catch (CoreException e) {
+//		fail("1.99", e);
+//	}
+//	assertTrue("1.4", link.exists());
+//	
+//	//create the contents in the file system
+//	try {
+//		createFileInFileSystem(location);
+//	} catch (CoreException e) {
+//		fail("2.99", e);
+//	}
+//	
+//	//should now be synchronized
+//	assertTrue("2.1", project.isSynchronized(IResource.DEPTH_INFINITE));
+//	assertTrue("2.2", link.isSynchronized(IResource.DEPTH_ZERO));
+//
+//	//refresh
+//	try {
+//		link.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+//	} catch (CoreException e) {
+//		fail("3.99", e);
+//	}
+//	
+//	//assert should exist in workspace
+//	assertTrue("2.3", link.exists());
 }
 /**
  * Tests discovering a file via refresh local when neither the file
