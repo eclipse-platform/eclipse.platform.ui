@@ -98,6 +98,38 @@ public class Queue {
 		return null;
 	}
 	/**
+	 * Removes the given object from the queue. Shifts the underlying array.
+	 */
+	public boolean remove(Object o) {
+		int index = head;
+		//find the object to remove
+		while (index != tail) {
+			if (elements[index].equals(o))
+				break;
+			index = increment(index);
+		}
+		//if element wasn't found, return
+		if(index == tail)
+			return false;
+		//store a reference to it (needed for reuse of objects)
+		Object toRemove = elements[index];
+		int nextIndex = -1;
+		while(index != tail) {
+			nextIndex = increment(index);
+			if(nextIndex!=tail)
+				elements[index] = elements[nextIndex];
+			
+			index = nextIndex;
+		}
+		//decrement tail
+		tail = decrement(tail);
+		
+		//if objects are reused, transfer the reference that is removed to the end of the queue
+		//otherwise set the element after the last one to null (to avoid duplicate references)
+		elements[tail] = reuse ? toRemove : null;
+		return true;
+	}
+	/**
 	 * Returns an object that has been removed from the queue, if any.
 	 * The intention is to support reuse of objects that have already
 	 * been processed and removed from the queue.  Returns null if there

@@ -135,25 +135,27 @@ public class OrderedLock implements ILock {
 	 * infinite delay.
 	 */
 	protected boolean doAcquire(Semaphore semaphore, long delay) throws InterruptedException {
-		if (semaphore != null) {
-			boolean success = false;
-			//notifiy hook to service pending syncExecs before falling asleep
-			if (manager.aboutToWait(getCurrentOperationThread())) {
-				//hook granted immediate access
-				operations.dequeue();
-				return true;
-			}
-			try {
-				success = semaphore.acquire(delay);
-			} catch (InterruptedException e) {
-				if (DEBUG)
-					System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
-				throw e;
-			}
-			updateCurrentOperation();
-			return success;
+		if (semaphore == null)
+			return true;
+		boolean success = false;
+		//notifiy hook to service pending syncExecs before falling asleep
+		if (manager.aboutToWait(getCurrentOperationThread())) {
+			//hook granted immediate access
+			operations.remove(semaphore);
+			return true;
 		}
-		return true;
+		try {
+			success = semaphore.acquire(delay);
+		} catch (InterruptedException e) {
+			if (DEBUG)
+				System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw e;
+		}
+		if(success)
+			updateCurrentOperation();
+		else
+			operations.remove(semaphore);
+		return success;
 	}
 	/**
 	 * Force this lock to release, regardless of depth.  Returns the current depth.

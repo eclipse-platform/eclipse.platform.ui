@@ -366,7 +366,7 @@ public class JobTest extends TestCase {
 			//status[i] = StatusChecker.STATUS_START;
 		}
 		//all the jobs should be running at the same time
-		waitForStart(jobs[4]);
+		waitForStart(jobs);
 		
 		//every job should now be waiting for the STATUS_START flag
 		for(int i = 0; i < status.length; i++) {
@@ -375,11 +375,8 @@ public class JobTest extends TestCase {
 			status[i] = StatusChecker.STATUS_START;
 		}
 		
-		//all the jobs should be running at the same time
-		//by the time the last job changes the status flag, the other jobs should have already done so
-		//for(int i = 0; i < status.length; i++) {
-		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_WAIT_FOR_START, 100);
-		//}
+		for(int i = 0; i < status.length; i++) 
+			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_WAIT_FOR_START, 100);
 		
 		//every job should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for(int i = 0; i < status.length; i++) {
@@ -387,11 +384,9 @@ public class JobTest extends TestCase {
 			status[i] = StatusChecker.STATUS_WAIT_FOR_RUN;
 		}
 		
-		//all the jobs should be running at the same time
-		//by the time the last job changes the status flag, the other jobs should have already done so
-		//for(int i = 0; i < status.length; i++) {
-		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_RUNNING, 100);
-		//}
+		//wait until all jobs are in the running state
+		for(int i = 0; i < status.length; i++) 
+			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
 		
 		//let the jobs execute
 		for(int i = 0; i < status.length; i++) {
@@ -399,9 +394,8 @@ public class JobTest extends TestCase {
 			status[i] = StatusChecker.STATUS_WAIT_FOR_DONE;
 		}
 		
-		//all jobs should run at the same time
-		//by the time the last one finishes, the rest should already be done
-		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_DONE, 100);
+		for(int i = 0; i < status.length; i++)
+			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_DONE, 100);
 		
 		//the status for every job should be STATUS_OK
 		//the threads should have been reset to null
@@ -411,7 +405,6 @@ public class JobTest extends TestCase {
 			assertEquals("9." + i, Status.OK, jobs[i].getResult().getSeverity());
 			assertNull("10." + i, jobs[i].getThread());
 		}
-		
 	}
 
 	public void testAsynchJobConflict() {
@@ -442,11 +435,10 @@ public class JobTest extends TestCase {
 			}
 			
 		}
-		//the first 3 jobs should be running at the same time
-		waitForStart(jobs[2]);
 		
 		//these 3 jobs should be waiting for the STATUS_START flag
 		for(int i = 0; i < 3; i++) {
+			waitForStart(jobs[i]);
 			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
 			status[i] = StatusChecker.STATUS_START;
@@ -461,10 +453,10 @@ public class JobTest extends TestCase {
 			assertTrue("5. " + i, jobs[i].getThread() instanceof Worker);
 			status[i] = StatusChecker.STATUS_WAIT_FOR_RUN;
 		}
-		
-		//the 3 jobs should be running at the same time
-		//by the time the third job changes the status flag, the other jobs should have already done so
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+
+		//wait until jobs block on running state
+		for(int i = 0; i < 3; i++) 
+			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
 		
 		//schedule the 2 remaining jobs
 		jobs[3].schedule();
@@ -555,6 +547,11 @@ public class JobTest extends TestCase {
 			assertTrue("Timeout waiting for job to start", i++ < 1000);
 		}
 	}
+	private void waitForStart(Job[] jobs) {
+		for (int i = 0; i < jobs.length; i++) 
+			waitForStart(jobs[i]);
+	}
+		
 	
 	/**
 	 * A job was scheduled to run.  Pause this thread so that a worker thread
