@@ -8,10 +8,10 @@ org.eclipse.core.runtime/debug=true
 org.eclipse.core.runtime/debug/context=false
 
 # Prints time taken by Plugin constructors and startup() methods.
-org.eclipse.core.runtime/debug/startup=false
+org.eclipse.core.runtime/timing/startup=false
 
 # Prints time taken by Plugin.shutdown() methods.
-org.eclipse.core.runtime/debug/shutdown=false
+org.eclipse.core.runtime/timing/shutdown=false
 
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
