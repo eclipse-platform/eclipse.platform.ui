@@ -6,12 +6,8 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 
 public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegate {
 
@@ -19,25 +15,7 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) throws DebugException {
-		try {
-			if (element instanceof ITerminate) {
-				ITerminate terminate= (ITerminate)element;
-				if (!terminate.isTerminated()) {
-					terminate.terminate();
-				}		
-			}
-		} finally {
-			ILaunch launch= null;
-			if (element instanceof ILaunch) {
-				launch= (ILaunch) element;
-			} else if (element instanceof IDebugElement) {
-				launch= ((IDebugElement) element).getLaunch();
-			} else if (element instanceof IProcess) {
-				launch= ((IProcess) element).getLaunch();
-			}
-			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-			lManager.removeLaunch(launch);
-		}
+		LaunchView.terminateAndRemove(element);
 	}
 
 	/**

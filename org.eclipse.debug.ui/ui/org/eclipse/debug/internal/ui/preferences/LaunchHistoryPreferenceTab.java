@@ -29,6 +29,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -125,6 +127,13 @@ public class LaunchHistoryPreferenceTab {
 				handleFavoriteSelectionChanged();
 			}
 		});
+		getFavoritesTable().getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					removeSelectedFavorites();
+				}
+			}
+		});
 		gd = new GridData(GridData.FILL_BOTH);
 		getFavoritesTable().getTable().setLayoutData(gd);
 		getFavoritesTable().getTable().setFont(font);
@@ -151,7 +160,7 @@ public class LaunchHistoryPreferenceTab {
 		fRemoveFavoritesButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Re&move_2"), null); //$NON-NLS-1$
 		fRemoveFavoritesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleRemoveFavoriteButtonSelected();
+				removeSelectedFavorites();
 			}
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
@@ -220,6 +229,13 @@ public class LaunchHistoryPreferenceTab {
 		getRecentTable().getTable().setLayoutData(gd);
 		getRecentTable().getTable().setFont(font);
 		getRecentTable().setInput(DebugUIPlugin.getDefault());
+		getRecentTable().getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					removeSelectedRecent();
+				}
+			}
+		});
 		
 		buttonComp = new Composite(topComp, SWT.NONE);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -243,7 +259,7 @@ public class LaunchHistoryPreferenceTab {
 		fRemoveRecentButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Remo&ve_6"), null); //$NON-NLS-1$
 		fRemoveRecentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleRemoveRecentButtonSelected();
+				removeSelectedRecent();
 			}
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
@@ -364,7 +380,7 @@ public class LaunchHistoryPreferenceTab {
 	/**
 	 * The 'remove favorites' button has been pressed
 	 */
-	protected void handleRemoveFavoriteButtonSelected() {
+	protected void removeSelectedFavorites() {
 		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
 		Iterator iter = sel.iterator();
 		while (iter.hasNext()) {
@@ -415,7 +431,7 @@ public class LaunchHistoryPreferenceTab {
 	/**
 	 * The 'remove recent' button has been pressed
 	 */
-	protected void handleRemoveRecentButtonSelected() {
+	protected void removeSelectedRecent() {
 		IStructuredSelection sel = (IStructuredSelection)getRecentTable().getSelection();
 		Iterator iter = sel.iterator();
 		while (iter.hasNext()) {

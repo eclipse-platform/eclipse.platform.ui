@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -20,13 +22,17 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -41,6 +47,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -56,7 +63,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -177,6 +187,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected Viewer createViewer(Composite parent) {
 		LaunchViewer lv = new LaunchViewer(parent);
 		lv.addSelectionChangedListener(this);
+		lv.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					handleDeleteKeyPressed();
+				}
+			}
+		});
 		lv.setContentProvider(createContentProvider());
 		lv.setLabelProvider(new DelegatingModelPresentation());
 		lv.setUseHashlookup(true);
@@ -189,6 +206,87 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setActive(getSite().getPage().findView(getSite().getId()) != null);
 		
 		return lv;
+	}
+	
+	private void handleDeleteKeyPressed() {
+		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
+		Iterator iter= selection.iterator();
+		Object item;
+		boolean itemsToTerminate= false;
+		ITerminate terminable;
+		while (iter.hasNext()) {
+			item= iter.next();
+			if (item instanceof ITerminate) {
+				terminable= (ITerminate) item;
+				if (terminable.canTerminate() && !terminable.isTerminated()) {
+					itemsToTerminate= true;
+					break;
+				}
+			}
+		}
+		if (itemsToTerminate) {
+			// Prompt the user to proceed with termination
+			if (!MessageDialog.openQuestion(getSite().getShell(), "Terminate and Remove", "Terminate and remove selected?")) {
+				return;
+			}
+		}
+		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "Exceptions occurred attempting to terminate and remove", null);
+		iter= selection.iterator(); 
+		while (iter.hasNext()) {
+			try {
+				terminateAndRemove(iter.next());
+			} catch (DebugException exception) {
+				status.merge(exception.getStatus());				
+			}
+		}
+		if (!status.isOK()) {
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window != null) {
+				DebugUIPlugin.errorDialog(window.getShell(), "Terminate and Remove", "Terminate and remove failed", status);
+			} else {
+				DebugUIPlugin.log(status);
+			}
+		}
+	}
+	
+	/**
+	 * Terminates and removes the given element from the launch manager
+	 */
+	public static void terminateAndRemove(Object element) throws DebugException {
+		if (!(element instanceof ITerminate)) {
+			return;
+		}
+		ITerminate terminable= (ITerminate) element;
+		if (!(terminable.canTerminate() || terminable.isTerminated())) {
+			// Don't try to terminate or remove attached launches
+			return;
+		}
+		try {
+			if (!terminable.isTerminated()) {
+				terminable.terminate();
+			}
+		} finally {
+			remove(element);
+		}
+	}
+	
+	/**
+	 * Removes the given element from the launch manager. Has no effect if the
+	 * given element is not of type ILaunch, IDebugElement, or IProcess
+	 */
+	private static void remove(Object element) {
+		ILaunch launch= null;
+		if (element instanceof ILaunch) {
+			launch= (ILaunch) element;
+		} else if (element instanceof IDebugElement) {
+			launch= ((IDebugElement) element).getLaunch();
+		} else if (element instanceof IProcess) {
+			launch= ((IProcess) element).getLaunch();
+		} else {
+			return;
+		}
+		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+		lManager.removeLaunch(launch);
 	}
 	
 	/**
