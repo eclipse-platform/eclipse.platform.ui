@@ -778,7 +778,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if the caret is at the end of the line the caret is moved directly after the line's last non-whitespace character
 	 *  @since 2.1
 	 */
-	private class LineEndAction extends TextNavigationAction {
+	class LineEndAction extends TextNavigationAction {
 
 		private boolean fDoSelect;
 		
@@ -857,7 +857,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if the caret is at the beginning of the line the caret is moved directly before the line's first non-whitespace character
 	 *  @since 2.1
 	 */
-	private class LineStartAction extends TextNavigationAction {
+	class LineStartAction extends TextNavigationAction {
 		
 		private boolean fDoSelect;
 		
