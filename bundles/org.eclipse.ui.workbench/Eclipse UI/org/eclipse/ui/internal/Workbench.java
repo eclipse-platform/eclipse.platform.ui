@@ -126,7 +126,6 @@ import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.testing.TestableObject;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. 

@@ -13,7 +13,6 @@ package org.eclipse.ui;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.testing.TestableObject;
 
 /**
