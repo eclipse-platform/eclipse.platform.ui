@@ -29,6 +29,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PreferenceLinkArea extends LinkArea {
 
+	/**
+	 * Create a new instance of the receiver
+	 * @param parent the parent Composite
+	 * @param style the SWT style 
+	 * @param pageId the page id
+	 * @param message the message to use as text
+	 */
 	public PreferenceLinkArea(Composite parent, int style, String pageId, String message) {
 		super(parent, style);
 		IPreferenceNode node = getPreferenceNode(pageId);
@@ -36,7 +43,6 @@ public class PreferenceLinkArea extends LinkArea {
 			throw new InvalidParameterException("Node not found");//$NON-NLS-1$
 		}
 		setRunnable(getRunnable(node));
-        MessageFormat format = new MessageFormat(message);
         String result = MessageFormat.format(message, new String[] {node.getLabelText()});
 		setText(result);
 	}

@@ -353,7 +353,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
-		layout.marginWidth = 10;
+		layout.marginWidth = IDialogConstants.HORIZONTAL_MARGIN;
 		pageAreaComposite.setLayout(layout);
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
@@ -466,7 +466,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * the pages.
 	 * @return PageLayout
 	 */
-	protected PageLayout getPageLayout() {
+	protected Layout getPageLayout() {
 		return new PageLayout();
 	}
 
