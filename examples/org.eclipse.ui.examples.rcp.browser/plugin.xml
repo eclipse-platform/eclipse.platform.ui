@@ -16,9 +16,9 @@
    </requires>
 
    <extension
+         point="org.eclipse.core.runtime.applications"
          id="app"
-         name="%appName"
-         point="org.eclipse.core.runtime.applications">
+         name="%appName">
       <application>
          <run
             class="org.eclipse.ui.examples.rcp.browser.BrowserApp">
@@ -28,16 +28,16 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
+            id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
             name="%perspectives.browser.name"
             class="org.eclipse.ui.examples.rcp.browser.BrowserPerspectiveFactory"
-            id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
             fixed="true"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="%views.category.name"
-            id="org.eclipse.ui.examples.rcp.browser"/>
+            id="org.eclipse.ui.examples.rcp.browser"
+            name="%views.category.name"/>
       <view
             id="org.eclipse.ui.examples.rcp.browser.browserView"
             name="%views.browser.name"
@@ -53,8 +53,8 @@
             category="org.eclipse.ui.examples.rcp.browser"/>
    </extension>
    <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
+         point="org.eclipse.core.runtime.products"
+         id="product">
       <product
             name="%productName"
             application="org.eclipse.ui.examples.rcp.browser.app">
