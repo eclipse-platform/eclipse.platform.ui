@@ -413,7 +413,11 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 	public int performMirror(String[] cmd_mirror) {
 		File file = new File(getEclipseRoot());
 		try {
-
+			System.out.println("Launching:");
+			for(int i=0; i<cmd_mirror.length; i++){
+				System.out.print(cmd_mirror[i]+" ");
+			}
+			System.out.println();
 			Process proc =
 				Runtime.getRuntime().exec(cmd_mirror, (String[]) null, file);
 
