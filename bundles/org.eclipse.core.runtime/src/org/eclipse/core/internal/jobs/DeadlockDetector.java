@@ -436,12 +436,34 @@ class DeadlockDetector {
 	 */
 	Thread resolutionCandidate(Thread thread, ISchedulingRule lock) {
 		Thread candidate = thread;
+		//first look for a candidate that has no scheduling rules
 		for (int i = 0; i < lockThreads.size(); i++) {
 			if (!ownsRuleLocks(candidate))
 				return candidate;
 			candidate = blockingThread(candidate);
 		}
+		//next choose the thread that owns the lock this thread is waiting for
+		if(lock instanceof ILock)
+			return getThreadOwningLock(lock);
+		//next look for any candidate with a lock
+		for (int i = 0; i < lockThreads.size(); i++) {
+			if (ownsLocks(candidate))
+				return candidate;
+			candidate = blockingThread(candidate);
+		}
 		return thread;
+	}
+	private boolean ownsLocks(Thread owner) {
+		int index = indexOf(owner);
+
+		for (int j = 0; j < graph[index].length; j++) {
+			if (graph[index][j] > NO_STATE) {
+				Object lock = locks.get(j);
+				if (lock instanceof ILock)
+					return true;
+			}
+		}
+		return false;
 	}
 	/**
 	 * The given thread is waiting for the given lock. Update the graph.  
