@@ -303,13 +303,13 @@ final class Persistence {
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
 
-		if (keyConfigurationId == null)
-			keyConfigurationId = Util.ZERO_LENGTH_STRING;
-
 		// TODO deprecated start
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("configuration"); //$NON-NLS-1$
 		// TODO deprecated end		
+
+		if (keyConfigurationId == null)
+			keyConfigurationId = Util.ZERO_LENGTH_STRING;
 
 		KeySequence keySequence = KeySequence.getInstance();
 		String keySequenceAsString = memento.getString(TAG_KEY_SEQUENCE);
