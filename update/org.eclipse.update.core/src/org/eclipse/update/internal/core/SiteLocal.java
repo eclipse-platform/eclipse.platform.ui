@@ -240,7 +240,8 @@ public class SiteLocal implements ILocalSite, IWritable {
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			File file = null;
 			try {
-				file = new File(UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null).getFile());
+				URL newURL = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+				file = UpdateManagerUtils.decodeFile(newURL);
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);

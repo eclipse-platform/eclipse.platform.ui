@@ -7,6 +7,7 @@ package org.eclipse.update.examples.buildzip;
  
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -83,7 +84,7 @@ public class BuildZipFeatureParser {
 		String build = "";
 		String state = "ID";
 		boolean firstToken = true;
-		String zipName = cp.getURL().getFile();
+		String zipName = URLDecoder.decode(cp.getURL().getFile());
 		int ix = zipName.lastIndexOf("/");
 		if (ix != -1)
 			zipName = zipName.substring(ix+1);

@@ -27,8 +27,8 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			IFeatureReference[] feature = remoteSite.getFeatureReferences();
 			ICategory[] categories = remoteSite.getCategories();
 			
-			String path = UpdateManagerUtils.getPath(remoteUrl);		
-			String path2 = UpdateManagerUtils.getPath(remoteSite.getInfoURL());	
+			String path = UpdateManagerUtils.decode(remoteUrl);		
+			String path2 = UpdateManagerUtils.decode(remoteSite.getInfoURL());	
 			assertEquals(path+"info/siteInfo.html",path2);
 			
 		} catch (Exception e){

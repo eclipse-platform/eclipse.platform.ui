@@ -27,7 +27,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 	 */
 	public void testSiteType() throws Exception{ 
 		
-		String featurePath = dataPath+"SiteTypeExamples/site1/";
+		String featurePath = dataPath+"SiteTypeExamples/site1/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature();

@@ -247,7 +247,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		// save the configuration
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = new File(location.getFile());
+			File file = UpdateManagerUtils.decodeFile(location);
 			UpdateManagerUtils.removeFromFileSystem(file);
 		}
 	}
@@ -291,7 +291,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		// save the configuration
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = new File(location.getFile());
+			File file = UpdateManagerUtils.decodeFile(location);
 			export(file);
 		}
 	}

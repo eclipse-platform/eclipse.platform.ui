@@ -23,7 +23,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testCreationConfigFile() throws Exception {
 
 		//clean up
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		URL newURL = new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE);
+		File localFile = UpdateManagerUtils.decodeFile(newURL);
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;	
 
@@ -32,7 +33,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
 		site.save();
 		URL location = ((SiteLocal)site).getLocation();
-		String filePath = new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile();
+		String filePath = UpdateManagerUtils.decode(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE));
 		File file = new File(filePath);
 		assertTrue("config file hasn't been saved in :"+filePath, file.exists());
 		assertTrue("Local site hasn't been saved in :"+localFile.getAbsolutePath(),localFile.exists());

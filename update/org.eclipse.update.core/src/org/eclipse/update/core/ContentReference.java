@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+
 /**
  * Default content reference. 
  * Implements a simple URL or local File wrapper.
@@ -128,7 +130,7 @@ public class ContentReference {
 			return file;
 			
 		if (url!=null && url.getProtocol().equals("file"))
-			return new File(url.getFile());
+			return UpdateManagerUtils.decodeFile(url);
 			
 		throw new IOException("Unable to return reference "+(url==null ? "" : url.toExternalForm())+" as file");
 	}

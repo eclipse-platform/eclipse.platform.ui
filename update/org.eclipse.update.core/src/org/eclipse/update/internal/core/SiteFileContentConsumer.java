@@ -30,7 +30,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
 
-		String path = UpdateManagerUtils.getPath(getSite().getURL());
+		String path = UpdateManagerUtils.decode(getSite().getURL());
 
 		// FIXME: fragment code
 		String pluginPath = null;
@@ -61,7 +61,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
  	 */
 	private String getFeaturePath() {
 		VersionedIdentifier featureIdentifier = feature.getVersionIdentifier();
-		String path = UpdateManagerUtils.getPath(getSite().getURL());
+		String path = UpdateManagerUtils.decode(getSite().getURL());
 		String featurePath = path + Site.INSTALL_FEATURE_PATH + featureIdentifier.toString() + File.separator;
 		return featurePath;
 	}

@@ -33,7 +33,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
  	 * move into contentSelector, comment to provider and consumer (SiteFile)
  	 */
 	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
-		String path = UpdateManagerUtils.getPath(getURL());
+		String path = UpdateManagerUtils.decode(getURL());
 		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
 		return featurePath;
 	}
@@ -74,11 +74,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
 			// if there is no mapping in the site.xml
 			// for this archiveId, use the default one
 			if (contentURL==null) {
-				String protocol = getURL().getProtocol();
-				String host = getURL().getHost();
-				int port = getURL().getPort();
-				String path = UpdateManagerUtils.getPath(getURL());			
-				contentURL = new URL(protocol,host,port,path+archiveId);
+				contentURL = UpdateManagerUtils.add(archiveId,getURL());
 			}
 			
 		} catch (MalformedURLException e){

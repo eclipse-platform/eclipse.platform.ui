@@ -11,6 +11,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 public class ZipSiteFactory extends BaseSiteFactory {
 
@@ -45,7 +46,7 @@ public class ZipSiteFactory extends BaseSiteFactory {
 			site.setSiteContentProvider(contentProvider);
 						
 			// get all matching zip files on teh site			
-			File file = new File(url.getFile());
+			File file = UpdateManagerUtils.decodeFile(url);
 			String[] listOfZips = file.list(new ZipFilter());
 
 			FeatureReferenceModel ref = null;
@@ -74,7 +75,8 @@ public class ZipSiteFactory extends BaseSiteFactory {
 		URL result = url;
 		if (url != null && url.getFile().endsWith(Site.SITE_XML)) {
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile().substring(0, index));
+			String newPath = UpdateManagerUtils.encode(url.getFile().substring(0, index));
+			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), newPath);
 		}
 		return result;
 	}

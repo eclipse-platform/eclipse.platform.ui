@@ -23,7 +23,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 * Method testHTTPSite.
 	 * @throws Exception
 	 */
-	public void testDejanSite() throws Exception{ 
+	public void testUpdateManagerSite() throws Exception{ 
 		
 		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),bundle.getString("HTTP_PATH_2")));
 		ICategory[] categories = remoteSite.getCategories();

@@ -85,7 +85,7 @@ public class UpdateManagerPlugin extends Plugin {
 
 	// clean TEMP drive
 	public void shutdown() throws CoreException {
-			String path = UpdateManagerUtils.getPath(SiteManager.getTempSite().getURL());
+			String path = UpdateManagerUtils.decode(SiteManager.getTempSite().getURL());
 			UpdateManagerUtils.removeFromFileSystem(new File(path));
 	}
 

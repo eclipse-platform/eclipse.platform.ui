@@ -83,7 +83,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		this.url = url;
 		this.site = (Site)createSiteMapModel();	
 				
-		String path = UpdateManagerUtils.getPath(this.url);
+		String path = UpdateManagerUtils.decode(this.url);
 		String pluginPath = path + Site.DEFAULT_PLUGIN_PATH;
 		String fragmentPath = path + Site.DEFAULT_FRAGMENT_PATH;
 		PluginRegistryModel model = new PluginRegistryModel();	
@@ -115,7 +115,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	private void parseExecutableFeature() throws CoreException {
 		
-		String path = UpdateManagerUtils.getPath(this.url);
+		String path = UpdateManagerUtils.decode(this.url);
 		String featurePath = path + Site.INSTALL_FEATURE_PATH;
 		
 		
@@ -156,7 +156,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	private void parsePackagedFeature() throws CoreException {
 		
-		String path = UpdateManagerUtils.getPath(this.url);
+		String path = UpdateManagerUtils.decode(this.url);
 		String featurePath = path + Site.DEFAULT_FEATURE_PATH;
 		
 		// FEATURES
@@ -359,7 +359,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 		URL result = url;
 		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			result = new URL(url.getProtocol(), url.getHost(), url.getPort(),url.getFile().substring(0,index));
+			String newPath = UpdateManagerUtils.encode(url.getFile().substring(0, index));			
+			result = new URL(url.getProtocol(), url.getHost(), url.getPort(),newPath);
 		}
 		return result;
 	}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -153,7 +154,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processFeature(Attributes attributes) {
 		FeatureReferenceModel feature = factory.createFeatureReferenceModel();
-		String urlInfo = attributes.getValue("url");
+		String urlInfo = UpdateManagerUtils.encode(attributes.getValue("url"));
 		feature.setURLString(urlInfo);
 
 		String type = attributes.getValue("type");
@@ -174,7 +175,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		ArchiveReferenceModel archive = factory.createArchiveReferenceModel();		
 		String id = attributes.getValue("path");
 		archive.setPath(id);
-		String urlString = attributes.getValue("url");
+		String urlString = UpdateManagerUtils.encode(attributes.getValue("url"));
 		archive.setURLString(urlString);
 		site.addArchiveReferenceModel(archive);
 

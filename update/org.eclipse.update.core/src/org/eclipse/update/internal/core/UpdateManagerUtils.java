@@ -6,6 +6,8 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -62,7 +64,7 @@ public class UpdateManagerUtils {
 		} catch (MalformedURLException e) {
 			// the url is not an absolute URL
 			// try relative
-			url = new URL(rootURL,urlString);
+			url = new URL(rootURL,encode(urlString));
 		}
 		return url;
 	}
@@ -250,6 +252,43 @@ public class UpdateManagerUtils {
 		return url.getPath();
 	}
 	
+	
+	public static String decode(URL url){
+		String result = null;
+		if (url!=null) result=URLDecoder.decode(url.getFile());
+		return result;
+	}
+
+	public static File decodeFile(URL url){
+		File result = null;
+		if (url!=null) result=new File(decode(url));
+		return result;
+	}
+	
+	public static String encode(String path){
+		String result = null;
+		path = path.trim();
+		// change any space with %20
+		int index = -1;
+		while ((index = path.indexOf(" "))!=-1){
+			path = path.substring(0,index)+"%20"+path.substring(index+1);
+		}
+		result = path;
+		return result;
+	}
+	
+	public static URL add(String path,URL url) throws MalformedURLException{
+		URL newURL = null;
+		if (path!=null && url != null){
+			String protocol = url.getProtocol();
+			String host = url.getHost();
+			int port = url.getPort();
+			String rootPath = UpdateManagerUtils.decode(url);
+			String newPath = UpdateManagerUtils.encode(rootPath+path);			
+			newURL = new URL(protocol,host,port,newPath);		
+		}
+		return newURL;
+	}	
 	/**
 	 * Returns teh runtime configuration from core boot
 	 */

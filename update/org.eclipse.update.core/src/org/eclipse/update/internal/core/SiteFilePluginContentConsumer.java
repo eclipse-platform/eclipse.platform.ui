@@ -28,7 +28,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
-		String path = UpdateManagerUtils.getPath(site.getURL());
+		String path = UpdateManagerUtils.decode(site.getURL());
 		InputStream inStream = null;
 
 		// FIXME: fragment code

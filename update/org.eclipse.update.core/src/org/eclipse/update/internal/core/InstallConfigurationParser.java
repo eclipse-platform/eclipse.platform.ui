@@ -150,7 +150,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private void processFeature(Attributes attributes) throws MalformedURLException, CoreException {
 
 		// url
-		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), attributes.getValue("url"), null);
+		String path = UpdateManagerUtils.encode(attributes.getValue("url"));
+		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), path, null);
 		
 		// configured ?
 		String configuredString = attributes.getValue("configured");

@@ -59,11 +59,7 @@ public class SiteURLContentProvider extends SiteContentProvider {
 			// if there is no mapping in the site.xml
 			// for this archiveId, use the default one
 			if (contentURL==null) {
-				String protocol = getURL().getProtocol();
-				String host = getURL().getHost();
-				int port = getURL().getPort();
-				String path = UpdateManagerUtils.getPath(getURL());			
-				contentURL = new URL(protocol,host,port,path+archiveId);
+				contentURL = UpdateManagerUtils.add(archiveId,getURL());
 			}
 			
 		} catch (MalformedURLException e){

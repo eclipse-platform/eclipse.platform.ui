@@ -25,10 +25,10 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 	public void testDataEntrySite() throws Exception {
 
 		//cleanup target 
-		File target = new File(TARGET_FILE_SITE.getFile());
+		File target = UpdateManagerUtils.decodeFile(TARGET_FILE_SITE);
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
-		URL newURL =new File(dataPath + "dataEntrySiteTest/").toURL();
+		URL newURL =new File(dataPath + "dataEntrySiteTest/site.xml").toURL();
 		ISite remoteSite = SiteManager.getSite(newURL);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);

@@ -127,7 +127,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 
 		// check
-		String site = UpdateManagerUtils.getPath(localSite.getURL());			
+		String site = UpdateManagerUtils.decode(localSite.getURL());			
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
@@ -186,7 +186,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
-		String sitePath = UpdateManagerUtils.getPath(site.getSite().getURL());			
+		String sitePath = UpdateManagerUtils.decode(site.getSite().getURL());			
 		String pluginName = entries[0].getVersionIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());

@@ -74,7 +74,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
 		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.exe");
 		
-		String featurePath = dataPath+"FeatureTypeExamples/site1/";
+		String featurePath = dataPath+"FeatureTypeExamples/site1/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature();
@@ -96,7 +96,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
 		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.jar");
 		
-		String featurePath = dataPath+"FeatureTypeExamples/site2/";
+		String featurePath = dataPath+"FeatureTypeExamples/site2/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		IFeature feature = ref.getFeature();
@@ -114,7 +114,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 * @throws Exception
 	 */
 	public void testFeatureUnknownType() throws Exception{ 
-		String featurePath = dataPath+"FeatureTypeExamples/site3/";
+		String featurePath = dataPath+"FeatureTypeExamples/site3/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		try {

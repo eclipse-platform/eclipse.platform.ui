@@ -36,7 +36,7 @@ public class AllAPITests extends UpdateManagerTestCase {
 		suite.addTest(new TestSuite(TestSiteManagerAPI.class));		
 
 		// clean up
-		String path = UpdateManagerUtils.getPath(SiteManager.getTempSite().getURL());
+		String path = UpdateManagerUtils.decode(SiteManager.getTempSite().getURL());
 		UpdateManagerUtils.removeFromFileSystem(new File(path));
 
 		return suite;
