@@ -140,15 +140,15 @@ public interface IExpressionManager {
 	public void removeExpressionListener(IExpressionsListener listener);
 		
 	/**
-	 * Retuns the watch expression delegate specified for the given debug
+	 * Returns a watch expression delegate specified for the given debug
 	 * model via extension or <code>null</code> if no delegate is available.
 	 * 
 	 * @param debugModel the unique identifier of a debug model
-	 * @return the watch expression delegate associated with the given model
+	 * @return a watch expression delegate associated with the given model
 	 * 		or <code>null</code> if none
 	 * @since 3.0
 	 */
-	public IWatchExpressionDelegate getWatchExpressionDelegate(String debugModel);
+	public IWatchExpressionDelegate newWatchExpressionDelegate(String debugModel);
 }
 
 

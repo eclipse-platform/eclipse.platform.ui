@@ -71,6 +71,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	private ListenerList fExpressionsListeners = null;
 	
+	/**
+	 * Mapping of debug model identifiers (String) to
+	 * expression delegate extensions (IConfigurationElement)
+	 */
 	private Map fWatchExpressionDelegates= new HashMap();	
 	
 	// Constants for add/remove/change notification
@@ -109,21 +113,22 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 				if (debugModel == null || debugModel.length() == 0) {
 					continue;
 				}
-				try {
-					IWatchExpressionDelegate delegate = (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
-					fWatchExpressionDelegates.put(debugModel, delegate);
-				} catch (CoreException e) {
-					DebugPlugin.log(e);
-				}
+				fWatchExpressionDelegates.put(debugModel, element);
 			}
 		}
 	}
 	
 	/**
-	 * @see IExpressionManager#getWatchExpressionDelegate(String)
+	 * @see IExpressionManager#newWatchExpressionDelegate(String)
 	 */
-	public IWatchExpressionDelegate getWatchExpressionDelegate(String debugModel) {
-		return (IWatchExpressionDelegate) fWatchExpressionDelegates.get(debugModel);
+	public IWatchExpressionDelegate newWatchExpressionDelegate(String debugModel) {
+		try {
+			IConfigurationElement element= (IConfigurationElement) fWatchExpressionDelegates.get(debugModel);
+			return (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+		} catch (CoreException e) {
+			DebugPlugin.log(e);
+			return null;
+		}
 	}
 
 	/**

@@ -26,7 +26,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	/**
 	 * Sets the context for this watch expression, or <code>null</code> if none.
 	 * If the given context is valid for this expression, this expression may
-	 * update its value. When the value update is complete, a change event is
+	 * update its value. When the value update is complete, a debug change event is
 	 * fired. When <code>null</code> is specified as a context, this expression
 	 * may choose to retain its previous value.
 	 * <p>

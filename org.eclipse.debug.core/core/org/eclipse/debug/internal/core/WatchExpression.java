@@ -34,6 +34,7 @@ public class WatchExpression implements IWatchExpression {
 	protected String fExpressionText;
 	protected IWatchExpressionResult fResult;
 	protected IDebugTarget fDebugTarget;
+	protected IDebugElement fCurrentContext;
 	private boolean fEnabled= true;
 	private boolean fObsolete= false;
 	private boolean fPending= false;
@@ -63,9 +64,10 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(java.lang.Object)
 	 */
 	public void setExpressionContext(IDebugElement context) {
+		fCurrentContext= context;
 		setObsolete(false);
 		if (context == null) {
-			fResult= null;
+			setResult(null);
 			return;
 		}
 		if (!isEnabled()) {
@@ -82,21 +84,21 @@ public class WatchExpression implements IWatchExpression {
 			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IValue)
 			 */
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
-				fResult= result;
 				setPending(false);
-				fireChanged();
+				setResult(result);
 			}
 		};
 		setPending(true);
-		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().getWatchExpressionDelegate(context.getModelIdentifier());
+		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().newWatchExpressionDelegate(context.getModelIdentifier());
 		delegate.evaluateExpression(getExpressionText(), context, listener);
 	}
 
 	/**
-	 * Set a change debug event, with this as the source, to notified that the
-	 * status/content of the expression has changed.
+	 * Sets the result of the last expression and fires notification that
+	 * this expression's value has changed.
 	 */
-	public void fireChanged() {
+	public void setResult(IWatchExpressionResult result) {
+		fResult= result;
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.CHANGE)});
 	}
 	
@@ -174,6 +176,7 @@ public class WatchExpression implements IWatchExpression {
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
 		watchExpressionChanged();
+		setExpressionContext(fCurrentContext);
 	}
 
 	/**
