@@ -62,7 +62,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.jobs.JobBusyCursor;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
-import org.eclipse.team.internal.ui.sync.actions.OpenInCompareAction;
 import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
