@@ -38,15 +38,30 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	}
 
 	public void start(BundleContext context) throws Exception {
-		PlatformActivator.context = context;
-		acquireInfoService();
-		acquireURLConverterService();
-		startInternalPlatform();
-		startRegistry(context);
-		installPlatformURLSupport();
-		registerApplicationService();
-		InternalPlatform.getDefault().setRuntimeInstance(this);
-		super.start(context);
+		try {
+			PlatformActivator.context = context;
+			acquireInfoService();
+			acquireURLConverterService();
+			startInternalPlatform();
+			startRegistry(context);
+			installPlatformURLSupport();
+			registerApplicationService();
+			InternalPlatform.getDefault().setRuntimeInstance(this);
+			super.start(context);
+		} catch (Exception e) {			
+			// need to show any exception that happened, otherwise the platform will not start
+			String message = Policy.bind("meta.platform", e.toString());							
+			if (InternalPlatform.getDefault().hasLogWriter()) {
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.INTERNAL_ERROR, message, e); //$NON-NLS-1$
+				InternalPlatform.getDefault().log(status);
+			}	else {				
+				// if we cannot count on a log file, let's hope the user has a console open
+				System.err.println(message);
+				e.printStackTrace();				
+			}
+			// let the exception interrupt the activation of the platform bundle
+			throw e;
+		}
 	}
 
 	/**
@@ -137,7 +152,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.urlConverter  = (URLConverter) context.getService(urlServiceReference);
 	}
 
-	private void startInternalPlatform() throws Exception {
+	private void startInternalPlatform() {
 		InternalPlatform.getDefault().start(context);	
 	}
 

@@ -328,7 +328,7 @@ public final class InternalPlatform implements IPlatform {
 
 
 	/**
-	 * Returns a log for the given plugin or <code>null</code> if none exists.
+	 * Returns a log for the given plugin. Creates a new one if needed.
 	 */
 	public ILog getLog(Bundle bundle) {
 		ILog result = (ILog) logs.get(bundle);
@@ -380,6 +380,12 @@ public final class InternalPlatform implements IPlatform {
 			log(status); //$NON-NLS-1$
 		}
 		code.handleException(e);
+	}
+	/**
+	 * @return whether platform log writer has already been registered
+	 */
+	public boolean hasLogWriter() {
+		return platformLog != null && logListeners.contains(platformLog);
 	}
 
 	public IExtensionRegistry getRegistry() {
@@ -460,7 +466,7 @@ public final class InternalPlatform implements IPlatform {
 	 * @see BootLoader
 	 */
 
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) {
 		this.context = context;
 		// TODO figure out how to do the splash.  This really should be something that is in the OSGi implementation
 		endOfInitializationHandler = getSplashHandler();
@@ -478,7 +484,7 @@ public final class InternalPlatform implements IPlatform {
 			addLogListener(consoleLog);
 		}
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
-	}
+	}	
 	/**
 	 * 
 	 */
