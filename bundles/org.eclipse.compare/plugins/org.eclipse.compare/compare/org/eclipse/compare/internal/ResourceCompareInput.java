@@ -125,6 +125,25 @@ class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	/**
+	 * Initializes the images in the compare configuration.
+	 */
+	void initializeCompareConfiguration() {
+		CompareConfiguration cc= getCompareConfiguration();
+		if (fLeftResource != null) {
+			cc.setLeftLabel(buildLabel(fLeftResource));
+			cc.setLeftImage(CompareUIPlugin.getImage(fLeftResource));
+		}
+		if (fRightResource != null) {
+			cc.setRightLabel(buildLabel(fRightResource));
+			cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
+		}
+		if (fThreeWay && fAncestorResource != null) {			
+			cc.setAncestorLabel(buildLabel(fAncestorResource));
+			cc.setAncestorImage(CompareUIPlugin.getImage(fAncestorResource));
+		}
+	}
+	
+	/**
 	 * Returns true if the given arguments cannot be compared.
 	 */
 	private boolean incomparable(IStructureComparator c1, IStructureComparator c2) {
@@ -170,8 +189,6 @@ class ResourceCompareInput extends CompareEditorInput {
 	 */
 	public Object prepareInput(IProgressMonitor pm) throws InvocationTargetException {
 				
-		CompareConfiguration cc= (CompareConfiguration) getCompareConfiguration();
-	
 		try {
 			// fix for PR 1GFMLFB: ITPUI:WIN2000 - files that are out of sync with the file system appear as empty							
 			fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
@@ -182,19 +199,11 @@ class ResourceCompareInput extends CompareEditorInput {
 				
 			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
-			cc.setLeftLabel(buildLabel(fLeftResource));
-			cc.setLeftImage(CompareUIPlugin.getImage(fLeftResource));
-			
-			cc.setRightLabel(buildLabel(fRightResource));
-			cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
-
 			String leftLabel= fLeftResource.getName();
 			String rightLabel= fRightResource.getName();
 			
 			String title;
 			if (fThreeWay) {			
-				cc.setAncestorLabel(buildLabel(fAncestorResource));
-				cc.setAncestorImage(CompareUIPlugin.getImage(fAncestorResource));
 				String format= Utilities.getString("ResourceCompare.threeWay.title"); //$NON-NLS-1$
 				String ancestorLabel= fAncestorResource.getName();
 				title= MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel} );

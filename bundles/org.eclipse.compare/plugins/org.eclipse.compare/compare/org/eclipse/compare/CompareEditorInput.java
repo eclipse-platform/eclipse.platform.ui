@@ -314,6 +314,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Progress should be reported to the given progress monitor.
 	 * A request to cancel the operation should be honored and acknowledged 
 	 * by throwing <code>InterruptedException</code>.
+	 * <p>
+	 * Note: this method is typically called in a modal context thread which doesn't have a Display assigned.
+	 * Implementors of this method shouldn't therefore allocated any SWT resources in this method.
+	 * </p>
 	 *
 	 * @param monitor the progress monitor to use to display progress and receive
 	 *   requests for cancelation

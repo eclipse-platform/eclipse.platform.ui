@@ -62,7 +62,20 @@ import org.eclipse.compare.internal.*;
 		fPatcher= patcher;
 		IResource[] s= Utilities.getResources(selection);
 		if (s.length == 1)
-			fTarget= s[0];	
+			fTarget= s[0];
+		
+		if (fPatcher != null) {
+			String rformat= PatchMessages.getString("PatchCompareInput.RightTitle.format");	//$NON-NLS-1$
+			String rightLabel= MessageFormat.format(rformat, new String[] { fPatcher.getName() } );
+			config.setRightLabel(rightLabel);
+			//cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
+		}
+		
+		if (fTarget != null) {
+			String leftLabel= fTarget.getName();
+			config.setLeftLabel(leftLabel);
+			config.setLeftImage(CompareUIPlugin.getImage(fTarget));
+		}	
 	}
 	
 	/**
@@ -70,8 +83,6 @@ import org.eclipse.compare.internal.*;
 	 */
 	public Object prepareInput(IProgressMonitor pm) throws InvocationTargetException {
 						
-		CompareConfiguration cc= (CompareConfiguration) getCompareConfiguration();
-		
 		try {				
 			Diff[] diffs= fPatcher.getDiffs();
 			
@@ -101,13 +112,9 @@ import org.eclipse.compare.internal.*;
 			fTarget.refreshLocal(IResource.DEPTH_INFINITE, pm);
 			
 			String leftLabel= fTarget.getName();
-			cc.setLeftLabel(leftLabel);
-			cc.setLeftImage(CompareUIPlugin.getImage(fTarget));
 			
 			String rformat= PatchMessages.getString("PatchCompareInput.RightTitle.format");	//$NON-NLS-1$
 			String rightLabel= MessageFormat.format(rformat, new String[] { fPatcher.getName() } );
-			cc.setRightLabel(rightLabel);
-			//cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
 			
 			String format= Utilities.getString("ResourceCompare.twoWay.title"); //$NON-NLS-1$
 			String title= MessageFormat.format(format, new String[] {leftLabel, rightLabel} );

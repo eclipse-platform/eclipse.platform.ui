@@ -18,6 +18,7 @@ public class CompareAction implements IActionDelegate {
 
 	public void run(IAction action) {
 		if (fInput != null) {
+			fInput.initializeCompareConfiguration();
 			CompareUI.openCompareEditor(fInput);
 			fInput= null;	// don't reuse this input!
 		}
