@@ -689,7 +689,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 			if (value instanceof IHandler) {
 				handler = (IHandler) value;
 			} else if (value == null) {
-				// TODO: Possible fix for 84700 (Kim)
 				handler = null;
 			} else {
 				handler = new LegacyHandlerWrapper(
