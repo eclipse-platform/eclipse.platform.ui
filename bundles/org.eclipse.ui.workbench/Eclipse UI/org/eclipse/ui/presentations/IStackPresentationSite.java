@@ -131,5 +131,13 @@ public interface IStackPresentationSite {
      * @param menuManager the menu manager to populate
      */
     public void addSystemActions(IMenuManager menuManager);
-
+    
+    /**
+     * Notifies the workbench that the preferred size of the presentation has
+     * changed. Hints to the workbench that it should trigger a layout at the
+     * next opportunity.
+     * 
+     * @since 3.1
+     */
+    public void flushLayout();
 }

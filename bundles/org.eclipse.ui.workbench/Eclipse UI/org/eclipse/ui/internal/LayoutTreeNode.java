@@ -16,6 +16,9 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +30,17 @@ import org.eclipse.ui.IPageLayout;
  * sash and it allways has two children.
  */
 public class LayoutTreeNode extends LayoutTree {
+	
+	static class ChildSizes {
+		int left;
+		int right;
+		
+		public ChildSizes (int l, int r) {
+			left = l;
+			right = r;
+		}
+	};
+	
     /* The node children witch may be another node or a leaf */
     private LayoutTree children[] = new LayoutTree[2];
 
@@ -76,11 +90,6 @@ public class LayoutTreeNode extends LayoutTree {
         }
     }
 
-    public boolean fixedHeight() {
-        return (!children[0].isVisible() || children[0].fixedHeight())
-                && (!children[1].isVisible() || children[1].fixedHeight());
-    }
-
     /**
      * Add the relation ship between the children in the list
      * and returns the left children.
@@ -104,6 +113,7 @@ public class LayoutTreeNode extends LayoutTree {
         children[0].disposeSashes();
         children[1].disposeSashes();
         getSash().dispose();
+        flushCache();
     }
 
     /**
@@ -205,34 +215,6 @@ public class LayoutTreeNode extends LayoutTree {
     }
 
     /**
-     * Return the bounds of this tree which is the rectangle that
-     * contains all Controls in this tree.
-     */
-    public Rectangle getBounds() {
-        if (!children[0].isVisible())
-            return children[1].getBounds();
-
-        if (!children[1].isVisible())
-            return children[0].getBounds();
-
-        Rectangle leftBounds = children[0].getBounds();
-        Rectangle rightBounds = children[1].getBounds();
-        Rectangle sashBounds = getSash().getBounds();
-        Rectangle result = new Rectangle(leftBounds.x, leftBounds.y,
-                leftBounds.width, leftBounds.height);
-        if (getSash().isVertical()) {
-            result.width = rightBounds.width + leftBounds.width
-                    + sashBounds.width;
-            result.height = Math.max(leftBounds.height, rightBounds.height);
-        } else {
-            result.height = rightBounds.height + leftBounds.height
-                    + sashBounds.height;
-            result.width = Math.max(leftBounds.width, rightBounds.width);
-        }
-        return result;
-    }
-
-    /**
      * Returns the sash of this node.
      */
     public LayoutPartSash getSash() {
@@ -281,6 +263,7 @@ public class LayoutTreeNode extends LayoutTree {
         if (!children[0].isVisible() || !children[0].isVisible())
             getSash().dispose();
 
+        flushCache();
     }
 
     /**
@@ -302,35 +285,112 @@ public class LayoutTreeNode extends LayoutTree {
         }
         return true;
     }
+    
+    public int doComputePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+    	assertValidSize(availablePerpendicular);
+    	assertValidSize(availableParallel);
+    	assertValidSize(preferredParallel);
+    	
+    	// If one child is invisible, defer to the other child
+    	if (!children[0].isVisible()) {
+    		return children[1].computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
+    	}
+    	
+    	if (!children[1].isVisible()) {
+    		return children[0].computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
+    	}
+    	
+    	if (availableParallel == 0) {
+    		return 0;
+    	}
+    	
+    	// If computing the dimension perpendicular to our sash
+    	if (width == getSash().isVertical()) {
+    		// Compute the child sizes
+    		ChildSizes sizes = computeChildSizes(availableParallel, availablePerpendicular,
+    				getSash().getLeft(), getSash().getRight(), preferredParallel);
+    		
+    		// Return the sum of the child sizes plus the sash size
+    		return add(sizes.left, add(sizes.right, SASH_WIDTH));
+    	} else {
+    		// Computing the dimension parallel to the sash. We will compute and return the preferred size
+    		// of whichever child is closest to the ideal size.
+    		
+    		ChildSizes sizes;
+    		// First compute the dimension of the child sizes perpendicular to the sash
+			sizes = computeChildSizes(availablePerpendicular, availableParallel,
+				getSash().getLeft(), getSash().getRight(), availablePerpendicular);
+    		
+    		// Use this information to compute the dimension of the child sizes parallel to the sash.
+    		// Return the preferred size of whichever child is closest to the ideal size
+    		int leftSize = children[0].computePreferredSize(width, availableParallel, sizes.left, preferredParallel);
+    		
+    		// If the preferred size of the left child *IS* the ideal size, then there's no way the right child
+    		// can do better. Return the ideal size.
+    		if (leftSize == preferredParallel) {
+    			assertValidSize(leftSize);
+    			return leftSize;
+    		}
+    		
+    		// Compute the preferred size of the right child
+    		int rightSize = children[1].computePreferredSize(width, availableParallel, sizes.right, preferredParallel); 
+    		
+    		// Return leftSize or rightSize: whichever one is closest to the ideal size
+    		int result = rightSize;
+    		if (leftSize > rightSize) {
+    			result = leftSize;
+    		}
 
+    		assertValidSize(result);
+    		
+    		return result;
+    	}
+    }
+	
     /**
-     * Resize the parts on this tree to fit in <code>bounds</code>.
+     * Computes the pixel sizes of this node's children, given the available
+     * space for this node. Note that "width" and "height" actually refer
+     * to the distance perpendicular and parallel to the sash respectively.
+     * That is, their meaning is reversed when computing a horizontal sash. 
+     * 
+     * @param width the pixel width of a vertical node, or the pixel height
+     * of a horizontal node (INFINITE if unbounded)
+     * @param height the pixel height of a vertical node, or the pixel width
+     * of a horizontal node (INFINITE if unbounded)
+     * @return a struct describing the pixel sizes of the left and right children
+     * (this is a width for horizontal nodes and a height for vertical nodes)
      */
-    public void setBounds(Rectangle bounds) {
-        //	if (bounds.isEmpty())
-        //		return;
-        if (!children[0].isVisible()) {
-            children[1].setBounds(bounds);
-            return;
+    ChildSizes computeChildSizes(int width, int height, int left, int right, int preferredWidth) {
+    	Assert.isTrue(children[0].isVisible());
+    	Assert.isTrue(children[1].isVisible());
+    	assertValidSize(width);
+    	assertValidSize(height);
+    	assertValidSize(preferredWidth);
+    	Assert.isTrue(left >= 0);
+    	Assert.isTrue(right >= 0);
+    	Assert.isTrue(preferredWidth >= 0);
+    	Assert.isTrue(preferredWidth <= width);
+    	boolean vertical = getSash().isVertical();
+    	
+        if (width <= SASH_WIDTH) {
+        	return new ChildSizes(0,0);
         }
-        if (!children[1].isVisible()) {
-            children[0].setBounds(bounds);
-            return;
+        
+        if (width == INFINITE) {
+        	if (preferredWidth == INFINITE) {
+        		return new ChildSizes(children[0].computeMaximumSize(vertical, height),
+        				children[1].computeMaximumSize(vertical, height));
+        	}
+        	
+        	if (preferredWidth == 0) {
+        		return new ChildSizes(children[0].computeMinimumSize(vertical, height),
+        				children[1].computeMinimumSize(vertical, height));
+        	}
         }
-
-        Rectangle leftBounds = new Rectangle(bounds.x, bounds.y, bounds.width,
-                bounds.height);
-        Rectangle rightBounds = new Rectangle(bounds.x, bounds.y, bounds.width,
-                bounds.height);
-        Rectangle sashBounds = new Rectangle(bounds.x, bounds.y, bounds.width,
-                bounds.height);
-
-        int left = getSash().getLeft();
-        int right = getSash().getRight();
+        
         int total = left + right;
 
-        //At first I was going to have a more elaborate weighting system, but all-or-non is
-        // sufficient
+        // Use all-or-none weighting
         double wLeft = left, wRight = right;
         switch (getCompressionBias()) {
         case -1:
@@ -343,168 +403,102 @@ public class LayoutTreeNode extends LayoutTree {
             break;
         }
         double wTotal = wLeft + wRight;
+                
+        preferredWidth = Math.max(0, subtract(preferredWidth, SASH_WIDTH));
+        width = Math.max(0, subtract(width, SASH_WIDTH));
+        int redistribute = preferredWidth - total;
+        
+    	int leftMinimum = 0;
+    	
+    	if (children[0].hasSizeFlag(vertical, SWT.MIN)) {
+    	    leftMinimum = children[0].computeMinimumSize(vertical, height);
+    	}
+    	
+    	int rightMinimum = 0;
+    	
+    	if (children[1].hasSizeFlag(vertical, SWT.MIN)) {
+    	    rightMinimum = children[1].computeMinimumSize(vertical, height);
+    	}
+    	
+    	int leftMaximum = Math.max(0, subtract(width, rightMinimum));
+    	int rightMaximum = Math.max(0, subtract(width, leftMinimum));
 
-        if (getSash().isVertical()) {
+    	if (children[0].hasSizeFlag(vertical, SWT.MAX)) {
+    		leftMaximum = Math.min(leftMaximum, children[0].computeMaximumSize(vertical, height));
+    	}
 
-            //Work on x and width
-            leftBounds.width = left;
-            rightBounds.width = right;
+    	if (children[1].hasSizeFlag(vertical, SWT.MAX)) {
+    		rightMaximum = Math.min(rightMaximum, children[1].computeMaximumSize(vertical, height));
+    	}
+    	
+        // First figure out the ideal sizes for each child
+    	int idealLeft = Math.max(leftMinimum, Math.min(preferredWidth,  
+    			left + (int) Math.round(redistribute * wLeft / wTotal)));
+    	
+    	idealLeft = Math.max(idealLeft, preferredWidth - rightMaximum);
+    	idealLeft = Math.min(idealLeft, leftMaximum);
 
-            int redistribute = bounds.width - SASH_WIDTH - total;
-
-            leftBounds.x = bounds.x;
-            leftBounds.width += Math.round(redistribute * wLeft / wTotal);
-
-            sashBounds.x = leftBounds.x + leftBounds.width;
-            sashBounds.width = SASH_WIDTH;
-
-            if (children[0].fixedHeight()) {
-                leftBounds.height = children[0].getMinimumHeight();
-            }
-
-            rightBounds.x = sashBounds.x + sashBounds.width;
-            rightBounds.width = bounds.x + bounds.width - rightBounds.x;
-
-            if (children[1].fixedHeight()) {
-                rightBounds.height = children[1].getMinimumHeight();
-            }
-
-            adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
-        } else {
-            //Work on y and height
-            int redistribute = bounds.height - SASH_WIDTH - total;
-
-            if (children[0].fixedHeight()) {
-                leftBounds.height = children[0].getMinimumHeight();
-            } else if (children[1].fixedHeight()) {
-                leftBounds.height = bounds.height
-                        - children[1].getMinimumHeight() - SASH_WIDTH;
-            } else {
-                leftBounds.height = left
-                        + (int) Math.round(redistribute * wLeft / wTotal);
-            }
-            sashBounds.y = leftBounds.y + leftBounds.height;
-            sashBounds.height = SASH_WIDTH;
-            rightBounds.y = sashBounds.y + sashBounds.height;
-
-            if (children[1].fixedHeight()) {
-                rightBounds.height = children[1].getMinimumHeight();
-            } else {
-                rightBounds.height = bounds.y + bounds.height - rightBounds.y;
-            }
-            adjustHeights(bounds, leftBounds, rightBounds, sashBounds);
+    	if (children[0].hasSizeFlag(vertical, SWT.FILL)) {
+    		idealLeft = children[0].computePreferredSize(vertical, leftMaximum, height, idealLeft);
+    	}
+    	idealLeft = Math.max(idealLeft, leftMinimum);
+    	
+    	int idealRight = Math.max(rightMinimum, preferredWidth - idealLeft);
+    	
+		rightMaximum = Math.max(0, Math.min(rightMaximum, subtract(width, idealLeft)));
+    	idealRight = Math.min(idealRight, rightMaximum);
+    	
+    	if (children[1].hasSizeFlag(vertical, SWT.FILL)) {
+    		idealRight = children[1].computePreferredSize(vertical, rightMaximum, height, idealRight);
+    	}
+    	idealRight = Math.max(idealRight, rightMinimum);
+    	
+    	return new ChildSizes(idealLeft, idealRight);    	    	
+    }
+    
+    protected int doGetSizeFlags(boolean width) {
+        return (children[0].isVisible() ? children[0].getSizeFlags(width) : 0)
+        	| (children[1].isVisible() ? children[1].getSizeFlags(width) : 0); 
+    }
+	
+    /**
+     * Resize the parts on this tree to fit in <code>bounds</code>.
+     */
+    public void doSetBounds(Rectangle bounds) {
+        if (!children[0].isVisible()) {
+            children[1].setBounds(bounds);
+            return;
         }
+        if (!children[1].isVisible()) {
+            children[0].setBounds(bounds);
+            return;
+        }
+        
+        bounds = Geometry.copy(bounds);
+        
+        boolean vertical = getSash().isVertical();
+
+        // If this is a horizontal sash, flip coordinate systems so 
+        // that we can eliminate special cases
+        if (!vertical) {
+        	Geometry.flipXY(bounds);
+        }
+
+        ChildSizes childSizes = computeChildSizes(bounds.width, bounds.height, getSash().getLeft(), getSash().getRight(), bounds.width);
+        
+        Rectangle leftBounds = new Rectangle(bounds.x, bounds.y, childSizes.left, bounds.height);
+        Rectangle sashBounds = new Rectangle(leftBounds.x + leftBounds.width, bounds.y, SASH_WIDTH, bounds.height);
+        Rectangle rightBounds = new Rectangle(sashBounds.x + sashBounds.width, bounds.y, childSizes.right, bounds.height);
+        
+        if (!vertical) {
+        	Geometry.flipXY(leftBounds);
+        	Geometry.flipXY(sashBounds);
+        	Geometry.flipXY(rightBounds);
+        }
+        
         getSash().setBounds(sashBounds);
         children[0].setBounds(leftBounds);
         children[1].setBounds(rightBounds);
-    }
-
-    // adjustHeights added by cagatayk@acm.org 
-    private boolean adjustHeights(Rectangle node, Rectangle left,
-            Rectangle right, Rectangle sash) {
-        int leftAdjustment = 0;
-        int rightAdjustment = 0;
-
-        leftAdjustment = adjustChildHeight(left, node, true);
-        if (leftAdjustment > 0) {
-            right.height -= leftAdjustment;
-        }
-
-        rightAdjustment = adjustChildHeight(right, node, false);
-        if (rightAdjustment > 0) {
-            left.height -= rightAdjustment;
-        }
-
-        boolean adjusted = leftAdjustment > 0 || rightAdjustment > 0;
-        if (adjusted) {
-            sash.y = left.y + left.height;
-            right.y = sash.y + sash.height;
-        }
-
-        return adjusted;
-    }
-
-    // adjustChildHeight added by cagatayk@acm.org 
-    private int adjustChildHeight(Rectangle childBounds, Rectangle nodeBounds,
-            boolean left) {
-        int adjustment = 0;
-        int minimum = 0;
-
-        minimum = left ? Math.round(getMinimumRatioFor(nodeBounds)
-                * nodeBounds.height)
-                : Math.round((1 - getMaximumRatioFor(nodeBounds))
-                        * nodeBounds.height)
-                        - SASH_WIDTH;
-
-        if (minimum > childBounds.height) {
-            adjustment = minimum - childBounds.height;
-            childBounds.height = minimum;
-        }
-
-        return adjustment;
-    }
-
-    // adjustWidths added by cagatayk@acm.org 
-    private boolean adjustWidths(Rectangle node, Rectangle left,
-            Rectangle right, Rectangle sash) {
-        int leftAdjustment = 0;
-        int rightAdjustment = 0;
-
-        leftAdjustment = adjustChildWidth(left, node, true);
-        if (leftAdjustment > 0) {
-            right.width -= leftAdjustment;
-        }
-
-        rightAdjustment = adjustChildWidth(right, node, false);
-        if (rightAdjustment > 0) {
-            left.width -= rightAdjustment;
-        }
-
-        boolean adjusted = leftAdjustment > 0 || rightAdjustment > 0;
-        if (adjusted) {
-            sash.x = left.x + left.width;
-            right.x = sash.x + sash.width;
-        }
-
-        return adjusted;
-    }
-
-    // adjustChildWidth added by cagatayk@acm.org 
-    private int adjustChildWidth(Rectangle childBounds, Rectangle nodeBounds,
-            boolean left) {
-        int adjustment = 0;
-        int minimum = 0;
-
-        minimum = left ? Math.round(getMinimumRatioFor(nodeBounds)
-                * nodeBounds.width) : Math
-                .round((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.width)
-                - SASH_WIDTH;
-
-        if (minimum > childBounds.width) {
-            adjustment = minimum - childBounds.width;
-            childBounds.width = minimum;
-        }
-
-        return adjustment;
-    }
-
-    // getMinimumRatioFor added by cagatayk@acm.org 
-    /**
-     * Obtain the minimum ratio required to display the control on the "left"
-     * using its minimum dimensions.
-     */
-    public float getMinimumRatioFor(Rectangle bounds) {
-        float part = 0, whole = 0;
-
-        if (getSash().isVertical()) {
-            part = children[0].getMinimumWidth();
-            whole = bounds.width;
-        } else {
-            part = children[0].getMinimumHeight();
-            whole = bounds.height;
-        }
-
-        return (part != 0) ? part / whole : IPageLayout.RATIO_MIN;
     }
 
     //Added by hudsonr@us.ibm.com - bug 19524
@@ -527,74 +521,8 @@ public class LayoutTreeNode extends LayoutTree {
         if (right)
             return -1;
         return 1;
-    }// getMaximumRatioFor added by cagatayk@acm.org 
-
-    /**
-     * Obtain the maximum ratio required to display the control on the "right"
-     * using its minimum dimensions.
-     */
-    public float getMaximumRatioFor(Rectangle bounds) {
-        float part = 0, whole = 0;
-
-        if (getSash().isVertical()) {
-            whole = bounds.width;
-            part = whole - children[1].getMinimumWidth();
-        } else {
-            whole = bounds.height;
-            part = whole - children[1].getMinimumHeight();
-        }
-
-        return (part != whole) ? (part - SASH_WIDTH) / whole
-                : IPageLayout.RATIO_MAX;
-
     }
-
-    // getMinimumHeight added by cagatayk@acm.org 
-    /**
-     * Obtain the minimum height required to display all controls under
-     * this node.
-     */
-    public int getMinimumHeight() {
-        int left = children[0].getMinimumHeight();
-        int right = children[1].getMinimumHeight();
-
-        int minimum = 0;
-        if (getSash().isVertical())
-            minimum = Math.max(left, right);
-        else if (left > 0 || right > 0) {
-            minimum = left + right;
-            // only consider sash if both children are visible, fix for placeholders
-            if (children[0].isVisible() && children[1].isVisible()) {
-                minimum += SASH_WIDTH;
-            }
-        }
-
-        return minimum;
-    }
-
-    // getMinimumWidth added by cagatayk@acm.org 
-    /**
-     * Obtain the minimum width required to display all controls under
-     * this node.
-     */
-    public int getMinimumWidth() {
-        int left = children[0].getMinimumWidth();
-        int right = children[1].getMinimumWidth();
-
-        int minimum = 0;
-        if (!getSash().isVertical())
-            minimum = Math.max(left, right);
-        else if (left > 0 || right > 0) {
-            minimum = left + right;
-            // only consider sash if both children are visible, fix for placeholders
-            if (children[0].isVisible() && children[1].isVisible()) {
-                minimum += SASH_WIDTH;
-            }
-        }
-
-        return minimum;
-    }
-
+	
     boolean isLeftChild(LayoutTree toTest) {
         return children[0] == toTest;
     }
@@ -610,6 +538,7 @@ public class LayoutTreeNode extends LayoutTree {
     void setChild(boolean left, LayoutPart part) {
         LayoutTree child = new LayoutTree(part);
         setChild(left, child);
+        flushCache();
     }
 
     /**
@@ -619,6 +548,7 @@ public class LayoutTreeNode extends LayoutTree {
         int index = left ? 0 : 1;
         children[index] = child;
         child.setParent(this);
+        flushCache();
     }
 
     /**

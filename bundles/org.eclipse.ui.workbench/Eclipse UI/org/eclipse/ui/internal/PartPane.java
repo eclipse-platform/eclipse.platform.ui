@@ -116,7 +116,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
         this.page = workbenchPage;
         ((WorkbenchPartReference) partReference).setPane(this);
     }
-
+	
     /**
      * Factory method for creating the SWT Control hierarchy for this Pane's child.
      */
@@ -276,16 +276,17 @@ public abstract class PartPane extends LayoutPart implements Listener {
         return control;
     }
 
-    /*
-     * @see LayoutPart#getMinimumHeight()
-     */
-    public int getMinimumHeight() {
-        if (control == null || control.isDisposed())
-            return super.getMinimumHeight();
-
-        // account for the borders
-        return control.computeTrim(0, 0, 0, 0).height;
-    }
+//    /*
+//     * @see LayoutPart#getMinimumHeight()
+//     */
+//    public int computeMinimumSize(boolean width, int knownHeight) {
+//        if (control == null || control.isDisposed())
+//            return super.computeMinimumSize(width, knownHeight);
+//
+//        // account for the borders
+//        int result = Geometry.getDimension(control.computeTrim(0, 0, 0, 0), width);
+//        return result;
+//    }
 
     /**
      * Answer the part child.

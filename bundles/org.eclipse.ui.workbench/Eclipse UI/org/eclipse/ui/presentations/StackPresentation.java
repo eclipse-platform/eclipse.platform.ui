@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
@@ -37,7 +40,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * 
  * @since 3.0
  */
-public abstract class StackPresentation {
+public abstract class StackPresentation implements ISizeProvider {
 
     /**
      * Inactive state. This is the default state for deselected presentations.
@@ -93,9 +96,35 @@ public abstract class StackPresentation {
      * and maximize buttons and one tab. 
      * 
      * @return the minimum size for this stack (not null)
+     * 
+     * @deprecated replaced by computePreferredSize
      */
-    public abstract Point computeMinimumSize();
-
+    public Point computeMinimumSize() {
+        return new Point(0,0);
+    }
+    
+    /*
+     * @see ISizeProvider#getSizeFlags(boolean) 
+     */
+    public int getSizeFlags(boolean width) {
+        boolean hasMaximumSize = getSite().getState() == IStackPresentationSite.STATE_MINIMIZED; 
+        
+        return SWT.MIN | (hasMaximumSize ? SWT.MAX : 0);
+    }
+    
+    /*
+     * @see ISizeProvider#computePreferredSize(boolean, int, int, int)
+     */
+    public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult) {
+        int minSize = Geometry.getCoordinate(computeMinimumSize(), width);
+        
+    	if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED || preferredResult < minSize) {
+    	    return minSize;
+    	}
+    	
+    	return preferredResult;
+    }
+    
     /**
      * Disposes all SWT resources being used by the stack. This is the
      * last method that will be invoked on the stack. 

@@ -16,9 +16,13 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISizeProvider;
 
 /**
  * Implementation of a tree where the node is allways a sash
@@ -26,13 +30,37 @@ import org.eclipse.swt.widgets.Composite;
  * the sash, ie the node, is removed as well and its other children
  * placed on its parent.
  */
-public class LayoutTree {
+public class LayoutTree implements ISizeProvider {
     /* The parent of this tree or null if it is the root */
     LayoutTreeNode parent;
 
     /* Any LayoutPart if this is a leaf or a LayoutSashPart if it is a node */
     LayoutPart part;
-
+    
+    // Cached information
+    private int cachedMinimumWidthHint = SWT.DEFAULT;
+    private int cachedMinimumWidth = SWT.DEFAULT;
+    private int cachedMinimumHeightHint = SWT.DEFAULT;
+    private int cachedMinimumHeight = SWT.DEFAULT;
+    private int cachedMaximumWidthHint = SWT.DEFAULT;
+    private int cachedMaximumWidth = SWT.DEFAULT;
+    private int cachedMaximumHeightHint = SWT.DEFAULT;
+    private int cachedMaximumHeight = SWT.DEFAULT;
+    
+    // Cached size flags
+    private boolean sizeFlagsDirty = true;
+    private int widthSizeFlags = 0;
+    private int heightSizeFlags = 0;
+    
+    // Cache statistics. For use in benchmarks and test suites only!
+    public static int minCacheHits;
+    public static int minCacheMisses;
+    public static int maxCacheHits;
+    public static int maxCacheMisses;
+    
+    private boolean forceLayout = true;
+    private Rectangle currentBounds = new Rectangle(0,0,0,0);
+    
     /**
      * Initialize this tree with its part.
      */
@@ -57,11 +85,7 @@ public class LayoutTree {
     public LayoutPart findPart(Point toFind) {
         return part;
     }
-
-    public boolean fixedHeight() {
-        return !part.resizesVertically();
-    }
-
+    
     /**
      * Dispose all Sashs in this tree
      */
@@ -95,7 +119,7 @@ public class LayoutTree {
     public LayoutPart findBottomRight() {
         return part;
     }
-
+    
     /**
      * Find a sash in the tree and return its sub-tree. Returns
      * null if the sash is not found.
@@ -108,20 +132,277 @@ public class LayoutTree {
      * Return the bounds of this tree which is the rectangle that
      * contains all Controls in this tree.
      */
-    public Rectangle getBounds() {
-        return part.getBounds();
+    public final Rectangle getBounds() {
+        return Geometry.copy(currentBounds);
     }
-
-    // getMinimumWidth() added by cagatayk@acm.org 
-    public int getMinimumWidth() {
-        return part.getMinimumWidth();
+    
+    /**
+     * Subtracts two integers. If a is INFINITE, this is treated as
+     * positive infinity. 
+     * 
+     * @param a a positive integer or INFINITE indicating positive infinity
+     * @param b a positive integer (may not be INFINITE)
+     * @return a - b, or INFINITE if a == INFINITE
+     * @since 3.1
+     */
+    public static int subtract(int a, int b) {
+        Assert.isTrue(b >= 0 && b < INFINITE);
+        
+    	return add(a, -b);
     }
-
-    // getMinimumHeight() added by cagatayk@acm.org 
-    public int getMinimumHeight() {
-        return part.getMinimumHeight();
+    
+    /**
+     * Adds two positive integers. Treates INFINITE as positive infinity.
+     * 
+     * @param a a positive integer
+     * @param b a positive integer
+     * @return a + b, or INFINITE if a or b are positive infinity
+     * @since 3.1
+     */
+    public static int add(int a, int b) {
+    	if (a == INFINITE || b == INFINITE) {
+    		return INFINITE;
+    	}
+    	
+    	return a + b;
     }
+    
+    /**
+     * Asserts that toCheck is a positive integer less than INFINITE / 2 or equal
+     * to INFINITE. Many of the methods of this class use positive integers as sizes,
+     * with INFINITE indicating positive infinity. This picks up accidental addition or
+     * subtraction from infinity. 
+     * 
+     * @param toCheck integer to validate
+     * @since 3.1
+     */
+    public static void assertValidSize(int toCheck) {
+    	Assert.isTrue(toCheck >= 0 && (toCheck == INFINITE || toCheck < INFINITE / 2));
+    }
+    
+    /**
+     * Computes the preferred size for this object. The interpretation of the result depends on the flags returned
+     * by getSizeFlags(). If the caller is looking for a maximum or minimum size, this delegates to computeMinimumSize
+     * or computeMaximumSize in order to benefit from caching optimizations. Otherwise, it delegates to 
+     * doComputePreferredSize. Subclasses should overload one of doComputeMinimumSize, doComputeMaximumSize, or
+     * doComputePreferredSize to specialize the return value. 
+     * 
+     * @see LayoutPart#computePreferredSize(boolean, int, int, int)
+     */
+    public final int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+    	assertValidSize(availableParallel);
+    	assertValidSize(availablePerpendicular);
+    	assertValidSize(preferredParallel);
+    	
+    	if (!isVisible()) {
+    		return 0;
+    	}
 
+    	if (availableParallel == 0) {
+    		return 0;
+    	}
+
+    	if (preferredParallel == 0) {
+    		return Math.min(availableParallel, computeMinimumSize(width, availablePerpendicular));
+    	} else if (preferredParallel == INFINITE && availableParallel == INFINITE) {
+    		return computeMaximumSize(width, availablePerpendicular);
+    	}
+    	
+    	int result = doComputePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
+
+    	return result;
+    }
+    
+    /**
+     * Returns the size flags for this tree. 
+     * 
+     * @see org.eclipse.ui.presentations.StackPresentation#getSizeFlags(boolean)
+     * 
+	 * @param b indicates whether the caller wants the flags for computing widths (=true) or heights (=false)
+	 * @return a bitwise combiniation of flags with the same meaning as StackPresentation.getSizeFlags(boolean)
+	 */
+	protected int doGetSizeFlags(boolean width) {
+		return part.getSizeFlags(width);
+	}
+
+	/**
+	 * Subclasses should overload this method instead of computePreferredSize(boolean, int, int, int)
+	 * 
+	 * @see org.eclipse.ui.presentations.StackPresentation#computePreferredSize(boolean, int, int, int)
+	 * 
+	 * @since 3.1
+	 */
+	protected int doComputePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+    	int result = Math.min(availableParallel, 
+    			part.computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel));
+
+    	assertValidSize(result);
+    	return result;    	
+    }
+    
+	/**
+	 * Returns the minimum size for this subtree. Equivalent to calling 
+	 * computePreferredSize(width, INFINITE, availablePerpendicular, 0).
+	 * Returns a cached value if possible or defers to doComputeMinimumSize otherwise.
+	 * Subclasses should overload doComputeMinimumSize if they want to specialize the
+	 * return value.
+	 * 
+	 * @param width true iff computing the minimum width, false iff computing the minimum height
+	 * @param availablePerpendicular available space (pixels) perpendicular to the dimension 
+	 * being computed. This is a height when computing a width, or a width when computing a height.
+	 * 
+	 * @see LayoutPart#computePreferredSize(boolean, int, int, int)
+	 */
+    public final int computeMinimumSize(boolean width, int availablePerpendicular) {
+    	assertValidSize(availablePerpendicular);
+    	
+    	// If this subtree doesn't contain any wrapping controls (ie: they don't care
+    	// about their perpendicular size) then force the perpendicular
+    	// size to be INFINITE. This ensures that we will get a cache hit
+    	// every time for non-wrapping controls.
+    	if (!hasSizeFlag(width, SWT.WRAP)) {
+    		availablePerpendicular = INFINITE;
+    	}
+    	
+    	if (width) {
+    	    // Check if we have a cached width measurement (we can only return a cached
+    	    // value if we computed it for the same height)
+    		if (cachedMinimumWidthHint == availablePerpendicular) {
+    			minCacheHits++;
+    			return cachedMinimumWidth;
+    		}
+    		
+    		// Recompute the minimum width and store it in the cache
+    		
+    		minCacheMisses++;
+    		 
+    		int result = doComputeMinimumSize(width, availablePerpendicular);
+    		cachedMinimumWidth = result;
+    		cachedMinimumWidthHint = availablePerpendicular;
+    		return result;
+    		
+    	} else {
+    	    // Check if we have a cached height measurement (we can only return a cached
+    	    // value if we computed it for the same width)
+    		if (cachedMinimumHeightHint == availablePerpendicular) {
+    			minCacheHits++;
+    			return cachedMinimumHeight;
+    		}
+    		
+    		// Recompute the minimum width and store it in the cache
+    		minCacheMisses++;
+    		
+    		int result = doComputeMinimumSize(width, availablePerpendicular);
+    		cachedMinimumHeight = result;
+    		cachedMinimumHeightHint = availablePerpendicular;
+    		return result;
+    	}
+    }
+    
+    /**
+     * For use in benchmarks and test suites only. Displays cache utilization statistics for all
+     * LayoutTree instances.
+     * 
+     * @since 3.1
+     */
+    public static void printCacheStatistics() {
+    	System.out.println("minimize cache " + minCacheHits + " / " + (minCacheHits + minCacheMisses) + " hits " +
+    			minCacheHits * 100 / (minCacheHits + minCacheMisses) + "%");
+    	System.out.println("maximize cache " + maxCacheHits + " / " + (maxCacheHits + maxCacheMisses) + " hits" +
+    			maxCacheHits * 100 / (maxCacheHits + maxCacheMisses) + "%");
+    }
+    
+	public int doComputeMinimumSize(boolean width, int availablePerpendicular) {
+		int result = doComputePreferredSize(width, INFINITE, availablePerpendicular, 0);
+		assertValidSize(result);
+		return result;
+	}
+
+    public final int computeMaximumSize(boolean width, int availablePerpendicular) {
+    	assertValidSize(availablePerpendicular);
+    	
+    	// If this subtree doesn't contain any wrapping controls (ie: they don't care
+    	// about their perpendicular size) then force the perpendicular
+    	// size to be INFINITE. This ensures that we will get a cache hit
+    	// every time.
+    	if (!hasSizeFlag(width, SWT.WRAP)) {
+    		availablePerpendicular = INFINITE;
+    	}
+    	
+    	if (width) {    	    
+    	    // Check if we have a cached width measurement (we can only return a cached
+    	    // value if we computed it for the same height)
+    		if (cachedMaximumWidthHint == availablePerpendicular) {
+    			maxCacheHits++;
+    			return cachedMaximumWidth;
+    		}
+    		
+    		maxCacheMisses++;
+    		
+    		// Recompute the maximum width and store it in the cache
+    		int result = doComputeMaximumSize(width, availablePerpendicular);
+    		cachedMaximumWidth = result;
+    		cachedMaximumWidthHint = availablePerpendicular;
+    		return result;
+    		
+    	} else {
+    	    // Check if we have a cached height measurement
+    		if (cachedMaximumHeightHint == availablePerpendicular) {
+    			maxCacheHits++;
+    			return cachedMaximumHeight;
+    		}
+    		
+    		maxCacheMisses++;
+    		
+    		// Recompute the maximum height and store it in the cache
+    		int result = doComputeMaximumSize(width, availablePerpendicular);
+    		cachedMaximumHeight = result;
+    		cachedMaximumHeightHint = availablePerpendicular;
+    		return result;
+    	}
+    }
+    
+    protected int doComputeMaximumSize(boolean width, int availablePerpendicular) {
+    	return doComputePreferredSize(width, INFINITE, availablePerpendicular, INFINITE);
+    }
+    
+    /**
+     * Called to flush any cached information in this tree and its parents.
+     */
+    public void flushCache() {
+        
+        // Clear cached sizes
+        cachedMinimumWidthHint = SWT.DEFAULT;
+        cachedMinimumWidth = SWT.DEFAULT;
+        cachedMinimumHeightHint = SWT.DEFAULT;
+        cachedMinimumHeight = SWT.DEFAULT;
+        cachedMaximumWidthHint = SWT.DEFAULT;
+        cachedMaximumWidth = SWT.DEFAULT;
+        cachedMaximumHeightHint = SWT.DEFAULT;
+        cachedMaximumHeight = SWT.DEFAULT;
+        
+        // Flags may have changed. Ensure that they are recomputed the next time around
+        sizeFlagsDirty = true;
+        
+        // The next setBounds call should trigger a layout even if set to the same bounds since
+        // one of the children has changed.
+        forceLayout = true;
+
+    	if (parent != null) {
+    		parent.flushCache();
+    	}
+    }
+    
+    public final int getSizeFlags(boolean width) {
+        if (sizeFlagsDirty) {
+            widthSizeFlags = doGetSizeFlags(true);
+            heightSizeFlags = doGetSizeFlags(false);
+            sizeFlagsDirty = false;
+        }
+        
+        return width ? widthSizeFlags : heightSizeFlags;
+    }
+        
     /**
      * Returns the parent of this tree or null if it is the root.
      */
@@ -199,9 +480,26 @@ public class LayoutTree {
     }
 
     /**
+     * Sets the bounds of this node. If the bounds have changed or any children have
+     * changed then the children will be recursively layed out. This implementation
+     * filters out redundant calls and delegates to doSetBounds to layout the children. 
+     * Subclasses should overload doSetBounds to lay out their children.  
+     * 
+     * @param bounds new bounds of the tree
+     */
+    public final void setBounds(Rectangle bounds) {
+        if (!bounds.equals(currentBounds) || forceLayout) {
+            currentBounds = Geometry.copy(bounds);
+            
+            doSetBounds(currentBounds);
+            forceLayout = false;
+        } 
+    }
+    
+    /**
      * Resize the parts on this tree to fit in <code>bounds</code>.
      */
-    public void setBounds(Rectangle bounds) {
+    protected void doSetBounds(Rectangle bounds) {
         part.setBounds(bounds);
     }
 
@@ -217,6 +515,7 @@ public class LayoutTree {
      */
     void setPart(LayoutPart part) {
         this.part = part;
+        flushCache();
     }
 
     /**
@@ -248,6 +547,21 @@ public class LayoutTree {
      */
     public void describeLayout(StringBuffer buf) {
         part.describeLayout(buf);
+    }
+
+    /**
+     * This is a shorthand method that checks if the tree contains the
+     * given size flag. For example, hasSizeFlag(false, SWT.MIN) returns
+     * true iff the receiver enforces a minimum height, or 
+     * hasSizeFlag(true, SWT.WRAP) returns true iff the receiver needs to
+     * know its height when computing its preferred width.
+     * 
+     * @param vertical 
+     * @return
+     * @since 3.1
+     */
+    public final boolean hasSizeFlag(boolean width, int flag) {        
+        return (getSizeFlags(width) & flag) != 0;
     }
 
 }

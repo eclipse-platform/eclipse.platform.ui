@@ -193,6 +193,10 @@ public final class PaneFolder {
         }
     };
 
+	private boolean minimizeVisible = false;
+
+	private boolean maximizeVisible = false;
+
     /**
      * Creates a pane folder. This will create exactly one child control in the
      * given parent.
@@ -347,6 +351,17 @@ public final class PaneFolder {
     }
 
     public void layout(boolean flushCache) {
+        boolean showButtons = true;
+        
+		Point minSize = computeMinimumSize();
+    	Rectangle bounds = tabFolder.getBounds();
+//    	if (bounds.width - minSize.x < 1233) {
+//    		showButtons = false;	
+//    	}
+        
+        tabFolder.setMinimizeVisible(showButtons && minimizeVisible);
+        tabFolder.setMaximizeVisible(showButtons && maximizeVisible);
+    	
         // Flush the cached sizes if necessary
         if (flushCache) {
             topLeftCache.flush();
@@ -548,7 +563,7 @@ public final class PaneFolder {
 
         // Add some space for the minimize and maximize buttons plus a tab.
         // Right now this isn't exposed from SWT as API, so we just add 50 pixels.
-        result.x += 60;
+        result.x += 100;
         return result;
     }
 
@@ -662,6 +677,7 @@ public final class PaneFolder {
      */
     public void setMinimizeVisible(boolean isVisible) {
         tabFolder.setMinimizeVisible(isVisible);
+        minimizeVisible = isVisible;
     }
 
     /**
@@ -669,6 +685,7 @@ public final class PaneFolder {
      */
     public void setMaximizeVisible(boolean isVisible) {
         tabFolder.setMaximizeVisible(isVisible);
+        maximizeVisible = isVisible;
     }
 
     /**

@@ -115,6 +115,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         public boolean isStackMoveable() {
             return canMoveFolder();
         }
+        
+        public void flushLayout() {
+        	PartStack.this.flushLayout();
+        }
     };
 
     protected abstract boolean isMoveable(IPresentablePart part);
@@ -591,19 +595,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
         return getPresentableParts().size();
     }
-
-    // getMinimumHeight() added by cagatayk@acm.org
-    /**
-     * @see LayoutPart#getMinimumHeight()
-     */
-    public int getMinimumHeight() {
-        if (getPresentation() == null) {
-            return 0;
-        }
-
-        return getPresentation().computeMinimumSize().y;
-    }
-
+    
     /**
      * Returns the LayoutPart for the given IPresentablePart, or null if the given
      * IPresentablePart is not in this stack. Returns null if given a null argument.
@@ -789,10 +781,23 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         remove(oldChild);
     }
 
-    public boolean resizesVertically() {
-        return presentationSite.getState() != IStackPresentationSite.STATE_MINIMIZED;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#computePreferredSize(boolean, int, int, int)
+	 */
+	public int computePreferredSize(boolean width, int availableParallel,
+			int availablePerpendicular, int preferredParallel) {
+		
+		return getPresentation().computePreferredSize(width, availableParallel, 
+				availablePerpendicular, preferredParallel);
+	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#getSizeFlags(boolean)
+     */
+    public int getSizeFlags(boolean horizontal) {
+        return getPresentation().getSizeFlags(horizontal);
     }
-
+    
     /**
      * @see IPersistable
      */
@@ -933,6 +938,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Sets the presentation bounds.
      */
     public void setBounds(Rectangle r) {
+    	
         if (getPresentation() != null) {
             getPresentation().setBounds(r);
         }
@@ -1005,7 +1011,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                         page.zoomOut();
                     }
 
-                    forceLayout();
+                    flushLayout();
                 }
             }
         }

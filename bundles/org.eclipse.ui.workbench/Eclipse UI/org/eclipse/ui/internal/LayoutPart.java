@@ -17,10 +17,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.presentations.IPresentablePart;
 
@@ -28,7 +30,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * A presentation part is used to build the presentation for the
  * workbench.  Common subclasses are pane and folder.
  */
-abstract public class LayoutPart {
+abstract public class LayoutPart implements ISizeProvider {
     protected ILayoutContainer container;
 
     protected String id;
@@ -156,22 +158,23 @@ abstract public class LayoutPart {
         return ptSize;
     }
 
-    // getMinimumWidth() added by cagatayk@acm.org 
     /**
-     * Returns the minimum width a part can have. Subclasses may
-     * override as necessary.
+     * @see org.eclipse.ui.presentations.StackPresentation#getSizeFlags(boolean)
+     * 
+     * @since 3.1
      */
-    public int getMinimumWidth() {
-        return 0;
+    public int getSizeFlags(boolean horizontal) {
+        return SWT.MIN;
     }
-
-    // getMinimumHeight() added by cagatayk@acm.org 
+    
     /**
-     * Returns the minimum height a part can have. Subclasses may 
-     * override as necessary.
+     * @see org.eclipse.ui.presentations.StackPresentation#computePreferredSize(boolean, int, int, int)
+     * 
+     * @since 3.1 
      */
-    public int getMinimumHeight() {
-        return 0;
+    public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+    	
+    	return preferredParallel;    	
     }
 
     /**
@@ -332,10 +335,6 @@ abstract public class LayoutPart {
         return null;
     }
 
-    public boolean resizesVertically() {
-        return true;
-    }
-
     public void setZoomed(boolean isZoomed) {
         ILayoutContainer container = getContainer();
 
@@ -384,7 +383,7 @@ abstract public class LayoutPart {
 
     }
 
-    public void forceLayout() {
+    public void flushLayout() {
         ILayoutContainer container = getContainer();
         if (getContainer() != null) {
             container.resizeChild(this);

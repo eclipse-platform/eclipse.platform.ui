@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuFastViewOrientation;
@@ -102,6 +103,10 @@ public class FastViewPane {
             }
         }
 
+        public void flushLayout() {
+        	
+        }
+        
         public void close(IPresentablePart part) {
             if (!isCloseable(part)) {
                 return;
@@ -410,10 +415,13 @@ public class FastViewPane {
         presentation.setActive(StackPresentation.AS_ACTIVE_FOCUS);
         presentation.setVisible(true);
 
-        Point minimumPresentationSize = presentation.computeMinimumSize();
-        minSize = Geometry.isHorizontal(side) ? minimumPresentationSize.y
-                : minimumPresentationSize.x;
+        boolean horizontalResize = Geometry.isHorizontal(side); 
 
+        minSize = presentation.computePreferredSize(horizontalResize,
+        		ISizeProvider.INFINITE,
+        		Geometry.getDimension(getClientArea(), horizontalResize),
+				0);
+        
         // Show pane fast.
         ctrl.setEnabled(true); // Add focus support.
         Composite parent = ctrl.getParent();

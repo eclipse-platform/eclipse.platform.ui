@@ -155,6 +155,32 @@ public class Geometry {
     public static Point copy(Point toCopy) {
         return new Point(toCopy.x, toCopy.y);
     }
+    
+    /**
+     * Sets result equal to toCopy
+     * 
+     * @param result object that will be modified
+     * @param toCopy object that will be copied
+     * @since 3.1
+     */
+    public static void set(Point result, Point toCopy) {
+    	result.x = toCopy.x;
+    	result.y = toCopy.y;
+    }
+    
+    /**
+     * Sets result equal to toCopy
+     * 
+     * @param result object that will be modified
+     * @param toCopy object that will be copied
+     * @since 3.1
+     */
+    public static void set(Rectangle result, Rectangle toCopy) {
+    	result.x = toCopy.x;
+    	result.y = toCopy.y;
+    	result.width = toCopy.width;
+    	result.height = toCopy.height;
+    }
 
     /**
      * Adds two points as 2d vectors. Returns a new point whose coordinates are
@@ -183,6 +209,34 @@ public class Geometry {
     }
 
     /**
+     * Swaps the X and Y coordinates of the given point.
+     * 
+     * @param toFlip modifies this point
+     * @since 3.1
+     */
+    public static void flipXY(Point toFlip) {
+    	int temp = toFlip.x;
+    	toFlip.x = toFlip.y;
+    	toFlip.y = temp;
+    }
+
+    /**
+     * Swaps the X and Y coordinates of the given rectangle, along with the height and width.
+     * 
+     * @param toFlip modifies this rectangle
+     * @since 3.1
+     */
+    public static void flipXY(Rectangle toFlip) {
+    	int temp = toFlip.x;
+    	toFlip.x = toFlip.y;
+    	toFlip.y = temp;
+    	
+    	temp = toFlip.width;
+    	toFlip.width = toFlip.height;
+    	toFlip.height = temp;
+    }
+    
+    /**
      * Returns the height or width of the given rectangle.
      * 
      * @param toMeasure rectangle to measure
@@ -198,6 +252,78 @@ public class Geometry {
         }
     }
 
+    /**
+     * Returns the x or y coordinates of the given point.
+     * 
+     * @param toMeasure point being measured
+     * @param width if true, returns x. Otherwise, returns y.
+     * @return the x or y coordinate
+     * @since 3.1
+     */
+    public static int getCoordinate(Point toMeasure, boolean width) {
+    	return width ? toMeasure.x : toMeasure.y;
+    }
+    
+    /**
+     * Returns the x or y coordinates of the given rectangle.
+     * 
+     * @param toMeasure rectangle being measured
+     * @param width if true, returns x. Otherwise, returns y.
+     * @return the x or y coordinate
+     * @since 3.1
+     */
+    public static int getCoordinate(Rectangle toMeasure, boolean width) {
+    	return width ? toMeasure.x : toMeasure.y;
+    }
+    
+    /**
+     * Sets one dimension of the given rectangle. Modifies the given rectangle.
+     * 
+     * @param toSet rectangle to modify
+     * @param width if true, the width is modified. If false, the height is modified.
+     * @param newCoordinate new value of the width or height
+     * @since 3.1
+     */
+    public static void setDimension(Rectangle toSet, boolean width, int newCoordinate) {
+    	if (width) {
+    		toSet.width = newCoordinate;
+    	} else {
+    		toSet.height = newCoordinate;
+    	}
+    }
+
+    /**
+     * Sets one coordinate of the given rectangle. Modifies the given rectangle.
+     * 
+     * @param toSet rectangle to modify
+     * @param width if true, the x coordinate is modified. If false, the y coordinate is modified.
+     * @param newCoordinate new value of the x or y coordinates
+     * @since 3.1
+     */
+    public static void setCoordinate(Rectangle toSet, boolean width, int newCoordinate) {
+    	if (width) {
+    		toSet.x = newCoordinate;
+    	} else {
+    		toSet.y = newCoordinate;
+    	}
+    }
+    
+    /**
+     * Sets one coordinate of the given point. Modifies the given point.
+     * 
+     * @param toSet point to modify
+     * @param width if true, the x coordinate is modified. If false, the y coordinate is modified.
+     * @param newCoordinate new value of the x or y coordinates
+     * @since 3.1
+     */
+    public static void setCoordinate(Point toSet, boolean width, int newCoordinate) {
+    	if (width) {
+    		toSet.x = newCoordinate;
+    	} else {
+    		toSet.y = newCoordinate;
+    	}
+    }
+    
     /**
      * Returns the distance of the given point from a particular side of the given rectangle.
      * Returns negative values for points outside the rectangle.
@@ -517,4 +643,5 @@ public class Geometry {
     public static Rectangle createRectangle(Point position, Point size) {
         return new Rectangle(position.x, position.y, size.x, size.y);
     }
+    
 }

@@ -52,6 +52,7 @@ public abstract class PartSashContainer extends LayoutPart implements
     protected WorkbenchPage page;
 
     boolean active = false;
+    boolean layoutDirty = false;
 
     /* Array of LayoutPart */
     protected ArrayList children = new ArrayList();
@@ -358,7 +359,7 @@ public abstract class PartSashContainer extends LayoutPart implements
             child.createControl(parent);
             child.setVisible(true);
             child.setContainer(this);
-            resizeSashes(parent.getClientArea());
+            resizeChild(child);
         }
 
     }
@@ -398,7 +399,7 @@ public abstract class PartSashContainer extends LayoutPart implements
         if (root != null) {
             root.updateSashes(parent);
         }
-        resizeSashes(parent.getClientArea());
+        flushLayout();
     }
 
     /**
@@ -542,21 +543,13 @@ public abstract class PartSashContainer extends LayoutPart implements
         return this.parent.getBounds();
     }
 
-    // getMinimumHeight() added by cagatayk@acm.org 
-    /**
-     * @see LayoutPart#getMinimumHeight()
-     */
-    public int getMinimumHeight() {
-        return getLayoutTree().getMinimumHeight();
-    }
-
-    // getMinimumHeight() added by cagatayk@acm.org 
-    /**
-     * @see LayoutPart#getMinimumWidth()
-     */
-    public int getMinimumWidth() {
-        return getLayoutTree().getMinimumWidth();
-    }
+//    // getMinimumHeight() added by cagatayk@acm.org 
+//    /**
+//     * @see LayoutPart#getMinimumHeight()
+//     */
+//    public int computeMinimumSize(boolean width, int knownHeight) {
+//        return getLayoutTree().computeMinimumSize(width, knownHeight);
+//    }
 
     /**
      * @see ILayoutContainer#getChildren
@@ -618,11 +611,16 @@ public abstract class PartSashContainer extends LayoutPart implements
      * @see org.eclipse.ui.internal.LayoutPart#forceLayout(org.eclipse.ui.internal.LayoutPart)
      */
     public void resizeChild(LayoutPart childThatChanged) {
-        forceLayout();
+    	if (root != null) {
+    		LayoutTree tree = root.find(childThatChanged);
+    		
+    		if (tree != null) {
+    			tree.flushCache();
+    		}
+    	}
+    	
+        flushLayout();
 
-        if (root != null) {
-            root.setBounds(getParent().getClientArea());
-        }
     }
 
     /**
@@ -647,10 +645,22 @@ public abstract class PartSashContainer extends LayoutPart implements
         if (active) {
             child.setVisible(false);
             child.setContainer(null);
-            resizeSashes(parent.getClientArea());
+            flushLayout();
         }
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#forceLayout()
+	 */
+	public void flushLayout() {
+		layoutDirty = true;
+		super.flushLayout();
+		
+		if (layoutDirty) {
+			resizeSashes(parent.getClientArea());
+		}
+	}
+	
     /**
      * Replace one part with another.
      */
@@ -688,11 +698,12 @@ public abstract class PartSashContainer extends LayoutPart implements
             newChild.createControl(parent);
             newChild.setContainer(this);
             newChild.setVisible(true);
-            resizeSashes(parent.getClientArea());
+            resizeChild(newChild);
         }
     }
 
     private void resizeSashes(Rectangle parentSize) {
+    	layoutDirty = false;
         if (!active)
             return;
         if (root != null) {
@@ -700,6 +711,31 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
     }
 
+    /**
+     * Returns the maximum size that can be utilized by this part if the given width and
+     * height are available. Parts can overload this if they have a quantized set of preferred 
+     * sizes.
+     * 
+     * @param availableWidth available horizontal space (pixels)
+     * @param availableHeight available vertical space (pixels)
+     * @return returns a new point where point.x is <= availableWidth and point.y is <= availableHeight
+     */
+    public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredParallel) {
+    	if (root != null) {
+    		return root.computePreferredSize(width, availableParallel, availablePerpendicular, preferredParallel);
+    	}
+    	    	
+    	return preferredParallel;
+    }
+	
+    public int getSizeFlags(boolean width) {
+        if (root != null) {
+            return root.getSizeFlags(width);
+        }
+        
+        return 0;
+    }
+    
     /**
      * @see LayoutPart#setBounds
      */
@@ -1034,15 +1070,15 @@ public abstract class PartSashContainer extends LayoutPart implements
         addChild(info);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
-     */
-    public boolean resizesVertically() {
-        if (root == null) {
-            return true;
-        }
-        return !root.fixedHeight();
-    }
+//    /* (non-Javadoc)
+//     * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
+//     */
+//    public boolean isMinimized(boolean width) {
+//        if (root == null) {
+//            return false;
+//        }
+//        return root.isMinimized(width);
+//    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.LayoutPart#testInvariants()

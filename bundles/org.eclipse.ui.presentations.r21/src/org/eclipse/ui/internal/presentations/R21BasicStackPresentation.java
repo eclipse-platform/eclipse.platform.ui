@@ -843,7 +843,7 @@ public class R21BasicStackPresentation extends StackPresentation {
     public void setBounds(Rectangle bounds) {
         if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
         	bounds = Geometry.copy(bounds);
-        	bounds.height = computeMinimumSize().y;
+        	bounds.height = computePreferredSize(false, Integer.MAX_VALUE, bounds.width, Integer.MAX_VALUE);
         }
     	
         paneFolder.getControl().setBounds(bounds);

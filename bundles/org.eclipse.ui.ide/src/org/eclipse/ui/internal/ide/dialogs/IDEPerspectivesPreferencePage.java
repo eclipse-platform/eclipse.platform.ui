@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
  * Extends the Perspectives preference page with IDE-specific settings.

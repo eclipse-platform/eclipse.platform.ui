@@ -1227,7 +1227,10 @@ public class DefaultPartPresentation extends StackPresentation {
      */
     public void setBounds(Rectangle bounds) {
         Assert.isTrue(!isDisposed());
-
+        
+		bounds = Geometry.copy(bounds);
+		bounds.height = computePreferredSize(false, bounds.height, bounds.width, bounds.height);
+        
         tabFolder.aboutToResize();
         tabFolder.getControl().setBounds(bounds);
         layout(false);
@@ -1239,6 +1242,7 @@ public class DefaultPartPresentation extends StackPresentation {
     public Point computeMinimumSize() {
         return tabFolder.computeMinimumSize();
     }
+
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.skins.Presentation#setVisible(boolean)
