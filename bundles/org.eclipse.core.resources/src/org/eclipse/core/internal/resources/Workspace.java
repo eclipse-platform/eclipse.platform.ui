@@ -1257,11 +1257,13 @@ public boolean isOpen() {
 	return openFlag;
 }
 /**
- * Returns true if the given file system locations overlap (they are the same,
- * or one is a proper prefix of the other), and false otherwise.  
+ * Returns true if the given file system locations overlap. If "bothDirections" is true,
+ * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
+ * is false, this method only returns true if the locations are the same, or the first location
+ * is a prefix of the second.  Returns false if the locations do not overlap
  * Does the right thing with respect to case insensitive platforms.
  */
-protected boolean isOverlapping(IPath location1, IPath location2) {
+protected boolean isOverlapping(IPath location1, IPath location2, boolean bothDirections) {
 	IPath one = location1;
 	IPath two = location2;
 	// If we are on a case-insensitive file system then convert to all lowercase.
@@ -1269,7 +1271,7 @@ protected boolean isOverlapping(IPath location1, IPath location2) {
 		one = new Path(location1.toOSString().toLowerCase());
 		two = new Path(location2.toOSString().toLowerCase());
 	}
-	return one.isPrefixOf(two) || two.isPrefixOf(one);
+	return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
 }
 public boolean isTreeLocked() {
 	if (overrideTreeLock)
@@ -1838,13 +1840,13 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the platform metadata location
 	IPath testLocation = getMetaArea().getLocation();
-	if (isOverlapping(location, testLocation)) {
+	if (isOverlapping(location, testLocation, true)) {
 		message = Policy.bind("links.invalidLocation", location.toOSString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
 	//test if the given path overlaps the location of the given project
 	testLocation = resource.getProject().getLocation();
-	if (isOverlapping(location, testLocation)) {
+	if (testLocation != null && isOverlapping(location, testLocation, false)) {
 		message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
@@ -1864,7 +1866,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		// know that they have been created before and must have a description
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
 		testLocation = desc.getLocation();
-		if (testLocation != null && isOverlapping(location, testLocation)) {
+		if (testLocation != null && isOverlapping(location, testLocation, true)) {
 			message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 		}
@@ -1882,7 +1884,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		for (int j = 0; j < children.length; j++) {
 			if (children[j].isLinked()) {
 				testLocation = children[j].getLocation();
-				if (testLocation != null && isOverlapping(location, testLocation)) {
+				if (testLocation != null && isOverlapping(location, testLocation, true)) {
 					message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
 					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 				}
@@ -2035,7 +2037,7 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the default default location
 	IPath defaultDefaultLocation = Platform.getLocation();
-	if (isOverlapping(location, defaultDefaultLocation)) {
+	if (isOverlapping(location, defaultDefaultLocation, true)) {
 		message = Policy.bind("resources.overlapLocal", location.toString(), defaultDefaultLocation.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
@@ -2054,9 +2056,30 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 		//tolerate locations being the same if this is the project being tested
 		if (project.equals(context) && definedLocalLocation.equals(location))
 			continue;
-		if (isOverlapping(location, definedLocalLocation)) {
+		if (isOverlapping(location, definedLocalLocation, true)) {
 			message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
+	}
+	//if this project exists and has linked resources, the project location cannot overlap
+	//the locations of any linked resources in that project
+	if (context.exists() && context.isOpen()) {
+		IResource[] children = null;
+		try {
+			children = context.members();
+		} catch (CoreException e) {
+			//ignore projects that cannot be accessed
+		}
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].isLinked()) {
+					IPath testLocation = children[i].getLocation();
+					if (testLocation != null && isOverlapping(testLocation, location, false)) {
+						message = Policy.bind("links.locationOverlapsLink", location.toOSString()); //$NON-NLS-1$
+						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
+					}
+				}				
+			}
 		}
 	}
 	return ResourceStatus.OK_STATUS;

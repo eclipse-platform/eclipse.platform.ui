@@ -1275,8 +1275,10 @@ public IStatus validatePath(String path, int typeMask);
  * to the restrictions for paths in general (see <code>IPath.
  * isValidPath</code>), a location path should also obey the following rules:
  * <ul>
- * <li> must not overlap with another open or closed project
- * <li> must not overlap with the platform's working directory
+ * <li> must not overlap with another open or closed project</li>
+ * <li> must not overlap with the platform's working directory</li>
+ * <li> must not be the same as or a child of the location of any existing linked resource
+ * in the given project</li>
  * </ul>
  * </p>
  * <p>
