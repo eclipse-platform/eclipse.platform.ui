@@ -3,7 +3,7 @@
 
 	<property name="bootclasspath" value=""/>
 
-	<target name="build">
+	<target name="build" description="Removes all build artifacts, recreates the support jar, and refreshes this plugin's resources">
 		<antcall target="clean"/>
 		<antcall target="lib/antTestsSupport.jar"/>
 		<antcall target="refresh"/>
@@ -28,7 +28,7 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="lib/antTestsSupport.jar" depends="init">
+	<target name="lib/antTestsSupport.jar" depends="init" description= "Builds the support JAR">
 		<property name="destdir" value="${temp.folder}/lib/antTestsSupport.jar.bin"/>
 		<delete dir="${temp.folder}/lib/antTestsSupport.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antTestsSupport.jar.bin"/>
@@ -46,7 +46,7 @@
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<target name="refresh" depends="init" if="eclipse.running">
+	<target name="refresh" depends="init" if="eclipse.running" description= "Refreshes the project's resources">
 		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
 	</target>
 </project>
