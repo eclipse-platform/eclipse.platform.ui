@@ -28,6 +28,7 @@
    <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders" schema="schema/markerImageProviders.exsd"/>
    <extension-point id="markerResolution" name="%ExtPoint.markerResolution" schema="schema/markerResolution.exsd"/>
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.exsd"/>
+   <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.exsd"/>
 
    <extension
          id="workbench"
@@ -322,6 +323,14 @@
             class="org.eclipse.ui.views.markers.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+            selected="false"
+            pattern=".*">
+      </filter>
    </extension>
 
 </plugin>
