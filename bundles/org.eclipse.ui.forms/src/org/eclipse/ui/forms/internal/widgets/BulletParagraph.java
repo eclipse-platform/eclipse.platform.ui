@@ -23,6 +23,7 @@ public class BulletParagraph extends Paragraph {
 	private int CIRCLE_DIAM = 5;
 	private int SPACING = 10;
 	private int indent = -1;
+	private int bindent = -1;
 	/**
 	 * Constructor for BulletParagraph.
 	 * @param addVerticalSpace
@@ -39,6 +40,12 @@ public class BulletParagraph extends Paragraph {
 				return CIRCLE_DIAM + SPACING;
 		}
 		return 20;
+	}
+	
+	public int getBulletIndent() {
+		if (bindent != -1)
+			return bindent;
+		return 0;
 	}
 
 	/*
@@ -58,6 +65,10 @@ public class BulletParagraph extends Paragraph {
 
 	public void setIndent(int indent) {
 		this.indent = indent;
+	}
+	
+	public void setBulletIndent(int bindent) {
+		this.bindent = bindent;
 	}
 
 	/*
@@ -83,7 +94,7 @@ public class BulletParagraph extends Paragraph {
 		Locator loc,
 		int lineHeight,
 		Hashtable objectTable) {
-		int x = loc.x - getIndent();
+		int x = loc.x - getIndent() + getBulletIndent();
 		if (style == CIRCLE) {
 			int y = loc.y + lineHeight / 2 - CIRCLE_DIAM / 2;
 			Color bg = gc.getBackground();

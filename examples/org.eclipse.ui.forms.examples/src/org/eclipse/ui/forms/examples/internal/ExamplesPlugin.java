@@ -22,6 +22,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_LARGE="large";
 	public static final String IMG_HORIZONTAL="horizontal";
 	public static final String IMG_VERTICAL="vertical";
+	public static final String IMG_SAMPLE="sample";
 	
 	/**
 	 * The constructor.
@@ -42,6 +43,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_LARGE, "large_image.gif");
 		registerImage(registry, IMG_HORIZONTAL, "th_horizontal.gif");
 		registerImage(registry, IMG_VERTICAL, "th_vertical.gif");
+		registerImage(registry, IMG_SAMPLE, "sample.gif");
 	}
 
 	private void registerImage(ImageRegistry registry, String key, String fileName) {

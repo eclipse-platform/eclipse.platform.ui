@@ -5,6 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.ui.forms.examples.internal.rcp;
+import java.io.*;
 import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -127,6 +128,13 @@ public class FreeFormPage extends FormPage {
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		rtext.setImage("image1", ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_LARGE));
 		InputStream is = FreeFormPage.class.getResourceAsStream("index.xml");
-		rtext.setContents(is, true);
+		if (is!=null) {
+			rtext.setContents(is, true);
+			try {
+				is.close();
+			}
+			catch (IOException e) {
+			}
+		}
 	}
 }

@@ -730,7 +730,25 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					minWidth = size.x;
 				}
 				minWidth += td.indent;
-				minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
+				if (td.colspan==1)
+					minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
+				else {
+					// check if the current minimum width is enough to
+					// support the control; if not, add the delta to
+					// the last column
+					int current = 0;
+					for (int k=j; k<j+td.colspan; k++) {
+						if (k>j) current+= horizontalSpacing;
+						current += minColumnWidths[k];
+					}
+					if (minWidth <= current) {
+						// we are ok - nothing to do here
+					}
+					else {
+						// add the delta to the last column
+						minColumnWidths[j+td.colspan-1] += minWidth-current;
+					}
+				}
 			}
 		}
 	}

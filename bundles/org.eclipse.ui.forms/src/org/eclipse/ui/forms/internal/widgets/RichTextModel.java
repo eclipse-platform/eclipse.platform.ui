@@ -144,8 +144,10 @@ public class RichTextModel {
 		Node styleAtt = atts.getNamedItem("style");
 		Node valueAtt = atts.getNamedItem("value");
 		Node indentAtt = atts.getNamedItem("indent");
+		Node bindentAtt = atts.getNamedItem("bindent");
 		int style = BulletParagraph.CIRCLE;
 		int indent = -1;
+		int bindent = -1;
 		String text = null;
 		boolean addSpace = true;
 
@@ -160,6 +162,9 @@ public class RichTextModel {
 			} else if (value.equalsIgnoreCase("image")) {
 				style = BulletParagraph.IMAGE;
 			}
+			else if (value.equalsIgnoreCase("bullet")) {
+				style = BulletParagraph.CIRCLE;
+			}
 		}
 		if (valueAtt != null) {
 			text = valueAtt.getNodeValue();
@@ -171,9 +176,17 @@ public class RichTextModel {
 			} catch (NumberFormatException e) {
 			}
 		}
+		if (bindentAtt != null) {
+			String value = bindentAtt.getNodeValue();
+			try {
+				bindent = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+			}
+		}
 
 		BulletParagraph p = new BulletParagraph(addSpace);
 		p.setIndent(indent);
+		p.setBulletIndent(bindent);
 		p.setBulletStyle(style);
 		p.setBulletText(text);
 
@@ -279,6 +292,12 @@ public class RichTextModel {
 		if (href != null) {
 			String value = href.getNodeValue();
 			segment.setHref(value);
+		}
+		Node nowrap = atts.getNamedItem("nowrap");
+		if (nowrap != null) {
+			String value = nowrap.getNodeValue();
+			if (value!=null && value.equalsIgnoreCase("true"))
+				segment.setWordWrapAllowed(false);
 		}
 		return segment;
 	}

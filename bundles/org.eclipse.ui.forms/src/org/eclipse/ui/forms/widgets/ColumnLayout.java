@@ -130,7 +130,7 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		}
 		size.x = cwidth * ncolumns + (ncolumns - 1) * horizontalSpacing;
 		size.x += leftMargin + rightMargin;
-		System.out.println("ColumnLayout: whint="+wHint+", size.x="+size.x);
+		//System.out.println("ColumnLayout: whint="+wHint+", size.x="+size.x);
 		size.y += topMargin + bottomMargin;
 		return size;
 	}

@@ -53,7 +53,9 @@ public class TableWrapData {
 	public static final int FILL = 1<< 7;
 /**
  * In addition to filling width or height, the control will
- * take part in allocation of any excess space.
+ * take part in allocation of any excess space. Note that this 
+ * constant can only be passed to the constructor (cannot be
+ * directly assigned to <code>align</code> variable).
  */
 	public static final int FILL_GRAB = 1 << 8;
 /**
@@ -65,11 +67,11 @@ public class TableWrapData {
  */
 	public int rowspan=1;
 /**
- * Horizontal alignment (default is LEFT).
+ * Horizontal alignment (LEFT, CENTER, RIGHT or FILL; default is LEFT).
  */
 	public int align = LEFT;
 /**
- * Vertical alignment (default is TOP).
+ * Vertical alignment (TOP, MIDDLE, BOTTOM or FILL; default is TOP).
  */
 	public int valign = TOP;
 /**
@@ -92,15 +94,15 @@ public class TableWrapData {
  * If <code>true</code>, will grab any excess horizontal space
  * (default is <code>false</code>).
  */
-	public boolean grabHorizontal=false;
+	public boolean grabHorizontal;
 	/**
 	 * If <code>true</code>, will grab any excess vertical space
 	 * (default is <code>false</code>). Note that since
 	 * TableWrapLayout works top-down and does not grows to fill
-	 * the parent, this only applies to space created by
-	 * children that span multiple rows.
+	 * the parent, this only applies to local excess space created by
+	 * fixed-height children that span multiple rows.
 	 */
-	public boolean grabVertical=false;
+	public boolean grabVertical;
 	
 	int childIndex;
 	boolean isItemData=true; 
@@ -141,13 +143,14 @@ public class TableWrapData {
  * @param colspan column span (1 or more)
  */
 	public TableWrapData(int align, int valign, int rowspan, int colspan) {
-		if (align==FILL_GRAB) {
-			align = FILL;
+		if (align == FILL_GRAB) {
+			this.align = FILL;
 			grabHorizontal = true;
 		}
 		else this.align = align;
-		if (valign==FILL_GRAB) {
-			valign = FILL;
+		
+		if (valign == FILL_GRAB) {
+			this.valign = FILL;
 			grabVertical = true;
 		}
 		else this.valign = valign;
