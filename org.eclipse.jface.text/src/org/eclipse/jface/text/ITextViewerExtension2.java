@@ -54,7 +54,7 @@ public interface ITextViewerExtension2 {
 	 * Removes all text hovers for the given content type.
 	 * <p>
 	 * Note: To remove a hover for a given content type and state mask
-	 * use @link #setTextHover(ITextHover, String, int) with <code>null</code>
+	 * use {@link #setTextHover(ITextHover, String, int)} with <code>null</code>
 	 * as parameter for the text hover.
 	 * </p>
 	 * @param contentType the type for which the hover is registered
