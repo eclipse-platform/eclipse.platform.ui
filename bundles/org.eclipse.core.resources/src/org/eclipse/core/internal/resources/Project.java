@@ -344,7 +344,11 @@ public class Project extends Container implements IProject {
 	public IProjectDescription getDescription() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
-		return (IProjectDescription) ((ProjectInfo) info).getDescription().clone();
+		ProjectDescription description = ((ProjectInfo)info).getDescription();
+		//if the project is currently in the middle of being created, the description might not be available yet
+		if (description == null)
+			checkAccessible(NULL_FLAG);
+		return (IProjectDescription) description.clone();
 	}
 
 	/* (non-Javadoc)
@@ -422,7 +426,11 @@ public class Project extends Container implements IProject {
 	public IProject[] getReferencedProjects() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
-		return ((ProjectInfo) info).getDescription().getAllReferences(true);
+		ProjectDescription description = ((ProjectInfo)info).getDescription();
+		//if the project is currently in the middle of being created, the description might not be available yet
+		if (description == null)
+			checkAccessible(NULL_FLAG);
+		return description.getAllReferences(true);
 	}
 
 	/* (non-Javadoc)
