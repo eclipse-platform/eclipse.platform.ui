@@ -69,6 +69,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	private BooleanFieldEditor2 fUseBufferSize = null;
 	private ConsoleIntegerFieldEditor fBufferSizeEditor = null;
 	
+	private ConsoleIntegerFieldEditor fTabSizeEditor = null;
+	
 	/**
 	 * Create the console page.
 	 */
@@ -124,6 +126,11 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 				}
 			}
 		);
+		
+		fTabSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.12"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(fTabSizeEditor);
+		fTabSizeEditor.setValidRange(1,100);
+		fTabSizeEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.13")); //$NON-NLS-1$
 		
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$

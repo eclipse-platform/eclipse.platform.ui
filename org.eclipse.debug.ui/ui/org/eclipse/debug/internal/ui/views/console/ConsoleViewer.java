@@ -118,6 +118,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		getTextWidget().addPaintListener(this);
 		getTextWidget().addLineStyleListener(this);
 		getTextWidget().addListener(SWT.KeyUp, this);
+		getTextWidget().setTabs(DebugUIPlugin.getDefault().getPluginPreferences().getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
 	}
 	
 	/**
@@ -187,6 +188,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 				getTextWidget().redraw();
 		} else if (propertyName.equals(IConsoleConstants.CONSOLE_FONT)) {
 			getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+		} else if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
+			getTextWidget().setTabs(DebugUIPlugin.getDefault().getPluginPreferences().getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
 		}
 	}
 	

@@ -61,6 +61,14 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_HIGH_WATER_MARK = "Console.highWaterMark"; //$NON-NLS-1$
 	
 	/**
+	 * Integer preference specifying the number of spaces composing a
+	 * tab in the console.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String CONSOLE_TAB_WIDTH= "Console.console_tab_width"; //$NON-NLS-1$
+	
+	/**
 	 * The orientation of the detail view in the VariablesView
 	 */
 	public static final String VARIABLES_DETAIL_PANE_ORIENTATION = "Variables.detail.orientation"; //$NON-NLS-1$

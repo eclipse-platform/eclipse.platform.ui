@@ -335,6 +335,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, 80000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, 100000);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, 8);
 		
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
