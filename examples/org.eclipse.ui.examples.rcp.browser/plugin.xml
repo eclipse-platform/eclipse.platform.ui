@@ -70,6 +70,9 @@
          <property
                name="aboutImage"
                value="icons/eclipse_lg.gif"/>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini"/>
       </product>
    </extension>
 
