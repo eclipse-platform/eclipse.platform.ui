@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Frame for tree viewers.  This capture the viewer's input element, selection,
@@ -28,6 +33,7 @@ public class TreeFrame extends Frame {
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TAG_FRAME_INPUT = "frameInput"; //$NON-NLS-1$
+	private static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 	
 	private AbstractTreeViewer viewer;
 	private Object input;
@@ -109,7 +115,7 @@ public class TreeFrame extends Frame {
 		List elements = new ArrayList(elementMem.length);
 		
 		for (int i = 0; i < elementMem.length; i++) {
-			String factoryID = elementMem[i].getString(IWorkbenchConstants.TAG_FACTORY_ID);
+			String factoryID = elementMem[i].getString(TAG_FACTORY_ID);
 			if (factoryID != null) {
 				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 				if (factory != null)
@@ -130,7 +136,7 @@ public class TreeFrame extends Frame {
 		if (childMem == null)
 			return;
 		
-		String factoryID = childMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+		String factoryID = childMem.getString(TAG_FACTORY_ID);
 		IAdaptable frameInput = null;
 		if (factoryID != null) {
 			IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
@@ -171,7 +177,7 @@ public class TreeFrame extends Frame {
 				IPersistableElement persistable = (IPersistableElement) ((IAdaptable) elements[i]).getAdapter(IPersistableElement.class);
 				if (persistable != null) {
 					IMemento elementMem = memento.createChild(TAG_ELEMENT);
-					elementMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+					elementMem.putString(TAG_FACTORY_ID, persistable.getFactoryId());
 					persistable.saveState(elementMem);								
 				}							
 			}
@@ -191,7 +197,7 @@ public class TreeFrame extends Frame {
 		if (persistable != null) {
 			IMemento frameMemento = memento.createChild(TAG_FRAME_INPUT);
 			
-			frameMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+			frameMemento.putString(TAG_FACTORY_ID, persistable.getFactoryId());
 			persistable.saveState(frameMemento);
 			
 			if (expandedElements.length > 0) {
