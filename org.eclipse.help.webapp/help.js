@@ -16,9 +16,13 @@ function onloadFrameset()
 {
 	framesLoaded = true;
 	if(args && args["toc"])
+	{
 		NavFrame.document.getElementById("toc").src = "toc.jsp"+ getQuery();
-	else
+		showBookshelfIcon(true);
+	} else {
 		NavFrame.document.getElementById("toc").src = "tocs.jsp"+ getQuery();
+		showBookshelfIcon(false);
+	}
 	
 	NavFrame.document.getElementById("search").src = "search_results.jsp" + getQuery();
 	if (NavFrame.document.getElementById("links"))
@@ -133,20 +137,23 @@ function displayTocFor(topic)
 
 function showBookshelfIcon(show)
 {
-   // show or hide the bookshelf icon on the nav toolbar 
-   // NavToolbarFrame.document.getElementById("iconLayer").style.display = show? "" : "none";
+   	// show or hide the bookshelf icon on the nav toolbar 
+   	if (show)
+   		NavToolbarFrame.document.getElementById("bookshelfIcon").src = "images/home_nav.gif";
+   	else
+   		NavToolbarFrame.document.getElementById("bookshelfIcon").src = "images/home_cont.gif";
 }
 
 function showBookshelf()
 { 
-	//showBookshelfIcon(false);
+	showBookshelfIcon(false);
 	
 	switchTab("toc");
 	// load the bookshelf
 	//window.toc.window.location.href = "tocs.jsp";
 	NavFrame.toc.window.location.replace("tocs.jsp");
 	// clear the content page
-	parent.MainFrame.location="home.jsp";
+	parent.MainFrame.location=help_home;
 	setToolbarTitle(" ");
 }
 
@@ -155,7 +162,7 @@ function showBookshelf()
  */		
 function loadTOC(tocId)
 {
-	//showBookshelfIcon(true);
+	showBookshelfIcon(true);
 	
 	// clear the content page
 	//MainFrame.location="home.jsp?toc="+tocId;

@@ -9,35 +9,11 @@
 	 String  ContentStr = WebappResources.getString("Content", request);
 	 String  SearchStr = WebappResources.getString("SearchResults", request);
 	 String  LinksStr = WebappResources.getString("Links", request);
-
-	// Paramters allowed:
-	// tab = toc | search | links
-	// toc
-	// topic
-	// searchWord
-	// contextId
-	// lang
-	
-	
-	String query = "";
-	if (request.getQueryString() != null && request.getQueryString().length() > 0)
-		query = "?" + request.getQueryString();
-	
-	// url of MainFrame
-	String srcMainFrame = "home.jsp";
-	if(request.getParameter("topic")!=null)
-	{
-		String topic = request.getParameter("topic");
-		if (topic.startsWith("/"))
-		{	
-			topic = request.getContextPath() + "/content/help:" + topic;
-		}
-		srcMainFrame=topic;
-	}
 	
 	// Load the preferences
 	String banner = null;
-	String banner_height = "48";
+	String banner_height = "45";
+	String help_home = null;
 	
 	ContentUtil content = new ContentUtil(application, request);
 	Element prefsElement = content.loadPreferences();
@@ -52,6 +28,8 @@
 				banner = pref.getAttribute("value");
 			else if (name.equals("banner_height"))
 				banner_height = pref.getAttribute("value");
+			else if (name.equals("help_home"))
+				help_home = pref.getAttribute("value");
 		}
 	}
 	if (banner != null){
@@ -61,6 +39,36 @@
 			banner = "content/help:" + banner;
 	}
 	
+	if (help_home != null)
+		help_home = "content/help:" + help_home;
+	else
+		help_home = "home.jsp";
+		
+		
+			 
+	// Paramters allowed:
+	// tab = toc | search | links
+	// toc
+	// topic
+	// searchWord
+	// contextId
+	// lang
+	
+	String query = "";
+	if (request.getQueryString() != null && request.getQueryString().length() > 0)
+		query = "?" + request.getQueryString();
+	
+	// url of MainFrame
+	String srcMainFrame = help_home;
+	if(request.getParameter("topic")!=null)
+	{
+		String topic = request.getParameter("topic");
+		if (topic.startsWith("/"))
+		{	
+			topic = request.getContextPath() + "/content/help:" + topic;
+		}
+		srcMainFrame=topic;
+	}
 %>
 
 

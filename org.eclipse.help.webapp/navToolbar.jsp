@@ -73,7 +73,7 @@ BODY {
 				</td>
 				<td align="middle" width="20">
 					<a  href="#" onclick="parent.showBookshelf(this); this.blur();" >
-						<img  src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0">
+						<img  id="bookshelfIcon" src="images/home_cont.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0">
 					</a>
 				</td>
 			</tr>
