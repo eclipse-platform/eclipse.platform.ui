@@ -43,6 +43,14 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		
 	private Set modifiedResources = new HashSet();
 
+	// consider the following changes types and ignore the others (e.g. marker and description changes are ignored)
+	protected int INTERESTING_CHANGES = 	IResourceDelta.CONTENT | 
+																	IResourceDelta.MOVED_FROM | 
+																	IResourceDelta.MOVED_TO |
+																	IResourceDelta.OPEN | 
+																	IResourceDelta.REPLACED |
+																	IResourceDelta.TYPE;
+
 	/**
 	 * Listen for file modifications and fire modification state changes
 	 * 
@@ -68,7 +76,10 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 					}
 					
 					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
-						contentsChanged((IFile)resource);
+						int flags = delta.getFlags();
+						if((flags & INTERESTING_CHANGES) != 0) {
+							contentsChanged((IFile)resource);
+						}
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
 						resourceAdded(resource);
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
@@ -128,16 +139,6 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 
 	
 	/**
-	 * Method syncInfoChanged.
-	 * @param resources
-	 */
-	public void syncInfoChanged(IResource[] resources) throws CVSException {
-		for (int i = 0; i < resources.length; i++) {
-			((EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resources[i])).syncInfoChanged();
-		}
-	}
-	
-	/**
 	 * Method updated flags the objetc as having been modfied by the updated
 	 * handler. This flag is read during the resource delta to determine whether
 	 * the modification made the file dirty or not.
@@ -153,7 +154,6 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		try {
 			EclipseFile cvsFile = (EclipseFile)CVSWorkspaceRoot.getCVSFileFor(file);
 			cvsFile.handleModification(false /* addition */);
-			// add all files to the modified list
 			modifiedResources.add(file);
 		} catch (CVSException e) {
 			throw e.toCoreException();
@@ -172,7 +172,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		try {
 			EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
 			cvsResource.handleModification(true /* addition */);
-				modifiedResources.add(resource);
+			modifiedResources.add(resource);
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}

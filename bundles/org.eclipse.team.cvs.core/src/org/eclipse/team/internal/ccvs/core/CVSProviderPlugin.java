@@ -126,6 +126,7 @@ public class CVSProviderPlugin extends Plugin {
 	private static final int REPOSITORIES_STATE_FILE_VERSION_2 = -1;
 	private Map repositories = new HashMap();
 	private List repositoryListeners = new ArrayList();
+	private static List decoratorEnablementListeners = new ArrayList();
 	
 	/**
 	 * The identifier for the CVS nature
@@ -450,6 +451,21 @@ public class CVSProviderPlugin extends Plugin {
 		}
 	}
 	
+	public static void broadcastDecoratorEnablementChanged(final boolean enabled) {
+		for(Iterator it=decoratorEnablementListeners.iterator(); it.hasNext();) {
+			final ICVSDecoratorEnablementListener listener = (ICVSDecoratorEnablementListener)it.next();
+			ISafeRunnable code = new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.decoratorEnablementChanged(enabled);
+				}
+				public void handleException(Throwable e) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+			};
+			Platform.run(code);
+		}
+	}
+	
 	public static void broadcastModificationStateChanges(final IResource[] resources) {
 		for(Iterator it=listeners.iterator(); it.hasNext();) {
 			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
@@ -639,9 +655,25 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
+	 * Register to receive notification of enablement of sync info decoration requirements. This
+	 * can be useful for providing lazy initialization of caches that are only required for decorating
+	 * resource with CVS information.
+	 */
+	public void addDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
+		repositoryListeners.add(listener);
+	}
+	
+	/**
 	 * De-register a listener
 	 */
 	public void removeRepositoryListener(ICVSListener listener) {
+		repositoryListeners.remove(listener);
+	}
+	
+	/**
+	 * De-register the decorator enablement listener. 
+	 */
+	public void removeDecoratorEnablementListener(ICVSDecoratorEnablementListener listener) {
 		repositoryListeners.remove(listener);
 	}
 	

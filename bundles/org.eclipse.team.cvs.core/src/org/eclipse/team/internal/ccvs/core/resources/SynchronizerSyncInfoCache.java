@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -44,7 +43,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	public SynchronizerSyncInfoCache() {
 		getWorkspaceSynchronizer().add(FOLDER_SYNC_KEY);
 		getWorkspaceSynchronizer().add(RESOURCE_SYNC_KEY);
-		getWorkspaceSynchronizer().add(DIRTY_COUNT);
 	}
 	/**
 	 * Return the Eclipse Workspace Synchronizer (from org.eclipse.core.resources)
@@ -168,7 +166,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		try {
 			getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, project, IResource.DEPTH_INFINITE);
 			getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, project, IResource.DEPTH_INFINITE);
-			getWorkspaceSynchronizer().flushSyncInfo(DIRTY_COUNT, project, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -266,163 +263,29 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		}
 	}
 
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.LowLevelSyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
 	 */
-	String getDirtyIndicator(IResource resource) throws CVSException {
+	String getDirtyIndicator(IResource resource) throws CVSException {		
 		if (resource.getType() == IResource.FILE) {
-			// if someone is asking about a non-existant file, it's probably dirty
-			return IS_DIRTY_INDICATOR;
+			// a phantom file is dirty if it was managed before it was deleted			 
+			return getCachedSyncBytes(resource) != null ? 
+							IS_DIRTY_INDICATOR : 
+							NOT_DIRTY_INDICATOR;
 		} else {
-			int dirtyCount = getCachedDirtyCount((IContainer)resource);
-			switch (dirtyCount) {
-				case -1 :
-					return null;
-				case 0 :
-					return NOT_DIRTY_INDICATOR;
-				default :
-					return IS_DIRTY_INDICATOR;
-			}
+			return calculateDirtyCountForPhantomFolder((IContainer)resource);
 		}
 	}
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.LowLevelSyncInfoCache#setDirtyIndicator(org.eclipse.core.resources.IResource, java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setDirtyIndicator(org.eclipse.core.resources.IResource, java.lang.String)
 	 */
 	void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
-		// The count is used as the indicator
+		// We don't cache the dirty count for folders because it would cause
+		// resource delta's in the decorator thread and possible deadlock.
 	}
 		
-	/**
-	 * Return the dirty count for the given folder. For existing folders, the
-	 * dirty count may not have been calculated yet and this method will return
-	 * null in that case. For phantom folders, the dirty count is calculated if
-	 * it does not exist yet.
-	 */
-	/*package*/ int getCachedDirtyCount(IContainer container) throws CVSException {
-		// get the count from the synchronizer
-		int count = internalGetDirtyCount(container);
-		if (count == -1) {
-			count = calculateDirtyCountForPhantom(container);
-			//setDirtyCount(parent, count);
-		}
-		return count;
-	}
-
-	/**
-	 * Set the dirty count for the given container to the given count.
-	 * 
-	 * @param container
-	 * @param count
-	 * @throws CVSException
-	 */
-	/*package*/ void setCachedDirtyCount(IContainer container, int count) throws CVSException {
-		try {
-			getWorkspaceSynchronizer().setSyncInfo(DIRTY_COUNT, container, getBytes(count));
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	/*
-	 * Convert an int to a byte array
-	 */
-	private byte[] getBytes(int count) {
-		byte[] result = new byte[4];
-		result[0] = (byte)(count & 256);
-		result[1] = (byte)(count<<8 & 256);
-		result[1] = (byte)(count<<16 & 256);
-		result[1] = (byte)(count<<24 & 256);
-		return result;
-	}
-
-	/*
-	 * Convert a byte array to an int
-	 */
-	private int intFromBytes(byte[] bytes) {
-		return bytes[0] + (bytes[1]>>8) + (bytes[2]>>16) + (bytes[3]>>24);
-	}
-	
-	private int internalGetDirtyCount(IContainer parent) throws CVSException {
-		try {
-			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(DIRTY_COUNT, parent);
-			if (bytes == null) return -1;
-			return intFromBytes(bytes);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	/*
-	 * Calculate the dirty count for the given phantom folder, performing any
-	 * necessary calculations on the childen as well
-	 */
-	private int calculateDirtyCountForPhantom(IContainer parent) throws CVSException {
-		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS | ICVSFolder.PHANTOM_MEMBERS);
-		int count = 0;
-		for (int i = 0; i < children.length; i++) {
-			ICVSResource resource = children[i];
-			if (resource.isFolder()) {
-				int dc = getCachedDirtyCount((IContainer)resource.getIResource());
-				if (dc > 0) count++;
-			} else {
-				// Any non-existant managed files are dirty (outgoing deletion)
-				count++;
-			}
-		}
-		return count;
-	}
-	
 	/*package*/ void flushDirtyCache(IResource container) throws CVSException {
-//		if (container.exists() || container.isPhantom()) {
-//			try {
-//				getWorkspaceSynchronizer().flushSyncInfo(DIRTY_COUNT, container, IResource.DEPTH_ZERO);
-//			} catch (CoreException e) {
-//				throw CVSException.wrapException(e);
-//			}
-//		}
-	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer#addDeletedChild(org.eclipse.core.resources.IContainer, org.eclipse.core.resources.IFile)
-	 */
-	protected boolean addDeletedChild(IContainer container, IFile file) throws CVSException {
-//			try {
-//				beginOperation(null);
-//				int oldCount = internalGetDirtyCount(container);
-//				if (oldCount == -1) {
-//					// there is no cached count so wait until the first query
-//					// or there was no deleted file
-//					return false;
-//				}
-//				int newCount = calculateDirtyCountForPhantom(container);
-//				// adjust the parent folder count if the newCount is 1;
-//				return oldCount == 0 && newCount == 1;
-//			} finally {
-//				endOperation(null);
-//			}
-			return true;
-	}
-
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer#removeDeletedChild(org.eclipse.core.resources.IContainer, org.eclipse.core.resources.IFile)
-	 */
-	protected boolean removeDeletedChild(IContainer container, IFile file) throws CVSException {
-//			try {
-//				beginOperation(null);
-//				int oldCount = internalGetDirtyCount(container);
-//				if (oldCount == -1 || oldCount == 0) {
-//					// there is no cached count so wait until the first query
-//					// or there was no deleted file
-//					return false;
-//				}
-//				int newCount = calculateDirtyCountForPhantom(container);
-//				// adjust the parent folder count if the newCount is 0;
-//				return newCount == 0;
-//			} finally {
-//				endOperation(null);
-//			}
-			return true;
 	}
 	
 	/*package*/ boolean isSyncInfoLoaded(IContainer parent) throws CVSException {
@@ -455,5 +318,32 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	boolean isDirtyCacheFlushed(IContainer resource) throws CVSException {
 		return false;
+	}
+	
+	/*
+	 * Calculate the dirty count for the given phantom folder, performing any
+	 * necessary calculations on the childen as well
+	 */
+	private String calculateDirtyCountForPhantomFolder(IContainer parent) throws CVSException {
+		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
+		if(getCachedFolderSync(parent) == null) {
+			return NOT_DIRTY_INDICATOR;
+		}
+		
+		String indicator = NOT_DIRTY_INDICATOR;
+		ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS | ICVSFolder.PHANTOM_MEMBERS);
+		for (int i = 0; i < children.length; i++) {
+			ICVSResource resource = children[i];
+			// keep looking into phantom folders until a managed phantom file 
+			// is found.
+			if (resource.isFolder()) {
+				indicator = calculateDirtyCountForPhantomFolder((IContainer)resource.getIResource());
+			} else {
+				// Any non-existant managed files are dirty (outgoing deletion)
+				indicator = IS_DIRTY_INDICATOR;
+				break;
+			}
+		}
+		return indicator;
 	}
 }

@@ -294,35 +294,10 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 
 	public abstract boolean handleModification(boolean forAddition) throws CVSException;
 	
-	/*
-	 * Flush all cached info for the file and it's ancestors
-	 */
-	protected void flushWithAncestors() throws CVSException {
-		EclipseSynchronizer.getInstance().flushDirtyCacheWithAncestors(getIResource());
-	}
-	
-	protected String getDirtyIndicator() throws CVSException {
-		return EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
-	}
-
-	protected void setDirtyIndicator(String indicator) throws CVSException {
-		EclipseSynchronizer.getInstance().setDirtyIndicator(getIResource(), indicator);
-	}
-	
-	/*
-	 * Method syncInfoChanged is invoked by the sync file change listener.
-	 */
-	protected abstract void syncInfoChanged() throws CVSException;
-	
 	/**
 	 * Method created is invoked after a resource is created
 	 */
 	protected void created() throws CVSException {
-		// flush the dirty cache for the ancestors
-		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
-		if (indicator != null) {
-			flushWithAncestors();
-		}
 		EclipseSynchronizer.getInstance().created(getIResource());
 	}
 	

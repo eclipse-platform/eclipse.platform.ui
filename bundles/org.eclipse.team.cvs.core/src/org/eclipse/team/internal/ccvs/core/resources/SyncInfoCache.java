@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
@@ -36,11 +35,11 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	
 	/*package*/ static final QualifiedName IS_DIRTY = new QualifiedName(CVSProviderPlugin.ID, "is-dirty"); //$NON-NLS-1$
 	/*package*/ static final QualifiedName CLEAN_UPDATE = new QualifiedName(CVSProviderPlugin.ID, "clean-update"); //$NON-NLS-1$
-	/*package*/ static final QualifiedName DIRTY_COUNT = new QualifiedName(CVSProviderPlugin.ID, "dirty-count"); //$NON-NLS-1$
-	/*package*/ static final QualifiedName DELETED_CHILDREN = new QualifiedName(CVSProviderPlugin.ID, "deleted"); //$NON-NLS-1$
 	/*package*/ static final String IS_DIRTY_INDICATOR = "d"; //$NON-NLS-1$
 	/*package*/ static final String NOT_DIRTY_INDICATOR = "c"; //$NON-NLS-1$
+	/*package*/ static final String RECOMPUTE_INDICATOR = "r"; //$NON-NLS-1$
 	/*package*/ static final String UPDATED_INDICATOR = "u"; //$NON-NLS-1$
+	
 	
 	/*package*/ static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 	
@@ -91,27 +90,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	
 	/*package*/ abstract void setDirtyIndicator(IResource resource, String indicator) throws CVSException;
 	
-	/**
-	 * Return the dirty count for the given folder. For existing folders, the
-	 * dirty count may not have been calculated yet and this method will return
-	 * -1 in that case.
-	 */
-	/*package*/ abstract int getCachedDirtyCount(IContainer container) throws CVSException;
-	
-	/**
-	 * Set the dirty count for the given container to the given count.
-	 *
-	 * @param container
-	 * @param count
-	 * @throws CVSException
-	 */
-	/*package*/ abstract void setCachedDirtyCount(IContainer container, int count) throws CVSException;
-	
 	/*package*/ abstract void flushDirtyCache(IResource resource) throws CVSException;
-	
-	/*package*/ abstract boolean addDeletedChild(IContainer container, IFile file) throws CVSException;
-
-	/*package*/ abstract boolean removeDeletedChild(IContainer container, IFile file) throws CVSException;
 	
 	/*package*/ abstract boolean isSyncInfoLoaded(IContainer parent) throws CVSException;
 	

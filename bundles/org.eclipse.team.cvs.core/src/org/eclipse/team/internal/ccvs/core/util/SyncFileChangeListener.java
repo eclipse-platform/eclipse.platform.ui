@@ -50,6 +50,15 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
  * See: http://dev.eclipse.org/bugs/show_bug.cgi?id=12386
  */
 public class SyncFileChangeListener implements IResourceChangeListener {
+	
+	// consider the following changes types and ignore the others (e.g. marker and description changes are ignored)
+	protected int INTERESTING_CHANGES = 	IResourceDelta.CONTENT | 
+																	IResourceDelta.MOVED_FROM | 
+																	IResourceDelta.MOVED_TO |
+																	IResourceDelta.OPEN | 
+																	IResourceDelta.REPLACED |
+																	IResourceDelta.TYPE;
+	
 	/*
 	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
 	 * by a 3rd party. For example, if the command line tool was run and then the user refreshed from local. To
@@ -75,9 +84,17 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						if (!resource.isAccessible()) return false;
 						if ((delta.getFlags() & IResourceDelta.OPEN) != 0) return false;
 					}
-					
+															
 					String name = resource.getName();
 					int kind = delta.getKind();
+					
+					// if the file has changed but not in a way that we care
+					// then ignore the change (e.g. marker changes to files).
+					if(kind == IResourceDelta.CHANGED && 
+						(delta.getFlags() & INTERESTING_CHANGES) == 0) {
+							return true;
+					}
+					
 					IResource[] toBeNotified = new IResource[0];
 					
 					if(name.equals(SyncFileWriter.CVS_DIRNAME)) {
@@ -92,7 +109,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 							}
 						}
 					}
-					
+										
 					if(isMetaFile(resource)) {
 						toBeNotified = handleChangedMetaFile(resource, kind);
 					} else if(name.equals(SyncFileWriter.IGNORE_FILE)) {
