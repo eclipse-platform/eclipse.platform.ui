@@ -442,20 +442,18 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected IInformationControl getInformationControl() {
 		
+		if (fDisposed)
+			return fInformationControl;
+		
 		IInformationControlCreator creator= null;
 		
-		if (fCustomInformationControlCreator == null || fDisposed) {
-			
-			if (fIsCustomInformationControl) {
-				fInformationControl.dispose();
-				fInformationControl= null;
-				fIsCustomInformationControl= false;
-			}
-			
-			if (fDisposed)
-				return fInformationControl;
-				
+		if (fCustomInformationControlCreator == null) {
 			creator= fInformationControlCreator;
+			if (fIsCustomInformationControl && fInformationControl != null) {
+				fInformationControl.dispose(); 
+				fInformationControl= null;
+			}
+			fIsCustomInformationControl= false;
 			
 		} else  {
 			
@@ -465,12 +463,10 @@ abstract public class AbstractInformationControlManager {
 				if (extension.canReuse(fInformationControl))
 					return fInformationControl;
 			}
-			
 			if (fInformationControl != null)  {
 				fInformationControl.dispose();
 				fInformationControl= null;
 			}
-			
 			fIsCustomInformationControl= true;
 		}
 		
@@ -783,6 +779,8 @@ abstract public class AbstractInformationControlManager {
 			setEnabled(false);
 			disposeInformationControl();			
 			
+			fIsCustomInformationControl= false;
+			fCustomInformationControlCreator= null;
 			fInformationControlCreator= null;
 			fInformationControlCloser= null;
 		}
