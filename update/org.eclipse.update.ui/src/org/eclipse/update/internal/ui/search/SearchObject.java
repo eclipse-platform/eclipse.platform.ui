@@ -294,12 +294,14 @@ public class SearchObject extends NamedModelObject {
 			// filter out the feature for environment
 			if (!getFilterEnvironment() || isValidEnvironment(candidate))
 				candidates.add(candidate);
-			monitor.worked(1);		
+			monitor.worked(1);
+			if (monitor.isCanceled()) return;
 		}
 		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
 		IFeature [] matches = query.getMatchingFeatures(array);
 		for (int i=0; i<matches.length; i++) {
 			// bingo - add this
+			if (monitor.isCanceled()) return;
 			SearchResultSite searchSite = findResultSite(site);
 			if (searchSite == null) {
 				searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);

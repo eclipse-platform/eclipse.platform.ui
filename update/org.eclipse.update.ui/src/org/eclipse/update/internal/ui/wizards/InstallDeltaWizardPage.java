@@ -198,7 +198,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		gd = new GridData(GridData.FILL_BOTH);
 		deltaViewer.getControl().setLayoutData(gd);
-		
+
 		Composite buttonContainer = new Composite(container, SWT.NULL);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -209,7 +209,9 @@ public class InstallDeltaWizardPage extends WizardPage {
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
 		deleteButton.setEnabled(false);
 		deleteButton.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deleteButton.setLayoutData(gd);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -218,10 +220,12 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		SWTUtil.setButtonDimensionHint(deleteButton);
 
-		errorsButton = new Button(buttonContainer , SWT.PUSH);
+		errorsButton = new Button(buttonContainer, SWT.PUSH);
 		errorsButton.setEnabled(false);
 		errorsButton.setText(UpdateUIPlugin.getResourceString(KEY_ERRORS));
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		errorsButton.setLayoutData(gd);
 		errorsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -239,20 +243,22 @@ public class InstallDeltaWizardPage extends WizardPage {
 
 	private void updateButtons(IStructuredSelection selection) {
 		boolean enableShowErrors = false;
-		boolean enableDelete = true;
-		
-		if (selection.size()==1) {
+		boolean enableDelete = selection.size() > 0;
+
+		if (selection.size() == 1) {
 			Object obj = selection.getFirstElement();
 			if (obj instanceof ISessionDelta) {
-				IStatus status = (IStatus)statusTable.get(obj);
-				enableShowErrors = status!=null;
+				IStatus status = (IStatus) statusTable.get(obj);
+				enableShowErrors = status != null;
 			}
 		}
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (!(obj instanceof ISessionDelta)) {
-				enableDelete=false;
-				break;
+		if (enableDelete) {
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				Object obj = iter.next();
+				if (!(obj instanceof ISessionDelta)) {
+					enableDelete = false;
+					break;
+				}
 			}
 		}
 		deleteButton.setEnabled(enableDelete);
@@ -271,6 +277,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 			}
 		}
 		deltaViewer.refresh();
+		dialogChanged();
 	}
 
 	private void handleShowErrors() {
@@ -336,7 +343,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 	}
 	private void dialogChanged() {
 		ISessionDelta[] deltas = getSelectedDeltas();
-		setPageComplete(deltas.length > 0);
+		setPageComplete(deltas.length > 0 || removed.size() > 0);
 	}
 
 	public ISessionDelta[] getRemovedDeltas() {

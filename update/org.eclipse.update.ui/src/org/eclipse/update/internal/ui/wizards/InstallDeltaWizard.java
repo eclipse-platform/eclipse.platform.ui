@@ -79,7 +79,6 @@ public class InstallDeltaWizard
 		for (int i = 0; i < removedDeltas.length; i++) {
 			ISessionDelta delta = removedDeltas[i];
 			delta.delete();
-			processed++;
 			monitor.worked(1);
 			if (monitor.isCanceled())
 				return;
