@@ -21,6 +21,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
+import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntImportNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
@@ -60,6 +61,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
@@ -90,6 +92,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ViewerSorter fSorter;
 	
 	private AntEditor fEditor;
+	
+	private TogglePresentationAction fTogglePresentation;
 	
 	/**
 	 * A viewer filter that removes imported elements except an imported default target
@@ -329,6 +333,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		fFilterTopLevel= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_TOP_LEVEL);
 		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
 		fEditor= editor;
+		
+		fTogglePresentation= new TogglePresentationAction();
+		fTogglePresentation.setEditor(editor);
 	}
 
 	/* (non-Javadoc)
@@ -345,6 +352,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			fCore.removeAntModelListener(fListener);
 			fListener= null;
 		}
+		fTogglePresentation.setEditor(null);
+		
+		super.dispose();
 	}
 	
 	/**  
@@ -408,6 +418,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		setFilterTopLevel(fFilterTopLevel);
 		
 		setFilter(true, new NonStructuralElementsFilter(), null);
+		
+		site.getActionBars().setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
 	
 	private void setViewerInput(Object newInput) {

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.actions;
 
+import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.editor.AntEditorMessages;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IRegion;
@@ -36,10 +36,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	 */
 	public TogglePresentationAction() {
 		super(AntEditorActionMessages.getResourceBundle(), "TogglePresentation.", null, IAction.AS_CHECK_BOX); //$NON-NLS-1$
-		JavaPluginImages.setToolImageDescriptors(this, "segment_edit.gif"); //$NON-NLS-1$
-		setToolTipText(AntEditorMessages.getString("TogglePresentation.tooltip")); //$NON-NLS-1$
-				
-		update();
+		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEGMENT_EDIT));
 	}
 	
 	/* (non-Javadoc)
@@ -48,8 +45,9 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	public void run() {
 		
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
-			return;
+		if (editor == null) {
+            return;
+        }
 		
 		IRegion remembered= editor.getHighlightRange();
 		editor.resetHighlightRange();
@@ -58,11 +56,12 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		setChecked(showAll);
 		
 		editor.showHighlightRangeOnly(showAll);
-		if (remembered != null)
-			editor.setHighlightRange(remembered.getOffset(), remembered.getLength(), true);
+		if (remembered != null) {
+            editor.setHighlightRange(remembered.getOffset(), remembered.getLength(), true);
+        }
 		
 		fStore.removePropertyChangeListener(this);
-		fStore.setValue(PreferenceConstants.EDITOR_SHOW_SEGMENTS, showAll);
+		fStore.setValue(AntEditorPreferenceConstants.EDITOR_SHOW_SEGMENTS, showAll);
 		fStore.addPropertyChangeListener(this);
 	}
 	
@@ -100,7 +99,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	}
 	
 	/**
-	 * Synchronizes the appearance of the editor with what the preference store tells him.
+	 * Synchronizes the appearance of the editor with what the preference store indicates
 	 * 
 	 * @param editor the text editor
 	 */
@@ -110,7 +109,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 			return;
 		}
 		
-		boolean showSegments= fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS);			
+		boolean showSegments= fStore.getBoolean(AntEditorPreferenceConstants.EDITOR_SHOW_SEGMENTS);			
 		setChecked(showSegments);
 		
 		if (editor.showsHighlightRangeOnly() != showSegments) {
@@ -127,7 +126,8 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EDITOR_SHOW_SEGMENTS))
-			synchronizeWithPreference(getTextEditor());
+		if (event.getProperty().equals(AntEditorPreferenceConstants.EDITOR_SHOW_SEGMENTS)) {
+            synchronizeWithPreference(getTextEditor());
+        }
 	}
 }

@@ -19,14 +19,16 @@ import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
+import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 /**
@@ -38,12 +40,14 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	protected RetargetTextEditorAction fContentAssistProposal;
 	protected RetargetTextEditorAction fContentFormat;
 	private OpenDeclarationAction fOpenDeclarationAction;
+	private TogglePresentationAction fTogglePresentation;
 
 	public AntEditorActionContributor() {
 		super();
 		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
 		fContentAssistProposal = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentFormat = new RetargetTextEditorAction(bundle, "ContentFormat."); //$NON-NLS-1$
+		fTogglePresentation= new TogglePresentationAction();
 	}
 	
 	protected void initializeActions(AntEditor editor) {	 
@@ -61,7 +65,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		fContentAssistProposal.setAction(getAction(editor, "ContentAssistProposal")); //$NON-NLS-1$
 		fContentFormat.setAction(getAction(editor, "ContentFormat")); //$NON-NLS-1$
 		
-		if (part instanceof AntEditor) {
+		if (editor instanceof AntEditor) {
 		    AntEditor antEditor= (AntEditor) part;
 			if (fOpenDeclarationAction == null) {
 				initializeActions(antEditor);
@@ -72,11 +76,13 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 			if (foldingActions != null) {
 				foldingActions.updateActionBars();
 			}
-			
+			if (fOpenDeclarationAction != null) {
+				fOpenDeclarationAction.setEditor(antEditor);		
+			}
 		}
-
-		if (fOpenDeclarationAction != null) {
-			fOpenDeclarationAction.setEditor((AntEditor) part);		
+		
+		if (fTogglePresentation != null) {
+		    fTogglePresentation.setEditor(editor);
 		}
 	}
 	
@@ -111,16 +117,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
-     */
-	public void contributeToToolBar(IToolBarManager toolBarManager) {
-		super.contributeToToolBar(toolBarManager);
-		//TODO the validate action is still in development
-		//toolBarManager.add(fValidateAction);
-		//toolBarManager.update(false);
-	}
-    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
@@ -135,4 +131,12 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		doSetActiveEditor(null);
 		super.dispose();
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
+     */
+    public void init(IActionBars bars, IWorkbenchPage page) {
+        super.init(bars, page);
+        bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+    }
 }

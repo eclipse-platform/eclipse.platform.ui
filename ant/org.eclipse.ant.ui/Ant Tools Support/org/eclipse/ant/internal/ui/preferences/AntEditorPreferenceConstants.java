@@ -245,7 +245,7 @@ public class AntEditorPreferenceConstants {
 	 *
 	 * @since 3.1
 	 */
-	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "EDITOR_SHOW_TEXT_HOVER_AFFORDANCE"; //$NON-NLS-1$
+	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "editor_show_text_hover_affordance"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that controls if browser like links are turned on or off.
@@ -292,6 +292,15 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public final static String EDITOR_LINK_COLOR= "linkColor"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls if segmented view (show selected element only) is turned on or off.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 3.1
+	 */
+	public static final String EDITOR_SHOW_SEGMENTS= "editor_show_segments"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -328,5 +337,7 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK, SWT.MOD1);
 		
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
+		
+		store.setDefault(EDITOR_SHOW_SEGMENTS, false);
 	}
 }

@@ -56,6 +56,7 @@ public class AntUIImages {
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
 	private final static String WIZ= "wizban/"; //$NON-NLS-1$
+	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -65,6 +66,8 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_PROPERTY, OBJECT + "property_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_TASK_PROPOSAL, OBJECT + "task_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL, OBJECT + "template_obj.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IAntUIConstants.IMG_SEGMENT_EDIT, T_ETOOL + "segment_edit.gif"); //$NON-NLS-1$
 		
 		// Ant View Actions
 		declareRegistryImage(IAntUIConstants.IMG_ANT, OBJECT + "ant.gif"); //$NON-NLS-1$
