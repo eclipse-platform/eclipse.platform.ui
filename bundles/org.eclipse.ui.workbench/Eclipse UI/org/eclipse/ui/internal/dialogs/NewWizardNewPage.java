@@ -124,8 +124,6 @@ class NewWizardNewPage
 
     private WizardContentProvider contentProvider;
     
-    private Object[] expandedElements = new Object[0];
-
     private ToolItem helpButton;
 
     private String wizardHelpHref;
@@ -246,6 +244,7 @@ class NewWizardNewPage
 			showAllCheck.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {				    
 					    boolean showAll = showAllCheck.getSelection();
+					    Object [] expandedElements = null;
 	                    if (!showAll)
 					        expandedElements = viewer.getExpandedElements();
 	                    
@@ -650,8 +649,7 @@ class NewWizardNewPage
 	 * instance of this page.
 	 */
 	protected void storeExpandedCategories() {
-	    if (expandedElements == null)
-	        return;
+	    Object [] expandedElements = viewer.getExpandedElements();
         List expandedElementPaths = new ArrayList(expandedElements.length);
         for (int i = 0; i < expandedElements.length; ++i) {
         	if (expandedElements[i] instanceof WizardCollectionElement)
