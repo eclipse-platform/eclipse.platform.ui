@@ -128,6 +128,11 @@ public abstract class WorkbenchAdvisor {
 	 */
 	public static final int FILL_STATUS_LINE = 0x08;
 
+//	/**
+//	 * The workbench configurer.
+//	 */
+//	private IWorkbenchConfigurer workbenchConfigurer;
+	
 	/**
 	 * Creates and initializes a new workbench advisor instance.
 	 */
@@ -135,22 +140,33 @@ public abstract class WorkbenchAdvisor {
 		// do nothing
 	}
 
+//	/**
+//	 * Returns the workbench configurer for the advisor. Can
+//	 * be <code>null</code> if the advisor is not initialized yet.
+//	 * 
+//	 * @return the workbench configurer, or <code>null</code>
+//	 *   if the advisor is not initialized yet
+//	 */
+//	protected IWorkbenchConfigurer getWorkbenchConfigurer() {
+//	    return workbenchConfigurer;
+//	}
+	
 	/**
 	 * Performs arbitrary initialization before the workbench starts running.
 	 * <p>
 	 * This method is called during workbench initialization prior to any
 	 * windows being opened. 
 	 * Clients must not call this method directly (although super calls are okay).
-	 * The default implementation does nothing. Subclasses may override. 
+	 * The default implementation remembers the configurer and makes it available
+	 * via <code>getWorkbenchConfigurer</code>. Subclasses may extend. 
 	 * Typical clients will use the configurer passed in to tweak the
-	 * workbench, and hang on to the configurer if further tweaking may be
-	 * required in the future.
+	 * workbench.
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the workbench
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
-		// do nothing
+//		this.workbenchConfigurer = configurer;
 	}
 
 	/**
@@ -395,7 +411,7 @@ public abstract class WorkbenchAdvisor {
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench
-	 * window just restored
+	 *   window just restored
      * @issue document checked exception
 	 */
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
@@ -404,9 +420,27 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Performs arbitrary actions after the given workbench window has been
+	 * created (possibly after being restored), but has not yet been opened.
+	 * <p>
+	 * This method is called after a new window has been created from scratch, 
+	 * or when a previously-saved window has been restored.  In the latter case,
+	 * this method is called after <code>postWindowRestore</code>.
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation does nothing. Subclasses may override.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the particular workbench
+	 *   window just created
+	 */
+	public void postWindowCreate(IWorkbenchWindowConfigurer configurer) {
+		// do nothing
+	}
+	
+	/**
+	 * Performs arbitrary actions after the given workbench window has been
 	 * opened (possibly after being restored).
 	 * <p>
-	 * This method is called after a window have been opened. This method is 
+	 * This method is called after a window has been opened. This method is 
 	 * called after a new window has been created from scratch, or when
 	 * a previously-saved window has been restored.
 	 * Clients must not call this method directly (although super calls are okay).
@@ -414,7 +448,7 @@ public abstract class WorkbenchAdvisor {
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench
-	 * window just opened
+	 *   window just opened
 	 */
 	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
@@ -458,7 +492,7 @@ public abstract class WorkbenchAdvisor {
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the particular workbench
-	 * window being closed
+	 *   window being closed
 	 */
 	public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
@@ -547,5 +581,26 @@ public abstract class WorkbenchAdvisor {
 	public void createWindowContents(IWorkbenchWindowConfigurer configurer, Shell shell) {
 	    ((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
 	}
+
+//    /**
+//     * Opens the workbench windows on startup.
+//     * The default implementation tries to restore the previously saved
+//     * workbench state using <code>IWorkbenchConfigurer.openPreviousWorkbenchState()</code>.
+//     * If there was no previously saved state, or if the restore failed, 
+//     * then a first-time window is opened using 
+//     * <code>IWorkbenchConfigurer.openFirstTimeWindow</code>.
+//     * 
+//     * @return <code>true</code> to proceed with workbench startup,
+//     *   or <code>false</code> to exit
+//     */
+//    public boolean openWindows() {
+//		int restoreCode = getWorkbenchConfigurer().openPreviousWorkbenchState();
+//		if (restoreCode == RESTORE_CODE_EXIT) {
+//			return false;
+//		}
+//		if (restoreCode == RESTORE_CODE_RESET) {
+//		    getWorkbenchConfigurer().openFirstTimeWindow();
+//		}
+//    }
 }
 

@@ -467,6 +467,8 @@ public final class Workbench implements IWorkbench {
 			return false;
 		}
 
+		shutdown();
+		
 		runEventLoop = false;
 		return true;
 	}
@@ -532,8 +534,8 @@ public final class Workbench implements IWorkbench {
 			windowManager.remove(newWindow);
 			throw e;
 		}
-
-		// Open after opening page, to avoid flicker.
+		
+		// Open window after opening page, to avoid flicker.
 		newWindow.open();
 
 		return newWindow;
@@ -736,14 +738,9 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Initializes the workbench now that the display is created.
 	 * 
-	 * @param windowImages
-	 *            An array of the descriptors of the images to be used in the
-	 *            corner of each window, or <code>null</code> if none. It is
-	 *            expected that the array will contain the same icon, rendered
-	 *            at different sizes.
 	 * @return true if init succeeded.
 	 */
-	private boolean init(ImageDescriptor[] windowImages, Display display) {
+	private boolean init(Display display) {
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
@@ -774,8 +771,85 @@ public final class Workbench implements IWorkbench {
         workbenchContextSupport.getContextManager().addContextManagerListener(
                 contextManagerListener);
 
-        // establish relationship between jface and the command manager
+        initializeCommandResolver();
 
+        addWindowListener(windowListener);
+        
+        // end the initialization of the activity, command, and context
+        // managers
+
+		// allow the workbench configurer to initialize
+		getWorkbenchConfigurer().init();
+
+		initializeImages();
+		initializeFonts();
+		initializeColors();
+		initializeApplicationColors();
+
+		// now that the workbench is sufficiently initialized, let the advisor
+		// have a turn.
+		advisor.initialize(getWorkbenchConfigurer());
+
+		// configure use of color icons in toolbars
+		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
+		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
+
+		// initialize workbench single-click vs double-click behavior
+		initializeSingleClickOption();
+
+		// deadlock code
+		boolean avoidDeadlock = true;
+
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
+				avoidDeadlock = false;
+		}
+
+		if (avoidDeadlock) {
+			UILockListener uiLockListener = new UILockListener(display);
+			Platform.getJobManager().setLockListener(uiLockListener);
+			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
+		}
+
+		// initialize activity helper. TODO why does this belong here and not
+		// up further in the main initialization section for activities?
+		activityHelper = ActivityPersistanceHelper.getInstance();
+
+		// attempt to restore a previous workbench state
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+
+			advisor.preStartup();
+
+			int restoreCode = openPreviousWorkbenchState();
+			if (restoreCode == RESTORE_CODE_EXIT) {
+				return false;
+			}
+			if (restoreCode == RESTORE_CODE_RESET) {
+			    openFirstTimeWindow();
+			}
+
+//			if (!advisor.openWindows()) {
+//			    return false;
+//			}
+			
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+		}
+
+		forceOpenPerspective();
+
+		isStarting = false;
+				
+		return true;
+	}
+
+	
+	/**
+	 * Establishes the relationship between JFace actions and the command manager.
+	 */
+	private void initializeCommandResolver() {
         CommandResolver.getInstance().setCommandResolver(
                 new CommandResolver.ICallback() {
 
@@ -857,75 +931,9 @@ public final class Workbench implements IWorkbench {
                         return true;
                     }
                 });
+    }
 
-        addWindowListener(windowListener);
-        
-        // end the initialization of the activity, command, and context
-        // managers
-
-		// allow the workbench configurer to initialize
-		getWorkbenchConfigurer().init();
-
-		initializeImages(windowImages);
-		initializeFonts();
-		initializeColors();
-		initializeApplicationColors();
-
-		// now that the workbench is sufficiently initialized, let the advisor
-		// have a turn.
-		advisor.initialize(getWorkbenchConfigurer());
-
-		// configure use of color icons in toolbars
-		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
-		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
-
-		// initialize workbench single-click vs double-click behavior
-		initializeSingleClickOption();
-
-		// deadlock code
-		boolean avoidDeadlock = true;
-
-		String[] commandLineArgs = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
-				avoidDeadlock = false;
-		}
-
-		if (avoidDeadlock) {
-			UILockListener uiLockListener = new UILockListener(display);
-			Platform.getJobManager().setLockListener(uiLockListener);
-			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
-		}
-
-		// initialize activity helper. TODO why does this belong here and not
-		// up further in the main initialization section for activities?
-		activityHelper = ActivityPersistanceHelper.getInstance();
-
-		// attempt to restore a previous workbench state
-		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
-
-			advisor.preStartup();
-
-			int restoreCode = openPreviousWorkbenchState();
-			if (restoreCode == RESTORE_CODE_EXIT) {
-				return false;
-			}
-			if (restoreCode == RESTORE_CODE_RESET) {
-				openFirstTimeWindow();
-			}
-		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
-		}
-
-		forceOpenPerspective();
-
-		isStarting = false;
-				
-		return true;
-	}
-
-	/**
+    /**
 	 * Initialize colors defined by the new colorDefinitions extension point.
 	 * Note this will be rolled into initializeColors() at some point.
 	 * 
@@ -970,11 +978,8 @@ public final class Workbench implements IWorkbench {
 	 *            at different sizes.
 	 * @since 3.0
 	 */
-	private void initializeImages(ImageDescriptor[] windowImages) {
-		// WorkbenchImages.imageRegistry before WorkbenchImages.declareImage is
-		// called later on.
-//		WorkbenchImages.getImageRegistry();
-
+	private void initializeImages() {
+	    ImageDescriptor[] windowImages = WorkbenchPlugin.getDefault().getWindowImages(); 
 		if(windowImages == null)
 			return;
 
@@ -1086,6 +1091,7 @@ public final class Workbench implements IWorkbench {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
 		}
+		newWindow.open();
 	}
 
 	/*
@@ -1268,6 +1274,7 @@ public final class Workbench implements IWorkbench {
 			} catch (WorkbenchException e) {
 				result.add(e.getStatus());
 			}
+			newWindow.open();
 		}
 		return result;
 	}
@@ -1397,7 +1404,7 @@ public final class Workbench implements IWorkbench {
 			Window.setExceptionHandler(handler);
 
 			// initialize workbench and restore or open one window
-			boolean initOK = init(WorkbenchPlugin.getDefault().getWindowImages(), display);
+			boolean initOK = init(display);
 
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -1405,11 +1412,6 @@ public final class Workbench implements IWorkbench {
 			// let the advisor run its start up code
 			if (initOK) {
 				advisor.postStartup(); // may trigger a close/restart
-			}
-
-			IWorkbenchWindow [] windows = getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {	
-				((WorkbenchWindow)windows[i]).open();
 			}
 
 			if (initOK && runEventLoop) {
@@ -1427,9 +1429,6 @@ public final class Workbench implements IWorkbench {
 				// the event loop
 				runEventLoop(handler, display);
 			}
-
-			// shutdown in an orderly way after event loop finishes
-			shutdown();
 			
 		} catch (final Exception e) {
 		    if (!display.isDisposed()) {
@@ -1443,13 +1442,7 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		uninitializeImages();
-		if (WorkbenchPlugin.getDefault() != null) {
-			WorkbenchPlugin.getDefault().reset();
-		}
-
 		// restart or exit based on returnCode
-		Workbench.instance = null;
 		return returnCode;
 	}
 
@@ -1724,11 +1717,11 @@ public final class Workbench implements IWorkbench {
 	 * Shuts down the application.
 	 */
 	private void shutdown() {
-		// for dynamic UI 
-		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
-
 		// shutdown application-specific portions first
 		advisor.postShutdown();
+
+		// for dynamic UI 
+		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
 
 		// shutdown the rest of the workbench
 		WorkbenchColors.shutdown();
@@ -1738,6 +1731,11 @@ public final class Workbench implements IWorkbench {
 		}
 		activityHelper.shutdown();
 		ProgressManager.getInstance().shutdown();
+
+		uninitializeImages();
+		if (WorkbenchPlugin.getDefault() != null) {
+			WorkbenchPlugin.getDefault().reset();
+		}		
 	}
 
 	/*

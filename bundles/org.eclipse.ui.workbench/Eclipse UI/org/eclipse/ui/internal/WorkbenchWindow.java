@@ -424,6 +424,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		return newPage;
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window
+     */
+    public void create() {
+        super.create();
+	    getAdvisor().postWindowCreate(getWindowConfigurer());
+    }
+    
 	/**
 	 * @see Window
 	 */
