@@ -29,7 +29,8 @@ public class HttpResponse implements Response {
 
 	public InputStream getInputStream() throws IOException {
 		if (in == null && url != null) {
-			connection = url.openConnection();
+			if (connection == null)
+				connection = url.openConnection();
 			if (offset > 0)
 				connection.setRequestProperty("Range", "bytes=" + offset + "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			in = connection.getInputStream();
@@ -43,7 +44,8 @@ public class HttpResponse implements Response {
 	public InputStream getInputStream(IProgressMonitor monitor)
 		throws IOException, CoreException {
 		if (in == null && url != null) {
-			connection = url.openConnection();
+			if (connection == null)
+				connection = url.openConnection();
 			if (offset > 0)
 				connection.setRequestProperty("Range", "bytes=" + offset + "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -125,6 +127,7 @@ public class HttpResponse implements Response {
 			for (;;) {
 				if (monitor.isCanceled()) {
 					runnable.disconnect();
+                    connection = null;
 					break;
 				}
 				if (runnable.getInputStream() != null) {

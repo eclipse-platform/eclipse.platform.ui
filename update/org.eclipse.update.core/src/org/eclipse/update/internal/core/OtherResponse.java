@@ -29,7 +29,8 @@ public class OtherResponse implements Response {
 
 	public InputStream getInputStream() throws IOException {
 		if (in == null && url != null) {
-			connection = url.openConnection();
+            if (connection == null)
+                connection = url.openConnection();
 			in = connection.getInputStream();
 			this.lastModified = connection.getLastModified();
 		}
@@ -41,7 +42,8 @@ public class OtherResponse implements Response {
 	public InputStream getInputStream(IProgressMonitor monitor)
 		throws IOException, CoreException {
 		if (in == null && url != null) {
-			connection = url.openConnection();
+            if (connection == null)
+                connection = url.openConnection();
 
 			if (monitor != null) {
 				this.in =
@@ -92,6 +94,7 @@ public class OtherResponse implements Response {
 				for (;;) {
 					if (monitor.isCanceled()) {
 						runnable.disconnect();
+                        connection = null;
 						break;
 					}
 					if (runnable.getInputStream() != null) {
