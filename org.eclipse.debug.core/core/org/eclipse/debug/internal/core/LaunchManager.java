@@ -1235,7 +1235,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void projectOpened(IProject project) throws CoreException {
 		List configs = findLaunchConfigurations(project);
 		if (!configs.isEmpty()) {
-			getAllLaunchConfigurations().addAll(configs);
+			List allList = getAllLaunchConfigurations();
+			Iterator iterator = configs.iterator();
+			while (iterator.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+				if (!allList.contains(config)) {
+					allList.add(config);
+				}
+			}			
 		}
 	}
 	
