@@ -95,6 +95,53 @@ public void testAutoBuildPR() {
 	}
 }
 /**
+ * Tests installing and running a builder that always fails during instantation. */
+public void testBrokenBuilder() {
+	// Create some resource handles
+	IProject project = getWorkspace().getRoot().getProject("PROJECT");
+	
+	try {
+		// Create and open a project
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// Create and set a build spec for the project
+	try {
+		IProjectDescription desc = project.getDescription();
+		ICommand command1 = desc.newCommand();
+		command1.setBuilderName(BrokenBuilder.BUILDER_NAME);
+		ICommand command2 = desc.newCommand();
+		command2.setBuilderName(SortBuilder.BUILDER_NAME);
+
+		desc.setBuildSpec(new ICommand[] {command1, command2});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+	//do an incremental build -- build should fail, but second builder should run
+	try {
+		getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		fail("3.0");
+	} catch (CoreException e) {
+		//expected
+	}
+	TestBuilder verifier = SortBuilder.getInstance();
+	verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+	verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+	verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
+	verifier.assertLifecycleEvents("3.1");
+	
+	//build again -- it should suceed this time
+	try {
+		getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+	} catch (CoreException e) {
+		fail("4.0", e);
+	}
+}
+/**
  * Tests the lifecycle of a builder.
  * @see SortBuilderPlugin
  * @see SortBuilder
