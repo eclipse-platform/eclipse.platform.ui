@@ -58,7 +58,7 @@ public class JFaceColors {
 		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 
 		Color inactive_bg;
-		if (SWT.getPlatform() == "win32")
+		if (SWT.getPlatform() == "win32") //$NON-NLS-1$
 			inactive_bg = d.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		else 
 			inactive_bg = d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
@@ -146,7 +146,7 @@ public class JFaceColors {
 	}
 
 	/**
-	 * Get the defualt color to use for displaying errors.
+	 * Get the default color to use for displaying errors.
 	 */
 	public static Color getErrorText(Display display) {
 
