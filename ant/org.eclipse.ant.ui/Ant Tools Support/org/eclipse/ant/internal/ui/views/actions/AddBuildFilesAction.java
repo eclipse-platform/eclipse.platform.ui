@@ -38,7 +38,7 @@ public class AddBuildFilesAction extends Action {
 	public AddBuildFilesAction(AntView view) {
 		super(AntViewActionMessages.getString("AddBuildFilesAction.1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
-		setToolTipText(AntViewActionMessages.getString("AddBuildFilesAction.1")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("AddBuildFilesAction.0")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
