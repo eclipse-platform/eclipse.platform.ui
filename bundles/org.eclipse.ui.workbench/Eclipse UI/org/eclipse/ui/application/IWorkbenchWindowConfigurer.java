@@ -12,8 +12,8 @@ package org.eclipse.ui.application;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.CoolBarManager;
 
 /**
  * Interface providing special access for configuring workbench windows.
@@ -192,16 +192,53 @@ public interface IWorkbenchWindowConfigurer {
 	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
 	 */
 	public IMenuManager getMenuManager();
+		
+	/**
+	 * Adds a tool bar item with the given id to the tool bar of the workbench
+	 * window. The new tool bar item is added after any existing ones.
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
+	 * 
+	 * @param id the id assigned to this tool bar
+	 * @return the tool bar manager for the new tool bar item
+	 * @issue TBD String ADDITIONS = "...";
+	 * @issue TBD String EDITOR_TOOLBAR_ID = "...";
+	 */
+	public IToolBarManager addToolbar(String id);
 	
 	/**
-	 * Returns the cool bar manager for the main tool bar of the workbench window.
+	 * Returns the tool bar manager for the tool bar item with the given id
+	 * to the tool bar of the workbench window. The new tool bar item is added
+	 * after any existing ones.
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
 	 * 
-	 * @return the cool bar manager
-	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
-	 * @issue CoolBarManager is internal.
+	 * @param id the id of the tool bar item
+	 * @return the tool bar manager for the tool bar item with the given id
 	 */
-	public CoolBarManager getCoolBarManager();
+	public IToolBarManager getToolbar(String id);
+
+	/**
+	 * Adds the special editor tool bar group to the tool bar of the workbench
+	 * window. The new tool bar item is added after any existing ones.
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
+	 * 
+	 * @return the tool bar manager for the new tool bar item
+	 */
+	public void addEditorToolbarGroup();
 	
+	/**
+     * @issue TBD
+	 */
+	public void addToolbarGroup(String groupId);
+
 	/**
 	 * Returns the status line manager of the workbench window.
 	 * 
