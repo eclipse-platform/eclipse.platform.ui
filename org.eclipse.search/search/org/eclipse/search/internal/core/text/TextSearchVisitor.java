@@ -59,7 +59,6 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		
 	private IProgressMonitor fProgressMonitor;
 	private StringMatcher fMatcher;
-	private String fErrorMessage;
 	private Integer[] fMessageFormatArgs;
 
 	private int fNumberOfScannedFiles;

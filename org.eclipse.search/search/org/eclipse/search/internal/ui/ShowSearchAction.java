@@ -6,11 +6,8 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.core.resources.IMarker;
-
 class ShowSearchAction extends Action {
 	private Search fSearch;
-	private IMarker[] fMarkerArrayTemplate= new IMarker[0];
 	
 	/**
 	 *	Create a new instance of this class

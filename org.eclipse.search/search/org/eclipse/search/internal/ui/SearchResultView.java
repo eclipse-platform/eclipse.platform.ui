@@ -173,15 +173,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		return ((SearchResultLabelProvider)labelProvider).getLabelProvider();
 	}
 
-	private void setContextMenuContributor(final IContextMenuContributor contributor) {
-		// Make sure we are doing it in the right thread.
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				getViewer().setContextMenuTarget(contributor);
-			}
-		});
-	}
-
 	private void setGotoMarkerAction(final IAction gotoMarkerAction) {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {

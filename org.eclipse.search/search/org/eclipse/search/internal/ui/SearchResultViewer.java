@@ -68,7 +68,6 @@ import org.eclipse.search.internal.ui.util.FileLabelProvider;
 public class SearchResultViewer extends TableViewer {
 	
 	private SearchResultView fOuterPart;
-	private boolean fFirstTime= true;
 	private ShowNextResultAction fShowNextResultAction;
 	private ShowPreviousResultAction fShowPreviousResultAction;
 	private GotoMarkerAction fGotoMarkerActionProxy;
@@ -85,7 +84,6 @@ public class SearchResultViewer extends TableViewer {
 	private Color fPotentialMatchFgColor;
 	private ActionGroup fActionGroup;
 	private IContextMenuContributor fContextMenuContributor;
-	private IActionGroupFactory fActionGroupFactory;	
 	private IAction fGotoMarkerAction;
 	
 	private ResourceToItemsMapper fResourceToItemsMapper;

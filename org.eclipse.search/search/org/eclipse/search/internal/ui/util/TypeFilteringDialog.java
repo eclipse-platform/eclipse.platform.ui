@@ -41,7 +41,6 @@ import org.eclipse.search.internal.ui.SearchMessages;
  * XXX: Workbench should offer this dialog (public API), see: bug 2763: TypeFilteringDialog should be public API
  */
 public class TypeFilteringDialog extends SelectionDialog {
-	private Button fAddTypesButton;
 
 	private Collection fInitialSelections;
 

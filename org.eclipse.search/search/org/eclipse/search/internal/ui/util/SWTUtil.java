@@ -79,13 +79,6 @@ public class SWTUtil {
 	}
 	
 	/**
-	 * @see DialogPage#convertHeightInCharsToPixels
-	 */
-	private static int convertHeightInCharsToPixels(int chars) {
-		return convertVerticalDLUsToPixels(chars * 8);
-	}
-
-	/**
 	 * @see DialogPage#convertHorizontalDLUsToPixels
 	 */
 	private static int convertHorizontalDLUsToPixels(int dlus) {
@@ -99,13 +92,6 @@ public class SWTUtil {
 		return (int)Math.round(dlus * fgVerticalDialogUnitSize);
 	}
 	
-	/**
-	 * @see DialogPage#convertWidthInCharsToPixels
-	 */
-	private static int convertWidthInCharsToPixels(int chars) {
-		return convertHorizontalDLUsToPixels(chars * 4);
-	}
-
 	/**
 	 * @see DialogPage#convertWidthInCharsToPixels
 	 */

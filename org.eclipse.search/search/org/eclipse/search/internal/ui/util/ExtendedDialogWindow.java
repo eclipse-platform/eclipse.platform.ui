@@ -49,7 +49,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	// The progress monitor
 	private ProgressMonitorPart fProgressMonitorPart;
 	private MessageDialog fWindowClosingDialog;
-	private static int PROGRESS_INDICATOR_HEIGHT= 12;
 	private static final String FOCUS_CONTROL= "focusControl"; //$NON-NLS-1$
 	private Cursor fWaitCursor;
 	private Cursor fArrowCursor;
@@ -256,23 +255,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 			Control focusControl= (Control)state.get(FOCUS_CONTROL);
 			if (focusControl != null && ! focusControl.isDisposed())
 				focusControl.setFocus();
-		}
-	}
-	
-	private void asyncSetOperationCancelButtonEnabled(final boolean b) {
-		Shell shell= getShell();
-		if (shell != null) {
-			shell.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					setOperationCancelButtonEnabled(b);
-				}
-			});
-		}
-	}
-	
-	private void setOperationCancelButtonEnabled(boolean b) {
-		if (fActiveRunningOperations > 0) {
-			fCancelButton.setEnabled(b);
 		}
 	}
 	

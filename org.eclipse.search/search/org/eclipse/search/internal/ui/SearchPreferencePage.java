@@ -42,7 +42,6 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
-	private Composite fParent;
 
 
 	private static class PerspectiveDescriptorComparator implements Comparator {

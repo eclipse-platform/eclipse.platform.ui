@@ -249,10 +249,6 @@ public class ReplaceDialog extends Dialog {
 		SearchPlugin.getWorkspace().deleteMarkers(new IMarker[] {source});
 	}
 	
-	private boolean isLastMatch() {
-		return fCurrentMatch != null && fCurrentMarkers == null;
-	}
-	
 	private boolean hasNextMatch() {
 		if (fCurrentMarkers != null)
 			return true;
