@@ -163,7 +163,7 @@ public class CompareWithPatchAction implements IActionDelegate {
 	
 	private void triggerBuild() {
 		if (fSavedFiles && ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-			new GlobalBuildAction(CompareUIPlugin.getActiveWorkbench(), CompareUIPlugin.getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
+			new GlobalBuildAction(CompareUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
 		}
 	}
 }
