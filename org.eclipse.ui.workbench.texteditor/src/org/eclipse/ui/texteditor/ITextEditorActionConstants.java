@@ -243,6 +243,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to convert line delimiters to Windows. 
 	 * Value: <code>"ConvertLineDelimitersToWindows"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "ConvertLineDelimitersToWindows"; //$NON-NLS-1$
 	
@@ -250,6 +251,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to convert line delimiters to UNIX. 
 	 * Value: <code>"ConvertLineDelimitersToUNIX"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	static final String CONVERT_LINE_DELIMITERS_TO_UNIX= "ConvertLineDelimitersToUNIX"; //$NON-NLS-1$
 	
@@ -257,6 +259,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to convert line delimiters to MAC. 
 	 * Value: <code>"ConvertLineDelimitersToMAC"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	static final String CONVERT_LINE_DELIMITERS_TO_MAC= "ConvertLineDelimitersToMAC"; //$NON-NLS-1$
 	

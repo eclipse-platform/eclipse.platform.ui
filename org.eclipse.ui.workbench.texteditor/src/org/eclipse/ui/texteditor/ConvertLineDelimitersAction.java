@@ -37,6 +37,7 @@ import org.eclipse.jface.text.TextUtilities;
  * particular line delimiter.
  * 
  * @since 2.0
+ * @deprecated since 3.1. Line delimiter conversion has been modified to work on groups of files rather than being editor specific
  */
 public class ConvertLineDelimitersAction extends TextEditorAction {
 
@@ -105,8 +106,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			}
 
 		} catch (InterruptedException e) {
-			// action cancelled				
-
+			// action canceled	
 		} catch (InvocationTargetException e) {
 			// should not happen
 		}
@@ -255,19 +255,12 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		return null;
 	}
 
-	/**
-	 * Internally sets the enable state of this action.
-	 */
-	private boolean doEnable() {
-		return canModifyEditor();
-	}
-	
 	/*
 	 * @see IUpdate#update()
 	 */
 	public void update() {
 		super.update();
-		setEnabled(doEnable());	
+		setEnabled(canModifyEditor());	
 	}
 
 }

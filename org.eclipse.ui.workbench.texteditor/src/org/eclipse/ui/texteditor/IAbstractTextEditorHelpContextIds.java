@@ -227,6 +227,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToWindows_action_context"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS + ACTION_POSTFIX;
 	
@@ -234,6 +235,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToUNIX_action_context"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX + ACTION_POSTFIX;
 	
@@ -241,6 +243,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToMAC_action_context"</code>
 	 * @since 2.0
+	 * @deprecated since 3.1 No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC + ACTION_POSTFIX;
 	
