@@ -141,6 +141,11 @@ private void sleep(long duration) {
 			new TestJob(null).schedule();
 		}
 		waitForCompletion();
+		//
+		for (int i = 0; i < JOB_COUNT; i++) {
+			new TestJob(null).schedule(50);
+		}
+		waitForCompletion();
 	}
 	public void testMutexRule() {
 		final int JOB_COUNT = 10;
