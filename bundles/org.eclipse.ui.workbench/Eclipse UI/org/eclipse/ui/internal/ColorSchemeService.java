@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.lang.ref.WeakReference;
+
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -31,7 +33,7 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class ColorSchemeService {
 
-    private static final String LISTENER_KEY = "theme.listener"; //$NON-NLS-1$
+    private static final String LISTENER_KEY = "org.eclipse.ui.internal.ColorSchemeService"; //$NON-NLS-1$
     
     public static void setViewColors(final Control control) {
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
@@ -62,22 +64,25 @@ public class ColorSchemeService {
                     .getWorkbench()
                     .getThemeManager()
                     .removePropertyChangeListener(listener);
+                    control.setData(LISTENER_KEY, null);
                 }});
 	        
 	        PlatformUI
 	        .getWorkbench()
 	        .getThemeManager()
 	        .addPropertyChangeListener(listener);	
-	        
-	        
 	    }
 	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));
 	    control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
     }
     
-	public static void setTabAttributes(final BasicStackPresentation presentation, final CTabFolder control) {
+	public static void setTabAttributes(BasicStackPresentation presentation, final CTabFolder control) {
+	    if (presentation == null)  // the reference to the presentation was lost by the listener
+	    	return;	    
+
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 	    if (control.getData(LISTENER_KEY) == null) {
+	    	final WeakReference ref = new WeakReference(presentation);
 	        final IPropertyChangeListener listener = new IPropertyChangeListener() {
 
                 /* (non-Javadoc)
@@ -94,7 +99,7 @@ public class ColorSchemeService {
 							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START)
 							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
                             || property.equals(IWorkbenchThemeConstants.TAB_TEXT_FONT)) {
-                        setTabAttributes(presentation, control);                        
+                        setTabAttributes((BasicStackPresentation) ref.get(), control);                        
                     }
                 }	            
 	        };
@@ -109,6 +114,7 @@ public class ColorSchemeService {
                     .getWorkbench()
                     .getThemeManager()
                     .removePropertyChangeListener(listener);
+                    control.setData(LISTENER_KEY, null);                    
                 }});
 	        
 	        PlatformUI
