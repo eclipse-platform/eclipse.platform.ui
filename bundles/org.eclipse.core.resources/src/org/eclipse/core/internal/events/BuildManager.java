@@ -466,7 +466,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * The list includes entries for all builders that are in the builder spec,
 	 * and that have a last built state but have not been instantiated this session.
 	 */
-	private ArrayList getBuildersPersistentInfo(IProject project) throws CoreException {
+	public ArrayList getBuildersPersistentInfo(IProject project) throws CoreException {
 		return (ArrayList) project.getSessionProperty(K_BUILD_LIST);
 	}
 
