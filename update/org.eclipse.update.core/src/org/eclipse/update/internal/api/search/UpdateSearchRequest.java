@@ -164,6 +164,7 @@ public class UpdateSearchRequest {
 		IUpdateSearchQuery[] queries = category.getQueries();
 		IUpdateSearchSite[] candidates = scope.getSearchSites();
 		URL updateMapURL = scope.getUpdateMapURL();
+		boolean searchFeatureProvidedSites = scope.isEnabledFeatureProvidedSite();
 
 		if (!monitor.isCanceled()) {
 			int nsearchsites = 0;
@@ -187,7 +188,7 @@ public class UpdateSearchRequest {
 				for (int i = 0; i < queries.length; i++) {
 					IUpdateSearchQuery query = queries[i];
 					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
-					if (qsite != null) {
+					if (qsite != null && searchFeatureProvidedSites) {
 						// check for mapping
 						IUpdateSiteAdapter mappedSite = getMappedSite(updatePolicy, qsite);
 						// when there is no mapped site the feature is not updatable

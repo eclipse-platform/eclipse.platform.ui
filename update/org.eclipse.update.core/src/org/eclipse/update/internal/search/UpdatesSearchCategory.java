@@ -105,11 +105,8 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			}
 		}
 		public boolean isUpdatable() {
-			if (parent == null)
-				return true;
-			return false;
+			return (parent == null);
 		}
-
 	}
 
 	private static class Hit {
@@ -232,16 +229,20 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			for (int i = 0; i < refs.length; i++) {
 				ISiteFeatureReference ref = refs[i];
 				try {
-					// accept the same feature if the installed
-					// feature is broken
-					if ((broken || missingOptionalChildren)
-						&& candidate.getVersionedIdentifier().equals(
-							ref.getVersionedIdentifier()))
+					if (isNewerVersion(candidate.getVersionedIdentifier(),ref.getVersionedIdentifier())) {
 						hits.add(new Hit(candidate, ref));
-					else {
-						// check for patches
-						if (isPatch(candidate, ref))
-							hits.add(new Hit(candidate, ref, true));
+					} else {
+						// accept the same feature if the installed
+						// feature is broken
+						if ((broken || missingOptionalChildren)
+							&& candidate.getVersionedIdentifier().equals(
+								ref.getVersionedIdentifier()))
+							hits.add(new Hit(candidate, ref));
+						else {
+							// check for patches
+							if (isPatch(candidate, ref))
+								hits.add(new Hit(candidate, ref, true));
+						}
 					}
 				} catch (CoreException e) {
 				}
