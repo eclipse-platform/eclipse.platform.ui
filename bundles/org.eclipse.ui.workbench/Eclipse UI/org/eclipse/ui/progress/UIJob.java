@@ -77,7 +77,7 @@ public abstract class UIJob extends Job {
 
 		Display asyncDisplay = getDisplay();
 
-		if (asyncDisplay == null) {
+		if (asyncDisplay == null || display.isDisposed()) {
 			return Status.CANCEL_STATUS;
 		}
 		asyncDisplay.asyncExec(new Runnable() {
