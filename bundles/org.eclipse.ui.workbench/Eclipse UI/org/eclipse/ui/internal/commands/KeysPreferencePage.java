@@ -214,6 +214,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * item is stored.
 	 */
 	private static final String ITEM_DATA_KEY = "org.eclipse.jface.bindings"; //$NON-NLS-1$
+	
+	/**
+	 * The number of items to show in the combo boxes.
+	 */
+	private static final int ITEMS_TO_SHOW = 9;
 
 	/**
 	 * The resource bundle from which translations can be retrieved.
@@ -559,6 +564,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		comboScheme.setLayoutData(gridData);
+		comboScheme.setVisibleItemCount(ITEMS_TO_SHOW);
 
 		comboScheme.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent e) {
@@ -592,6 +598,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 200;
 		comboCategory.setLayoutData(gridData);
+		comboCategory.setVisibleItemCount(ITEMS_TO_SHOW);
 
 		comboCategory.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent e) {
@@ -609,6 +616,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
 		comboCommand.setLayoutData(gridData);
+		comboCommand.setVisibleItemCount(9);
 
 		comboCommand.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent e) {
@@ -834,6 +842,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData();
 		gridData.widthHint = 250;
 		comboContext.setLayoutData(gridData);
+		comboContext.setVisibleItemCount(ITEMS_TO_SHOW);
 
 		comboContext.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent e) {
