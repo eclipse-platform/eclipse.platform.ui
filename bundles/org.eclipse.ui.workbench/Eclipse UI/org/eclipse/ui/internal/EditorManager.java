@@ -401,7 +401,7 @@ public class EditorManager {
 				IFile file = ((IFileEditorInput)input).getFile();
 				if(file != null) {
 					// Update the default editor for this file.
-					IEditorDescriptor defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor(file);
+					IEditorDescriptor defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor(file.getName());
 					if (defaultDesc == null)
 						defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
 					String editorID = desc.getId();
@@ -697,10 +697,11 @@ public class EditorManager {
 				visibleEditors.add(e);
 				page.addPart(e);
 				result.add(restoreEditor(e,editorMem));
-				if(e.getPart(true) != null) {
+				IEditorPart editor = (IEditorPart)e.getPart(true);
+				if(editor != null) {
 					String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
 					if ("true".equals(strActivePart)) //$NON-NLS-1$
-						activeEditor[0] = (IEditorPart)e.getPart(true);
+						activeEditor[0] = editor;
 				} else {
 					page.closeEditor(e,false);
 					visibleEditors.remove(e);

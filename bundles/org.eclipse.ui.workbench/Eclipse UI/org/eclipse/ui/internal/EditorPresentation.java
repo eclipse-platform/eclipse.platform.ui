@@ -158,7 +158,7 @@ public IEditorReference getVisibleEditor() {
 		IEditorReference result = pane.getEditorReference();
 		IEditorPart editorPart = (IEditorPart)result.getPart(false);
 		if((editorPart != null) && (editorPart instanceof MultiEditor)) {
-			editorPart = ((MultiEditor)result.getPart(true)).getActiveEditor();
+			editorPart = ((MultiEditor)editorPart).getActiveEditor();
 			EditorSite site = (EditorSite)editorPart.getSite();
 			result = (IEditorReference)site.getPane().getPartReference();
 		}
@@ -390,7 +390,9 @@ public boolean setVisibleEditor(IEditorReference ref, boolean setFocus) {
 	IEditorReference visibleEditor = getVisibleEditor();
 	if (ref != visibleEditor) {
 		IEditorPart part = (IEditorPart)ref.getPart(true);
-		EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
+		EditorPane pane = null;
+		if(part != null)
+			pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
 		if (pane != null) {
 			if(pane instanceof MultiEditorInnerPane) {
 				EditorPane parentPane = ((MultiEditorInnerPane)pane).getParentPane();

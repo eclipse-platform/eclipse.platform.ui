@@ -1169,17 +1169,20 @@ public EditorPresentation getEditorPresentation() {
  */
 public IEditorPart [] getEditors() {
 	final IEditorReference refs[] = getEditorReferences();
-	final IEditorPart result[] = new IEditorPart[refs.length];
+	final ArrayList result = new ArrayList(refs.length);
 	Display d = getWorkbenchWindow().getShell().getDisplay();
 	//Must be backward compatible.
 	d.syncExec(new Runnable() {
 		public void run() {
 			for (int i = 0; i < refs.length; i++) {
-				result[i] = (IEditorPart)refs[i].getPart(true);
+				IWorkbenchPart part = refs[i].getPart(true);
+				if(part != null)
+					result.add(part);
 			}
 		}
 	});
-	return result;
+	final IEditorPart editors[] = new IEditorPart[result.size()];	
+	return (IEditorPart[])result.toArray(editors);
 }
 
 public IEditorPart[] getDirtyEditors() {
@@ -1339,10 +1342,14 @@ public IViewPart [] getViews() {
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
 		IViewReference refs[] = persp.getViewReferences();
-		IViewPart parts[] = new IViewPart[refs.length];
-		for (int i = 0; i < refs.length; i++)
-			parts[i] = refs[i].getView(true);
-		return parts;
+		ArrayList parts = new ArrayList(refs.length);
+		for (int i = 0; i < refs.length; i++) {
+			IWorkbenchPart part = refs[i].getPart(true);
+			if(part != null)
+				parts.add(part);
+		}
+		IViewPart[] result = new IViewPart[parts.size()];	
+		return (IViewPart[])parts.toArray(result);
 	}
 	return new IViewPart[0];
 }
@@ -1376,9 +1383,9 @@ public void hideActionSet(String actionSetID) {
 }
 
 public void hideView(IViewReference ref) {
-	if(ref.getPart(false) == null)
-		return;
-	hideView((IViewPart)ref.getPart(false));
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null)
+		hideView((IViewPart)part);
 }
 /**
  * See IPerspective
@@ -2447,7 +2454,7 @@ public void toggleFastView(IViewReference ref) {
  * Zoom in on a part.  
  * If the part is already in zoom then zoom out.
  */
-public void toggleZoom(IWorkbenchPart part) {
+public void toggleZoom(IWorkbenchPartReference ref) {
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return;
@@ -2466,8 +2473,8 @@ public void toggleZoom(IWorkbenchPart part) {
 		zoomOut();
 		return;
 	} else {
-		persp.getPresentation().zoomIn(getReference(part));
-		activate(part);
+		persp.getPresentation().zoomIn(ref);
+		activate(ref.getPart(true));
 	}
 }
 /**

@@ -30,7 +30,9 @@ public class MultiEditorInnerPane extends EditorPane {
 	 * Update the gradient on the inner editor title bar
 	 */
 	private void updateGradient() {
-		((MultiEditor)parentPane.getPartReference().getPart(true)).updateGradient((IEditorPart)this.getEditorReference().getPart(true));
+		MultiEditor multiEditor = (MultiEditor)parentPane.getPartReference().getPart(true);
+		if(multiEditor != null)
+			multiEditor.updateGradient((IEditorPart)this.getEditorReference().getPart(true));
 	}
 	/**
  	 * Indicate focus in part.

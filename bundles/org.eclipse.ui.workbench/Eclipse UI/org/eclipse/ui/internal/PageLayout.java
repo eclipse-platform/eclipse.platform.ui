@@ -112,10 +112,8 @@ public void addFastView(String id, float ratio) {
 		try {
 			IViewReference ref = viewFactory.createView(id);
 			IViewPart view = (IViewPart)ref.getPart(true);
-			ViewSite site = (ViewSite)view.getSite();
-			ViewPane pane = (ViewPane)site.getPane();
-			IViewPart part = (IViewPart)pane.getViewReference().getPart(true);
-			fastViews.add(part);
+			if(view != null)
+				fastViews.add(view);
 			if(ratio >= IPageLayout.RATIO_MIN && ratio <= IPageLayout.RATIO_MAX)
 				mapFastViewToWidthRatio.put(id, new Float(ratio));
 		} catch(PartInitException e) {

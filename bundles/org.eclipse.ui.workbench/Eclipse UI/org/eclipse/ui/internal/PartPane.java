@@ -211,7 +211,7 @@ abstract public void doHide();
  */
 protected void doZoom() {
 	if (getWindow() instanceof IWorkbenchWindow)
-		page.toggleZoom(partReference.getPart(true));
+		page.toggleZoom(partReference);
 }
 /**
  * Gets the presentation bounds.
@@ -419,7 +419,9 @@ protected void moveSash(final Sash sash) {
 	final KeyListener listener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
 			if (e.character == SWT.ESC || e.character == '\r') {
-				partReference.getPart(true).setFocus();
+				IWorkbenchPart part = partReference.getPart(true);
+				if(part != null)
+					part.setFocus();
 			}
 		}
 	};

@@ -206,10 +206,12 @@ protected void createChildControl() {
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
 			IViewPart part = (IViewPart)getViewReference().getPart(true);
-			builder.readActionExtensions(part);
-			ActionDescriptor[] extendedActions = builder.getExtendedActions();
-			KeyBindingService keyBindingService = (KeyBindingService)part.getSite().getKeyBindingService();
-			keyBindingService.registerExtendedActions(extendedActions);
+			if(part != null) {
+				builder.readActionExtensions(part);
+				ActionDescriptor[] extendedActions = builder.getExtendedActions();
+				KeyBindingService keyBindingService = (KeyBindingService)part.getSite().getKeyBindingService();
+				keyBindingService.registerExtendedActions(extendedActions);
+			}
 			updateActionBars();
 		}
 		public void handleException(Throwable e) {

@@ -486,7 +486,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		void save(IProgressMonitor monitor) {
 			if(editorRef == null)
 				return;
-			((IEditorPart)editorRef.getPart(true)).doSave(monitor);
+			IEditorPart editor = (IEditorPart)editorRef.getPart(true);
+			if(editor != null)
+				editor.doSave(monitor);
 		}
 		String[] getText() {
 			if(text != null)

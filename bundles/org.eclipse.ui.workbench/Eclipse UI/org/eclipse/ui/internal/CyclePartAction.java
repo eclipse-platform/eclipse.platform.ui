@@ -118,7 +118,9 @@ public void activate(IWorkbenchPage page,Object selection) {
 		if (selection instanceof IEditorReference) {
 			page.setEditorAreaVisible(true);
 		}
-		page.activate(((IWorkbenchPartReference)selection).getPart(true));
+		IWorkbenchPart part = ((IWorkbenchPartReference)selection).getPart(true);
+		if(part != null) 
+			page.activate(part);
 	}	
 }
 /*

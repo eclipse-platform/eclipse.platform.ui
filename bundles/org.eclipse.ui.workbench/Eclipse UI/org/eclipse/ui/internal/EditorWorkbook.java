@@ -297,7 +297,7 @@ public void dispose() {
 private void doZoom() {
 	if (visibleEditor == null)
 		return;
-	((WorkbenchPage)(getWorkbenchWindow().getActivePage())).toggleZoom(visibleEditor.getPartReference().getPart(true));
+	visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
 }
 /**
  * Draws the applicable gradient on the active tab

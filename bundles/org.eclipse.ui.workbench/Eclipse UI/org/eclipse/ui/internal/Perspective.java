@@ -810,9 +810,11 @@ public IStatus restoreState() {
 			result.add(restoreStatus);
 			if(restoreStatus.getSeverity() == IStatus.OK) {
 				IViewPart view = (IViewPart)ref.getPart(true);
-				ViewSite site = (ViewSite)view.getSite();
-				ViewPane pane = (ViewPane)site.getPane();			
-				pres.replacePlaceholderWithPart(pane);
+				if(view != null) {
+					ViewSite site = (ViewSite)view.getSite();
+					ViewPane pane = (ViewPane)site.getPane();			
+					pres.replacePlaceholderWithPart(pane);
+				}
 			} else {
 				page.removePart(ref);
 			}
@@ -1301,9 +1303,9 @@ public IViewPart showView(String viewID)
 				throw (PartInitException)status.getException();
 			else
 				throw new PartInitException(status);
-		}
-		else //No error so the part has been created
+		} else { //No error so the part has been created
 			part = (IViewPart)ref.getPart(false);
+		}
 	}
 	ViewSite site = (ViewSite)part.getSite();
 	ViewPane pane = (ViewPane)site.getPane();
