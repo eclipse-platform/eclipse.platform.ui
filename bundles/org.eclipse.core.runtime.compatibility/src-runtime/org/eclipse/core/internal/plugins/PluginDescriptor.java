@@ -682,12 +682,25 @@ public class PluginDescriptor implements IPluginDescriptor {
 			return;
 		}
 
-		//A backward compatible plugin is being started through a reference to its plugin object.
+		//A backward compatible plugin is being started through PluginDescriptor#getPlugin()
 		try {
 			bundleOsgi.start();
+			// here we know the bundle is active. If the bundle does not use PluginActivator  
+			// the plug-in activation (and plugin object creation) must be forced by hand 
+			// (otherwise the first case above would handle it)
+			if (pluginObject == null) {
+				if (pluginActivationEnter()) {
+					try {
+						internalDoPluginActivation();
+						errorExit = false;
+					} finally {
+						pluginActivationExit(errorExit);
+					}
+				}
+				return;
+			}			
 		} catch (BundleException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throwException(Policy.bind("plugin.startupProblems",getId()), e);
 		}
 	}
 
