@@ -166,6 +166,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				return Status.OK_STATUS;
 			}
 		};
+		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
 
 		return launch;
