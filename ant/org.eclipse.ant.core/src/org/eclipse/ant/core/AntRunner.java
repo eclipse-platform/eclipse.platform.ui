@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -295,14 +296,14 @@ public class AntRunner implements IPlatformRunnable {
 			Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
 			run.invoke(runner, null);
 		} catch (NoClassDefFoundError e) {
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			problemLoadingClass(e);
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
+			problemLoadingClass(e);
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
 			// J9 throws NoClassDefFoundError nested in a InvocationTargetException
 			if ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException)) {
-				throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), realException)); //$NON-NLS-1$
+				problemLoadingClass(e);
 			}
 			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
@@ -316,6 +317,21 @@ public class AntRunner implements IPlatformRunnable {
 				System.out.println(InternalCoreAntMessages.getString("AntRunner.Buildfile_run_took___9") + (finishTime - startTime) + InternalCoreAntMessages.getString("AntRunner._milliseconds._10")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+
+	protected void problemLoadingClass(Throwable e) throws CoreException {
+		String missingClassName= e.getMessage();
+		String message;
+		if (missingClassName != null) {
+			missingClassName= missingClassName.replaceAll("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._2"); //$NON-NLS-1$
+			message= MessageFormat.format(message, new String[]{missingClassName});
+		} else {
+			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"); //$NON-NLS-1$
+		}
+		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
+		AntCorePlugin.getPlugin().getLog().log(status);
+		throw new CoreException(status);
 	}
 
 	/**
