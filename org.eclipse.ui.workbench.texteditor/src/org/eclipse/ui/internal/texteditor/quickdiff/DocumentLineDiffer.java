@@ -77,9 +77,25 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		private int fOffset;
 
 		DiffRegion(RangeDifference difference, int offset) {
-			super("org.eclipse.quickdiff.changeindication", false, null);
+			super("org.eclipse.ui.workbench.texteditor.quickdiffChange", false, null); //$NON-NLS-1$
 			fOffset= offset;
 			fDifference= difference;
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.source.Annotation#getType()
+		 */
+		public String getType() {
+			// we return unknown for unchanged regions to avoid 
+			// them getting displayed.
+			switch (getChangeType()) {
+				case CHANGED:
+					return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
+				case ADDED:
+					return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
+				default: // and UNCHANGED
+					return TYPE_UNKNOWN;
+			}
 		}
 		
 		/*
@@ -1251,7 +1267,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			public Object next() {
 				RangeDifference diff= (RangeDifference) iter.next();
-				return new DiffRegion(diff, diff.rightStart());
+				return new DiffRegion(diff, 0);
 			}
 			
 		};
