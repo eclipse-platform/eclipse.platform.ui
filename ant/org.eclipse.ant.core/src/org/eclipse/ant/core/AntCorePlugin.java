@@ -11,11 +11,17 @@
 package org.eclipse.ant.core;
 
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
@@ -222,7 +228,17 @@ public class AntCorePlugin extends Plugin {
 	 * @return the new class loader
 	 */
 	public ClassLoader getNewClassLoader() {
-		return getNewClassLoader(false);
+	    AntCorePreferences corePreferences = getPreferences();
+		return getNewClassLoader(false, corePreferences.getURLs());
+	}
+	
+	/**
+	 * Returns a new class loader to use when executing Ant builds.
+	 * 
+	 * @return the new class loader
+	 */
+	public URLClassLoader getNewClassLoader(URL[] urls) {
+		return getNewClassLoader(false, urls);
 	}
 	
 	/**
@@ -235,6 +251,19 @@ public class AntCorePlugin extends Plugin {
 	public ClassLoader getNewClassLoader(boolean allowLoading) {
 		AntCorePreferences corePreferences = getPreferences();
 		URL[] urls = corePreferences.getURLs();
+		return getNewClassLoader(allowLoading, urls);
+	}
+		
+	/**
+	 * Returns a new class loader to use when executing Ant builds or 
+	 * other applications such as parsing or code proposal determination 
+	 * @param allowLoading whether to allow plugin classloaders associated 
+	 * with the new classloader to load Apache Ant classes.
+	 * @param urls the urls that define the classpath of the new classloader
+	 * @return the new class loader
+	 */
+	public URLClassLoader getNewClassLoader(boolean allowLoading, URL[] urls) {
+		AntCorePreferences corePreferences = getPreferences();
 		ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
 		AntClassLoader loader= new AntClassLoader(urls, pluginLoaders);
 		loader.allowPluginClassLoadersToLoadAntClasses(allowLoading);

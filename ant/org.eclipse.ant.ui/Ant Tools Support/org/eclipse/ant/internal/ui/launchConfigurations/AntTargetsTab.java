@@ -17,14 +17,15 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
-import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,6 +50,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -75,8 +77,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
-	private TargetInfo fDefaultTarget = null;
-	private TargetInfo[] fAllTargets= null;
+	private AntTargetNode fDefaultTarget = null;
+	private AntTargetNode[] fAllTargets= null;
 	private List fOrderedTargets = null;
 	
 	private CheckboxTableViewer fTableViewer = null;
@@ -84,10 +86,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Text fTargetOrderText = null;
 	private Button fOrderButton = null;
 	private Button fFilterInternalTargets;
+	private InternalTargetFilter fInternalTargetFilter= null;
 	private Button fSortButton;
 	
 	private ILaunchConfiguration fLaunchConfiguration;
-	private AntTargetContentProvider fTargetContentProvider;
 	private int fSortDirection= 0;
 	private boolean fInitializing= false;
 	
@@ -109,7 +111,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (!(e1 instanceof TargetInfo && e2 instanceof TargetInfo)) {
+			if (!(e1 instanceof AntTargetNode && e2 instanceof AntTargetNode)) {
 				return super.compare(viewer, e1, e2);
 			}
 			if (fSortDirection == SORT_NONE) {
@@ -118,11 +120,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			String string1, string2;
 			int result= 0;
 			if (fSortDirection == SORT_NAME || fSortDirection == SORT_NAME_REVERSE) {
-				string1= ((TargetInfo) e1).getName();
-				string2= ((TargetInfo) e2).getName();
+				string1= ((AntTargetNode) e1).getLabel();
+				string2= ((AntTargetNode) e2).getLabel();
 			} else {
-				string1= ((TargetInfo) e1).getDescription();
-				string2= ((TargetInfo) e2).getDescription();
+				string1= ((AntTargetNode) e1).getTarget().getDescription();
+				string2= ((AntTargetNode) e2).getTarget().getDescription();
 			}
 			if (string1 != null && string2 != null) {
 				result= getCollator().compare(string1, string2);
@@ -259,22 +261,26 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void handleFilterTargetsSelected() {
 		boolean filter= fFilterInternalTargets.getSelection();
-		fTargetContentProvider.setFilterInternalTargets(filter);
 		if (filter) {
-			ListIterator iter= fOrderedTargets.listIterator();
-			while (iter.hasNext()) {
-				TargetInfo target= (TargetInfo) iter.next();
-				if (fTargetContentProvider.isInternal(target)) {
-					iter.remove();
-				}
-			}
+			fTableViewer.addFilter(getInternalTargetsFilter());
+		} else {
+			fTableViewer.removeFilter(getInternalTargetsFilter());
 		}
-		fTableViewer.refresh();
+		
 		// Must refresh before updating selection count because the selection
 		// count's "hidden" reporting needs the content provider to be queried
 		// first to count how many targets are hidden.
 		updateSelectionCount();
-		updateLaunchConfigurationDialog();
+		if (!fInitializing) {
+		    updateLaunchConfigurationDialog();
+		}
+	}
+	
+	private ViewerFilter getInternalTargetsFilter() {
+		if (fInternalTargetFilter == null) {
+			fInternalTargetFilter= new InternalTargetFilter();
+		}
+		return fInternalTargetFilter;
 	}
 	
 	/**
@@ -354,8 +360,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
-		fTargetContentProvider= new AntTargetContentProvider();
-		fTableViewer.setContentProvider(fTargetContentProvider);
+		fTableViewer.setContentProvider(new AntModelContentProvider());
 		fTableViewer.setSorter(new AntTargetsSorter());
 		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -430,16 +435,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Updates the selection count widget to display how many targets are
-	 * selected (example, "1 out of 6 selected").
+	 * selected (example, "1 out of 6 selected") and filtered.
 	 */
 	private void updateSelectionCount() {
 		Object[] checked = fTableViewer.getCheckedElements();
 		String numSelected = Integer.toString(checked.length);
-		int length= fTargetContentProvider.getNumTargets();
-		String total = Integer.toString(length);
-		int numHidden= fTargetContentProvider.getNumFiltered();
+	
+		int all= fAllTargets == null ? 0 : fAllTargets.length;
+		int visible= fTableViewer.getTable().getItemCount();
+		String total = Integer.toString(visible);
+		int numHidden= all - visible;
 		if (numHidden > 0) {
-			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.13"), new String[]{numSelected, total, String.valueOf(numHidden)})); //$NON-NLS-1$
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.13"), new String[]{numSelected, String.valueOf(all), String.valueOf(numHidden)})); //$NON-NLS-1$
 		} else {
 			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
 		}
@@ -449,7 +456,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		StringBuffer buffer = new StringBuffer();
 		Iterator iter = fOrderedTargets.iterator();
 		while (iter.hasNext()) {
-			buffer.append(((TargetInfo)iter.next()).getName());
+			buffer.append(((AntTargetNode)iter.next()).getTargetName());
 			buffer.append(", "); //$NON-NLS-1$
 		}
 		if (buffer.length() > 2) {
@@ -463,7 +470,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * Returns all targets in the buildfile.
 	 * @return all targets in the buildfile
 	 */
-	private TargetInfo[] getTargets() {
+	private AntTargetNode[] getTargets() {
 		if (fAllTargets == null || isDirty()) {
 			fAllTargets= null;
 			setDirty(false);
@@ -518,9 +525,17 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				return fAllTargets;
 			}
 			for (int i=0; i < fAllTargets.length; i++) {
-				if (fAllTargets[i].isDefault()) {
-					fDefaultTarget = fAllTargets[i];
-					break;
+			    AntTargetNode target= fAllTargets[i];
+				if (target.isDefaultTarget()) {
+					fDefaultTarget= target;
+				}
+				if (target.isErrorNode() || target.isWarningNode()) {
+				    String message= target.getProblemMessage();
+				    if (message != null) {
+				        setErrorMessage(message);
+				    } else {
+				        setErrorMessage("Buildfile contains errors/problems. Check syntax and classpath"); //$NON-NLS-1$
+				    }
 				}
 			}
 		}
@@ -540,6 +555,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fInitializing= true;
 		fLaunchConfiguration= configuration;
+		fOrderedTargets = new ArrayList();
 		setErrorMessage(null);
 		setMessage(null);
 		setDirty(true);
@@ -550,7 +566,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			AntUIPlugin.log(e);
 		}
 		fFilterInternalTargets.setSelection(hideInternal);
-		fTargetContentProvider.setFilterInternalTargets(hideInternal);
+		handleFilterTargetsSelected();
 		int sort= SORT_NONE;
 		try {
 			sort = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, sort);
@@ -561,7 +577,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		setSort(sort);
 		String configTargets= null;
 		String newLocation= null;
-		fOrderedTargets = new ArrayList();
+		
 		try {
 			configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
@@ -575,8 +591,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return; 
 		}
 		
-		TargetInfo[] allInfos= getTargets();
-		if (allInfos == null) {
+		AntTargetNode[] allTargetNodes= getTargets();
+		if (allTargetNodes == null) {
 			initializeForNoTargets();
 			return; 
 		}
@@ -585,7 +601,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (targetNames.length == 0) {
 			fOrderedTargets.add(fDefaultTarget);
 			fTableViewer.setAllChecked(false);
-			setExecuteInput(allInfos);
+			setExecuteInput(allTargetNodes);
 			if (fDefaultTarget != null) {
 				fTableViewer.setChecked(fDefaultTarget, true);
 				updateSelectionCount();
@@ -595,11 +611,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 		
-		setExecuteInput(allInfos);
+		setExecuteInput(allTargetNodes);
 		fTableViewer.setAllChecked(false);
 		for (int i = 0; i < targetNames.length; i++) {
 			for (int j = 0; j < fAllTargets.length; j++) {
-				if (targetNames[i].equals(fAllTargets[j].getName())) {
+				if (targetNames[i].equals(fAllTargets[j].getTargetName())) {
 					fOrderedTargets.add(fAllTargets[j]);
 					fTableViewer.setChecked(fAllTargets[j], true);
 				}
@@ -610,8 +626,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void initializeForNoTargets() {
-		setExecuteInput(new TargetInfo[0]);
-		fTableViewer.setInput(new TargetInfo[0]);
+		setExecuteInput(new AntTargetNode[0]);
+		fTableViewer.setInput(new AntTargetNode[0]);
 		fInitializing= false;
 	}
 
@@ -641,8 +657,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		if (fOrderedTargets.size() == 1) {
-			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
-			if (item.isDefault()) {
+			AntTargetNode item = (AntTargetNode)fOrderedTargets.get(0);
+			if (item.isDefaultTarget()) {
 				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 				return;
 			}
@@ -655,8 +671,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		Iterator iter = fOrderedTargets.iterator();
 		String targets = null;
 		while (iter.hasNext()) {
-			TargetInfo item = (TargetInfo)iter.next();
-			buff.append(item.getName());
+			AntTargetNode item = (AntTargetNode)iter.next();
+			buff.append(item.getTargetName());
 			buff.append(',');
 		}
 		if (buff.length() > 0) {
@@ -684,6 +700,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
+	    if (getErrorMessage() != null) {
+	        return false;
+	    }
 		if (fAllTargets == null || isDirty()) {
 			if (getErrorMessage() != null && !isDirty()) {
 				//error in parsing;
@@ -774,4 +793,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 	}
+//    /* (non-Javadoc)
+//     * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+//     */
+//    public void dispose() {
+//        super.dispose();
+//        if (fAllTargets != null) {
+//            fAllTargets[0].get
+//        }
+//    }
 }

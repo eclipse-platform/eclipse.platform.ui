@@ -129,7 +129,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		Map userProperties= AntUtil.getProperties(configuration);
 		String[] propertyFiles= AntUtil.getPropertyFiles(configuration);
-		String[] targets = AntUtil.getTargetsFromConfig(configuration);
+		String[] targets = AntUtil.getTargetNames(configuration);
 		URL[] customClasspath= AntUtil.getCustomClasspath(configuration);
 		String antHome= AntUtil.getAntHome(configuration);
 		

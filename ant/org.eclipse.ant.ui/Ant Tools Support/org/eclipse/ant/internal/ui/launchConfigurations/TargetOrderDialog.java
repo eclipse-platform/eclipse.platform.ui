@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
+import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,7 +45,6 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	private Button fUp;
 	private Button fDown;
 	private TableViewer fViewer;
-	private AntTargetContentProvider fContentProvider;
 	private Object[] fTargets;
 
 	/**
@@ -121,7 +122,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		if (targets.isEmpty()) {
 			return;
 		}
-		List list= new ArrayList(Arrays.asList(fContentProvider.getElements(null)));
+		List list= new ArrayList(Arrays.asList(fTargets));
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
@@ -145,7 +146,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		}
 		int top = 0;
 		int index = 0;
-		List list= new ArrayList(Arrays.asList(fContentProvider.getElements(null)));
+		List list= new ArrayList(Arrays.asList(fTargets));
 		Iterator entries = targets.iterator();
 		while (entries.hasNext()) {
 			Object target = entries.next();
@@ -173,14 +174,14 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	
 	/**
 	 * Returns the selected items in the list, in the order they are
-	 * displayed.
+	 * displayed (not in the order they were selected).
 	 * 
 	 * @return targets for an action
 	 */
 	private List getOrderedSelection() {
 		List targets = new ArrayList();
 		List selection = ((IStructuredSelection)fViewer.getSelection()).toList();
-		Object[] entries = fContentProvider.getElements(null);
+		Object[] entries = fTargets;
 		for (int i = 0; i < entries.length; i++) {
 			Object target = entries[i];
 			if (selection.contains(target)) {
@@ -197,10 +198,9 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 */
 	private void createTargetList(Composite comp) {
 		fViewer = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
-		fViewer.setLabelProvider(new TargetTableLabelProvider());
-		
-		fContentProvider = new AntTargetContentProvider();
-		fViewer.setContentProvider(fContentProvider);
+		fViewer.setLabelProvider(new AntModelLabelProvider());
+	
+		fViewer.setContentProvider(new AntModelContentProvider());
 		fViewer.setInput(fTargets);
 		fViewer.addSelectionChangedListener(this);
 		Table table = fViewer.getTable();
