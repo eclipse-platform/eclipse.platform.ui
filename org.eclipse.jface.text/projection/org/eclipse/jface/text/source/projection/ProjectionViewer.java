@@ -69,6 +69,11 @@ import org.eclipse.jface.text.source.SourceViewer;
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
+	/**
+	 * Threshold determining whether individual repaints should be sent out.
+	 */
+	private static final int REDRAW_THRESHOLD= 15;
+	
 	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
 	
 	/** Operation constant for the expand operation. */
@@ -774,7 +779,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				Annotation[] changedAnnotation= event.getChangedAnnotations();
 				Annotation[] removedAnnotations= event.getRemovedAnnotations();
 				
-				boolean fireRedraw= true;
+				boolean fireRedraw= (addedAnnotations.length + changedAnnotation.length  + removedAnnotations.length) < REDRAW_THRESHOLD;
 				processDeletions(event, removedAnnotations, fireRedraw);
 				List coverage= new ArrayList();
 				processChanges(addedAnnotations, fireRedraw, coverage);
