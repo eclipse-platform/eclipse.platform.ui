@@ -687,7 +687,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
 				//make sure the rule factory is cleared on project deletion
 				if (getType() == PROJECT)
-					((Rules)workspace.getRuleFactory()).setRuleFactory((IProject)this, null);
+					((Rules) workspace.getRuleFactory()).setRuleFactory((IProject) this, null);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
