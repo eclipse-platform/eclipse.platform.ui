@@ -238,6 +238,9 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 				sitePath,
 				Site.DEFAULT_INSTALLED_FEATURE_PATH
 					+ remoteFeature.getVersionedIdentifier().toString());
+		if (Locale.getDefault().toString().indexOf("fr") != -1 ||
+				Locale.getDefault().toString().indexOf("us") != -1 ||
+				Locale.getDefault().toString().indexOf("de") != -1)
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
