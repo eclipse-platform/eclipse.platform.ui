@@ -409,11 +409,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         l.setLayoutData(data);
 
-        l = new Label(dialogArea, SWT.NONE);
-        l.setText(IDEWorkbenchMessages
-                .getString("ResourceSelectionDialog.pattern")); //$NON-NLS-1$
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        l.setLayoutData(data);
         pattern = new Text(dialogArea, SWT.SINGLE | SWT.BORDER);
         pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         l = new Label(dialogArea, SWT.NONE);
