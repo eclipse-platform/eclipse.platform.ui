@@ -125,6 +125,26 @@ protected Control createDialogArea(Composite parent) {
 	label.setText(platformText());
 	label.setLayoutData(data);
 
+	// horizontal bar
+	bar =  new Label(topContainer, SWT.HORIZONTAL | SWT.SEPARATOR);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	bar.setLayoutData(data);
+	
+	Button button = new Button(topContainer, SWT.PUSH);
+
+	button.setText(WorkbenchMessages.getString("AboutDialog.pluginInfo"));
+	data = new GridData();
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
+	button.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent event) {
+			new AboutPluginsDialog(getShell()).open();
+		}
+	});
+
 	return outer;
 }
 /**
