@@ -203,6 +203,7 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring how often the workspace performs 
 	 * auto-refresh.
+	 * @deprecated - to be removed before 3.0 release
 	 * @since 3.0
 	 */
 	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	 //$NON-NLS-1$

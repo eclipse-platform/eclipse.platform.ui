@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * Manages auto-refresh functionality, including maintaining the active
- * set of monitors and controlling the refresh job.
+ * set of monitors and controlling the job that performs periodic refreshes
+ * on out of sync resources.
  */
 public class RefreshManager implements IRefreshResult, IManager, Preferences.IPropertyChangeListener {
 	public static boolean DEBUG = Policy.DEBUG_AUTO_REFRESH;
@@ -39,10 +40,8 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	/*
 	 * Starts or stops auto-refresh depending on the auto-refresh preference.
 	 */
-	protected void manageAutoRefresh() {
-		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-		boolean autoRefresh= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
-		if (autoRefresh) {
+	protected void manageAutoRefresh(boolean enabled) {
+		if (enabled) {
 			refreshJob.start();
 			monitors.start();
 		} else {
@@ -59,17 +58,21 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (ResourcesPlugin.PREF_AUTO_REFRESH.equals(property)) {
-			manageAutoRefresh();
-		} else if (ResourcesPlugin.PREF_REFRESH_POLLING_DELAY.equals(property)) {
 			Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-			long delay = preferences.getLong(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY);
-			monitors.setPollingDelay(delay);
+			boolean autoRefresh= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+			manageAutoRefresh(autoRefresh);
 		} 
 	}
-	
+	/* (non-Javadoc)
+	 * @see IRefreshResult#refresh
+	 */
 	public void refresh(IResource resources) {
 		refreshJob.refresh(resources);
 	}
+	/**
+	 * Shuts down the refresh manager.  This only happens when
+	 * the resources plugin is going away.
+	 */
 	public void shutdown(IProgressMonitor monitor) {
 		ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
 		if (monitors != null) {
@@ -81,16 +84,19 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 			refreshJob = null;
 		}
 	}
+	/**
+	 * Initializes the refresh manager. This does a minimal amount of work
+	 * if autobuild is turned off.
+	 */
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, false);
-		preferences.setDefault(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY, 30000);
 		preferences.addPropertyChangeListener(this);
-		long pollingDelay = preferences.getLong(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY);
 		
 		refreshJob = new RefreshJob();
 		monitors = new MonitorManager(workspace, this);
-		monitors.setPollingDelay(pollingDelay);
-		manageAutoRefresh();
+		boolean autoRefresh= preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
+		if (autoRefresh)
+			manageAutoRefresh(autoRefresh);
 	}
 }

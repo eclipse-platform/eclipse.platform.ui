@@ -115,7 +115,7 @@ public class RefreshJob extends WorkspaceJob {
 	 * Stops the refresh job
 	 */
 	public void stop() {
-		if (RefreshManager.DEBUG)
+		if (active && RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " disabling auto-refresh"); //$NON-NLS-1$
 		active = false;
 		cancel();

@@ -244,9 +244,6 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 				}
 		}
 	}
-	public void setPollingDelay(long delay) {
-		pollMonitor.setPollingDelay(delay);
-	}
 	/**
 	 * Start the monitoring of resources by all monitors.
 	 */
