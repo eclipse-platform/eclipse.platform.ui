@@ -13,40 +13,48 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
+public final class ActiveKeyConfigurationDefinition
+	implements IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class.getName().hashCode();
-
-	private String keyConfigurationId;
-	private String pluginId;
+	private final static int HASH_INITIAL =
+		ActiveKeyConfigurationDefinition.class.getName().hashCode();
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+
+	private String keyConfigurationId;
+	private String pluginId;
 	private transient String string;
 
-	public ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
+	public ActiveKeyConfigurationDefinition(
+		String keyConfigurationId,
+		String pluginId) {
 		this.keyConfigurationId = keyConfigurationId;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
-		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;
-		int compareTo = Util.compare(keyConfigurationId, castedObject.keyConfigurationId);			
+		ActiveKeyConfigurationDefinition castedObject =
+			(ActiveKeyConfigurationDefinition) object;
+		int compareTo =
+			Util.compare(keyConfigurationId, castedObject.keyConfigurationId);
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pluginId, castedObject.pluginId);								
+			compareTo = Util.compare(pluginId, castedObject.pluginId);
 
-		return compareTo;	
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof ActiveKeyConfigurationDefinition))
 			return false;
 
-		ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;	
+		ActiveKeyConfigurationDefinition castedObject =
+			(ActiveKeyConfigurationDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
+		equals
+			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
@@ -58,15 +66,16 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 	public String getPluginId() {
 		return pluginId;
 	}
-	
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
+			hashCode =
+				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
+
 		return hashCode;
 	}
 
@@ -80,7 +89,7 @@ public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigu
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
 	}
 }

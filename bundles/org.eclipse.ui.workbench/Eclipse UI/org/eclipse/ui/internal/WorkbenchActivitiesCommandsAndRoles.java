@@ -13,7 +13,10 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -23,12 +26,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
@@ -38,13 +35,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.IActivityManagerEvent;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
@@ -225,13 +222,13 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 		Set activeActivityIds;
 
-		public final void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
+		public final void activityManagerChanged(final ActivityManagerEvent activityManagerEvent) {
 			updateActiveActivityIds();
 		}
 	};
 
 	final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
-		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
+		public final void commandManagerChanged(final CommandManagerEvent commandManagerEvent) {
 			updateActiveActivityIds();
 		}
 	};
@@ -570,13 +567,17 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		// activeWorkbenchWindow).getContextActivationService() : null;
 
 		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
+		
 		IActionService activeWorkbenchPageActionService =
 			activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getActionService() : null;
+		
 		IContextActivationService activeWorkbenchPageContextActivationService =
 			activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;
+		
 		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
 		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
 		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		
 		IActionService activeWorkbenchPartActionService =
 			activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getActionService() : null;
 		IContextActivationService activeWorkbenchPartContextActivationService =

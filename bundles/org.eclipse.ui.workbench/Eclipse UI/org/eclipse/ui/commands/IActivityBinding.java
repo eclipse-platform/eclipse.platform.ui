@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>IActivityBinding</code> represents a binding between 
+ * An instance of <code>IActivityBinding</code> represents a binding between
  * a command and an activity.
  * </p>
  * <p>
@@ -30,6 +30,6 @@ public interface IActivityBinding extends Comparable {
 
 	/**
 	 * TODO
-	 */	
+	 */
 	String getActivityId();
 }

@@ -143,14 +143,14 @@ public void setWorkbook(EditorWorkbook editorWorkbook) {
  * Method declared on PartPane.
  */
 /* package */ void shellActivated() {
-	//this.workbook.drawGradient();
+	this.workbook.drawGradient();
 }
 
 /* (non-Javadoc)
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
-	//this.workbook.drawGradient();
+	this.workbook.drawGradient();
 }
 /**
  * Indicate focus in part.
@@ -195,7 +195,6 @@ protected void addMoveItems(Menu moveMenu) {
 	else
 		item.setEnabled(wbCount > 1);
 }
-
 /**
  * Add the pin menu item on the editor system menu
  */

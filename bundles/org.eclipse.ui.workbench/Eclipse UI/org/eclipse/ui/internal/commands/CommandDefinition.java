@@ -19,104 +19,116 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class CommandDefinition implements Comparable, ICommandDefinition {
+public final class CommandDefinition
+	implements Comparable, ICommandDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = CommandDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		CommandDefinition.class.getName().hashCode();
 
-	public static Map commandDefinitionsById(Collection commandDefinitions, boolean allowNullIds) {
+	public static Map commandDefinitionsById(
+		Collection commandDefinitions,
+		boolean allowNullIds) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = commandDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICommandDefinition.class);				
+			Util.assertInstance(object, ICommandDefinition.class);
 			ICommandDefinition commandDefinition = (ICommandDefinition) object;
 			String id = commandDefinition.getId();
-			
+
 			if (allowNullIds || id != null)
-				map.put(id, commandDefinition);		
-		}			
-		
+				map.put(id, commandDefinition);
+		}
+
 		return map;
 	}
 
-	public static Map commandDefinitionsByName(Collection commandDefinitions, boolean allowNullNames) {
+	public static Map commandDefinitionsByName(
+		Collection commandDefinitions,
+		boolean allowNullNames) {
 		if (commandDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = commandDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICommandDefinition.class);			
+			Util.assertInstance(object, ICommandDefinition.class);
 			ICommandDefinition commandDefinition = (ICommandDefinition) object;
 			String name = commandDefinition.getName();
-			
+
 			if (allowNullNames || name != null) {
 				Collection commandDefinitions2 = (Collection) map.get(name);
-					
+
 				if (commandDefinitions2 == null) {
 					commandDefinitions2 = new HashSet();
-					map.put(name, commandDefinitions2);					
+					map.put(name, commandDefinitions2);
 				}
-	
-				commandDefinitions2.add(commandDefinition);		
-			}											
-		}				
-	
+
+				commandDefinitions2.add(commandDefinition);
+			}
+		}
+
 		return map;
 	}
 
 	private String categoryId;
 	private String description;
-	private String id;
-	private String name;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String id;
+	private String name;
+	private String pluginId;
 	private transient String string;
-	
-	public CommandDefinition(String categoryId, String description, String id, String name, String pluginId) {
+
+	public CommandDefinition(
+		String categoryId,
+		String description,
+		String id,
+		String name,
+		String pluginId) {
 		this.categoryId = categoryId;
 		this.description = description;
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
-		CommandDefinition castedObject = (CommandDefinition) object;		
+		CommandDefinition castedObject = (CommandDefinition) object;
 		int compareTo = Util.compare(categoryId, castedObject.categoryId);
-							
+
 		if (compareTo == 0) {
 			compareTo = Util.compare(description, castedObject.description);
-		
-			if (compareTo == 0) {		
-				compareTo = Util.compare(id, castedObject.id);			
-			
+
+			if (compareTo == 0) {
+				compareTo = Util.compare(id, castedObject.id);
+
 				if (compareTo == 0) {
 					compareTo = Util.compare(name, castedObject.name);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, castedObject.pluginId);								
-				}							
+						compareTo =
+							Util.compare(pluginId, castedObject.pluginId);
+				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof CommandDefinition))
 			return false;
 
-		CommandDefinition castedObject = (CommandDefinition) object;	
+		CommandDefinition castedObject = (CommandDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(categoryId, castedObject.categoryId);
 		equals &= Util.equals(description, castedObject.description);
@@ -131,16 +143,16 @@ public final class CommandDefinition implements Comparable, ICommandDefinition {
 	}
 
 	public String getDescription() {
-		return description;	
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
+
 	public String getName() {
 		return name;
-	}	
+	}
 
 	public String getPluginId() {
 		return pluginId;
@@ -156,8 +168,8 @@ public final class CommandDefinition implements Comparable, ICommandDefinition {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -176,7 +188,7 @@ public final class CommandDefinition implements Comparable, ICommandDefinition {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
 }

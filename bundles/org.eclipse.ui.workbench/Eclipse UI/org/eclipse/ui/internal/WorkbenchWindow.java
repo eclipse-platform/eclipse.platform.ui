@@ -22,7 +22,16 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -45,19 +54,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -75,6 +71,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.activities.IActivityService;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -253,6 +250,9 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		getAdviser().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
 		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
+
+		workbenchWindowActivityService = new WorkbenchWindowActivityService(this);
+		workbenchWindowActivityService.start();
 	}
 
 	/**
@@ -263,6 +263,12 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		return SWT.FLAT | SWT.WRAP | SWT.VERTICAL;
 	}
 
+	private WorkbenchWindowActivityService workbenchWindowActivityService;
+
+	public IActivityService getActivityService() {
+		return workbenchWindowActivityService;
+	}	
+	
 	private SortedMap actionsForActionSets = new TreeMap();
 	private SortedMap actionsForGlobalActions = new TreeMap();
 

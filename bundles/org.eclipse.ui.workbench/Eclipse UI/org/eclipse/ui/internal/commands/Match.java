@@ -19,13 +19,13 @@ public final class Match {
 	private final static int HASH_INITIAL = Match.class.getName().hashCode();
 
 	private String commandId;
-	private int value;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
-	
-	Match(String commandId, int value) {	
+	private int value;
+
+	Match(String commandId, int value) {
 		if (value < 0)
 			throw new IllegalArgumentException();
 
@@ -36,18 +36,18 @@ public final class Match {
 	public int compareTo(Object object) {
 		Match castedObject = (Match) object;
 		int compareTo = Util.compare(value, castedObject.value);
-		
+
 		if (compareTo == 0)
 			compareTo = Util.compare(commandId, castedObject.commandId);
-					
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof Match))
 			return false;
 
-		Match castedObject = (Match) object;	
+		Match castedObject = (Match) object;
 		boolean equals = true;
 		equals &= Util.equals(commandId, castedObject.commandId);
 		equals &= Util.equals(value, castedObject.value);
@@ -57,20 +57,20 @@ public final class Match {
 	public String getCommandId() {
 		return commandId;
 	}
-		
+
 	public int getValue() {
-		return value;	
+		return value;
 	}
-	
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -83,7 +83,7 @@ public final class Match {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;			
+
+		return string;
 	}
 }

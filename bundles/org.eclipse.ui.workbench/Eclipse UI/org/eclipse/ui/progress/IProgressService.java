@@ -12,9 +12,7 @@ package org.eclipse.ui.progress;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
@@ -58,14 +56,5 @@ public interface IProgressService {
 	 */
 	public void busyCursorWhile(IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException;
-
-	/**
-	 * Run the job showing state information in part. <b>Note: This is
-	 * experimental API and subject to change at any time</b>.
-	 * 
-	 * @param job
-	 * @param part
-	 */
-	public void runInPart(Job job, IWorkbenchPart part);
 
 }

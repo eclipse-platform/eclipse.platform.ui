@@ -28,23 +28,23 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
- * A <code>KeyStroke</code> is defined as an optional set of modifier keys 
- * followed optionally by a natural key. A <code>KeyStroke</code> is said to be
- * complete if it contains a natural key.
+ * A <code>KeyStroke</code> is defined as an optional set of modifier keys
+ * followed optionally by a natural key. A <code>KeyStroke</code> is said to
+ * be complete if it contains a natural key.
  * </p>
  * <p>
- * All <code>KeyStroke</code> objects have a formal string representation 
- * available via the <code>toString()</code> method. There are a number of 
- * methods to get instances of <code>KeyStroke</code> objects, including one 
- * which can parse this formal string representation. 
+ * All <code>KeyStroke</code> objects have a formal string representation
+ * available via the <code>toString()</code> method. There are a number of
+ * methods to get instances of <code>KeyStroke</code> objects, including one
+ * which can parse this formal string representation.
  * </p>
  * <p>
- * All <code>KeyStroke</code> objects, via the <code>format()</code> method, 
- * provide a version of their formal string representation translated by 
- * platform and locale, suitable for display to a user.
+ * All <code>KeyStroke</code> objects, via the <code>format()</code>
+ * method, provide a version of their formal string representation translated
+ * by platform and locale, suitable for display to a user.
  * </p>
  * <p>
- * <code>KeyStroke</code> objects are immutable. Clients are not permitted to 
+ * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
  * <p>
@@ -56,38 +56,146 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeyStroke implements Comparable {
 
 	/**
-	 * The delimiter for <code>Key</code> objects in the formal string 
+	 * An internal map used to lookup instances of <code>CharacterKey</code>
+	 * given the formal string representation of a character key.
+	 */
+	private static SortedMap characterKeyLookup = new TreeMap();
+
+	/**
+	 * An internal map used to lookup instances of <code>ModifierKey</code>
+	 * given the formal string representation of a modifier key.
+	 */
+	private static SortedMap modifierKeyLookup = new TreeMap();
+	
+	/**
+	 * An internal map used to lookup instances of <code>SpecialKey</code>
+	 * given the formal string representation of a special key.
+	 */
+	private static SortedMap specialKeyLookup = new TreeMap();
+	
+	static {
+		characterKeyLookup.put(CharacterKey.BS.toString(), CharacterKey.BS);
+		characterKeyLookup.put(CharacterKey.CR.toString(), CharacterKey.CR);
+		characterKeyLookup.put(CharacterKey.DEL.toString(), CharacterKey.DEL);
+		characterKeyLookup.put(CharacterKey.ESC.toString(), CharacterKey.ESC);
+		characterKeyLookup.put(CharacterKey.FF.toString(), CharacterKey.FF);
+		characterKeyLookup.put(CharacterKey.LF.toString(), CharacterKey.LF);
+		characterKeyLookup.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
+		characterKeyLookup.put(
+			CharacterKey.SPACE.toString(),
+			CharacterKey.SPACE);
+		characterKeyLookup.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
+		characterKeyLookup.put(CharacterKey.VT.toString(), CharacterKey.VT);
+		modifierKeyLookup.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
+		modifierKeyLookup.put(
+			ModifierKey.COMMAND.toString(),
+			ModifierKey.COMMAND);
+		modifierKeyLookup.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
+		modifierKeyLookup.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
+		specialKeyLookup.put(
+			SpecialKey.ARROW_DOWN.toString(),
+			SpecialKey.ARROW_DOWN);
+		specialKeyLookup.put(
+			SpecialKey.ARROW_LEFT.toString(),
+			SpecialKey.ARROW_LEFT);
+		specialKeyLookup.put(
+			SpecialKey.ARROW_RIGHT.toString(),
+			SpecialKey.ARROW_RIGHT);
+		specialKeyLookup.put(
+			SpecialKey.ARROW_UP.toString(),
+			SpecialKey.ARROW_UP);
+		specialKeyLookup.put(SpecialKey.END.toString(), SpecialKey.END);
+		specialKeyLookup.put(SpecialKey.F1.toString(), SpecialKey.F1);
+		specialKeyLookup.put(SpecialKey.F10.toString(), SpecialKey.F10);
+		specialKeyLookup.put(SpecialKey.F11.toString(), SpecialKey.F11);
+		specialKeyLookup.put(SpecialKey.F12.toString(), SpecialKey.F12);
+		specialKeyLookup.put(SpecialKey.F13.toString(), SpecialKey.F13);
+		specialKeyLookup.put(SpecialKey.F14.toString(), SpecialKey.F14);
+		specialKeyLookup.put(SpecialKey.F15.toString(), SpecialKey.F15);
+		specialKeyLookup.put(SpecialKey.F2.toString(), SpecialKey.F2);
+		specialKeyLookup.put(SpecialKey.F3.toString(), SpecialKey.F3);
+		specialKeyLookup.put(SpecialKey.F4.toString(), SpecialKey.F4);
+		specialKeyLookup.put(SpecialKey.F5.toString(), SpecialKey.F5);
+		specialKeyLookup.put(SpecialKey.F6.toString(), SpecialKey.F6);
+		specialKeyLookup.put(SpecialKey.F7.toString(), SpecialKey.F7);
+		specialKeyLookup.put(SpecialKey.F8.toString(), SpecialKey.F8);
+		specialKeyLookup.put(SpecialKey.F9.toString(), SpecialKey.F9);
+		specialKeyLookup.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
+		specialKeyLookup.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
+		specialKeyLookup.put(
+			SpecialKey.PAGE_DOWN.toString(),
+			SpecialKey.PAGE_DOWN);
+		specialKeyLookup.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
+	}
+
+	/**
+	 * An internal constant used only in this object's hash code algorithm.
+	 */
+	private final static int HASH_FACTOR = 89;
+
+	/**
+	 * An internal constant used only in this object's hash code algorithm.
+	 */
+	private final static int HASH_INITIAL =
+		KeyStroke.class.getName().hashCode();
+
+	/**
+	 * The delimiter for <code>Key</code> objects in the formal string
 	 * representation.
 	 */
 	public final static char KEY_DELIMITER = '\u002B';
-	
-	/**
-	 * The set of delimiters for <code>Key</code> objects allowed during parsing
-	 * of the formal string representation. 
-	 */
-	public final static String KEY_DELIMITERS = KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
 
 	/**
-	 * A comparator to sort modifier keys in the order that they would be 
+	 * An internal constant used to find the translation of the key delimiter
+	 * in the resource bundle.
+	 */
+	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
+
+	/**
+	 * The set of delimiters for <code>Key</code> objects allowed during
+	 * parsing of the formal string representation.
+	 */
+	public final static String KEY_DELIMITERS =
+		KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
+
+	/**
+	 * A comparator to sort modifier keys in the order that they would be
 	 * displayed to a user. This comparator is platform-specific.
 	 */
 	private final static Comparator modifierKeyComparator = new Comparator() {
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		public int compare(Object left, Object right) {
+			ModifierKey modifierKeyLeft = (ModifierKey) left;
+			ModifierKey modifierKeyRight = (ModifierKey) right;
+			int modifierKeyLeftRank = rank(modifierKeyLeft);
+			int modifierKeyRightRank = rank(modifierKeyRight);
+
+			if (modifierKeyLeftRank != modifierKeyRightRank)
+				return modifierKeyLeftRank - modifierKeyRightRank;
+			else
+				return modifierKeyLeft.compareTo(modifierKeyRight);
+		}
+
 		/**
 		 * Calculates a rank for a given modifier key.
 		 * 
-		 * @param  modifierKey the modifier key to rank.
-		 * @return 			   the rank of this modifier key. This is a 
-		 * 					   non-negative number where a lower number suggests 
-		 *                     a higher rank.
+		 * @param modifierKey
+		 *            the modifier key to rank.
+		 * @return the rank of this modifier key. This is a non-negative number
+		 *         where a lower number suggests a higher rank.
 		 */
 		private int rank(ModifierKey modifierKey) {
 			String platform = SWT.getPlatform();
-			
+
 			if ("carbon".equals(platform)) { //$NON-NLS-1$
 				if (ModifierKey.SHIFT.equals(modifierKey))
 					return 0;
-				
+
 				if (ModifierKey.CTRL.equals(modifierKey))
 					return 1;
 
@@ -102,240 +210,167 @@ public final class KeyStroke implements Comparable {
 				// TODO this is order of modifier keys on gnome
 				if (ModifierKey.SHIFT.equals(modifierKey))
 					return 0;
-				
+
 				if (ModifierKey.CTRL.equals(modifierKey))
 					return 1;
 
 				if (ModifierKey.ALT.equals(modifierKey))
 					return 2;
 
-				/* TODO this is order of modifier keys on kde
-				if (ModifierKey.ALT.equals(modifierKey))
-					return 0;
-				
-				if (ModifierKey.CTRL.equals(modifierKey))
-					return 1;
-           
-				if (ModifierKey.SHIFT.equals(modifierKey))
-					return 2;
-				*/
+				/*
+				 * TODO this is order of modifier keys on kde if
+				 * (ModifierKey.ALT.equals(modifierKey)) return 0;
+				 * 
+				 * if (ModifierKey.CTRL.equals(modifierKey)) return 1;
+				 * 
+				 * if (ModifierKey.SHIFT.equals(modifierKey)) return 2;
+				 */
 			}
-			
+
 			if ("win32".equals(platform)) { //$NON-NLS-1$
 				if (ModifierKey.CTRL.equals(modifierKey))
 					return 0;
 
 				if (ModifierKey.ALT.equals(modifierKey))
 					return 1;
-				
+
 				if (ModifierKey.SHIFT.equals(modifierKey))
 					return 2;
 			}
-			
+
 			return Integer.MAX_VALUE;
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
-		public int compare(Object left, Object right) {
-			ModifierKey modifierKeyLeft = (ModifierKey) left;
-			ModifierKey modifierKeyRight = (ModifierKey) right;
-			int modifierKeyLeftRank = rank(modifierKeyLeft);
-			int modifierKeyRightRank = rank(modifierKeyRight);
+	};
 
-			if (modifierKeyLeftRank != modifierKeyRightRank)
-				return modifierKeyLeftRank - modifierKeyRightRank;
-			else
-				return modifierKeyLeft.compareTo(modifierKeyRight);
-		}
-	};		
-
-	/**
-	 * An internal constant used only in this object's hash code algorithm.
-	 */
-	private final static int HASH_FACTOR = 89;
-	
-	/**
-	 * An internal constant used only in this object's hash code algorithm.
-	 */
-	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
-
-	/**
-	 * An internal constant used to find the translation of the key delimiter 
-	 * in the resource bundle.
-	 */
-	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
-	
 	/**
 	 * The resource bundle used by <code>format()</code> to translate formal
 	 * string representations by locale.
 	 */
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeyStroke.class.getName());
-
-	/**
-	 * An internal map used to lookup instances of <code>CharacterKey</code> 
-	 * given the formal string representation of a character key.
-	 */
-	private static SortedMap characterKeyLookup = new TreeMap();
-
-	/**
-	 * An internal map used to lookup instances of <code>ModifierKey</code> 
-	 * given the formal string representation of a modifier key.
-	 */
-	private static SortedMap modifierKeyLookup = new TreeMap();
-
-	/**
-	 * An internal map used to lookup instances of <code>SpecialKey</code> 
-	 * given the formal string representation of a special key.
-	 */
-	private static SortedMap specialKeyLookup = new TreeMap();
-	
-	static {
-		characterKeyLookup.put(CharacterKey.BS.toString(), CharacterKey.BS);
-		characterKeyLookup.put(CharacterKey.CR.toString(), CharacterKey.CR);
-		characterKeyLookup.put(CharacterKey.DEL.toString(), CharacterKey.DEL);
-		characterKeyLookup.put(CharacterKey.ESC.toString(), CharacterKey.ESC);
-		characterKeyLookup.put(CharacterKey.FF.toString(), CharacterKey.FF);
-		characterKeyLookup.put(CharacterKey.LF.toString(), CharacterKey.LF);
-		characterKeyLookup.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
-		characterKeyLookup.put(CharacterKey.SPACE.toString(), CharacterKey.SPACE);
-		characterKeyLookup.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
-		characterKeyLookup.put(CharacterKey.VT.toString(), CharacterKey.VT);
-		modifierKeyLookup.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
-		modifierKeyLookup.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
-		modifierKeyLookup.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
-		modifierKeyLookup.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
-		specialKeyLookup.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
-		specialKeyLookup.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
-		specialKeyLookup.put(SpecialKey.ARROW_RIGHT.toString(), SpecialKey.ARROW_RIGHT);
-		specialKeyLookup.put(SpecialKey.ARROW_UP.toString(), SpecialKey.ARROW_UP);		
-		specialKeyLookup.put(SpecialKey.END.toString(), SpecialKey.END);
-		specialKeyLookup.put(SpecialKey.F1.toString(), SpecialKey.F1);
-		specialKeyLookup.put(SpecialKey.F10.toString(), SpecialKey.F10);
-		specialKeyLookup.put(SpecialKey.F11.toString(), SpecialKey.F11);		
-		specialKeyLookup.put(SpecialKey.F12.toString(), SpecialKey.F12);
-		specialKeyLookup.put(SpecialKey.F2.toString(), SpecialKey.F2);
-		specialKeyLookup.put(SpecialKey.F3.toString(), SpecialKey.F3);
-		specialKeyLookup.put(SpecialKey.F4.toString(), SpecialKey.F4);		
-		specialKeyLookup.put(SpecialKey.F5.toString(), SpecialKey.F5);
-		specialKeyLookup.put(SpecialKey.F6.toString(), SpecialKey.F6);
-		specialKeyLookup.put(SpecialKey.F7.toString(), SpecialKey.F7);
-		specialKeyLookup.put(SpecialKey.F8.toString(), SpecialKey.F8);		
-		specialKeyLookup.put(SpecialKey.F9.toString(), SpecialKey.F9);
-		specialKeyLookup.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
-		specialKeyLookup.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
-		specialKeyLookup.put(SpecialKey.PAGE_DOWN.toString(), SpecialKey.PAGE_DOWN);		
-		specialKeyLookup.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
-	}
-
-	/**
-	 * Gets an instance of <code>KeyStroke</code> given a natural key. 
-	 * 
-	 * @param  naturalKey the natural key. May be <code>null</code>.
-	 * @return 		      a key stroke. This key stroke will have no modifier 
-	 * 					  keys. Guaranteed not to be <code>null</code>.
-	 */	
-	public static KeyStroke getInstance(NaturalKey naturalKey) {
-		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
-	}
+	private final static ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(KeyStroke.class.getName());
 
 	/**
 	 * Gets an instance of <code>KeyStroke</code> given a single modifier key
 	 * and a natural key.
 	 * 
-	 * @param  modifierKey a modifier key. Must not be <code>null</code>.
-	 * @param  naturalKey  the natural key. May be <code>null</code>.
-	 * @return 			   a key stroke. Guaranteed not to be <code>null</code>.
-	 */	
-	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
+	 * @param modifierKey
+	 *            a modifier key. Must not be <code>null</code>.
+	 * @param naturalKey
+	 *            the natural key. May be <code>null</code>.
+	 * @return a key stroke. Guaranteed not to be <code>null</code>.
+	 */
+	public static KeyStroke getInstance(
+		ModifierKey modifierKey,
+		NaturalKey naturalKey) {
 		if (modifierKey == null)
 			throw new NullPointerException();
 
-		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), naturalKey);
+		return new KeyStroke(
+			new TreeSet(Collections.singletonList(modifierKey)),
+			naturalKey);
 	}
 
 	/**
-	 * Gets an instance of <code>KeyStroke</code> given an array of modifier 
+	 * Gets an instance of <code>KeyStroke</code> given an array of modifier
 	 * keys and a natural key.
 	 * 
-	 * @param  modifierKeys the array of modifier keys. This array may be empty, 
-	 *                      but it must not be <code>null</code>. If this array 
-	 *                      is not empty, it must not contain <code>null</code> 
-	 *                      elements. 
-	 * @param  naturalKey   the natural key. May be <code>null</code>.
-	 * @return 			    a key stroke. Guaranteed not to be 
-	 *                      <code>null</code>.
-	 */	
-	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
-		Util.assertInstance(modifierKeys, ModifierKey.class);		
-		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), naturalKey);
+	 * @param modifierKeys
+	 *            the array of modifier keys. This array may be empty, but it
+	 *            must not be <code>null</code>. If this array is not empty,
+	 *            it must not contain <code>null</code> elements.
+	 * @param naturalKey
+	 *            the natural key. May be <code>null</code>.
+	 * @return a key stroke. Guaranteed not to be <code>null</code>.
+	 */
+	public static KeyStroke getInstance(
+		ModifierKey[] modifierKeys,
+		NaturalKey naturalKey) {
+		Util.assertInstance(modifierKeys, ModifierKey.class);
+		return new KeyStroke(
+			new TreeSet(Arrays.asList(modifierKeys)),
+			naturalKey);
 	}
 
 	/**
-	 * Gets an instance of <code>KeyStroke</code> given a set of modifier 
+	 * Gets an instance of <code>KeyStroke</code> given a natural key.
+	 * 
+	 * @param naturalKey
+	 *            the natural key. May be <code>null</code>.
+	 * @return a key stroke. This key stroke will have no modifier keys.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
+	public static KeyStroke getInstance(NaturalKey naturalKey) {
+		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
+	}
+
+	/**
+	 * Gets an instance of <code>KeyStroke</code> given a set of modifier
 	 * keys and a natural key.
 	 * 
-	 * @param  modifierKeys the set of modifier keys. This set may be empty, but
-	 *        			    it must not be <code>null</code>. If this set is not 
-	 * 					    empty, it must only contain instances of 
-	 *                      <code>ModifierKey</code>.
-	 * @param  naturalKey   the natural key. May be <code>null</code>.
-	 * @return              a key stroke. Guaranteed not to be 
-	 *                      <code>null</code>.
-	 */	
-	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
+	 * @param modifierKeys
+	 *            the set of modifier keys. This set may be empty, but it must
+	 *            not be <code>null</code>. If this set is not empty, it
+	 *            must only contain instances of <code>ModifierKey</code>.
+	 * @param naturalKey
+	 *            the natural key. May be <code>null</code>.
+	 * @return a key stroke. Guaranteed not to be <code>null</code>.
+	 */
+	public static KeyStroke getInstance(
+		SortedSet modifierKeys,
+		NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
 	/**
 	 * Gets an instance of <code>KeyStroke</code> by parsing a given a formal
-	 * string representation. 
+	 * string representation.
 	 * 
-	 * @param  string         the formal string representation to parse.
-	 * @return                a key stroke. Guaranteed not to be 
-	 *                        <code>null</code>.
-	 * @throws ParseException if the given formal string representation could
-	 * 						  not be parsed to a valid key stroke.
+	 * @param string
+	 *            the formal string representation to parse.
+	 * @return a key stroke. Guaranteed not to be <code>null</code>.
+	 * @throws ParseException
+	 *             if the given formal string representation could not be
+	 *             parsed to a valid key stroke.
 	 */
-	public static KeyStroke getInstance(String string)
-		throws ParseException {
+	public static KeyStroke getInstance(String string) throws ParseException {
 		if (string == null)
 			throw new NullPointerException();
 
 		SortedSet modifierKeys = new TreeSet();
 		NaturalKey naturalKey = null;
-		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS, true);
+		StringTokenizer stringTokenizer =
+			new StringTokenizer(string, KEY_DELIMITERS, true);
 		int i = 0;
-		
+
 		while (stringTokenizer.hasMoreTokens()) {
 			String token = stringTokenizer.nextToken();
-		
+
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
 					token = token.toUpperCase();
-					ModifierKey modifierKey = (ModifierKey) modifierKeyLookup.get(token);
-				
+					ModifierKey modifierKey =
+						(ModifierKey) modifierKeyLookup.get(token);
+
 					if (modifierKey == null || !modifierKeys.add(modifierKey))
 						throw new ParseException();
 				} else if (token.length() == 1) {
-					naturalKey = CharacterKey.getInstance(token.charAt(0));				
+					naturalKey = CharacterKey.getInstance(token.charAt(0));
 					break;
 				} else {
 					token = token.toUpperCase();
 					naturalKey = (NaturalKey) characterKeyLookup.get(token);
-				
+
 					if (naturalKey == null)
 						naturalKey = (NaturalKey) specialKeyLookup.get(token);
 
 					if (naturalKey == null)
 						throw new ParseException();
-				}					
+				}
 			}
-		
+
 			i++;
 		}
-		
+
 		try {
 			return new KeyStroke(modifierKeys, naturalKey);
 		} catch (Throwable t) {
@@ -344,93 +379,102 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
+	 * The cached hash code for this object. Because <code>KeyStroke</code>
+	 * objects are immutable, their hash codes need only to be computed once.
+	 * After the first call to <code>hashCode()</code>, the computed value
+	 * is cached here for all subsequent calls.
+	 */
+	private transient int hashCode;
+
+	/**
+	 * A flag to determine if the <code>hashCode</code> field has already
+	 * been computed.
+	 */
+	private transient boolean hashCodeComputed;
+
+	/**
 	 * The set of modifier keys for this key stroke.
 	 */
 	private SortedSet modifierKeys;
-	
+
+	/**
+	 * The set of modifier keys for this key stroke in the form of an array.
+	 * Used internally by <code>int compareTo(Object)</code>.
+	 */
+	private transient ModifierKey[] modifierKeysAsArray;
+
 	/**
 	 * The natural key for this key stroke.
 	 */
 	private NaturalKey naturalKey;
 
 	/**
-	 * The cached hash code for this object. Because <code>KeyStroke</code> 
-	 * objects are immutable, their hash codes need only to be computed once. 
-	 * After the first call to <code>hashCode()</code>, the computed value is 
-	 * cached here for all subsequent calls.
-	 */
-	private transient int hashCode;
-	
-	/**
-	 * A flag to determine if the <code>hashCode</code> field has already been 
-	 * computed. 
-	 */
-	private transient boolean hashCodeComputed;
-	
-	/**
-	 * The set of modifier keys for this key stroke in the form of an array. 
-	 * Used internally by <code>int compareTo(Object)</code>. 
-	 */	
-	private transient ModifierKey[] modifierKeysAsArray;
-
-	/**
-	 * The cached formal string representation for this object. Because 
-	 * <code>KeyStroke</code> objects are immutable, their formal string 
-	 * representations need only to be computed once. After the first call to 
-	 * <code>toString()</code>, the computed value is cached here for all 
-	 * subsequent calls.
+	 * The cached formal string representation for this object. Because <code>KeyStroke</code>
+	 * objects are immutable, their formal string representations need only to
+	 * be computed once. After the first call to <code>toString()</code>,
+	 * the computed value is cached here for all subsequent calls.
 	 */
 	private transient String string;
-	
+
 	/**
-	 * Constructs an instance of <code>KeyStroke</code> given a set of modifier 
-	 * keys and a natural key.
+	 * Constructs an instance of <code>KeyStroke</code> given a set of
+	 * modifier keys and a natural key.
 	 * 
-	 * @param modifierKeys the set of modifier keys. This set may be empty, but
-	 *                     it must not be <code>null</code>. If this set is not 
-	 * 					   empty, it must only contain instances of 
-	 * 					   <code>ModifierKey</code>.
-	 * @param naturalKey   the natural key. May be <code>null</code>.
+	 * @param modifierKeys
+	 *            the set of modifier keys. This set may be empty, but it must
+	 *            not be <code>null</code>. If this set is not empty, it
+	 *            must only contain instances of <code>ModifierKey</code>.
+	 * @param naturalKey
+	 *            the natural key. May be <code>null</code>.
 	 */
 	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
-		this.naturalKey = naturalKey;		
-		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
+		this.naturalKey = naturalKey;
+		this.modifierKeysAsArray =
+			(ModifierKey[]) this.modifierKeys.toArray(
+				new ModifierKey[this.modifierKeys.size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object object) {
 		KeyStroke castedObject = (KeyStroke) object;
-		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) castedObject.modifierKeysAsArray);
-		
+		int compareTo =
+			Util.compare(
+				(Comparable[]) modifierKeysAsArray,
+				(Comparable[]) castedObject.modifierKeysAsArray);
+
 		if (compareTo == 0)
-			compareTo = Util.compare(naturalKey, castedObject.naturalKey);			
-			
-		return compareTo;	
+			compareTo = Util.compare(naturalKey, castedObject.naturalKey);
+
+		return compareTo;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof KeyStroke))
 			return false;
 
-		KeyStroke castedObject = (KeyStroke) object;	
+		KeyStroke castedObject = (KeyStroke) object;
 		boolean equals = true;
 		equals &= modifierKeys.equals(castedObject.modifierKeys);
-		equals &= Util.equals(naturalKey, castedObject.naturalKey);		
+		equals &= Util.equals(naturalKey, castedObject.naturalKey);
 		return equals;
 	}
 
 	/**
-	 * Returns the formal string representation for this key stroke, translated 
+	 * Returns the formal string representation for this key stroke, translated
 	 * for the user's current platform and locale.
 	 * 
-	 * @return The formal string representation for this key stroke, translated 
-	 *         for the user's current platform and locale. Guaranteed not to be 
+	 * @return The formal string representation for this key stroke, translated
+	 *         for the user's current platform and locale. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
 	public String format() {
@@ -439,8 +483,10 @@ public final class KeyStroke implements Comparable {
 		SortedSet modifierKeys = new TreeSet(modifierKeyComparator);
 		modifierKeys.addAll(this.modifierKeys);
 		StringBuffer stringBuffer = new StringBuffer();
-		
-		for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
+
+		for (Iterator iterator = modifierKeys.iterator();
+			iterator.hasNext();
+			) {
 			ModifierKey modifierKey = (ModifierKey) iterator.next();
 			stringBuffer.append(modifierKey.format());
 			stringBuffer.append(keyDelimiter);
@@ -455,11 +501,10 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * Returns the set of modifier keys for this key stroke.
 	 * 
-	 * @return the set of modifier keys. This set may be empty, but is 
-	 * 		   guaranteed not to be <code>null</code>. If this set is not empty, 
-	 *         it is guaranteed to only contain instances of 
-	 *         <code>ModifierKey</code>.
-     */
+	 * @return the set of modifier keys. This set may be empty, but is
+	 *         guaranteed not to be <code>null</code>. If this set is not
+	 *         empty, it is guaranteed to only contain instances of <code>ModifierKey</code>.
+	 */
 	public Set getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
@@ -473,7 +518,9 @@ public final class KeyStroke implements Comparable {
 		return naturalKey;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -483,32 +530,34 @@ public final class KeyStroke implements Comparable {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(naturalKey);
 			hashCodeComputed = true;
 		}
-			
+
 		return hashCode;
 	}
 
 	/**
-	 * Returns whether or not this key stroke is complete. Key strokes are 
+	 * Returns whether or not this key stroke is complete. Key strokes are
 	 * complete iff they have a natural key which is not <code>null</code>.
 	 * 
-	 * @return <code>true</code>, iff the key stroke is complete. 
+	 * @return <code>true</code>, iff the key stroke is complete.
 	 */
 	public boolean isComplete() {
 		return naturalKey != null;
-	}	
+	}
 
 	/**
 	 * Returns the formal string representation for this key stroke.
 	 * 
-	 * @return The formal string representation for this key stroke. Guaranteed 
-	 * 		   not to be <code>null</code>. 
-	 * @see    java.lang.Object#toString()
+	 * @return The formal string representation for this key stroke. Guaranteed
+	 *         not to be <code>null</code>.
+	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		if (string == null) {
 			StringBuffer stringBuffer = new StringBuffer();
-		
-			for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
+
+			for (Iterator iterator = modifierKeys.iterator();
+				iterator.hasNext();
+				) {
 				ModifierKey modifierKey = (ModifierKey) iterator.next();
 				stringBuffer.append(modifierKey);
 				stringBuffer.append(KEY_DELIMITER);
@@ -519,7 +568,7 @@ public final class KeyStroke implements Comparable {
 
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
 	}
 }

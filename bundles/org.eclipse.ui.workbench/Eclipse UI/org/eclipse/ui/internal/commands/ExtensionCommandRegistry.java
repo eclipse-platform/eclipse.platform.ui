@@ -28,23 +28,28 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 	private List activeKeyConfigurationDefinitions;
 	private List activityBindingDefinitions;
-	private List categoryDefinitions; 
-	private List commandDefinitions; 
+	private List categoryDefinitions;
+	private List commandDefinitions;
 	private IExtensionRegistry extensionRegistry;
 	private List imageBindingDefinitions;
-	private List keyConfigurationDefinitions;	
+	private List keyConfigurationDefinitions;
 	private List keySequenceBindingDefinitions;
-	
+
 	public ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)
 			throw new NullPointerException();
-		
+
 		this.extensionRegistry = extensionRegistry;
 
-		this.extensionRegistry.addRegistryChangeListener(new IRegistryChangeListener() {
-			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {				
-				IExtensionDelta[] extensionDeltas = registryChangeEvent.getExtensionDeltas(Persistence.PACKAGE_PREFIX, Persistence.PACKAGE_BASE);
-				
+		this
+			.extensionRegistry
+			.addRegistryChangeListener(new IRegistryChangeListener() {
+			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {
+				IExtensionDelta[] extensionDeltas =
+					registryChangeEvent.getExtensionDeltas(
+						Persistence.PACKAGE_PREFIX,
+						Persistence.PACKAGE_BASE);
+
 				if (extensionDeltas.length != 0)
 					try {
 						load();
@@ -52,54 +57,69 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 					}
 			}
 		});
-		
+
 		try {
 			load();
 		} catch (IOException eIO) {
 		}
 	}
 
-	private void load()
-		throws IOException {	
+	private String getPluginId(IConfigurationElement configurationElement) {
+		String pluginId = null;
+
+		if (configurationElement != null) {
+			IExtension extension = configurationElement.getDeclaringExtension();
+
+			if (extension != null)
+				pluginId = extension.getParentIdentifier();
+		}
+
+		return pluginId;
+	}
+
+	private void load() throws IOException {
 		if (activeKeyConfigurationDefinitions == null)
 			activeKeyConfigurationDefinitions = new ArrayList();
-		else 
+		else
 			activeKeyConfigurationDefinitions.clear();
 
 		if (activityBindingDefinitions == null)
 			activityBindingDefinitions = new ArrayList();
-		else 
-			activityBindingDefinitions.clear();			
-	
+		else
+			activityBindingDefinitions.clear();
+
 		if (categoryDefinitions == null)
 			categoryDefinitions = new ArrayList();
-		else 
+		else
 			categoryDefinitions.clear();
-		
+
 		if (commandDefinitions == null)
 			commandDefinitions = new ArrayList();
-		else 
-			commandDefinitions.clear();	
+		else
+			commandDefinitions.clear();
 
 		if (imageBindingDefinitions == null)
 			imageBindingDefinitions = new ArrayList();
-		else 
-			imageBindingDefinitions.clear();				
-			
+		else
+			imageBindingDefinitions.clear();
+
 		if (keyConfigurationDefinitions == null)
 			keyConfigurationDefinitions = new ArrayList();
-		else 
-			keyConfigurationDefinitions.clear();		
-		
+		else
+			keyConfigurationDefinitions.clear();
+
 		if (keySequenceBindingDefinitions == null)
 			keySequenceBindingDefinitions = new ArrayList();
-		else 
-			keySequenceBindingDefinitions.clear();		
-			
-		IConfigurationElement[] configurationElements = extensionRegistry.getConfigurationElementsFor(Persistence.PACKAGE_FULL);
+		else
+			keySequenceBindingDefinitions.clear();
+
+		IConfigurationElement[] configurationElements =
+			extensionRegistry.getConfigurationElementsFor(
+				Persistence.PACKAGE_FULL);
 
 		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement configurationElement = configurationElements[i];			
+			IConfigurationElement configurationElement =
+				configurationElements[i];
 			String name = configurationElement.getName();
 
 			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
@@ -120,38 +140,49 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 		boolean commandRegistryChanged = false;
 
-		if (!activeKeyConfigurationDefinitions.equals(super.activeKeyConfigurationDefinitions)) {
-			super.activeKeyConfigurationDefinitions = Collections.unmodifiableList(activeKeyConfigurationDefinitions);		
+		if (!activeKeyConfigurationDefinitions
+			.equals(super.activeKeyConfigurationDefinitions)) {
+			super.activeKeyConfigurationDefinitions =
+				Collections.unmodifiableList(activeKeyConfigurationDefinitions);
 			commandRegistryChanged = true;
-		}			
+		}
 
-		if (!activityBindingDefinitions.equals(super.activityBindingDefinitions)) {
-			super.activityBindingDefinitions = Collections.unmodifiableList(activityBindingDefinitions);		
+		if (!activityBindingDefinitions
+			.equals(super.activityBindingDefinitions)) {
+			super.activityBindingDefinitions =
+				Collections.unmodifiableList(activityBindingDefinitions);
 			commandRegistryChanged = true;
 		}
 
 		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
-			super.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);		
+			super.categoryDefinitions =
+				Collections.unmodifiableList(categoryDefinitions);
 			commandRegistryChanged = true;
-		}		
-		
+		}
+
 		if (!commandDefinitions.equals(super.commandDefinitions)) {
-			super.commandDefinitions = Collections.unmodifiableList(commandDefinitions);		
+			super.commandDefinitions =
+				Collections.unmodifiableList(commandDefinitions);
 			commandRegistryChanged = true;
-		}		
-		
+		}
+
 		if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
-			super.imageBindingDefinitions = Collections.unmodifiableList(imageBindingDefinitions);		
+			super.imageBindingDefinitions =
+				Collections.unmodifiableList(imageBindingDefinitions);
 			commandRegistryChanged = true;
-		}			
-		
-		if (!keyConfigurationDefinitions.equals(super.keyConfigurationDefinitions)) {
-			super.keyConfigurationDefinitions = Collections.unmodifiableList(keyConfigurationDefinitions);		
+		}
+
+		if (!keyConfigurationDefinitions
+			.equals(super.keyConfigurationDefinitions)) {
+			super.keyConfigurationDefinitions =
+				Collections.unmodifiableList(keyConfigurationDefinitions);
 			commandRegistryChanged = true;
-		}		
-		
-		if (!keySequenceBindingDefinitions.equals(super.keySequenceBindingDefinitions)) {
-			super.keySequenceBindingDefinitions = Collections.unmodifiableList(keySequenceBindingDefinitions);		
+		}
+
+		if (!keySequenceBindingDefinitions
+			.equals(super.keySequenceBindingDefinitions)) {
+			super.keySequenceBindingDefinitions =
+				Collections.unmodifiableList(keySequenceBindingDefinitions);
 			commandRegistryChanged = true;
 		}
 
@@ -159,65 +190,74 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			fireCommandRegistryChanged();
 	}
 
-	private String getPluginId(IConfigurationElement configurationElement) {
-		String pluginId = null;	
-	
-		if (configurationElement != null) {	
-			IExtension extension = configurationElement.getDeclaringExtension();
-		
-			if (extension != null)
-				pluginId = extension.getParentIdentifier();
-		}
-
-		return pluginId;
-	}	
-	
 	private void readActiveKeyConfigurationDefinition(IConfigurationElement configurationElement) {
-		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence.readActiveKeyConfigurationDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
+			Persistence.readActiveKeyConfigurationDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (activeKeyConfigurationDefinition != null)
-			activeKeyConfigurationDefinitions.add(activeKeyConfigurationDefinition);	
+			activeKeyConfigurationDefinitions.add(
+				activeKeyConfigurationDefinition);
 	}
 
 	private void readActivityBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityBindingDefinition activityBindingDefinition = Persistence.readActivityBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		IActivityBindingDefinition activityBindingDefinition =
+			Persistence.readActivityBindingDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (activityBindingDefinition != null)
-			activityBindingDefinitions.add(activityBindingDefinition);	
-	}	
-	
-	private void readCategoryDefinition(IConfigurationElement configurationElement) {
-		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
-		if (categoryDefinition != null)
-			categoryDefinitions.add(categoryDefinition);	
+			activityBindingDefinitions.add(activityBindingDefinition);
 	}
-	
+
+	private void readCategoryDefinition(IConfigurationElement configurationElement) {
+		ICategoryDefinition categoryDefinition =
+			Persistence.readCategoryDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
+		if (categoryDefinition != null)
+			categoryDefinitions.add(categoryDefinition);
+	}
+
 	private void readCommandDefinition(IConfigurationElement configurationElement) {
-		ICommandDefinition commandDefinition = Persistence.readCommandDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		ICommandDefinition commandDefinition =
+			Persistence.readCommandDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (commandDefinition != null)
-			commandDefinitions.add(commandDefinition);	
+			commandDefinitions.add(commandDefinition);
 	}
 
 	private void readImageBindingDefinition(IConfigurationElement configurationElement) {
-		IImageBindingDefinition imageBinding = Persistence.readImageBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		IImageBindingDefinition imageBinding =
+			Persistence.readImageBindingDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (imageBinding != null)
-			imageBindingDefinitions.add(imageBinding);	
+			imageBindingDefinitions.add(imageBinding);
 	}
-	
+
 	private void readKeyConfigurationDefinition(IConfigurationElement configurationElement) {
-		IKeyConfigurationDefinition keyConfigurationDefinition = Persistence.readKeyConfigurationDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		IKeyConfigurationDefinition keyConfigurationDefinition =
+			Persistence.readKeyConfigurationDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (keyConfigurationDefinition != null)
-			keyConfigurationDefinitions.add(keyConfigurationDefinition);	
+			keyConfigurationDefinitions.add(keyConfigurationDefinition);
 	}
 
 	private void readKeySequenceBindingDefinition(IConfigurationElement configurationElement) {
-		IKeySequenceBindingDefinition keySequenceBindingDefinition = Persistence.readKeySequenceBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
-	
+		IKeySequenceBindingDefinition keySequenceBindingDefinition =
+			Persistence.readKeySequenceBindingDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
+
 		if (keySequenceBindingDefinition != null)
-			keySequenceBindingDefinitions.add(keySequenceBindingDefinition);	
+			keySequenceBindingDefinitions.add(keySequenceBindingDefinition);
 	}
 }

@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.runtime.IAdaptable;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityService;
+import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressService;
@@ -381,6 +382,16 @@ public IObjectActivityManager getObjectActivityManager(String id, boolean create
 public IActivityManager getActivityManager();
 
 /**
+ * Sets the set of identifiers to enabled activities.
+ * 
+ * @param enabledActivityIds
+ *            the set of identifiers to enabled activities. This set may be
+ *            empty, but it must not be <code>null</code>. If this set
+ *            is not empty, it must only contain instances of <code>String</code>.
+ */
+public void setEnabledActivityIds(Set enabledActivityIds);
+
+/**
  * Returns the command manager for the workbench. 
  * 
  * @return the command manager for the workbench. Guaranteed not to be 
@@ -399,10 +410,20 @@ public ICommandManager getCommandManager();
 public IRoleManager getRoleManager();
 
 /**
- * TODO javadoc
+ * Returns the activity service for the workbench.
  * 
- * @return
+ * @return the activity service for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
  * @since 3.0
  */
-public IActivationService getActivationService();
+public IActivityService getActivityService();
+
+/**
+ * Returns the compound activity service for the workbench.
+ * 
+ * @return the compound activity service for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public ICompoundActivityService getCompoundActivityService();
 }

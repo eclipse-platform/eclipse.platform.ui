@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -29,6 +30,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.activities.ActivityServiceFactory;
+import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
@@ -81,6 +84,12 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
 
+	private final IMutableActivityService mutableActivityService = ActivityServiceFactory.getMutableActivityService();
+
+	public IMutableActivityService getMutableActivityService() {
+		return mutableActivityService;
+	}	
+	
 	private IActionService actionService;
 
 	public IActionService getActionService() {
@@ -299,26 +308,24 @@ public class PartSite implements IWorkbenchPartSite {
 	protected String getInitialScopeId() {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressEnd(org.eclipse.core.runtime.jobs.Job)
+	
+	/**
+	 * Schedule the job. Start by asking for the job listeners
+	 * from the part and the pane and adding them.
+	 * @param job
+	 * @param delay The delay in scheduling the job.
 	 */
-	public void progressEnd(Job job) {
-		getPane().progressEnd(job);
+	public void schedule(Job job, long delay) {
+		IJobChangeListener paneListener = getPane().getJobChangeListener();
+				
+		if(paneListener != null)
+			job.addJobChangeListener(paneListener);
 		
-		IWorkbenchPart part = getPart();
-		if(part instanceof WorkbenchPart)
-			((WorkbenchPart) part).progressEnd(job);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#progressStart(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void progressStart(Job job) {
-		getPane().progressStart(job);
+		Object partListener = getPart().getAdapter(IJobChangeListener.class);
+		if(partListener != null)
+			job.addJobChangeListener((IJobChangeListener) partListener);
 		
-		IWorkbenchPart part = getPart();
-		if(part instanceof WorkbenchPart)
-			((WorkbenchPart) part).progressStart(job);
+		job.schedule(delay);
 	}
 
 }

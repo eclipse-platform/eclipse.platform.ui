@@ -163,7 +163,7 @@ public interface IEditorRegistry {
 	public void removePropertyListener(IPropertyListener listener);
 	
 	/**
-	 * Sets the default editor id for a the files that match that
+	 * Sets the default editor id for the files that match that
 	 * specified file name or extension. The specified editor must be
 	 * defined as an editor for that file name or extension.
 	 *

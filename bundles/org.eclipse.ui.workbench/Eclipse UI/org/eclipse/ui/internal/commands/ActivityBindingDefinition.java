@@ -19,72 +19,81 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityBindingDefinition implements IActivityBindingDefinition {
+public final class ActivityBindingDefinition
+	implements IActivityBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActivityBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		ActivityBindingDefinition.class.getName().hashCode();
 
 	static Map activityBindingDefinitionsByCommandId(Collection activityBindingDefinitions) {
 		if (activityBindingDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = activityBindingDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityBindingDefinition.class);			
-			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) object;
+			Util.assertInstance(object, IActivityBindingDefinition.class);
+			IActivityBindingDefinition activityBindingDefinition =
+				(IActivityBindingDefinition) object;
 			String commandId = activityBindingDefinition.getCommandId();
-			
+
 			if (commandId != null) {
-				Collection activityBindingDefinitions2 = (Collection) map.get(commandId);
-					
+				Collection activityBindingDefinitions2 =
+					(Collection) map.get(commandId);
+
 				if (activityBindingDefinitions2 == null) {
 					activityBindingDefinitions2 = new ArrayList();
-					map.put(commandId, activityBindingDefinitions2);					
+					map.put(commandId, activityBindingDefinitions2);
 				}
-	
-				activityBindingDefinitions2.add(activityBindingDefinition);		
-			}											
-		}				
-	
+
+				activityBindingDefinitions2.add(activityBindingDefinition);
+			}
+		}
+
 		return map;
-	}		
-	
+	}
+
 	private String activityId;
 	private String commandId;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String pluginId;
 	private transient String string;
 
-	public ActivityBindingDefinition(String activityId, String commandId, String pluginId) {
+	public ActivityBindingDefinition(
+		String activityId,
+		String commandId,
+		String pluginId) {
 		this.activityId = activityId;
 		this.commandId = commandId;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
-		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;
+		ActivityBindingDefinition castedObject =
+			(ActivityBindingDefinition) object;
 		int compareTo = Util.compare(activityId, castedObject.activityId);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(commandId, castedObject.commandId);			
-		
+
+		if (compareTo == 0) {
+			compareTo = Util.compare(commandId, castedObject.commandId);
+
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, castedObject.pluginId);								
+				compareTo = Util.compare(pluginId, castedObject.pluginId);
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof ActivityBindingDefinition))
 			return false;
 
-		ActivityBindingDefinition castedObject = (ActivityBindingDefinition) object;	
+		ActivityBindingDefinition castedObject =
+			(ActivityBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(commandId, castedObject.commandId);
@@ -112,7 +121,7 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
+
 		return hashCode;
 	}
 
@@ -128,7 +137,7 @@ public final class ActivityBindingDefinition implements IActivityBindingDefiniti
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
-	}	
+	}
 }

@@ -13,8 +13,8 @@ package org.eclipse.ui.roles;
 
 /**
  * <p>
- * An instance of <code>IActivityBinding</code> represents a binding between a 
- * role and an activity.
+ * An instance of <code>IActivityBinding</code> represents a binding between
+ * a role and an activity.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -31,8 +31,7 @@ public interface IActivityBinding extends Comparable {
 	/**
 	 * Returns the identifier of the activity represented in this binding.
 	 * 
-	 * @return the identifier of the activity. Guaranteed not to be 
-	 *         <code>null</code>.
-	 */	
+	 * @return the identifier of the activity. Guaranteed not to be <code>null</code>.
+	 */
 	String getActivityId();
 }

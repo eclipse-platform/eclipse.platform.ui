@@ -19,16 +19,17 @@ import org.eclipse.ui.internal.util.Util;
 final class PatternBinding implements IPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = PatternBinding.class.getName().hashCode();
-	
-	private boolean inclusive;
-	private Pattern pattern;
+	private final static int HASH_INITIAL =
+		PatternBinding.class.getName().hashCode();
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+
+	private boolean inclusive;
+	private Pattern pattern;
 	private transient String string;
 
-	PatternBinding(boolean inclusive, Pattern pattern) {	
+	PatternBinding(boolean inclusive, Pattern pattern) {
 		if (pattern == null)
 			throw new NullPointerException();
 
@@ -38,19 +39,20 @@ final class PatternBinding implements IPatternBinding {
 
 	public int compareTo(Object object) {
 		PatternBinding castedObject = (PatternBinding) object;
-		int compareTo = Util.compare(inclusive, castedObject.inclusive);			
-		
-		if (compareTo == 0)			
-			compareTo = Util.compare(pattern.pattern(), castedObject.pattern.pattern());
-		
-		return compareTo;	
+		int compareTo = Util.compare(inclusive, castedObject.inclusive);
+
+		if (compareTo == 0)
+			compareTo =
+				Util.compare(pattern.pattern(), castedObject.pattern.pattern());
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof PatternBinding))
 			return false;
 
-		PatternBinding castedObject = (PatternBinding) object;	
+		PatternBinding castedObject = (PatternBinding) object;
 		boolean equals = true;
 		equals &= Util.equals(inclusive, castedObject.inclusive);
 		equals &= Util.equals(pattern, castedObject.pattern);
@@ -61,10 +63,6 @@ final class PatternBinding implements IPatternBinding {
 		return pattern;
 	}
 
-	public boolean isInclusive() {
-		return inclusive;
-	}
-	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -72,8 +70,12 @@ final class PatternBinding implements IPatternBinding {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
+	}
+
+	public boolean isInclusive() {
+		return inclusive;
 	}
 
 	public String toString() {
@@ -86,7 +88,7 @@ final class PatternBinding implements IPatternBinding {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
 	}
 }

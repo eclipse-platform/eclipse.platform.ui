@@ -13,27 +13,18 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.custom.CTabItem2;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
@@ -43,7 +34,7 @@ public class PartTabFolder extends LayoutPart
 {
 	private static int tabLocation = -1;	// Initialized in constructor.
 	
-	private CTabFolder2 tabFolder;
+	private CTabFolder tabFolder;
 	private Map mapTabToPart = new HashMap();
 	private LayoutPart current;
 	private Map mapPartToDragMonitor = new HashMap();
@@ -60,16 +51,14 @@ public class PartTabFolder extends LayoutPart
 		public void mouseDown(MouseEvent e) {
 			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
 			// Else, set focus.
-			CTabItem2 newItem = tabFolder.getItem(new Point(e.x, e.y));
+			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
 			if (newItem != null) {
-				CTabItem2 oldItem = tabFolder.getSelection();
+				CTabItem oldItem = tabFolder.getSelection();
 				if (newItem != oldItem)
 					return;
 			}
-			if (PartTabFolder.this.current != null) {
+			if (PartTabFolder.this.current != null)
 				PartTabFolder.this.current.setFocus();
-				tabFolder.setBorderVisible(true);
-			}
 		}
 	};
 
@@ -97,7 +86,7 @@ public PartTabFolder() {
 public void add(String name, int index, LayoutPart part)
 {
 	if (active && !(part instanceof PartPlaceholder)) {
-		CTabItem2 tab = createPartTab(part, name, index);
+		CTabItem tab = createPartTab(part, name, index);
 		index = tabFolder.indexOf(tab);
 		setSelection(index);
 	}
@@ -129,7 +118,7 @@ public void add(LayoutPart child) {
  * folder so no need for one from the parts.
  */
 public boolean allowsBorder() {
-	return false;
+	return mapTabToPart.size() <= 1;
 }
 private TabInfo[] arrayAdd(TabInfo[] array, TabInfo item, int index) {
 
@@ -175,7 +164,7 @@ private TabInfo[] arrayRemove(TabInfo[] array, LayoutPart item) {
 /**
  * Set the default bounds of a page in a CTabFolder.
  */
-protected static Rectangle calculatePageBounds(CTabFolder2 folder) {
+protected static Rectangle calculatePageBounds(CTabFolder folder) {
 	if (folder == null) 
 		return new Rectangle(0,0,0,0);
 	Rectangle bounds = folder.getBounds();
@@ -192,10 +181,8 @@ public void createControl(Composite parent) {
 
 	// Create control.	
 	this.parent = parent;
-	CTabFolder2.borderRGB = new RGB(121, 142, 194);
-	tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
-	ColorSchemeService.setTabColors(tabFolder);
-	
+	tabFolder = new CTabFolder(parent, tabLocation | SWT.BORDER);
+
 	// listener to switch between visible tabItems
 	tabFolder.addListener(SWT.Selection, new Listener(){
 		public void handleEvent(Event e){
@@ -252,13 +239,13 @@ public void createControl(Composite parent) {
 		setSelection(newPage);
 	}
 }
-private CTabItem2 createPartTab(LayoutPart part, String tabName, int tabIndex) {
-	CTabItem2 tabItem;
+private CTabItem createPartTab(LayoutPart part, String tabName, int tabIndex) {
+	CTabItem tabItem;
 
 	if (tabIndex < 0)
-		tabItem = new CTabItem2(this.tabFolder, SWT.NONE);
+		tabItem = new CTabItem(this.tabFolder, SWT.NONE);
 	else
-		tabItem = new CTabItem2(this.tabFolder, SWT.NONE, tabIndex);
+		tabItem = new CTabItem(this.tabFolder, SWT.NONE, tabIndex);
 	tabItem.setText(tabName);
 
 	mapTabToPart.put(tabItem, part);
@@ -316,7 +303,7 @@ public void dispose() {
 			
 	Iterator keys = mapTabToPart.keySet().iterator();
 	while(keys.hasNext()) {
-		CTabItem2 item = (CTabItem2)keys.next();
+		CTabItem item = (CTabItem)keys.next();
 		LayoutPart part = (LayoutPart)mapTabToPart.get(item);
 		TabInfo info = new TabInfo();
 		info.tabText = item.getText();
@@ -351,7 +338,7 @@ public void enableDrag(ViewPane pane, IPartDropListener listener) {
 	if (mapPartToDragMonitor.containsKey(pane))
 		return;
 
-	CTabItem2 tab = getTab(pane);
+	CTabItem tab = getTab(pane);
 	if (tab == null)
 		return;
 
@@ -417,7 +404,7 @@ public LayoutPart[] getChildren() {
 		System.arraycopy(children, 0, newChildren, 0, children.length);
 		children = newChildren;
 		for (int nX = 0; nX < count; nX ++) {
-			CTabItem2 tabItem = tabFolder.getItem(nX);
+			CTabItem tabItem = tabFolder.getItem(nX);
 			children[index] = (LayoutPart)mapTabToPart.get(tabItem);
 			index++;
 		}
@@ -453,10 +440,10 @@ public int getSelection() {
 /**
  * Returns the tab for a part.
  */
-private CTabItem2 getTab(LayoutPart child) {
+private CTabItem getTab(LayoutPart child) {
 	Iterator tabs = mapTabToPart.keySet().iterator();
 	while (tabs.hasNext()) {
-		CTabItem2 tab = (CTabItem2) tabs.next();
+		CTabItem tab = (CTabItem) tabs.next();
 		if (mapTabToPart.get(tab) == child)
 			return tab;
 	}
@@ -475,7 +462,7 @@ public int indexOf (LayoutPart item) {
 
 	Iterator keys = mapTabToPart.keySet().iterator();
 	while (keys.hasNext()) {
-		CTabItem2 tab = (CTabItem2)keys.next();
+		CTabItem tab = (CTabItem)keys.next();
 		LayoutPart part = (LayoutPart)mapTabToPart.get(tab);
 		if (part.equals(item))
 			return tabFolder.indexOf(tab);
@@ -492,7 +479,7 @@ public void remove(LayoutPart child) {
 		
 		Iterator keys = mapTabToPart.keySet().iterator();
 		while (keys.hasNext()) {
-			CTabItem2 key = (CTabItem2) keys.next();
+			CTabItem key = (CTabItem) keys.next();
 			if (mapTabToPart.get(key).equals(child)) {
 				removeTab(key);
 				break;
@@ -507,7 +494,7 @@ public void remove(LayoutPart child) {
 		child.setContainer(null);
 	}
 }
-private void removeTab(CTabItem2 tab) {
+private void removeTab(CTabItem tab) {
 	// disable any d&d based on this tab
 	LayoutPart part = (LayoutPart)mapTabToPart.get(tab);
 	if (part != null)
@@ -538,7 +525,7 @@ private void removeTab(CTabItem2 tab) {
  * as the last tab.
  */
 public void reorderTab(ViewPane pane, int x, int y) {
-	CTabItem2 sourceTab = getTab(pane);
+	CTabItem sourceTab = getTab(pane);
 	if (sourceTab == null)
 		return;
 
@@ -552,7 +539,7 @@ public void reorderTab(ViewPane pane, int x, int y) {
 		location.x = x;
 		
 	// find the tab under the adjusted location.
-	CTabItem2 targetTab = tabFolder.getItem(location);
+	CTabItem targetTab = tabFolder.getItem(location);
 
 	// no tab under location so move view's tab to end
 	if (targetTab == null) {
@@ -578,16 +565,16 @@ public void reorderTab(ViewPane pane, int x, int y) {
 /**
  * Reorder the tab representing the specified pane.
  */
-private void reorderTab(ViewPane pane, CTabItem2 sourceTab, int newIndex) {
+private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex) {
 	// remember if the source tab was the visible one
 	boolean wasVisible = (tabFolder.getSelection() == sourceTab);
 
 	// create the new tab at the specified index
-	CTabItem2 newTab;
+	CTabItem newTab;
 	if (newIndex < 0)
-		newTab = new CTabItem2(tabFolder, SWT.NONE);
+		newTab = new CTabItem(tabFolder, SWT.NONE);
 	else
-		newTab = new CTabItem2(tabFolder, SWT.NONE, newIndex);
+		newTab = new CTabItem(tabFolder, SWT.NONE, newIndex);
 
 	// map it now before events start coming in...	
 	mapTabToPart.put(newTab, pane);
@@ -651,7 +638,7 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 	if (active) {
 		Iterator keys = mapTabToPart.keySet().iterator();
 		while (keys.hasNext()) {
-			CTabItem2 key = (CTabItem2)keys.next();
+			CTabItem key = (CTabItem)keys.next();
 			LayoutPart part = (LayoutPart)mapTabToPart.get(key);
 			if (part == oldChild) {
 				boolean partIsActive = (current == oldChild);
@@ -695,7 +682,7 @@ private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 					WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)newChild).getPartReference();
 					info.tabText = ref.getRegisteredName();
 				}
-				CTabItem2 item = createPartTab(newChild, info.tabText, -1);
+				CTabItem item = createPartTab(newChild, info.tabText, -1);
 				int index = tabFolder.indexOf(item);
 				setSelection(index);
 			} else {
@@ -774,7 +761,7 @@ public IStatus saveState(IMemento memento)
 		}
 	} else {
 		LayoutPart [] children = getChildren();
-		CTabItem2 keys[] = new CTabItem2[mapTabToPart.size()];
+		CTabItem keys[] = new CTabItem[mapTabToPart.size()];
 		mapTabToPart.keySet().toArray(keys);
 		if(children != null) {
 			for (int i = 0; i < children.length; i ++){
@@ -819,7 +806,12 @@ public void setBounds(Rectangle r) {
 private void setControlSize() {
 	if (current == null || tabFolder == null) 
 		return;
-	current.setBounds(calculatePageBounds(tabFolder));
+	Rectangle bounds;
+	if (mapTabToPart.size() > 1)
+		bounds = calculatePageBounds(tabFolder);
+	else
+		bounds = tabFolder.getBounds();
+	current.setBounds(bounds);
 	current.moveAbove(tabFolder);
 }
 
@@ -836,7 +828,7 @@ public void setSelection(int index) {
 	if (index > mapTabToPart.size() - 1) index = mapTabToPart.size() - 1;
 	tabFolder.setSelection(index);
 
-	CTabItem2 item = tabFolder.getItem(index);
+	CTabItem item = tabFolder.getItem(index);
 	LayoutPart part = (LayoutPart)mapTabToPart.get(item);
 	setSelection(part);
 }
@@ -856,7 +848,7 @@ private void setSelection(LayoutPart part) {
 	}
 
 	
-	  // set the title of the detached window to reflect the active tab
+	  // set the title of the detached window to reflact the active tab
 	  Window window = getWindow();
 	  if (window instanceof DetachedWindow) {
 	  	if (current == null || !(current instanceof PartPane))

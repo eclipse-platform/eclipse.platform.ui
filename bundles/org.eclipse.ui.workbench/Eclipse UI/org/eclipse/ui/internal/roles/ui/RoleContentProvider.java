@@ -17,8 +17,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.roles.IRoleManager;
 
 /**
- * The RoleContentProvider is a class that supplies the contents for the
- * viewer in the RolePreferencePage.
+ * The RoleContentProvider is a class that supplies the contents for the viewer
+ * in the RolePreferencePage.
  */
 public class RoleContentProvider implements IStructuredContentProvider {
 
@@ -29,28 +29,34 @@ public class RoleContentProvider implements IStructuredContentProvider {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object inputElement) {
-		Object [] roles = new Object[0];
-		if (inputElement instanceof IRoleManager) {
-			roles = ((IRoleManager)inputElement).getDefinedRoleIds().toArray();
-		}
-        else if (inputElement instanceof Collection) {
-            roles = ((Collection)inputElement).toArray();
-        }        
-		return roles;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 */
+	public Object[] getElements(Object inputElement) {
+		Object[] roles = new Object[0];
+		if (inputElement instanceof IRoleManager) {
+			roles = ((IRoleManager) inputElement).getDefinedRoleIds().toArray();
+		} else if (inputElement instanceof Collection) {
+			roles = ((Collection) inputElement).toArray();
+		}
+		return roles;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}

@@ -23,95 +23,106 @@ import org.eclipse.ui.internal.util.Util;
 public final class CategoryDefinition implements ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = CategoryDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		CategoryDefinition.class.getName().hashCode();
 
-	public static Map categoryDefinitionsById(Collection categoryDefinitions, boolean allowNullIds) {
+	public static Map categoryDefinitionsById(
+		Collection categoryDefinitions,
+		boolean allowNullIds) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = categoryDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);				
-			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			Util.assertInstance(object, ICategoryDefinition.class);
+			ICategoryDefinition categoryDefinition =
+				(ICategoryDefinition) object;
 			String id = categoryDefinition.getId();
-			
+
 			if (allowNullIds || id != null)
-				map.put(id, categoryDefinition);		
-		}			
-		
+				map.put(id, categoryDefinition);
+		}
+
 		return map;
 	}
 
-	public static Map categoryDefinitionsByName(Collection categoryDefinitions, boolean allowNullNames) {
+	public static Map categoryDefinitionsByName(
+		Collection categoryDefinitions,
+		boolean allowNullNames) {
 		if (categoryDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = categoryDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);			
-			ICategoryDefinition categoryDefinition = (ICategoryDefinition) object;
+			Util.assertInstance(object, ICategoryDefinition.class);
+			ICategoryDefinition categoryDefinition =
+				(ICategoryDefinition) object;
 			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {
 				Set categoryDefinitions2 = (Set) map.get(name);
-				
+
 				if (categoryDefinitions2 == null) {
 					categoryDefinitions2 = new HashSet();
-					map.put(name, categoryDefinitions2);					
+					map.put(name, categoryDefinitions2);
 				}
 
-				categoryDefinitions2.add(categoryDefinition);								
-			}				
-		}			
-		
+				categoryDefinitions2.add(categoryDefinition);
+			}
+		}
+
 		return map;
 	}
 
 	private String description;
-	private String id;
-	private String name;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String id;
+	private String name;
+	private String pluginId;
 	private transient String string;
-	
-	public CategoryDefinition(String description, String id, String name, String pluginId) {
+
+	public CategoryDefinition(
+		String description,
+		String id,
+		String name,
+		String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
 		CategoryDefinition castedObject = (CategoryDefinition) object;
 		int compareTo = Util.compare(description, castedObject.description);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(id, castedObject.id);	
-		
+
+		if (compareTo == 0) {
+			compareTo = Util.compare(id, castedObject.id);
+
 			if (compareTo == 0) {
 				compareTo = Util.compare(name, castedObject.name);
-				
+
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, castedObject.pluginId);								
+					compareTo = Util.compare(pluginId, castedObject.pluginId);
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof CategoryDefinition))
 			return false;
 
-		CategoryDefinition castedObject = (CategoryDefinition) object;	
+		CategoryDefinition castedObject = (CategoryDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
@@ -121,16 +132,16 @@ public final class CategoryDefinition implements ICategoryDefinition {
 	}
 
 	public String getDescription() {
-		return description;	
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
+
 	public String getName() {
 		return name;
-	}	
+	}
 
 	public String getPluginId() {
 		return pluginId;
@@ -145,8 +156,8 @@ public final class CategoryDefinition implements ICategoryDefinition {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -163,7 +174,7 @@ public final class CategoryDefinition implements ICategoryDefinition {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
 }

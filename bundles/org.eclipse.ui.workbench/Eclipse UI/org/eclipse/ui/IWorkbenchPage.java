@@ -11,10 +11,8 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
-
-import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.ICompoundActivityService;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -559,10 +557,11 @@ public void setEditorReuseThreshold(int openEditors);
 public INavigationHistory getNavigationHistory();
 
 /**
- * TODO javadoc
+ * Returns the compound activity service for the workbench page.
  * 
- * @return
+ * @return the compound activity service for the workbench page. Guaranteed not 
+ * 		   to be <code>null</code>.
  * @since 3.0
  */
-public IActivationService getActivationService();
+public ICompoundActivityService getCompoundActivityService();
 }

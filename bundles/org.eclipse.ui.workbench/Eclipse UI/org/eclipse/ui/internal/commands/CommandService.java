@@ -34,26 +34,38 @@ public final class CommandService implements ICommandService {
 	public void addCommandServiceListener(ICommandServiceListener commandServiceListener) {
 		if (commandServiceListener == null)
 			throw new NullPointerException();
-			
+
 		if (commandServiceListeners == null)
 			commandServiceListeners = new ArrayList();
-		
+
 		if (!commandServiceListeners.contains(commandServiceListener))
 			commandServiceListeners.add(commandServiceListener);
+	}
+
+	private void fireCommandServiceChanged(ICommandServiceEvent commandServiceEvent) {
+		if (commandServiceEvent == null)
+			throw new NullPointerException();
+
+		if (commandServiceListeners != null)
+			for (int i = 0; i < commandServiceListeners.size(); i++)
+				(
+					(ICommandServiceListener) commandServiceListeners.get(
+						i)).commandServiceChanged(
+					commandServiceEvent);
 	}
 
 	public Set getActiveCommandIds() {
 		return Collections.unmodifiableSet(activeCommandIds);
 	}
-	
+
 	public void removeCommandServiceListener(ICommandServiceListener commandServiceListener) {
 		if (commandServiceListener == null)
 			throw new NullPointerException();
-			
+
 		if (commandServiceListeners != null)
 			commandServiceListeners.remove(commandServiceListener);
 	}
-		
+
 	public void setActiveCommandIds(Set activeCommandIds) {
 		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
 		boolean commandServiceChanged = false;
@@ -61,16 +73,7 @@ public final class CommandService implements ICommandService {
 
 		if (!this.activeCommandIds.equals(activeCommandIds)) {
 			this.activeCommandIds = activeCommandIds;
-			fireCommandServiceChanged(new CommandServiceEvent(this, true));	
+			fireCommandServiceChanged(new CommandServiceEvent(this, true));
 		}
-	}
-
-	private void fireCommandServiceChanged(ICommandServiceEvent commandServiceEvent) {
-		if (commandServiceEvent == null)
-			throw new NullPointerException();
-		
-		if (commandServiceListeners != null)
-			for (int i = 0; i < commandServiceListeners.size(); i++)
-				((ICommandServiceListener) commandServiceListeners.get(i)).commandServiceChanged(commandServiceEvent);
 	}
 }

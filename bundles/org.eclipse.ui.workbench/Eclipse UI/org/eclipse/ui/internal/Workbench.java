@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -80,13 +79,12 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.ActivationServiceFactory;
 import org.eclipse.ui.activities.ActivityManagerFactory;
-import org.eclipse.ui.activities.DisposedException;
-import org.eclipse.ui.activities.IActivationService;
-import org.eclipse.ui.activities.IActivationServiceEvent;
-import org.eclipse.ui.activities.IActivationServiceListener;
+import org.eclipse.ui.activities.ActivityServiceFactory;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityService;
+import org.eclipse.ui.activities.ICompoundActivityService;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdviser;
@@ -195,14 +193,15 @@ public final class Workbench implements IWorkbench {
 		Assert.isNotNull(adviser);
 		this.adviser = adviser;
 		this.display = display;
-		Workbench.instance = this;
+		Workbench.instance = this;		
 	}
 	
 	/**
-	 * Returns the one and only instance of the workbench
-	 * or <code>null</code> if not created yet.
+	 * Returns the one and only instance of the workbench, if there
+	 * is one.
 	 * 
-	 * @return the workbench or <code>null</code> if not created yet.
+	 * @return the workbench, or <code>null</code> if the workbench has
+	 * not been created, or has been created and already completed
 	 */
 	public static final Workbench getInstance() {
 		return instance;
@@ -282,21 +281,23 @@ public final class Workbench implements IWorkbench {
 		}
 		return testableObject;
 	}
-	
-	// TODO reduce visibility
-	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);
 
-	private IActivityManager activityManager;
-	// TODO reduce visibility
-	ICommandManager commandManager;
-	private IRoleManager roleManager;
-	private WorkbenchActivityHelper activityHelper;
 	
-	private volatile boolean keyFilterDisabled;
-	private final Object keyFilterMutex = new Object();	
+	private IMutableActivityManager activityManager;	
+	/* TODO private */ ICommandManager commandManager;
+	private IRoleManager roleManager;
+	private WorkbenchActivityService workbenchActivityService;
+	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
+	// TODO reduce visibility
+	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);	
+	private WorkbenchActivityHelper activityHelper;	
 	
 	public IActivityManager getActivityManager() {
 		return activityManager;
+	}
+	
+	public void setEnabledActivityIds(Set enabledActivityIds) {
+		activityManager.setEnabledActivityIds(enabledActivityIds);
 	}
 	
 	public ICommandManager getCommandManager() {
@@ -307,40 +308,17 @@ public final class Workbench implements IWorkbench {
 		return roleManager;
 	}		
 
-	private final HashSet activationServices = new HashSet();
-	private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
+	public IActivityService getActivityService() {
+		return workbenchActivityService;
+	}	
 
-	private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
-		public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
-			Set activeActivityIds = new HashSet();
-			
-			for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
-				IActivationService activationService = (IActivationService) iterator.next();
-				
-				try {
-					activeActivityIds.addAll(activationService.getActiveActivityIds());					
-				} catch (DisposedException eDisposed) {
-					iterator.remove();
-				}
-			}
-			
-			try {
-				compositeActivationService.setActiveActivityIds(activeActivityIds);
-			} catch (DisposedException eDisposed) {			
-			}
-		}
-	};
-
-	public IActivationService getActivationService() {
-		IActivationService activationService = ActivationServiceFactory.getActivationService();
-		activationServices.add(activationService);	
-		activationService.addActivationServiceListener(activationServiceListener);
-		return activationService;	
+	public ICompoundActivityService getCompoundActivityService() {
+		return compoundActivityService;
 	}
-
-	public IActivationService getCompositeActivationService() {
-		return compositeActivationService;
-	}
+	
+	
+	private volatile boolean keyFilterDisabled;
+	private final Object keyFilterMutex = new Object();	
 	
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
@@ -753,10 +731,9 @@ public final class Workbench implements IWorkbench {
 	 * of each window, or <code>null</code> if none
 	 * @return true if init succeeded.
 	 */
-	private boolean init(ImageDescriptor windowImage, Display display) {
-		
+	private boolean init(ImageDescriptor windowImage, Display display) {		
 		// create an activity manager		
-		activityManager = ActivityManagerFactory.getActivityManager();
+		activityManager = ActivityManagerFactory.getMutableActivityManager();
 		activityManager.addActivityManagerListener(workbenchActivitiesCommandsAndRoles.activityManagerListener);                   
 		
 		// create a role manager
@@ -839,6 +816,9 @@ public final class Workbench implements IWorkbench {
 
 		// create workbench window manager
 		windowManager = new WindowManager();
+		
+		workbenchActivityService = new WorkbenchActivityService(this);
+		workbenchActivityService.start();		
 
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
@@ -925,24 +905,28 @@ public final class Workbench implements IWorkbench {
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
 		ArrayList fontsToSet = new ArrayList();
+		
+		for (int i = 0; i < definitions.length; i++) {            
+			installFont(definitions[i].getId(), registry, store);
+		}
+        
+		// post-process the defaults to allow for out-of-order specification.  
 		for (int i = 0; i < definitions.length; i++) {
-			FontDefinition definition = definitions[i];
-			String fontKey = definition.getId();
-			installFont(fontKey, registry, store);
-			String defaultsTo = definitions[i].getDefaultsTo();
+			FontDefinition definition = definitions[i];            
+			String defaultsTo = definition.getDefaultsTo();            
 			if (defaultsTo != null){
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
 					PreferenceConverter.
 						getDefaultFontDataArray(store,defaultsTo));
-				
+                
 				//If there is no value in the registry pass though the mapping
-				if(!registry.hasValueFor(fontKey)) {
+				if(!registry.hasValueFor(definition.getId())) {
 					fontsToSet.add(definition);
 				}
-			}
-		}
+			}            
+		}		
 		
 		
 		/*
@@ -1090,7 +1074,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	private int openPreviousWorkbenchState() {
 		
-		if (!getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE)) {
+		if (!getWorkbenchConfigurer().getSaveAndRestore()) {
 			return RESTORE_CODE_RESET;
 		}
 		// Read the workbench state file.
@@ -1253,13 +1237,13 @@ public final class Workbench implements IWorkbench {
 			newWindow.create();
 
 			// allow the application to specify an initial perspective to open
-			String initialPerspectiveId = getAdviser().getInitialWindowPerspectiveId();
-			if (initialPerspectiveId != null) {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
-				if (desc != null) {
-					result.merge(newWindow.restoreState(childMem, desc));
-				}    
-			}
+			// @issue temporary workaround for ignoring initial perspective
+//			String initialPerspectiveId = getAdviser().getInitialWindowPerspectiveId();
+//			if (initialPerspectiveId != null) {
+//				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
+//				result.merge(newWindow.restoreState(childMem, desc));
+//			}
+			result.merge(newWindow.restoreState(childMem, null));
 			windowManager.add(newWindow);
 			try {
 				getAdviser().postWindowRestore(newWindow.getWindowConfigurer());

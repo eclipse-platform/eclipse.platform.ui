@@ -22,28 +22,29 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 		this.action = action;
 	}
 
-	public org.eclipse.jface.action.IAction getAction() {
-		return action;
-	}
-
 	public void addPropertyListener(XIPropertyListener propertyListener) {
 	}
 
-	public void execute() {	
+	public void execute() {
 		action.run();
 	}
 
 	public void execute(Event event) {
-		if ((action.getStyle() == org.eclipse.jface.action.IAction.AS_CHECK_BOX)
-			|| (action.getStyle() == org.eclipse.jface.action.IAction.AS_RADIO_BUTTON)) {
+		if ((action.getStyle()
+			== org.eclipse.jface.action.IAction.AS_CHECK_BOX)
+			|| (action.getStyle()
+				== org.eclipse.jface.action.IAction.AS_RADIO_BUTTON)) {
 			action.setChecked(!action.isChecked());
 		}
 
 		action.runWithEvent(event);
 	}
 
-	public Object getProperty(String name)
-		throws Exception {
+	public org.eclipse.jface.action.IAction getAction() {
+		return action;
+	}
+
+	public Object getProperty(String name) throws Exception {
 		return null;
 	}
 
@@ -54,7 +55,7 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 	public boolean isEnabled() {
 		return action.isEnabled();
 	}
-	
-	public void removePropertyListener(XIPropertyListener propertyListener) {	
+
+	public void removePropertyListener(XIPropertyListener propertyListener) {
 	}
 }

@@ -11,12 +11,13 @@
 package org.eclipse.ui.activities;
 
 /**
- * The IObjectContributionRecord is the object that holds onto the
- * plug-in and local id of a contribution for lookup of mappings.
+ * The IObjectContributionRecord is the object that holds onto the plug-in and
+ * local id of a contribution for lookup of mappings.
  */
 public interface IObjectContributionRecord {
 	/**
 	 * Return the local id of this object contribution
+	 * 
 	 * @return String
 	 */
 	public abstract String getLocalId();

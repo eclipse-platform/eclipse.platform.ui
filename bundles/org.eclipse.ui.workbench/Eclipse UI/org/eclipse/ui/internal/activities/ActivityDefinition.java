@@ -22,101 +22,114 @@ import org.eclipse.ui.internal.util.Util;
 final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActivityDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		ActivityDefinition.class.getName().hashCode();
 
-	static Map activityDefinitionsById(Collection activityDefinitions, boolean allowNullIds) {
+	static Map activityDefinitionsById(
+		Collection activityDefinitions,
+		boolean allowNullIds) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = activityDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityDefinition.class);				
-			IActivityDefinition activityDefinition = (IActivityDefinition) object;
+			Util.assertInstance(object, IActivityDefinition.class);
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) object;
 			String id = activityDefinition.getId();
-			
+
 			if (allowNullIds || id != null)
-				map.put(id, activityDefinition);		
-		}			
-		
+				map.put(id, activityDefinition);
+		}
+
 		return map;
 	}
 
-	static Map activityDefinitionsByName(Collection activityDefinitions, boolean allowNullNames) {
+	static Map activityDefinitionsByName(
+		Collection activityDefinitions,
+		boolean allowNullNames) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = activityDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityDefinition.class);			
-			IActivityDefinition activityDefinition = (IActivityDefinition) object;
+			Util.assertInstance(object, IActivityDefinition.class);
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) object;
 			String name = activityDefinition.getName();
-			
+
 			if (allowNullNames || name != null) {
 				Collection activityDefinitions2 = (Collection) map.get(name);
-					
+
 				if (activityDefinitions2 == null) {
 					activityDefinitions2 = new HashSet();
-					map.put(name, activityDefinitions2);					
+					map.put(name, activityDefinitions2);
 				}
-	
-				activityDefinitions2.add(activityDefinition);		
-			}											
-		}				
-	
+
+				activityDefinitions2.add(activityDefinition);
+			}
+		}
+
 		return map;
 	}
 
 	private String description;
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
 	private String parentId;
 	private String pluginId;
-
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
 	private transient String string;
-	
-	ActivityDefinition(String description, String id, String name, String parentId, String pluginId) {
+
+	ActivityDefinition(
+		String description,
+		String id,
+		String name,
+		String parentId,
+		String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
 		ActivityDefinition castedObject = (ActivityDefinition) object;
 		int compareTo = Util.compare(description, castedObject.description);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(id, castedObject.id);			
-		
+
+		if (compareTo == 0) {
+			compareTo = Util.compare(id, castedObject.id);
+
 			if (compareTo == 0) {
 				compareTo = Util.compare(name, castedObject.name);
-				
+
 				if (compareTo == 0) {
 					compareTo = Util.compare(parentId, castedObject.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, castedObject.pluginId);								
-				}							
+						compareTo =
+							Util.compare(pluginId, castedObject.pluginId);
+				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof ActivityDefinition))
 			return false;
 
-		ActivityDefinition castedObject = (ActivityDefinition) object;	
+		ActivityDefinition castedObject = (ActivityDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
@@ -127,16 +140,16 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	}
 
 	public String getDescription() {
-		return description;	
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
+
 	public String getName() {
 		return name;
-	}	
+	}
 
 	public String getParentId() {
 		return parentId;
@@ -156,8 +169,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -176,7 +189,7 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
 }

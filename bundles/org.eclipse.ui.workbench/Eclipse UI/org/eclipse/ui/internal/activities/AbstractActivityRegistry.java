@@ -17,24 +17,38 @@ import java.util.List;
 
 abstract class AbstractActivityRegistry implements IActivityRegistry {
 
-	private IActivityRegistryEvent activityRegistryEvent;
-	private List activityRegistryListeners;
-	
 	protected List activityDefinitions = Collections.EMPTY_LIST;
-	protected List patternBindingDefinitions = Collections.EMPTY_LIST;	
-	
+
+	private ActivityRegistryEvent activityRegistryEvent;
+	private List activityRegistryListeners;
+	protected List patternBindingDefinitions = Collections.EMPTY_LIST;
+
 	protected AbstractActivityRegistry() {
 	}
 
 	public void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {
 		if (activityRegistryListener == null)
 			throw new NullPointerException();
-			
+
 		if (activityRegistryListeners == null)
 			activityRegistryListeners = new ArrayList();
-		
+
 		if (!activityRegistryListeners.contains(activityRegistryListener))
 			activityRegistryListeners.add(activityRegistryListener);
+	}
+
+	protected void fireActivityRegistryChanged() {
+		if (activityRegistryListeners != null) {
+			for (int i = 0; i < activityRegistryListeners.size(); i++) {
+				if (activityRegistryEvent == null)
+					activityRegistryEvent = new ActivityRegistryEvent(this);
+
+				(
+					(IActivityRegistryListener) activityRegistryListeners.get(
+						i)).activityRegistryChanged(
+					activityRegistryEvent);
+			}
+		}
 	}
 
 	public List getActivityDefinitions() {
@@ -43,24 +57,13 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 
 	public List getPatternBindingDefinitions() {
 		return patternBindingDefinitions;
-	}	
-	
+	}
+
 	public void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {
 		if (activityRegistryListener == null)
 			throw new NullPointerException();
-			
+
 		if (activityRegistryListeners != null)
 			activityRegistryListeners.remove(activityRegistryListener);
 	}
-
-	protected void fireActivityRegistryChanged() {
-		if (activityRegistryListeners != null) {
-			for (int i = 0; i < activityRegistryListeners.size(); i++) {
-				if (activityRegistryEvent == null)
-					activityRegistryEvent = new ActivityRegistryEvent(this);
-							
-				((IActivityRegistryListener) activityRegistryListeners.get(i)).activityRegistryChanged(activityRegistryEvent);
-			}				
-		}	
-	}
-}	
+}

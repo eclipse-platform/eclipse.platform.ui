@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -505,17 +506,11 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
  */
 protected void doDock() {}
 
-
 /**
- * Progress on a job that blocks the site has begun.
- * @param Job the job starting.
+ * Return an IJobChangeListener for jobs run in this pane.
+ * @return IJobChangeListener or <code>null</code>.
  */
-public void progressStart(Job job) {
-}
-/**
- * Progress on a job that blocks the site has finished.
- * @param Job the job finishing.
- */
-public void progressEnd(Job job) {
+public IJobChangeListener getJobChangeListener(){
+	return null;
 }
 }

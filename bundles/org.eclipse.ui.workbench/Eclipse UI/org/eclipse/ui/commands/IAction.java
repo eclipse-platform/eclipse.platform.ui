@@ -30,7 +30,7 @@ public interface IAction {
 
 	/**
 	 * JAVADOC
-	 */	
+	 */
 	void execute();
 
 	/**
@@ -38,34 +38,34 @@ public interface IAction {
 	 * 
 	 * @param event
 	 */
-	// TODO temporary method	
+	// TODO temporary method
 	void execute(Event event);
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 */	
+	 */
 	// TODO String getDescription();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 */	
+	 */
 	// TODO String getName();
-	
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 */	
+	 */
 	// TODO String getHelpId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
-	 */	
+	 */
 	boolean isEnabled();
 }

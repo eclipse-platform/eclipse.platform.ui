@@ -7,15 +7,15 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityManagerListener</code> can be used by
+ * An instance of <code>IActivityServiceListener</code> can be used by
  * clients to receive notification of changes to one or more instances of
- * <code>IActivityManager</code>.
+ * <code>IActivityService</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -25,18 +25,18 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see ActivityManagerEvent
- * @see IActivityManager#addActivityManagerListener
- * @see IActivityManager#removeActivityManagerListener
+ * @see ActivityServiceEvent
+ * @see IActivityService#addRoleManagerListener
+ * @see IActivityService#removeRoleManagerListener
  */
-public interface IActivityManagerListener {
+public interface IActivityServiceListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>IActivityManager</code>
-	 * have changed. Specific details are described in the <code>ActivityManagerEvent</code>.
+	 * Notifies that one or more attributes of an instance of <code>IActivityService</code>
+	 * have changed. Specific details are described in the <code>ActivityServiceEvent</code>.
 	 * 
-	 * @param activityManagerEvent
-	 *            the activity manager event. Guaranteed not to be <code>null</code>.
+	 * @param activityServiceEvent
+	 *            the activity service event. Guaranteed not to be <code>null</code>.
 	 */
-	void activityManagerChanged(ActivityManagerEvent activityManagerEvent);
+	void activityServiceChanged(ActivityServiceEvent activityServiceEvent);
 }

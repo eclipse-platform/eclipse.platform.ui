@@ -18,21 +18,22 @@ import org.eclipse.ui.keys.KeySequence;
 final class KeySequenceBinding implements IKeySequenceBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeySequenceBinding.class.getName().hashCode();
-
-	private KeySequence keySequence;
-	private int match;	
+	private final static int HASH_INITIAL =
+		KeySequenceBinding.class.getName().hashCode();
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+
+	private KeySequence keySequence;
+	private int match;
 	private transient String string;
 
-	KeySequenceBinding(KeySequence keySequence, int match) {	
+	KeySequenceBinding(KeySequence keySequence, int match) {
 		if (keySequence == null)
 			throw new NullPointerException();
-		
+
 		if (match < 0)
-			throw new IllegalArgumentException();		
+			throw new IllegalArgumentException();
 
 		this.keySequence = keySequence;
 		this.match = match;
@@ -40,19 +41,19 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 
 	public int compareTo(Object object) {
 		KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		int compareTo = Util.compare(match, castedObject.match);		
+		int compareTo = Util.compare(match, castedObject.match);
 
 		if (compareTo == 0)
-			compareTo = Util.compare(keySequence, castedObject.keySequence);	
-		
+			compareTo = Util.compare(keySequence, castedObject.keySequence);
+
 		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof KeySequenceBinding))
 			return false;
 
-		KeySequenceBinding castedObject = (KeySequenceBinding) object;	
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;
 		boolean equals = true;
 		equals &= Util.equals(keySequence, castedObject.keySequence);
 		equals &= Util.equals(match, castedObject.match);
@@ -62,11 +63,11 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 	public KeySequence getKeySequence() {
 		return keySequence;
 	}
-	
+
 	public int getMatch() {
-		return match;	
-	}	
-	
+		return match;
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -74,8 +75,8 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -88,7 +89,7 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
 	}
 }

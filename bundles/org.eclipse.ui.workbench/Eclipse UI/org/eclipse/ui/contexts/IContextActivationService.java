@@ -30,36 +30,40 @@ public interface IContextActivationService {
 
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @param contextId
-	 */	
+	 */
 	void activateContext(String contextId);
 
 	/**
-	 * Registers an IContextActivationServiceListener instance with this context activation service.
-	 *
-	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to register.
-	 */	
+	 * Registers an IContextActivationServiceListener instance with this
+	 * context activation service.
+	 * 
+	 * @param contextActivationServiceListener
+	 *            the IContextActivationServiceListener instance to register.
+	 */
 	void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @param contextId
-	 */	
+	 */
 	void deactivateContext(String contextId);
-		
+
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @return
 	 */
 	SortedSet getActiveContextIds();
-	
+
 	/**
-	 * Unregisters an IContextActivationServiceListener instance with this context activation services.
-	 *
-	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to unregister.
+	 * Unregisters an IContextActivationServiceListener instance with this
+	 * context activation services.
+	 * 
+	 * @param contextActivationServiceListener
+	 *            the IContextActivationServiceListener instance to unregister.
 	 */
 	void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener);
 }

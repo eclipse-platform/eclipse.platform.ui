@@ -96,7 +96,7 @@ public class ProgressFeedbackManager {
 			job.join();
 		}
 		catch (InterruptedException exception){
-			return ProgressUtil.exceptionStatus(exception);
+			return ProgressManagerUtil.exceptionStatus(exception);
 		}
 		
 		return statuses[0];

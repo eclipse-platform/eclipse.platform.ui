@@ -16,7 +16,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.jface.window.*;
 import java.util.*;
 import java.util.List;
@@ -89,7 +89,7 @@ protected void configureShell(Shell shell) {
 			Control[] children = shell.getChildren();
 			if (children != null) {
 				for (int i = 0, length = children.length; i < length; i++){
-					if (children[i] instanceof CTabFolder2) {
+					if (children[i] instanceof CTabFolder) {
 						children[i].setBounds(shell.getClientArea());
 						break;
 					}

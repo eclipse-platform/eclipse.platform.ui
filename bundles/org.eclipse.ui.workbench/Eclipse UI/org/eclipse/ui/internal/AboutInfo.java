@@ -17,10 +17,11 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.zip.CRC32;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.internal.IniFileReader;
 
 /**
  * The information within this object is obtained from the about INI file.
@@ -67,11 +68,13 @@ public final class AboutInfo {
 	 * 
 	 * @param featureId the feature id
 	 * @param versionId the version id (of the feature)
+	 * @param pluginId the plug-in id
 	 * @return the configuration information for the feature
 	 */
 	public static AboutInfo readFeatureInfo(String featureId, String versionId, String pluginId) {
 		Assert.isNotNull(featureId);
 		Assert.isNotNull(versionId);
+		Assert.isNotNull(pluginId);
 		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
 		IStatus status = reader.load();
 		if (!status.isOK()) {
@@ -118,15 +121,18 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Returns the name of the feature image as supplied in the properties file.
+	 * Returns the simple name of the feature image file.
 	 * 
-	 * @return the name of the feature image, or <code>null</code> if none
+	 * @return the simple name of the feature image file,
+	 * or <code>null</code> if none
 	 */
 	public String getFeatureImageName() {
-		if (featureImageURL != null)
-			return featureImageURL.getFile();
-		else
+		if (featureImageURL != null) {
+			IPath path = new Path(featureImageURL.getPath());
+			return path.lastSegment();
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -174,11 +180,13 @@ public final class AboutInfo {
 				try {
 					in.close();
 				} catch (IOException e) {
+					// ignore errors on close
 				}
 			if (out != null)
 				try {
 					out.close();
 				} catch (IOException e) {
+					// ignore errors on close
 				}
 		}
 	}	
