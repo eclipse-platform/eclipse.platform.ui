@@ -62,10 +62,10 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param original the original definition.  This will be used to populate 
+	 * @param originalFont the original definition.  This will be used to populate 
 	 * all fields except defaultsTo and value.  defaultsTo will always be 
 	 * <code>null</code>.
-	 * @param value the FontData[] value
+	 * @param datas the FontData[] value
 	 */
     public FontDefinition(FontDefinition originalFont, FontData[] datas) {
     	this.label = originalFont.getLabel();

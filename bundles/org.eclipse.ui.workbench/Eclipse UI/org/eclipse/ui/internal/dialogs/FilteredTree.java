@@ -37,7 +37,7 @@ public class FilteredTree extends Composite{
      * Create a new instance of the receiver.
      * 
      * @param parent the parent composite
-     * @parem treeStyle the SWT style bits to be passed to the tree viewer
+     * @param treeStyle the SWT style bits to be passed to the tree viewer 
      */
     public FilteredTree(
             Composite parent, 

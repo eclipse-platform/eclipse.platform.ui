@@ -110,7 +110,7 @@ public final class ColorUtils {
     /**
 	 * Get the RGB values for a given color array.
      * 
-     * @param rawValue the raw values, either RGB triple or an SWT constant.
+     * @param rawValues the raw values, either RGB triple or an SWT constant.
      * @return Returns the RGB values.
 	 */
     public static RGB [] getColorValues(String[] rawValues) {

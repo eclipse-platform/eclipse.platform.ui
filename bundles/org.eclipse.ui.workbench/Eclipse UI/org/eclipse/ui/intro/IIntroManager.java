@@ -103,7 +103,7 @@ public interface IIntroManager {
      * 
      * @param preferredWindow the preferred workbench window, or 
      * <code>null</code> to indicate the currently active workbench window
-     * @param <code>true</code> to put the intro part in its partially
+     * @param standby <code>true</code> to put the intro part in its partially
 	 * visible standy mode, and <code>false</code> to make it fully visible
      * @return the newly-created or existing intro part, or <code>null</code>
      * if no intro part is available or if <code>preferredWindow</code> is

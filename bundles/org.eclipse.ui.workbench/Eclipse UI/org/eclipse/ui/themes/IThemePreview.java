@@ -25,7 +25,7 @@ public interface IThemePreview {
      * Create the preview control.
      *  
      * @param parent the Composite in which to create the example
-     * @param theme the theme to preview
+     * @param currentTheme the theme to preview
      */
     void createControl(Composite parent, ITheme currentTheme);
     

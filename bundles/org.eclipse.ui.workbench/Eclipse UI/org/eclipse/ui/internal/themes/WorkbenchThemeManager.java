@@ -126,9 +126,7 @@ public class WorkbenchThemeManager implements IThemeManager {
     
     private Map themes = new HashMap(7);
 
-    /**
-     * @return
-     */
+
     public ITheme getCurrentTheme() {
         if (currentTheme == null) {
     		String themeId = PlatformUI.getWorkbench().getPreferenceStore().getString(IPreferenceConstants.CURRENT_THEME_ID);
