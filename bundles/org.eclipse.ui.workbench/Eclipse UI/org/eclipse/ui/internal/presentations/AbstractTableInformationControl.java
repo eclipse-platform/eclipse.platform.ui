@@ -295,7 +295,7 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	protected Text createFilterText(Composite parent) {
-		fFilterText = new Text(parent, SWT.FLAT);
+		fFilterText = new Text(parent, SWT.NONE);
 
 		GridData data = new GridData();
 		GC gc = new GC(parent);
