@@ -810,8 +810,8 @@ public static Object run(String applicationName, URL pluginPathLocation, String 
 	}
 	// if the application is still null, then the user has not specified so use the
 	// one from the launch info. This is the normal case.
-	if (applicationName == null)
-		application = applicationName;
+	if (application == null)
+		application = LaunchInfo.getCurrent().getApplication();
 	IPlatformRunnable runnable = getRunnable(application);
 	if (runnable == null)
 		throw new IllegalArgumentException("Application not found: " + application);
