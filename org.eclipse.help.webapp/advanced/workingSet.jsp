@@ -354,7 +354,7 @@ for (int i=0; i<data.getTocCount(); i++)
 	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
 %>
 				<div class="book" id='<%="id"+i%>' >
-					<img id='<%="img"+i%>' src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					<img id='<%="img"+i%>' alt="" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
 					<input 	class='<%=className%>' 
 							type="checkbox" 
 							id='<%=data.getTocHref(i)%>' 

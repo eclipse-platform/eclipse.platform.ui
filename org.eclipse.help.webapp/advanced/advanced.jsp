@@ -185,7 +185,7 @@ function onloadHandler()
 <form name="searchForm" onsubmit="doAdvancedSearch()">
 <div style="overflow:auto;height:250px;">
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:0px 10px;"><%=ServletResources.getString("SearchExpression", request)%>
+		<tr><td style="padding:0px 10px;"><label for="searchWord"><%=ServletResources.getString("SearchExpression", request)%></label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
@@ -205,7 +205,7 @@ for (int i=0; i<tocData.getTocCount(); i++)
 {
 	String label = tocData.getTocLabel(i);
 %>
-				<div class="book"><input class="checkbox" type="checkbox" name='<%=tocData.getTocHref(i)%>' alt="<%=label%>"><%=label%></div>
+				<div class="book"><input class="checkbox" type="checkbox" name='<%=tocData.getTocHref(i)%>' id="checkbox<%=i%>" alt="<%=label%>"><label for="checkbox<%=i%>"><%=label%></label></div>
 <%
 }		
 %>

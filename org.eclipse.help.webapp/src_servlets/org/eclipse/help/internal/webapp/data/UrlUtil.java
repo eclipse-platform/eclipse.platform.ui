@@ -120,11 +120,25 @@ public class UrlUtil {
 
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
+		
+		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
+		if(agent.startsWith("bobby/")){
+			return true;
+		}
+		//
+		
 		return (agent.indexOf("msie") >= 0);
 	}
 
 	public static String getIEVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent").toLowerCase();
+		
+		// When accessing with Bobby identified Bobby return 5.5 to allow testing advanced UI as bobby cannot identifiy as IE >=5.5
+		if(agent.startsWith("bobby/")){
+			return "5.5";
+		}
+		//
+		
 		int start = agent.indexOf("msie ") + "msie ".length();
 		if (start < "msie ".length() || start >= agent.length())
 			return "0";

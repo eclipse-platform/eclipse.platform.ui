@@ -48,7 +48,7 @@ if(!data.isLinksRequest()) {
 <tr>
 	<td align='left' nowrap>
 		<a href='<%=data.getTopicHref(link)%>'>
-		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif" border=0>
+		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"  alt="" border=0>
 		   <%=data.getTopicLabel(link)%>
 		 </a>
 	</td>

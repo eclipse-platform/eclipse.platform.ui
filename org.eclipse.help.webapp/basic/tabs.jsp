@@ -71,7 +71,7 @@ function resynch()
 		<td nowrap>
 		<b>
 		<a  href='<%=viewHref%>' > 
-	         <img alt="" 
+	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
 	              src="<%=views[i].getOnImage()%>" border=0>
 	         

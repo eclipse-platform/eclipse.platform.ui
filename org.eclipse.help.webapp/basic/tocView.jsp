@@ -42,7 +42,7 @@
 %>
 	<tr>
 		<td align='left' nowrap>
-			<b><img src="<%=icon%>"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
+			<b><img src="<%=icon%>" alt=""><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
 		</td>
 	</tr>
 <%

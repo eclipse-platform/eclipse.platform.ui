@@ -127,7 +127,7 @@ if(data.getBookmarks().length == 0) {
 		   oncontextmenu="contextMenuHandler(event);return false;"
 		   onkeydown="bookmarkKeyDownHandler(event);"
 		   title="<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>">
-		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"><%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%></a>
+		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif" alt=""><%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%></a>
 	</td>
 </tr>
 

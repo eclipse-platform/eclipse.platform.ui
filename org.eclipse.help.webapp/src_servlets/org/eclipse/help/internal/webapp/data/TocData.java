@@ -339,11 +339,11 @@ public class TocData extends RequestData {
 			out.write("<li>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='collapsed' >");
+			out.write("/plus.gif' class='collapsed' alt=\"\">");
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/container_obj.gif'>");
+			out.write("/container_obj.gif' alt=\"\">");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 
@@ -389,11 +389,11 @@ public class TocData extends RequestData {
 			out.write("<li>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/plus.gif' class='h'>");
+			out.write("/plus.gif' class='h' alt=\"\">");
 			out.write("<a href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/topic.gif'>");
+			out.write("/topic.gif' alt=\"\">");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 		}
@@ -430,7 +430,7 @@ public class TocData extends RequestData {
 			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/container_obj.gif' border=0>&nbsp;");
+			out.write("/container_obj.gif' alt=\"\" border=0>&nbsp;");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 			out.write("</nobr>");
@@ -452,7 +452,7 @@ public class TocData extends RequestData {
 			out.write("href='" + UrlUtil.getHelpURL(topic.getHref()) + "'>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
-			out.write("/topic.gif' border=0>&nbsp;");
+			out.write("/topic.gif' alt=\"\" border=0>&nbsp;");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 			out.write("</nobr>");

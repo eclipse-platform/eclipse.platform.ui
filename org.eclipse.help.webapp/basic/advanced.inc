@@ -12,8 +12,13 @@
 
 	<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
+			<td>
+				<label for="searchWord"><%=ServletResources.getString("SearchExpression", request)%></label>
+			</td>
+		</tr>
+		<tr>
 			<td nowrap>
-				<input type="text" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>>
+				<input type="text" name="searchWord" id="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>>
           	  	<input type="hidden" name="maxHits" value="500" >
           	  	<input type="hidden" name="scopedSearch" value="true" >
 				<input type="submit" value='<%=ServletResources.getString("GO", request)%>' alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
@@ -49,7 +54,7 @@ for (int toc=0; toc<tocData.getTocCount(); toc++)
 %>
   		<tr>
   			<td nowrap>
-				<input type="checkbox" name='scope' value='<%=tocData.getTocHref(toc)%>' <%=checked%> alt="<%=label%>"><%=label%>
+				<input type="checkbox" name='scope' id="checkbox<%=toc%>" value='<%=tocData.getTocHref(toc)%>' <%=checked%> alt="<%=label%>"><label for="checkbox<%=toc%>"><%=label%></label>
 			</td>
 		</tr>
 <%
