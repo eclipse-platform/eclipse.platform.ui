@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -186,26 +187,28 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @return the scheduling rule to be used when saving this launch configuration
 	 */
 	private ISchedulingRule getSchedulingRule() {
-		List changedFiles= new ArrayList(2);
+		List rules= new ArrayList(2);
 		if (!isLocal()) {
 			//working copy will be saved to a workspace location
-			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
-			if (files.length > 0) {
-				changedFiles.add(files[0].getParent());
-			}
+			addSchedulingRule(rules, getLocation());
 		}
 		ILaunchConfiguration original = getOriginal();
 		if (original != null && !original.isLocal()) {
 			//original will be deleted from a workspace location
-			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(original.getLocation());
-			if (files.length > 0) {
-				changedFiles.add(files[0].getParent());
-			}
+			addSchedulingRule(rules, original.getLocation());
 		}
-		if (changedFiles.isEmpty()) {
+		if (rules.isEmpty()) {
 			return null;
 		}
-		return new MultiRule((ISchedulingRule[]) changedFiles.toArray(new ISchedulingRule[changedFiles.size()]));
+		return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+	}
+	
+	private void addSchedulingRule(List rules, IPath location) {
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		if (files.length > 0) {
+			IResourceRuleFactory fac = ResourcesPlugin.getWorkspace().getRuleFactory();
+			rules.add(fac.modifyRule(files[0].getParent()));
+		}
 	}
 
 	private void doSave0() throws CoreException {
