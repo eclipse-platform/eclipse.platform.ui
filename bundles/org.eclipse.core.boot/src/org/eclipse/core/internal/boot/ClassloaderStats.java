@@ -71,7 +71,7 @@ public class ClassloaderStats {
 				input.close();
 			}
 		} catch (IOException e) {
-			System.out.println("  Failed to load."); //$NON-NLS-1$
+			System.out.println("  No trace filters loaded."); //$NON-NLS-1$
 		}
 	}
 
