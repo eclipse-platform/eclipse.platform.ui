@@ -110,7 +110,7 @@ public class RemoteFolderTreeBuilder {
 	}
 		
 	
-	private RemoteFolderTreeBuilder(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag) {
+	/* package */ RemoteFolderTreeBuilder(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag) {
 		this.repository = repository;
 		this.root = root;
 		this.tag = tag;
@@ -174,7 +174,7 @@ public class RemoteFolderTreeBuilder {
  		return builder.buildTree(resources, monitor);
 	}
 	
-	private RemoteFolderTree buildTree(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
+	/* package */ RemoteFolderTree buildTree(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		
 		// Make sure that the cvs commands are not quiet during this operations
 		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
@@ -183,76 +183,17 @@ public class RemoteFolderTreeBuilder {
 			
 			monitor.beginTask(null, 100);
 
-			// Get the arguments from the files
-			ArrayList arguments = new ArrayList();
-			for (int i = 0; i < resources.length; i++) {
-				ICVSResource resource = resources[i];
-				arguments.add(resource.getRelativePath(root));
-			}
-			
 			// 1st Connection: Use local state to determine delta with server
-			Policy.checkCanceled(monitor);
-			Session session = new Session(repository, root, false);
-			session.open(Policy.subMonitorFor(monitor, 10));
-			try {
-				Policy.checkCanceled(monitor);
-				fetchDelta(session, (String[]) arguments.toArray(new String[arguments.size()]), Policy.subMonitorFor(monitor, 50));
-				if (projectDoesNotExist) {
-					// We cannot handle the case where a project (i.e. the top-most CVS folder)
-					// has been deleted directly on the sever (i.e. deleted using rm -rf)
-					if (root.isCVSFolder() && ! root.isManaged()) {
-						throw new CVSException(Policy.bind("RemoteFolderTreeBuild.folderDeletedFromServer", root.getFolderSyncInfo().getRepository())); //$NON-NLS-1$
-					} else {
-						return null;
-					}
-				}
-			} finally {
-				session.close();
+			if (!fetchDelta(resources, Policy.subMonitorFor(monitor, 50))) {
+				return null;
 			}
 			
 			// 2nd Connection: Build remote tree from above delta using 2nd connection to fetch unknown directories
 			// NOTE: Multiple commands may be issued over this connection.
-			remoteRoot =
-				new RemoteFolderTree(null, root.getName(), repository,
-					root.getFolderSyncInfo().getRepository(),
-					tagForRemoteFolder(root, tag));
-			if (newFolderExist) {
-				// New folders will require a connection for fetching their members
-				session = new Session(repository, remoteRoot, false);
-				session.open(Policy.subMonitorFor(monitor, 10));
-			} else {
-				session = null;
-			}
-			try {
-				// Set up an infinite progress monitor for the recursive build
-				IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 30);
-				subProgress.beginTask(null, 512);
-				// Build the remote tree
-				buildRemoteTree(session, root, remoteRoot, "", subProgress); //$NON-NLS-1$
-			} finally {
-				if (session != null)
-					session.close();
-			}
+			fetchNewDirectories(Policy.subMonitorFor(monitor, 20));
 
-			// 3rd+ Connection: Used to fetch file status in groups of 1024
-			if (!changedFiles.isEmpty()) {
-				String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
-				int iterations = (allChangedFiles.length / MAX_REVISION_FETCHES_PER_CONNECTION) 
-					+ (allChangedFiles.length % MAX_REVISION_FETCHES_PER_CONNECTION == 0 ? 0 : 1);
-				for (int i = 0; i < iterations ; i++) {
-					int length = Math.min(MAX_REVISION_FETCHES_PER_CONNECTION, 
-						allChangedFiles.length - (MAX_REVISION_FETCHES_PER_CONNECTION * i));
-					String buffer[] = new String[length];
-					System.arraycopy(allChangedFiles, i * MAX_REVISION_FETCHES_PER_CONNECTION, buffer, 0, length);
-					session = new Session(repository, remoteRoot, false);
-					session.open(Policy.subMonitorFor(monitor, 1));
-					try {
-						fetchFileRevisions(session, buffer, Policy.subMonitorFor(monitor, 2));
-					} finally {
-						session.close();
-					}
-				}
-			}
+			//	3rd+ Connection: Used to fetch file status in groups of 1024
+			fetchFileRevisions(Policy.subMonitorFor(monitor, 30));
 			
 			return remoteRoot;
 			
@@ -261,7 +202,93 @@ public class RemoteFolderTreeBuilder {
 			monitor.done();
 		}
 	}
-	private RemoteFile buildTree(ICVSFile file, IProgressMonitor monitor) throws CVSException {
+
+	private boolean fetchDelta(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
+		
+		// Get the arguments from the files
+		ArrayList arguments = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource resource = resources[i];
+			arguments.add(resource.getRelativePath(root));
+		}
+		
+		// Use local state to determine delta with server
+		monitor.beginTask(null, 100);
+		Policy.checkCanceled(monitor);
+		Session session = new Session(repository, root, false);
+		session.open(Policy.subMonitorFor(monitor, 10));
+		try {
+			Policy.checkCanceled(monitor);
+			fetchDelta(session, (String[]) arguments.toArray(new String[arguments.size()]), Policy.subMonitorFor(monitor, 90));
+			if (projectDoesNotExist) {
+				// We cannot handle the case where a project (i.e. the top-most CVS folder)
+				// has been deleted directly on the sever (i.e. deleted using rm -rf)
+				if (root.isCVSFolder() && ! root.isManaged()) {
+					throw new CVSException(Policy.bind("RemoteFolderTreeBuild.folderDeletedFromServer", root.getFolderSyncInfo().getRepository())); //$NON-NLS-1$
+				} else {
+					return false;
+				}
+			}
+		} finally {
+			session.close();
+			monitor.done();
+		}
+		return true;
+	}
+
+	private void fetchNewDirectories(IProgressMonitor monitor) throws CVSException {
+		// Build remote tree from the fetched delta using a new connection to fetch unknown directories
+		// NOTE: Multiple commands may be issued over this connection.
+		monitor.beginTask(null, 100);
+		Session session;
+		remoteRoot =
+			new RemoteFolderTree(null, root.getName(), repository,
+				root.getFolderSyncInfo().getRepository(),
+				tagForRemoteFolder(root, tag));
+		if (newFolderExist) {
+			// New folders will require a connection for fetching their members
+			session = new Session(repository, remoteRoot, false);
+			session.open(Policy.subMonitorFor(monitor, 10));
+		} else {
+			session = null;
+		}
+		try {
+			// Set up an infinite progress monitor for the recursive build
+			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 90);
+			subProgress.beginTask(null, 512);
+			// Build the remote tree
+			buildRemoteTree(session, root, remoteRoot, "", subProgress); //$NON-NLS-1$
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+			monitor.done();
+		}
+	}
+	
+	private void fetchFileRevisions(IProgressMonitor monitor) throws CVSException {
+		// 3rd+ Connection: Used to fetch file status in groups of 1024
+		if (!changedFiles.isEmpty()) {
+			String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
+			int iterations = (allChangedFiles.length / MAX_REVISION_FETCHES_PER_CONNECTION) 
+				+ (allChangedFiles.length % MAX_REVISION_FETCHES_PER_CONNECTION == 0 ? 0 : 1);
+			for (int i = 0; i < iterations ; i++) {
+				int length = Math.min(MAX_REVISION_FETCHES_PER_CONNECTION, 
+					allChangedFiles.length - (MAX_REVISION_FETCHES_PER_CONNECTION * i));
+				String buffer[] = new String[length];
+				System.arraycopy(allChangedFiles, i * MAX_REVISION_FETCHES_PER_CONNECTION, buffer, 0, length);
+				Session session = new Session(repository, remoteRoot, false);
+				session.open(Policy.subMonitorFor(monitor, 1));
+				try {
+					fetchFileRevisions(session, buffer, Policy.subMonitorFor(monitor, 2));
+				} finally {
+					session.close();
+				}
+			}
+		}
+	}
+	
+	/* package */ RemoteFile buildTree(ICVSFile file, IProgressMonitor monitor) throws CVSException {
 		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 		try {
 			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
@@ -306,7 +333,7 @@ public class RemoteFolderTreeBuilder {
 			}
 			// Add the resource to its parent
 			remoteRoot.setChildren(new ICVSRemoteResource[] {remoteFile});
-			// If there was a delta, ftech the new revision
+			// If there was a delta, fetch the new revision
 			if (!changedFiles.isEmpty()) {
 				// Add the remote folder to the remote folder lookup table (used to update file revisions)
 				recordRemoteFolder(remoteRoot);
@@ -741,5 +768,14 @@ public class RemoteFolderTreeBuilder {
 	
 	private RemoteFolderTree getRecoredRemoteFolder(String path) {
 		return (RemoteFolderTree)remoteFolderTable.get(Util.asPath(path));
+	}
+
+	/**
+	 * This method returns an array of the files that differ between the local and remote trees.
+	 * The files are represented as a String that contains the path to the file in the remote or local trees.
+	 * @return an array of differing files
+	 */
+	public String[] getFileDiffs() {
+		return (String[]) changedFiles.toArray(new String[changedFiles.size()]);;
 	}
 }

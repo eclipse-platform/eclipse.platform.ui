@@ -12,7 +12,9 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -54,4 +56,17 @@ public class BaseSynchronizer extends ResourceSynchronizer {
 		return new QualifiedName(CVSProviderPlugin.ID, "workspace"); // $NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#refresh(org.eclipse.core.resources.IResource[], int, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IResource[] refresh(
+		IResource[] resources,
+		int depth,
+		boolean cacheFileContentsHint,
+		IProgressMonitor monitor)
+		throws TeamException {
+			
+		// TODO Ensure that file contents are cached for modified local files
+		return super.refresh(resources, depth, cacheFileContentsHint, monitor);
+	}
 }

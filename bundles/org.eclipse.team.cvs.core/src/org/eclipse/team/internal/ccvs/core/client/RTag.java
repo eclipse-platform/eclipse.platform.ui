@@ -94,12 +94,11 @@ public class RTag extends RemoteCommand {
 			newArguments, null, monitor);
 	}
 	
-	public IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, 
+	public IStatus execute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions, 
 		CVSTag sourceTag, CVSTag tag, ICVSRemoteResource[] arguments, IProgressMonitor monitor) 
 		throws CVSException {
 		
 		ICVSResource[] resources = (ICVSResource[])Arrays.asList(arguments).toArray(new ICVSResource[arguments.length]);
-		Session session = getOpenSession(resources);
 		String[] stringArguments = convertArgumentsForOpenSession(arguments);
 
 		return execute(session, globalOptions, localOptions, sourceTag, tag, stringArguments, monitor);

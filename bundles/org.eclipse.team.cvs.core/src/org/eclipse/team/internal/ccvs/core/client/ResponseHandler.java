@@ -175,5 +175,13 @@ public abstract class ResponseHandler {
 		}
 		folder.mkdir();
 	}
+
+	/**
+	 * Return as instance that can be used by an open session. Subclasses that contain
+	 * session related state must override this message to return a copy of themselves.
+	 */
+	/* package */ ResponseHandler getInstance() {
+		return this;
+	}
 }
 

@@ -45,7 +45,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -93,9 +92,6 @@ public class Session {
 
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
-
-	private static Map currentOpenSessions = null;
-	private static final int MAX_SESSIONS_OPEN = 10;
 	
 	private CVSRepositoryLocation location;
 	private ICVSFolder localRoot;
@@ -115,6 +111,7 @@ public class Session {
 
 	// The resource bundle key that provides the file sending message
 	private String sendFileTitleKey;
+	private Map responseHandlers;
 
 	/**
 	 * Creates a new CVS session, initially in the CLOSED state.
@@ -138,129 +135,6 @@ public class Session {
 		this.location = (CVSRepositoryLocation) location;
 		this.localRoot = localRoot;
 		this.outputToConsole = outputToConsole;
-	}
-	
-	/**
-	 * Execute the given runnable in a context that has access to an open session
-	 * 
-	 * A session will be opened for the provided root. If the root is null, no session is opened.
-	 * However, sessions will be open for nested calls to run and these sessions will not be closed
-	 * until the outer most run finishes.
-	 */
-	public static void run(final ICVSRepositoryLocation location, final ICVSFolder root, final boolean outputToConsole,
-		final ICVSRunnable runnable, final IProgressMonitor monitor) throws CVSException {
-			
-		// Serialize runnables to allow only one thread to run at a time. 
-		// TODO: The following removed due to bug 40129
-//		CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(new ICVSRunnable() {
-//			public void run(IProgressMonitor monitor) throws CVSException {
-				internalRun(location, root, outputToConsole, runnable, monitor);
-//			}
-//		}, monitor);
-	}
-		
-	private static void internalRun(ICVSRepositoryLocation location, ICVSFolder root, boolean outputToConsole,
-			ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
-
-		// Determine if we are nested or not
-		boolean isOuterRun = false;
-		if (currentOpenSessions == null) {
-			// Initialize the variable to be a map
-			currentOpenSessions = new HashMap();
-			isOuterRun = true;
-		}
-		
-		try {
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(null, 100);
-			if (root == null) {
-				// We don't have a root, so just run the runnable
-				// (assuming that nested runs will create sessions)
-				runnable.run(Policy.subMonitorFor(monitor, 90));
-			} else {
-				// Open a session on the root as far up the chain as possible
-				ICVSFolder actualRoot = root;
-				while (actualRoot.isManaged()) {
-					actualRoot = actualRoot.getParent();
-				}
-				// Look for the root in the current open sessions
-				Session session = (Session)currentOpenSessions.get(actualRoot);
-				if (session == null) {
-					// Make sure we don't exceed our maximum
-					if (currentOpenSessions.size() == MAX_SESSIONS_OPEN) {
-						// Pick one at random and close it
-						Object key = currentOpenSessions.keySet().iterator().next();
-						try {
-							((Session)currentOpenSessions.get(key)).close();
-						} catch (CVSException e) {
-							CVSProviderPlugin.log(e);
-						} finally {
-							currentOpenSessions.remove(key);
-						}
-					}
-					// If it's not there, open a session for the given root and remember it
-					session = new Session(location, actualRoot, outputToConsole);
-					session.open(Policy.subMonitorFor(monitor, 10));
-					currentOpenSessions.put(actualRoot, session);
-				}
-				
-				try {
-					root.run(runnable, Policy.subMonitorFor(monitor, 100));
-				} catch (CVSException e) {
-					// The run didn't succeed so close the session and forget it ever existed
-					try {
-						// The session may have been close by a nested run
-						if (currentOpenSessions.get(actualRoot) != null) session.close();
-					} finally {
-						currentOpenSessions.remove(actualRoot);
-						throw e;
-					}
-				}
-			}
-		} finally {
-			monitor.done();
-			if (isOuterRun) {
-				// Close all open sessions
-				try {
-					Iterator iter = currentOpenSessions.keySet().iterator();
-					while (iter.hasNext()) {
-						Session session = (Session)currentOpenSessions.get(iter.next());
-						try {
-							session.close();
-						} catch (CVSException e) {
-							CVSProviderPlugin.log(e);
-						}
-					}
-				} finally {
-					currentOpenSessions = null;
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Answer the currently open session
-	 */
-	protected static Session getOpenSession(ICVSResource resource) throws CVSException {
-		ICVSFolder root;
-		if (resource.isFolder()) {
-			root = (ICVSFolder)resource;
-		} else {
-			root = resource.getParent();
-		}
-		// go to the top of the management chain
-		while (root.isManaged()) {
-			root = root.getParent();
-		}
-		// Look for the root in the current open sessions
-		Session session;
-		do {
-			session = (Session)currentOpenSessions.get(root);
-			if (session != null) return session;
-			// we should have found it the first time but continue up the chain
-			root = root.getParent();
-		} while (root != null);
-		return null;
 	}
 	
 	/** 
@@ -319,26 +193,15 @@ public class Session {
 		try {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
 			
-			ResponseHandler mtHandler = Request.getResponseHandler("MT"); //$NON-NLS-1$
-			// accept MT messages for all non-standard server
+			// If we're connected to a CVSNT server or we don't know the platform, 
+			// accept MT. Otherwise don't.
 			boolean useMT = ! (location.getServerPlatform() == CVSRepositoryLocation.CVS_SERVER);
-			try {
-				// If we're connected to a CVSNT server or we don't know the platform, 
-				// accept MT. Otherwise don't.
-				// We only want to disable MT messages for this particular session
-				// since there may be multiple sessions open.
-				if ( ! useMT) {
-					Request.removeResponseHandler("MT"); //$NON-NLS-1$
-				}
-				
-				// tell the server the names of the responses we can handle
-				connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
-			} finally {
-				// Re-register the MT handler since there may be more than one session open
-				if ( ! useMT) {
-					Request.registerResponseHandler(mtHandler);
-				}
+			if ( ! useMT) {
+				removeResponseHandler("MT"); //$NON-NLS-1$
 			}
+			
+			// tell the server the names of the responses we can handle
+			connection.writeLine("Valid-responses " + makeResponseList()); //$NON-NLS-1$
 	
 			// ask for the set of valid requests
 			IStatus status = Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 40));
@@ -1238,4 +1101,41 @@ public class Session {
 		return oldPath.toString();
 	}
 
+	/*
+	 * Get the response handler map to be used for this session. The map is created by making a copy of the global
+	 * reponse handler map.
+	 */
+	protected Map getReponseHandlers() {
+		if (responseHandlers == null) {
+			responseHandlers = Request.getReponseHandlerMap();
+		}
+		return responseHandlers;
+	}
+	
+	/*
+	 * Makes a list of all valid responses; for initializing a session.
+	 * @return a space-delimited list of all valid response strings
+	 */
+	private String makeResponseList() {
+		StringBuffer result = new StringBuffer("ok error M E");  //$NON-NLS-1$
+		Iterator elements = getReponseHandlers().keySet().iterator();
+		while (elements.hasNext()) {
+			result.append(' ');
+			result.append((String) elements.next());
+		}
+		
+		return result.toString();
+	}
+	protected void registerResponseHandler(ResponseHandler handler) {
+		getReponseHandlers().put(handler.getResponseID(), handler);
+	}
+	
+	protected void removeResponseHandler(String responseID) {
+		getReponseHandlers().remove(responseID);
+	}
+	
+	protected ResponseHandler getResponseHandler(String responseID) {
+		return (ResponseHandler)getReponseHandlers().get(responseID);
+	}
+	
 }

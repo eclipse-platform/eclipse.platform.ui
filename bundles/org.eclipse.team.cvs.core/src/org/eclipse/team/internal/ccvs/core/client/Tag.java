@@ -79,11 +79,10 @@ public class Tag extends Command {
 		return execute(session, globalOptions, localOptions, newArguments, listener, monitor);	
 	}
 
-	public IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, 
+	public IStatus execute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions, 
 		CVSTag tag, ICVSResource[] arguments, ICommandOutputListener listener, IProgressMonitor monitor) 
 		throws CVSException {
 		
-		Session session = getOpenSession(arguments);
 		String[] stringArguments = convertArgumentsForOpenSession(arguments, session);
 
 		return execute(session, globalOptions, localOptions, tag, stringArguments, listener, monitor);

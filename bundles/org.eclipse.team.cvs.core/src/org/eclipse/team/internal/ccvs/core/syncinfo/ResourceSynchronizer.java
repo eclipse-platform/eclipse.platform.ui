@@ -59,13 +59,17 @@ public abstract class ResourceSynchronizer {
 
 	/**
 	 * Refreshes the contents of the resource synchronizer and returns the list
-	 * of resources whose remote sync state changed.
+	 * of resources whose remote sync state changed. The <code>cacheFileContentsHint</code>
+	 * indicates that the user of this synchronizer will be using the file contents. Subclasses can decide
+	 * whether to cache file contents during the refresh or to allow them to be fetched when request.
 	 * @param resources
 	 * @param depth
+	 * @param cacheFileContentsHint a hint which indicates whether file contents will be used
 	 * @param monitor
 	 * @return
+	 * @throws TeamException
 	 */
-	public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
 		return new IResource[0];
 	}
 

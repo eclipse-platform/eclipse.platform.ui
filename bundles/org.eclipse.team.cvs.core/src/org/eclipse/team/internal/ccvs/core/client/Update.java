@@ -100,23 +100,6 @@ public class Update extends Command {
 	}
 	
 	/**
-	 * Convenience method that allows the creation of .# files to be disabled.
-	 * @param createBackups if true, creates .# files
-	 * @see Command.execute
-	 */
-	public final IStatus execute(GlobalOption[] globalOptions,
-		LocalOption[] localOptions, ICVSResource[] arguments, ICommandOutputListener listener,
-		IProgressMonitor pm, boolean createBackups) throws CVSException {
-		
-		Session s = getOpenSession(arguments);
-		s.setCreateBackups(createBackups);
-		try {
-			return super.execute(globalOptions, localOptions, arguments, listener, pm);
-		} finally {
-			s.setCreateBackups(true);
-		}
-	}
-	/**
 	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
 	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,

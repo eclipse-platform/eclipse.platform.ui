@@ -174,19 +174,16 @@ public class CheckoutAsWizard extends Wizard {
 	private boolean performConfigureAndCheckout() throws CVSException, InterruptedException {
 		IProject newProject = getNewProject();
 		if (newProject == null) return false;
-		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, null, true)
-			.runInContext(getContainer());
+		// Run the checkout in the background
+		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, null, true).run();
 		return true;
 	}
 	
-	/**
-	 * 
-	 */
 	private boolean performSingleCheckoutAs() throws CVSException, InterruptedException {
 		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(mainPage.getProjectName());
 		String targetLocation = locationSelectionPage.getTargetLocation();
-		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, targetLocation, false)
-			.runInContext(getContainer());
+		// Run the checkout in the background
+		new CheckoutSingleProjectOperation(getShell(), remoteFolders[0], newProject, targetLocation, false).run();
 		return true;
 	}
 
@@ -196,14 +193,11 @@ public class CheckoutAsWizard extends Wizard {
 	 */
 	private boolean performMultipleCheckoutAs() throws CVSException, InterruptedException {
 		String targetLocation = locationSelectionPage.getTargetLocation();
-		new CheckoutMultipleProjectsOperation(getShell(), remoteFolders, targetLocation)
-			.runInContext(getContainer());
+		// Run the checkout in the background
+		new CheckoutMultipleProjectsOperation(getShell(), remoteFolders, targetLocation).run();
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean performCheckoutInto() throws CVSException, InterruptedException {
 		CheckoutIntoOperation operation;
 		boolean recursive = projectSelectionPage.isRecurse();
@@ -212,7 +206,8 @@ public class CheckoutAsWizard extends Wizard {
 		} else {
 			operation = new CheckoutIntoOperation(getShell(), remoteFolders, projectSelectionPage.getParentFolder(), recursive);
 		}
-		operation.runInContext(getContainer());
+		// Run the checkout in the background
+		operation.run();
 		return true;
 	}
 

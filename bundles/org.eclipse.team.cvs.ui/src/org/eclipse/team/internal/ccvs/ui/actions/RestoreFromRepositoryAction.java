@@ -30,7 +30,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Log;
@@ -176,28 +175,32 @@ public class RestoreFromRepositoryAction extends CVSAction {
 	 * Fetch the RCS paths (minus the Attic segment) of all files in the Attic.
 	 * This path includes the repository root path.
 	 */
-	private ICVSFile[] fetchFilesInAttic(ICVSRepositoryLocation location, final ICVSFolder parent, IProgressMonitor monitor) throws CVSException {
-		final AtticLogListener listener = new AtticLogListener();
-		Session.run(location, parent, false, new ICVSRunnable() {
-			public void run(IProgressMonitor monitor) throws CVSException {
-				monitor = Policy.monitorFor(monitor);
-				monitor.beginTask(null, 100);
-				QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
-				try {
-					CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
-					IStatus status = Command.LOG.execute(Command.NO_GLOBAL_OPTIONS, 
-						new LocalOption[] { Log.RCS_FILE_NAMES_ONLY },
-						new ICVSResource[] { parent }, listener,
-						Policy.subMonitorFor(monitor, 100));
-					if (status.getCode() == CVSStatus.SERVER_ERROR) {
-						throw new CVSServerException(status);
-					}
-				} finally {
-					CVSProviderPlugin.getPlugin().setQuietness(quietness);
-					monitor.done();
+	private ICVSFile[] fetchFilesInAttic(ICVSRepositoryLocation location, ICVSFolder parent, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
+		AtticLogListener listener = new AtticLogListener();
+		Session session = new Session(location, parent, true /* output to console */);
+		session.open(Policy.subMonitorFor(monitor, 10));
+		try {
+			QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+			try {
+				CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+				IStatus status = Command.LOG.execute(
+					session,
+					Command.NO_GLOBAL_OPTIONS, 
+					new LocalOption[] { Log.RCS_FILE_NAMES_ONLY },
+					new ICVSResource[] { parent }, listener,
+					Policy.subMonitorFor(monitor, 90));
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+					throw new CVSServerException(status);
 				}
+			} finally {
+				CVSProviderPlugin.getPlugin().setQuietness(quietness);
+				monitor.done();
 			}
-		}, monitor);
+		} finally {
+			session.close();
+		}
 		return listener.getAtticFilePaths();
 	}
 }

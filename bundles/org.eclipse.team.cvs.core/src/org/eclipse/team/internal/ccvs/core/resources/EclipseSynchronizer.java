@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -411,7 +412,14 @@ public class EclipseSynchronizer {
 	 */
 	public void beginOperation(IResource resource, IProgressMonitor monitor) throws CVSException {
 		// ensure locks are acquired in the same order: workspace then cvs
-		Platform.getJobManager().beginRule(resource);					
+		// The scheduling rule is either the project or the resource's parent
+		ISchedulingRule rule;
+		if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT) {
+			rule = resource;
+		} else {
+			rule = resource.getParent();
+		}
+		Platform.getJobManager().beginRule(rule);					
 		lock.acquire();
 
 		if (lock.getDepth() == 1) {

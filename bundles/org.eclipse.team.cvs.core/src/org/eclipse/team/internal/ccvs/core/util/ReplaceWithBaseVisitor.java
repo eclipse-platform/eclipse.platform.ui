@@ -20,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -34,6 +33,7 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 
 	private IProgressMonitor monitor;
 	private int depth;
+	private Session session;
 	
 	/**
 	 * @see ICVSResourceVisitor#visitFile(ICVSFile)
@@ -61,13 +61,10 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 			if (isModified) {
 				ICVSFolder parent = file.getParent();
 				FolderSyncInfo folderInfo = parent.getFolderSyncInfo();
-				Session.run(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), parent, true, new ICVSRunnable() {
-					public void run(IProgressMonitor monitor) throws CVSException {
-						Command.UPDATE.execute(Command.NO_GLOBAL_OPTIONS, 
-							new LocalOption[] {Update.makeTagOption(CVSTag.BASE), Update.IGNORE_LOCAL_CHANGES}, 
-							new ICVSResource[] { file }, null, monitor);
-					}
-				}, Policy.subMonitorFor(monitor, 1));
+				// Use the session opened in tghe replaceWithBase method to make the connection.
+				Command.UPDATE.execute(this.session, Command.NO_GLOBAL_OPTIONS, 
+					new LocalOption[] {Update.makeTagOption(CVSTag.BASE), Update.IGNORE_LOCAL_CHANGES}, 
+					new ICVSResource[] { file }, null, Policy.subMonitorFor(monitor, 1));
 	
 				// Set the tag to be the original tag
 				syncBytes = file.getSyncBytes();
@@ -108,26 +105,26 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 	 * results in the workspace are "sticky". This operation does not leave the local workspace "sticky".
 	 * 
 	 * NOTE: This operation issues multiple commands over a single connection. It may fail
-	 * with some servers that are configured to run scripts during an update.
+	 * with some servers that are configured to run scripts during an update (see bug 40145).
 	 */
 	public void replaceWithBase(IProject project, final IResource[] resources, int depth, IProgressMonitor pm) throws CVSException {
 		this.depth = depth;
 		final ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
 		FolderSyncInfo folderInfo = root.getFolderSyncInfo();
-		Session.run(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), root, true, new ICVSRunnable() {
-			public void run(IProgressMonitor monitor) throws CVSException {
-				root.run(new ICVSRunnable() {
-					public void run(IProgressMonitor pm) throws CVSException {
-						ReplaceWithBaseVisitor.this.monitor = Policy.infiniteSubMonitorFor(pm, 100);
-						ReplaceWithBaseVisitor.this.monitor.beginTask(null, 512);
-						for (int i = 0; i < resources.length; i++) {
-							ReplaceWithBaseVisitor.this.monitor.subTask(Policy.bind("ReplaceWithBaseVisitor.replacing", resources[i].getFullPath().toString())); //$NON-NLS-1$
-							CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(ReplaceWithBaseVisitor.this);
-						}
-						ReplaceWithBaseVisitor.this.monitor.done();
-					}
-				}, monitor);
+		IProgressMonitor monitor = Policy.monitorFor(pm);
+		monitor.beginTask(null, 100);
+		this.session = new Session(CVSProviderPlugin.getPlugin().getRepository(folderInfo.getRoot()), root, true /* creat e backups */);
+		this.session.open(Policy.subMonitorFor(monitor, 10));
+		try {
+			this.monitor = Policy.infiniteSubMonitorFor(monitor, 90);
+			this.monitor.beginTask(null, 512);
+			for (int i = 0; i < resources.length; i++) {
+				this.monitor.subTask(Policy.bind("ReplaceWithBaseVisitor.replacing", resources[i].getFullPath().toString())); //$NON-NLS-1$
+				CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(this);
 			}
-		}, pm);
+		} finally {
+			this.session.close();
+			monitor.done();
+		}
 	}
 }

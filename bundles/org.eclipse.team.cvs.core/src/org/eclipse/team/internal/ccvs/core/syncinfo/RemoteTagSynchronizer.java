@@ -221,7 +221,7 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	 * @return
 	 * @throws TeamException
 	 */
-	public IResource[] refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
 		int work = 100 * resources.length;
 		monitor.beginTask(null, work);
 		resetChanges();
@@ -230,7 +230,7 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 				IResource resource = resources[i];	
 				
 				// build the remote tree only if an initial tree hasn't been provided
-				ICVSRemoteResource	tree = buildRemoteTree(resource, depth, Policy.subMonitorFor(monitor, 70));
+				ICVSRemoteResource	tree = buildRemoteTree(resource, depth, cacheFileContentsHint, Policy.subMonitorFor(monitor, 70));
 				
 				// update the known remote handles 
 				IProgressMonitor sub = Policy.infiniteSubMonitorFor(monitor, 30);
@@ -253,10 +253,10 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 	/**
 	 * Build a remote tree for the given parameters.
 	 */
-	protected ICVSRemoteResource buildRemoteTree(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+	protected ICVSRemoteResource buildRemoteTree(IResource resource, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
 		// TODO: we are currently ignoring the depth parameter because the build remote tree is
 		// by default deep!
-		return CVSWorkspaceRoot.getRemoteTree(resource, tag, monitor);
+		return CVSWorkspaceRoot.getRemoteTree(resource, tag, cacheFileContentsHint, monitor);
 	}
 
 }

@@ -48,7 +48,7 @@ public class UpdateMergableOnly extends Update {
 			String adjustedFileName = fileName;
 			if (ResourceSyncInfo.isMergedWithConflicts(entryBytes)) {
 				// for merged-with-conflict, return a temp file
-				adjustedFileName = ".##" + adjustedFileName;
+				adjustedFileName = ".##" + adjustedFileName; //$NON-NLS-1$
 				skippedFiles.add(((IContainer)mParent.getIResource()).getFile(new Path(fileName)));
 			}
 			return super.getTargetFile(mParent, adjustedFileName, entryBytes);
@@ -90,10 +90,10 @@ public class UpdateMergableOnly extends Update {
 		throws CVSException {
 		
 		MergableOnlyUpdatedHandler newHandler = new MergableOnlyUpdatedHandler();
-		ResponseHandler oldHandler = getResponseHandler(newHandler.getResponseID());
+		ResponseHandler oldHandler = session.getResponseHandler(newHandler.getResponseID());
 		skippedFiles.clear();
 		try {
-			registerResponseHandler(newHandler);
+			session.registerResponseHandler(newHandler);
 			return super.doExecute(
 				session,
 				globalOptions,
@@ -102,7 +102,7 @@ public class UpdateMergableOnly extends Update {
 				listener,
 				monitor);
 		} finally {
-			registerResponseHandler(oldHandler);
+			session.registerResponseHandler(oldHandler);
 		}
 	}
 

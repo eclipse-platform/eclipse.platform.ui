@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -20,42 +21,27 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
- * Thsi operation replaces the local resources with their remote contents
+ * Operation which performs a CVS update
  */
-public class ReplaceOperation extends UpdateOperation {
+public class UpdateOperation extends SingleCommandOperation {
 
-	boolean recurse = true; 
-
-	public ReplaceOperation(Shell shell, IResource[] resources, CVSTag tag, boolean recurse) {
-		super(shell, resources, getReplaceOptions(recurse), tag);
-		this.recurse = recurse;
-	}
-
-	/*
-	 * Create the local options required to do a replace
+	CVSTag tag;
+	
+	/**
+	 * @param shell
+	 * @param resources
 	 */
-	private static LocalOption[] getReplaceOptions(boolean recurse) {
-		List options = new ArrayList();
-		options.add(Update.IGNORE_LOCAL_CHANGES);
-		if(!recurse) {
-			options.add(Command.DO_NOT_RECURSE);
-		}
-		return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
-	 */
-	protected String getTaskName() {
-		return Policy.bind("ReplaceOperation.taskName"); //$NON-NLS-1$
+	public UpdateOperation(Shell shell, IResource[] resources, LocalOption[] options, CVSTag tag) {
+		super(shell, resources, options);
+		this.tag = tag;
 	}
 
 	/* (non-Javadoc)
@@ -68,20 +54,33 @@ public class ReplaceOperation extends UpdateOperation {
 		IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
 			
-			monitor.beginTask(null, 100);
-			try {
-				new PrepareForReplaceVisitor().visitResources(
-					provider.getProject(), 
-					resources, 
-					"CVSTeamProvider.scrubbingResource", // TODO: This is a key in CVS core! //$NON-NLS-1$
-					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
-					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
-									
-				// Perform an update, ignoring any local file modifications
-				return super.executeCommand(session, provider, resources, monitor);
-			} finally {
-				monitor.done();
+			// Build the local options
+			List localOptions = new ArrayList();
+		
+			// Use the appropriate tag options
+			if (tag != null) {
+				localOptions.add(Update.makeTagOption(tag));
 			}
+		
+			// Build the arguments list
+			localOptions.addAll(Arrays.asList(getLocalOptions()));
+			LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+			ICVSResource[] arguments = getCVSArguments(resources);
+
+			return Command.UPDATE.execute(
+				session,
+				Command.NO_GLOBAL_OPTIONS, 
+				commandOptions, 
+				arguments,
+				null,
+				monitor);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
+	 */
+	protected String getTaskName() {
+		return Policy.bind("UpdateOperation.taskName"); //$NON-NLS-1$;
+	}
+
 }

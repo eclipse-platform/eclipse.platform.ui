@@ -26,6 +26,8 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -146,4 +148,15 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		}
 		return cvsResources;
 	}
+	
+	protected ICVSRepositoryLocation getRemoteLocation(CVSTeamProvider provider) throws CVSException {
+		CVSWorkspaceRoot workspaceRoot = provider.getCVSWorkspaceRoot();
+		return workspaceRoot.getRemoteLocation();
+	}
+	
+	protected ICVSFolder getLocalRoot(CVSTeamProvider provider) throws CVSException {
+		CVSWorkspaceRoot workspaceRoot = provider.getCVSWorkspaceRoot();
+		return workspaceRoot.getLocalRoot();
+	}
+	
 }

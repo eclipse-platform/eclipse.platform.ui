@@ -36,7 +36,8 @@ public abstract class Request {
 
 	/*** Response handler map ***/
 	private static final Map responseHandlers = new HashMap();
-	static {
+	
+	private static void initializeHandlerCache() {
 		synchronized(responseHandlers) {
 			registerResponseHandler(new CheckedInHandler());
 			registerResponseHandler(new CopyHandler());
@@ -59,22 +60,32 @@ public abstract class Request {
 			registerResponseHandler(new TemplateHandler());
 		}
 	}
-	protected static void registerResponseHandler(ResponseHandler handler) {
+	private static void registerResponseHandler(ResponseHandler handler) {
 		synchronized(responseHandlers) {
 			responseHandlers.put(handler.getResponseID(), handler);
 		}
 	}
-	protected static void removeResponseHandler(String responseID) {
+	
+	/**
+	 * This method is invoked by Session to get a mutable copy of the
+	 * global list of acceptable response handlers.
+	 * 
+	 * @return a map of reponse handlers
+	 */
+	protected static Map getReponseHandlerMap() {
 		synchronized(responseHandlers) {
-			responseHandlers.remove(responseID);
+			if (responseHandlers.isEmpty()) {
+				initializeHandlerCache();
+			}
+			Map copy = new HashMap();
+			for (Iterator iter = responseHandlers.values().iterator(); iter.hasNext();) {
+				ResponseHandler handler = (ResponseHandler) iter.next();
+				copy.put(handler.getResponseID(), handler.getInstance());
+				
+			}
+			return copy;
 		}
 	}
-	protected static ResponseHandler getResponseHandler(String responseID) {
-		synchronized(responseHandlers) {
-			return (ResponseHandler)responseHandlers.get(responseID);
-		}
-	}
-
 	/**
 	 * Prevents client code from instantiating us.
 	 */
@@ -181,7 +192,7 @@ public abstract class Request {
 			// handle message responses
 			} else if (response.equals("MT")) {  //$NON-NLS-1$
 				// Handle the MT response
-				MTHandler handler = (MTHandler) responseHandlers.get(response);
+				MTHandler handler = (MTHandler) session.getResponseHandler(response);
 				if (handler != null) {
 					handler.handle(session, argument, monitor);
 				} else {
@@ -216,7 +227,7 @@ public abstract class Request {
 				}
 			// handle other responses
 			} else {
-				ResponseHandler handler = (ResponseHandler) responseHandlers.get(response);
+				ResponseHandler handler = (ResponseHandler) session.getResponseHandler(response);
 				if (handler != null) {
 					handler.handle(session, argument, monitor);
 				} else {
@@ -241,20 +252,5 @@ public abstract class Request {
 	 */
 	protected String getServerErrorMessage() {
 		return Policy.bind("Command.serverError", Policy.bind("Command." + getRequestId())); //$NON-NLS-1$  //$NON-NLS-2$
-	}
-	
-	/**
-	 * Makes a list of all valid responses; for initializing a session.
-	 * @return a space-delimited list of all valid response strings
-	 */
-	static String makeResponseList() {
-		StringBuffer result = new StringBuffer("ok error M E");  //$NON-NLS-1$
-		Iterator elements = responseHandlers.keySet().iterator();
-		while (elements.hasNext()) {
-			result.append(' ');
-			result.append((String) elements.next());
-		}
-		
-		return result.toString();
 	}
 }

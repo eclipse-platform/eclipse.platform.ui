@@ -42,8 +42,6 @@ import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
@@ -320,34 +318,11 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	 */
 	public Object prepareInput(IProgressMonitor pm) throws InterruptedException, InvocationTargetException {
 		final Object[] result = new Object[] { null };
-		final Exception[] exception = new Exception[] {null};
-		try {
-			Session.run(null, null, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					try {
-						CVSUIPlugin.runWithRefresh(getShell(), resources, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								result[0] = CVSSyncCompareInput.super.prepareInput(monitor);
-							}
-						}, monitor);
-					} catch (InterruptedException e) {
-						exception[0] = e;
-					} catch (InvocationTargetException e) {
-						exception[0] = e;
-					}
-				}
-			}, pm);
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
-		
-		if (exception[0] != null) {
-			if (exception[0] instanceof InvocationTargetException) {
-				throw (InvocationTargetException)exception[0];
-			} else {
-				throw (InterruptedException)exception[0];
+		CVSUIPlugin.runWithRefresh(getShell(), resources, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				result[0] = CVSSyncCompareInput.super.prepareInput(monitor);
 			}
-		}
+		}, pm);
 		
 		if (hasDifferences(result[0])) {
 			return result[0];

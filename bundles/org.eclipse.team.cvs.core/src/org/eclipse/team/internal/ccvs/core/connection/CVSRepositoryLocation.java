@@ -39,12 +39,10 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
@@ -481,25 +479,30 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public void validateConnection(IProgressMonitor monitor) throws CVSException {
 		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100);
 			ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
-			Session.run(this, root, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					IStatus status = Command.VERSION.execute(null, CVSRepositoryLocation.this, monitor);
-					// Log any non-ok status
-					if (! status.isOK()) {
-						CVSProviderPlugin.log(status);
-					}
-					if (getServerPlatform() == CVSNT_SERVER) {
-						// check for the use of a repository prefix
-						if (getRootDirectory().startsWith(Session.SERVER_SEPARATOR)) {
-							// A prefix is in use. Log a warning
-							CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null); //$NON-NLS-1$
-							throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
-								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
-						}
-					}
+			Session session = new Session(this, root, false /* output to console */);
+			session.open(Policy.subMonitorFor(monitor, 50));
+			try {
+				IStatus status = Command.VERSION.execute(session, this, Policy.subMonitorFor(monitor, 50));
+				// Log any non-ok status
+				if (! status.isOK()) {
+					CVSProviderPlugin.log(status);
 				}
-			}, monitor);
+			} finally {
+				session.close();
+				monitor.done();
+			}
+			if (getServerPlatform() == CVSNT_SERVER) {
+				// check for the use of a repository prefix
+				if (getRootDirectory().startsWith(Session.SERVER_SEPARATOR)) {
+					// A prefix is in use. Log a warning
+					CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null); //$NON-NLS-1$
+					throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
+						Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
+				}
+			}
 		} catch (CVSException e) {
 			// If the validation failed, dispose of any cached info
 			dispose();

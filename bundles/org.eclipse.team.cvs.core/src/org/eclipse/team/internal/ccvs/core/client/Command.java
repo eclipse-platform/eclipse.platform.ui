@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +32,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
 /**
  * Abstract base class for command requests.
@@ -630,7 +628,7 @@ public abstract class Command extends Request {
 	 */
 	public static LocalOption makeArgumentOption(LocalOption option, String argument) {
 		if(argument == null) {
-			argument = "";
+			argument = ""; //$NON-NLS-1$
 		}
 		return new LocalOption(option.getOption(), argument);  //$NON-NLS-1$
 	}
@@ -710,42 +708,26 @@ public abstract class Command extends Request {
 	}
 	
 	/**
-	 * Execute a CVS command inside an ICVSRunnable passed to Session.run()
-	 * <p>
-	 * Dispatches the commands, retrieves the results, and determines whether or
-	 * not an error occurred.  A listener may be supplied to capture message text
-	 * that would normally be written to the standard error and standard output
-	 * streams of a command line CVS client.
+	 * Execute a CVS command on an array of ICVSResource. This method simply converts
+	 * the ICVSResource to String paths relative to the local root of the session and
+	 * invokes <code>execute(Session, GlobalOption[], LocalOption[], String[], ICommandOutputListener, IProgressMonitor)</code>.
 	 * </p>
+	 * @param session the open CVS session
 	 * @param globalOptions the array of global options, or NO_GLOBAL_OPTIONS
 	 * @param localOptions the array of local options, or NO_LOCAL_OPTIONS
-	 * @param arguments the array of arguments (usually filenames relative to localRoot), or NO_ARGUMENTS
+	 * @param arguments the array of ICVSResource to be operated on
 	 * @param listener the command output listener, or null to discard all messages
 	 * @param monitor the progress monitor
 	 * @return a status code indicating success or failure of the operation
 	 * @throws CVSException if a fatal error occurs (e.g. connection timeout)
+	 * 
+	 * @see Command#execute(Session, GlobalOption[], LocalOption[], String[], ICommandOutputListener, IProgressMonitor)
 	 */
-	public final IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, ICVSResource[] arguments, 
+	public final IStatus execute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions, ICVSResource[] arguments, 
 		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
 		
-		Session openSession = getOpenSession(arguments);
-		String[] stringArguments = convertArgumentsForOpenSession(arguments, openSession);
-		return execute(openSession, globalOptions, localOptions, stringArguments, listener, pm);
-	}
-	
-	protected Session getOpenSession(ICVSResource[] arguments) throws CVSException {
-		// We assume that all the passed resources have the same root
-		Session openSession;
-		if (arguments == null || arguments.length == 0) {
-			// If there are no arguments to the command, assume that the command is rooted at the workspace root
-			openSession = Session.getOpenSession(CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
-		} else {
-			openSession = Session.getOpenSession(arguments[0]);
-		}
-		if (openSession == null) {
-			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
-		}
-		return openSession;
+		String[] stringArguments = convertArgumentsForOpenSession(arguments, session);
+		return execute(session, globalOptions, localOptions, stringArguments, listener, pm);
 	}
 	
 	protected String[] convertArgumentsForOpenSession(ICVSResource[] arguments, Session openSession) throws CVSException {

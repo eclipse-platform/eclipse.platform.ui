@@ -34,14 +34,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -73,6 +70,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	public CVSCompareEditorInput(ResourceEditionNode left, ResourceEditionNode right, ResourceEditionNode ancestor) {
 		super(new CompareConfiguration());
+		// TODO: Invokers of this method should ensure that trees and contents are prefetched
 		this.left = left;
 		this.right = right;
 		this.ancestor = ancestor;
@@ -291,26 +289,19 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		try {	
 			// do the diff	
-			final Object[] result = new Object[] { null };
-			Session.run(null, null, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
-					IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
-					sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
-					try {
-						result[0] = d.findDifferences(threeWay, sub, null, ancestor, left, right);
-					} finally {
-						sub.done();
-					}
-				}
-			}, monitor);
-			return result[0];
+			Object result = null;
+			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
+			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
+			sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
+			try {
+				result = d.findDifferences(threeWay, sub, null, ancestor, left, right);
+			} finally {
+				sub.done();
+			}
+			return result;
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException(e.getMessage());
 		} catch (RuntimeException e) {
-			handle(e);
-			return null;
-		} catch (CVSException e) {
 			handle(e);
 			return null;
 		} finally {

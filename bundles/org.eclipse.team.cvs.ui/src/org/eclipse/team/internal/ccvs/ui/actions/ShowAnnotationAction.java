@@ -26,7 +26,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Annotate;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -109,35 +108,39 @@ public class ShowAnnotationAction extends CVSAction {
 	private void fetchAnnotation(final AnnotateListener listener, final ICVSResource cvsResource, final String revision, IProgressMonitor monitor) throws InvocationTargetException {
 		
 		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100);
 			ICVSFolder folder = cvsResource.getParent();
 			final FolderSyncInfo info = folder.getFolderSyncInfo();
 			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
-			Session.run(location, folder, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					monitor = Policy.monitorFor(monitor);
-					monitor.beginTask(null, 100);
-					Command.QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
-					try {
-						CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
-						final Command.LocalOption[] localOption;
-						if (revision == null) {
-							localOption = Command.NO_LOCAL_OPTIONS;	
-						} else {
-							localOption  = new Command.LocalOption[1];
-							localOption[0] = Annotate.makeRevisionOption(revision);
-						}
-						IStatus status = Command.ANNOTATE.execute(Command.NO_GLOBAL_OPTIONS, 
-							localOption, new ICVSResource[] { cvsResource }, listener,
-							Policy.subMonitorFor(monitor, 100));
-						if (status.getCode() == CVSStatus.SERVER_ERROR) {
-							throw new CVSServerException(status);
-						}
-					} finally {
-						CVSProviderPlugin.getPlugin().setQuietness(quietness);
-						monitor.done();
+			Session session = new Session(location, folder, true /* output to console */);
+			session.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				Command.QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+				try {
+					CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+					final Command.LocalOption[] localOption;
+					if (revision == null) {
+						localOption = Command.NO_LOCAL_OPTIONS;	
+					} else {
+						localOption  = new Command.LocalOption[1];
+						localOption[0] = Annotate.makeRevisionOption(revision);
 					}
+					IStatus status = Command.ANNOTATE.execute(
+						session,
+						Command.NO_GLOBAL_OPTIONS, 
+						localOption, new ICVSResource[] { cvsResource }, listener,
+						Policy.subMonitorFor(monitor, 90));
+					if (status.getCode() == CVSStatus.SERVER_ERROR) {
+						throw new CVSServerException(status);
+					}
+				} finally {
+					CVSProviderPlugin.getPlugin().setQuietness(quietness);
+					monitor.done();
 				}
-			}, monitor);
+			} finally {
+				session.close();
+			}
 		} catch (CVSException e) {
 			throw new InvocationTargetException(e);
 		}

@@ -212,7 +212,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		try {
 			monitor.beginTask(null, 100);
 			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, 60));
-			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, Policy.subMonitorFor(monitor, 40));
+			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), Policy.subMonitorFor(monitor, 40));
 		
 			Set allChanges = new HashSet();
 			allChanges.addAll(Arrays.asList(remoteChanges));
@@ -225,7 +225,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	}
 
 	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		return getRemoteSynchronizer().refresh(resources, depth, monitor);
+		return getRemoteSynchronizer().refresh(resources, depth,  getCacheFileContentsHint(), monitor);
 	}
 
 	/* (non-Javadoc)
@@ -235,6 +235,10 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		return (ComparisonCriteria)comparisonCriterias.get(defaultCriteria);
 	}
 
+	private boolean getCacheFileContentsHint() {
+		return getCurrentComparisonCriteria().usesFileContents();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#setCurrentComparisonCriteria(java.lang.String)
 	 */

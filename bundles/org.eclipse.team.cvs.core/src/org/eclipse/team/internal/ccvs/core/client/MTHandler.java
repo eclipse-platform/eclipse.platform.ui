@@ -18,6 +18,13 @@ public class MTHandler extends ResponseHandler {
 	private String nextLine;
 	private boolean isLineAvailable;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.ResponseHandler#getInstance()
+	 */
+	ResponseHandler getInstance() {
+		return new MTHandler();
+	}
+
 	/**
 	 * @see ResponseHandler#getResponseID()
 	 */

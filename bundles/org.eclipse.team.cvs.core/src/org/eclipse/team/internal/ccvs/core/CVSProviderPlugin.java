@@ -18,10 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +45,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.sync.RemoteContentsCache;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -92,16 +90,6 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
-	
-	// Directory to cache file contents
-	private static final String CACHE_DIRECTORY = ".cache"; //$NON-NLS-1$
-	// Maximum lifespan of local cache file, in milliseconds
-	private static final long CACHE_FILE_LIFESPAN = 60*60*1000; // 1hr
-	
-	private Hashtable cacheFileNames;
-	private Hashtable cacheFileTimes;
-	private long lastCacheCleanup;
-	private int cacheDirSize;
 	
 	private QuietOption quietness;
 	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
@@ -339,7 +327,7 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
 		
-		createCacheDirectory();
+		RemoteContentsCache.enableCaching(ID);
 		
 		cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
 				CVS_WORKSPACE_SUBSCRIBER_ID, 
@@ -368,7 +356,7 @@ public class CVSProviderPlugin extends Plugin {
 		// each class that added itself as a participant to have to listen to shutdown.
 		workspace.removeSaveParticipant(this);
 		
-		deleteCacheDirectory();
+		RemoteContentsCache.disableCache(ID);
 	}
 		
 	/**
@@ -570,91 +558,6 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void setReplaceUnmanaged(boolean replaceUnmanaged) {
 		this.replaceUnmanaged = replaceUnmanaged;
-	}
-
-	private void createCacheDirectory() {
-		try {
-			IPath cacheLocation = getStateLocation().append(CACHE_DIRECTORY);
-			File file = cacheLocation.toFile();
-			if (file.exists()) {
-				deleteFile(file);
-			}
-			file.mkdir();
-			cacheFileNames = new Hashtable();
-			cacheFileTimes = new Hashtable();
-			lastCacheCleanup = -1;
-			cacheDirSize = 0;
-		} catch (IOException e) {
-			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorCreatingCache", e.getMessage()), e)); //$NON-NLS-1$
-		}
-	}
-			
-	private void deleteCacheDirectory() {
-		try {
-			IPath cacheLocation = getStateLocation().append(CACHE_DIRECTORY);
-			File file = cacheLocation.toFile();
-			if (file.exists()) {
-				deleteFile(file);
-			}
-			cacheFileNames = cacheFileTimes = null;
-			lastCacheCleanup = -1;
-			cacheDirSize = 0;
-		} catch (IOException e) {
-			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorDeletingCache", e.getMessage()), e)); //$NON-NLS-1$
-		}
-	}
-	
-	private void deleteFile(File file) throws IOException {
-		if (file.isDirectory()) {
-			File[] children = file.listFiles();
-			for (int i = 0; i < children.length; i++) {
-				deleteFile(children[i]);
-			}
-		}
-		file.delete();
-	}
-	
-	public synchronized File getCacheFileFor(String path) throws IOException {
-		String physicalPath;
-		if (cacheFileNames.containsKey(path)) {
-			/*
-			 * cache hit
-			 */
-			physicalPath = (String)cacheFileNames.get(path);
-			registerHit(path);
-		} else {
-			/*
-			 * cache miss
-			 */
-			physicalPath = String.valueOf(cacheDirSize++);
-			cacheFileNames.put(path, physicalPath);
-			registerHit(path);
-			clearOldCacheEntries();
-		}
-		return getCacheFileForPhysicalPath(physicalPath);
-	}
-	private File getCacheFileForPhysicalPath(String physicalPath) throws IOException {
-		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), physicalPath);
-	}
-	private void registerHit(String path) {
-		cacheFileTimes.put(path, Long.toString(new Date().getTime()));
-	}
-	private void clearOldCacheEntries() throws IOException {
-		long current = new Date().getTime();
-		if ((lastCacheCleanup!=-1) && (current - lastCacheCleanup < CACHE_FILE_LIFESPAN)) return;
-		Enumeration e = cacheFileTimes.keys();
-		while (e.hasMoreElements()) {
-			String f = (String)e.nextElement();
-			long lastHit = Long.valueOf((String)cacheFileTimes.get(f)).longValue();
-			if ((current - lastHit) > CACHE_FILE_LIFESPAN) purgeCacheFile(f);
-		}
-		
-	}
-	private void purgeCacheFile(String path) throws IOException {
-		File f = getCacheFileForPhysicalPath((String)cacheFileNames.get(path));
-		f.delete();
-		cacheFileTimes.remove(path);
-		cacheFileNames.remove(path);
 	}
 	
 	/*

@@ -109,16 +109,15 @@ public class Commit extends Command {
 	protected void sendArguments(Session session, String[] arguments) throws CVSException {
 	}
 	
-	public final IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, 
+	public final IStatus execute(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions, 
 		ICVSResource[] arguments, Collection filesToCommitAsText,
 		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
 		
-		Session openSession = getOpenSession(arguments);
-		openSession.setTextTransferOverride(filesToCommitAsText);
+		session.setTextTransferOverride(filesToCommitAsText);
 		try {
-			return super.execute(globalOptions, localOptions, arguments, listener, pm);
+			return super.execute(session, globalOptions, localOptions, arguments, listener, pm);
 		} finally {
-			openSession.setTextTransferOverride(null);
+			session.setTextTransferOverride(null);
 		}
 	}
 }	

@@ -61,7 +61,7 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 				} else {
 					tag = tags[i];
 				}
-				IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(resource, tag, Policy.subMonitorFor(monitor, 50));
+				IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(resource, tag, getCacheFileContentsHint(), Policy.subMonitorFor(monitor, 50));
 				trees[i] = new CVSRemoteSyncElement(false /* two-way */, resource, null, remote);				 
 			}
 		} finally {
@@ -71,6 +71,10 @@ public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 		return trees;
 	}
 	
+	private boolean getCacheFileContentsHint() {
+		return getSyncGranularity() != IRemoteSyncElement.GRANULARITY_TIMESTAMP;
+	}
+
 	public String getTitle() {
 		return Policy.bind("CVSLocalCompareEditorInput.title", tags[0].getName()); //$NON-NLS-1$
 	}

@@ -224,81 +224,6 @@ public class CVSWorkspaceRoot {
 		}
 	}
 
-	/**
-	 * Checkout the remote resources into the provided local folder.
-	 */
-	public static void checkout(final ICVSRemoteFolder resource, final IContainer target, final boolean configure, final boolean recurse, final IProgressMonitor monitor) throws TeamException {
-		final TeamException[] eHolder = new TeamException[1];
-		try {
-			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor pm) throws CoreException {
-					try {
-						pm.beginTask(null, 1000);
-						
-						final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(target);
-						
-						// Delete the target folder if it exists.
-						String folderName = cvsFolder.getName();
-						if (cvsFolder.exists()) {
-							// Unmanage first so we don't get outgoing deletions
-							cvsFolder.unmanage(Policy.subMonitorFor(pm, 50));
-							cvsFolder.delete();
-						}
-						
-						// Prepare the target to receive the contents of the directory
-						cvsFolder.mkdir();
-						cvsFolder.setFolderSyncInfo(resource.getFolderSyncInfo());
-						
-						// Open a connection session to the repository
-						ICVSRepositoryLocation repository = resource.getRepository();
-						Session.run(repository, cvsFolder, true, new ICVSRunnable() {
-							public void run(IProgressMonitor monitor) throws CVSException {
-								List localOptions = new ArrayList();
-								// Add recurse option
-								if (!recurse)
-									localOptions.add(Update.DO_NOT_RECURSE);
-								// Perform the checkout using the update command
-								// We use update to avoid communicating info about the parent
-								// directory which may or may not be shared with CVS
-								IStatus status = Command.UPDATE.execute(
-									Command.NO_GLOBAL_OPTIONS,
-									(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-									new ICVSResource[]{ cvsFolder },
-									null,
-									monitor);
-								if (status.getCode() == CVSStatus.SERVER_ERROR) {
-									throw new CVSServerException(status);
-								}
-							}
-						}, Policy.subMonitorFor(pm, 800));
-						if (configure) {
-							manageFolder(cvsFolder, repository.getLocation());
-							refreshProjects(new IProject[] { target.getProject() }, Policy.subMonitorFor(pm, 50));
-						} else {
-							cvsFolder.unmanage(Policy.subMonitorFor(pm, 50));
-						}
-					}
-					catch (TeamException e) {
-						// Pass it outside the workspace runnable
-						eHolder[0] = e;
-					} finally {
-						pm.done();
-					}
-					// CoreException and OperationCanceledException are propagated
-				}
-			};
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		} finally {
-			monitor.done();
-		}		
-		// Re-throw the TeamException, if one occurred
-		if (eHolder[0] != null) {
-			throw eHolder[0];
-		}
-	}
-
 	private static void manageFolder(ICVSFolder folder, String root) throws CVSException {
 		// Ensure that the parent is a CVS folder
 		ICVSFolder parent = folder.getParent();
@@ -674,20 +599,40 @@ public class CVSWorkspaceRoot {
 	}
 	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		return getRemoteTree(resource, tag, false /* cache file contents hint */, progress);
+	}
+
+	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, boolean cacheFileContentsHint, IProgressMonitor progress) throws TeamException {
 		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
 		if (remote == null) {
-			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
+			progress.beginTask(null, 100);
+			remote = getRemoteTreeFromParent(resource, managed, tag, Policy.subMonitorFor(progress, 50));
+			if (cacheFileContentsHint && remote != null && remote instanceof RemoteFile) {
+				RemoteFile file = (RemoteFile)remote;
+				if (!file.isContentsCached()) {
+					file.fetchContents(Policy.subMonitorFor(progress, 50));
+				}
+			}
+			progress.done();
 		} else if(resource.getType() == IResource.FILE) {
 			ICVSRepositoryLocation location = remote.getRepository();
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
+			if (cacheFileContentsHint) {
+				remote = FileContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
+			} else {
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
+			}
 		} else {
 			ICVSRepositoryLocation location = remote.getRepository();
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
+			if (cacheFileContentsHint) {
+				remote = FileContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			} else {
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			}	
 		}
 		return remote;
 	}
-
+	
 	public static boolean hasRemote(IResource resource) {
 		try {
 			ICVSResource cvsResource = getCVSResourceFor(resource);

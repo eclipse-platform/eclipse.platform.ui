@@ -89,4 +89,11 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 			return false;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.ComparisonCriteria#usesFileContents()
+	 */
+	public boolean usesFileContents() {
+		return false;
+	}
 }
