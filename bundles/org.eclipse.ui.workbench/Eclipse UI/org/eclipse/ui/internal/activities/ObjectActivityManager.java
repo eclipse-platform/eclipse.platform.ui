@@ -256,7 +256,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 				IObjectContributionRecord objectId =
 					(IObjectContributionRecord) objItr.next();
 
-				if (activity.isMatch(objectId.toString())) {
+				if (activity.match(objectId.toString())) {
 					addActivityBinding(objectId, activity.getId());
 				}
 			}

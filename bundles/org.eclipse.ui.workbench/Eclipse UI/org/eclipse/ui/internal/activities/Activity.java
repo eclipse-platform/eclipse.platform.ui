@@ -204,27 +204,22 @@ final class Activity implements IActivity {
 		return enabled;
 	}
 
-	public boolean isMatch(String string) {
+	public boolean match(String string) {
 		if (isDefined())
 			for (Iterator iterator = activityPatternBindings.iterator();
-				iterator.hasNext();
-				) {
+					iterator.hasNext();
+			) {
 				IActivityPatternBinding activityPatternBinding =
-					(IActivityPatternBinding) iterator.next();
+				(IActivityPatternBinding) iterator.next();
 
 				if (activityPatternBinding
-					.getPattern()
-					.matcher(string)
-					.matches())
+						.getPattern()
+						.matcher(string)
+						.matches())
 					return true;
 			}
 
 		return false;
-	}
-
-	/** @deprecated */
-	public boolean match(String string) {
-		return isMatch(string);
 	}
 		
 	public void removeActivityListener(IActivityListener activityListener) {

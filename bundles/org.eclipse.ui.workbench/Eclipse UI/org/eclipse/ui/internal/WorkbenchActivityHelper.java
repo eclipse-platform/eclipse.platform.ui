@@ -108,7 +108,7 @@ public class WorkbenchActivityHelper {
         for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
             IActivity activity = activityManager.getActivity((String) iterator.next());
 
-            if (activity.isMatch(idToMatchAgainst)) {
+            if (activity.match(idToMatchAgainst)) {
                 match = true;
                 if (activity.isEnabled()) {
                     enabled = true;
@@ -158,7 +158,7 @@ public class WorkbenchActivityHelper {
         for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
             IActivity activity = activityManager.getActivity(activityId);
-            if (activity.isMatch(id)) {
+            if (activity.match(id)) {
                 activities.add(activityId);
             }
         }

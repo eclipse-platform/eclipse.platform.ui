@@ -124,13 +124,8 @@ public interface IActivityManager {
 	
 	/**
 	 * TODO javadoc
-	 */
-	boolean isMatch(String string, Set activityIds);
-
-	/**
-	 * TODO javadoc
 	 * 
-	 * @deprecated use isMatch(String, Set);
+	 * @deprecated
 	 */
 	boolean match(String string, Set activityIds);
 

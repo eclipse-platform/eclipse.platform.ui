@@ -184,13 +184,8 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * TODO javadoc
-	 */
-	boolean isMatch(String string);
-
-	/**
-	 * TODO javadoc
 	 * 
-	 * @deprecated use isMatch(String)
+	 * @deprecated
 	 */
 	boolean match(String string);
 
