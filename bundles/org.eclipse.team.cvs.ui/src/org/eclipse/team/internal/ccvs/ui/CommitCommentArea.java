@@ -234,9 +234,9 @@ public class CommitCommentArea extends DialogArea {
             
             if (MessageDialogWithToggle.PROMPT.equals(value)) {
                 
-                final String title= Policy.bind("CommitWizard.3"); //$NON-NLS-1$
-                final String message= Policy.bind("CommitWizard.4"); //$NON-NLS-1$
-                final String toggleMessage= Policy.bind("CommitWizard.5"); //$NON-NLS-1$
+                final String title= Policy.bind("CommitCommentArea.2"); //$NON-NLS-1$
+                final String message= Policy.bind("CommitCommentArea.3"); //$NON-NLS-1$
+                final String toggleMessage= Policy.bind("CommitCommentArea.4"); //$NON-NLS-1$
                 
                 final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
                 if (dialog.getReturnCode() == IDialogConstants.NO_ID) {
