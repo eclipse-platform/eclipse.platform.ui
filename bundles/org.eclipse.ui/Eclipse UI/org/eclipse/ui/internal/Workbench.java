@@ -652,35 +652,35 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			newWindow.open();
 		}
 	}
-/**
- * Runs the workbench.
- */
-public Object run(Object arg) {
-	String[] commandLineArgs = new String[0];
-	if (arg != null && arg instanceof String[])
-		commandLineArgs = (String[]) arg;
-	if (!readPlatformAndProductInfo())
-		return null;
-	if (getProductInfo().getAppName() != null)
-		Display.setAppName(getProductInfo().getAppName());
-	Display display = new Display();
-	//Workaround for 1GEZ9UR and 1GF07HN
-	display.setWarnings(false);
-	try {
-		handler = new ExceptionHandler(this);
-		Window.setExceptionHandler(handler);
-		boolean initOK = init(commandLineArgs);
-		Platform.endSplash();
-		if (initOK) {
-			runEventLoop();
+	/**
+	 * Runs the workbench.
+	 */
+	public Object run(Object arg) {
+		String[] commandLineArgs = new String[0];
+		if (arg != null && arg instanceof String[])
+			commandLineArgs = (String[]) arg;
+		if (!readPlatformAndProductInfo())
+			return null;
+		if (getProductInfo().getAppName() != null)
+			Display.setAppName(getProductInfo().getAppName());
+		Display display = new Display();
+		//Workaround for 1GEZ9UR and 1GF07HN
+		display.setWarnings(false);
+		try {
+			handler = new ExceptionHandler(this);
+			Window.setExceptionHandler(handler);
+			boolean initOK = init(commandLineArgs);
+			Platform.endSplash();
+			if (initOK) {
+				runEventLoop();
+			}
+			shutdown();
+		} finally {
+			if (!display.isDisposed())
+			  display.dispose();
 		}
-		shutdown();
-	} finally {
-		if (!display.isDisposed())
-		  display.dispose();
+		return null;
 	}
-	return null;
-}
 	/**
 	 * run an event loop for the workbench.
 	 */
@@ -742,8 +742,8 @@ public Object run(Object arg) {
 		startingPlugin = configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
 		productInfoFilename = (String) ((Map) data).get(P_PRODUCT_INFO);
 	}
-	/**
-	 * @see IWorkbench.showPerspective(String, IWorkbenchWindow)
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
 		throws WorkbenchException
@@ -797,12 +797,15 @@ public Object run(Object arg) {
 		// window, and the window is given focus.
 		win = (WorkbenchWindow) window;
 		if (win != null) {
-			WorkbenchPage page = win.getActiveWorkbenchPage();
+			IWorkbenchPage page = win.getActiveWorkbenchPage();
 			IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 			if (desc == null)
 				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 			win.getShell().open();
-			page.setPerspective(desc);
+			if (page == null)
+				page = win.openPage(perspectiveId, input);
+			else
+				page.setPerspective(desc);
 			return page;
 		}
 
@@ -810,8 +813,8 @@ public Object run(Object arg) {
 		throw new WorkbenchException(WorkbenchMessages.format("Workbench.showPerspectiveError", new Object[] { perspectiveId })); //$NON-NLS-1$
 	}
 	
-	/**
-	 * @see IWorkbench.showPerspective(String, IWorkbenchWindow, IAdaptable)
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) 
 		throws WorkbenchException
@@ -820,6 +823,7 @@ public Object run(Object arg) {
 
 		// If the specified window has the requested perspective open and the same requested
 		// input, then the window is given focus and the perspective is shown.
+		boolean inputSameAsWindow = false;
 		WorkbenchWindow win = (WorkbenchWindow) window;
 		if (win != null) {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
@@ -830,18 +834,22 @@ public Object run(Object arg) {
 				else
 					inputSame = input.equals(page.getInput());
 				if (inputSame) {
-					IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
-					if (desc == null)
-						throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-					win.getShell().open();
-					page.setPerspective(desc);
-					return page;
+					inputSameAsWindow = true;
+					Iterator enum = page.getOpenedPerspectives();
+					while (enum.hasNext()) {
+						Perspective persp = (Perspective) enum.next();
+						if (perspectiveId.equals(persp.getDesc().getId())) {
+							win.getShell().open();
+							page.setPerspective(persp.getDesc());
+							return page;
+						}
+					}
 				}
 			}
 		}
 		
-		// If another window that has the requested input and the requested
-		// perpective open and active, then the window is given focus.
+		// If another window has the requested input and the requested
+		// perpective open and active, then that window is given focus.
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			win = (WorkbenchWindow) windows[i];
@@ -863,7 +871,21 @@ public Object run(Object arg) {
 				}
 			}
 		}
-			
+
+		// If the specified window has the same requested input but not the requested
+		// perspective, then the window is given focus and the perspective is opened and shown.
+		if (inputSameAsWindow) {
+			WorkbenchPage page = win.getActiveWorkbenchPage();
+			if (page != null) {
+				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				if (desc == null)
+					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+				win.getShell().open();
+				page.setPerspective(desc);
+				return page;
+			}			
+		}
+		
 		// Otherwise the requested perspective is opened and shown in a new window, and the
 		// window is given focus.
 		IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
