@@ -26,6 +26,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
 
 
 public class NavigationHistory {
@@ -203,7 +204,9 @@ public class NavigationHistory {
 	}
 	
 	public void add(IEditorPart part) {
-		
+		if(!WorkInProgressPreferencePage.useNavigationHistory())
+			return;
+			
 		if (fIgnoreEntries > 0)
 			return;
 		
@@ -228,7 +231,9 @@ public class NavigationHistory {
 	}
 	
 	public void add(ISelection selection) {
-		
+		if(!WorkInProgressPreferencePage.useNavigationHistory())
+			return;
+			
 		if (selection == null || fIgnoreEntries > 0)
 			return;
 

@@ -19,14 +19,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage;
 
 /**
  * This is used to add actions to the workbench.
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
-	
-	//Must be deleted once the final code for bug 5700 is released.
-	private static final boolean use5700 = false;
 	
 	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
 	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
@@ -415,7 +413,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_END));
 		
 		//TBD: Location of this actions
-		if(use5700) {
+		if(WorkInProgressPreferencePage.useNavigationHistory()) {
 			menu.add(new Separator());
 			menu.add(backwardHistoryAction);
 			menu.add(forwardHistoryAction);
@@ -652,7 +650,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
 		}
-		if(use5700)
+		if(WorkInProgressPreferencePage.useNavigationHistory())
 			addHistoryActions();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {

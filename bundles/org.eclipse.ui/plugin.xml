@@ -1381,7 +1381,13 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.EditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Editors">
-      </page>              
+      </page>
+      <page
+            name="Work in Progress"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage"
+            id="org.eclipse.ui.preferencePages.WorkInProgressPreferencePage">
+      </page>                    
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
