@@ -242,6 +242,9 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
 		Object[] allDescriptors = getRegistryObjects();
+		if (allDescriptors == null)
+			return null;
+		
 		for (int i = 0; i < allDescriptors.length; i++) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)allDescriptors[i];
 			if (desc.getId().equals(id))
@@ -255,6 +258,9 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
 		Object[] allDescriptors = getRegistryObjects();
+		if (allDescriptors == null)
+			return null;
+
 		for (int i = 0; i < allDescriptors.length; i++) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)allDescriptors[i];
 			if (desc.getLabel().equals(label))
