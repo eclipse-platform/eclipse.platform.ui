@@ -570,7 +570,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	try {
     		helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
     	} catch (NoClassDefFoundError e) {
-			AntUIPlugin.log(MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.0"), new String[]{taskClass.getName()}), e); //$NON-NLS-1$
+    		//ignore as a task may require additional classpath components
 		}
     	return helper;
     }
