@@ -26,61 +26,59 @@ import org.eclipse.swt.widgets.Tree;
 public class ColorSchemeService {
 
 	static void setSchemeColors(Control control) {
-		
-		if(control instanceof CTabFolder){
+
+		if (control instanceof List) {
+			return;
+		}
+
+		if (control instanceof Tree) {
+			return;
+		}
+
+		if (control instanceof StyledText) {
+			return;
+		}
+
+		if (control instanceof Table) {
+			return;
+		}
+
+		if (control instanceof CTabFolder) {
 			setTabColors((CTabFolder) control);
 			return;
 		}
-		
-		if(control instanceof Composite){
+
+		if (control instanceof Composite) {
 			setCompositeColors((Composite) control);
 			return;
 		}
-		
-		if(control instanceof List){
-			return;
-		}
-		
-		if(control instanceof Tree){
-			return;
-		}
-		
-		if(control instanceof StyledText){
-			return;
-		}
-		
-		if(control instanceof Table){
-			return;
-		}
-		
+
 		control.setBackground(
 			JFaceColors.getSchemeBackground(control.getDisplay()));
 		control.setForeground(
 			JFaceColors.getSchemeForeground(control.getDisplay()));
 
 	}
-	
+
 	static void setTabColors(CTabFolder control) {
-		
+
 		control.setSelectionBackground(
-				JFaceColors.getSchemeSelectionBackground(control.getDisplay()));
+			JFaceColors.getSchemeSelectionBackground(control.getDisplay()));
 		control.setSelectionForeground(
-				JFaceColors.getSchemeSelectionForeground(control.getDisplay()));
+			JFaceColors.getSchemeSelectionForeground(control.getDisplay()));
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			setSchemeColors(children[i]);
 		}
 	}
 
-
 	static void setCompositeColors(Composite control) {
-		
-		
+
 		control.setBackground(
-				JFaceColors.getSchemeBackground(control.getDisplay()));
+			JFaceColors.getSchemeBackground(control.getDisplay()));
 		control.setForeground(
-				JFaceColors.getSchemeForeground(control.getDisplay()));
-		
+			JFaceColors.getSchemeForeground(control.getDisplay()));
+
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			setSchemeColors(children[i]);
