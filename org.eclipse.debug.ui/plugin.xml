@@ -502,6 +502,7 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.relaunch"
 			menubarPath = "launchGroup"
+			icon = "icons/full/clcl16/relaunch_co.gif"
 			helpContextId = "relaunch_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
 			label="%RelaunchAction.label">
