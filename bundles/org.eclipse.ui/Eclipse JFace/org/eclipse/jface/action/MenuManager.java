@@ -540,9 +540,11 @@ protected void update(boolean force, boolean recursive) {
 				// we can't set force to false since then information for the
 				// sub sub menus is lost.
 				if (recursive) {
-					if (src instanceof IMenuManager) {
-						((IMenuManager)src).updateAll(force);
-					}
+					IContributionItem item = src;
+					if (item instanceof SubContributionItem) 
+						item = ((SubContributionItem)src).getInnerItem();
+					if (item instanceof IMenuManager) 
+						((IMenuManager)item).updateAll(force);
 				}
 
 			}
