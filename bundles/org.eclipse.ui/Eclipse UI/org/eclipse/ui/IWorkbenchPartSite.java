@@ -18,33 +18,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public interface IWorkbenchPartSite {
 	
-/**
- * Returns the decorator manager.
- * This site's part can ask the decorator manager to apply decorations 
- * (text and image modifications) to elements it displays.
- * <p>
- * The part should come up with the text and image for the element (including
- * any of the part's own decorations) before calling the decorator manager.
- * It should also add a listener to be notified when decorations change.
- * </p>
- * <p>
- * Note that if the element implements <code>IAdaptable</code>, decorators may use this
- * mechanism to obtain an adapter (for example an <code>IResource</code>), and derive the
- * decoration from the adapter rather than the element.
- * Since the adapter may differ from the part's element, the part should be prepared 
- * to handle notification that the decoration for the adapter has changed, in addition to 
- * handling notification that the decoration for the element has changed.
- * That is, it needs to be able to map back from the adapter to the element.
- * </p>
- * 
- * @return the decorator manager
- * @deprecated use IWorkbench.getDecoratorManager() instead
- * <p>
- * NOTE: This is experimental API, which may be changed or removed at any point in time.
- * This API should not be called, overridden or otherwise used in production code.
- * </p>
- */
-public ILabelDecorator getDecoratorManager();
 
 /**
  * Returns the part registry extension id for this workbench site's part.

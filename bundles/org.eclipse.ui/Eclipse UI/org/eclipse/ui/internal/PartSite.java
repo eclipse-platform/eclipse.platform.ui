@@ -79,12 +79,6 @@ public IConfigurationElement getConfigurationElement() {
 	return configElement;
 }
 
-/* (non-Javadoc)
- * Method declared on IWorkbenchPartSite
- */
-public ILabelDecorator getDecoratorManager() {
-	return WorkbenchPlugin.getDefault().getDecoratorManager();
-}
 
 /**
  * Returns the part registry extension ID.
