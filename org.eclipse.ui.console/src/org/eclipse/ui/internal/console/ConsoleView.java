@@ -219,6 +219,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
 		fConsoleToPart.remove(console);
+        if (fPartToConsole.isEmpty()) {
+            fActiveConsole = null;
+        }
 		
 		// update console actions
 		fPinAction.update();		
@@ -339,10 +342,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 							if (part != null) {
 								partClosed(part);
 							}
-                            // if removing the last console, clear the active console
-                            if (fStack.isEmpty()) {
-                                fActiveConsole = null;
-                            }
 							if (getConsole() == null) {
 								IConsole[] available = getConsoleManager().getConsoles();
 								if (available.length > 0) {
