@@ -45,6 +45,13 @@ public class FilteredTree extends Composite {
         this(parent, treeStyle, new PatternFilter());
     }
 
+    /**
+     * Create a new instance of the receiver.
+     * 
+     * @param parent parent <code>Composite</code>
+     * @param treeStyle the style bits for the <code>Tree</code>
+     * @param filter the filter to be used
+     */
     public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
         super(parent, SWT.NONE);
         patternFilter = filter;

@@ -22,12 +22,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
- * A filter used in conjunction with FilteredTree.  This filter is inefficient -
- * in order to see if a node should be filtered it must use the content provider
- * of the tree to do pattern matching on its children.  This causes the entire 
- * tree structure to be expanded.
+ * A filter used in conjunction with <code>FilteredTree</code>.  This filter is 
+ * inefficient - in order to see if a node should be filtered it must use the 
+ * content provider of the tree to do pattern matching on its children.  This 
+ * causes the entire tree structure to be realized.
  * 
- * @see org.eclipse.ui.dialogs.FilteredTree  
+ * @see org.eclipse.ui.internal.dialogs.FilteredTree  
  * @since 3.0
  */
 public class PatternFilter extends ViewerFilter {
@@ -69,7 +69,7 @@ public class PatternFilter extends ViewerFilter {
 
     /**
      * 
-     * @param pattern
+     * @param patternString
      */
     public void setPattern(String patternString) {
         cache.clear();
