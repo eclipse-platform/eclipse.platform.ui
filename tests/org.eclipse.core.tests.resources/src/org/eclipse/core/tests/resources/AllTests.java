@@ -32,6 +32,7 @@ public AllTests(String name) {
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());
+		suite.addTest(IPathVariableTest.suite());
 		suite.addTest(IResourceChangeEventTest.suite());
 		suite.addTest(IResourceChangeListenerTest.suite());
 		suite.addTest(IResourceDeltaTest.suite());

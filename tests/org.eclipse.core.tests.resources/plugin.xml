@@ -42,6 +42,9 @@
     <test id="resources.IProjectTest">
       <run class="org.eclipse.core.tests.resources.IProjectTest"/>
     </test>
+    <test id="resources.IPathVariableTest">
+      <run class="org.eclipse.core.tests.resources.IPathVariableTest"/>
+    </test>
     <test id="resources.IResourceChangeEventTest">
       <run class="org.eclipse.core.tests.resources.IResourceChangeEventTest"/>
     </test>
