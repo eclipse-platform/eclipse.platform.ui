@@ -71,12 +71,12 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
-		fConfigurationBlock.createControl(parent);
+		Control content= fConfigurationBlock.createControl(parent);
 		
 		initialize();
 		
-		Dialog.applyDialogFont(parent);
-		return parent;
+		Dialog.applyDialogFont(content);
+		return content;
 	}
 	
 	private void initialize() {
