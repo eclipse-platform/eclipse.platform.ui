@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
@@ -23,7 +24,7 @@ import org.w3c.dom.*;
  */
 public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
-    // vector is lazily created when children are loaded, ie: call to
+    // vector is lazily created when children are loaded in a call to
     // loadChildren().
     protected Vector children;
     protected boolean loaded = false;
@@ -202,7 +203,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         // add the elements at the end children's vector.
         insertElementsBefore(filteredElements, getBundle(), children.size());
         loaded = true;
-        // null instance to free xml memory.
+        // free DOM model for memory performance.
         element = null;
 
     }
@@ -306,7 +307,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             return;
         if (target.isOfType(AbstractIntroElement.GROUP
                 | AbstractIntroElement.ABSTRACT_TEXT
-                | AbstractIntroElement.IMAGE | AbstractIntroElement.TEXT))
+                | AbstractIntroElement.IMAGE | AbstractIntroElement.TEXT
+                | AbstractIntroElement.PAGE_TITLE))
+            // be picky about model elements to include. Can not use
+            // BASE_ELEMENT model class because pages can not be included.
             insertTarget(include, target);
     }
 
@@ -416,11 +420,22 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             // should never be here.
             return;
         children.remove(includeLocation);
-        // handle merging target styles first, before changing target parent.
+        // handle merging target styles first, before changing target parent to
+        // enable inheritance of styles.
         handleIncludeStyleInheritence(include, target);
-        // set parent of target to this new container.
-        target.setParent(this);
-        children.insertElementAt(target, includeLocation);
+        // now clone the target node because original model should be kept
+        // intact.
+        AbstractIntroElement clonedTarget = null;
+        try {
+            clonedTarget = (AbstractIntroElement) target.clone();
+        } catch (CloneNotSupportedException ex) {
+            // should never be here.
+            Log.error("Failed to clone Intro model node.", ex); //$NON-NLS-1$
+            return;
+        }
+        // set parent of cloned target to be this container.
+        clonedTarget.setParent(this);
+        children.insertElementAt(clonedTarget, includeLocation);
     }
 
     /**
@@ -428,7 +443,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * are including a shared group, or if we are including an element from the
      * same page, do nothing. For inherited alt-styles, we have to cache the pd
      * from which we inherited the styles to be able to access resources in that
-     * plugin.
+     * plugin. Also note that when including an container, it must be resolved
+     * otherwise reparenting will cause includes in this target containet to
+     * fail.
      * 
      * @param include
      * @param target
@@ -462,11 +479,27 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         }
 
         // now add inherited styles. Race condition could happen here if Page A
-        // is including from Page B which is in turn including from Page A. 
+        // is including from Page B which is in turn including from Page A.
         getParentPage().addStyles(target.getParentPage().getStyles());
         getParentPage().addAltStyles(target.getParentPage().getAltStyles());
 
     }
+
+    /**
+     * Creates a clone of the given target node. A clone is create by simply
+     * recreating that protion of the model.
+     * 
+     * Note: looked into the clonable interface in Java, but it was not used
+     * because it makes modifications/additions to the model harder to maintain.
+     * Will revisit later.
+     * 
+     * @param targer
+     * @return
+     */
+    protected AbstractIntroElement cloneTarget(AbstractIntroElement targer) {
+        return null;
+    }
+
 
     /*
      * (non-Javadoc)
@@ -483,5 +516,24 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected boolean isLoaded() {
         return loaded;
     }
+
+    /**
+     * Deep copy since class has mutable objects. Leave DOM element as a shallow
+     * reference copy since DOM is immutable.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        AbstractIntroContainer clone = (AbstractIntroContainer) super.clone();
+        clone.children = new Vector();
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                AbstractIntroElement cloneChild = (AbstractIntroElement) ((AbstractIntroElement) children
+                        .elementAt(i)).clone();
+                cloneChild.setParent(clone);
+                clone.children.add(i, cloneChild);
+            }
+        }
+        return clone;
+    }
+
 
 }

@@ -309,6 +309,34 @@ public class IntroPartPresentation extends AbstractIntroElement {
     }
 
     /**
+     * Util method to load shared style from given kind.
+     */
+    public String getSharedStyle(String kind) {
+
+        // There can be more than one implementation contribution.
+        IConfigurationElement[] implementationElements = getCfgElement()
+                .getChildren(TAG_IMPLEMENTATION);
+        IConfigurationElement implementationElement = null;
+
+        if (implementationElements.length == 0)
+            // no implementations. done.
+            return null;
+
+        // loop through all to find one with matching kind.
+        for (int i = 0; i < implementationElements.length; i++) {
+            String aKind = implementationElements[i].getAttribute(ATT_KIND);
+            if (aKind.equals(kind)) {
+                // found implementation with matching kind.
+                String style = implementationElements[i]
+                        .getAttribute(ATT_STYLE);
+                return IntroModelRoot.resolveURL(style, getCfgElement());
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * Creates the actual implementation class. Returns null on failure. NOTE:
      * this method if not actually used now, but will be when we need to expose
      * class attribute on implmentation.

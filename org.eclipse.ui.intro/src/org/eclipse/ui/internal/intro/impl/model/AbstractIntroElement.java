@@ -18,18 +18,25 @@ import org.w3c.dom.*;
 
 /**
  * An intro config component. All config components can get to their defining
- * config element or bindle depending from where the element was loaded. Model
- * Rules:
+ * config element or bundle depending from where the element was loaded.
  * <p>
+ * Class Rules:
+ * <ul>
  * <li>If an element does not appear as a child under any node, then that
  * element does not need a type to be defined.</li>
+ * <li>Each subclass must ensure that it properly supports cloning. This means
+ * that if a deep copy is needed, the subclass must override the base behavior
+ * here.</li>
+ * <li>if cloning is not needed, override clone method and throw an unsupported
+ * cloning exception. For now, only pages and targets of includes are cloneable.
+ * </li>
+ * </ul>
  * <p>
  * Note: This is an abstract base class for all classes in the Intro Model. <br>
  * Clients are not expected to implement or subclass this class, or any of its
  * subclasses.
- * </p>
  */
-public abstract class AbstractIntroElement {
+public abstract class AbstractIntroElement implements Cloneable {
 
     /**
      * Type constant which identifies an IntroModelRoot element.
@@ -226,7 +233,7 @@ public abstract class AbstractIntroElement {
      * <li>for divs that are children of configs (shared divs), it returns the
      * holding model root.</li>
      * <li>for Head elements that are children of Implementation elements
-     * (shared Heads), it returns the holding prsentation element.</li>
+     * (shared Heads), it returns the holding presentation element.</li>
      * </ul>
      * 
      * @return returns the parent of this intro element. Null only for model
@@ -320,6 +327,17 @@ public abstract class AbstractIntroElement {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Shallow copy. Note, not all parents are cloned. One parent has many
+     * children. The design of cloning this model assumes that when a container
+     * is cloned, all its children must be cloned and reparented to it, hence
+     * one clone of this container object. This is why we have a shallow copy
+     * here.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
 

@@ -220,4 +220,10 @@ public class BaseExtensionPointManager {
         return sharedConfigExtensionsManager;
     }
 
+    /**
+     * @return Returns the cached introModels.
+     */
+    public Hashtable getIntroModels() {
+        return introModels;
+    }
 }

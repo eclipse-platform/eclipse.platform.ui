@@ -46,15 +46,13 @@ public class IntroLink extends AbstractTextElement {
             if (parser.hasIntroUrl())
                 introURL = parser.getIntroURL();
         }
-        
+
         // There should be at most one img element.
-        NodeList imgElements = element
-                .getElementsByTagName(TAG_IMG);
+        NodeList imgElements = element.getElementsByTagName(TAG_IMG);
         if (imgElements.getLength() > 0) {
-        	img = new IntroImage((Element) imgElements.item(0),
-                    getBundle());
+            img = new IntroImage((Element) imgElements.item(0), getBundle());
             img.setParent(this);
-        }          
+        }
     }
 
     /**
@@ -90,10 +88,24 @@ public class IntroLink extends AbstractTextElement {
         return AbstractIntroElement.LINK;
     }
 
-	/**
-	 * @return Returns the img.
-	 */
-	public IntroImage getImg() {
-		return img;
-	}
+    /**
+     * @return Returns the img.
+     */
+    public IntroImage getImg() {
+        return img;
+    }
+
+    /**
+     * Deep copy since class has mutable objects.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        IntroLink clone = (IntroLink) super.clone();
+        if (img != null) {
+            IntroImage cloneIntroImage = (IntroImage) img.clone();
+            cloneIntroImage.setParent(clone);
+            clone.img = cloneIntroImage;
+        }
+        // no need to clobe IntroURL.
+        return clone;
+    }
 }

@@ -310,14 +310,21 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Display an Intro Page.
+     * <p>
+     * REVISIT: revisit picking first page.
      */
     private boolean showPage(String pageId, String standbyState) {
         // set the current page id in the model. This will triger appropriate
         // listener event to the UI. If setting the page in the model fails (ie:
-        // the page was not found in the model), return false.
+        // the page was not found in the current model, look for it in loaded
+        // models. return false if failed.
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
         boolean success = modelRoot.setCurrentPageId(pageId);
+        if (!success)
+            success = includePageToShow(modelRoot, pageId);
+
         if (success) {
+            // found page
             modelRoot.getPresentation().updateHistory(pageId);
             // ran action successfully. Now set intro intro standby if needed.
             if (standbyState == null)
@@ -325,9 +332,78 @@ public class IntroURL implements IIntroURL {
             else
                 return setStandbyState(standbyState);
         } else
+            // could not find referenced page.
             return false;
     }
 
+    /**
+     * Finds the target page and includes it in passed model.
+     * 
+     * @param pageId
+     * @return
+     */
+    private boolean includePageToShow(IntroModelRoot model, String pageId) {
+        AbstractIntroPage page = findPageToShow(pageId);
+        if (page == null) {
+            Log.error("Failed to clone Intro page.", null); //$NON-NLS-1$
+            return false;
+        }
+        // now clone the target page because original model should be kept
+        // intact. Resolve target page first to resolve its includes
+        // properly. Insert presentation shared style at the top of the shared
+        // styles list because once reparented, the shared style is lost.
+        // Finally, add clone page to current model.
+        page.getChildren();
+        // current kind.
+        String currentPresentationKind = model.getPresentation()
+                .getImplementationKind();
+        // load shared style corresponding to same presentation kind from target
+        // model.
+        IntroPartPresentation targetPresentation = ((IntroModelRoot) page
+                .getParent()).getPresentation();
+        String targetSharedStyle = targetPresentation
+                .getSharedStyle(currentPresentationKind);
+        // clone.
+        AbstractIntroPage clonedPage = null;
+        try {
+            clonedPage = (AbstractIntroPage) page.clone();
+        } catch (CloneNotSupportedException ex) {
+            // should never be here.
+            Log.error("Failed to clone Intro model node.", ex); //$NON-NLS-1$
+            return false;
+        }
+        // reparent cloned target to current model.
+        clonedPage.setParent(model);
+        // REVISIT: SWT presentation does not support multiple shared
+        // styles.
+        if (targetSharedStyle != null)
+            // add target model shared style.
+            clonedPage.insertStyle(targetSharedStyle, 0);
+        model.children.add(clonedPage);
+        return model.setCurrentPageId(clonedPage.getId());
+    }
+
+
+    /**
+     * Searches all loaded models for the first page with the given id.
+     * 
+     * @param pageId
+     * @return
+     */
+    private AbstractIntroPage findPageToShow(String pageId) {
+        // get all cached models.
+        Hashtable models = ExtensionPointManager.getInst().getIntroModels();
+        Enumeration values = models.elements();
+        while (values.hasMoreElements()) {
+            IntroModelRoot model = (IntroModelRoot) values.nextElement();
+            AbstractIntroPage page = (AbstractIntroPage) model.findChild(
+                    pageId, AbstractIntroElement.ABSTRACT_PAGE);
+            if (page != null)
+                return page;
+        }
+        // could not find page in any model.
+        return null;
+    }
 
     /**
      * Navigate foward in the presentation, whichever one it is.

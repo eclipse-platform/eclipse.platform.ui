@@ -110,4 +110,17 @@ public class IntroHTML extends AbstractTextElement {
         return AbstractIntroElement.HTML;
     }
 
+    /**
+     * Deep copy since class has mutable objects.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        IntroHTML clone = (IntroHTML) super.clone();
+        if (introImage != null) {
+            IntroImage cloneIntroImage = (IntroImage) introImage.clone();
+            cloneIntroImage.setParent(clone);
+            clone.introImage = cloneIntroImage;
+        }
+        return clone;
+    }
+
 }

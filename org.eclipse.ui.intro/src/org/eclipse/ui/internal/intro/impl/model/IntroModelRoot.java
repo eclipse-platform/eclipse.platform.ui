@@ -52,7 +52,12 @@ import org.w3c.dom.*;
  * <li>Pages and shared groups that are contributed through extensions become
  * children of the atrget configuration, and so any includes they may have will
  * be resolved correctly.</li>
- * <li>An infinite loop can occur ig </li>
+ * <li>An infinite loop can occur if page A includes from page B and page B in
+ * turn includes from page A. iue: cyclic includes. For performnace, accept.
+ * </li>
+ * <li>When resolving includes, if the target is a container, it must be
+ * resolved to resolve its includes correctly. Otherwise, included includes will
+ * fail due to reparenting.</li>
  * <li>unresolved includes are left as children of the parent container.</li>
  * <li>Unresolved extensions are left as children of the targetted model.</li>
  * <li>For dynamic awarness, the model is nulled and then reloaded. However, we

@@ -40,8 +40,8 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
             NodeList textElements = element
                     .getElementsByTagName(IntroText.TAG_TEXT);
             if (textElements.getLength() == 0)
-                    // no contributions. done.
-                    return null;
+                // no contributions. done.
+                return null;
             IntroText text = new IntroText((Element) textElements.item(0),
                     getBundle());
             text.setParent(this);
@@ -80,6 +80,19 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
      */
     public int getType() {
         return AbstractIntroElement.ABSTRACT_TEXT;
+    }
+
+    /**
+     * Deep copy since class has mutable objects.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        AbstractTextElement clone = (AbstractTextElement) super.clone();
+        if (introText != null) {
+            IntroText cloneIntroText = (IntroText) introText.clone();
+            cloneIntroText.setParent(clone);
+            clone.introText = cloneIntroText;
+        }
+        return clone;
     }
 
 }

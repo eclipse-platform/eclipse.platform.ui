@@ -54,7 +54,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * </ul>
      */
     private Vector styles;
-
     private Hashtable altStyles;
 
     /**
@@ -90,11 +89,21 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     public String getTitle() {
         // title is a child of the page, and so we have to load children first.
         // We also have to resolve children because someone might be including a
-        // title.
+        // title. Update title instance after all includes and extensions have
+        // been resolved.
         getChildren();
+        if (title == null) {
+            // there should only be one title child per page. safe to cast.
+            IntroPageTitle[] titles = (IntroPageTitle[]) getChildrenOfType(AbstractIntroElement.PAGE_TITLE);
+            if (titles.length > 0)
+                title = titles[0];
+        }
+
         if (title == null)
+            // still null. no title.
             return null;
-        return title.getTitle();
+        else
+            return title.getTitle();
     }
 
     /**
@@ -161,6 +170,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (styles.contains(style))
             return;
         styles.add(style);
+    }
+
+    public void insertStyle(String style, int location) {
+        initStylesVectors();
+        if (styles.contains(style))
+            return;
+        styles.add(location, style);
     }
 
     /**
@@ -240,8 +256,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // if we have a title, only add it as a child if we did not load one
             // before. A page can only have one title.
             if (title == null) {
-                title = new IntroPageTitle(childElement, bundle);
-                child = title;
+                child = new IntroPageTitle(childElement, bundle);
             }
         }
         if (child != null)
@@ -315,11 +330,30 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // init the children vector.
             children = new Vector();
             loaded = true;
-            // null instance to free xml memory.
+            // free DOM model for memory performance.
             element = null;
             Log.warning("Content file does not have page with id= " + getId()); //$NON-NLS-1$
         }
     }
+
+    /**
+     * Deep copy since class has mutable objects.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        AbstractIntroPage clone = (AbstractIntroPage) super.clone();
+        if (title != null) {
+            IntroPageTitle clonedTitle = (IntroPageTitle) title.clone();
+            clonedTitle.setParent(clone);
+            clone.title = clonedTitle;
+        }
+        // styles are safe for a shallow copy.
+        if (styles != null)
+            clone.styles = (Vector) styles.clone();
+        if (altStyles != null)
+            clone.altStyles = (Hashtable) altStyles.clone();
+        return clone;
+    }
+
 }
 
 

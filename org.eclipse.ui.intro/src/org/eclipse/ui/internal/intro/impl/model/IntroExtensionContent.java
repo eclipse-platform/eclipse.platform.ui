@@ -72,7 +72,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
-        // null to free xml memory.
+        // free DOM model for memory performance.
         this.element = null;
         return filteredElements;
     }
