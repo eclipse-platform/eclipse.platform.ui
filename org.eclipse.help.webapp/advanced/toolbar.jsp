@@ -83,16 +83,14 @@ if (data.isMozilla()) {
 }
 
 #container {
-	border-left:1px solid ThreeDHighlight;
 	border-bottom:1px solid ThreeDShadow;
 <%
 if (data.isIE()) {
 %> 
-	border-top:1px solid ThreeDHighlight;
 <%
 }else if (data.isMozilla()){
 %>
-	border-top:2px groove ThreeDHighlight;
+	border-top:1px solid ThreeDShadow;
 	height:27px;
 <%
 }

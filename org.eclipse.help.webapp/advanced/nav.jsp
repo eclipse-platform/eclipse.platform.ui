@@ -35,8 +35,8 @@ HTML {
 FRAMESET {
 	border-top:1px solid ThreeDShadow;
 	border-left:1px solid ThreeDShadow;
-	border-right:3px ridge ThreeDHighlight;
-	border-bottom:2px solid ThreeDShadow;
+	border-right:1px solid ThreeDShadow;
+	border-bottom:1px solid ThreeDShadow;
 }
 <%
 }
