@@ -22,7 +22,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -91,7 +90,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 		} else if (exception instanceof InterruptedException) {
 			return;
 		} else {
-			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), exception); //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), exception); //$NON-NLS-1$
 			log = true;
 			dialog = true;
 		}
