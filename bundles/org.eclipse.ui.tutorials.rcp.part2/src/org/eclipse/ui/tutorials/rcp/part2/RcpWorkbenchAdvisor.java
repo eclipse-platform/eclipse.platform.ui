@@ -12,6 +12,8 @@ public class RcpWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		super.preWindowOpen(configurer);
         configurer.setInitialSize(new Point(400, 300));
+        configurer.setShowCoolBar(false);
+        configurer.setShowStatusLine(false);
 		configurer.setTitle(Messages.getString("Hello_RCP")); //$NON-NLS-1$
 	}
 }
