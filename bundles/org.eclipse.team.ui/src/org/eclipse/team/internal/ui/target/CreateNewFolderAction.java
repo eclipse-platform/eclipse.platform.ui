@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.target;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -107,19 +108,40 @@ public class CreateNewFolderAction extends TargetAction {
 		IRemoteResource[] members;
 		monitor.subTask(Policy.bind("CreateNewFolderAction.suggestedNameProgress")); //$NON-NLS-1$
 		members = parent.members(monitor);
-
+		ArrayList names = new ArrayList();
+		
 		String suggestedFolderName = defaultName;
 		
-		while(true) {
-			boolean nameUsed = false;
+		boolean nameUsed = false;
+		
+		for (int i = 0; i < members.length; i++) {
+			String existingName = members[i].getName();
+			names.add(existingName);  // cache them for next round since faster
+			if(existingName.equals(suggestedFolderName)) {
+				nameUsed = true;
+			}							
+		}
+		
+		if(!nameUsed)
+			return suggestedFolderName;
+			
+		//Otherwise, keep proposing new names by incrementing a postfix name index until we find one not used
+		int postfix = 1;
+
+		String baseName = suggestedFolderName;
+
+		do {			
+			nameUsed = false;
 			for (int i = 0; i < members.length && !nameUsed; i++) {
-				if(members[i].getName().equals(suggestedFolderName)) {
+				suggestedFolderName = Policy.bind("CreateNewFolderAction.suggestedNameConcat", baseName, String.valueOf(postfix)); //$NON-NLS-1$
+				String existingName = (String) names.get(i);
+				
+				if(existingName.equals(suggestedFolderName)) {
+					postfix = postfix + 1;
 					nameUsed = true;
 				}							
 			}
-			if(!nameUsed)
-				return suggestedFolderName;
-			suggestedFolderName = Policy.bind("CreateNewFolderAction.suggestedNameConcat", suggestedFolderName, String.valueOf(1)); //$NON-NLS-1$
-		}
+		} while(nameUsed);
+		return suggestedFolderName;
 	}
 }
