@@ -128,7 +128,11 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 			return getPresentation().getText(element);
 		} catch (Throwable e) {
 			DebugUIPlugin.log(e);
-			return null;
+			if (e.getMessage() == null) {
+				return e.getClass().getName();
+			} else {
+				return e.getMessage();
+			}
 		}
 	}
 	
