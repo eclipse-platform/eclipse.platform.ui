@@ -26,6 +26,7 @@ import org.eclipse.ant.ui.internal.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.ui.internal.launchConfigurations.TaskLinkManager;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,12 +41,6 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	
 	private File fBuildFileParent= null;
 	private long fStartTime;
-	
-	/**
-	 * Size of left-hand column for right-justified task name.
-	 * @see #logMessage(String, BuildEvent, -1)
-	  */
-	public static final int LEFT_COLUMN_SIZE = 15;
 
 	/**
 	 * Associated process - discovered as needed to log messages
@@ -106,7 +101,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (name == null) {
 			name = "null"; //$NON-NLS-1$
 		}
-		int size = LEFT_COLUMN_SIZE - (name.length() + 3);
+		int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
 			fullMessage.append(' ');
 		}
@@ -114,7 +109,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fullMessage.append(name);
 		fullMessage.append("] "); //$NON-NLS-1$
 		int offset = Math.max(size, 0) + 1;
-		int length = LEFT_COLUMN_SIZE - size - 3;
+		int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
 		IConsoleHyperlink taskLink = getTaskLink(event);
 		if (taskLink != null) {
 			TaskLinkManager.addTaskHyperlink(getAntProcess(null), taskLink, new Region(offset, length), name);
