@@ -29,6 +29,7 @@ Perisistence
 Property Sheet Example
 	Before verifying any of the following tests, do:
 		1. Make sure the workbench example is already installed
+		   i.e., checkout org.eclipse.ui.examples.propertysheet and launch a run-time workbench
 		2. Create a .usr file and open it 
 		3. Show both the outline view and the properties view	
 
