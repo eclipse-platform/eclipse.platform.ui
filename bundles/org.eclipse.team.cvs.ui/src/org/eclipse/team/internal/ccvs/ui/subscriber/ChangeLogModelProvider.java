@@ -560,12 +560,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 */
 	protected void removeFromViewer(IResource resource) {
 		// First clear the log history cache for the remote element
-		ISynchronizeModelElement element = getModelObject(resource);
-		if(element instanceof FullPathSyncInfoElement) {
-			CVSSyncInfo info = (CVSSyncInfo)((FullPathSyncInfoElement)element).getSyncInfo();
-			if(info != null) {
-				ICVSRemoteResource remote = getRemoteResource(info);
-				logOperation.clearEntriesFor(remote);
+		if (logOperation != null) {
+			ISynchronizeModelElement element = getModelObject(resource);
+			if (element instanceof FullPathSyncInfoElement) {
+				CVSSyncInfo info = (CVSSyncInfo) ((FullPathSyncInfoElement) element).getSyncInfo();
+				if (info != null) {
+					ICVSRemoteResource remote = getRemoteResource(info);
+					logOperation.clearEntriesFor(remote);
+				}
 			}
 		}
 		// Remove the object now
