@@ -31,8 +31,6 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
 
-    private ToolBar toolBar = null;
-
     private ToolItem toolItem = null;
 
     private WorkbenchPage workbenchPage;
@@ -63,7 +61,6 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     public void fill(ToolBar parent, int index) {
         if (toolItem == null && parent != null && !parent.isDisposed()) {
-            toolBar = parent;
             if (index >= 0)
                 toolItem = new ToolItem(parent, SWT.CHECK, index);
             else

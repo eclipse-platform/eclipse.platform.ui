@@ -498,7 +498,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 
 		// Notify listeners.
-		window.getFastViewBar().update(true);
+		window.updateFastViewBar();
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -736,7 +736,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				getPerspective(),
 				CHANGE_VIEW_SHOW);
 			// Just in case view was fast.
-			window.getFastViewBar().update(true);
+			window.updateFastViewBar();
 		}
 		return view;
 	}
@@ -1046,7 +1046,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Creates the client composite.
 	 */
 	private void createClientComposite() {
-		final Composite parent = window.getClientComposite();
+		final Composite parent = window.getPageComposite();
 		composite = new Composite(parent, SWT.NONE);
 		composite.setVisible(false); // Make visible on activate.
 		composite.setBounds(parent.getClientArea());
@@ -1179,7 +1179,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		editorPresentation.dispose();
 
 		// Get rid of composite.
-		window.getClientComposite().removeControlListener(resizeListener);
+		window.getPageComposite().removeControlListener(resizeListener);
 		composite.dispose();
 
 		navigationHistory.dispose();
@@ -1787,7 +1787,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 
 		// Just in case view was fast.
-		window.getFastViewBar().update(true);
+		window.updateFastViewBar();
 
 		//if it was the last part, close the perspective
 //		lastPartClosePerspective();
@@ -2051,7 +2051,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		final PartInitException ex[] = new PartInitException[1];
 		BusyIndicator
 			.showWhile(
-				window.getClientComposite().getDisplay(),
+				window.getWorkbench().getDisplay(),
 				new Runnable() {
 			public void run() {
 				try {
@@ -2211,7 +2211,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		persp.removeFastView(ref);
 
 		// Notify listeners.
-		window.getFastViewBar().update(true);
+		window.updateFastViewBar();
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
@@ -2686,7 +2686,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Update the window
 		window.updateActionSets();
-		window.getFastViewBar().update(true);
+		window.updateFastViewBar();
 
 		updateVisibility(oldPersp, newPersp);
 
@@ -2997,7 +2997,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (isFastView(ref)) {
 			// Would be more efficient to just update label of single tool item
 			// but we don't have access to it from here.
-			window.getFastViewBar().update(true);
+			window.updateFastViewBar();
 		}
 	}
 	/**

@@ -40,7 +40,8 @@ import org.eclipse.swt.SWT;
  * new TrimLayoutData(false, someFixedWidthInPixels, someFixedHeightInPixels);
  * </code> 
  * </p>
- *  
+ *
+ * @since 3.0  
  */
 public class TrimLayoutData {
 	/**

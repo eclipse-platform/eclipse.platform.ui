@@ -65,7 +65,6 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
@@ -114,9 +113,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
 	
-	//private PerspectiveBarManager newBar;
-	
-	private TrimLayout layout = new TrimLayout(); 
+	private TrimLayout defaultLayout; 
 	
 	ProgressRegion progressRegion;
 
@@ -125,6 +122,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private boolean asMaximizedState = false;
 
 	private CBanner topBar;
+	
+	/**
+	 * The composite under which workbench pages create their controls.
+	 * 
+	 * @since 3.0
+	 */
+	private Composite pageComposite;
 
 	/**
 	 * Bit flags indication which submenus (New, Show Views, ...) this
@@ -228,22 +232,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public WorkbenchWindow(int number) {
 		super(null);
 		this.number = number;
-		layout = new TrimLayout();
-		//layout.setMargins(3,3);
-		layout.setSpacing(5, 5, 2, 2);
 		
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet. 
 		PlatformUI.getWorkbench();
 		
-		// Setup window.
+		// Add contribution managers that are exposed to other plugins.
 		addMenuBar();
 		addCoolBar(SWT.FLAT);
-
 		addStatusLine();
-		fastViewBar = new FastViewBar(this);
-		addPerspectiveBar(perspectiveBarStyle());
-		//addNewBar(perspectiveBarStyle());
 
 		actionPresentation = new ActionPresentation(this);
 
@@ -310,17 +307,17 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		Map handlersByCommandId = new HashMap();
 		handlersByCommandId.putAll(actionSetHandlersByCommandId);
 		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
-		List handlerSubmissions = new ArrayList();
+		List newHandlerSubmissions = new ArrayList();
 		
 		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             String commandId = (String) entry.getKey();
             IHandler handler = (IHandler) entry.getValue();
-            handlerSubmissions.add(new HandlerSubmission(null, this, commandId, handler, 5));
+            newHandlerSubmissions.add(new HandlerSubmission(null, this, commandId, handler, 5));
         }
 		
 		Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(this.handlerSubmissions);
-		this.handlerSubmissions = handlerSubmissions;
+		this.handlerSubmissions = newHandlerSubmissions;
 		Workbench.getInstance().getCommandSupport().addHandlerSubmissions(this.handlerSubmissions);		
 	}	
 	
@@ -343,21 +340,21 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * add a shortcut for the page.
 	 */
 	void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
-		perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
-		perspectiveBar.update(false);
-		topBar.layout(true);
+	    if (perspectiveBar != null) {
+			perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
+			perspectiveBar.update(false);
+			perspectiveBar.getControl().getParent().layout();
+	    }
 	}
 	
 	/**
-	 * Configures this window to have a shortcut bar.
+	 * Configures this window to have a perspecive bar.
 	 * Does nothing if it already has one.
-	 * This method must be called before this window's shell is created.
 	 */
 	protected void addPerspectiveBar(int style) {
-		if ((getShell() == null) && (perspectiveBar == null)) {
-			perspectiveBar = new PerspectiveBarManager(style);
-			perspectiveBar.add(new PerspectiveBarNewContributionItem(this));	
-		}
+	    Assert.isTrue(perspectiveBar == null);
+		perspectiveBar = new PerspectiveBarManager(style);
+		perspectiveBar.add(new PerspectiveBarNewContributionItem(this));	
 	}
 	
 	/**
@@ -535,43 +532,105 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return true;
 	}
 	private void showEmptyWindowMessage() {
-		Composite parent = getClientComposite();
+		Composite parent = getPageComposite();
 		if (noOpenPerspective == null) {
 			noOpenPerspective = new Label(parent, SWT.NONE);
 			noOpenPerspective.setText(WorkbenchMessages.getString("WorkbenchWindow.noPerspective")); //$NON-NLS-1$
 			noOpenPerspective.setBounds(parent.getClientArea());
 		}
 	}
-	/**
-	 * Sets the ApplicationWindows's content layout.
-	 * This vertical layout supports a fixed size Toolbar area, a separator line,
-	 * the variable size content area,
-	 * and a fixed size status line.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		
-//		ColorSchemeService.setControlColors(shell);
-//		ColorSchemeService.setControlColors(getStatusLineManager().getControl());
-		
-		if (!getWindowConfigurer().getShowMenuBar()) {
-			shell.setMenuBar(null);
-		}
+
 		String title = getWindowConfigurer().basicGetTitle();
 		if (title != null) {
 			shell.setText(title);
 		}
 		
-		//Reset the colors for ViewForms
-		// removed temporarily
-//		ViewForm.borderInsideRGB = 
-//			JFaceColors.getTabFolderSelectionBackground(shell.getDisplay()).getRGB();
-//		
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 		trackShellActivation(shell);
 		trackShellResize(shell);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.ApplicationWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void createTrimWidgets(Shell shell) {
+	    // do nothing -- trim widgets are created in createDefaultContents
+	}
+
+	/**
+	 * Creates and remembers the client composite, under which workbench
+	 * pages create their controls.
+	 * 
+	 * @since 3.0
+	 */
+	protected Composite createPageComposite(Composite parent) {
+	    pageComposite = new Composite(parent, SWT.NONE);
+	    return pageComposite;
+	}
+	
+	
+    /**
+     * Creates the contents of the workbench window, including
+     * trim controls and the client composite.
+     * This MUST create the client composite via a call to
+     * <code>createClientComposite</code>.
+     * 
+     * @since 3.0
+     */
+    protected Control createContents(Composite parent) {
+        // we know from Window.create that the parent is a Shell.
+        getAdvisor().createWindowContents(getWindowConfigurer(), (Shell) parent);
+        // the page composite must be set by createWindowContents
+        Assert.isNotNull(pageComposite, "createWindowContents must call configurer.createPageComposite"); //$NON-NLS-1$
+        return pageComposite;
+    }
+    
+    /**
+     * Creates the default contents and layout of the shell. 
+     * 
+     * @param shell the shell
+     */
+	protected void createDefaultContents(Shell shell) {
+		defaultLayout = new TrimLayout();
+		defaultLayout.setSpacing(5, 5, 2, 2);
+		shell.setLayout(defaultLayout);
+	    
+	    Menu menuBar = getMenuBarManager().createMenuBar(shell);
+	    if (getWindowConfigurer().getShowMenuBar()) {
+			shell.setMenuBar(menuBar);
+		}
+	    
+		topBar = new CBanner(shell, SWT.NONE);
+
+		createCoolBarControl(topBar);
+		if (getWindowConfigurer().getShowCoolBar()) {
+			topBar.setLeft(getCoolBarControl());
+		}
+
+		addPerspectiveBar(perspectiveBarStyle());
+		createPerspectiveBar(topBar);
+		perspectiveBar.setBanner(topBar);
+		if (getWindowConfigurer().getShowPerspectiveBar()) {
+			topBar.setRight(perspectiveBar.getControl());
+		}
+
+		createStatusLine(shell);
+		
+		fastViewBar = new FastViewBar(this);
+		fastViewBar.createControl(shell);
+
+		createProgressIndicator(shell);
+
+		trimDropTarget = new TrimDropTarget(shell, this);		
+		DragUtil.addDragTarget(shell, trimDropTarget);
+		
 		// If the user clicks on toolbar, status bar, or shortcut bar
 		// hide the fast view.
 		Listener listener = new Listener() {
@@ -591,6 +650,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			}
 		};
+		topBar.addListener(SWT.MouseDown, listener);
 		getCoolBarControl().addListener(SWT.MouseDown, listener);
 		Control[] children = ((Composite) getStatusLineManager().getControl()).getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -599,70 +659,22 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		//fastViewBar.getControl().addListener(SWT.MouseDown, listener);
 		perspectiveBar.getControl().addListener(SWT.MouseDown, listener);
+		
+		
+		// Create the client composite area (where page content goes).
+		createPageComposite(shell);
+		
+		setLayoutDataForContents();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.ApplicationWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void createTrimWidgets(Shell parent) {
-		
-		//Color background = JFaceColors.getSchemeBackground(getWorkbench().getDisplay());
-		//Color foreground = JFaceColors.getSchemeForeground(getWorkbench().getDisplay());
-
-		topBar = new CBanner(parent, SWT.NONE);
-		
-		createCoolBarControl(topBar);
-		createPerspectiveBar(topBar);
-		//createNewBar(topBar);
-
-		perspectiveBar.setBanner(topBar);
-		
-		if (getWindowConfigurer().getShowCoolBar()) {
-			topBar.setLeft(getCoolBarControl());
-		}
-		if (getWindowConfigurer().getShowPerspectiveBar()) {
-			topBar.setRight(perspectiveBar.getControl());
-		}
-		
-		//topBar.setMiddle(newBar.getControl());
-		
-//		ColorSchemeService.setCoolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), getCoolBarControl());
-//		ColorSchemeService.setPerspectiveToolBarColors(getWorkbench().getThemeManager().getCurrentTheme(), perspectiveBar.getControl());
-		
-//		ColorSchemeService.setControlColors(getCoolBarControl());
-//		ColorSchemeService.setControlColors(perspectiveBar.getControl());
-//		ColorSchemeService.setControlColors(topBar);
-
-		createStatusLine(parent);
-		
-		fastViewBar.createControl(parent);
-//		ColorSchemeService.setControlColors(fastViewBar.getControl());
-		
-		addPerspectiveListener(new IPerspectiveListener() {
-
-			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-				fastViewBar.update(true);
-			}
-
-			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-				fastViewBar.update(true);				
-			}
-			
-		});
-		
-		trimDropTarget = new TrimDropTarget(parent, this);
-		
-		DragUtil.addDragTarget(parent, trimDropTarget);
-		
-		createProgressIndicator(parent);
-	}
-
+	
     /**
 	 * Create the perspective toolbar control
 	 */
 	private void createPerspectiveBar(Composite parent) {
 
-		Listener listener = new Listener() {
+	    // TODO: encapsulate the listener and showPerspectiveBarPopup in PerspectiveBar
+
+	    Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				if (event.type == SWT.MenuDetect) {
 					showPerspectiveBarPopup(new Point(event.x, event.y));
@@ -677,23 +689,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 	
 	/**
-	 * Create the new toolbar control
-	 */
-	/*
-	private void createNewBar(Composite parent) {
-
-		newBar.createControl(parent);
-
-	}
-	*/
-	
-	/**
 	 * Returns the shortcut for a page.
 	 */
 	/* protected */
 	IContributionItem findPerspectiveShortcut(
 		IPerspectiveDescriptor perspective,
 		WorkbenchPage page) {
+	    if (perspectiveBar == null) {
+	        return null;
+	    }
 		IContributionItem[] array = perspectiveBar.getItems();
 		int length = array.length;
 		for (int i = 0; i < length; i++) {
@@ -783,10 +787,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return pageList.getActive();
 	}
 	/**
-	 * Get the workbench client area.
+	 * Returns the page composite, under which the window's pages create
+	 * their controls.
 	 */
-	protected Composite getClientComposite() {
-		return (Composite) getContents();
+	protected Composite getPageComposite() {
+		return pageComposite;
 	}
 	/**
 	 * Answer the menu manager for this window.
@@ -822,7 +827,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @return the layout for the shell
 	 */
 	protected Layout getLayout() {
-		return layout;
+		return null;
 	}
 
 	/**
@@ -1031,7 +1036,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
 		IMemento fastViewMem = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
 		if (fastViewMem != null) {
-			fastViewBar.restoreState(fastViewMem);
+		    if (fastViewBar != null) {
+		        fastViewBar.restoreState(fastViewMem);
+		    }
 		}
 		Integer bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
 		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
@@ -1475,25 +1482,29 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		IWorkbenchCommandSupport commandSupport = getWorkbench().getCommandSupport();
 		final boolean keyFilterEnabled = commandSupport.isKeyFilterEnabled();
 
-		FastViewBar shortcutBar = getFastViewBar();
-		Control shortcutBarControl = null;
-		if (shortcutBar != null)
-			shortcutBarControl = shortcutBar.getControl();
-		boolean shortcutbarWasEnabled = false;
-		if (shortcutBarControl != null)
-			shortcutbarWasEnabled = shortcutBarControl.getEnabled();
+		Control fastViewBarControl = getFastViewBar() == null ? null : getFastViewBar().getControl();
+		boolean fastViewBarWasEnabled = fastViewBarControl == null ? false : fastViewBarControl.getEnabled();
+
+		Control perspectiveBarControl = getPerspectiveBar() == null ? null : getPerspectiveBar().getControl();
+		boolean perspectiveBarWasEnabled = perspectiveBarControl == null ? false : perspectiveBarControl.getEnabled();
 
 		try {
-			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
-				shortcutBarControl.setEnabled(false);
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+			    fastViewBarControl.setEnabled(false);
+
+			if (perspectiveBarControl != null && !perspectiveBarControl.isDisposed())
+			    perspectiveBarControl.setEnabled(false);
 
 			if (keyFilterEnabled)
 				commandSupport.setKeyFilterEnabled(false);
 
 			super.run(fork, cancelable, runnable);
 		} finally {
-			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
-				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+			if (fastViewBarControl != null && !fastViewBarControl.isDisposed())
+			    fastViewBarControl.setEnabled(fastViewBarWasEnabled);
+
+			if (perspectiveBarControl != null && !perspectiveBarControl.isDisposed())
+			    perspectiveBarControl.setEnabled(perspectiveBarWasEnabled);
 
 			if (keyFilterEnabled)
 				commandSupport.setKeyFilterEnabled(true);
@@ -1529,7 +1540,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			normalBounds = getShell().getBounds();
 		}
 		IMemento fastViewBarMem = memento.createChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
-		fastViewBar.saveState(fastViewBarMem);
+		if (fastViewBar != null) {
+		    fastViewBar.saveState(fastViewBarMem);
+		}
 		
 		memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
 		memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
@@ -1685,7 +1698,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 				// Update action bars ( implicitly calls updateActionBars() )
 				updateActionSets();
-				perspectiveBar.update(false);
+				if (perspectiveBar != null) {
+				    perspectiveBar.update(false);
+				}
 				getMenuManager().update(IAction.TEXT);
 
 				if (noOpenPerspective != null && in != null) {
@@ -2060,9 +2075,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		Point size = getInitialSize();
 		Point location = getInitialLocation(size);
 		getShell().setBounds(getConstrainedShellBounds(new Rectangle(location.x, location.y, size.x, size.y)));
-		
-		// TODO: Move this elsewhere
-		setLayoutDataForContents();
 	}
 	
 	/**
@@ -2153,20 +2165,20 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		//   separately configurable
 		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar()) || (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar())) {
-			layout.addTrim(topBar, SWT.TOP, null);
+			defaultLayout.addTrim(topBar, SWT.TOP, null);
 			topBar.setVisible(true);
 		}
 		else {
-			layout.removeTrim(topBar);
+			defaultLayout.removeTrim(topBar);
 			topBar.setVisible(false);
 		}
 
 		if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
-			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
+			defaultLayout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
 			getStatusLineManager().getControl().setVisible(true);
 		}
 		else {
-			layout.removeTrim(getStatusLineManager().getControl());
+			defaultLayout.removeTrim(getStatusLineManager().getControl());
 			getStatusLineManager().getControl().setVisible(false);
 		}
 		
@@ -2178,16 +2190,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	
 				progressRegion.getControl().setLayoutData(animationData);
 			}
-			layout.addTrim(progressRegion.getControl(), SWT.BOTTOM, null);
+			defaultLayout.addTrim(progressRegion.getControl(), SWT.BOTTOM, null);
 			progressRegion.getControl().setVisible(true);
 		}
 		else {
 			if (progressRegion != null) {
-				layout.removeTrim(progressRegion.getControl());
+				defaultLayout.removeTrim(progressRegion.getControl());
 				progressRegion.getControl().setVisible(false);
 			}
 		}
-		layout.setCenterControl(getClientComposite());	
+		defaultLayout.setCenterControl(getPageComposite());	
 	}
 	
 	/**
@@ -2196,7 +2208,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private void setLayoutDataForContents() {
 		updateLayoutDataForContents();
 		
-		if (getWindowConfigurer().getShowFastViewBars()) {
+		if (getWindowConfigurer().getShowFastViewBars() && fastViewBar != null) {
 			fastViewBar.addDockingListener(new IChangeListener() {
 				public void update(boolean changed) {
 					Control reference = null;
@@ -2208,7 +2220,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						reference = getStatusLineManager().getControl();	
 					}
 					
-					layout.addTrim(fastViewBar.getControl(), side, reference);
+					defaultLayout.addTrim(fastViewBar.getControl(), side, reference);
 					WorkbenchPage page = getActiveWorkbenchPage(); 
 					
 					if (page != null) {
@@ -2226,11 +2238,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 	}
 	
-	public void hideFastViewBar() {
-		layout.removeTrim(fastViewBar.getControl());
-		getShell().layout();
-	}
-		
 	/**
 	 * Returns the fast view bar.
 	 */
@@ -2261,14 +2268,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return false;
 	}
 	
-
-	/* package */ public int getFastViewBarSide() {
-		return fastViewBar.getSide();
-	}
-	
 	/**
 	 * Close the floating window just for this instance.
-	 *
 	 */
 	public void closeFloatingWindow(){
 		progressRegion.getAnimationItem().closeFloatingWindow();
@@ -2293,5 +2294,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
      */
     protected void createStatusLine(Shell shell) {
         getWindowConfigurer().getPresentationFactory().createStatusLineControl(getStatusLineManager(), shell);
+    }
+
+    /**
+     * Updates the fast view bar, if present.
+     * TODO: The fast view bar should update itself as necessary.
+     * All calls to this should be cleaned up.
+     * 
+     * @since 3.0
+     */
+    public void updateFastViewBar() {
+		if (getFastViewBar() != null) {
+		    getFastViewBar().update(true);
+		}
     }
 }

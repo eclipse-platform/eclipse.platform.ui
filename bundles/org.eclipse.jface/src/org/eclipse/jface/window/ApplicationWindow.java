@@ -278,38 +278,35 @@ public boolean close() {
 	}
 	return false;
 }
-/* (non-Javadoc)
- * Method declared on Window.
- * Sets the ApplicationWindows's content layout.
- * This vertical layout supports a fixed size Toolbar area, a separator line,
- * the variable size content area,
- * and a fixed size status line.
+/**
+ * Extends the super implementation by creating the trim widgets using <code>createTrimWidgets</code>. 
  */
 protected void configureShell(Shell shell) {
 
 	super.configureShell(shell);
 	
+	createTrimWidgets(shell);
+}
+
+/**
+ * Creates the trim widgets around the content area.
+ * 
+ * @param shell the shell
+ * @since 3.0
+ */
+protected void createTrimWidgets(Shell shell){
 	if (menuBarManager != null) {
 		menuBarManager.updateAll(true);
 		shell.setMenuBar(menuBarManager.createMenuBar((Decorations)shell));
 	}
 
-	shell.setLayout(getLayout());
 	if (showTopSeperator()) //$NON-NLS-1$
 		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
-	createTrimWidgets(shell);
-}
-
-/**
- * Create the widgets around the work area.
- * @param parent
- */
-protected void createTrimWidgets(Shell parent){
     // will create either a cool bar or a tool bar
-    createToolBarControl(parent);
-    createCoolBarControl(parent);
-    createStatusLine(parent);
+    createToolBarControl(shell);
+    createCoolBarControl(shell);
+    createStatusLine(shell);
 }
 
 /* (non-Javadoc)
@@ -321,8 +318,14 @@ protected Layout getLayout() {
 
 
 /**
- * Return whether or not the top seperator is being shown.
- * @return boolean
+ * Returns whether to show a top separator line between the menu bar
+ * and the rest of the window contents.  On some platforms such as the Mac,
+ * the menu is separated from the main window already, so a separator line
+ * is not desired. 
+ * 
+ * @return <code>true</code> to show the top separator, <code>false</code>
+ *   to not show it
+ * @since 3.0
  */
 protected boolean showTopSeperator() {
 	return ! "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$

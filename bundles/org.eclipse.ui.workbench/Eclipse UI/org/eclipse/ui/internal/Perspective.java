@@ -1272,13 +1272,15 @@ private void setAllPinsVisible(boolean visible) {
  * Sets the selection for the shortcut bar icon representing the givevn fast view.
  */
 private void setFastViewIconSelection(IViewReference ref, boolean selected) {
-	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+	WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
 	FastViewBar bar = window.getFastViewBar();
-	if (selected) {
-		bar.setSelection(ref);
-	} else {
-		if (ref == bar.getSelection()) {
-			bar.setSelection(null);
+	if (bar != null) {
+		if (selected) {
+			bar.setSelection(ref);
+		} else {
+			if (ref == bar.getSelection()) {
+				bar.setSelection(null);
+			}
 		}
 	}
 }
@@ -1367,7 +1369,12 @@ boolean showFastView(IViewReference ref) {
 
 	saveFastViewWidthRatio();
 	
-	int side = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar().getViewSide(ref);
+	WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+	FastViewBar bar = window.getFastViewBar();
+	if (bar == null) {
+	    return false;
+	}
+	int side = bar.getViewSide(ref);
 	
 	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref.getId()));	
 	

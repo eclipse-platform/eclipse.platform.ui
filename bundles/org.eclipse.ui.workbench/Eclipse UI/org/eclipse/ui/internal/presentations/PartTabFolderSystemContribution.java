@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -36,12 +37,16 @@ public class PartTabFolderSystemContribution extends PartPaneSystemContribution 
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
 	 */
 	public void fill(Menu menu, int index) {
-        if (getSite().isMoveable(getPart())) {
+        if (fastViewsEnabled() && getSite().isMoveable(getPart())) {
             addFastViewMenuItem(menu);
         }
 		super.fill(menu, index);
 	}
 
+	private boolean fastViewsEnabled() {
+		WorkbenchWindow window = (WorkbenchWindow) getPane().getPage().getWorkbenchWindow();
+		return window.getFastViewBar() != null;
+	}
     protected void addFastViewMenuItem(Menu menu) {
         MenuItem item = new MenuItem(menu, SWT.NONE);
 		item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$

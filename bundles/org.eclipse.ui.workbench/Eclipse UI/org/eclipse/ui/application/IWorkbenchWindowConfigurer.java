@@ -13,6 +13,9 @@ package org.eclipse.ui.application;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
@@ -376,4 +379,73 @@ public interface IWorkbenchWindowConfigurer {
 	 * @param factory the presentation factory to use for this window
 	 */
 	public void setPresentationFactory(AbstractPresentationFactory factory);
+
+    /**
+     * Creates the menu bar for the window's shell.
+     * <p>
+     * This should only be called if the advisor is defining custom window contents
+     * in <code>createWindowContents</code>.
+     * The caller must set it in the shell using <code>Shell.setMenuBar(Menu)</code>
+     * but must not make add, remove or change items in the result.
+     * The menu bar is populated by the window's menu manager.  
+     * The application can add to the menu manager in the advisor's 
+     * <code>fillActionBars</code> method instead.
+     * </p>
+     * 
+     * @result the menu bar, suitable for setting in the shell
+     */
+    public Menu createMenuBar();
+
+    /**
+     * Creates the cool bar control. 
+     * <p>
+     * This should only be called if the advisor is defining custom window contents
+     * in <code>createWindowContents</code>.
+     * The caller must lay out the cool bar appropriately within the parent,
+     * but must not add, remove or change items in the result (hence the
+     * return type of <code>Control</code>).
+     * The cool bar is populated by the window's cool bar manager.  
+     * The application can add to the cool bar manager in the advisor's 
+     * <code>fillActionBars</code> method instead.
+     * </p>
+     * 
+     * @param parent the parent composite
+     * @result the cool bar control, suitable for laying out in the parent 
+     */
+    public Control createCoolBarControl(Composite parent);
+
+    /**
+     * Creates the status line control. 
+     * <p>
+     * This should only be called if the advisor is defining custom window contents
+     * in <code>createWindowContents</code>.
+     * The caller must lay out the status line appropriately within the parent,
+     * but must not add, remove or change items in the result (hence the
+     * return type of <code>Control</code>).
+     * The status line is populated by the window's status line manager.  
+     * The application can add to the status line manager in the advisor's 
+     * <code>fillActionBars</code> method instead.
+     * </p>
+     * 
+     * @param parent the parent composite
+     * @result the status line control, suitable for laying out in the parent 
+     */
+    public Control createStatusLineControl(Composite parent);
+
+    /**
+     * Creates the page composite, in which the window's pages, and their
+     * views and editors, appear.
+     * <p>
+     * This should only be called if the advisor is defining custom window contents
+     * in <code>createWindowContents</code>.
+     * The caller must lay out the page composite appropriately within the parent,
+     * but must not add, remove or change items in the result (hence the
+     * return type of <code>Control</code>).
+     * The page composite is populated by the workbench.  
+     * </p>
+     * 
+     * @param parent the parent composite
+     * @result the page composite, suitable for laying out in the parent 
+     */
+    public Control createPageComposite(Composite parent);
 }

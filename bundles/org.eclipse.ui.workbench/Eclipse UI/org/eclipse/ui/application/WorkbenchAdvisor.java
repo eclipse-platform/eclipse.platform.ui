@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 
 /**
  * Public base class for configuring the workbench.
@@ -522,5 +524,28 @@ public abstract class WorkbenchAdvisor {
 		return null;
 	}
 	
+	/**
+	 * Creates the contents of the window.
+	 * <p>
+	 * The default implementation adds a menu bar, a cool bar, a status line, 
+	 * a perspective bar, and a fast view bar.  The visibility of these controls
+	 * can be configured using the <code>setShow*</code> methods on
+	 * <code>IWorkbenchWindowConfigurer</code>.
+	 * </p>
+	 * <p>
+	 * Subclasses may override to define custom window contents and layout,
+	 * but must call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
+	 * </p> 
+	 * 
+	 * @param configurer the window configurer
+	 * @param shell the window's shell
+	 * @see IWorkbenchWindowConfigurer#createMenuBar
+	 * @see IWorkbenchWindowConfigurer#createCoolBarControl
+	 * @see IWorkbenchWindowConfigurer#createStatusLineControl
+	 * @see IWorkbenchWindowConfigurer#createPageComposite
+	 */
+	public void createWindowContents(IWorkbenchWindowConfigurer configurer, Shell shell) {
+	    ((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
+	}
 }
 

@@ -38,14 +38,15 @@ import org.eclipse.swt.widgets.Layout;
  * <p>The interface to this layout is intended to easily support drag-and-drop. Trim widgets
  * can be added, removed, or inserted between other existing widgets and the layout will
  * adjust accordingly. If one side of the layout contains no trim widgets, the central 
- * area will expand to reclaim the unused space</p> 
+ * area will expand to reclaim the unused space.</p> 
  *
  * <p>This layout must be told about every widget that it is supposed to arrange. If the
  * composite contains additional widgets, they will not be moved by the layout and may
  * be arranged through other means.</p>
  *  
+ * @since 3.0
  */
-class TrimLayout extends Layout {
+public class TrimLayout extends Layout {
 
 	private static final TrimLayoutData defaultData = new TrimLayoutData();
 	private Control centerArea;
@@ -81,13 +82,10 @@ class TrimLayout extends Layout {
 			trimSizes[idx] = SWT.DEFAULT;
 		}
 	}
-	
+
 	/**
 	 * Sets the empty space surrounding the center area. This whitespace is
 	 * located between the trim and the central widget.
-	 * 
-	 * @param horizontalSpacing
-	 * @param verticalSpacing
 	 */
 	public void setSpacing(int left, int right, int top, int bottom) {
 		leftSpacing = left;
@@ -324,6 +322,17 @@ class TrimLayout extends Layout {
 		return convertIndexToSwtConstant(getIndex(trimControl));
 	}
 		
+	/**
+	 * Adds the given control to the layout's trim at the given location.
+	 * This is equivalent to <code>addTrim(control, location, null)</code>.
+	 * 
+	 * @param control new trim widget to be added
+	 * @param location one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT
+	 */
+    public void addTrim(Control control, int location) {
+        addTrim(control, location, null);
+	}
+
 	/**
 	 * Adds the given control to the layout's trim. Note that this must be called
 	 * for every trim control. If the given widget is already a trim

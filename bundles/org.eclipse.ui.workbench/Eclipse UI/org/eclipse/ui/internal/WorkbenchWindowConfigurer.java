@@ -19,6 +19,9 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
@@ -557,5 +560,42 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      */
     public void setPresentationFactory(AbstractPresentationFactory factory) {
         presentationFactory = factory;
+    }
+
+    /**
+     * Creates the default window contents.
+     * 
+     * @param shell the shell
+     */
+    public void createDefaultContents(Shell shell) {
+        window.createDefaultContents(shell);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public Menu createMenuBar() {
+       return window.getMenuManager().createMenuBar(window.getShell());
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public Control createCoolBarControl(Composite parent) {
+        return window.getCoolBarManager().createControl(parent);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public Control createStatusLineControl(Composite parent) {
+        return window.getStatusLineManager().createControl(parent);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public Control createPageComposite(Composite parent) {
+        return window.createPageComposite(parent);
     }
 }
