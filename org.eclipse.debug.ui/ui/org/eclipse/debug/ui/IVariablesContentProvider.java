@@ -11,12 +11,13 @@
 package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public interface IVariablesContentProvider {
 
-	public IVariable[] getVariableChildren(IDebugView view, IVariable parent) throws DebugException;
+	public IVariable[] getVariableChildren(IDebugView view, IValue value) throws DebugException;
 	
-	public boolean hasVariableChildren(IDebugView view, IVariable parent) throws DebugException;
+	public boolean hasVariableChildren(IDebugView view, IValue value) throws DebugException;
 	
 }

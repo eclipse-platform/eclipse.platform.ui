@@ -76,6 +76,7 @@ public class ExpressionView extends VariablesView {
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));		
 		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 	}	

@@ -103,7 +103,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	
 	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.getVariableChildren(getDebugView(), parent);
+		return contentProvider.getVariableChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	
 	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.hasVariableChildren(getDebugView(), parent);
+		return contentProvider.hasVariableChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**
@@ -234,7 +234,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	 * Extract the debug model id from the specified <code>IDebugElement</code>
 	 * and return it.
 	 */
-	private  String getDebugModelId(IDebugElement debugElement) {
+	protected  String getDebugModelId(IDebugElement debugElement) {
 		return debugElement.getModelIdentifier();
 	}
 		
@@ -290,7 +290,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 		fDebugView = view;
 	}
 
-	private IDebugView getDebugView() {
+	protected IDebugView getDebugView() {
 		return fDebugView;
 	}
 	

@@ -19,15 +19,14 @@ public class DefaultVariablesContentProvider implements IVariablesContentProvide
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
 	 */
-	public IVariable[] getVariableChildren(IDebugView view, IVariable parent) throws DebugException {
-		return ((IVariable)parent).getValue().getVariables();
+	public IVariable[] getVariableChildren(IDebugView view, IValue value) throws DebugException {
+		return value.getVariables();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IVariable parent) throws DebugException {
-		IValue value = ((IVariable)parent).getValue();
+	public boolean hasVariableChildren(IDebugView view, IValue value) throws DebugException {
 		return value != null && value.hasVariables();
 	}
 

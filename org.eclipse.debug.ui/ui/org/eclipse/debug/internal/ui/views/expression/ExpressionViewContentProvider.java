@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.ui.IVariablesContentProvider;
  
 /**
  * Provides contents for the expression view
@@ -39,11 +40,12 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 			if (parent instanceof IExpressionManager) {
 				// do not cache parents
 				return ((IExpressionManager)parent).getExpressions();
-			} else if (parent instanceof IExpression) {
-				IValue value= ((IExpression)parent).getValue();
-				if (value != null) {
-					children= value.getVariables();
-				}
+			} else if (parent instanceof IExpression) {				
+				children = getModelSpecificExpressionChildren((IExpression)parent);
+//				IValue value= ((IExpression)parent).getValue();
+//				if (value != null) {
+//					children= value.getVariables();
+//				}
 			} else if (parent instanceof IVariable) {
 				children = getModelSpecificVariableChildren((IVariable)parent);
 			}
@@ -51,10 +53,15 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 				cache(parent, children);
 				return children;
 			}
-		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
+		} catch (DebugException de) {
+			DebugUIPlugin.log(de);
 		}
 		return new Object[0];
+	}
+	
+	protected IVariable[] getModelSpecificExpressionChildren(IExpression parent) throws DebugException {
+		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
+		return contentProvider.getVariableChildren(getDebugView(), parent.getValue());
 	}
 	
 	/**
