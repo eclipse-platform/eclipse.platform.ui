@@ -47,7 +47,6 @@ import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
 	private IResource[] resources;
-	private TeamFile previousTeamFile = null;	
 	private boolean onlyOutgoing = false;
 	
 	public CVSSyncCompareInput(IResource[] resources) {
@@ -217,7 +216,16 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		// prompt user with warning
 		Shell shell = getShell();
 		if(shell != null) {
-			promptForConfirmMerge(getShell());
+			// prompt
+			if(source instanceof TeamFile) {
+				TeamFile file = (TeamFile)source;						
+				int direction = file.getChangeDirection();
+				int type = file.getChangeType();
+				if(direction == IRemoteSyncElement.INCOMING ||
+				   direction == IRemoteSyncElement.CONFLICTING) {
+					promptForConfirmMerge(getShell());
+			    }
+			}
 		}
 	}
 	
@@ -250,7 +258,6 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		if(!store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC)) {
 			return;
 		};
-
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {							
 				AvoidableMessageDialog dialog = new AvoidableMessageDialog(
@@ -371,5 +378,4 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	private static boolean isDirty(IFile file) {
 		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
 	}
-	
 }
