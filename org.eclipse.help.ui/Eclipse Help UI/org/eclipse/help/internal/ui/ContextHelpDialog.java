@@ -253,7 +253,7 @@ public class ContextHelpDialog implements Runnable {
 
 		return contents;
 	}
-	protected Control createInfoArea(Composite parent) {
+	private Control createInfoArea(Composite parent) {
 	
 		// Create the text field.    
 		String styledText = cmgr.getDescription(contexts);
@@ -271,7 +271,7 @@ public class ContextHelpDialog implements Runnable {
 		return text;
 	}
 	
-	protected Control createLink(Composite parent, IHelpTopic topic) {
+	private Control createLink(Composite parent, IHelpTopic topic) {
 		Label image = new Label(parent, SWT.NONE);
 		image.setImage(ElementLabelProvider.getDefault().getImage(topic));
 		image.setBackground(backgroundColour);
@@ -295,7 +295,7 @@ public class ContextHelpDialog implements Runnable {
 		linkManager.registerHyperlink(link, new LinkListener(topic));
 		return link;
 	}
-	protected Control createLinksArea(Composite parent) {
+	private Control createLinksArea(Composite parent) {
 		// get links from first context with links
 		relatedTopics = cmgr.getRelatedTopics(contexts);
 		relatedTopics = removeDuplicates(relatedTopics);
@@ -344,7 +344,7 @@ public class ContextHelpDialog implements Runnable {
 		return composite;
 	}
 
-	protected void createMoreButton(Composite parent) {
+	private void createMoreButton(Composite parent) {
 		// Create Show More button
 		CLabel showMoreButton = new CLabel(parent, SWT.NONE);
 		showMoreButton.setBackground(backgroundColour);
@@ -356,7 +356,7 @@ public class ContextHelpDialog implements Runnable {
 		// Before returning start thread obtaining more related links in the bacground
 		getMoreRelatedTopicsInBackground();
 	}
-	protected void getMoreRelatedTopicsInBackground() {
+	private void getMoreRelatedTopicsInBackground() {
 		getMoreRelatedTopicsThread = new Thread(this);
 		getMoreRelatedTopicsThread.setDaemon(true);
 		getMoreRelatedTopicsThread.setName("MoreRelatedTopics");
@@ -366,7 +366,7 @@ public class ContextHelpDialog implements Runnable {
 	}
 	/**
 	 */
-	protected void launchFullViewHelp(IHelpTopic selectedTopic) {
+	private void launchFullViewHelp(IHelpTopic selectedTopic) {
 		// wait for more related links
 		if (getMoreRelatedTopicsThread != null &&
 		    getMoreRelatedTopicsThread.isAlive()) 
@@ -386,22 +386,9 @@ public class ContextHelpDialog implements Runnable {
 		close();
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
+	
+		IHelpTopic[] allTopics = getAllRelatedTopics();
 		
-		// group related topics, and far related topics together
-		int len1 = relatedTopics==null?0:relatedTopics.length;
-		int len2 = farRelatedTopics==null?0:farRelatedTopics.length;
-		          
-		IHelpTopic allTopics[] = new IHelpTopic[len1+len2];
-		if (len1 > 0) 
-		    System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
-		if (len2 > 0)
-		    System.arraycopy(
-				farRelatedTopics,
-				0,
-				allTopics,
-				len1,
-				len2);
-
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(allTopics, selectedTopic);
 	}
@@ -422,14 +409,16 @@ public class ContextHelpDialog implements Runnable {
 	 */
 	public void run() {
 		farRelatedTopics = cmgr.getMoreRelatedTopics(contexts);
-		IHelpTopic[] temp=new IHelpTopic[relatedTopics.length+ farRelatedTopics.length];
-		System.arraycopy(relatedTopics, 0, temp, 0, relatedTopics.length);
-		System.arraycopy(farRelatedTopics, 0, temp, relatedTopics.length, farRelatedTopics.length);
-		temp=removeDuplicates(temp);
-		farRelatedTopics=new IHelpTopic[temp.length-relatedTopics.length];
-		System.arraycopy(temp, relatedTopics.length, farRelatedTopics, 0, temp.length-relatedTopics.length);
+		// Fitler duplicates. We need to take into account all the related links
+		IHelpTopic[] temp = getAllRelatedTopics();
+		temp = removeDuplicates(temp);
+		// strip off the related links to obtain just the far related ones
+		int len1 = relatedTopics==null ? 0 : relatedTopics.length;
+		farRelatedTopics = new IHelpTopic[temp.length-len1];
+		System.arraycopy(temp, len1, farRelatedTopics, 0, temp.length-len1);
 	}
-	protected void showMoreLinks() {
+	
+	private void showMoreLinks() {
 		Menu menu = new Menu(shell);
 		if (farRelatedTopics == null || farRelatedTopics.length < 1) {
 			// show "no more links" menu item only
@@ -491,5 +480,23 @@ public class ContextHelpDialog implements Runnable {
 			&& !"".equals(topic.getHref())
 			&& topic.getLabel() != null
 			&& !"".equals(topic.getLabel());
+	}
+	
+	/**
+	 * Returns the list of all related topics
+	 */
+	private IHelpTopic[] getAllRelatedTopics()
+	{
+		// group related topics, and far related topics together
+		int len1 = relatedTopics==null?0:relatedTopics.length;
+		int len2 = farRelatedTopics==null?0:farRelatedTopics.length;
+		          
+		IHelpTopic allTopics[] = new IHelpTopic[len1+len2];
+		if (len1 > 0) 
+			System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
+		if (len2 > 0)
+		    System.arraycopy(farRelatedTopics, 0, allTopics, len1,len2);
+		    
+		return allTopics;
 	}
 }
