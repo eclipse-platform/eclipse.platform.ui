@@ -421,9 +421,9 @@ public class DebugUITools {
 			LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group);
 			dialog.setInitialStatus(status);
 			return dialog.open();
-		} else {
-			return Window.CANCEL;
-		}
+		} 
+		
+		return Window.CANCEL;
 	}
 	
 	/**
@@ -452,9 +452,9 @@ public class DebugUITools {
 			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, configuration, group);
 			dialog.setInitialStatus(status);
 			return dialog.open();
-		} else {
-			return Window.CANCEL;
-		}
+		} 
+			
+		return Window.CANCEL;
 	}
 			
 	/**
