@@ -546,10 +546,24 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		if (keepHistory)
 			addToLocalHistory(folder, IResource.DEPTH_INFINITE);
 
+		boolean success;
+		try {
+			FileSystemResourceManager localManager = ((Folder) folder).getLocalManager();
+			localManager.delete(folder, force, true, false, monitor);
+			java.io.File folderLocation = folder.getLocation().toFile();			
+			success = Workspace.clear(folderLocation);
+		} catch (CoreException ce) {
+			message = Policy.bind("localstore.couldnotDelete", folder.getFullPath().toString()); //$NON-NLS-1$					
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
+			if (ce.getStatus() != null)
+				status.merge(ce.getStatus());
+			failed(status);
+			success = false;
+		}
+
 		// If the folder was successfully deleted from the file system the
 		// workspace tree should be updated accordingly. Otherwise
 		// we need to signal that a problem occurred.
-		boolean success = Workspace.clear(folder.getLocation().toFile());
 		if (success) {
 			deletedFolder(folder);
 		} else {
@@ -688,8 +702,7 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 			if (project.isOpen()) {
 				try {
 					FileSystemResourceManager localManager = ((Project) project).getLocalManager();
-					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, Policy.totalWork * 1 / 2);
-					localManager.delete(project, force, false, false, subMonitor);
+					localManager.delete(project, force, false, false, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
 					success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
 				} catch (CoreException ce) {
 					message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString()); //$NON-NLS-1$					
@@ -701,11 +714,11 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 				}
 				if (!success)
 					return;
-			} else
+			} else {
 				success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
+				monitor.worked(Policy.totalWork * 3 / 4);
+			}
 		}
-		// deleting project content is 75% of the work
-		monitor.worked(Policy.totalWork * 3 / 4);
 
 		// Signal that the workspace tree should be updated that the project
 		// has been deleted.

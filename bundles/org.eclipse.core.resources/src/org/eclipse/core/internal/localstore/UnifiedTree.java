@@ -220,7 +220,9 @@ protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, 
 	IResource target = getWorkspace().newResource(childPath, type);
 	return createNode(target, stat, location, childName, false);
 }
-protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) throws CoreException {
+//XXX: do we still need this method? UnifiedTreeNodes are always created with a valid IResource (which may exist or not)
+//see #createChildNodeFromFileSystem
+protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) throws CoreException {	
 	long stat = CoreFileSystemLibrary.getStat(location);
 	UnifiedTreeNode node = createNode(null, stat, location, localName, false);
 	int type = node.isFile() ? IResource.FILE : IResource.FOLDER;
