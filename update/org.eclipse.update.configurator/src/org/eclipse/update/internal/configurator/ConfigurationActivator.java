@@ -42,7 +42,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
-	private IPlatform platform;
 	private PlatformConfiguration configuration;
 	
 	// Install location
@@ -81,24 +80,26 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				Utils.debug("no eclipse.product, setting it and returning"); //$NON-NLS-1$
 				System.setProperty(ECLIPSE_PRODUCT, product);
 			}
-			platform.registerBundleGroupProvider(this);
+			Platform.registerBundleGroupProvider(this);
 			return;
 		}
 
 		Utils.debug("Starting update configurator..."); //$NON-NLS-1$
 
 		installBundles();
-		platform.registerBundleGroupProvider(this);
+		Platform.registerBundleGroupProvider(this);
 	}
 
 
 	private void initialize() throws Exception {
-		platform = acquirePlatform();
-		if (platform==null)
+		// TODO this test is not really needed any more than any plugin has 
+		// to test to see if the runtime is running.  It was there from earlier days
+		// where startup was much more disjoint.  Some day that level of decoupling
+		// will return but for now...
+		if (!Platform.isRunning())
 			throw new Exception(Messages.getString("ConfigurationActivator.initialize")); //$NON-NLS-1$
 		
-		installURL = platform.getInstallURL();
-		configLocation = platform.getConfigurationLocation();
+		configLocation = Platform.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
 		if (!configLocation.isReadOnly()) {
 			try {
@@ -111,7 +112,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			}
 		}
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(installURL, configLocation);
+		configuration = getPlatformConfiguration(getInstallURL(), configLocation);
 		if (configuration == null)
 			throw Utils.newCoreException(Messages.getString("ConfigurationActivator.createConfig", configLocation.getURL().toExternalForm()), null); //$NON-NLS-1$
 
@@ -140,9 +141,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		platform = null;
-		releasePlatform();
 		configurationFactorySR.unregister();
 	}
 
@@ -205,9 +203,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			return true;
 		} catch (Exception e) {
 			return false;
-		} finally {
-			releasePlatform();
-		}
+		} 
 	}
 
 	private List getUnresolvedBundles() {
@@ -371,23 +367,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 	}
 
-	
-	private IPlatform acquirePlatform() {
-		if (platformTracker == null) {
-			platformTracker = new ServiceTracker(context, IPlatform.class.getName(), null);
-			platformTracker.open();
-		}
-		IPlatform result = (IPlatform) platformTracker.getService();
-		return result;
-	}
-	
-	private void releasePlatform() {
-		if (platformTracker == null)
-			return;
-		platformTracker.close();
-		platformTracker = null;
-	}
-
 	private void loadOptions() {
 		// all this is only to get the application args		
 		DebugOptions service = null;
@@ -416,12 +395,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 	public static URL getInstallURL() {
 		if (installURL == null)
-			try {
-				installURL = new URL((String) System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				//This can't fail because the location was set coming in
-			}
-			return installURL;
+			installURL = Platform.getInstallLocation().getURL();
+		return installURL;
 	}
 	
 	/* (non-Javadoc)
