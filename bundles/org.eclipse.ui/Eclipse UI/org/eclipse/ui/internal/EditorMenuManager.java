@@ -93,7 +93,7 @@ public void insertAfter(String id, IContributionItem item) {
 	if (refItem != null) {
 		super.insertAfter(refItem.getId(), item);
 	} else {
-		WorkbenchPlugin.log("Reference action not found: " + id); //$NON-NLS-1$
+		WorkbenchPlugin.log("Reference item " + id + " not found for action " + item.getId()); //$NON-NLS-1$
 	}
 }
 /* (non-Javadoc)

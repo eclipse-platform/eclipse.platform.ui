@@ -195,7 +195,7 @@ protected void insertAfter(IContributionManager mgr, String refId,
 	if (refItem != null) {
 		mgr.insertAfter(refItem.getId(), item);
 	} else {
-		WorkbenchPlugin.log("Reference action not found: " + refId); //$NON-NLS-1$
+		WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$
 	}
 }
 /**
