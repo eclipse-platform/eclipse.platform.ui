@@ -479,9 +479,11 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					}
 				}
 			} catch (CoreException e) {
-				// If the resource exists, log the exception and continue.
+				// If the resource exists (is accessible), log the exception and continue.
 				// Otherwise, just ignore the exception
-				if (resource.exists() && e.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND) {
+				if (resource.isAccessible() 
+						&& e.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND
+						&& e.getStatus().getCode() != IResourceStatus.PROJECT_NOT_OPEN) {
 					TeamPlugin.log(e);
 				}
 			}
