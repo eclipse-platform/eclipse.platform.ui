@@ -16,19 +16,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -68,7 +64,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
@@ -114,7 +109,6 @@ import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
-import org.osgi.framework.Bundle;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1354,123 +1348,6 @@ public final class Workbench implements IWorkbench {
 
 		Thread thread = new Thread(work);
 		thread.start();
-	}
-
-	/**
-	 * A utility class used to call #earlyStartup on the proper instance for a
-	 * given configuration element. The process is made complicated since
-	 * attributes that were optional in 2.1 are manadatory in 3.0.
-	 */
-	private static class EarlyStartupRunnable extends SafeRunnable {
-		private static final String EXTENSION_CLASS = "org.eclipse.core.internal.registry.Extension"; //$NON-NLS-1$
-		private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.internal.plugins.PluginDescriptor"; //$NON-NLS-1$
-
-		private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
-		private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
-
-		private IExtension extension;
-
-		public EarlyStartupRunnable(IExtension extension) {
-			this.extension = extension;
-		}
-
-		public void run() throws Exception {
-			Object executableExtension = getExecutableExtension();
-
-			// make sure the extension implements IStartup
-			if (executableExtension != null
-					&& executableExtension instanceof IStartup)
-				((IStartup) executableExtension).earlyStartup();
-			else {
-				IStatus status = new Status(IStatus.ERROR, extension
-						.getNamespace(), 0,
-						"startup class must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
-						null);
-				WorkbenchPlugin.log("Bad startup extension specification in plugin " + extension.getNamespace(), status); //$NON-NLS-1$
-			}
-		}
-
-		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR,
-					extension.getNamespace(), 0,
-					"Unable to execute early startup code for a startup extension in plugin " + extension.getNamespace(), //$NON-NLS-1$
-					exception);
-			WorkbenchPlugin.log("Unhandled Exception", status); //$NON-NLS-1$
-		}
-
-		/**
-		 * The class attribute of the startup element was optional for pre-3.0
-		 * plugins (the declaring plugin's object would silently be used
-		 * instead). In 3.0 this attribute is mandatory, but 2.1 plugins should
-		 * still be able to run in the compatibility mode. So, if the attribute
-		 * is missing, then reflection is used to see if the compatibility
-		 * bundle can be located and used to access the plugin object.
-		 * 
-		 * @return an executable extension for this startup element or null if
-		 *         an extension (or plugin) could not be found
-		 */
-		private Object getExecutableExtension() throws CoreException {
-
-			// see if this extension has a config element for startup, pre-3.0
-			// plugins are allowed to leave out this element (the plugin will be
-			// used)
-			IConfigurationElement[] configElements = extension
-					.getConfigurationElements();
-
-			// There should only be one configuration element and it
-			// should be named "startup".
-			IConfigurationElement startupElement = null;
-			String startupClass = null;
-			for (int i = 0; i < configElements.length; ++i)
-				if (configElements[i].getName().equals(
-						IWorkbenchConstants.TAG_STARTUP)) {
-					startupElement = configElements[i];
-					startupClass = startupElement
-							.getAttribute(IWorkbenchConstants.TAG_CLASS);
-					break;
-				}
-
-			// if the startup element exists and it had a class attribute, then
-			// use it
-			if (startupClass != null && startupClass.length() > 0)
-				return WorkbenchPlugin.createExtension(startupElement,
-						IWorkbenchConstants.TAG_CLASS);
-
-			// otherwise see if the compat bundle is running
-			Bundle compatBundle = Platform
-					.getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
-			if (compatBundle == null)
-				return null;
-
-			// use reflection to try to access the plugin object
-			try {
-				// IPluginDescriptor pluginDesc =
-				// 		extension.getDeclaringPluginDescriptor();
-				Class extensionClass = compatBundle.loadClass(EXTENSION_CLASS);
-				Method getDescMethod = extensionClass.getDeclaredMethod(
-						GET_DESC_METHOD, new Class[0]);
-				Object pluginDesc = getDescMethod.invoke(extension,
-						new Object[0]);
-				if (pluginDesc == null)
-					return null;
-
-				// Plugin plugin = pluginDesc.getPlugin();
-				Class pluginDescClass = compatBundle.loadClass(PLUGIN_DESC_CLASS);
-				Method getPluginMethod = pluginDescClass.getDeclaredMethod(
-						GET_PLUGIN_METHOD, new Class[0]);
-				return getPluginMethod.invoke(pluginDesc, new Object[0]);
-			} catch (ClassNotFoundException e) {
-				handleException(e);
-			} catch (IllegalAccessException e) {
-				handleException(e);
-			} catch (InvocationTargetException e) {
-				handleException(e);
-			} catch (NoSuchMethodException e) {
-				handleException(e);
-			}
-
-			return null;
-		}
 	}
 
 	/**
