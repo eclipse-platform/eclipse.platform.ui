@@ -303,7 +303,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			value= dialog.getValue(VALUE_LABEL);
 			description= dialog.getValue(DESCRIPTION_LABEL);
 			if (!name.equals(originalName)) {
-				if (addVariable(getVariableManager().newValueVariable(name, description))) {
+				IValueVariable newVariable = getVariableManager().newValueVariable(name, description);
+				newVariable.setValue(value);
+				if (addVariable(newVariable)) {
 					variableContentProvider.removeVariables(new IValueVariable[]{variable});
 					variableTable.refresh();
 				}
