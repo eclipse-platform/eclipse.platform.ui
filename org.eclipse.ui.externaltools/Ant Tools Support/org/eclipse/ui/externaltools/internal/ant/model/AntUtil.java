@@ -9,6 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -27,7 +31,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  */
 public final class AntUtil {
 	public static final String RUN_TARGETS_ATTRIBUTE = IExternalToolConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
-	private static final String TARGET_SEPARATOR = ","; //$NON-NLS-1$;
+	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
 	
 	/**
 	 * No instances allowed
@@ -37,25 +41,25 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns a single-string of target names for storage.
+	 * Returns a single-string of the strings for storage.
 	 * 
-	 * @param targets the array of target names
-	 * @return a single-string representation of the target names,
-	 *  or <code>null</code> if the target array is empty.
+	 * @param targets the array of strings
+	 * @return a single-string representation of the strings or
+	 * <code>null</code> if the array is empty.
 	 */
-	public static String combineRunTargets(String[] targets) {
-		if (targets.length == 0)
+	public static String combineStrings(String[] strings) {
+		if (strings.length == 0)
 			return null;
 
-		if (targets.length == 1)
-			return targets[0];
+		if (strings.length == 1)
+			return strings[0];
 
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < targets.length - 1; i++) {
-			buf.append(targets[i]);
-			buf.append(TARGET_SEPARATOR);
+		for (int i = 0; i < strings.length - 1; i++) {
+			buf.append(strings[i]);
+			buf.append(ATTRIBUTE_SEPARATOR);
 		}
-		buf.append(targets[targets.length - 1]);
+		buf.append(strings[strings.length - 1]);
 		return buf.toString();
 	}
 
@@ -124,6 +128,69 @@ public final class AntUtil {
 	}
 	
 	/**
+	 * Returns the list of urls that define the custom classpath for the Ant
+	 * build , or <code>null</code> if the global classpath is to be used.
+	 *
+	 * @param configuration launch configuration
+	 * @return a list of <code>URL</code>
+	 *
+	 * @throws CoreException if file does not exist, IO problems, or invalid format.
+	 */
+	public static URL[] getCustomClasspath(ILaunchConfiguration config) throws CoreException {
+		String classpathString= config.getAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		if (classpathString == null) {
+			return null;
+		}
+		List antURLs= new ArrayList();
+		List userURLs= new ArrayList();
+		getCustomClasspaths(config, antURLs, userURLs);
+		URL[] custom= new URL[antURLs.size() + userURLs.size()];
+		antURLs.addAll(userURLs);
+		return (URL[])antURLs.toArray(custom);
+	}
+	
+	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) {
+		String classpathString= null;
+		try {
+			classpathString = config.getAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+		} catch (CoreException e) {
+		}
+		if (classpathString == null) {
+			return;
+		}
+		String antString= null;
+		String userString= null;
+		int delim= classpathString.indexOf('*');
+
+		if (delim == -1) {
+			antString= classpathString;
+		} else {
+			antString= classpathString.substring(0, delim);
+			userString= classpathString.substring(delim+1);
+		}
+
+		String[] antStrings= AntUtil.parseString(antString, AntUtil.ATTRIBUTE_SEPARATOR);
+		for (int i = 0; i < antStrings.length; i++) {
+			String string = antStrings[i];
+			try {
+				antURLs.add(new URL("file:" + string));
+			} catch (MalformedURLException e) {
+			}
+		}
+		if (userString != null) {
+			String[] userStrings=AntUtil.parseString(userString, AntUtil.ATTRIBUTE_SEPARATOR);
+			for (int i = 0; i < userStrings.length; i++) {
+				String string = userStrings[i];
+				try {
+					userURLs.add(new URL("file:" + string));
+				} catch (MalformedURLException e) {
+				}
+			}
+
+		}
+	}
+	
+	/**
 	 * Returns the currently displayed Ant View if it is open.
 	 * 
 	 * @return the Ant View open in the current workbench page or
@@ -172,7 +239,7 @@ public final class AntUtil {
 	 * @return a list of target names
 	 */
 	public static String[] parseRunTargets(String extraAttibuteValue) {
-		return parseString(extraAttibuteValue, TARGET_SEPARATOR);
+		return parseString(extraAttibuteValue, ATTRIBUTE_SEPARATOR);
 	}
 	
 	/**
@@ -195,5 +262,20 @@ public final class AntUtil {
 		}
 		
 		return results;
+	}
+	
+	/**
+	 * Returns whether the Ant class loader should be reused or a new one
+	 * created for each build of this launch configuration.
+	 * 
+	 * @param configuration  the launch configuration for the build
+	 * @return whether to reuse the class loader
+	 */
+	public static boolean shouldReuseClassLoader(ILaunchConfiguration config) {
+		try {
+			return config.getAttribute(IExternalToolConstants.ATTR_ANT_REUSE_CLASSLOADER, true);
+		} catch (CoreException e) {
+			return true;
+		}
 	}
 }
