@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.internal.navigator.*;
 import org.eclipse.ui.views.navigator.*;
 
 public class OpenActionFactory extends ActionFactory {
