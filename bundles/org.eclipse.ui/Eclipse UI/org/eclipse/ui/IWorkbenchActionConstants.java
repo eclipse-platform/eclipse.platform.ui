@@ -339,11 +339,22 @@ public interface IWorkbenchActionConstants {
 	public static final String SELECT_ALL = "selectAll";		// Global action. //$NON-NLS-1$
 	
 	/**
-	 * Edit menu: name of standard Bookmark global action
+	 * Edit menu: name of standard Add Bookmark global action
 	 * (value <code>"bookmark"</code>).
 	 */
 	public static final String BOOKMARK = "bookmark"; 		// Global action. //$NON-NLS-1$
-	
+
+	/**
+	 * Edit menu: name of standard Add Task global action
+	 * (value <code>"addTask"</code>).
+	 */
+	public static final String ADD_TASK = "addTask"; 		// Global action. //$NON-NLS-1$
+		
+	/**
+	 * Edit menu: name of group for extra Add-like actions (value <code>"add.ext"</code>).
+	 */
+	public static final String ADD_EXT = "add.ext";			// Group. //$NON-NLS-1$
+
 // Standard workbench actions:
 	/**
 	 * Workbench menu: name of group for start of menu

@@ -105,6 +105,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction selectAllAction;
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
+	private RetargetAction addTaskAction;
 	private RetargetAction printAction;
 	
 // menu reorg
@@ -343,6 +344,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new Separator());
 		
 		menu.add(addBookmarkAction);
+		menu.add(addTaskAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.ADD_EXT));
 		
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -799,6 +802,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
 		addBookmarkAction.setActionDefinitionId(addBookmarkActionDefId);
 		keyBindingService.registerGlobalAction(addBookmarkAction);
+
+		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "addTask", false); //$NON-NLS-1$
 
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
