@@ -34,6 +34,8 @@ import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.ShowEmptyGroupsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -57,6 +59,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
@@ -67,12 +70,16 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
@@ -91,6 +98,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
 	private BreakpointsContentProvider fContentProvider;
+    private Clipboard fClipboard;
+    
 	/**
 	 * This memento allows the Breakpoints view to save and restore state
 	 * when it is closed and opened within a session. A different
@@ -140,18 +149,18 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     
     private void initDragAndDrop() {
         StructuredViewer viewer = (StructuredViewer)getViewer();
-        int ops= DND.DROP_MOVE;
+        int ops= DND.DROP_MOVE | DND.DROP_COPY;
         // drop
         Transfer[] dropTransfers= new Transfer[] {
             LocalSelectionTransfer.getInstance()
         };
-        viewer.addDropSupport(ops, dropTransfers, new BreakpointsDropAdapter(viewer));
+        viewer.addDropSupport(ops, dropTransfers, new BreakpointsDropAdapter(this, viewer));
         
         // Drag 
         Transfer[] dragTransfers= new Transfer[] {
             LocalSelectionTransfer.getInstance()
         };
-        viewer.addDragSupport(ops, dragTransfers, new BreakpointsDragAdapter((BreakpointsContentProvider)(viewer.getContentProvider()), viewer));
+        viewer.addDragSupport(ops, dragTransfers, new BreakpointsDragAdapter(this, viewer));
     }    
 	
 	/**
@@ -374,6 +383,11 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
 		}
+        
+        if (fClipboard != null) {
+            fClipboard.dispose();
+        }
+        
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 	}
 
@@ -387,9 +401,33 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
 		setAction("SkipBreakpoints", new SkipAllBreakpointsAction()); //$NON-NLS-1$
         getViewSite().getActionBars().getMenuManager().add(new ShowEmptyGroupsAction((StructuredViewer) getViewer()));
+        
+        fClipboard= new Clipboard(getSite().getShell().getDisplay());
+        
+        PasteBreakpointsAction paste = new PasteBreakpointsAction(this, fClipboard);
+        configure(paste, IWorkbenchActionDefinitionIds.PASTE, ISharedImages.IMG_TOOL_PASTE);
+        SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
+        configure(copy, IWorkbenchActionDefinitionIds.COPY, ISharedImages.IMG_TOOL_COPY);        
 	}
 
 	/**
+     * Configures the action to override the global action, registers
+     * the action for selection change notification, and registers
+     * the action with this view.
+     * 
+     * @param sla action
+     * @param defId global action definition id
+     * @param imgId image identifier
+     */
+    private void configure(SelectionListenerAction action, String defId, String imgId) {
+        setAction(defId, action);
+        action.setActionDefinitionId(defId);
+        getViewSite().getActionBars().setGlobalActionHandler(defId, action);
+        getViewer().addSelectionChangedListener(action);
+        action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
+    }
+
+    /**
 	 * Adds items to the context menu.
 	 * 
 	 * @param menu The menu to contribute to
@@ -401,6 +439,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
+        menu.add(getAction(IWorkbenchActionDefinitionIds.COPY));
+        menu.add(getAction(IWorkbenchActionDefinitionIds.PASTE));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 
 		menu.add(new Separator(IDebugUIConstants.SELECT_GROUP));
@@ -617,5 +657,120 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             }
         }
         return null;
+    }    
+    
+    /**
+     * Checks if the elements contained in the given selection can
+     * be moved.
+     * 
+     * @param selection containing the elements to be moved
+     */
+    public boolean canMove(ISelection selection) {
+        if (selection.isEmpty() || !fContentProvider.isShowingGroups()) {
+            return false;
+        }
+        if (selection instanceof IStructuredSelection) {
+            IStructuredSelection ss = (IStructuredSelection) selection;
+            Object[] objects = ss.toArray();
+            for (int i = 0; i < objects.length; i++) {
+                Object object = objects[i];
+                if (object instanceof IBreakpoint) {
+                    IBreakpoint breakpoint = (IBreakpoint) object;
+                    BreakpointContainer[] containers = fContentProvider.getLeafContainers(breakpoint);
+                    if (containers != null) {
+                        for (int j = 0; j < containers.length; j++) {
+                            BreakpointContainer container = containers[j];
+                            if (!container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
+                                return false;
+                            }
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }   
+    
+    /**
+     * Returns whether the given selection can be pasted into the given target.
+     * 
+     * @param target target of the paste
+     * @param selection the selection to paste
+     * @return whether the given selection can be pasted into the given target
+     */
+    public boolean canPaste(Object target, ISelection selection) {
+        if (target instanceof BreakpointContainer) {
+            BreakpointContainer container = (BreakpointContainer) target;
+            if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+                Object[] objects = ((IStructuredSelection)selection).toArray();
+                for (int i = 0; i < objects.length; i++) {
+                    if (objects[i] instanceof IBreakpoint) {
+                        IBreakpoint breakpoint = (IBreakpoint)objects[i];
+                        if (container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }   
+    
+    public void performRemove(BreakpointContainer[] containers, ISelection ss) {
+        if (ss instanceof IStructuredSelection) {
+            // remove from source on move operation
+            IStructuredSelection selection = (IStructuredSelection) ss;
+            Object[] breakpoints = selection.toArray();
+            for (int i = 0; i < breakpoints.length; i++) {
+                IBreakpoint breakpoint = (IBreakpoint) breakpoints[i];
+                for (int j = 0; j < containers.length; j++) {
+                    BreakpointContainer container = containers[j];
+                    container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
+                }
+            }
+        }
+    }
+    
+    public BreakpointContainer[] getSourceContainers(ISelection s) {
+        List list = new ArrayList();
+        if (s instanceof IStructuredSelection) {
+            // remove from source on move operation
+            IStructuredSelection selection = (IStructuredSelection) s;
+            Object[] breakpoints = selection.toArray();
+            for (int i = 0; i < breakpoints.length; i++) {
+                IBreakpoint breakpoint = (IBreakpoint) breakpoints[i];
+                BreakpointContainer[] leafContainers = fContentProvider.getLeafContainers(breakpoint);
+                for (int j = 0; j < leafContainers.length; j++) {
+                    list.add(leafContainers[j]);
+                }
+            }
+        }        
+        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+    }
+    
+    /** 
+     * Pastes the selection into the given target
+     * 
+     * @param target breakpoint container
+     * @param selection breakpoints
+     * @return whehther successful
+     */
+    public boolean performPaste(Object target, ISelection selection) {
+        if (target instanceof BreakpointContainer && selection instanceof IStructuredSelection) {
+            BreakpointContainer container = (BreakpointContainer) target;
+            Object[] objects = ((IStructuredSelection)selection).toArray();
+            for (int i = 0; i < objects.length; i++) {
+                container.getOrganizer().addBreakpoint((IBreakpoint)objects[i], container.getCategory());
+            }
+            return true;
+        }
+        return false;
     }    
 }

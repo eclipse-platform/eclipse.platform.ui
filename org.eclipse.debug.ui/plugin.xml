@@ -1154,24 +1154,6 @@
       </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
-            id="org.eclipse.debug.ui.breakpointview.breakpointActions">
-         <visibility>
-            <objectClass
-               name="org.eclipse.debug.core.model.IBreakpoint">
-            </objectClass>
-         </visibility>
-         <action
-               label="%addToGroup.label"
-               icon="icons/full/obj16/brkp_grp.gif"
-               helpContextId="add_breakpoint_to_group_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.AddBreakpointToGroupAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.actions.AddBreakpointToGroup">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.debug.ui.breakpointview.popupMenu">
          <action
                label="%SelectAll.label"
