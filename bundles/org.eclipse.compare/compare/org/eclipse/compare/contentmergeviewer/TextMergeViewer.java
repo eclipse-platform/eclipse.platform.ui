@@ -1202,13 +1202,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			if (!showResolveUI()) {
+			if (!fUseResolveUI) {
 				new Resizer(canvas, HORIZONTAL);
 			} else {
 				canvas.addMouseMoveListener(
 					new MouseMoveListener() {
 						public void mouseMove(MouseEvent e) {
-							handleMouseMoveOverCenter(canvas, e.x, e.y);
+							if (showResolveUI())
+								handleMouseMoveOverCenter(canvas, e.x, e.y);
 						}
 					}
 				);
@@ -2971,7 +2972,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		// we only enable the new resolve ui if exactly one side is editable
 		boolean l= cc.isLeftEditable();
 		boolean r= cc.isRightEditable();
-		return (l && !r) || (r && !l);
+		//return (l && !r) || (r && !l);
+		return l || r;
 	}
 	
 	private void paintCenter(Canvas canvas, GC g) {
