@@ -29,7 +29,7 @@ public class WorkbenchEncoding {
 	/**
 	 * The list of encodings read from the extension registry
 	 */
-	private static List definedEncodings;
+	static List definedEncodings;
 	
 	private static class EncodingsRegistryReader extends RegistryReader{
 		
@@ -111,33 +111,6 @@ public class WorkbenchEncoding {
 		return System.getProperty("file.encoding", "UTF-8");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/**
-	 * Return the list of encodings supplied as standard choices in the
-	 * workbench. Include the default encoding as well.
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 * 
-	 * @return List of String
-	 */
-	public static List getStandardEncodings() {
-		ArrayList encodings = new ArrayList();
-
-		encodings.add(US_ASCII);
-		encodings.add(UTF_16);
-		encodings.add(UTF_16_BIG_ENDIAN);
-		encodings.add(UTF_16_LITTLE_ENDIAN);
-		encodings.add(UTF_8);
-		encodings.add(ISO_8859_1);
-
-		String defaultEnc = getWorkbenchDefaultEncoding();
-
-		if (!encodings.contains(defaultEnc)) {
-			encodings.add(defaultEnc);
-		}
-
-		return encodings;
-	}
 	
 	/**
 	 * Return the list of encodings defined using the org.eclipse.ui.encodings
