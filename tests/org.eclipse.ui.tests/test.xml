@@ -7,9 +7,9 @@
   <!-- The property ${eclipse-home} should be passed into this script -->
 
   <!-- sets the properties eclipse-home, and library-file -->
-  <property name="eclipse-home" value="D:\eclipse\target"/>
+  <property name="eclipse-home" value="${basedir}\..\.."/>
   <property name="plugin-name" value="org.eclipse.ui.tests"/>
-  <property name="library-file" value="${basedir}/../org.eclipse.test/bin/library.xml"/>
+  <property name="library-file" value="${eclipse-home}/fragments/org.eclipse.test/library.xml"/>
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
@@ -25,12 +25,12 @@
   <target name="suite">
     <property name="location1" value="${eclipse-home}/ui_session_sniff_folder"/>
     <delete dir="${location1}" quiet="true"/>
-    <ant target="eclipse-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location1}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.ui.tests.api.SessionCreateTest"/>
     </ant>
-    <ant target="eclipse-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location1}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.ui.tests.api.SessionRestoreTest"/>
@@ -38,7 +38,7 @@
 
     <property name="location2" value="${eclipse-home}/ui_sniff_folder"/>
     <delete dir="${location2}" quiet="true"/>
-    <ant target="eclipse-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location2}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.ui.tests.UiTestSuite"/>
