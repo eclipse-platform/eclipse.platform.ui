@@ -370,6 +370,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	public void refresh() {
 		if (!isInitializingTabs()) {
+			updateWorkingCopyFromPages();
 			boolean dirty = isDirty();
 			getApplyButton().setEnabled(dirty && canSave());
 			getRevertButton().setEnabled(dirty);
@@ -478,6 +479,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 		// Update the name field after in case client changed it
 		getNameWidget().setText(getWorkingCopy().getName());
+		
+		fCurrentTabIndex = getTabFolder().getSelectionIndex();
 
 		// Turn off initializing flag to update message
 		setInitializingTabs(false);
@@ -647,7 +650,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			return true;
 		}
 
-		updateWorkingCopyFromPages();
 		ILaunchConfiguration original = getOriginal();
 		return !original.contentsEqual(workingCopy);
 	}
@@ -951,10 +953,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			ILaunchConfigurationTab tab = tabs[fCurrentTabIndex];
 			ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
 			if (wc != null) {
+				setInitializingTabs(true);
 				// apply changes when leaving a tab
 				tab.performApply(wc);
 				// re-initialize a tab when entering it
 				getActiveTab().initializeFrom(wc);
+				setInitializingTabs(false);
 			}
 		}
 		fCurrentTabIndex = getTabFolder().getSelectionIndex();
@@ -966,16 +970,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification the name field has been modified
 	 */
 	protected void handleNameModified() {
-		if (getWorkingCopy() != null) {
-			try {
-				verifyName();
-				getWorkingCopy().rename(getNameWidget().getText().trim());
-			} catch (CoreException ce) {
-				// verification failed
-			}
-			// fire selection changed so the launch dialog will update
-			fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
-		}		
+		refreshStatus();
 	}		
 	
 	/**
@@ -985,15 +980,19 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		try {
 			// trim name
 			Text widget = getNameWidget();
-			widget.setText(widget.getText().trim());
+			String name = widget.getText();
+			String trimmed = name.trim();
+			if (!name.equals(trimmed)) {
+				widget.setText(trimmed);
+			}
 			if (isDirty()) {
 				getWorkingCopy().doSave();
+				refresh();
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_46"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_saving_launch_configuration_47"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		refresh();
 	}
 
 	/**

@@ -583,7 +583,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void refreshStatus() {
 		updateButtons();
 		updateMessage();
-		fTabViewer.refresh();
 	}
 			
 	private Display getDisplay() {
@@ -1437,9 +1436,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getButtonActionDelete().setEnabled(getDeleteAction().isEnabled());
 
 		// Launch button
+		fTabViewer.refresh();
 		getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch());
 		
-		fTabViewer.refresh();
 	}
 	
 	/**
