@@ -18,6 +18,7 @@ class FinishedJobs {
     private static ListenerList listeners= new ListenerList();
 	private IJobProgressManagerListener listener;
 	private HashSet keptjobinfos= new HashSet();
+	private long timeStamp;
     
     
     static synchronized FinishedJobs getInstance() {
@@ -75,6 +76,7 @@ class FinishedJobs {
     void add(JobInfo info) {
         if (!keptjobinfos.contains(info)) {
             keptjobinfos.add(info);
+            timeStamp++;
             if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: added job");
             Object l[]= listeners.getListeners();
 			for (int i= 0; i < l.length; i++) {
@@ -107,5 +109,9 @@ class FinishedJobs {
 
     JobInfo[] getJobInfos() {
         return (JobInfo[]) keptjobinfos.toArray(new JobInfo[keptjobinfos.size()]);
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
     }
 }
