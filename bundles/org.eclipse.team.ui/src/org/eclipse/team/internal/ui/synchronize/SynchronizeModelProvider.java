@@ -49,7 +49,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider, IResourceChangeListener {
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 	
 	// Flags to indicate if tree control should be updated while building the model.
 	private boolean refreshViewer;
@@ -688,7 +688,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			// Accumulate all distinct resources that have had problem marker
 			// changes
 			for (int idx = 0; idx < markerTypes.length; idx++) {
-				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
+				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(markerTypes[idx], true);
 					for (int i = 0; i < markerDeltas.length; i++) {
 						IMarkerDelta delta = markerDeltas[i];
 						int kind = delta.getKind();
