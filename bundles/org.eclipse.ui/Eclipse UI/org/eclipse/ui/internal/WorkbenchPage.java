@@ -2102,8 +2102,10 @@ private void setActivePart(IWorkbenchPart newPart) {
 	}
 	activatePart(activePart);
 	
-	if(activePart instanceof IEditorPart)
+	if(activePart != null && activePart instanceof IEditorPart)
 		getNavigationHistory().add((IEditorPart)activePart);		
+	else
+		getNavigationHistory().add((IEditorPart)null);	
 
 	// Fire notifications
 	if (oldPart != null)
