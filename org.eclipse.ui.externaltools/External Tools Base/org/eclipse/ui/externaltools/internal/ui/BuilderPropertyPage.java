@@ -240,7 +240,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 *
 	 * @return the configured build command
 	 */
-	public ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
+	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
 		Map args= null;
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			if (((ILaunchConfigurationWorkingCopy) config).getLocation() == null) {
