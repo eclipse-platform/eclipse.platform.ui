@@ -92,6 +92,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
       <complexType>
          <sequence>
             <element ref="implementation" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="launchBar" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="home-page-id" type="string" use="required">
             <annotation>
@@ -153,6 +154,70 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <annotation>
                <documentation>
                   The optional windowing system specification used when choosing the presentation&apos;s implementation.  It can be any of the ws designators defined by Eclipse (see Javadoc for &lt;code&gt;org.eclipse.core.runtime.Platform&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchBar">
+      <annotation>
+         <documentation>
+            Launch bar works in conjuction with &apos;switchToLaunchBar&apos; command. When executed, the command will close intro and create a launch bar in one of the trim areas of the main window. The launch bar will contain at least one button that would allow users to return to the last intro page. Optionally, it can contain additional buttons defined using &lt;code&gt;shortcut&lt;/code&gt; elements. These buttons can be used to quickly go to a certain intro page.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="shortcut" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="location" use="default" value="right">
+            <annotation>
+               <documentation>
+                  the location of the launch bar relative to the content area in the main window.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="left">
+                  </enumeration>
+                  <enumeration value="bottom">
+                  </enumeration>
+                  <enumeration value="right">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="shortcut">
+      <annotation>
+         <documentation>
+            a button will be created in the intro launch bar for each shortcut element. The URL defined in the shortcut will be executed when the button is pressed.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  a tooltip to be used for this shortcut
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a relative path to the image icon that should be used for this shortcut in the intro launch bar.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="url" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the URL to execute when the shortcut in the launch bar is activated
                </documentation>
             </annotation>
          </attribute>
