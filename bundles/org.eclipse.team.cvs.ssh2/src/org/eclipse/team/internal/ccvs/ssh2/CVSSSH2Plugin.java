@@ -46,12 +46,14 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		CVSSSH2PreferencePage.initDefaults(store);
+	private void initializeDefaultPreferences() {
+	    IPreferenceStore store = getPreferenceStore();
+	    CVSSSH2PreferencePage.initDefaults(store);
 	}
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);	
 		Policy.localize("org.eclipse.team.internal.ccvs.ssh2.messages"); //$NON-NLS-1$
+		initializeDefaultPreferences();
 	}
 }
