@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
-import org.eclipse.ui.junit.util.CallHistory;
+import org.eclipse.jdt.junit.util.CallHistory;
 
 public class MockEditorActionBarContributor
 	implements IEditorActionBarContributor 

@@ -1,6 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.*;
 

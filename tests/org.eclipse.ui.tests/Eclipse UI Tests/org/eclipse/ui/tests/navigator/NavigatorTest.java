@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.*;
-import org.eclipse.ui.junit.util.UITestCase;
+import org.eclipse.jdt.junit.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**

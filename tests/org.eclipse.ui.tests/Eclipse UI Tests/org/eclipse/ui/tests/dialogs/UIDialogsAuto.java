@@ -11,7 +11,7 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.junit.util.DialogCheck;
+import org.eclipse.jdt.junit.util.DialogCheck;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 

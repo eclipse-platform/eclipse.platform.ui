@@ -12,7 +12,7 @@
    <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.swt"/>
    <import plugin="org.eclipse.ui"/>
-   <import plugin="org.eclipse.ui.junit"/>
+   <import plugin="org.eclipse.jdt.junit"/>
    <import plugin="org.junit"/>
 </requires>
 

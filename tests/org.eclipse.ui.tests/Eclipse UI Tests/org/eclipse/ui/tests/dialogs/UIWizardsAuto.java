@@ -10,7 +10,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.junit.util.DialogCheck;
+import org.eclipse.jdt.junit.util.DialogCheck;
 import org.eclipse.ui.wizards.newresource.*;
 
 public class UIWizardsAuto extends TestCase {

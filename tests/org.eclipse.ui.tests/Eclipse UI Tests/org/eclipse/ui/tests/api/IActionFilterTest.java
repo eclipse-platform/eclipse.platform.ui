@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 
 /**
  * Test the lifecycle of an action filter.

@@ -5,7 +5,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 
 /**
  * Tests the IWorkbench interface.

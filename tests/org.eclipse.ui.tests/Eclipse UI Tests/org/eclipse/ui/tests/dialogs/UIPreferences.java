@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.junit.util.DialogCheck;
+import org.eclipse.jdt.junit.util.DialogCheck;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class UIPreferences extends TestCase {

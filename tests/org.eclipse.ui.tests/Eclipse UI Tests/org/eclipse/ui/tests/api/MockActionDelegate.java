@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 
 public class MockActionDelegate implements IActionDelegate {
 

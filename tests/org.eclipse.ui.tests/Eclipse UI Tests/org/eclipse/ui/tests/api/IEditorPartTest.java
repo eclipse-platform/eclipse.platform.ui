@@ -2,7 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.junit.util.FileUtil;
+import org.eclipse.jdt.junit.util.FileUtil;
 
 /**
  * This is a test for IEditorPart.  Since IEditorPart is an

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 

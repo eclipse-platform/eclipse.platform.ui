@@ -5,7 +5,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.junit.util.*;
+import org.eclipse.jdt.junit.util.*;
 import org.eclipse.ui.tests.api.*;
 
 
