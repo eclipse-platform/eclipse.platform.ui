@@ -23,6 +23,7 @@ import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.util.*;
+import org.osgi.framework.*;
 
 /**
  * Text search index.  Documents added to this index
@@ -304,12 +305,12 @@ public class SearchIndex {
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
-			Iterator docPluginsIterator =
-				HelpPlugin.getTocManager().getContributingPlugins().iterator();
+			Collection docPluginsIds =
+				HelpPlugin.getTocManager().getContributingPlugins();
 			docPlugins =
 				new PluginVersionInfo(
 					INDEXED_CONTRIBUTION_INFO_FILE,
-					docPluginsIterator,
+					docPluginsIds,
 					indexDir,
 					!exists());
 		}
@@ -357,11 +358,10 @@ public class SearchIndex {
 	private boolean isLuceneCompatible() {
 		String usedLuceneVersion = getDependencies().getProperty("lucene");
 		String currentLuceneVersion = "";
-		IPluginDescriptor lucenePluginDescriptor =
-			Platform.getPluginRegistry().getPluginDescriptor(LUCENE_PLUGIN_ID);
+		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (lucenePluginDescriptor != null) {
-			currentLuceneVersion =
-				lucenePluginDescriptor.getVersionIdentifier().toString();
+			currentLuceneVersion += (String) lucenePluginDescriptor
+					.getHeaders().get(Constants.BUNDLE_VERSION);
 		}
 		// Later might add code to return true for other known cases
 		// of compatibility between post 1.2.1 versions.
@@ -372,22 +372,20 @@ public class SearchIndex {
 	 */
 	private void saveDependencies() {
 		getDependencies().put("analyzer", analyzerDescriptor.getId());
-
-		IPluginDescriptor lucenePluginDescriptor =
-			Platform.getPluginRegistry().getPluginDescriptor(LUCENE_PLUGIN_ID);
-		if (lucenePluginDescriptor != null) {
-			getDependencies().put(
-				"lucene",
-				lucenePluginDescriptor.getVersionIdentifier().toString());
+		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
+		if (luceneBundle != null) {
+			String luceneBundleVersion = ""
+					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
+			getDependencies().put("lucene", luceneBundleVersion);
 		} else {
 			getDependencies().put("lucene", "");
 		}
 		getDependencies().save();
 	}
 	/**
-	 * @return Returns true if index has been left in inconsistent state
-	 * If analyzer has changed to incompatible one,
-	 * index is treated as inconsistent as well.
+	 * @return Returns true if index has been left in inconsistent state If
+	 *         analyzer has changed to incompatible one, index is treated as
+	 *         inconsistent as well.
 	 */
 	public boolean isInconsistent() {
 		if (inconsistencyFile.exists()) {

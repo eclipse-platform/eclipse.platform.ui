@@ -32,46 +32,44 @@ public class PluginVersionInfo extends HelpProperties {
 	/**
 	 * Creates table of current contributing plugins and their fragments with versions.
 	 * @param name the name of the file to serialize the data to
-	 * @param it iterator of current contributions (IConfigurationElement type)
+	 * @param docBundleIds Collection of String
 	 * @param basePlugin use this plugin's state location to store the data
 	 * @param ignoreSavedVersion if true, will cause detect change
 	 *  to ignore saved plugin version and behave like there was nothing saved
 	 */
 	public PluginVersionInfo(
 		String name,
-		Iterator it,
+		Collection docBundleIds,
 		File dir,
 		boolean ignoreSavedVersions) {
 		super(name, dir);
 		this.dir=dir;
 		this.ignoreSavedVersions = ignoreSavedVersions;
-		if (it == null)
-			return;
 		// create table of current contributions
-		for (; it.hasNext();) {
-			IPluginDescriptor plugin = (IPluginDescriptor) it.next();
+		for (Iterator it = docBundleIds.iterator(); it.hasNext();) {
+			String bundleId = (String) it.next();
+			Bundle pluginBundle = Platform.getBundle(bundleId);
+			if(pluginBundle == null){
+				continue;
+			}
 			StringBuffer pluginVersionAndFragments = new StringBuffer();
-			pluginVersionAndFragments.append(plugin.getUniqueIdentifier());
+			pluginVersionAndFragments.append(bundleId);
 			pluginVersionAndFragments.append(SEPARATOR);
-			pluginVersionAndFragments.append(plugin.getVersionIdentifier()
-					.toString());
-			Bundle pluginBundle = Platform.getBundle(plugin.getUniqueIdentifier());
-			if (pluginBundle != null) {
-				Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
-				if (fragmentBundles != null) {
-					for (int f = 0; f < fragmentBundles.length; f++) {
-						if (fragmentBundles[f].getState() == Bundle.UNINSTALLED)
-							continue;
-						pluginVersionAndFragments.append(SEPARATOR);
-						pluginVersionAndFragments.append(fragmentBundles[f]
-								.getSymbolicName());
-						pluginVersionAndFragments.append(SEPARATOR);
-						pluginVersionAndFragments.append(fragmentBundles[f]
-								.getHeaders().get(Constants.BUNDLE_VERSION));
-					}
+			pluginVersionAndFragments.append(pluginBundle.getHeaders().get(Constants.BUNDLE_VERSION));
+			Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
+			if (fragmentBundles != null) {
+				for (int f = 0; f < fragmentBundles.length; f++) {
+					if (fragmentBundles[f].getState() == Bundle.INSTALLED || fragmentBundles[f].getState() == Bundle.UNINSTALLED)
+						continue;
+					pluginVersionAndFragments.append(SEPARATOR);
+					pluginVersionAndFragments.append(fragmentBundles[f]
+							.getSymbolicName());
+					pluginVersionAndFragments.append(SEPARATOR);
+					pluginVersionAndFragments.append(fragmentBundles[f]
+							.getHeaders().get(Constants.BUNDLE_VERSION));
 				}
 			}
-			this.put(plugin.getUniqueIdentifier(), pluginVersionAndFragments
+			this.put(bundleId, pluginVersionAndFragments
 					.toString());
 		}
 	}
