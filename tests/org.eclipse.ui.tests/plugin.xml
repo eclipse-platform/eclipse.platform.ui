@@ -13,6 +13,7 @@
    <requires>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.ui.ide"/>
@@ -824,6 +825,27 @@
                id="oc4">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ui.tests.api.ListElement"
+            id="oc12">
+         <enablement>
+            <test property="org.eclipse.ui.tests.api.testing.name" value="red"/>
+         </enablement>
+         <action
+               label="expressionEnablementAction_v2"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="oc13">
+         </action>
+      </objectContribution>
+   </extension> 
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            namespace="org.eclipse.ui.tests.api.testing"
+            properties="name"
+            type="org.eclipse.ui.tests.api.ListElement"
+            class="org.eclipse.ui.tests.api.ListElementPropertyTester"
+            id="org.eclipse.ui.tests.api.propertyTester">
+      </propertyTester>
    </extension>
 <!-- Decorator tests -->
    <extension

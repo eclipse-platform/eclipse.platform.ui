@@ -45,4 +45,24 @@ public class PopupMenuExpressionTest extends ActionExpressionTest {
  		else
  			assertNull(action, ActionUtil.getActionWithLabel(mgr, action));
  	}
+ 	
+	public void testExpressionEnabledAction() throws Throwable 
+	{
+		// Setup.
+		ListView view = showListView();
+		MenuManager mgr = getActionMenuManager(view);
+		
+		// Test null selection.
+		selectAndUpdateMenu(view, null, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", false);
+
+		// Test red selection.
+		selectAndUpdateMenu(view, red, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", true);
+		
+		// Test blue selection.
+		selectAndUpdateMenu(view, blue, mgr);
+		testAction(mgr, "expressionEnablementAction_v2", false);
+ 	}
+
 }

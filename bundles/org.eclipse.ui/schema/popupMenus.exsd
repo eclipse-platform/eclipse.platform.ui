@@ -22,6 +22,8 @@ If these filtering mechanisms are inadequate an action contribution may use the 
 
    <include schemaLocation="commonExpression.mxsd"/>
 
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -62,6 +64,7 @@ If these filtering mechanisms are inadequate an action contribution may use the 
          <sequence>
             <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="visibility" minOccurs="0" maxOccurs="1"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
             <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>

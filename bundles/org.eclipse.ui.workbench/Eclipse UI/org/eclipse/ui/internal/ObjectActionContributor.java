@@ -13,14 +13,23 @@ package org.eclipse.ui.internal;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.IEvaluationContext;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -31,6 +40,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 	private static final String ATT_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
 	private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
 	private static final String P_TRUE = "true"; //$NON-NLS-1$
+	private static final String TAG_ENABLEMENT= "enablement"; //$NON-NLS-1$
 
 	private IConfigurationElement config;
 	private boolean configRead = false;
@@ -182,6 +192,11 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 			((ObjectContribution)currentContribution).addFilterTest(element);
 			return true;
 		}
+		
+		if (tag.equals(TAG_ENABLEMENT)) {
+			((ObjectContribution)currentContribution).setEnablementTest(element);
+			return true;
+		}
 
 		return super.readElement(element);
 	}
@@ -214,6 +229,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 	private static class ObjectContribution extends BasicContribution {
 		private ObjectFilterTest filterTest;
 		private ActionExpression visibilityTest;
+		private Expression enablement;
 
 		public void addFilterTest(IConfigurationElement element) {
 			if (filterTest == null)
@@ -225,18 +241,43 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 			visibilityTest = new ActionExpression(element);
 		}
 		
+		public void setEnablementTest(IConfigurationElement element) {
+			try {
+				enablement= ExpressionConverter.getDefault().perform(element);
+			} catch (CoreException e) {
+				WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			}
+		}
+		
 		/**
 		 * Returns true if name filter is not specified for the contribution
 		 * or the current selection matches the filter.
 		 */
 		public boolean isApplicableTo(Object object) {
-			if (visibilityTest != null)
-				return visibilityTest.isEnabledFor(object);
-
-			if (filterTest != null)
-				return filterTest.matches(object, true);
-
-			return true;
+			boolean result= true;
+			if (visibilityTest != null) {
+				result= result && visibilityTest.isEnabledFor(object);
+				if (!result)
+					return result;
+			} else if (filterTest != null) {
+				result= result && filterTest.matches(object, true);
+				if (!result)
+					return result;
+			}
+			if (enablement != null) {
+				try {
+					IEvaluationContext context= new EvaluationContext(null, object);
+					context.addVariable("selection", object); //$NON-NLS-1$
+					EvaluationResult evalResult= enablement.evaluate(context);
+					if (evalResult == EvaluationResult.FALSE)
+						return false;
+				} catch (CoreException e) {
+					enablement= null;
+					WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+					result= false;
+				}
+			}
+			return result;
 		}
 	}
 }
