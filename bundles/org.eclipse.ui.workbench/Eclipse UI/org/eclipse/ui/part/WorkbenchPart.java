@@ -57,6 +57,8 @@ public abstract class WorkbenchPart implements IWorkbenchPart2, IExecutableExten
     private String partName = ""; //$NON-NLS-1$
     private String contentDescription = ""; //$NON-NLS-1$
     
+    /* package */ boolean automaticTitle = true;
+    
 /**
  * Creates a new workbench part.
  */
@@ -248,8 +250,8 @@ protected void setSite(IWorkbenchPartSite site) {
 /**
  * Sets or clears the title of this part. Setting this to null or the empty string (default)
  * will cause the title to be automatically generated based on the part name and
- * content description. Setting this to a non-empty string may overwrite a value that
- * was set previously using setContentDescription or setPartName.
+ * content description. Setting this to a non-empty string will override this
+ * behavior.
  *
  * @deprecated new code should use setPartName and setContentDescription
  *
@@ -258,11 +260,28 @@ protected void setSite(IWorkbenchPartSite site) {
 protected void setTitle(String title) {
 	title = Util.safeString(title);
 	
-	if (title.equals("")) { //$NON-NLS-1$
-		setDefaultTitle();
+	automaticTitle = (title.equals("") || title.equals(getPartName())); //$NON-NLS-1$
+	if (automaticTitle) {
+		String description = getContentDescription();
+		String name = getPartName();
+		
+		if (Util.equals(description, "")) { //$NON-NLS-1$
+			title = name;
+		} else {
+			title = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {name, description}); //$NON-NLS-1$
+		}
 	}
 	
 	internalSetTitle(title);
+}
+
+private void internalSetTitle(String title) {
+     
+	//Do not send changes if they are the same
+	if(Util.equals(this.title, title))
+		return;
+	this.title = title;
+	firePropertyChange(IWorkbenchPart.PROP_TITLE);	
 }
 
 /**
@@ -313,22 +332,26 @@ public String getPartName() {
 }
 
 /**
- * Sets the name of this part. The name will be shown in the tab area for 
- * the part. 
- * 
- * <p>
- * This may overwrite a value that was set previously in setTitle. New code
- * should use setPartName and setContentDescription but not setTitle.  
- * </p>
+ * Sets the name of this part. The name will be shown when the tab area for 
+ * selecting the part. The name will also be included in the part's title unless
+ * it explicitly calls setTitle to override this behavior.
  *
  * @param partName the part name, as it should be displayed in tabs.
  * 
  * @since 3.0
  */
 protected void setPartName(String partName) {
-	internalSetPartName(partName);
+	Assert.isNotNull(partName);
+ 
+	//Do not send changes if they are the same
+	if(Util.equals(this.partName, partName))
+		return;
+	this.partName = partName;
+	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
 	
-	setDefaultTitle();
+	if (automaticTitle) {
+		setTitle(""); //$NON-NLS-1$
+	}
 }
 
 /* (non-Javadoc)
@@ -342,39 +365,15 @@ public String getContentDescription() {
 
 /**
  * Sets the content description for this part. The content description is typically
- * a short string describing the current contents of the part. 
- *
- * <p>
- * This may overwrite a value that was previously set in setTitle
- * </p>
- * <ul>
- * <li>The default value for editors is the empty string</li>
- * <li>The default value for views is the empty string if no title has been set, or </li>  
- * </ul>
+ * a short string describing the current contents of the part. This will be included
+ * in the part's title unless the part explicitly calls setTitle to override this
+ * behavior.
  * 
  * @param description the content description
  * 
  * @since 3.0
  */
 protected void setContentDescription(String description) {
-	internalSetContentDescription(description);
-	
-	setDefaultTitle();
-}
-
-private void setDefaultTitle() {
-	String description = getContentDescription();
-	String name = getPartName();
-	String newTitle = name;
-	
-	if (!Util.equals(description, "")) { //$NON-NLS-1$
-		newTitle = MessageFormat.format(WorkbenchMessages.getString("WorkbenchPart.AutoTitleFormat"), new String[] {name, description}); //$NON-NLS-1$
-	}
-
-	internalSetTitle(newTitle);
-}
-
-/* package */ void internalSetContentDescription(String description) {
 	Assert.isNotNull(description);
 	
 	//Do not send changes if they are the same
@@ -383,26 +382,11 @@ private void setDefaultTitle() {
 	this.contentDescription = description;
 	
 	firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
-
+	
+	if (automaticTitle) {
+		setTitle(""); //$NON-NLS-1$
+	}
 }
 
-/* package */ void internalSetTitle(String title) {
-    
-	//Do not send changes if they are the same
-	if(Util.equals(this.title, title))
-		return;
-	this.title = title;
-	firePropertyChange(IWorkbenchPart.PROP_TITLE);	
-}
-
-/* package */ void internalSetPartName(String partName) {
-	Assert.isNotNull(partName);
-
-	//Do not send changes if they are the same
-	if(Util.equals(this.partName, partName))
-		return;
-	this.partName = partName;
-	firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
-}
 
 }
