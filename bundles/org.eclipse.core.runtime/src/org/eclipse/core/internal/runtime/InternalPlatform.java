@@ -860,13 +860,13 @@ public final class InternalPlatform implements IPlatform {
 		return null;
 	}
 	public boolean isFragment(Bundle bundle) {
-		return packageAdmin.isFragment(bundle);
-	}	
-	
+		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
+	}
+
 	public Bundle[] getHosts(Bundle bundle) {
 		return packageAdmin.getHosts(bundle);
-	}	
-	
+	}
+
 	public Bundle[] getFragments(Bundle bundle) {
 		return packageAdmin.getFragments(bundle);
 	}
