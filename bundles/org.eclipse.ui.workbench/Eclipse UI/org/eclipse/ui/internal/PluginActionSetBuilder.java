@@ -14,9 +14,19 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.ui.*;
+
+import org.eclipse.jface.action.AbstractGroupMarker;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 
 /**
