@@ -82,7 +82,7 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
     			for (int j = 0; j < breakpoints.length; j++) {
                     fBreakpointParents.put(breakpoints[j], container);
                 }
-    		} else if (index > 0) {
+    		} else if (index >= 0) {
     			IBreakpointContainerFactory nextFactory = (IBreakpointContainerFactory) fBreakpointContainerFactories.get(index + 1);
     			computeChildContent(nextFactory.getContainers(container));
     		}   
