@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.*;
@@ -49,11 +50,17 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
-		if (selection.size() == 1
-			&& ResourceSelectionUtil.allResourcesAreOfType(
-				selection,
-				IResource.PROJECT | IResource.FOLDER)) {
-			menu.add(goIntoAction);
+		if (selection.size() == 1) {
+			if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FOLDER)) {
+				menu.add(goIntoAction);
+			} else {
+				IStructuredSelection resourceSelection = ResourceSelectionUtil.allResources(selection, IResource.PROJECT);
+				if (!resourceSelection.isEmpty()) {
+					IProject project = (IProject)resourceSelection.getFirstElement();
+					if (project.isOpen())
+						menu.add(goIntoAction);
+				}
+			}
 		}
 		MenuManager gotoMenu =
 			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.goto")); //$NON-NLS-1$

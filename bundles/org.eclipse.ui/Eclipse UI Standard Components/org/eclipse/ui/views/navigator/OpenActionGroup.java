@@ -90,12 +90,14 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
 	 */
 	private void addNewWindowAction(IMenuManager menu, IStructuredSelection selection) {
 
-		// Only supported if exactly one container (i.e project or folder) is selected.
+		// Only supported if exactly one container (i.e open project or folder) is selected.
 		if (selection.size() != 1)
 			return;
 		Object element = selection.getFirstElement();
 		if (!(element instanceof IContainer))
 			return;
+		if (element instanceof IProject && !(((IProject)element).isOpen()))
+			return;				
 
 		menu.add(new OpenInNewWindowAction(navigator.getSite().getWorkbenchWindow(), (IContainer) element));
 	}
