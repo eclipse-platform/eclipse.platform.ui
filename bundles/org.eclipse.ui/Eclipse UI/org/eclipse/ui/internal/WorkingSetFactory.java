@@ -56,6 +56,11 @@ public class WorkingSetFactory implements IElementFactory {
 		if (workingSetEditPageId != null) {
 			workingSet.setEditPageId(workingSetEditPageId);
 		}
+		else {
+			// working sets created with builds 20020418 and 20020419 will not
+			// have an edit page id. fix this automatically.
+			workingSet.setEditPageId("org.eclipse.ui.resourceWorkingSetPage");
+		}
 		return workingSet;
 	}
 }
