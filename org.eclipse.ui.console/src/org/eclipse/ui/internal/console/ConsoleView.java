@@ -317,7 +317,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
-		fOpenConsoleAction = new OpenConsoleAction();
+		ConsoleFactoryExtension[] extensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
+		if (extensions.length > 0) {
+		    fOpenConsoleAction = new OpenConsoleAction();
+		}
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -326,7 +329,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fPinAction);
 		mgr.add(fDisplayConsoleAction);
-		mgr.add(fOpenConsoleAction);
+		if (fOpenConsoleAction != null) {
+		    mgr.add(fOpenConsoleAction);
+		}
 	}
 
 	/* (non-Javadoc)
