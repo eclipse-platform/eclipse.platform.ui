@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +36,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -77,7 +75,7 @@ public class AntModel {
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
 	
-	private boolean fValidateFully= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
+	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
 	
 	/**
      * The find replace adapter for the document
@@ -171,10 +169,8 @@ public class AntModel {
 			return;
 		}
     	Project project = new Project();
-    	if (fValidateFully) {
-    		project.setCoreLoader(getClassLoader());
-    	}
-    	project.init();
+    	
+    	initializeProject(project);
     	
     	/* 
     	 * Ant's parsing facilities always works on a file, therefore we need
@@ -199,8 +195,52 @@ public class AntModel {
     	} finally {
     		resolveBuildfile();
     		endReporting();
+    		project.fireBuildFinished(null); //cleanup
     	}
 	}
+
+	private void initializeProject(Project project) {
+		//ClassLoader loader= getClassLoader();
+		if (fValidateFully) {
+    		project.setCoreLoader(getClassLoader());
+    	}
+		project.init();
+		//setTasks(project, loader);
+		//setTypes(project, loader);
+	}
+	
+//	private void setTasks(Project project, ClassLoader loader) {
+//		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
+//		
+//		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+//			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
+//			try {
+//				Class taskClass = loader.loadClass(task.getClassName());
+//				try {
+//					project.checkTaskClass(taskClass);
+//				} catch (BuildException e) {
+//					continue;
+//				}
+//				project.addTaskDefinition(task.getTaskName(), taskClass);
+//			} catch (ClassNotFoundException e) {
+//			} catch (NoClassDefFoundError e) {
+//				
+//			}
+//		}
+//	}
+//
+//	private void setTypes(Project project, ClassLoader loader) {
+//		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
+//		
+//		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+//			Type type = (Type) iterator.next();
+//			try {
+//				Class typeClass = loader.loadClass(type.getClassName());
+//				project.addDataTypeDefinition(type.getTypeName(), typeClass);
+//			} catch (ClassNotFoundException e) {
+//			}
+//		}
+//	}
 
 	private void resolveBuildfile() {	
 		Collection nodes= fTaskToNode.values();
@@ -462,7 +502,7 @@ public class AntModel {
 		}
 	}
 	
-	private int getOffset(int line, int column) throws BadLocationException {
+	public int getOffset(int line, int column) throws BadLocationException {
 		return fDocument.getLineOffset(line - 1) + column - 1;
 	}
 	
@@ -598,11 +638,13 @@ public class AntModel {
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
 	}
 	
-	public void error(Exception exception, int start, int count) {
-		error(exception, fLastNode, start, count);
+	public void errorFromElementText(Exception exception, int start, int count) {
+		computeEndLocationForErrorNode(fLastNode, start, count);
+		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
+		generateExceptionOutline(fLastNode);
 	}
 	
-	public void error(Exception exception, AntElementNode node, int start, int count) {
+	public void errorFromElement(Exception exception, AntElementNode node, int lineNumber, int column) {
 		if (node == null) {
 			if (!fStillOpenElements.empty()) {
 				node= (AntElementNode)fStillOpenElements.peek();
@@ -610,14 +652,8 @@ public class AntModel {
 				node= fLastNode;
 			}
 		}
-		
-		computeEndLocationForErrorNode(node, start, count);
-		
-		if (start > -1 && count > -1) {
-			notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
-		} else {
-			notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
-		}
+		computeEndLocationForErrorNode(node, lineNumber, column);
+		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
 		generateExceptionOutline(node);
 	}
 
@@ -653,7 +689,11 @@ public class AntModel {
 			}
 			int endColumn;
 			if (startColumn <= 0) {
-				startColumn= 1;
+				if (element.getOffset() > -1) {
+					startColumn= element.getOffset() + 1;
+				} else {
+					startColumn= 1;
+				}
 				endColumn= getLastCharColumn(line) + 1;
 			} else {
 				if (startColumn > 1) {
@@ -739,14 +779,18 @@ public class AntModel {
 	}
 
 	public String getPropertyValue(String propertyName) {
-		AntElementNode[] nodes= getRootElements();
-		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		AntProjectNode projectNode= getProjectNode();
+		if (projectNode == null) {
+			return null;
+		}
 		return projectNode.getProject().getProperty(propertyName);
 	}
 
 	public Object getReferenceObject(String refId) {
-		AntElementNode[] nodes= getRootElements();
-		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		AntProjectNode projectNode= getProjectNode();
+		if (projectNode == null) {
+			return null;
+		}
 		try {
 			Project project= projectNode.getProject();
 			Object ref= project.getReference(refId);
@@ -778,8 +822,6 @@ public class AntModel {
 				UnknownElement element= (UnknownElement) object;
 				object= element.getRealThing();
 				if (object == null) {
-					//element.maybeConfigure();
-					//object= element.getRealThing();
 					continue;
 				}
 			} 
@@ -794,15 +836,21 @@ public class AntModel {
 		AntCorePreferences corePreferences = AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls = corePreferences.getURLs();
 		//ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
-		return new URLClassLoader(urls, this.getClass().getClassLoader());
+		//return new AntClassLoader(urls, pluginLoaders);
+		org.apache.tools.ant.AntClassLoader loader= new org.apache.tools.ant.AntClassLoader(this.getClass().getClassLoader(), false);
+		for (int i = 0; i < urls.length; i++) {
+			URL url = urls[i];
+			loader.addPathElement(url.getFile());
+		}
+		return loader;
 	}
 
 	
 	public String getTargetDescription(String targetRename) {
-
-		AntElementNode[] nodes= getRootElements();
-		AntProjectNode projectNode= (AntProjectNode)nodes[0];
-		
+		AntProjectNode projectNode= getProjectNode();
+		if (projectNode == null) {
+			return null;
+		}
 		Project project= projectNode.getProject();
 		Map targets= project.getTargets();
 		Target target= (Target)targets.get(targetRename);
@@ -810,5 +858,14 @@ public class AntModel {
 			return target.getDescription();
 		}
 		return null;
+	}
+	
+	public AntProjectNode getProjectNode() {
+		AntElementNode[] nodes= getRootElements();
+		if (nodes.length == 0) {
+			return null;
+		}
+		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		return projectNode;
 	}
 }
