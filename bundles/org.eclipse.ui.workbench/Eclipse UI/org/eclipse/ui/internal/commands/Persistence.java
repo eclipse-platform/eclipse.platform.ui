@@ -868,6 +868,7 @@ final class Persistence {
 		memento.putString(
 			TAG_PLUGIN_ID,
 			keySequenceBindingDefinition.getPluginId());
+		memento.putString(TAG_ALLOW_IN_DIALOGS, "" + keySequenceBindingDefinition.isAllowedInDialogs()); //$NON-NLS-1$
 	}
 
 	static void writeKeySequenceBindingDefinitions(
