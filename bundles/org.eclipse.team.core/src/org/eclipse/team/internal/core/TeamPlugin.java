@@ -71,6 +71,7 @@ final public class TeamPlugin extends Plugin {
 	 */
 	public void shutdown() {
 		Team.shutdown();
+		ResourceVariantCache.shutdown();
 	}
 	
 	/**

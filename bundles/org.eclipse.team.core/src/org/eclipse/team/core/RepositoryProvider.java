@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 
 /**
  * A concrete subclass of <code>RepositoryProvider</code> is created for each
@@ -49,7 +48,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  *
  * @since 2.0
  */
-public abstract class RepositoryProvider implements IProjectNature {
+public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 	private final static String TEAM_SETID = "org.eclipse.team.repository-provider"; //$NON-NLS-1$
 	
@@ -516,24 +515,6 @@ public abstract class RepositoryProvider implements IProjectNature {
 			return false;
 		}
 	}
-	
-	/**
-	 * Provisional non-API method.
-	 *
-	 * This method is here to allow experimentation with 3rd party tools
-	 * calling providers in a repository neutral manner.
-     *
- 	 * Returns an object which implements a set of provider neutral operations for this 
- 	 * provider. Answers <code>null</code> if the provider does not wish to support these 
- 	 * operations.
- 	 * 
- 	 * @return the repository operations or <code>null</code> if the provider does not
- 	 * support provider neutral operations.
- 	 * @see SimpleAccessOperations
- 	 */
-	public SimpleAccessOperations getSimpleAccess() {
- 		return null;
- 	}
  	
 	/*
 	 * @see IProjectNature#getProject()
@@ -598,27 +579,6 @@ public abstract class RepositoryProvider implements IProjectNature {
 	}	
 	
 	/**
-	 * Convert a project that are using natures to mark them as Team projects
-	 * to instead use persistent properties. Optionally remove the nature from the project.
-	 * Do nothing if the project has no Team nature.
-	 * Assume that the same ID is used for both the nature and the persistent property.
-	 * 
-	 * @deprecated
-	 */
-	public static void convertNatureToProperty(IProject project, boolean removeNature) throws TeamException {
-		RepositoryProvider provider = RepositoryProvider.getProvider(project);
-		if(provider == null)
-			return;
-			
-		String providerId = provider.getID();	
-		
-		RepositoryProvider.map(project, providerId);
-		if(removeNature) {
-			Team.removeNatureFromProject(project, providerId, new NullProgressMonitor());
-		}
-	}
-	
-	/**
 	 * Method validateCreateLink is invoked by the Platform Core TeamHook when a
 	 * linked resource is about to be added to the provider's project. It should
 	 * not be called by other clients and it should not need to be overridden by
@@ -659,5 +619,13 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	public boolean canHandleLinkedResources() {
 		return false;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {		
+		return null;
 	}
 }	
