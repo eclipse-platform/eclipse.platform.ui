@@ -7,7 +7,7 @@ public class PinEditorAction extends ActiveEditorAction {
 	private IWorkbenchWindow window;
 
 /**
- * Constructor for ReuseEditorAction
+ * Creates a PinEditorAction.
  */
 protected PinEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
