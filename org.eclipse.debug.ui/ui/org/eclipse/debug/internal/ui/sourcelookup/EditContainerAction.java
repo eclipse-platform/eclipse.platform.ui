@@ -15,9 +15,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Action used to edit source containers on a source lookup path
@@ -35,7 +33,7 @@ public class EditContainerAction extends SourceContainerAction {
 	/**
 	 * Prompts for a project to add.
 	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
 	public void run() {
 		ISourceContainer[] replacements = fBrowser.editSourceContainers(getShell(), fDirector, fContainers);
@@ -56,8 +54,8 @@ public class EditContainerAction extends SourceContainerAction {
 		fDirector = director;
 	}
 	
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if(selection == null || selection.isEmpty()) {
@@ -87,6 +85,4 @@ public class EditContainerAction extends SourceContainerAction {
 		}
 		return false;
 	}
-	
-	
 }
