@@ -244,11 +244,11 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Returns a collection of events, based on the given event
 	 * set, removing any events that are filtered by registered
-	 * debug event filters. Returns <code>null</code> if all
-	 * events are filtered.
+	 * debug event filters. Returns <code>null</code> or an empty 
+	 * collection if all events are filtered.
 	 * 
 	 * @param events the event set to filter
-	 * @return filter event set
+	 * @return filtered event set
 	 */
 	private DebugEvent[] filterEvents(DebugEvent[] events) {
 		if (hasEventFilters()) {
