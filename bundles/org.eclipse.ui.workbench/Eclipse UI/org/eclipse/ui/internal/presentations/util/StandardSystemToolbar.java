@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.newapi;
 
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -24,20 +30,120 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * @since 3.1
  */
 public class StandardSystemToolbar {
-    private ToolBar toolbar;
+    private ToolBarManager toolbarManager;
     private Composite control;
     
-    private ToolItem paneMenu;
-    private ToolItem showToolbar;
-    private ToolItem min;
-    private ToolItem max;
-    private ToolItem close;
+    private class SystemMenuContribution extends ContributionItem {
+    	ToolItem item;
+    	Image img;
+    	String text;
+    	int flags;
+    	
+    	public SystemMenuContribution() {
+    		this(SWT.PUSH);
+    	}
+    	
+    	public SystemMenuContribution(int flags) {
+    		this.flags = flags;
+    	}
+    	
+    	public void setToolTipText(String text) {
+    		this.text = text;
+    		if (item != null) {
+    			item.setToolTipText(text);
+    		}
+    	}
+    	
+    	public void setImage(Image img) {
+    		this.img = img;
+    		
+    		if (item != null) {
+    			item.setImage(img);
+    		}
+    	}
+    	
+    	/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.ContributionItem#setVisible(boolean)
+		 */
+		public void setVisible(boolean visible) {
+			if (visible != isVisible()) {
+				toolbarManager.markDirty();
+			}
+			
+			super.setVisible(visible);
+		}
+    	
+    	/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.ToolBar, int)
+		 */
+		public void fill(ToolBar parent, int index) {
+			if (!isVisible()) {
+				return;
+			}
+			
+			item = new ToolItem(parent, flags, index);
+			if (img != null) {
+				item.setImage(img);
+			}
+			if (text != null) {
+				item.setToolTipText(text);
+			}
+			item.addSelectionListener(selectionListener);
+		}
+    }
+    
+    private class PaneMenu extends SystemMenuContribution {
+    	
+    	public PaneMenu() {
+    		super(SWT.NONE);
+    	}
+    	    	
+     	public void setToolTipText(String text) {
+     		super.setToolTipText(text);
+    	}
+    	
+    	public void setImage(Image img) {
+    		
+    		super.setImage(img);
+    	}
+    	
+    	/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.ToolBar, int)
+		 */
+		public void fill(ToolBar parent, int index) {
+			if (!isVisible()) {
+				return;
+			}
+			super.fill(parent, index);
+		}
+    }
+    
+    
+    private MouseListener mouseListener = new MouseAdapter() {
+    	/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+			ToolItem item = toolbarManager.getControl().getItem(new Point(e.x, e.y));
+			
+    		if (item == paneMenu.item && e.button == 1) {
+    			fireEvent(TabFolderEvent.EVENT_PANE_MENU);
+    		}
+		}
+    };
+    
+    private SystemMenuContribution paneMenu = new PaneMenu();
+    private SystemMenuContribution showToolbar = new SystemMenuContribution();
+    private SystemMenuContribution min = new SystemMenuContribution();
+    private SystemMenuContribution max = new SystemMenuContribution();
+    private SystemMenuContribution close = new SystemMenuContribution();
     
     private ListenerList listeners = new ListenerList();
     
@@ -46,27 +152,27 @@ public class StandardSystemToolbar {
     
     private SelectionAdapter selectionListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			if (e.widget == paneMenu) {
-			    fireEvent(TabFolderEvent.EVENT_PANE_MENU);
-			} else if (e.widget == showToolbar) {
+			if (e.widget == paneMenu.item) {
+			    //fireEvent(TabFolderEvent.EVENT_PANE_MENU);
+			} else if (e.widget == showToolbar.item) {
 			    if (showingToolbar) {
 			        fireEvent(TabFolderEvent.EVENT_HIDE_TOOLBAR);
 			    } else {
 			        fireEvent(TabFolderEvent.EVENT_SHOW_TOOLBAR);
 			    }
-			} else if (e.widget == min) {
+			} else if (e.widget == min.item) {
 			    if (state == IStackPresentationSite.STATE_MINIMIZED) {
 			        fireEvent(TabFolderEvent.EVENT_RESTORE);
 			    } else {
 			        fireEvent(TabFolderEvent.EVENT_MINIMIZE);
 			    }
-			} else if (e.widget == max) {
+			} else if (e.widget == max.item) {
 			    if (state == IStackPresentationSite.STATE_MAXIMIZED) {
 			        fireEvent(TabFolderEvent.EVENT_RESTORE);
 			    } else {
 			        fireEvent(TabFolderEvent.EVENT_MAXIMIZE);
 			    }			    
-			} else if (e.widget == close) {
+			} else if (e.widget == close.item) {
 			    fireEvent(TabFolderEvent.EVENT_CLOSE);
 			}
 		}
@@ -78,73 +184,63 @@ public class StandardSystemToolbar {
         control = new Composite(parent, SWT.NONE);
         control.setLayout(new EnhancedFillLayout());
         
-        toolbar = new ToolBar(control, SWT.FLAT);
+        toolbarManager = new ToolBarManager(SWT.FLAT);
+        toolbarManager.createControl(control);
+        toolbarManager.getControl().addMouseListener(mouseListener);
         
-        if (showPaneMenu) {
-	        paneMenu = new ToolItem(toolbar, SWT.PUSH);
-	        paneMenu.addSelectionListener(selectionListener);
-	        paneMenu.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN));
-        }
+        toolbarManager.add(paneMenu);
+        paneMenu.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN));
+        paneMenu.setVisible(showPaneMenu);
+        paneMenu.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+
+        toolbarManager.add(showToolbar);
+        showToolbar.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN));
+        showToolbar.setVisible(showHideToolbar);
+
+        toolbarManager.add(min);
+        min.setVisible(showMinimize);
+
+        toolbarManager.add(max);
+        max.setVisible(showMaximize);
+
+        toolbarManager.add(close);
+        close.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN));
+        close.setVisible(enableClose);
         
-        if (showHideToolbar) {
-            showToolbar = new ToolItem(toolbar, SWT.PUSH);
-            showToolbar.addSelectionListener(selectionListener);
-            showToolbar.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN));
-        }
+        setState(IStackPresentationSite.STATE_RESTORED);
         
-        if (showMinimize) {
-            min = new ToolItem(toolbar, SWT.PUSH);
-            min.addSelectionListener(selectionListener);
-            min.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN));            
-        }
-        
-        if (showMaximize) {
-            max = new ToolItem(toolbar, SWT.PUSH);
-            max.addSelectionListener(selectionListener);
-            max.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN));            
-        }
-        
-        if (enableClose) {
-	        close = new ToolItem(toolbar, SWT.PUSH);
-	        close.addSelectionListener(selectionListener);
-	        close.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN));
-        }
+        toolbarManager.update(true);
     }
     
     public Point getPaneMenuLocation() {
         
-        Rectangle bounds = Geometry.toDisplay(paneMenu.getParent(), paneMenu.getBounds());
+        Rectangle bounds = Geometry.toDisplay(paneMenu.item.getParent(), paneMenu.item.getBounds());
         return new Point(bounds.x, bounds.y + bounds.height);
     }
     
     public void enableClose(boolean enabled) {
-        if (close != null) {
-            close.setEnabled(enabled);
-        }        
+    	close.setVisible(enabled);
+    	toolbarManager.update(false);
     }
     
     public void enableMinimize(boolean enabled) {
-        if (min != null) {
-            min.setEnabled(enabled);
-        }
+    	min.setVisible(enabled);
+    	toolbarManager.update(false);
     }
     
     public void enableMaximize(boolean enabled) {
-        if (max != null) {
-            max.setEnabled(enabled);
-        }
+    	max.setVisible(enabled);
+    	toolbarManager.update(false);
     }
     
-    public void enableShowToolbar(boolean enabled) {
-        if (showToolbar != null) {
-            showToolbar.setEnabled(enabled);
-        }
+   public void enableShowToolbar(boolean enabled) {
+   		showToolbar.setVisible(enabled);
+   		toolbarManager.update(false);
     }
     
     public void enablePaneMenu(boolean enabled) {
-        if (paneMenu != null) {
-            paneMenu.setEnabled(enabled);
-        }
+    	paneMenu.setVisible(enabled);
+    	toolbarManager.update(false);
     }
     
     /**
@@ -155,15 +251,19 @@ public class StandardSystemToolbar {
     public void setState(int newState) {
         if (min != null) {
             if (newState == IStackPresentationSite.STATE_MINIMIZED) {
+            	min.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Restore")); //$NON-NLS-1$
                 min.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN));
             } else {
+            	min.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Minimize")); //$NON-NLS-1$
                 min.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN));
             }
         }
         if (max != null) {
             if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+            	max.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Restore")); //$NON-NLS-1$
                 max.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN));
             } else {
+            	max.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Maximize")); //$NON-NLS-1$
                 max.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN));
             }
         }

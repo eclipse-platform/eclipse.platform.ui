@@ -778,5 +778,9 @@ public final class PaneFolder {
     public void hideTitle() {
         tabFolder.setTabHeight(0);
     }
+    
+    public ViewForm getViewForm() {
+        return viewForm;
+    }
 
 }
