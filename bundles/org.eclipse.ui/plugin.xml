@@ -2253,7 +2253,9 @@
       <view
             name="%Views.Progress"
             class="org.eclipse.ui.views.progress.ProgressView"
-            id="org.eclipse.ui.progressView">
+            id="org.eclipse.ui.views.ProgressView"
+            icon="icons/full/progress/pview.gif"
+            category="org.eclipse.ui">
       </view>
    </extension>
    <extension
