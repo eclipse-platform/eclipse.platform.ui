@@ -42,8 +42,8 @@ public class WorkbenchWindow extends ApplicationWindow
 {
 	private int number;
 	private Workbench workbench;
-	private WorkbenchPage activePage;
-	private List pageTable = new ArrayList(4);
+	private WorkbenchPage activePage; //This var could be deleted since this info is in PageList
+	private PageList pageList = new PageList(4);
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
@@ -270,7 +270,7 @@ private IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
 {
 	// Create page.
 	WorkbenchPage result = new WorkbenchPage(this, perspID, input);
-	pageTable.add(result);
+	pageList.add(result);
 	firePageOpened(result);
 
 	// Add shortcut.
@@ -303,11 +303,11 @@ private void closeAllPages()
 
 	// Clone and deref all so that calls to getPages() returns
 	// empty list (if call by pageClosed event handlers)
-	List clone = (List)((ArrayList)pageTable).clone();
-	pageTable.clear();
+	PageList oldList = pageList;
+	pageList = new PageList(4);
 
 	// Close all.
-	Iterator enum = clone.iterator();
+	Iterator enum = oldList.iterator();
 	while (enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
 		removeShortcut(page);
@@ -330,7 +330,7 @@ public void closeAllPages(boolean save) {
  */
 protected boolean closePage(IWorkbenchPage in, boolean save) {
 	// Validate the input.
-	if (!pageTable.contains(in))
+	if (!pageList.contains(in))
 		return false;
 	WorkbenchPage oldPage = (WorkbenchPage)in;
 
@@ -345,22 +345,16 @@ protected boolean closePage(IWorkbenchPage in, boolean save) {
 	if (oldIsActive)
 		setActivePage(null);
 		
-	// Close old page.
-	int nIndex = pageTable.indexOf(oldPage);
-	pageTable.remove(oldPage);
+	// Close old page. 
+	pageList.remove(oldPage);
 	removeShortcut(oldPage);
 	firePageClosed(oldPage);
 	oldPage.dispose();
 	
 	// Activate new page.
 	if (oldIsActive) {
-		WorkbenchPage newPage = null;
-		int nMaxIndex = pageTable.size() - 1;
-		if (nIndex > nMaxIndex)
-			nIndex = nMaxIndex;
-		if (nIndex >= 0)
-			newPage = (WorkbenchPage)pageTable.get(nIndex);
-		if (newPage != null)
+		IWorkbenchPage newPage = pageList.getActive();
+		if(newPage != null)
 			setActivePage(newPage);
 	}
 
@@ -536,10 +530,7 @@ public int getNumber() {
  * @return an array of pages
  */
 public IWorkbenchPage[] getPages() {
-	int nSize = pageTable.size();
-	IWorkbenchPage [] retArray = new IWorkbenchPage[nSize];
-	pageTable.toArray(retArray);
-	return retArray;
+	return pageList.getPages();
 }
 /**
  * @see IWorkbenchWindow
@@ -728,7 +719,7 @@ public void restoreState(IMemento memento) {
 		WorkbenchPage result = null;
 		try {
 			result = new WorkbenchPage(this, pageMem, input);
-			pageTable.add(result);
+			pageList.add(result);
 			pageListeners.firePageOpened(result);
 			addShortcut(result);
 		} catch (WorkbenchException e) {
@@ -743,12 +734,12 @@ public void restoreState(IMemento memento) {
 	}
 
 	// If there are no pages create a default.
-	if (pageTable.isEmpty()) {
+	if (pageList.isEmpty()) {
 		try {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			String defPerspID = workbench.getPerspectiveRegistry().getDefaultPerspective();
 			WorkbenchPage result = new WorkbenchPage(this, defPerspID, root);
-			pageTable.add(result);
+			pageList.add(result);
 			pageListeners.firePageOpened(result);
 			addShortcut(result);
 		} catch (WorkbenchException e) {
@@ -760,7 +751,7 @@ public void restoreState(IMemento memento) {
 		
 	// Set active page.
 	if (newActivePage == null)
-		newActivePage = (IWorkbenchPage)pageTable.get(0);
+		newActivePage = (IWorkbenchPage)pageList.getActive();
 	setActivePage(newActivePage);
 }
 /**
@@ -769,7 +760,7 @@ public void restoreState(IMemento memento) {
 private boolean saveAllPages(boolean bConfirm) 
 {
 	boolean bRet = true;
-	Iterator enum = pageTable.iterator();
+	Iterator enum = pageList.iterator();
 	while (bRet && enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
 		bRet = page.saveAllEditors(bConfirm);
@@ -793,7 +784,7 @@ public void saveState(IMemento memento) {
 	}
 
 	// Save each page.
-	Iterator enum = pageTable.iterator();
+	Iterator enum = pageList.iterator();
 	while (enum.hasNext()) 
 	{
 		WorkbenchPage page = (WorkbenchPage)enum.next();
@@ -857,10 +848,11 @@ public void setActivePage(final IWorkbenchPage in) {
 			}
 
 			// Activate new persp.
-			if (in == null || pageTable.contains(in)) {
+			if (in == null || pageList.contains(in)) {
 				activePage = (WorkbenchPage)in;
 				if (activePage != null) {
 					activePage.onActivate();
+					pageList.setActive(activePage);
 					firePageActivated(activePage);
 					firePerspectiveActivated(activePage, activePage.getPerspective());
 					selectShortcut(activePage, true);
@@ -977,5 +969,52 @@ public void updateTitle() {
 		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
 	}
 	getShell().setText(title);	
+}
+
+class PageList {
+	//List of pages in the order they were created;
+	private List pageList;
+	//List of pages where the top is the last activated.
+ 	private List pageStack;
+ 	
+	public PageList(int size) {
+		pageList = new ArrayList(4);
+ 		pageStack = new ArrayList(4);
+	}
+	public boolean add(Object object) {
+		pageList.add(object);
+		pageStack.add(0,object); //It will be moved to top only when activated.
+		return true;
+	}
+	public Iterator iterator() {
+		return pageList.iterator();
+	}
+	public boolean contains(Object object) {
+		return pageList.contains(object);
+	}
+	public boolean remove(Object object) {
+		pageStack.remove(object);
+		return pageList.remove(object);
+	}
+	public boolean isEmpty() {
+		return pageList.isEmpty();
+	}
+	public IWorkbenchPage[] getPages() {
+		int nSize = pageList.size();
+		IWorkbenchPage [] retArray = new IWorkbenchPage[nSize];
+		pageList.toArray(retArray);
+		return retArray;
+	}
+	public void setActive(Object page) {
+		if(page == getActive())
+			return;
+		pageStack.remove(page);
+		pageStack.add(page);
+	}
+	public WorkbenchPage getActive() {
+		if(pageStack.isEmpty())
+			return null;
+		return (WorkbenchPage)pageStack.get(pageStack.size() - 1);
+	}
 }
 }

@@ -30,13 +30,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 /**
  * A collection of views and editors in a workbench.
  */
-public class WorkbenchPage implements IWorkbenchPage
-{
+public class WorkbenchPage implements IWorkbenchPage {
 	private WorkbenchWindow window;
 	private IAdaptable input;
 	private Composite composite;
 	private ControlListener resizeListener;
-	private IWorkbenchPart activePart;
+	private IWorkbenchPart activePart; //Could be delete. This information is in the active part list;
+	private ActivationList activationList = new ActivationList();
 	private IEditorPart lastActiveEditor;
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
@@ -96,6 +96,7 @@ public void activate(IWorkbenchPart part) {
 		bringToTop(part);
 		setActivePart(part);
 	} else {
+		activationList.setActive(part);
 		activePart = part;
 	}
 }
@@ -130,8 +131,10 @@ public void addFastView(IViewPart view) {
 
 	// The view is now invisible.
 	// If it is active then deactivate it.
-	if (view == activePart)
-		setActivePart(null);
+	if (view == activePart) {
+		activationList.remove(view);
+		setActivePart(activationList.getActive());
+	}
 		
 	// Notify listeners.
 	window.getShortcutBar().update(true);
@@ -216,6 +219,7 @@ private void busyResetPerspective() {
 	// Deactivate active part.
 	IWorkbenchPart oldActivePart = activePart;
 	setActivePart(null);
+	activationList = new ActivationList();
 	
 	// Install new persp.
 	setPerspective(newPersp);
@@ -355,7 +359,8 @@ public boolean closeAllEditors(boolean save) {
 		return false;
 
 	// Deactivate part.
-	if (activePart instanceof IEditorPart)
+	boolean deactivate = activePart instanceof IEditorPart;
+	if (deactivate)
 		setActivePart(null);
 	if (lastActiveEditor != null) {
 		deactivateLastEditor();
@@ -368,10 +373,12 @@ public boolean closeAllEditors(boolean save) {
 	getEditorManager().closeAll();
 	for (int nX = 0; nX < editors.length; nX ++) {
 		IEditorPart editor = editors[nX];
+		activationList.remove(editor);
 		firePartClosed(editor);
 		editor.dispose();
 	}
-
+	if(deactivate)
+		setActivePart(activationList.getActive());
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
@@ -396,6 +403,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 		return false;
 
 	// Deactivate part.
+	activationList.remove(editor);
 	boolean partWasActive = (editor == activePart);
 	if (partWasActive)
 		setActivePart(null);
@@ -412,13 +420,11 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
-
+	
 	// Activate new part.
-	if (partWasActive) {
-		IEditorPart newEditor = getEditorManager().getVisibleEditor();
-		setActivePart(newEditor); // null is OK.  It just deactivates editor.
-	}
-
+	if (partWasActive)
+		setActivePart(activationList.getActive());
+	
 	// Return true on success.
 	return true;
 }
@@ -502,6 +508,7 @@ public void dispose() {
 		view.dispose();
 	}
 	activePart = null;
+	activationList = null;
 
 	// Get rid of editor presentation.
 	editorPresentation.dispose();
@@ -782,7 +789,7 @@ public void hideView(IViewPart view) {
 		
 	// Activate new part.
 	if (view == activePart)
-		setActivePart(null);
+		setActivePart(activationList.getPreviouslyActive());
 		
 	// Hide the part.  
 	getPersp().hideView(view);
@@ -792,6 +799,7 @@ public void hideView(IViewPart view) {
 	if (!exists) {
 		firePartClosed(view);
 		view.dispose();
+		activationList.remove(view);		
 	}
 	
 	// Notify interested listeners
@@ -895,6 +903,8 @@ protected void onActivate() {
 	composite.setVisible(true);
 	getPersp().onActivate();
 	if (activePart != null) {
+		activationList.setActive(activePart);
+		
 		activatePart(activePart, true, true);
 		if (activePart instanceof IEditorPart)
 			lastActiveEditor = (IEditorPart) activePart;
@@ -1257,7 +1267,8 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	// Set active part.
 	activePart = newPart;
-	if (newPart != null) {
+	if (newPart != null) {	
+		activationList.setActive(newPart);
 		// Upon a new editor being activated, make sure the previously
 		// active editor's toolbar contributions are removed.
 		if (newPart instanceof IEditorPart) {
@@ -1268,6 +1279,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 					deactivateLastEditor();
 			}
 			lastActiveEditor = (IEditorPart)newPart;
+			editorMgr.setVisibleEditor(lastActiveEditor,true);
 		}
 		activatePart(newPart, switchActions, switchActionsForced);
 		firePartActivated(newPart);
@@ -1450,5 +1462,29 @@ public void setReuseEditors(boolean reuse) {
  */
 public void clearReuseEditors() {
 	reuseEditors = 0;
+}
+class ActivationList {
+	List parts = new ArrayList();
+	void setActive(IWorkbenchPart part) {
+		if((part instanceof IViewPart) && WorkbenchPage.this.isFastView((IViewPart)part))
+			return;
+		if(part == getActive())
+			return;
+		parts.remove(part);
+		parts.add(part);
+	}
+	WorkbenchPart getActive() {
+		if(parts.isEmpty())
+			return null;
+		return (WorkbenchPart)parts.get(parts.size() - 1);
+	}
+	WorkbenchPart getPreviouslyActive() {
+		if(parts.size() < 2) 
+			return null;
+		return (WorkbenchPart)parts.get(parts.size() - 2);	
+	}
+	boolean remove(Object part) {
+		return parts.remove(part);
+	}
 }
 }
