@@ -578,7 +578,7 @@ private void getMatchingResources(final ArrayList resources) {
 				if (type == IResource.FILE) return false;
 				return true;
 			}
-		}, IResource.DEPTH_INFINITE);
+		}, IResource.NONE);
 	} catch (CoreException e) {
 	}
 }
