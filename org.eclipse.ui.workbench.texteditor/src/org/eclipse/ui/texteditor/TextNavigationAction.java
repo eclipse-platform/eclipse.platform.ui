@@ -195,8 +195,8 @@ public class TextNavigationAction implements IAction {
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	}
 
-	/*
-	 * @see IAction#setAccelerator(int)
+	/**
+	 * @deprecated
 	 */
 	public void setAccelerator(int keycode) {
 	}

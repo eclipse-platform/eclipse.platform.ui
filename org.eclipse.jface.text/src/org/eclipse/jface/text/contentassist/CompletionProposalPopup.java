@@ -37,10 +37,11 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -75,12 +76,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** List of document events used for filtering proposals */
 	private List fDocumentEvents= new ArrayList();
 	/** Listener filling the document event queue */
-	private IDocumentListener fDocumentListener= new IDocumentListener() {
-		public void documentAboutToBeChanged(DocumentEvent event) {}
-		public void documentChanged(DocumentEvent event) {
-			fDocumentEvents.add(event);
-		}
-	};
+	private ITextListener fTextListener;
 	/** Reentrance count for <code>filterProposals</code> */
 	private long fInvocationCounter= 0;
 	/** The filter list of proposals */
@@ -117,11 +113,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return an error message or <code>null</code> in case of no error
 	 */
 	public String showProposals(final boolean autoActivated) {
-		
-		IDocument document= fViewer.getDocument();
-		if (document != null)
-			document.addDocumentListener(fDocumentListener);		
-			
+					
 		if (fKeyListener == null) {
 			fKeyListener= new KeyListener() {
 				public void keyPressed(KeyEvent e) {
@@ -267,8 +259,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				selectProposalWithMask(e.stateMask);
 			}
 		});
-//		if (fKeyListener != null)
-//			fProposalTable.addKeyListener(fKeyListener);
 
 		fPopupCloser.install(fContentAssistant, fProposalTable);
 		
@@ -384,9 +374,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public void hide() {
 
-		IDocument document= fViewer.getDocument();
-		if (document != null)
-			document.removeDocumentListener(fDocumentListener);
+		if (fTextListener != null) {
+			fViewer.removeTextListener(fTextListener);
+			fTextListener= null;
+		}
 		fDocumentEvents.clear();		
 
 		StyledText styledText= fViewer.getTextWidget();
@@ -399,8 +390,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) proposal;
 				extension.unselected(fViewer);
 			}
-//			if (fKeyListener != null)
-//				fProposalTable.removeKeyListener(fKeyListener);
 		}
 
 		if (Helper.okToUse(fProposalShell)) {
@@ -489,6 +478,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void displayProposals() {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
+			
+			if (fTextListener == null) {
+				fTextListener= new ITextListener() {
+					public void textChanged(TextEvent event) {
+						if (event.getDocumentEvent() != null && !fInserting)  {
+							fDocumentEvents.add(event.getDocumentEvent());
+							filterProposals();
+						}
+					}
+				};
+			}
+			fViewer.addTextListener(fTextListener);		
+						
 			fProposalShell.setVisible(true);
 			if (fAdditionalInfoController != null) {
 				fAdditionalInfoController.install(fProposalTable);		
@@ -513,7 +515,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 				case SWT.ARROW_LEFT :
 				case SWT.ARROW_RIGHT :
-					filterProposal();
+					filterProposals();
 					return true;
 
 				case SWT.ARROW_UP :
@@ -646,15 +648,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @see IEventConsumer#processEvent(VerifyEvent)
 	 */
 	public void processEvent(VerifyEvent e) {
-		if (!fInserting)
-			filterProposal();
 	}
 	
 	/**
 	 * Filters the displayed proposal based on the given cursor position and the 
 	 * offset of the original invocation of the content assistant.
 	 */
-	private void filterProposal() {
+	private void filterProposals() {
 		++ fInvocationCounter;
 		Control control= fViewer.getTextWidget();
 		control.getDisplay().asyncExec(new Runnable() {
@@ -664,8 +664,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (fCounter != fInvocationCounter) return;
 				
 				int offset= fViewer.getSelectedRange().x;
-				ICompletionProposal[] proposals= (offset == -1 ? null : computeFilteredProposals(offset));
-				fDocumentEvents.clear();
+				ICompletionProposal[] proposals= null;
+				try  {
+					if (offset > -1) {
+						DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
+						proposals= computeFilteredProposals(offset, event);
+					}
+				} catch (BadLocationException x)  {
+				} finally  {
+					fDocumentEvents.clear();
+				}
 				fFilterOffset= offset;
 				
 				if (proposals != null && proposals.length > 0)
@@ -681,10 +689,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * the given offset.
 	 * 
 	 * @param offset the offset
+	 * @param event the merged document event
 	 * @return the set of filtered proposals
 	 * @since 2.0
 	 */
-	private ICompletionProposal[] computeFilteredProposals(int offset) {
+	private ICompletionProposal[] computeFilteredProposals(int offset, DocumentEvent event) {
 		
 		if (offset == fInvocationOffset)
 			return fComputedProposals;
@@ -709,14 +718,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 			if (proposals[i] instanceof ICompletionProposalExtension2) {
 
-				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
-				
-				try {
-					DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
-					if (p.validate(document, offset, event))
-						filtered.add(p);
-				} catch (BadLocationException e) {
-				}					
+				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];				
+				if (p.validate(document, offset, event))
+					filtered.add(p);
 			
 			} else if (proposals[i] instanceof ICompletionProposalExtension) {
 								

@@ -38,6 +38,7 @@ public interface IVerticalRulerInfo {
 	/**
 	 * Returns the line number of the last mouse button activity.
 	 * Based on the input document of the connected text viewer.
+	 * The smallest possible line number is <code>0</code>.
 	 *
 	 * @return the line number of the last mouse button activity
 	 */
