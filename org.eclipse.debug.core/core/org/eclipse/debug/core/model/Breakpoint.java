@@ -126,7 +126,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 */
 	public void setPersisted(boolean persisted) throws CoreException {
 		if (isPersisted() != persisted) {
-			setAttribute(PERSISTED, persisted);
+			setAttributes(new String[] {PERSISTED, IMarker.TRANSIENT}, new Object[] {new Boolean(persisted), new Boolean(!persisted)});
 		}
 	}
 	

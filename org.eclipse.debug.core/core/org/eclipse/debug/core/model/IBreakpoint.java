@@ -200,12 +200,12 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Sets whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
-	 * Since marker definitions only allow all/none of a specific type of
-	 * marker to be persisted (rather than selected markers of a specific
-	 * type), breakpoints define this functionality. Has no effect if this
-	 * breakpoint's marker definition is defined as not persisted.
+	 * Has no effect if this breakpoint's marker definition is defined as not
+	 * persisted. Sets the underlying <code>TRANSIENT</code> attribute on this
+	 * breakpoint's marker to <code>true</code>.
 	 * 
-	 * @param persist whether this breakpoint is to be persisted
+	 * @param persist whether this breakpoint is to be persisted across
+	 * workspace invocations
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */

@@ -153,10 +153,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Returns the persisted markers associated with the given resource.
 	 * 
-	 * Delete any non-persisted/invalid breakpoint markers. This is done
-	 * at startup rather than shutdown, since the changes made at
-	 * shutdown are not persisted as the workspace state has already
-	 * been saved. See bug 7683.
+	 * Delete any invalid breakpoint markers. This is done at startup rather
+	 * than shutdown, since the changes made at shutdown are not persisted as
+	 * the workspace state has already been saved. See bug 7683.
+	 * 
+	 * Since the <code>TRANSIENT</code> marker attribute/feature has been added,
+	 * we no longer have to manully delete non-persisted markers - the platform
+	 * does this for us (at shutdown, transient markers are not saved). However,
+	 * the code is still present to delete non-persisted markers from old
+	 * workspaces.
 	 */
 	protected IMarker[] getPersistedMarkers(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
