@@ -53,7 +53,7 @@ public class ResourceChangeListenerList {
 	/**
 	 * The list of listeners.  Maintains invariant: listeners != null.
 	 */
-	private ListenerEntry[] listeners = EMPTY_ARRAY;
+	private volatile ListenerEntry[] listeners = EMPTY_ARRAY;
 
 	/**
 	 * Adds the given listener to this list. Has no effect if an identical listener
