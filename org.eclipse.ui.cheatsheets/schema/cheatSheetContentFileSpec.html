@@ -47,7 +47,7 @@ introduction. &lt;intro&gt; attributes are as follows:</p>
     not be supplied (<b>href</b> will be ignored if both are present).</li>
 </ul>
 <h2><code>description</code></h2>
-<pre>&lt;!ELEMENT description ()&gt;&nbsp;
+<pre>&lt;!ELEMENT description EMPTY&gt;
 &lt;!ATTLIST description&nbsp;
 &gt;</pre>
 <p>The &lt;description&gt; element holds the description of a cheat sheet or of
@@ -56,11 +56,16 @@ formatting tags. The cheat sheet automatically formats and lays out the text to
 make it show up reasonably in the UI. Within the text, balanced <b>&lt;b&gt;</b>...<b>&lt;/b&gt;</b>
 tags cause the enclosed text to be rendered in a bold font, and the <b>&lt;br/&gt;</b>
 element can be used to force a line break. These are the only formatting tags
-supported at this time (however, more may be added in the future). Certain
+supported at this time (however, others may be added in the future). Certain
 characters in the text have special significance for XML parsers; in particular,
-to write &quot;&lt;&quot;, &quot;&gt;&quot;, and &quot;&amp;&quot; instead write
-&quot;&amp;lt;&quot;, &quot;&amp;gt;&quot;, and &quot;&amp;amp&quot;,
-respectively.</p>
+to write &quot;&lt;&quot;, &quot;&gt;&quot;, &quot;&amp;&quot;, and
+&quot;&quot;&quot; (quotation mark) instead write &quot;&amp;lt;&quot;,
+&quot;&amp;gt;&quot;, &quot;&amp;amp&quot;, and &quot;&amp;quot;&quot;
+respectively. Whitespace (spaces and line breaks) is treated as a word
+separator; adjacent spaces and line breaks are treated as single unit and
+rendered as a single space or a line break. Whitespace immediately after the
+&lt;<b>description</b>&gt; and &lt;<b>br/</b>&gt; tags is ignored, as is
+whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <h2><code>item</code></h2>
 <pre>&lt;!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
@@ -210,20 +215,20 @@ corresponding string value.</p>
 <pre>&lt;item ...&gt;&nbsp;
   &lt;repeated-subitem values=&quot;${v1}&quot;&gt;
      &lt;subitem label=&quot;Step ${this}.&quot;&gt;
-        &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;${this}&quot;/&gt;
+        &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;${this}&quot;/&gt;
      &lt;/subitem&gt;
   &lt;/repeated-subitem&gt;
 &lt;/item&gt;</pre>
 then the item expands to something equivalent to:
 <pre>&lt;item ...&gt;&nbsp;
   &lt;subitem label=&quot;Step 1.&quot;&gt;
-     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;1&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;1&quot;/&gt;
   &lt;/subitem&gt;
   &lt;subitem label=&quot;Step b.&quot;&gt;
-     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;b&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;b&quot;/&gt;
   &lt;/subitem&gt;
   &lt;subitem label=&quot;Step three.&quot;&gt;
-     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;three&quot;/&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot; param0=&quot;three&quot;/&gt;
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
 <h2><code>action</code></h2>
@@ -297,8 +302,8 @@ element with a matching value.</p>
 <pre>&lt;item ...&gt;
   &lt;subitem label=&quot;Main step&quot;&gt;
      &lt;perform-when condition=&quot;${v1}&quot;&gt;
-        &lt;action when=&quot;a&quot; class=com.xyz.action1 pluginId=com.xyz /&gt;
-        &lt;action when=&quot;b&quot; class=com.xyz.action2 pluginId=com.xyz /&gt;
+        &lt;action when=&quot;a&quot; class=&quot;com.xyz.action1&quot; pluginId=&quot;com.xyz&quot; /&gt;
+        &lt;action when=&quot;b&quot; class=&quot;com.xyz.action2&quot; pluginId=&quot;com.xyz&quot; /&gt;
      &lt;/conditional-subitem&gt;
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
@@ -306,24 +311,24 @@ then the second action is selected and the item expands to something equivalent
 to
 <pre>&lt;item ...&gt;&nbsp;
   &lt;subitem label=&quot;Main step&quot;&gt;
-     &lt;action class=com.xyz.action2 pluginId=com.xyz /&gt;
+     &lt;action class=&quot;com.xyz.action2&quot; pluginId=&quot;com.xyz&quot; /&gt;
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
 <h2>Example</h2>
-<p>The following is a very simple example of a cheat sheet content file:</p>
+<p>The following is an example of a very simple cheat sheet content file:</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;cheatsheet title=&quot;Two-step program&quot;&gt;
+&lt;cheatsheet title=&quot;Example&quot;&gt;
   &lt;intro&gt;
-    &lt;description&gt;Welcome to the 2-step program.&lt;/description&gt;
+    &lt;description&gt;Example cheat sheet with two steps.&lt;/description&gt;
   &lt;/intro&gt;
-  &lt;item title=&quot;Step 1&quot; kind=&quot;manual&quot;&gt;
-     &lt;description&gt;Press the button to proceed to step 2.&lt;/description&gt;
+  &lt;item title=&quot;Step 1&quot;&gt;
+     &lt;description&gt;This is a step with an action.&lt;/description&gt;
+     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot;/&gt;
   &lt;/item&gt;
-  &lt;item title=&quot;Step 2&quot; kind=&quot;manual&quot;&gt;
-     &lt;description&gt;Press the button to complete the 2-step program.&lt;/description&gt;
+  &lt;item title=&quot;Step 2&quot;&gt;
+     &lt;description&gt;This is a fully manual step.&lt;/description&gt;
   &lt;/item&gt;
-&lt;/cheatsheet&gt;
-</pre>
+&lt;/cheatsheet&gt;</pre>
 
 </body>
 
