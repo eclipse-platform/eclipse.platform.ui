@@ -46,6 +46,7 @@ public class DefaultColumnSizeDialog extends Dialog {
 	 */
 	protected DefaultColumnSizeDialog(Shell parentShell) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fPrefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 	
@@ -57,7 +58,7 @@ public class DefaultColumnSizeDialog extends Dialog {
 		
 		getShell().setText(DebugUIMessages.getString(DEFAULT_COLUMN_SIZE));
 		
-		Composite content = new Composite(parent, SWT.NONE);
+		Composite content = (Composite) super.createDialogArea(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		content.setLayout(layout);
