@@ -207,7 +207,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private void createSortTargets(Composite parent) {
 		fSortButton= new Button(parent, SWT.CHECK);
-		fSortButton.setText("&Sort targets");
+		fSortButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.14")); //$NON-NLS-1$
 		fSortButton.setFont(parent.getFont());
 		fSortButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -250,7 +250,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @param column the column which should be sorted on
 	 */
-	public void setSort(int column) {
+	private void setSort(int column) {
 		fSortColumn= column;
 		fTableViewer.refresh();
 		updateLaunchConfigurationDialog();
@@ -309,7 +309,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					Object element= ss.getFirstElement();
 					boolean checked= !fTableViewer.getChecked(element);
 					fTableViewer.setChecked(element, checked);
-					updateOrderedTargets(element , checked);
+					updateOrderedTargets(element, checked);
 				}
 			}
 		});
@@ -445,19 +445,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					}
 				}
 			}
-				
-//			if (fAllTargets != null) {
-//				Arrays.sort(fAllTargets, new Comparator() {
-//					public int compare(Object o1, Object o2) {
-//						TargetInfo t1= (TargetInfo)o1;
-//						TargetInfo t2= (TargetInfo)o2;
-//						return t1.getName().compareToIgnoreCase(t2.getName());
-//					}
-//					public boolean equals(Object obj) {
-//						return false;
-//					}
-//				});
-//			}
 		}
 		return fAllTargets;
 	}

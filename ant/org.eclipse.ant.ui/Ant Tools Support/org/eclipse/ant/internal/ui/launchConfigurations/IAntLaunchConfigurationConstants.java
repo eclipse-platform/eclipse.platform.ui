@@ -65,7 +65,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * value of 0 indicates target name, 1 indicates target description, and -1
 	 * indicates no sort. Default value is -1.
 	 */
-	public static final String ATTR_SORT_TARGETS = IExternalToolConstants.PLUGIN_ID + "ATTR_SORT_TARGETS";
+	public static final String ATTR_SORT_TARGETS = IExternalToolConstants.PLUGIN_ID + "ATTR_SORT_TARGETS"; //$NON-NLS-1$
 
 
 	// ------- Launch configuration types --------
