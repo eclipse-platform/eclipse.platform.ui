@@ -85,7 +85,7 @@
 	</objectContribution>	
 
 	<!-- ****************** Target Management Popup Actions *************** -->
-	<!--
+
    	<objectContribution
          id="org.eclipse.team.ui.targetResourceContributions"
          objectClass="org.eclipse.core.resources.IResource" adaptable="true">
@@ -122,7 +122,6 @@
 			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
 		</action>
    </objectContribution>
-   -->
 </extension>
 
 <!-- ************** Views ********************** -->
