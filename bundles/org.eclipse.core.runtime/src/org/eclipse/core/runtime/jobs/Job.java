@@ -181,13 +181,20 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 	/**
 	 * Jobs that complete their execution asynchronously must indicate when they
-	 * are finished by calling this method.  This method has no effect if called on
+	 * are finished by calling this method.  This method must not be called by
 	 * a job that has not indicated that it is executing asynchronously.
+	 * <p>
+	 * This method must not be called from within the scope of a job's <code>run</code>
+	 * method.  Jobs should normally indicate completion by returning an appropriate
+	 * status from the <code>run</code> method.  Jobs that return a status of
+	 * <code>ASYNC_FINISH</code> from their run method must later call 
+	 * <code>done</code> to indicate completion.
 	 * 
 	 * @param result a status object indicating the result of the job's execution.
+	 * @see #ASYNC_FINISH
 	 * @see #run
 	 */
-	protected final void done(IStatus result) {
+	public final void done(IStatus result) {
 		super.done(result);
 	}
 	/**
@@ -289,13 +296,13 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Jobs can optionally finish their execution asynchronously (in another thread) by 
 	 * returning a result status of <code>Job.ASYNC_FINISH</code>.  Jobs that finish
 	 * asynchronously <b>must</b> indicate when they are finished by calling
-	 * the method <code>Job.finished</code>.
+	 * the method <code>Job.done</code>.
 	 * 
 	 * @param monitor the monitor to be used for reporting progress, or <code>
 	 * null</code> if progress monitoring is not required.
 	 * @return the job result.
 	 * @see #ASYNC_FINISH
-	 * @see #finish
+	 * @see #done
 	 */
 	public abstract IStatus run(IProgressMonitor monitor);
 	/**
