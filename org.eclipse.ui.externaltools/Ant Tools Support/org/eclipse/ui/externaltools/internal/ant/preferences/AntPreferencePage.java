@@ -33,7 +33,7 @@ import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Ant preference page to set the classpath, tasks, and types.
+ * Ant preference page to set the classpath, tasks, and types and properties.
  */
 public class AntPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -76,9 +76,9 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		propertiesPage.createTabItem(folder);
 	
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		classpathPage.setInput(Arrays.asList(prefs.getCustomURLs()));
 		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
 		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
+		classpathPage.initialize();
 		propertiesPage.initialize();
 
 		return folder;
@@ -91,10 +91,10 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		super.performDefaults();
 		
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		classpathPage.setInput(Arrays.asList(prefs.getDefaultCustomURLs()));
 		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
 		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
-		propertiesPage.performDefaults();
+		classpathPage.initialize();
+		propertiesPage.initialize();
 	}
 	
 	/* (non-Javadoc)
@@ -106,7 +106,18 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		List contents = classpathPage.getContents();
 		if (contents != null) {
 			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
+			prefs.setAntURLs(urls);
+		}
+		
+		contents = classpathPage.getUserURLs();
+		if (contents != null) {
+			URL[] urls = (URL[]) contents.toArray(new URL[contents.size()]);
 			prefs.setCustomURLs(urls);
+		}
+		
+		String antHome= classpathPage.getAntHome();
+		if (antHome.length() > 0) {
+			prefs.setAntHome(antHome);
 		}
 		
 		contents = tasksPage.getContents();

@@ -1,7 +1,6 @@
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Property;
@@ -11,8 +10,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -24,7 +21,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
@@ -93,12 +89,13 @@ public class AntPropertiesPage extends AntPage {
 	/**
 	 * Creates the tab item that contains this sub-page.
 	 */
-	public TabItem createTabItem(TabFolder folder) {
+	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title")); //$NON-NLS-1$
 		item.setImage(labelProvider.getPropertyImage());
 		item.setData(this);
-		item.setControl(createControl(folder));
+		Composite top = new Composite(folder, SWT.NONE);
+		item.setControl(createContents(top));
 		return item;
 	}
 	
@@ -122,25 +119,19 @@ public class AntPropertiesPage extends AntPage {
 					fileTableSelectionChanged((IStructuredSelection) event.getSelection());
 				}
 			});
-			
-			fileTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event) {
-					//editFile((IStructuredSelection)event.getSelection());
-				}
-			});
 		}
 	}
 	
-	/**
-	 * Creates this page's controls
-	 */
-	public Control createControl(Composite parent) {
-		Composite top = (Composite)super.createControl(parent);
+	
+	protected Composite createContents(Composite parent) {
+		Composite top = super.createContents(parent);
 		
-		Label separator = new Label(parent, SWT.NONE);
+		Label label = new Label(top, SWT.NONE);
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
-		gd.heightHint = 4;
-		separator.setLayoutData(gd);
+		gd.horizontalSpan =2;
+		label.setLayoutData(gd);
+		label.setFont(parent.getFont());
+		label.setText("Specify global property files:");
 		
 		createTable(top);
 		createButtonGroup(top);
@@ -160,22 +151,14 @@ public class AntPropertiesPage extends AntPage {
 				edit(getSelection());
 				break;
 			case REMOVE_BUTTON :
-				removeButtonPressed();
+				remove();
 				break;
 			case ADD_PROPERTY_FILE_BUTTON :
 				addPropertyFile();
 				break;
 			case REMOVE_PROPERTY_FILE_BUTTON :
-				removePropertyFile();
+				remove(fileTableViewer);
 				break;
-		}
-	}
-	
-	private void removePropertyFile() {
-		IStructuredSelection selection= ((IStructuredSelection)fileTableViewer.getSelection());
-		Iterator itr = selection.iterator();
-		while (itr.hasNext()) {
-			fileContentProvider.remove(itr.next());
 		}
 	}
 	
@@ -214,10 +197,6 @@ public class AntPropertiesPage extends AntPage {
 		prop.setName(dialog.getName());
 		prop.setValue(dialog.getClassName());
 		updateContent(prop);
-	}
-	
-	protected void performDefaults() {
-		setInput(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomProperties()));
 	}
 
 	/**
@@ -293,16 +272,15 @@ public class AntPropertiesPage extends AntPage {
 	/**
 	 * Handles selection changes in the Property file table viewer.
 	 */
-	protected void fileTableSelectionChanged(IStructuredSelection newSelection) {
+	private void fileTableSelectionChanged(IStructuredSelection newSelection) {
 		int size = newSelection.size();
 		removeFileButton.setEnabled(size > 0);
 	}
 	
 	/**
-	 * Sets the contents of the table on this page.  Has no effect
-	 * if this widget has not yet been created or has been disposed.
+	 * Sets the contents of the tables on this page.
 	 */
-	public void initialize() {
+	protected void initialize() {
 		getTableViewer().setInput(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomProperties()));
 		fileTableViewer.setInput(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles()));
 		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
@@ -310,7 +288,7 @@ public class AntPropertiesPage extends AntPage {
 	}
 	
 	/**
-	 * Allows the user to enter JARs to the classpath.
+	 * Allows the user to enter property files
 	 */
 	private void addPropertyFile() {
 		String lastUsedPath;
@@ -336,6 +314,7 @@ public class AntPropertiesPage extends AntPage {
 		
 		fDialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTFILE, filterPath.toOSString());
 	}
+	
 	/**
 	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#addContent(java.lang.Object)
 	 */
@@ -352,7 +331,7 @@ public class AntPropertiesPage extends AntPage {
 	 * 
 	 * @return String[]
 	 */
-	public String[] getPropertyFiles() {
+	protected String[] getPropertyFiles() {
 		Object[] elements = fileContentProvider.getElements(null);
 		String[] files= new String[elements.length];
 		for (int i = 0; i < elements.length; i++) {

@@ -53,7 +53,7 @@ public class AntTasksPage extends AntPage {
 	/**
 	 * Allows the user to enter a custom task.
 	 */
-	private void addTaskButtonPressed() {
+	private void addTask() {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
 		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
@@ -73,13 +73,13 @@ public class AntTasksPage extends AntPage {
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case ADD_TASK_BUTTON :
-				addTaskButtonPressed();
+				addTask();
 				break;
 			case EDIT_TASK_BUTTON :
 				edit(getSelection());
 				break;
 			case REMOVE_BUTTON :
-				removeButtonPressed();
+				remove();
 				break;
 		}
 	}
@@ -87,12 +87,13 @@ public class AntTasksPage extends AntPage {
 	/**
 	 * Creates the tab item that contains this sub-page.
 	 */
-	public TabItem createTabItem(TabFolder folder) {
+	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntTasksPage.title")); //$NON-NLS-1$
 		item.setImage(labelProvider.getTaskImage());
 		item.setData(this);
-		item.setControl(createControl(folder));
+		Composite top = new Composite(folder, SWT.NONE);
+		item.setControl(createContents(top));
 		return item;
 	}
 

@@ -53,7 +53,7 @@ public class AntTypesPage extends AntPage {
 	/**
 	 * Allows the user to enter a custom type.
 	 */
-	private void addTypeButtonPressed() {
+	private void addType() {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogDescription"); //$NON-NLS-1$
 		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
@@ -74,13 +74,13 @@ public class AntTypesPage extends AntPage {
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case ADD_TYPE_BUTTON :
-				addTypeButtonPressed();
+				addType();
 				break;
 			case EDIT_TYPE_BUTTON :
 				edit(getSelection());
 				break;
 			case REMOVE_BUTTON :
-				removeButtonPressed();
+				remove();
 				break;
 		}
 	}
@@ -88,12 +88,13 @@ public class AntTypesPage extends AntPage {
 	/**
 	 * Creates the tab item that contains this sub-page.
 	 */
-	public TabItem createTabItem(TabFolder folder) {
+	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntTypesPage.typesPageTitle")); //$NON-NLS-1$
 		item.setImage(labelProvider.getTypeImage());
 		item.setData(this);
-		item.setControl(createControl(folder));
+		Composite top = new Composite(folder, SWT.NONE);
+		item.setControl(createContents(top));
 		return item;
 	}
 	
