@@ -1,4 +1,13 @@
+# Debugging options for the org.eclipse.core.resources plugin.
+
+# Turn on debugging for the org.eclipse.core.resources plugin.
+# Also displays snapshot times.
 org.eclipse.core.resources/debug=true
+
+# Debug build failure cases such as failue to retrieve deltas.
 org.eclipse.core.resources/debug/build=true
+
+# For incrementatl builds, displays which builder is being run
+# and because of changes in which project.
 org.eclipse.core.resources/debug/build/needbuild=true
 
