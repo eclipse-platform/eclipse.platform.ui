@@ -33,11 +33,8 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(DeltaChainFlatteningTest.suite());
 		suite.addTest(DeltaFlatteningTest.suite());
-		suite.addTest(ElementDeltaTest.suite());
 		suite.addTest(ElementTreeDeltaChainTest.suite());
 		suite.addTest(ElementTreeIteratorTest.suite());
-		suite.addTest(ElementTreeTest.suite());
-		suite.addTest(PluggableDeltaLogicTest.suite());
 		suite.addTest(TreeFlatteningTest.suite());
 		return suite;
 	}

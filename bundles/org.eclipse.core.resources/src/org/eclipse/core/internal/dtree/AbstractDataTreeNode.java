@@ -470,39 +470,6 @@ public abstract class AbstractDataTreeNode {
 	}
 
 	/**
-	 * Sort the nodes in the given array.
-	 */
-	static void quickSort(AbstractDataTreeNode[] list, int left, int right) {
-
-		int original_left = left;
-		int original_right = right;
-
-		AbstractDataTreeNode mid = list[(left + right) / 2];
-		do {
-			while (list[left].name.compareTo(mid.name) < 0) {
-				left++;
-			}
-			while (mid.name.compareTo(list[right].name) < 0) {
-				right--;
-			}
-			if (left <= right) {
-				AbstractDataTreeNode tmp = list[left];
-				list[left] = list[right];
-				list[right] = tmp;
-				left++;
-				right--;
-			}
-		} while (left <= right);
-
-		if (original_left < right) {
-			quickSort(list, original_left, right);
-		}
-		if (left < original_right) {
-			quickSort(list, left, original_right);
-		}
-	}
-
-	/**
 	 * Replaces the child with the given local name.
 	 */
 	void replaceChild(String localName, DataTreeNode node) {
@@ -561,15 +528,6 @@ public abstract class AbstractDataTreeNode {
 	 */
 	int size() {
 		return children.length;
-	}
-
-	/**
-	 * Sort the nodes in the given array.
-	 */
-	public static void sort(AbstractDataTreeNode[] list) {
-		if (list.length > 1) {
-			quickSort(list, 0, list.length - 1);
-		}
 	}
 
 	/* (non-Javadoc

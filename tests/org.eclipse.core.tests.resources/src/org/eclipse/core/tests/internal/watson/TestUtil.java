@@ -25,7 +25,6 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		super(name);
 	}
 
-	static final IDeltaFilter fFilter = new TestDeltaFilter();
 	static final IElementComparator fComparator = TestElementComparator.getComparator();
 
 	/**
@@ -319,13 +318,6 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 			paths[i] = project3.append(names[i]);
 		}
 		return paths;
-	}
-
-	/**
-	 * Returns an element tree filter
-	 */
-	static IDeltaFilter getFilter() {
-		return fFilter;
 	}
 
 	/**

@@ -109,26 +109,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Creates a new element tree having a single (root) element with the given 
-	 * name and data.
-	 */
-	public ElementTree(String name, Object data) {
-		DataTreeNode node = nodeForElement(name, data, null);
-		initialize(node);
-	}
-
-	/**
-	 * Creates a new element tree having a root with the given name and 
-	 * element, and with the given subtrees as children.
-	 * This constructor allows element trees to be built bottom-up.
-	 * Note that this is a relatively expensive operation.
-	 */
-	public ElementTree(String name, Object data, ElementTree[] children) {
-		DataTreeNode node = nodeForElement(name, data, children);
-		initialize(node);
-	}
-
-	/**
 	 * Creates an element tree given its internal node representation.
 	 */
 	protected ElementTree(DataTreeNode rootNode) {
@@ -181,61 +161,6 @@ public class ElementTree {
 		//collapse my tree to be a forward delta of the parent's tree.
 		tree.collapseTo(parent.tree, DefaultElementComparator.getComparator());
 		return this;
-	}
-
-	/**
-	 * Computes a delta between this element tree and the given one,
-	 * using the given comparator to compare elements.
-	 * The result describes the changes applied to the given element tree
-	 * to yield this one.
-	 * <p>
-	 * For each element, if it is added or deleted it shows up as such in the delta.
-	 * Otherwise, the element in the given tree is compared to the one in this tree
-	 * using the comparator.
-	 * If it returns non-zero, the element is included in the delta as a change and the
-	 * return value of the comparator is remembered in the delta.
-	 * <p>
-	 * The result will be created for this tree, with its parent set to the given tree.
-	 * The trees need not be related.
-	 * The root element IDs of both trees must be equal.
-	 *
-	 * @see ElementDelta#getComparison()
-	 */
-
-	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator) {
-		if (olderTree == null || comparator == null) {
-			throw new IllegalArgumentException(NLS.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
-		}
-
-		return new ElementTreeDelta(olderTree, this, comparator);
-	}
-
-	/**
-	 * Computes a delta between this element tree and the given one,
-	 * using the given comparator to compare elements.  The delta will
-	 * begin at the given path.  The result describes the changes applied 
-	 * to the subtree of the given element tree to yield this one.
-	 * <p>
-	 * For each element, if it is added or deleted it shows up as such in the delta.
-	 * Otherwise, the element in the given tree is compared to the one in this tree
-	 * using the comparator.
-	 * If it returns non-zero, the element is included in the delta as a change and the
-	 * return value of the comparator is remembered in the delta.
-	 * <p>
-	 * The result will be created for this tree, with its parent set to the given tree.
-	 * The trees need not be related.
-	 * The root element IDs of both trees must be equal.
-	 *
-	 * @see ElementDelta#getComparison()
-	 */
-
-	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
-		if (olderTree == null || comparator == null)
-			throw new IllegalArgumentException(NLS.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
-		/* can optimize certain cases when computing deltas on the whole tree */
-		if (path.isRoot())
-			return new ElementTreeDelta(olderTree, this, comparator);
-		return new ElementTreeDelta(olderTree, this, comparator, path);
 	}
 
 	/** 
@@ -325,26 +250,6 @@ public class ElementTree {
 		} catch (ObjectNotFoundException e) {
 			elementNotFound(key);
 		}
-	}
-
-	/**
-	 * Returns the "delta depth" of this element tree.
-	 * A brand new element tree has delta depth 0;
-	 * <code>newEmptyDelta()</code> on an element tree
-	 * of delta depth n returns one of depth n+1.
-	 *
-	 * <p> The delta depth of an element tree should be managed.
-	 * If the element tree is allowed to get deep, the speed
-	 * of accesses slows (it searches the delta layers sequentially),
-	 * and the memory footprint increases (it is still hanging on
-	 * to all the information in the previous immutable trees).
-	 */
-	public int deltaDepth() {
-		int d = 0;
-		for (DeltaDataTree t = tree; t.getParent() != null; t = t.getParent()) {
-			d++;
-		}
-		return d;
 	}
 
 	/**
@@ -539,33 +444,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Returns whether this tree has the given tree as a direct
-	 * or indirect ancestor.  Returns false if they are the same tree.
-	 */
-	public boolean hasAncestor(ElementTree oldTree) {
-		if (this == oldTree)
-			return false;
-		/**
-		 * If this tree has been closed, the ancestor chain is flipped
-		 */
-		if (this.tree.isImmutable()) {
-			for (ElementTree parent = oldTree.getParent(); parent != null; parent = parent.getParent()) {
-				if (parent == this) {
-					return true;
-				}
-			}
-		} else {
-			for (ElementTree parent = this.getParent(); parent != null; parent = parent.getParent()) {
-				if (parent == oldTree) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Returns true if there have been changes in the tree between the two
 	 * given layers.  The two must be related and new must be newer than old.
 	 * That is, new must be an ancestor of old.
@@ -672,18 +550,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Converts this tree's representation to be a complete tree, not a delta.
-	 * This disconnects this tree from its parents.
-	 * The parent trees are unaffected.
-	 */
-	public synchronized void makeComplete() {
-		/* need to clear the lookup cache since it reports whether results were found
-		 in the topmost delta, and the order of deltas is changing */
-		lookupCache = null;
-		tree.makeComplete();
-	}
-
-	/**
 	 * Merges a chain of deltas for a certain subtree to this tree.
 	 * If this tree has any data in the specified subtree, it will
 	 * be overwritten.  The receiver tree must be open, and it will
@@ -746,43 +612,6 @@ public class ElementTree {
 	public synchronized ElementTree newEmptyDelta() {
 		lookupCache = null; // Don't want old trees hanging onto cached infos.
 		return new ElementTree(this);
-	}
-
-	/**
-	 * Returns the node hierarchy corresponding to the given element and any children (optional).
-	 */
-	protected DataTreeNode nodeForElement(String elementName, Object element, ElementTree[] children) {
-
-		/* if children is null or empty there is nothing to do here */
-		if (children == null || children.length == 0)
-			return new DataTreeNode(elementName, element, null);
-
-		/**
-		 * Each of the given child trees has an implicit root node
-		 * specified by Path.ROOT.  What we are really interested in
-		 * are the children of these roots.
-		 */
-
-		/* find out the number of real children */
-		int childCount = 0;
-		for (int i = 0; i < children.length; i++)
-			childCount += children[i].getChildCount(children[i].getRoot());
-
-		/* if there is no child, just go on */
-		if (childCount == 0)
-			return new DataTreeNode(elementName, element, null);
-
-		/* grab children of roots to create child array */
-		AbstractDataTreeNode[] childNodes = new AbstractDataTreeNode[childCount];
-		int next = 0;
-		for (int i = 0; i < children.length; i++) {
-			IPath[] rootChildren = children[i].getChildren(children[i].getRoot());
-			for (int j = 0; j < rootChildren.length; j++) {
-				childNodes[next++] = children[i].tree.copyCompleteSubtree(rootChildren[j]);
-			}
-		}
-		Assert.isTrue(next == childCount);
-		return new DataTreeNode(elementName, element, childNodes);
 	}
 
 	/**

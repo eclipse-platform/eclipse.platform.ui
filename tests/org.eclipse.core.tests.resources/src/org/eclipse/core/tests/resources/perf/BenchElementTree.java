@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources.perf;
 import java.util.Vector;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.watson.DefaultElementComparator;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -82,54 +81,6 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	}
 
 	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchDeltaLargeTreeFewChanges() {
-		ElementTree oldTree = createLargeTree();
-		ElementTree newTree = doRoutineOperationsOnLargeTree(oldTree);
-
-		startBench();
-		int repeat = 1000;
-		for (int i = 0; i < repeat; i++) {
-			newTree.computeDeltaWith(oldTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchDeltaLargeTreeFewChanges", repeat);
-	}
-
-	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchDeltaLargeTreeManyChangesInOneLayer() {
-		ElementTree oldTree = createLargeTree();
-		ElementTree newTree = doManyRoutineOperationsOnLargeTree(oldTree);
-
-		startBench();
-		int repeat = 50;
-		for (int i = 0; i < repeat; i++) {
-			newTree.computeDeltaWith(oldTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchDeltaLargeTreeManyChangesInOneLayer", repeat);
-	}
-
-	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchDeltaSmallTreeManyChangesInSeperateLayers() {
-		ElementTree oldTree = createTestTree(false);
-		ElementTree newTree = doRoutineOperations(oldTree);
-
-		startBench();
-		int repeat = 100;
-		for (int i = 0; i < repeat; i++) {
-			newTree.computeDeltaWith(oldTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchDeltaSmallTreeManyChangesInSeperateLayers", repeat);
-	}
-
-	/**
 	 * Tests the performance of the getElementData operation.
 	 */
 	public void benchGetElementData() {
@@ -168,54 +119,6 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		}
 
 		stopBench("benchMergeDeltaChain", repeat);
-	}
-
-	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchReverseDeltaLargeTreeFewChanges() {
-		ElementTree oldTree = createLargeTree();
-		ElementTree newTree = doRoutineOperationsOnLargeTree(oldTree);
-
-		startBench();
-		int repeat = 1000;
-		for (int i = 0; i < repeat; i++) {
-			oldTree.computeDeltaWith(newTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchReverseDeltaLargeTreeFewChanges", repeat);
-	}
-
-	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchReverseDeltaLargeTreeManyChangesInOneLayer() {
-		ElementTree oldTree = createLargeTree();
-		ElementTree newTree = doManyRoutineOperationsOnLargeTree(oldTree);
-
-		startBench();
-		int repeat = 25;
-		for (int i = 0; i < repeat; i++) {
-			oldTree.computeDeltaWith(newTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchReverseDeltaLargeTreeManyChangesInOneLayer", repeat);
-	}
-
-	/**
-	 * Bench calculation of deltas between two trees
-	 */
-	public void benchReverseDeltaSmallTreeManyChangesInSeperateLayers() {
-		ElementTree oldTree = createTestTree(false);
-		ElementTree newTree = doRoutineOperations(oldTree);
-
-		startBench();
-		int repeat = 20;
-		for (int i = 0; i < repeat; i++) {
-			oldTree.computeDeltaWith(newTree, DefaultElementComparator.getComparator());
-		}
-
-		stopBench("benchReverseDeltaSmallTreeManyChangesInSeperateLayers", repeat);
 	}
 
 	/**

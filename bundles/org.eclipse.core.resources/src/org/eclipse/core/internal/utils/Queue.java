@@ -62,10 +62,6 @@ public class Queue {
 		tail = head = 0;
 	}
 
-	public boolean contains(Object o) {
-		return get(o) != null;
-	}
-
 	/**
 	 * This method does not affect the queue itself. It is only a
 	 * helper to decrement an index in the queue.
