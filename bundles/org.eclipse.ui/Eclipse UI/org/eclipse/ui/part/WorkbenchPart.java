@@ -66,6 +66,13 @@ public void dispose() {
 		descriptorImage.dispose();
 		descriptorImage = null;
 	}
+	
+	// Clear out the property change listeners as we
+	// should not be notifying anyone after the part
+	// has been disposed.
+	if (!propChangeListeners.isEmpty()) {
+		propChangeListeners = new ListenerList(1);
+	}
 }
 /**
  * Fires a property changed event.
