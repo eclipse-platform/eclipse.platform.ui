@@ -76,12 +76,12 @@ public class BrowserActionBuilder {
 		
 		backAction = new RetargetAction("back", "&Back");  //$NON-NLS-1$
 		backAction.setToolTipText("Back");
-		backAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
+		backAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 		window.getPartService().addPartListener(backAction);
 		
 		forwardAction = new RetargetAction("forward", "&Forward");  //$NON-NLS-1$
 		forwardAction.setToolTipText("Forward");
-		forwardAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
+		forwardAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		window.getPartService().addPartListener(forwardAction);
 		
 		stopAction = new RetargetAction("stop", "Sto&p");  //$NON-NLS-1$
