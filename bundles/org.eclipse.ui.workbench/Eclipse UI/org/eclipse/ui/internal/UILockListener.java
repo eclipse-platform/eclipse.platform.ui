@@ -66,22 +66,26 @@ public class UILockListener extends LockListener {
 	}
 	protected Display display;
 	protected final Queue pendingWork = new Queue();
-	protected boolean pendingWorkStarted;
+	protected Semaphore currentWork = null;
 	protected Thread ui;
 
 	public UILockListener(Display display) {
 		this.display = display;
-		pendingWorkStarted = false;
 	}
 	public void aboutToRelease() {
 		if (isUI())
 			ui = null;
 	}
-	public void aboutToWait(Thread lockOwner) {
+	public boolean aboutToWait(Thread lockOwner) {
 		if (isUI()) {
+			// If a syncExec was executed from the current operation, it
+			// has already acquired the lock. So, just return true.
+			if (currentWork != null && currentWork.getOperationThread() == lockOwner)
+				return true;
 			ui = Thread.currentThread();
 			doPendingWork();
 		}
+		return false;
 	}
 	void addPendingWork(Semaphore work) {
 		pendingWork.add(work);
@@ -93,8 +97,10 @@ public class UILockListener extends LockListener {
 		Semaphore work;
 		while ((work = pendingWork.remove()) != null) {
 			try {
+				currentWork = work;
 				work.getRunnable().run();
 			} finally {
+				currentWork = null;
 				work.release();
 			}
 		}

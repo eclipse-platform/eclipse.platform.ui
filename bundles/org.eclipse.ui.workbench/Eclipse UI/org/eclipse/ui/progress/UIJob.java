@@ -74,6 +74,9 @@ public abstract class UIJob extends Job {
 			public void run() {
 				IStatus result = null;
 				try {
+					//As we are in the UI Thread we can
+					//always know what to tell the job.
+					setThread(Thread.currentThread());
 					result = runInUIThread(monitor);
 				} finally {
 					if (result == null)
