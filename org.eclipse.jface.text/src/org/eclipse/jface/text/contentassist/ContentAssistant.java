@@ -70,14 +70,21 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
 
+		/** The shell that a <code>ControlListener</code> is registered with. */
+		private Control fShell;
+		/** The control that a <code>MouseListener</code>, a<code>FocusListener</code> and a <code>DisposeListener</code> are registered with. */
+		private Control fControl;
+		
 		/**
 		 * Installs this closer on it's viewer's text widget.
 		 */
 		protected void install() {
 			Control control= fContentAssistSubjectAdapter.getControl();
+			fControl= control;
 			if (Helper.okToUse(control)) {
 				
 				Control shell= control.getShell();
+				fShell= shell;
 				shell.addControlListener(this);
 					
 				control.addMouseListener(this);
@@ -96,12 +103,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * Uninstalls this closer from the viewer's text widget.
 		 */
 		protected void uninstall() {
-			Control control= fContentAssistSubjectAdapter.getControl();
+			Control shell= fShell;
+			fShell= null;
+			if (Helper.okToUse(shell))
+				shell.removeControlListener(this);
+			
+			Control control= fControl;
+			fControl= null;
 			if (Helper.okToUse(control)) {
-				
-				Control shell= control.getShell();
-				if (Helper.okToUse(shell))
-					shell.removeControlListener(this);
 				
 				control.removeMouseListener(this);
 				control.removeFocusListener(this);
