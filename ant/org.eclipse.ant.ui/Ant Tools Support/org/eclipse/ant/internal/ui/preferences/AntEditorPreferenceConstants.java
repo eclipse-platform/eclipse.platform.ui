@@ -91,8 +91,8 @@ public class AntEditorPreferenceConstants {
 	/**
 	 * A named preference that specifies if the Ant formatter uses spaces for tabs.
 	 * <p>
-	 * Value is of type <code>boolean</code>. If <code>true</code> spaces instead of tabs are used
-	 * when formatting. If <code>false</code> the formatter inserts a tab character for indenting.
+	 * Value is of type <code>boolean</code>. If <code>false</code> spaces instead of tabs are used
+	 * when formatting. If <code>true</code> the formatter inserts a tab character for indenting.
 	 * </p>
 	 */
 	public static String FORMATTER_TAB_CHAR= "formatter_tab_char"; //$NON-NLS-1$
