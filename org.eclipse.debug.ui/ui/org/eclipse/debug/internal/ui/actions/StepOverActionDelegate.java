@@ -50,6 +50,6 @@ public class StepOverActionDelegate extends StepActionDelegate {
 	 * @see org.eclipse.debug.internal.ui.actions.StepActionDelegate#getActionDefinitionId()
 	 */
 	 protected String getActionDefinitionId() {
-		return "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate";
+		return "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"; //$NON-NLS-1$
 	}
 }

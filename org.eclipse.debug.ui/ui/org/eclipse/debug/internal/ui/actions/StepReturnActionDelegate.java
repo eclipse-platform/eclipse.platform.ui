@@ -52,6 +52,6 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	 * StepActionDelegate#getActionDefinitionId()
 	 */
 	protected String getActionDefinitionId() {
-		return "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate";
+		return "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"; //$NON-NLS-1$
 	}
 }

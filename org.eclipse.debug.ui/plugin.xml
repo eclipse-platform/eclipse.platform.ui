@@ -163,6 +163,16 @@
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
       </action>
       <action
+            label="%StepWithFiltersAction.label"
+            icon="icons/full/elcl16/stepbystep_co.gif"
+            disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
+            hoverIcon="icons/full/clcl16/stepbystep_co.gif"
+            helpContextId="step_with_filters_action_context"
+            class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            menubarPath="org.eclipse.ui.run/stepIntoGroup"
+            id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
+      </action>      
+      <action
             label="%TerminateAction.label"
             icon="icons/full/elcl16/terminate_co.gif"
             disabledIcon="icons/full/dlcl16/terminate_co.gif"
@@ -394,7 +404,18 @@
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 			tooltip="%StepIntoAction.tooltip"
 			label="%StepIntoAction.label">
-		</action>		
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.toolbar.stepWithFilters"
+			toolbarPath = "stepIntoGroup"
+			icon = "icons/full/elcl16/stepbystep_co.gif"
+			disabledIcon= "icons/full/dlcl16/stepbystep_co.gif"
+            hoverIcon= "icons/full/clcl16/stepbystep_co.gif"
+			helpContextId = "step_with_filters_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+			tooltip="%StepWithFiltersAction.tooltip"
+			label="%StepWithFiltersAction.label">
+		</action>						
 	</viewContribution>
 <!-- Contributions to Console View Toolbar -->
 	<viewContribution
@@ -593,6 +614,14 @@
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 			label="%StepIntoAction.label">
 		</action>		
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
+			menubarPath = "stepIntoGroup"
+			icon = "icons/full/clcl16/stepbystep_co.gif"
+			helpContextId = "step_with_filters_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+			label="%StepWithFiltersAction.label">
+		</action>				
 	</viewerContribution>
 	<!-- Contributions to Breakpoints View Popup Menu -->
 	<viewerContribution
@@ -821,6 +850,11 @@
 
 <extension point="org.eclipse.ui.actionDefinitions">
 	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+		name= "%ActionDefinition.stepWithFilters.name"
+		description="%ActionDefinition.stepWithFilters.description"
+	/>
+	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 		name= "%ActionDefinition.stepInto.name"
 		description="%ActionDefinition.stepInto.description"
@@ -842,6 +876,7 @@
 		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 
 		<!-- step actions -->
+		<accelerator key="Shift+F5" id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate" />
 		<accelerator key="F5" id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate" />
 		<accelerator key="F6" id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate" />
 		<accelerator key="F7" id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate" />
