@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 

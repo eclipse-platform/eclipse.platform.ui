@@ -6,7 +6,6 @@ package org.eclipse.ui.actions;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.SubActionBars;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.events.*;

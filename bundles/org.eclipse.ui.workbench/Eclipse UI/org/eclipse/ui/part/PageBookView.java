@@ -13,7 +13,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.SubActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**

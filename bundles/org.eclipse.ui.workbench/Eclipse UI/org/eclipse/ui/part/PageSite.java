@@ -8,7 +8,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.SubActionBars;
 import org.eclipse.ui.internal.misc.Assert;
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
