@@ -250,7 +250,7 @@ public class BreakpointsView extends AbstractDebugView {
 	class BreakpointsViewEventHandler implements IBreakpointListener {
 	
 		/**
-		 * Constructs an enent handler for the breakpoints view.
+		 * Constructs an event handler for the breakpoints view.
 		 */
 		public BreakpointsViewEventHandler() {
 			DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
@@ -259,7 +259,6 @@ public class BreakpointsView extends AbstractDebugView {
 		public void dispose() {
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		}
-	
 	
 		/**
 		 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
@@ -276,7 +275,6 @@ public class BreakpointsView extends AbstractDebugView {
 				});
 			}
 		}
-	
 	
 		/**
 		 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
