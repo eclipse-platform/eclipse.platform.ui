@@ -41,6 +41,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
@@ -174,9 +175,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void registerSubscriberListener() throws TeamException {
 		registerSubscriberListener(getSubscriber());
 	}
@@ -201,9 +199,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
-	/**
-	 * @return
-	 */
 	private TeamDelta[] deregisterSubscriberListener() throws TeamException {
 		return deregisterSubscriberListener(getSubscriber());
 	}
@@ -250,59 +245,54 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
-	/**
-	 * Update the resources from an existing container with the changes from the CVS repository.
-	 * This update uses the SubscriberUpdateAction to perform the update so that all special
-	 * cases should be handled properly
-	 */
-	public IResource[] update(IContainer container, String[] hierarchy, boolean allowOverwrite) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
-		IResource[] resources = getResources(container, hierarchy);
-		SyncInfo[] syncResources = createSyncInfos(resources);
-		update(syncResources,allowOverwrite);
-		return resources;
-	}
-	
-	/**
-	 * @param resources
-	 * @return
-	 */
+	/******************************************************************
+	 * Subscriber Actions: commit/update and overide and commit/update
+	 * These actions are those contributed to the Synchronize View by
+	 * the CVS plugin.
+	 ******************************************************************/
 	private SyncInfo[] createSyncInfos(IResource[] resources) throws TeamException {
 		return createSyncInfos(getSubscriber(), resources);
 	}
+	
+	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
+		return runSubscriberAction(new TestUpdateAction(), container, hierarchy);
+	}
+	
+	public IResource[] commit(IContainer container, String[] hierarchy) throws CoreException, TeamException {
+		return runSubscriberAction(new TestCommitAction(), container, hierarchy);
+	}
 
-	/**
-	 * Commit the resources from an existing container to the CVS repository.
-	 * This commit uses the SubscriberCommitAction to perform the commit so that all special
-	 * cases should be handled properly
-	 */
-	public IResource[] commitResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
-		IResource[] resources = getResources(container, hierarchy);
-		SyncInfo[] syncResources = createSyncInfos(resources);
-		commitResources(syncResources);
+	public IResource[] overrideAndUpdate(IContainer container, String[] hierarchy, boolean shouldPrompt) throws CoreException, TeamException {
+		TestOverrideAndUpdate action = new TestOverrideAndUpdate();
+		IResource[] resources = runSubscriberAction(action, container, hierarchy);
+		assertTrue(shouldPrompt == action.isPrompted());			
 		return resources;
 	}
-
-	private void update(SyncInfo[] infos, final boolean allowOverwrite) throws TeamException {
-		TestWorkspaceUpdateAction action = new TestWorkspaceUpdateAction(allowOverwrite);
+	
+	public IResource[] overrideAndCommit(IContainer container, String[] hierarchy, boolean shouldPrompt) throws CoreException, TeamException {
+		TestOverrideAndCommit action = new TestOverrideAndCommit();
+		IResource[] resources = runSubscriberAction(action, container, hierarchy);
+		assertTrue(shouldPrompt == action.isPrompted());			
+		return resources;
+	}
+	
+	private IResource[] runSubscriberAction(CVSSubscriberAction action, IContainer container, String[] hierarchy) throws CoreException {
+		IResource[] resources = getResources(container, hierarchy);
+		SyncInfo[] syncResources = createSyncInfos(resources);
 		try {
-			action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
+			action.getRunnable(new SyncInfoSet(syncResources)).run(DEFAULT_MONITOR);
+			return resources;
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
 			fail("Operation was interupted");
-		}	
+		}
+		return new IResource[0];
 	}
 
-	private void commitResources(SyncInfo[] syncResources) throws TeamException {
-		TestCommitAction action = new TestCommitAction();
-		try {
-			action.getRunnable(new SyncInfoSet(syncResources)).run(DEFAULT_MONITOR);	
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
-		} catch (InterruptedException e) {
-			fail("Operation was interupted");
-		}	
-	}
+	/******************************************************************
+	 * Tests
+	 ******************************************************************/
 	
 	/*
 	 * Perform a simple test that checks for the different types of incoming changes
@@ -338,8 +328,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				"folder1/b.txt", 
 				"folder2/", 
 				"folder2/folder3/", 
-				"folder2/folder3/add.txt"},
-			false /* allow overwrite */);
+				"folder2/folder3/add.txt"});
 		
 		// Verify that we are in sync (except for "folder1/b.txt", which was deleted)
 		assertSyncEquals("testIncomingChanges", project, 
@@ -384,7 +373,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION});
 				
 		// Commit the changes
-		commitResources(project, new String[] {"folder1/a.txt", "folder1/b.txt", "folder2/folder3/add.txt"});
+		commit(project, new String[] {"folder1/a.txt", "folder1/b.txt", "folder2/folder3/add.txt"});
 		
 		// Ensure we're in sync
 		assertSyncEquals("testOutgoingChanges", project, 
@@ -399,6 +388,72 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				
 		// Ensure deleted resource "folder1/b.txt" no longer exists
 		assertDeleted("testOutgoingChanges", project, new String[] {"folder1/b.txt"});
+	}
+	
+	public void testOverideAndUpdateSimple() throws CVSException, CoreException, IOException {
+		 IProject project = createProject("testOutgoingChangesOverideAndUpdate", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+	
+		 // Make some modifications
+		 setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
+		 addResources(project, new String[] { "folder2/folder3/add.txt" }, false);
+		 deleteResources(project, new String[] {"folder1/b.txt"}, false);
+
+		 // Get the sync tree for the project
+		 assertSyncEquals("testOutgoingChangesOverwrite", project, 
+			 new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
+			 true, new int[] {
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.OUTGOING | SyncInfo.CHANGE,
+				 SyncInfo.OUTGOING | SyncInfo.DELETION,
+				 SyncInfo.IN_SYNC, /* adding a folder creates it remotely */
+				 SyncInfo.IN_SYNC, /* adding a folder creates it remotely */
+				 SyncInfo.OUTGOING | SyncInfo.ADDITION});
+			
+		 // Revert the changes
+		 overrideAndUpdate(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, true /* should prompt */);
+	
+		 // Ensure we're in sync
+		 assertSyncEquals("testOutgoingChangesOverwrite", project, 
+			 new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
+			 true, new int[] {
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC,
+				 SyncInfo.IN_SYNC});
+			
+		 // Ensure deleted resource is re-created
+		 assertExistsInWorkspace("testOutgoingChangesOverwrite", project.getFile(new Path("folder1/b.txt")));
+
+		// Test conflicting changes
+		IProject copy = checkoutCopy(project, "-copy");
+		appendText(copy.getFile("file1.txt"), "prefix" + eol, true);
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermitant errors!");
+		commitProject(copy);
+
+		// Make the same modifications to the original (We need to test both M and C!!!)
+		appendText(project.getFile("file1.txt"), eol + "postfix", false); // This will test merges (M)
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
+
+		// Get the sync tree for the project
+		assertSyncEquals("testFileConflict", project, 
+			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
+			true, new int[] {
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
+				SyncInfo.IN_SYNC,
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE });
+		
+		// Revert the changes
+		overrideAndUpdate(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, true /* should prompt */);
+
+		assertSyncEquals("testFileConflict", project, 
+			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
+			true, new int[] {
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC});
 	}
 	
 	/*
@@ -428,13 +483,13 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION});
 				
 		// Override the changes
-		update(
+		overrideAndUpdate(
 			project, 
 			new String[] {
 				"folder1/a.txt", 
 				"folder1/b.txt", 
 				"folder2/folder3/add.txt"},
-			true /* allow overwrite */);
+			true /* should prompt */);
 		
 		// Ensure added resources no longer exist
 		assertDeleted("testOverrideOutgoingChanges", project, new String[] {"folder2/", "folder2/folder3/","folder2/folder3/add.txt"});
@@ -480,7 +535,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION,
 				SyncInfo.OUTGOING | SyncInfo.ADDITION});
 				
-		commitResources(project, new String[] {"folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"});
+		commit(project, new String[] {"folder1/b.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"});
 		
 		// Ensure we are in sync
 		assertSyncEquals("testOutgoingQuestionables", project, 
@@ -501,9 +556,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * Test simple file conflicts
 	 */
 	public void testFileConflict() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
-		String eol = System.getProperty("line.separator");
-		if (eol == null) eol = "\n";
-		
 		// Create a test project (which commits it as well)
 		IProject project = createProject("testFileConflict", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
@@ -532,8 +584,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// Catch up to the file1.txt conflict using UPDATE
 		update(
 			project,
-			new String[] {"file1.txt"},
-			false /* allow overwrite */);
+			new String[] {"file1.txt"});
 								 
 		assertSyncEquals("testFileConflict", project, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
@@ -543,7 +594,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.CONFLICTING | SyncInfo.CHANGE });
 				
 		// Release the folder1/a.txt conflict by merging and then committing
-		commitResources(project, new String[] {"file1.txt", "folder1/a.txt"});
+		commit(project, new String[] {"file1.txt", "folder1/a.txt"});
 		
 		assertSyncEquals("testFileConflict", project, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
@@ -591,7 +642,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION });
 		
 		// Commit conflicting add1b.txt and add2b.txt and outgoing add3.txt
-		commitResources(project, new String[]{"add1b.txt", "add2b.txt", "add3.txt"});
+		commit(project, new String[]{"add1b.txt", "add2b.txt", "add3.txt"});
 
 		assertSyncEquals("testAdditionConflicts", project, 
 			new String[] { "file.txt", "add1b.txt", "add2b.txt", "add3.txt"}, 
@@ -602,10 +653,10 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC });
 				
 		// Catch-up to conflicting cases using UPDATE
-		update(
+		overrideAndUpdate(
 			project,
 			new String[] {"add1a.txt", "add2a.txt"},
-			true /* allow overwrite */);
+			true /* should prompt */);
 
 		
 		assertSyncEquals("testAdditionConflicts", project, 
@@ -666,7 +717,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC });
 				
 		// Catch up to remote changes.
-		update(
+		overrideAndUpdate(
 			project, 
 			new String[] {
 				"delete1.txt", 
@@ -674,7 +725,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				"delete3.txt", 
 				"delete4.txt", 
 				"delete5.txt"},
-			true /* allow overwrite */);
+			true /* should be prompted */);
 		
 		assertSyncEquals("testDeletionConflictsA", project, 
 			new String[] { "delete1.txt", "delete2.txt"}, 
@@ -714,7 +765,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC });
 
 		// Release the resources
-		commitResources(project, new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"});
+		commit(project, new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"});
 		
 		assertSyncEquals("testDeletionConflictsB", project, 
 			new String[] { "delete3.txt"}, 
@@ -775,8 +826,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				
 		update(
 			project, 
-			new String[] {"folder1/"},
-			false /* allow overwrite */);
+			new String[] {"folder1/"});
 	
 		assertSyncEquals("testFolderConflict", project, 
 			new String[] { "file.txt", "folder1/", "folder1/file.txt", "folder2/", "folder2/file.txt"}, 
@@ -810,7 +860,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.DELETION});
 				
 		// Commit the deletion
-		commitResources(project , new String[] {"folder1/b.txt"});
+		commit(project , new String[] {"folder1/b.txt"});
 		
 		// Get the sync tree again for the project and ensure others aren't effected
 		assertSyncEquals("testOutgoingDeletion", project, 
@@ -847,8 +897,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// Catch up to the addition by updating
 		update(
 			project, 
-			new String[] {"folder1/add.txt"},
-			false /* allow overwrite */);
+			new String[] {"folder1/add.txt"});
 		
 		// Get the sync tree again for the project and ensure the added resource is in sync
 		assertSyncEquals("testIncomingAddition", project, 
@@ -1012,7 +1061,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 									  SyncInfo.OUTGOING | SyncInfo.DELETION});
 		
 		// commit folder1/a.txt
-		commitResources(project, new String[] { "folder1/a.txt" });
+		commit(project, new String[] { "folder1/a.txt" });
 		
 		// Resync and verify that above file is gone and others remain the same
 		assertSyncEquals("testFolderDeletion sync check", project,
@@ -1023,7 +1072,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertDeleted("testFolderDeletion", project, new String[] {"folder1/a.txt"});
 		
 		// Commit folder1/folder2/file.txt
-		commitResources(project, new String[] { "folder1/folder2/file.txt" });
+		commit(project, new String[] { "folder1/folder2/file.txt" });
 		
 		// Resync and verify that all are deleted
 		assertDeleted("testFolderDeletion", project, new String[] {"folder1/", "folder1/folder2/", "folder1/folder2/file.txt"});
@@ -1104,7 +1153,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 			true, new int[] {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION});
 				
-		commitResources(project, new String[] { "folder2" });
+		commit(project, new String[] { "folder2" });
 		
 		assertSyncEquals("testOutgoingEmptyFolder", project, 
 			new String[] { "folder2/" }, 

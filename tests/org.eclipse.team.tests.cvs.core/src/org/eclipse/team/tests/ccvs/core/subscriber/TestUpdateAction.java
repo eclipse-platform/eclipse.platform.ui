@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
-class TestWorkspaceUpdateAction extends WorkspaceUpdateAction {
-	boolean allowOverwrite = false;
+class TestUpdateAction extends WorkspaceUpdateAction {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#warnAboutFailedResources(org.eclipse.team.ui.sync.SyncInfoSet)
@@ -26,22 +24,8 @@ class TestWorkspaceUpdateAction extends WorkspaceUpdateAction {
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
-	 */
-	protected boolean getOverwriteLocalChanges() {
-		return allowOverwrite;
-	}
-
-	public TestWorkspaceUpdateAction(boolean allowOverwrite) {
-		this.allowOverwrite = allowOverwrite;
-	}
-
 	protected boolean promptForOverwrite(SyncInfoSet syncSet) {
-		if (allowOverwrite) return true;
-		if (syncSet.isEmpty()) return true;
-		IResource[] resources = syncSet.getResources();
-		EclipseTest.fail(resources[0].getFullPath().toString() + " failed to update properly");
+		EclipseTest.fail("Should never prompt on update, simply update nodes that are valid.");
 		return false;
 	}
 	

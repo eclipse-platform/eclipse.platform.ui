@@ -11,25 +11,37 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction;
+import org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
-class TestCommitAction extends SubscriberCommitAction {
-
-	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
-		return super.getRunnable(syncSet);
-	}
+public class TestOverrideAndCommit extends OverrideAndCommitAction {
 	
-	protected boolean canRunAsJob() {
-		return false;
-	}
+	private boolean prompted = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction#promptForComment(org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager, org.eclipse.core.resources.IResource[])
 	 */
 	protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
-		return "dummy comment";
+		return "test comments";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction#promptForConflicts(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected int promptForConflicts(SyncInfoSet syncSet) {
+		this.prompted = true;
+		return 0; // ok to commit all conflicts
+	}
+	
+	public boolean isPrompted() {
+		return this.prompted;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		return false;
 	}
 }
