@@ -1,23 +1,37 @@
 package org.eclipse.ui.externaltools.internal.core;
 
 /**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
-import java.io.*;
 
-import javax.xml.parsers.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * General utility class dealing with Ant files
@@ -57,7 +71,7 @@ public final class AntUtil {
 			IPath basePath = path.removeLastSegments(1).addTrailingSeparator();
 			return createReadRoot(reader, basePath.toOSString());
 		} catch (FileNotFoundException e) {
-			processException(e, "AntUtil.antFileNotFound"); //$NON-NLS-1$
+			processException(e, "AntUtil.antFileNotFound", -1); //$NON-NLS-1$
 		}
 		
 		// Will never get here as processException will always throw
@@ -88,19 +102,22 @@ public final class AntUtil {
 			NodeList list = document.getChildNodes();
 			for(int i=0; i < list.getLength(); i++) {
 				Node node = list.item(i);
-				if (node instanceof Element)
+				if (node instanceof Element) {
 					return new XMLMemento(document, (Element) node);
+				}
 			}
 		} catch (ParserConfigurationException e) {
-			processException(e, "AntUtil.parserConfigError"); //$NON-NLS-1$
+			processException(e, "AntUtil.parserConfigError", -1); //$NON-NLS-1$
 		} catch (IOException e) {
-			processException(e, "AntUtil.ioError"); //$NON-NLS-1$
+			processException(e, "AntUtil.ioError", -1); //$NON-NLS-1$
+		} catch (SAXParseException e) {
+			processException(e, "AntUtil.formatError", e.getLineNumber());
 		} catch (SAXException e) {
-			processException(e, "AntUtil.formatError"); //$NON-NLS-1$
+			processException(e, "AntUtil.formatError", -1); //$NON-NLS-1$
 		}
 		
 		// Invalid ant file
-		processException(null, "AntUtil.invalidAntBuildFile"); //$NON-NLS-1$
+		processException(null, "AntUtil.invalidAntBuildFile", -1); //$NON-NLS-1$
 		
 		// Will never get here as processException will always throw
 		// a Core exception...but compiler does not know that!
@@ -142,13 +159,20 @@ public final class AntUtil {
 	 * Process the exception by creating a well formatted
 	 * IStatus and throwing a CoreException with it.
 	 */
-	private static void processException(Exception e, String messageKey) throws CoreException {
-		String problem = null;
-		if (e != null)
-			problem = e.getMessage();
-		if (problem == null || problem.length() == 0)
-			problem = ToolMessages.getString(messageKey);
-		IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, problem, e);
+	private static void processException(Exception e, String messageKey, int lineNumber) throws CoreException {
+		StringBuffer problem= new StringBuffer();
+		
+		if (lineNumber > 0) {
+			problem.append(MessageFormat.format("At line number: {0}", new String[]{Integer.toString(lineNumber)}));
+			problem.append(System.getProperty("line.separator")); //$NON-NLS-1$;
+		}
+		if (e != null) {
+			problem.append(e.getMessage());
+		}
+		if (problem.length() == 0) {
+			problem.append(ToolMessages.getString(messageKey));
+		}
+		IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, problem.toString(), e);
 		throw new CoreException(status);
 	}
 	
@@ -163,8 +187,9 @@ public final class AntUtil {
 		}
 		
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-			if (systemId == null)
+			if (systemId == null) {
 				return null;
+			}
 			
 			// remove "file:" prefix
 			if (systemId.startsWith("file:")) { //$NON-NLS-1$
