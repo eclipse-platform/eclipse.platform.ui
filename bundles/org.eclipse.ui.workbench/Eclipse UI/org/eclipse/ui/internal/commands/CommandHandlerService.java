@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.ui.commands.ICommandHandler;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
-import org.eclipse.ui.commands.old.ICommandHandler;
 
 public final class CommandHandlerService implements ICommandHandlerService {
 

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.old;
+package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Event;
 
@@ -30,7 +30,7 @@ public interface ICommandHandler {
 	 *
 	 * @param propertyListener the IPropertyListener instance to register.
 	 */	
-	void addPropertyListener(IPropertyListener propertyListener);
+	//void addPropertyListener(IPropertyListener propertyListener);
 
 	/**
 	 * TODO javadoc
@@ -48,16 +48,16 @@ public interface ICommandHandler {
 	 * @param name
 	 * @return
 	 */	
-	Object getProperty(String name)
-		throws Exception;
+	//Object getProperty(String name)
+	//	throws Exception;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */	
-	String[] getPropertyNames()
-		throws Exception;
+	//String[] getPropertyNames()
+	//	throws Exception;
 
 	/**
 	 * TODO temporary method
@@ -69,5 +69,5 @@ public interface ICommandHandler {
 	 *
 	 * @param propertyListener the IPropertyListener instance to unregister.
 	 */
-	void removePropertyListener(IPropertyListener propertyListener);
+	//void removePropertyListener(IPropertyListener propertyListener);
 }

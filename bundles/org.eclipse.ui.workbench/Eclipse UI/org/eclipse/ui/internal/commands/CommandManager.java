@@ -23,10 +23,10 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandHandler;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.old.ICommandHandler;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {

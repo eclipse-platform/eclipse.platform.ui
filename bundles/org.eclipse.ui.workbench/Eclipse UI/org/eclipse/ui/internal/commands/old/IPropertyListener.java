@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.old;
+package org.eclipse.ui.internal.commands.old;
 
 /**
- * TODO javadoc
- * 
  * <p>
- * This class is not intended to be extended by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -23,32 +21,26 @@ package org.eclipse.ui.commands.old;
  * 
  * @since 3.0
  */
-public class PropertyEvent {
-
-	private String name;
+public interface IPropertyListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param name
-	 * @throws IllegalArgumentException
+	 * @param propertyEvent
 	 */	
-	public PropertyEvent(String name)
-		throws IllegalArgumentException {		
-		super();
-		
-		if (name == null)
-			throw new IllegalArgumentException();
-		
-		this.name = name;
-	}
-
+	void propertyAdded(PropertyEvent propertyEvent);
+	
 	/**
 	 * TODO javadoc
 	 * 
-	 * @return
-	 */		
-	public String getName() {
-		return name;
-	}
+	 * @param propertyEvent
+	 */	
+	void propertyChanged(PropertyEvent propertyEvent);
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyRemoved(PropertyEvent propertyEvent);
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.old;
+package org.eclipse.ui.internal.commands.old;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.ICommandListener;

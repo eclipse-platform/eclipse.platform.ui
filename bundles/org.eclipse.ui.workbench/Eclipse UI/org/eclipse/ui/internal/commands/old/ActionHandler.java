@@ -13,8 +13,7 @@ package org.eclipse.ui.internal.commands.old;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.commands.old.ICommandHandler;
-import org.eclipse.ui.commands.old.IPropertyListener;
+import org.eclipse.ui.commands.ICommandHandler;
 
 public class ActionHandler implements ICommandHandler {
 

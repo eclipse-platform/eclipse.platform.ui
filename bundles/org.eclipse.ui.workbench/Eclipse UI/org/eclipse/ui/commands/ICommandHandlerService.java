@@ -13,8 +13,6 @@ package org.eclipse.ui.commands;
 
 import java.util.SortedMap;
 
-import org.eclipse.ui.commands.old.ICommandHandler;
-
 /**
  * <p>
  * TODO javadoc

@@ -75,7 +75,7 @@ public final class ContextManager implements IContextManager {
 	}
 
 	public SortedSet getDefinedContextIds() {
-		return Collections.unmodifiableSortedSet(activeContextIds);
+		return Collections.unmodifiableSortedSet(definedContextIds);
 	}
 
 	public void removeContextManagerListener(IContextManagerListener contextManagerListener)

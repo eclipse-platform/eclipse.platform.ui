@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.old.ICommandHandler;
-
 /**
  * <p>
  * TODO javadoc

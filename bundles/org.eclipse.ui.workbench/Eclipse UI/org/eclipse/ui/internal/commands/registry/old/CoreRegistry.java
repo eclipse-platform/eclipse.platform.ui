@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class CoreRegistry extends AbstractRegistry {
 
