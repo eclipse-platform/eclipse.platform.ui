@@ -180,7 +180,7 @@ public final class KeySupport {
 			throw new IllegalArgumentException();
 		
 		List list = new ArrayList();
-		StringTokenizer stringTokenizer = new StringTokenizer(string, MODIFIER_SEPARATOR);
+		StringTokenizer stringTokenizer = new StringTokenizer(string, MODIFIER_SEPARATOR, true);
 		
 		while (stringTokenizer.hasMoreTokens())
 			list.add(stringTokenizer.nextToken());
@@ -188,7 +188,7 @@ public final class KeySupport {
 		int size = list.size();
 		int value = 0;
 
-		if (size >= 1) {
+		if (size % 2 == 1) {
 			String token = (String) list.get(size - 1);			
 			Integer integer = (Integer) stringToValueMap.get(token.toUpperCase());
 		
@@ -201,27 +201,30 @@ public final class KeySupport {
 				for (int i = 0; i < size - 1; i++) {
 					token = (String) list.get(i);			
 					
-					if (CTRL.equalsIgnoreCase(token)) {
-						if ((value & SWT.CTRL) != 0)
-							return Stroke.create(0);
+					if (i % 2 == 0) {
+						if (CTRL.equalsIgnoreCase(token)) {
+							if ((value & SWT.CTRL) != 0)
+								return Stroke.create(0);
 							
-						value |= SWT.CTRL;
-					} else if (ALT.equalsIgnoreCase(token)) {
-						if ((value & SWT.ALT) != 0)
-							return Stroke.create(0);
+							value |= SWT.CTRL;
+						} else if (ALT.equalsIgnoreCase(token)) {
+							if ((value & SWT.ALT) != 0)
+								return Stroke.create(0);
 
-						value |= SWT.ALT;
-					} else if (SHIFT.equalsIgnoreCase(token)) {
-						if ((value & SWT.SHIFT) != 0)
-							return Stroke.create(0);
+							value |= SWT.ALT;
+						} else if (SHIFT.equalsIgnoreCase(token)) {
+							if ((value & SWT.SHIFT) != 0)
+								return Stroke.create(0);
 
-						value |= SWT.SHIFT;
-					} else if (COMMAND.equalsIgnoreCase(token)) {
-						if ((value & SWT.COMMAND) != 0)
-							return Stroke.create(0);
+							value |= SWT.SHIFT;
+						} else if (COMMAND.equalsIgnoreCase(token)) {
+							if ((value & SWT.COMMAND) != 0)
+								return Stroke.create(0);
 
-						value |= SWT.COMMAND;
-					} else
+							value |= SWT.COMMAND;
+						} else
+							return Stroke.create(0);
+					} else if (!MODIFIER_SEPARATOR.equals(token))
 						return Stroke.create(0);
 				}				
 			}				

@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="actionDefinitions" name="Action Definitions"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register action definitions. Accelerators (see the Accelerator Sets extension point) use action definitions to reference actions. An action associates itself with a given accelerator by registering with that accelerator's associated action definition. An action registers itself with an action definition by calling the setActionDefinitionId(String id) method and supplying the action definition's id as an argument.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="actionDefinitions" name="Action Definitions"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register action definitions. Accelerators (see the Accelerator Sets extension point) use action definitions to reference actions. An action associates itself with a given accelerator by registering with that accelerator&apos;s associated action definition. An action registers itself with an action definition by calling the setActionDefinitionId(String id) method and supplying the action definition&apos;s id as an argument.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -48,6 +48,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  the name of the action as displayed to the user.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  a short description of the action to display to the user.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -68,21 +82,21 @@
          Following is an example of an action definition extension: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.actionDefinitions"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.actionDefinitions&quot;&gt; 
       &lt;actionDefinition 
-        id="org.eclipse.ui.file.save"&gt; 
+        id=&quot;org.eclipse.ui.file.save&quot;&gt; 
       &lt;/actionDefinition&gt; 
       &lt;actionDefinition 
-        id="org.eclipse.ui.file.saveAll"&gt; 
+        id=&quot;org.eclipse.ui.file.saveAll&quot;&gt; 
       &lt;/actionDefinition&gt; 
       &lt;actionDefinition 
-        id="org.eclipse.ui.file.close"&gt; 
+        id=&quot;org.eclipse.ui.file.close&quot;&gt; 
       &lt;/actionDefinition&gt; 
       &lt;actionDefinition 
-        id="org.eclipse.ui.file.closeAll"&gt; 
+        id=&quot;org.eclipse.ui.file.closeAll&quot;&gt; 
       &lt;/actionDefinition&gt; 
       &lt;actionDefinition 
-        id="org.eclipse.ui.file.print"&gt; 
+        id=&quot;org.eclipse.ui.file.print&quot;&gt; 
       &lt;/actionDefinition&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -97,7 +111,7 @@
       <documentation>
          The methods public void setActionDefinitionId(String id) and public String getActionDefinitionId() have been added to IAction. 
 &lt;p&gt;
-&lt;B&gt;&lt;font color="#FF0000"&gt;NOTE&lt;/font&gt; -&lt;/b&gt; other attributes may be added in the future, as needed.
+&lt;B&gt;&lt;font color=&quot;#FF0000&quot;&gt;NOTE&lt;/font&gt; -&lt;/b&gt; other attributes may be added in the future, as needed.
       </documentation>
    </annotation>
 
