@@ -5,6 +5,7 @@ package org.eclipse.jface.util;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.jface.text.internal.html.HoverBrowserControl;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;
@@ -26,37 +27,56 @@ import org.eclipse.swt.graphics.Point;
  * </p>
  */
 public class OpenStrategy {
-	/* A single click will generate
-	 * an open event but key arrows will not do anything.*/
-	public static final int NO_TIMER = 1;
-	/* A single click will generate an open
+	/** 
+	 * Default behavior. Double click to open the item.
+	 */
+	public static final int DOUBLE_CLICK = 0;
+	/** 
+	 * Single click will open the item.
+	 */
+	public static final int SINGLE_CLICK = 1;
+	/** 
+	 * Hover will select the item.
+	 */
+	public static final int SELECT_ON_HOVER = 1 << 1;
+	/**
+	 * Open item when using arrow keys
+	 */
+	public static final int ARROW_KEYS_OPEN = 1 << 2;
+	/** A single click will generate
+	 * an open event but key arrows will not do anything.
+	 * 
+	 * @deprecated
+	 */
+	public static final int NO_TIMER = SINGLE_CLICK;
+	/** A single click will generate an open
 	 * event and key arrows will generate an open event after a
-	 * small time. */
-	public static final int FILE_EXPLORER = 2;
-	/* Pointing to an item will change the selection
-	 * and a single click will gererate an open event */
-	public static final int ACTIVE_DESKTOP = 3;
-	/* Default SWT behavior */
-	public static final int DOUBLE_CLICK = 4;
+	 * small time.
+	 * 
+	 * @deprecated
+	 */
+	public static final int FILE_EXPLORER = SINGLE_CLICK | ARROW_KEYS_OPEN;
+	/** Pointing to an item will change the selection
+	 * and a single click will gererate an open event
+	 * 
+	 * @deprecated
+	 */
+	public static final int ACTIVE_DESKTOP = SINGLE_CLICK | SELECT_ON_HOVER;		
 	
 	// Time used in FILE_EXPLORER and ACTIVE_DESKTOP
 	private static final int TIME = 500;
 	
-	// NO_TIMER, FILE_EXPLORER, ACTIVE_DESKTOP, DOUBLE_CLICK.
+	/* SINGLE_CLICK or DOUBLE_CLICK;
+	 * In case of SINGLE_CLICK, the bits SELECT_ON_HOVER and ARROW_KEYS_OPEN
+	 * my be set as well. */
 	private static int CURRENT_METHOD = DOUBLE_CLICK;
 	
-	private Listener noTimerHandler;
-	private Listener fileExplorerHandler;
-	private Listener activeDesktopHandler;
-	private Listener doubleClickHandler;
+	private Listener eventHandler;
 	
 	private ListenerList listeners = new ListenerList(1);
 	
 	public OpenStrategy(Control control) {
-		initializeNoTimerHandler();
-		initializeFileExplorerHandler(control.getDisplay());
-		initializeActiveDesktopHandler(control.getDisplay());
-		initializeDoubleClickHandler();
+		initializeHandler(control.getDisplay());
 		addListener(control);
 	}
 	/**
@@ -87,14 +107,15 @@ public class OpenStrategy {
 	 * the framework.
 	 */
 	public static void setOpenMethod(int method) {
-		switch (method) {
-			case NO_TIMER:
-			case FILE_EXPLORER:
-			case ACTIVE_DESKTOP:
-			case DOUBLE_CLICK:
-				CURRENT_METHOD = method;
-				return;
+		if(method == DOUBLE_CLICK) {
+			CURRENT_METHOD = method;
+			return;
 		}
+		if((method & SINGLE_CLICK) == 0)
+			throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
+		if((method & (SINGLE_CLICK | SELECT_ON_HOVER | ARROW_KEYS_OPEN)) == 0)
+			throw new IllegalArgumentException("Invalid open mode"); //$NON-NLS-1$
+		CURRENT_METHOD = method;
 	}
 	/**
 	 * Return true if editors should be activated when opened.
@@ -107,32 +128,14 @@ public class OpenStrategy {
 	 * single-click/double-click strategies.
 	 */ 
 	private void addListener(Control c) {
-		Listener wrapper = new Listener() {			
-			public void handleEvent (Event event) {
-				switch (CURRENT_METHOD) {
-					case NO_TIMER:
-						noTimerHandler.handleEvent(event);
-						break;
-					case FILE_EXPLORER:
-						fileExplorerHandler.handleEvent(event);
-						break;
-					case ACTIVE_DESKTOP:
-						activeDesktopHandler.handleEvent(event);
-						break;
-					case DOUBLE_CLICK:
-						doubleClickHandler.handleEvent(event);
-						break;
-				}
-			}
-		};
-		c.addListener(SWT.MouseEnter,wrapper);
-		c.addListener(SWT.MouseExit,wrapper);
-		c.addListener(SWT.MouseMove,wrapper);
-		c.addListener(SWT.MouseDown, wrapper);
-		c.addListener(SWT.MouseUp, wrapper);
-		c.addListener(SWT.KeyDown, wrapper);
-		c.addListener(SWT.Selection, wrapper);
-		c.addListener(SWT.DefaultSelection, wrapper);
+		c.addListener(SWT.MouseEnter,eventHandler);
+		c.addListener(SWT.MouseExit,eventHandler);
+		c.addListener(SWT.MouseMove,eventHandler);
+		c.addListener(SWT.MouseDown, eventHandler);
+		c.addListener(SWT.MouseUp, eventHandler);
+		c.addListener(SWT.KeyDown, eventHandler);
+		c.addListener(SWT.Selection, eventHandler);
+		c.addListener(SWT.DefaultSelection, eventHandler);
 	}
 	/*
 	 * Fire the open event to all listeners
@@ -143,94 +146,30 @@ public class OpenStrategy {
 			((IOpenEventListener)l[i]).handleOpen(e);
 		}
 	}
-	//Initialize no timer handler.
-	private void initializeNoTimerHandler() {
-		noTimerHandler = new Listener() {
-			Event mouseUpEvent = null;
-			boolean selectionPendent = false;
-			
-			public void handleEvent(Event e) {
-				switch (e.type) {
-					case SWT.MouseEnter:
-					case SWT.MouseExit:
-						mouseUpEvent = null;
-						selectionPendent = false;
-						break;
-					case SWT.MouseUp:
-						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
-							return;
-						if(selectionPendent)
-							mouseSelectItem(e);
-						else
-							mouseUpEvent = e;
-						break;
-					case SWT.Selection:
-						if (mouseUpEvent != null)
-							mouseSelectItem(e);
-						else
-							selectionPendent = true;
-						break;
-					case SWT.DefaultSelection:
-						handleOpen(new SelectionEvent(e));
-						break;
-				}
-			}
-			void mouseSelectItem(Event e) {
-				handleOpen(new SelectionEvent(e));
-				mouseUpEvent = null;
-				selectionPendent = false;
-			}
-		};
-	}	
-	//Initialize file explorer handler.	
-	private void initializeFileExplorerHandler(final Display display) {
-		fileExplorerHandler = new Listener() {
-			boolean keyDown = false;
-			final int[] count = new int[1];
-			public void handleEvent(final Event e) {
-				switch (e.type) {
-					case SWT.KeyDown :
-						keyDown = true;
-						break;
-					case SWT.MouseDown :
-						keyDown = false;
-						break;
-					case SWT.Selection :
-						count[0]++;
-						display.asyncExec(new Runnable() {
-							public void run() {
-								if (keyDown) {
-									display.timerExec(TIME, new Runnable() {
-										int id = count[0];
-										public void run() {
-											if (id == count[0]) {
-												handleOpen(new SelectionEvent(e));
-											}
-										}
-									});
-								} else {
-									handleOpen(new SelectionEvent(e));
-								}
-							}
-						});
-						break;
-				}
-			}
-		};
-	}	
-	//Initialize active desktop handler.
-	private void initializeActiveDesktopHandler(final Display display) {
-		activeDesktopHandler = new Listener() {
+	
+	//Initialize event handler.
+	private void initializeHandler(final Display display) {
+		eventHandler = new Listener() {
 			boolean timerStarted = false;
 			Event mouseUpEvent = null;
 			Event mouseMoveEvent = null;
 			boolean selectionPendent = false;
-			
-			long startTime = System.currentTimeMillis();
+
+			boolean keyDown = false;
 			final int[] count = new int[1];
 			
-			public void handleEvent(Event e) {
-				switch (e.type) {
+			long startTime = System.currentTimeMillis();
+
+			public void handleEvent(final Event e) {
+				if(e.type == SWT.DefaultSelection) {
+						handleOpen(new SelectionEvent(e));
+						return;
+				} else {
+					if(CURRENT_METHOD == DOUBLE_CLICK)
+						return;
+				}
+				
+				switch (e.type) {			
 					case SWT.MouseEnter:
 					case SWT.MouseExit:
 						mouseUpEvent = null;
@@ -238,6 +177,8 @@ public class OpenStrategy {
 						selectionPendent = false;
 						break;
 					case SWT.MouseMove:
+						if((CURRENT_METHOD & SELECT_ON_HOVER) == 0)
+							return;
 						if(e.stateMask != 0)
 							return;
 						if(e.widget.getDisplay().getFocusControl() != e.widget)
@@ -262,6 +203,9 @@ public class OpenStrategy {
 							display.timerExec(TIME * 2 / 3,runnable[0]);
 						}
 						break;
+					case SWT.MouseDown :
+						keyDown = false;
+						break;						
 					case SWT.MouseUp:
 						mouseMoveEvent = null;
 						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
@@ -274,6 +218,7 @@ public class OpenStrategy {
 					case SWT.KeyDown:
 						mouseMoveEvent = null;
 						mouseUpEvent = null;
+						keyDown = true;
 						break;
 					case SWT.Selection:
 						mouseMoveEvent = null;
@@ -281,10 +226,23 @@ public class OpenStrategy {
 							mouseSelectItem(e);
 						else
 							selectionPendent = true;
-						break;
-					case SWT.DefaultSelection:
-						mouseMoveEvent = null;
-						handleOpen(new SelectionEvent(e));
+						count[0]++;
+						if((CURRENT_METHOD & ARROW_KEYS_OPEN) == 0)
+							return;
+						display.asyncExec(new Runnable() {
+							public void run() {
+								if (keyDown) {
+									display.timerExec(TIME, new Runnable() {
+										int id = count[0];
+										public void run() {
+											if (id == count[0]) {
+												handleOpen(new SelectionEvent(e));
+											}
+										}
+									});
+								}
+							}
+						});
 						break;
 				}
 			}
@@ -322,15 +280,4 @@ public class OpenStrategy {
 			}
 		};
 	}
-	//Initialize double click handler.
-	private void initializeDoubleClickHandler() {
-		doubleClickHandler = new Listener() {
-			public void handleEvent(Event e) {
-				switch (e.type) {
-					case SWT.DefaultSelection:
-						handleOpen(new SelectionEvent(e));
-				}
-			}
-		};
-	}	
 }

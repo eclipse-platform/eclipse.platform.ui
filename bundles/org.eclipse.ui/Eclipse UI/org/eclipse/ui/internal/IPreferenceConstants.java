@@ -27,6 +27,13 @@ public interface IPreferenceConstants {
 	//Do we show tabs up or down for views
 	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
 
+	//Boolean: true = single click opens editor; false = double click opens it.
+	public static final String OPEN_ON_SINGLE_CLICK = "OPEN_ON_SINGLE_CLICK"; //$NON-NLS-1$
+	//Boolean: true = select on hover;
+	public static final String SELECT_ON_HOVER = "SELECT_ON_HOVER"; //$NON-NLS-1$
+	//Boolean: true = open after delay
+	public static final String OPEN_AFTER_DELAY = "OPEN_AFTER_DELAY"; //$NON-NLS-1$
+
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 

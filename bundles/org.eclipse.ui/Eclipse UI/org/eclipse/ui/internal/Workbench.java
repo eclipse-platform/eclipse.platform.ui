@@ -514,7 +514,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		int singleClickMethod = store.getInt("SINGLE_CLICK_METHOD"); //$NON-NLS-1$
+		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
+		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); 
+		boolean openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
+		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
+		if(openOnSingleClick) {
+			if(selectOnHover)
+				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
+			if(openAfterDelay)
+				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
+		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 	/**
