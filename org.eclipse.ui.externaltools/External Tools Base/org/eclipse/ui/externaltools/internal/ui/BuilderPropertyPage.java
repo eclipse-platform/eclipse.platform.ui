@@ -29,8 +29,10 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -95,6 +97,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private boolean userHasMadeChanges= false;
 	
 	private List configsToBeDeleted= null;
+	private List commandsToBeDeleted= null;
 	
 	private CheckboxTableViewer viewer= null;
 	
@@ -499,19 +502,22 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if (selection != null) {
 			int numSelected= selection.size();
-			if (configsToBeDeleted == null) {
-				configsToBeDeleted= new ArrayList(numSelected);
-			}
 			userHasMadeChanges= true;
 			Iterator iterator= selection.iterator();
 			while (iterator.hasNext()) {
 				Object item= iterator.next();
 				if (item instanceof ILaunchConfiguration) {
+					if (configsToBeDeleted == null) {
+						configsToBeDeleted= new ArrayList(numSelected);
+					}
 					configsToBeDeleted.add(item);
-					viewer.remove(item);
-				} else if (item instanceof ErrorConfig) {
-					viewer.remove(item);
+				} else if (item instanceof ICommand) {
+					if (commandsToBeDeleted == null) {
+						commandsToBeDeleted= new ArrayList(numSelected);
+					}
+					commandsToBeDeleted.add(item);
 				}
+				viewer.remove(item);
 			}
 		}
 	}
@@ -743,7 +749,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					if (data instanceof ErrorConfig) {
 						continue;
 					}
-					enableRemove= false;
+					IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, ((ICommand)data).getBuilderName());
+					enableRemove= ext == null;
 					break;
 				}
 			}
@@ -871,10 +878,14 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		//get all the build commands
 		int numCommands = itemData.length;
 		monitor.beginTask(ExternalToolsUIMessages.getString("BuilderPropertyPage.3"), numCommands + 1); //$NON-NLS-1$
-		ICommand[] commands = new ICommand[numCommands];
+		List possibleCommands= new ArrayList(numCommands);
 		for (int i = 0; i < numCommands; i++) {
 			Object data = itemData[i];
 			if (data instanceof ICommand) {
+				if (commandsToBeDeleted != null && commandsToBeDeleted.contains(data)) {
+					//command specified to be removed
+					data= null;
+				}
 				ICommand command= (ICommand)data;
 				Map args= command.getArguments();
 				Boolean enabled= (Boolean)args.get(COMMAND_ENABLED);
@@ -893,7 +904,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				try {
 					disabledBuilderName = config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
 					if (disabledBuilderName != null && ExternalToolsUtil.isBuilderEnabled(config)) {
-						commands[i]= translateBackToCommand(config, project);
+						possibleCommands.add(translateBackToCommand(config, project));
 						continue;
 					}
 				} catch (CoreException e1) {
@@ -915,11 +926,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				data= ((ErrorConfig) data).getCommand();
 			}
 			if (data != null) {
-				commands[i] = (ICommand) data;
+				possibleCommands.add(data);
 			}
 			monitor.worked(1);
 		}
-		
+		ICommand[] commands= new ICommand[possibleCommands.size()];
+		possibleCommands.toArray(commands);
 		if (checkCommandsForChange(commands)) {
 			//set the build spec
 			try {
