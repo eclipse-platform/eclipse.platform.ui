@@ -41,7 +41,9 @@ public class DataArea {
 			if (url == null)
 				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified")); //$NON-NLS-1$
 			// TODO assume the URL is a file: 
-			location = new Path(url.getFile());
+			// Use the new File technique to ensure that the resultant string is 
+			// in the right format (e.g., leading / removed from /c:/foo etc)
+			location = new Path(new File(url.getFile()).toString());
 			initializeLocation();
 		} catch (CoreException e) {
 			throw new IllegalStateException(e.getMessage());
