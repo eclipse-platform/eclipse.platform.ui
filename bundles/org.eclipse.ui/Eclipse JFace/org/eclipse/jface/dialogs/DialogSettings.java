@@ -105,25 +105,47 @@ public boolean getBoolean(String key) {
  * Method declared on IDialogSettings.
  */
 public double getDouble(String key) throws NumberFormatException {
-	return new Double((String)items.get(key)).doubleValue();
+	String setting = (String)items.get(key);
+	if(setting == null)
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		
+	return new Double(setting).doubleValue();
 }
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
  */
 public float getFloat(String key) throws NumberFormatException {
-	return new Float((String)items.get(key)).floatValue();
+	String setting = (String)items.get(key);
+	if(setting == null)
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+		
+	return new Float(setting).floatValue();
 }
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
  */
 public int getInt(String key) throws NumberFormatException {
-	return new Integer((String)items.get(key)).intValue();
+	String setting = (String)items.get(key);
+	if(setting == null) {
+		//new Integer(null) will throw a NumberFormatException and meet our spec, but this message
+		//is clearer.
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+	}
+		
+	return new Integer(setting).intValue();
 }
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
  */
 public long getLong(String key) throws NumberFormatException {
-	return new Long((String)items.get(key)).longValue();
+	String setting = (String)items.get(key);
+	if(setting == null) {
+		//new Long(null) will throw a NumberFormatException and meet our spec, but this message
+		//is clearer.
+		throw new NumberFormatException("There is no setting associated with the key \"" + key + "\"");//$NON-NLS-1$
+	}
+		
+	return new Long(setting).longValue();
 }
 /* (non-Javadoc)
  * Method declared on IDialogSettings.
@@ -168,7 +190,7 @@ public void load(Reader r) {
  */
 public void load(String fileName) throws IOException {
 	FileInputStream stream = new FileInputStream(fileName);
-	InputStreamReader reader = new InputStreamReader(stream, "utf-8");
+	InputStreamReader reader = new InputStreamReader(stream, "utf-8");//$NON-NLS-1$
 	load(reader);
 	reader.close();
 }
@@ -272,7 +294,7 @@ public void save(Writer writer) throws IOException {
  */
 public void save(String fileName) throws IOException {
 	FileOutputStream stream = new FileOutputStream(fileName);
-	OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
+	OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");//$NON-NLS-1$
 	save(writer);
 	writer.close();
 }
