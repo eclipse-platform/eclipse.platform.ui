@@ -64,6 +64,10 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 				CompareEditorInput compareInput= (CompareEditorInput) input;
 				fNext.setCompareEditorInput(compareInput);
 				fPrevious.setCompareEditorInput(compareInput);
+				// Begin fix http://bugs.eclipse.org/bugs/show_bug.cgi?id=20105
+				fToolbarNext.setCompareEditorInput(compareInput);
+				fToolbarPrevious.setCompareEditorInput(compareInput);
+				// End fix http://bugs.eclipse.org/bugs/show_bug.cgi?id=20105
 			}
 		}
 			
