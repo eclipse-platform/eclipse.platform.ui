@@ -12,6 +12,7 @@
 
 package org.eclipse.debug.internal.core.memory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -62,9 +63,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	private static final String RENDERING_BIND = "rendering_binding"; //$NON-NLS-1$
 	private static final String RENDERING_FACTORY = "renderingFactory"; //$NON-NLS-1$
 	private static final String DYNAMIC_RENDERING_FACTORY = "dynamicRenderingFactory"; //$NON-NLS-1$
-	
-	private static final String PREFIX = "MemoryRenderingManager."; //$NON-NLS-1$
-	private static final String ERROR_MSG = PREFIX + "ErrorMsg"; //$NON-NLS-1$
 	
 	private boolean fHandleAddEvent = true;
 		
@@ -453,20 +451,22 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			}
 			else
 			{
+				String message= MessageFormat.format(DebugCoreMessages.getString("MemoryRenderingManager.ErrorMsg"), new String[]{renderingId}); //$NON-NLS-1$
 				// throw a debug exception because the rendering info cannot be located
 				Status status = new Status(IStatus.ERROR, 
 						DebugPlugin.getUniqueIdentifier(),
-						0, DebugCoreMessages.getString(ERROR_MSG) + renderingId, null);
+						0, message , null); //$NON-NLS-1$
 				DebugException de = new DebugException(status);
 				throw de;				
 			}
 		}
 		else
 		{
+			String message= MessageFormat.format(DebugCoreMessages.getString("MemoryRenderingManager.ErrorMsg"), new String[]{renderingId}); //$NON-NLS-1$
 			// throw a debug exception because the rendering info cannot be located
 			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getUniqueIdentifier(),
-					0, DebugCoreMessages.getString(ERROR_MSG) + renderingId, null);
+					0, message, null); //$NON-NLS-1$
 			DebugException de = new DebugException(status);
 			throw de;
 		}
