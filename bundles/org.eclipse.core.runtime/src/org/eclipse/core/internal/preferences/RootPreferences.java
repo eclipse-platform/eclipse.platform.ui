@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
-import java.util.HashMap;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -27,19 +26,6 @@ public class RootPreferences extends EclipsePreferences {
 	public RootPreferences() {
 		super(null, ""); //$NON-NLS-1$
 	}
-
-	public void addChild(IEclipsePreferences child) {
-		if (children == null)
-			children = new HashMap();
-		children.put(child.name(), child);
-	}
-
-	public void addChild(String scope) {
-		if (children == null)
-			children = new HashMap();
-		children.put(scope, scope);
-	}
-
 	/*
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
@@ -60,6 +46,36 @@ public class RootPreferences extends EclipsePreferences {
 		if (exception != null)
 			throw exception;
 	}
+	
+	/* (non-Javadoc)
+	 * @see EclipsePreferences#getChild(java.lang.String)
+	 */
+	protected synchronized IEclipsePreferences getChild(String key) {
+		Object value = null;
+		IEclipsePreferences child = null;
+		if (children != null)
+			value = children.get(key);
+		if (value != null) {
+			if (value instanceof IEclipsePreferences)
+				return (IEclipsePreferences) value;
+			//lazy initialization
+			child = ((PreferencesService) Platform.getPreferencesService()).createNode(key);
+			addChild(key, child);
+		}
+		return child;
+	}
+
+	/* (non-Javadoc)
+	 * @see EclipsePreferences#getChildren()
+	 */
+	protected synchronized IEclipsePreferences[] getChildren() {
+		//must perform lazy initialization of child nodes
+		String[] childNames = childrenNames();
+		IEclipsePreferences[] childNodes = new IEclipsePreferences[childNames.length];
+		for (int i = 0; i < childNames.length; i++) 
+			childNodes[i] = getChild(childNames[i]);
+		return childNodes;
+	}
 
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
@@ -67,21 +83,11 @@ public class RootPreferences extends EclipsePreferences {
 	public IEclipsePreferences node(IPath path) {
 		if (path.segmentCount() == 0)
 			return this;
-		IEclipsePreferences child = null;
-		Object value = null;
 		String scope = path.segment(0);
-		if (children != null)
-			value = children.get(scope);
-		if (value == null) {
+		IEclipsePreferences child = getChild(scope);
+		if (child == null) {
 			child = new EclipsePreferences(this, scope);
-			addChild(child);
-		} else {
-			if (value instanceof IEclipsePreferences)
-				child = (IEclipsePreferences) value;
-			else {
-				child = ((PreferencesService) Platform.getPreferencesService()).createNode(scope);
-				addChild(child);
-			}
+			addChild(scope, child);
 		}
 		return child.node(path.removeFirstSegments(1));
 	}

@@ -103,7 +103,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("5.0", value, actual);
 		actual = test.get(newKey, null);
 		assertNull("5.1", actual);
-		// ensure that the node isn't dirty (has been saved after the import
+		// ensure that the node isn't dirty (has been saved after the import)
 		assertTrue("5.2", test instanceof TestScope);
 		assertTrue("5.3", !((TestScope) test).isDirty());
 	

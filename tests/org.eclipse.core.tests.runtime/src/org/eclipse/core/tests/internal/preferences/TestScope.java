@@ -11,10 +11,10 @@
 package org.eclipse.core.tests.internal.preferences;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -23,9 +23,12 @@ import org.osgi.service.prefs.BackingStoreException;
 public class TestScope extends EclipsePreferences implements IScopeContext {
 
 	public static final String SCOPE = "test"; //$NON-NLS-1$
-
 	public TestScope() {
 		super(null, null);
+	}
+
+	private TestScope(IEclipsePreferences parent, String key) {
+		super(parent, key);
 	}
 
 	public void flush() {
@@ -33,19 +36,9 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		// are marked as not dirty.
 		makeClean();
 	}
-	
-	public void sync() {
-		// don't store the values but a side effect is that the nodes
-		// are marked as not dirty.
-		makeClean();
-	}
 
-	private TestScope(IEclipsePreferences parent, String key) {
-		super(parent, key);
-	}
-
-	public boolean isDirty() {
-		return dirty;
+	public IPath getLocation() {
+		return null;
 	}
 
 	public String getName() {
@@ -56,11 +49,44 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
 	}
 
-	public IPath getLocation() {
-		return null;
-	}
-
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
 		return new TestScope(nodeParent, nodeName);
+	}
+
+
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	/**
+	 * Recursively mark all nodes in this hierarchy as clean
+	 *
+	 */
+	protected void makeClean() {
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) {
+				((TestScope) node).setDirty(false);
+				return true;
+			}
+		};
+		try {
+			accept(visitor);
+		} catch (BackingStoreException e) {
+			// shouldn't happen
+			if (InternalPlatform.DEBUG_PREFERENCES) {
+				System.out.println("Exception visiting nodes during #makeClean"); //$NON-NLS-1$
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	void setDirty(boolean value) {
+		dirty = value;
+	}
+	
+	public void sync() {
+		// don't store the values but a side effect is that the nodes
+		// are marked as not dirty.
+		makeClean();
 	}
 }

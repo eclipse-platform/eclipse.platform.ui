@@ -92,7 +92,7 @@ public class PreferencesService implements IPreferencesService {
 			return;
 		}
 		scopeRegistry.put(key, element);
-		root.addChild(key);
+		root.addChild(key, null);
 	}
 
 	/*
