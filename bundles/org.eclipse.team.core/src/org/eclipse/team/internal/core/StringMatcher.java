@@ -142,67 +142,70 @@ public class StringMatcher {
 	 * @param int <code>end<code> marks the ending index (exclusive) of the substring 
 	 */
 	public boolean match(String text, int start, int end) {
-		if (null == fPattern || null == text)
+		if (null == text)
 			throw new IllegalArgumentException();
-			
-		if (start >= end)
+
+		if (start > end)
 			return false;
-		
+
 		if (fIgnoreWildCards)
-			return fPattern.regionMatches(fIgnoreCase, 0, text, start, fLength);
-		int segCount = fSegments.length;
-		if (segCount == 0)//pattern contains only '*'(s) or empty pattern
+			return (end - start == fLength) && fPattern.regionMatches(fIgnoreCase, 0, text, start, fLength);
+		int segCount= fSegments.length;
+		if (segCount == 0 && (fHasLeadingStar || fHasTrailingStar))  // pattern contains only '*'(s)
 			return true;
 		if (start == end)
 			return fLength == 0;
 		if (fLength == 0)
-			return start == end;	
-		 
-		int tlen = text.length();
+			return start == end;
+
+		int tlen= text.length();
 		if (start < 0)
-			start = 0;
+			start= 0;
 		if (end > tlen)
-			end = tlen; 
-					
-		int tCurPos = start;
-		int bound = end - fBound;
+			end= tlen;
+
+		int tCurPos= start;
+		int bound= end - fBound;
 		if ( bound < 0)
 			return false;
 		int i=0;
-		String current = fSegments[i];
-		int segLength = current.length();
+		String current= fSegments[i];
+		int segLength= current.length();
 
 		/* process first segment */
-		if (!fHasLeadingStar){ 
+		if (!fHasLeadingStar){
 			if(!regExpRegionMatches(text, start, current, 0, segLength)) {
 				return false;
 			} else {
 				++i;
-				tCurPos = tCurPos + segLength;
+				tCurPos= tCurPos + segLength;
 			}
 		}
-
-		/* process middle segments */	
-		while ( i < segCount) {
-			current = fSegments[i];
+		if ((fSegments.length == 1) && (!fHasLeadingStar) && (!fHasTrailingStar)) {
+			// only one segment to match, no wildcards specified
+			return tCurPos == end;
+		}
+		/* process middle segments */
+		while (i < segCount) {
+			current= fSegments[i];
 			int currentMatch;
-			int k = current.indexOf(fSingleWildCard);
+			int k= current.indexOf(fSingleWildCard);
 			if (k < 0) {
-				currentMatch = textPosIn(text, tCurPos, end, current);
+				currentMatch= textPosIn(text, tCurPos, end, current);
 				if (currentMatch < 0)
 					return false;
-			} else { 
-				currentMatch = regExpPosIn(text, tCurPos, end, current);
+			} else {
+				currentMatch= regExpPosIn(text, tCurPos, end, current);
 				if (currentMatch < 0)
 					return false;
 			}
-			tCurPos = currentMatch + current.length();
+			tCurPos= currentMatch + current.length();
 			i++;
 		}
 
 		/* process final segment */
 		if (!fHasTrailingStar && tCurPos != end) {
-			int clen = current.length();
+			int clen= current.length();
 			return regExpRegionMatches(text, end - clen, current, 0, clen);
 		}
 		return i == segCount ;
