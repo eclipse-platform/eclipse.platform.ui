@@ -14,14 +14,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.forms.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.internal.ui.search.*;
 
 /**
  * Insert the type's description here.
@@ -167,7 +167,7 @@ public class DetailsView extends MultiPageView {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
 				el = ssel.getFirstElement();
-				if (el instanceof IFeatureAdapter) {
+				if (el instanceof IFeature || el instanceof IFeatureAdapter) {
 					showPageWithInput(DETAILS_PAGE, el);
 					return;
 				}
