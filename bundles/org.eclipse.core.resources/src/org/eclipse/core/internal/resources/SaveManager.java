@@ -811,7 +811,7 @@ public void shutdown(IProgressMonitor monitor) {
 public void snapshotIfNeeded() throws CoreException {
 	if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
 		return;
-	if (snapshotRequested) {
+	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
 		if (snapshotRunnable != null) {
 			snapshotRunnable.cancel();
 		}
