@@ -62,5 +62,12 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	 */
 	protected void doAction(Object element) throws DebugException {
 	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
+	 */
+	protected boolean isEnabledFor(Object element) {
+		return element instanceof IBreakpoint;
+	}
 }
 

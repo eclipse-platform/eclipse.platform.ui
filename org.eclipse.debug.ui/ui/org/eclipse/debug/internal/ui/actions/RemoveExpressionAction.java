@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -47,6 +48,13 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 			}	
 		}
 		return null;
+	}
+	
+	/**
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
+	 */
+	protected boolean isEnabledFor(Object element) {
+		return element instanceof IVariable || element instanceof IExpression;
 	}
 }
 
