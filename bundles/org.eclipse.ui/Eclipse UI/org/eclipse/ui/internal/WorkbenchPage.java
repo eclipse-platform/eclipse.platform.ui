@@ -2278,9 +2278,6 @@ private IViewPart showView(final String viewID, final boolean activate)
 public void toggleFastView(IViewPart part) {
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
-		if (part == persp.getActiveFastView()) {
-			zoomOut();
-		}				
 		persp.toggleFastView(part);
 		// if the fast view has been deactivated
 		if (part != persp.getActiveFastView()) {
