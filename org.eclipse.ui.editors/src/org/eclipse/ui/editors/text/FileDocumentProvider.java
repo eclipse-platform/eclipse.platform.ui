@@ -634,7 +634,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// continue with next strategy
 		} finally {
 			try {
-				stream.close();
+				if (stream != null)
+					stream.close();
 			} catch (IOException x) {
 			}
 		}
