@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.base;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
@@ -37,7 +36,7 @@ public final class BaseHelpSystem {
 	public final static int MODE_STANDALONE = 2;
 
 	protected SearchManager searchManager;
-	protected HashMap workingSetManagers;
+	protected WorkingSetManager workingSetManager;
 	private int mode = MODE_WORKBENCH;
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
@@ -73,21 +72,11 @@ public final class BaseHelpSystem {
 	 * Used to obtain Working Set Manager
 	 * @return instance of WorkingSetManager
 	 */
-	public static WorkingSetManager getWorkingSetManager() {
-		return getWorkingSetManager(Platform.getNL());
-	}
-
-	public static synchronized WorkingSetManager getWorkingSetManager(String locale) {
-		if (getInstance().workingSetManagers == null) {
-			getInstance().workingSetManagers = new HashMap();
+	public static synchronized WorkingSetManager getWorkingSetManager() {
+		if (getInstance().workingSetManager == null) {
+			getInstance().workingSetManager = new WorkingSetManager(Platform.getNL());
 		}
-		WorkingSetManager wsmgr =
-			(WorkingSetManager) getInstance().workingSetManagers.get(locale);
-		if (wsmgr == null) {
-			wsmgr = new WorkingSetManager(locale);
-			getInstance().workingSetManagers.put(locale, wsmgr);
-		}
-		return wsmgr;
+		return getInstance().workingSetManager;
 	}
 
 	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
