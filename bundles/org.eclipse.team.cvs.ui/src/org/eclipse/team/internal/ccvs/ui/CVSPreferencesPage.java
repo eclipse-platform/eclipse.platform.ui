@@ -52,6 +52,7 @@ public class CVSPreferencesPage
 	private Button pruneEmptyDirectoriesField;
 	private Text timeoutValue;
 	private Combo quietnessCombo;
+	private Combo compressionLevelCombo;
 	private Button historyTracksSelectionButton;
 	private Button considerContentsInCompare;
 	private Button promptOnFileDelete;
@@ -140,6 +141,10 @@ public class CVSPreferencesPage
 		
 		createLabel(composite, Policy.bind("CVSPreferencePage.quietness")); //$NON-NLS-1$
 		quietnessCombo = createCombo(composite);
+
+		createLabel(composite, Policy.bind("CVSPreferencePage.compressionLevel")); //$NON-NLS-1$
+		compressionLevelCombo = createCombo(composite);
+		compressionLevelCombo.setEnabled(false);
 		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
 		
@@ -213,6 +218,10 @@ public class CVSPreferencesPage
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet")); //$NON-NLS-1$
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet")); //$NON-NLS-1$
 		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
+		for (int i = 0; i < 10; ++i) {
+			compressionLevelCombo.add(Policy.bind("CVSPreferencePage.level" + i)); //$NON-NLS-1$
+		}
+		compressionLevelCombo.select(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
@@ -242,6 +251,7 @@ public class CVSPreferencesPage
 		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
+		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
@@ -255,6 +265,8 @@ public class CVSPreferencesPage
 			store.getInt(ICVSUIConstants.PREF_TIMEOUT));
 		CVSProviderPlugin.getPlugin().setQuietness(
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
+		CVSProviderPlugin.getPlugin().setCompressionLevel(
+			store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(
 			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(
@@ -278,6 +290,7 @@ public class CVSPreferencesPage
 			store.getDefaultBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
+		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));

@@ -178,6 +178,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);
+		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
 		store.setDefault(ICVSUIConstants.PREF_REPLACE_UNMANAGED, true);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_SERVER, CVSProviderPlugin.DEFAULT_CVS_SERVER);
@@ -211,6 +212,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
+		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 	}
 
