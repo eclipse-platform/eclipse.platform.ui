@@ -23,6 +23,7 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 	private List activityRegistryListeners;
 	protected List categoryActivityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List categoryDefinitions = Collections.EMPTY_LIST;
+	protected List defaultEnabledActivities = Collections.EMPTY_LIST; 
 
 	protected AbstractActivityRegistry() {
 	}
@@ -79,4 +80,8 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 		if (activityRegistryListeners != null)
 			activityRegistryListeners.remove(activityRegistryListener);
 	}
+
+	public List getDefaultEnabledActivities() {
+        return defaultEnabledActivities;
+    }
 }

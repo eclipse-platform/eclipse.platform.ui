@@ -20,6 +20,7 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
             <element ref="activityPatternBinding"/>
             <element ref="category"/>
             <element ref="categoryActivityBinding"/>
+            <element ref="defaultEnablement"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -173,6 +174,25 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
             <annotation>
                <documentation>
                   The unique identifier of the category to bind.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaultEnablement">
+      <annotation>
+         <documentation>
+            This element allows one to specify that a given activity should be enabled by default.
+
+This tag is experimental.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the activity.
                </documentation>
             </annotation>
          </attribute>

@@ -28,9 +28,9 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 class ActivityPersistanceHelper {
 
 	/**
-	 * Prefix for all role preferences
+	 * Prefix for all activity preferences
 	 */
-	private static String PREFIX = "UIRoles."; //$NON-NLS-1$    
+	private static String PREFIX = "UIActivities."; //$NON-NLS-1$    
 
 	/**
 	 * Singleton instance.
@@ -41,7 +41,6 @@ class ActivityPersistanceHelper {
 	 * Get the singleton instance of this class.
 	 * 
 	 * @return the singleton instance of this class.
-	 * @since 3.0
 	 */
 	public static ActivityPersistanceHelper getInstance() {
 		if (singleton == null) {
@@ -56,30 +55,16 @@ class ActivityPersistanceHelper {
 	 */
 	private ActivityPersistanceHelper() {
 		loadEnabledStates();
-
-		// TODO kim: shouldn't you want to check for any activities (not
-		// categories)?
-
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
-
-		boolean noRoles =
-			support.getActivityManager().getDefinedCategoryIds().isEmpty();
-
-		if (noRoles) {
-			IActivityManager activityManager = support.getActivityManager();
-			support.setEnabledActivityIds(
-				activityManager.getDefinedActivityIds());
-		}
 	}
 
 	/**
 	 * Create the preference key for the activity.
 	 * 
-	 * @param activity the activity.
+	 * @param activityId the activity id.
 	 * @return String a preference key representing the activity.
 	 */
-	private String createPreferenceKey(IActivity activity) {
-		return PREFIX + activity.getId();
+	private String createPreferenceKey(String activityId) {
+		return PREFIX + activityId;
 	}
 
 	/**
@@ -89,30 +74,27 @@ class ActivityPersistanceHelper {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 
-		//Do not set it if the store is not set so as to
-		//allow for switching off and on of roles
-		//        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
-		//            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
-
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IActivityManager activityManager = support.getActivityManager();
+		
+		for (Iterator i = activityManager.getEnabledActivityIds().iterator(); i.hasNext(); ) { // default enabled IDs		    
+		    store.setDefault(createPreferenceKey((String) i.next()), true);
+		}
 
-		Iterator values = activityManager.getDefinedActivityIds().iterator();
-		Set enabledActivities = new HashSet();
-		while (values.hasNext()) {
-			IActivity activity =
-				activityManager.getActivity((String) values.next());
-			if (store.getBoolean(createPreferenceKey(activity))) {
-				enabledActivities.add(activity.getId());
-			}
+		Set enabledActivities = new HashSet();			
+		for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext(); ) {
+		    String activityId = (String) i.next();
+
+		    if (store.getBoolean(createPreferenceKey(activityId)))
+				enabledActivities.add(activityId);
 		}
 
 		support.setEnabledActivityIds(enabledActivities);
 	}
 
 	/**
-	 * Save the enabled states in he preference store.
+	 * Save the enabled states in the preference store.
 	 */
 	private void saveEnabledStates() {
 		IPreferenceStore store =
@@ -125,12 +107,12 @@ class ActivityPersistanceHelper {
 			IActivity activity =
 				activityManager.getActivity((String) values.next());
 
-			store.setValue(createPreferenceKey(activity), activity.isEnabled());
+			store.setValue(createPreferenceKey(activity.getId()), activity.isEnabled());
 		}
 	}
 
 	/**
-	 * Save the enabled state of all Activities.
+	 * Save the enabled state of all activities.
 	 */
 	public void shutdown() {
 		saveEnabledStates();

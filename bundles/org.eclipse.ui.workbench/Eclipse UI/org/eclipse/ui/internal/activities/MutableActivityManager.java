@@ -70,11 +70,11 @@ public final class MutableActivityManager
 			.activityRegistry
 			.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(ActivityRegistryEvent activityRegistryEvent) {
-				readRegistry();
+				readRegistry(false);
 			}
 		});
 
-		readRegistry();
+		readRegistry(true);
 	}
 
 	public IActivity getActivity(String activityId) {
@@ -220,7 +220,7 @@ public final class MutableActivityManager
 		}
 	}
 
-	private void readRegistry() {
+	private void readRegistry(boolean setDefaults) {
 		Collection activityDefinitions = new ArrayList();
 		activityDefinitions.addAll(activityRegistry.getActivityDefinitions());
 		Map activityDefinitionsById =
@@ -478,6 +478,12 @@ public final class MutableActivityManager
 
 		if (identifierEventsByIdentifierId != null)
 			notifyIdentifiers(identifierEventsByIdentifierId);
+		
+		if (setDefaults) {
+		    setEnabledActivityIds(
+		            new HashSet(
+		                    activityRegistry.getDefaultEnabledActivities()));
+		}
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {

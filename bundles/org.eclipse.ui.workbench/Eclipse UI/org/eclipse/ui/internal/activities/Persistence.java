@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
-
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
@@ -24,7 +23,8 @@ final class Persistence {
 	final static String PACKAGE_FULL = "org.eclipse.ui.activities"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
 	final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
-	final static String TAG_ACTIVITY_ACTIVITY_BINDING = "activityActivityBinding"; //$NON-NLS-1$		
+	final static String TAG_ACTIVITY_ACTIVITY_BINDING = "activityActivityBinding"; //$NON-NLS-1$
+	final static String TAG_DEFAULT_ENABLEMENT = "defaultEnablement"; //$NON-NLS-1$
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_PATTERN_BINDING = "activityPatternBinding"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
@@ -77,6 +77,15 @@ final class Persistence {
 
 		return list;
 	}
+	
+    static String readDefaultEnablement(
+        IMemento memento) {
+		if (memento == null)
+			throw new NullPointerException();
+
+		return memento.getString(TAG_ID);
+    }
+	
 
 	static ActivityDefinition readActivityDefinition(
 		IMemento memento,

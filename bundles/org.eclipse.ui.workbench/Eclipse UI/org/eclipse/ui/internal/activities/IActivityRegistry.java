@@ -26,6 +26,8 @@ public interface IActivityRegistry {
 	List getCategoryActivityBindingDefinitions();
 
 	List getCategoryDefinitions();
+	
+	List getDefaultEnabledActivities();
 
 	void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 }

@@ -30,6 +30,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	private List activityPatternBindingDefinitions;
 	private List categoryActivityBindingDefinitions;
 	private List categoryDefinitions;
+	private List defaultEnabledActivities;
 	private IExtensionRegistry extensionRegistry;
 
 	ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
@@ -99,6 +100,11 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			categoryDefinitions = new ArrayList();
 		else
 			categoryDefinitions.clear();
+		
+		if (defaultEnabledActivities == null)
+		    defaultEnabledActivities = new ArrayList();
+		else
+		    defaultEnabledActivities.clear();
 
 		IConfigurationElement[] configurationElements =
 			extensionRegistry.getConfigurationElementsFor(
@@ -119,6 +125,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				readCategoryActivityBindingDefinition(configurationElement);
 			else if (Persistence.TAG_CATEGORY.equals(name))
 				readCategoryDefinition(configurationElement);
+			else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name)) 
+			    readDefaultEnablement(configurationElement);
 		}
 
 		boolean activityRegistryChanged = false;
@@ -157,12 +165,28 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				Collections.unmodifiableList(categoryDefinitions);
 			activityRegistryChanged = true;
 		}
+		
+		if (!defaultEnabledActivities.equals(super.defaultEnabledActivities)) {
+			super.defaultEnabledActivities =
+				Collections.unmodifiableList(defaultEnabledActivities);
+			activityRegistryChanged = true;
+		}		
 
 		if (activityRegistryChanged)
 			fireActivityRegistryChanged();
 	}
 
-	private void readActivityActivityBindingDefinition(IConfigurationElement configurationElement) {
+    private void readDefaultEnablement(IConfigurationElement configurationElement) {
+		String enabledActivity =
+			Persistence.readDefaultEnablement(
+				new ConfigurationElementMemento(configurationElement));
+
+		if (enabledActivity != null)
+			defaultEnabledActivities.add(enabledActivity);
+        
+    }
+
+    private void readActivityActivityBindingDefinition(IConfigurationElement configurationElement) {
 		ActivityActivityBindingDefinition activityActivityBindingDefinition =
 			Persistence.readActivityActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
