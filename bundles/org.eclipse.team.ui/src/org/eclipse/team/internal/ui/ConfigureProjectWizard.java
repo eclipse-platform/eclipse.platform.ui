@@ -66,6 +66,11 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		mainPage.setWorkbench(workbench);
 		addPage(mainPage);
 	}
+	public boolean canFinish() {
+		// If we are on the first page, never allow finish.
+		if (getContainer().getCurrentPage() == mainPage) return false;
+		return super.canFinish();
+	}
 	/*
 	 * @see Wizard#performFinish
 	 */
