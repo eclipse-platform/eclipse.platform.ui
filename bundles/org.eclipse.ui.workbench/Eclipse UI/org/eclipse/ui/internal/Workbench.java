@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
@@ -93,6 +94,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandService;
+import org.eclipse.ui.internal.commands.ws.ShowViewHandler;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
@@ -864,7 +866,14 @@ public final class Workbench implements IWorkbench {
 		final IBindingService bindingService = new BindingService(
 				bindingManager);
 		services[IWorkbenchServices.BINDING] = bindingService;
-		bindingService.readRegistryAndPreferences();
+		bindingService.readRegistryAndPreferences(commandService);
+		
+		/*
+		 * TODO Putting this here is a like a sword in my side.  But alas, the
+		 * handler support from XML just isn't up to the task yet.
+		 */  
+		final Command command = commandService.getCommand("org.eclipse.ui.views.showView"); //$NON-NLS-1$
+		command.setHandler(new ShowViewHandler());
 
 		/*
 		 * TODO This is the deprecated support. It would be nice to pull out all

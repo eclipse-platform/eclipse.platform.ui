@@ -119,6 +119,9 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          </documentation>
       </annotation>
       <complexType>
+         <all>
+            <element ref="parameter"/>
+         </all>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
@@ -460,6 +463,42 @@ This particular API should still be considered experimental.  While you may use 
                   The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
 
 @deprecated Please use the &quot;org.eclipse.ui.contexts&quot; extension point instead.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="values" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IParameterValues"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="optional" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

@@ -23,6 +23,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.BindingManager;
@@ -199,7 +200,11 @@ public final class ExternalActionManager {
 				while (listenerItr.hasNext()) {
 					final Map.Entry entry = (Map.Entry) listenerItr.next();
 					final String commandId = (String) entry.getKey();
-					if (event.isActiveBindingsChangedFor(commandId)) {
+					final Command command = commandManager
+							.getCommand(commandId);
+					final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+							command, null);
+					if (event.isActiveBindingsChangedFor(parameterizedCommand)) {
 						final IPropertyChangeListener listener = (IPropertyChangeListener) entry
 								.getValue();
 						listener.propertyChange(new PropertyChangeEvent(event
@@ -213,8 +218,11 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAccelerator(String)
 		 */
 		public final Integer getAccelerator(final String commandId) {
+			final Command command = commandManager.getCommand(commandId);
+			final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+					command, null);
 			final TriggerSequence[] activeBindings = bindingManager
-					.getActiveBindingsFor(commandId);
+					.getActiveBindingsFor(parameterizedCommand);
 			final int activeBindingsCount = activeBindings.length;
 			Integer accelerator = null;
 			for (int i = 0; i < activeBindingsCount; i++) {
@@ -239,8 +247,11 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAcceleratorText(String)
 		 */
 		public final String getAcceleratorText(final String commandId) {
+			final Command command = commandManager.getCommand(commandId);
+			final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+					command, null);
 			final TriggerSequence[] activeBindings = bindingManager
-					.getActiveBindingsFor(commandId);
+					.getActiveBindingsFor(parameterizedCommand);
 			final int activeBindingsCount = activeBindings.length;
 			String acceleratorText = null;
 

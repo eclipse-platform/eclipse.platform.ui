@@ -14,6 +14,7 @@ package org.eclipse.jface.bindings;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.AbstractBitSetEvent;
 import org.eclipse.jface.util.Util;
 
@@ -67,11 +68,11 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 
 	/**
 	 * The map of triggers (<code>Collection</code> of
-	 * <code>TriggerSequence</code>) by command id (<code>String</code>)
+	 * <code>TriggerSequence</code>) by parameterized command (<code>ParameterizedCommand</code>)
 	 * before the change occurred. This map may be empty and it may be
 	 * <code>null</code>.
 	 */
-	private final Map previousTriggersByCommandId;
+	private final Map previousTriggersByParameterizedCommand;
 
 	/**
 	 * The scheme that became defined or undefined. This value may be
@@ -87,10 +88,11 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	 *            <code>null</code>.
 	 * @param activeBindingsChanged
 	 *            Whether the active bindings have changed.
-	 * @param previousTriggersByCommandId
+	 * @param previousTriggersByParameterizedCommand
 	 *            The map of triggers (<code>TriggerSequence</code>) by
-	 *            command id (<code>String</code>) before the change
-	 *            occured. This map may be <code>null</code> or empty.
+	 *            fully-parameterized command (<code>ParameterizedCommand</code>)
+	 *            before the change occured. This map may be <code>null</code>
+	 *            or empty.
 	 * @param activeSchemeChanged
 	 *            true, iff the active scheme changed.
 	 * @param scheme
@@ -106,7 +108,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	 */
 	public BindingManagerEvent(final BindingManager manager,
 			final boolean activeBindingsChanged,
-			final Map previousTriggersByCommandId,
+			final Map previousTriggersByParameterizedCommand,
 			final boolean activeSchemeChanged, final Scheme scheme,
 			final boolean schemeDefined, final boolean localeChanged,
 			final boolean platformChanged) {
@@ -121,7 +123,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 		}
 		this.scheme = scheme;
 
-		this.previousTriggersByCommandId = previousTriggersByCommandId;
+		this.previousTriggersByParameterizedCommand = previousTriggersByParameterizedCommand;
 
 		if (activeBindingsChanged) {
 			changedValues |= CHANGED_ACTIVE_BINDINGS;
@@ -173,19 +175,20 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	 * Computes whether the active bindings have changed for a given command
 	 * identifier.
 	 * 
-	 * @param commandId
-	 *            The identifier for the command whose bindings might have
+	 * @param parameterizedCommand
+	 *            The fully-parameterized command whose bindings might have
 	 *            changed; must not be <code>null</code>.
 	 * @return <code>true</code> if the active bindings have changed for the
 	 *         given command identifier; <code>false</code> otherwise.
 	 */
-	public final boolean isActiveBindingsChangedFor(final String commandId) {
+	public final boolean isActiveBindingsChangedFor(
+			final ParameterizedCommand parameterizedCommand) {
 		final TriggerSequence[] currentBindings = manager
-				.getActiveBindingsFor(commandId);
+				.getActiveBindingsFor(parameterizedCommand);
 		final TriggerSequence[] previousBindings;
-		if (previousTriggersByCommandId != null) {
-			final Collection previousBindingCollection = (Collection) previousTriggersByCommandId
-					.get(commandId);
+		if (previousTriggersByParameterizedCommand != null) {
+			final Collection previousBindingCollection = (Collection) previousTriggersByParameterizedCommand
+					.get(parameterizedCommand);
 			if (previousBindingCollection == null) {
 				previousBindings = null;
 			} else {

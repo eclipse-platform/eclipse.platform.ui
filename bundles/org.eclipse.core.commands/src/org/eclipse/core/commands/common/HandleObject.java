@@ -70,7 +70,7 @@ public abstract class HandleObject {
      * The hash code for this object. This value is computed lazily, and marked
      * as invalid when one of the values on which it is based changes.
      */
-    private transient int hashCode;
+    private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
     /**
      * The identifier for this object. This identifier should be unique across

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.util.Util;
 
 /**
@@ -50,8 +51,8 @@ import org.eclipse.jface.util.Util;
  * decide we need to change it.
  * </p>
  * <code><pre>
- *      KeyBinding(null,scheme,context,&quot;Ctrl+Shift+F&quot;,gtk)
- *      KeyBinding(command,scheme,context,&quot;Esc Ctrl+F&quot;,gtk)
+ *                  KeyBinding(null,scheme,context,&quot;Ctrl+Shift+F&quot;,gtk)
+ *                  KeyBinding(command,scheme,context,&quot;Esc Ctrl+F&quot;,gtk)
  * </pre></code>
  * <p>
  * Bindings are intended to be immutable objects.
@@ -65,6 +66,12 @@ import org.eclipse.jface.util.Util;
  * @since 3.1
  */
 public abstract class Binding {
+
+	/**
+	 * The constant integer hash code value meaning the hash code has not yet
+	 * been computed.
+	 */
+	private static final int HASH_CODE_NOT_COMPUTED = -1;
 
 	/**
 	 * A factor for computing the hash code for all key bindings.
@@ -91,11 +98,11 @@ public abstract class Binding {
 	public static final int USER = 1;
 
 	/**
-	 * The identifier of the command to which this binding applies. This value
-	 * may be <code>null</code> if this binding is meant to "unbind" an
-	 * existing binding.
+	 * The parameterized command to which this binding applies. This value may
+	 * be <code>null</code> if this binding is meant to "unbind" an existing
+	 * binding.
 	 */
-	private final String commandId;
+	private final ParameterizedCommand command;
 
 	/**
 	 * The context identifier to which this binding applies. This context must
@@ -108,12 +115,7 @@ public abstract class Binding {
 	 * The hash code for this key binding. This value is computed lazily, and
 	 * marked as invalid when one of the values on which it is based changes.
 	 */
-	private transient int hashCode;
-
-	/**
-	 * Whether <code>hashCode</code> still contains a valid value.
-	 */
-	private transient boolean hashCodeComputed = false;
+	private transient int hashCode = HASH_CODE_NOT_COMPUTED;
 
 	/**
 	 * The locale in which this binding applies. This value may be
@@ -154,10 +156,10 @@ public abstract class Binding {
 	/**
 	 * Constructs a new instance of <code>Binding</code>.
 	 * 
-	 * @param commandId
-	 *            The command to which this binding applies; this value may be
-	 *            <code>null</code> if the binding is meant to "unbind" (no
-	 *            op). This identifier must be of non-zero length.
+	 * @param command
+	 *            The parameterized command to which this binding applies; this
+	 *            value may be <code>null</code> if the binding is meant to
+	 *            "unbind" (no op).
 	 * @param schemeId
 	 *            The scheme to which this binding belongs; this value must not
 	 *            be <code>null</code>.
@@ -178,14 +180,9 @@ public abstract class Binding {
 	 *            The type of binding. This should be either <code>SYSTEM</code>
 	 *            or <code>USER</code>.
 	 */
-	protected Binding(final String commandId, final String schemeId,
-			final String contextId, final String locale, final String platform,
-			final String windowManager, final int type) {
-		if ((commandId != null) && (commandId.length() < 1)) {
-			throw new IllegalArgumentException(
-					"Cannot bind to an empty command id"); //$NON-NLS-1$
-		}
-
+	protected Binding(final ParameterizedCommand command,
+			final String schemeId, final String contextId, final String locale,
+			final String platform, final String windowManager, final int type) {
 		if (schemeId == null) {
 			throw new NullPointerException("The scheme cannot be null"); //$NON-NLS-1$
 		}
@@ -199,7 +196,7 @@ public abstract class Binding {
 					"The type must be SYSTEM or USER"); //$NON-NLS-1$
 		}
 
-		this.commandId = commandId;
+		this.command = command;
 		this.schemeId = schemeId.intern();
 		this.contextId = contextId.intern();
 		this.locale = (locale == null) ? null : locale.intern();
@@ -228,7 +225,7 @@ public abstract class Binding {
 			deletes &= !Util.equals(getPlatform(), binding.getPlatform());
 		}
 		deletes &= (binding.getType() == SYSTEM);
-		deletes &= Util.equals(getCommandId(), null);
+		deletes &= Util.equals(getParameterizedCommand(), null);
 
 		return deletes;
 	}
@@ -243,33 +240,46 @@ public abstract class Binding {
 	 *         values for all of its properties; <code>false</code> otherwise.
 	 */
 	public final boolean equals(final Object object) {
+		if (this == object) {
+			return true;
+
+		}
 		if (!(object instanceof Binding)) {
 			return false;
 		}
 
 		final Binding binding = (Binding) object;
-		boolean equals = true;
-		equals &= Util.equals(getCommandId(), binding.getCommandId());
-		equals &= Util.equals(getContextId(), binding.getContextId());
-		equals &= Util.equals(getTriggerSequence(), binding
-				.getTriggerSequence());
-		equals &= Util.equals(getLocale(), binding.getLocale());
-		equals &= Util.equals(getPlatform(), binding.getPlatform());
-		equals &= Util.equals(getSchemeId(), binding.getSchemeId());
-		equals &= (getType() == binding.getType());
-
-		return equals;
+		if (!Util.equals(getParameterizedCommand(), binding
+				.getParameterizedCommand())) {
+			return false;
+		}
+		if (!Util.equals(getContextId(), binding.getContextId())) {
+			return false;
+		}
+		if (!Util.equals(getTriggerSequence(), binding.getTriggerSequence())) {
+			return false;
+		}
+		if (!Util.equals(getLocale(), binding.getLocale())) {
+			return false;
+		}
+		if (!Util.equals(getPlatform(), binding.getPlatform())) {
+			return false;
+		}
+		if (!Util.equals(getSchemeId(), binding.getSchemeId())) {
+			return false;
+		}
+		return (getType() != binding.getType());
 	}
 
 	/**
-	 * Returns the identifier of the command to which this binding applies. If
-	 * the identifier is <code>null</code>, then this binding is "unbinding"
-	 * an existing binding.
+	 * Returns the parameterized command to which this binding applies. If the
+	 * identifier is <code>null</code>, then this binding is "unbinding" an
+	 * existing binding.
 	 * 
-	 * @return The command identifier; may be <code>null</code>.
+	 * @return The fully-parameterized command; may be <code>null</code>.
 	 */
-	public final String getCommandId() {
-		return commandId;
+	public final ParameterizedCommand getParameterizedCommand() {
+		return command;
 	}
 
 	/**
@@ -341,9 +351,10 @@ public abstract class Binding {
 	 * @return The hash code for this key binding.
 	 */
 	public final int hashCode() {
-		if (!hashCodeComputed) {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getCommandId());
+			hashCode = hashCode * HASH_FACTOR
+					+ Util.hashCode(getParameterizedCommand());
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getContextId());
 			hashCode = hashCode * HASH_FACTOR
 					+ Util.hashCode(getTriggerSequence());
@@ -351,7 +362,9 @@ public abstract class Binding {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getPlatform());
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getSchemeId());
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(getType());
-			hashCodeComputed = true;
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
+				hashCode++;
+			}
 		}
 
 		return hashCode;
@@ -370,7 +383,7 @@ public abstract class Binding {
 			stringBuffer.append("Binding("); //$NON-NLS-1$
 			stringBuffer.append(getTriggerSequence());
 			stringBuffer.append(',');
-			stringBuffer.append(commandId);
+			stringBuffer.append(command);
 			stringBuffer.append(',');
 			stringBuffer.append(schemeId);
 			stringBuffer.append(',');

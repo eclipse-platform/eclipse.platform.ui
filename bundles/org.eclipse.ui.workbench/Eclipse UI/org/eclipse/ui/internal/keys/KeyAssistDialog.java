@@ -22,8 +22,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -72,9 +74,22 @@ import org.eclipse.ui.keys.IBindingService;
 final class KeyAssistDialog extends Dialog {
 
 	/**
+	 * The data key for the binding stored on an SWT widget. The key is a
+	 * fully-qualified name, but in reverse order. This is so that the equals
+	 * method will detect misses faster.
+	 */
+	private static final String BINDING_KEY = "Binding.bindings.jface.eclipse.org"; //$NON-NLS-1$
+
+	/**
+	 * The value of <code>previousWidth</code> to set if there is no
+	 * remembered width.
+	 */
+	private static final int NO_REMEMBERED_WIDTH = -1;
+
+	/**
 	 * The translation bundle in which to look up internationalized text.
 	 */
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(KeyAssistDialog.class.getName());
 
 	/**
@@ -88,21 +103,21 @@ final class KeyAssistDialog extends Dialog {
 	private final IBindingService bindingService;
 
 	/**
-	 * The command service for the associated workbench.
+	 * The binding that was selected when the key assist dialog last closed.
+	 * This is only remembered until <code>clearRememberedState()</code> is
+	 * called.
 	 */
-	private final ICommandService commandService;
-
-	/**
-	 * The name of the command that was selected when the key assist dialog last
-	 * closed. This is only remembered until <code>clearRememberedState()</code>
-	 * is called.
-	 */
-	private String commandName = null;
+	private Binding binding = null;
 
 	/**
 	 * The ordered list of command identifiers corresponding to the table.
 	 */
-	private final List commands = new ArrayList();
+	private final List bindings = new ArrayList();
+
+	/**
+	 * The command service for the associated workbench.
+	 */
+	private final ICommandService commandService;
 
 	/**
 	 * The table containing of the possible completions. This value is
@@ -111,22 +126,20 @@ final class KeyAssistDialog extends Dialog {
 	private Table completionsTable = null;
 
 	/**
+	 * Whether this dialog is currently holding some remembered state.
+	 */
+	private boolean hasRememberedState = false;
+
+	/**
 	 * The key binding state for the associated workbench.
 	 */
 	private final KeyBindingState keyBindingState;
 
 	/**
-	 * The key sequence that was selected when the key assist dialog last
-	 * closed. This is only remembered until <code>clearRememberedState()</code>
-	 * is called.
-	 */
-	private String keySequence = null;
-
-	/**
 	 * The width of the shell when it was previously open. This is only
 	 * remembered until <code>clearRememberedState()</code> is called.
 	 */
-	private int previousWidth = -1;
+	private int previousWidth = NO_REMEMBERED_WIDTH;
 
 	/**
 	 * The key binding listener for the associated workbench.
@@ -153,7 +166,7 @@ final class KeyAssistDialog extends Dialog {
 	KeyAssistDialog(final IWorkbench workbench,
 			final WorkbenchKeyboard associatedKeyboard,
 			final KeyBindingState associatedState) {
-		super((Shell)null);
+		super((Shell) null);
 		setShellStyle(SWT.NO_TRIM);
 		setBlockOnOpen(false);
 
@@ -169,12 +182,12 @@ final class KeyAssistDialog extends Dialog {
 
 	/**
 	 * Clears out the remembered state of the key assist dialog. This includes
-	 * its width, as well as the selected command name and key sequence.
+	 * its width, as well as the selected binding.
 	 */
 	final void clearRememberedState() {
-		previousWidth = -1;
-		commandName = null;
-		keySequence = null;
+		previousWidth = NO_REMEMBERED_WIDTH;
+		binding = null;
+		hasRememberedState = false;
 	}
 
 	/**
@@ -201,23 +214,30 @@ final class KeyAssistDialog extends Dialog {
 		final Shell shell = getShell();
 		if (rememberState) {
 			// Remember the previous width.
+			final int widthToRemember;
 			if ((shell != null) && (!shell.isDisposed())) {
-				previousWidth = getShell().getSize().x;
+				widthToRemember = getShell().getSize().x;
+			} else {
+				widthToRemember = NO_REMEMBERED_WIDTH;
 			}
 
 			// Remember the selected command name and key sequence.
+			final Binding bindingToRemember;
 			if ((completionsTable != null) && (!completionsTable.isDisposed())) {
 				final int selectedIndex = completionsTable.getSelectionIndex();
 				if (selectedIndex != -1) {
 					final TableItem selectedItem = completionsTable
 							.getItem(selectedIndex);
-					commandName = selectedItem.getText(0);
-					keySequence = selectedItem.getText(1);
+					bindingToRemember = (Binding) selectedItem
+							.getData(BINDING_KEY);
 				} else {
-					commandName = Util.ZERO_LENGTH_STRING;
-					keySequence = Util.ZERO_LENGTH_STRING;
+					bindingToRemember = null;
 				}
+			} else {
+				bindingToRemember = null;
 			}
+
+			rememberState(widthToRemember, bindingToRemember);
 			completionsTable = null;
 		}
 
@@ -297,7 +317,7 @@ final class KeyAssistDialog extends Dialog {
 		final Point size = shell.getSize();
 
 		// Use the previous width if appropriate.
-		if ((previousWidth != -1) && (previousWidth > size.x)) {
+		if ((previousWidth != NO_REMEMBERED_WIDTH) && (previousWidth > size.x)) {
 			size.x = previousWidth;
 		}
 
@@ -348,8 +368,10 @@ final class KeyAssistDialog extends Dialog {
 		 * Figure out which key is used to open the key assist. If no key, then
 		 * just return.
 		 */
+		final Command command = commandService
+				.getCommand("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
 		final TriggerSequence[] keyBindings = bindingService
-				.getActiveBindingsFor("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
+				.getActiveBindingsFor(new ParameterizedCommand(command, null));
 		final int keyBindingsCount = keyBindings.length;
 		final KeySequence currentState = keyBindingState.getCurrentSequence();
 		final int prefixSize = currentState.getKeyStrokes().length;
@@ -512,7 +534,8 @@ final class KeyAssistDialog extends Dialog {
 	/**
 	 * Creates a dialog area with a table of the partial matches for the current
 	 * key binding state. The table will be either the minimum width, or
-	 * <code>previousWidth</code> if it is not <code>-1</code>.
+	 * <code>previousWidth</code> if it is not
+	 * <code>NO_REMEMBERED_WIDTH</code>.
 	 * 
 	 * @param parent
 	 *            The parent composite for the dialog area; must not be
@@ -532,7 +555,7 @@ final class KeyAssistDialog extends Dialog {
 		completionsTable.setLinesVisible(true);
 
 		// Initialize the columns and rows.
-		commands.clear();
+		bindings.clear();
 		final TableColumn columnCommandName = new TableColumn(completionsTable,
 				SWT.LEFT, 0);
 		final TableColumn columnKeySequence = new TableColumn(completionsTable,
@@ -540,20 +563,23 @@ final class KeyAssistDialog extends Dialog {
 		final Iterator itemsItr = partialMatches.entrySet().iterator();
 		while (itemsItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) itemsItr.next();
-			final KeySequence sequence = (KeySequence) entry.getValue();
-			final Command command = (Command) entry.getKey();
+			final TriggerSequence sequence = (TriggerSequence) entry.getValue();
+			final Binding binding = (Binding) entry.getKey();
+			final ParameterizedCommand command = binding
+					.getParameterizedCommand();
 			try {
 				final String[] text = { command.getName(), sequence.format() };
 				final TableItem item = new TableItem(completionsTable, SWT.NULL);
 				item.setText(text);
-				commands.add(command);
+				item.setData(BINDING_KEY, binding);
+				bindings.add(binding);
 			} catch (NotDefinedException e) {
 				// Not much to do, but this shouldn't really happen.
 			}
 		}
 
 		columnKeySequence.pack();
-		if (previousWidth != -1) {
+		if (previousWidth != NO_REMEMBERED_WIDTH) {
 			columnKeySequence.setWidth(previousWidth);
 		}
 		columnCommandName.pack();
@@ -564,7 +590,7 @@ final class KeyAssistDialog extends Dialog {
 		 */
 		completionsTable.addSelectionListener(new SelectionAdapter() {
 			public final void widgetDefaultSelected(final SelectionEvent event) {
-				executeKeyBinding();
+				executeKeyBinding(event);
 			}
 		});
 	}
@@ -586,7 +612,7 @@ final class KeyAssistDialog extends Dialog {
 		final IPreferencePage page = dialog.getCurrentPage();
 		if (page instanceof KeysPreferencePage) {
 			final KeysPreferencePage keysPreferencePage = (KeysPreferencePage) page;
-			keysPreferencePage.editCommand(commandName, keySequence);
+			keysPreferencePage.editBinding(binding);
 		}
 
 		/*
@@ -603,13 +629,13 @@ final class KeyAssistDialog extends Dialog {
 	 * Handles the default selection event on the table of possible completions.
 	 * This attempts to execute the given command.
 	 */
-	private final void executeKeyBinding() {
+	private final void executeKeyBinding(final Object trigger) {
 		// Try to execute the corresponding command.
 		final int selectionIndex = completionsTable.getSelectionIndex();
 		if (selectionIndex >= 0) {
-			final Command command = (Command) commands.get(selectionIndex);
+			final Binding binding = (Binding) bindings.get(selectionIndex);
 			try {
-				workbenchKeyboard.executeCommand(command.getId());
+				workbenchKeyboard.executeCommand(binding, trigger);
 			} catch (final CommandException e) {
 				workbenchKeyboard.logException(e);
 			}
@@ -632,8 +658,12 @@ final class KeyAssistDialog extends Dialog {
 		// Create a sorted map that sorts based on lexicographical order.
 		final SortedMap sortedMatches = new TreeMap(new Comparator() {
 			public final int compare(final Object a, final Object b) {
-				Command commandA = (Command) a;
-				Command commandB = (Command) b;
+				final Binding bindingA = (Binding) a;
+				final Binding bindingB = (Binding) b;
+				final ParameterizedCommand commandA = bindingA
+						.getParameterizedCommand();
+				final ParameterizedCommand commandB = bindingB
+						.getParameterizedCommand();
 				try {
 					return commandA.getName().compareTo(commandB.getName());
 				} catch (final NotDefinedException e) {
@@ -650,17 +680,28 @@ final class KeyAssistDialog extends Dialog {
 		final Iterator partialMatchItr = partialMatches.entrySet().iterator();
 		while (partialMatchItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) partialMatchItr.next();
-			final String commandId = (String) entry.getValue();
-			final Command command = commandService.getCommand(commandId);
+			final Binding binding = (Binding) entry.getValue();
+			final Command command = binding.getParameterizedCommand()
+					.getCommand();
 			if (command.isDefined()
 					&& activityManager.getIdentifier(command.getId())
 							.isEnabled()) {
-				sortedMatches.put(command, entry.getKey());
+				sortedMatches.put(binding, entry.getKey());
 			}
 		}
 
 		return sortedMatches;
 
+	}
+
+	/**
+	 * Returns whether the dialog is currently holding some remembered state.
+	 * 
+	 * @return <code>true</code> if the dialog has remembered state;
+	 *         <code>false</code> otherwise.
+	 */
+	private final boolean hasRememberedState() {
+		return hasRememberedState;
 	}
 
 	/**
@@ -673,7 +714,7 @@ final class KeyAssistDialog extends Dialog {
 	 */
 	public final int open() {
 		// If there is remember state, open the preference page.
-		if ((commandName != null) && (keySequence != null)) {
+		if (hasRememberedState()) {
 			editKeyBinding();
 			clearRememberedState();
 			return Window.OK;
@@ -719,6 +760,21 @@ final class KeyAssistDialog extends Dialog {
 				.getAssociatedWindow().getWorkbench().getContextSupport();
 		contextSupport.registerShell(shell, contextSupport
 				.getShellType((Shell) shell.getParent()));
+	}
+
+	/**
+	 * Remembers the current state of this dialog.
+	 * 
+	 * @param previousWidth
+	 *            The previous width of the dialog.
+	 * @param binding
+	 *            The binding to remember, may be <code>null</code> if none.
+	 */
+	private final void rememberState(final int previousWidth,
+			final Binding binding) {
+		this.previousWidth = previousWidth;
+		this.binding = binding;
+		hasRememberedState = true;
 	}
 
 	/**

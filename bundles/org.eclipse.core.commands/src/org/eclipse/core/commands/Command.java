@@ -77,19 +77,26 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * The category to which this command belongs. This value should not be
 	 * <code>null</code> unless the command is undefined.
 	 */
-	private Category category;
+	private Category category = null;
 
 	/**
 	 * A collection of objects listening to changes to this command. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private Collection commandListeners;
+	private Collection commandListeners = null;
 
 	/**
 	 * The handler currently associated with this command. This value may be
 	 * <code>null</code> if there is no handler currently.
 	 */
 	private IHandler handler = null;
+
+	/**
+	 * The ordered array of parameters understood by this command. This value
+	 * may be <code>null</code> if there are no parameters, or if the command
+	 * is undefined. It may also be empty.
+	 */
+	private IParameter[] parameters = null;
 
 	/**
 	 * Constructs a new instance of <code>Command</code> based on the given
@@ -144,6 +151,10 @@ public final class Command extends NamedHandleObject implements Comparable {
 						compareTo = Util.compare(id, castedObject.id);
 						if (compareTo == 0) {
 							compareTo = Util.compare(name, castedObject.name);
+							if (compareTo == 0) {
+								compareTo = Util.compare(parameters,
+										castedObject.parameters);
+							}
 						}
 					}
 				}
@@ -167,9 +178,13 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *            The description for this command; may be <code>null</code>.
 	 * @param category
 	 *            The category for this command; may be <code>null</code>.
+	 * @param parameters
+	 *            The parameters understood by this command. This value may be
+	 *            either <code>null</code> or empty if the command does not
+	 *            accept parameters.
 	 */
 	public final void define(final String name, final String description,
-			final Category category) {
+			final Category category, final IParameter[] parameters) {
 		if (name == null) {
 			throw new NullPointerException(
 					"The name of a command cannot be null"); //$NON-NLS-1$
@@ -193,8 +208,13 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final boolean categoryChanged = !Util.equals(this.category, category);
 		this.category = category;
 
+		final boolean parametersChanged = !Util.equals(this.parameters,
+				parameters);
+		this.parameters = parameters;
+
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
-				definedChanged, descriptionChanged, false, nameChanged));
+				definedChanged, descriptionChanged, false, nameChanged,
+				parametersChanged));
 	}
 
 	/**
@@ -207,19 +227,37 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *         otherwise.
 	 */
 	public final boolean equals(final Object object) {
+		// Check if they're the same.
+		if (object == this) {
+			return true;
+		}
+
+		// Check if they're the same type.
 		if (!(object instanceof Command))
 			return false;
 
-		final Command castedObject = (Command) object;
-		boolean equals = true;
-		equals &= Util.equals(category, castedObject.category);
-		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(handler, castedObject.handler);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
+		// Check each property in turn.
+		final Command command = (Command) object;
+		if (!Util.equals(id, command.id)) {
+			return false;
+		}
+		if (!Util.equals(name, command.name)) {
+			return false;
+		}
+		if (!Util.equals(description, command.description)) {
+			return false;
+		}
+		if (!Util.equals(category, command.category)) {
+			return false;
+		}
+		if (!Util.equals(defined, command.defined)) {
+			return false;
+		}
+		if (!Util.equals(handler, command.handler)) {
+			return false;
+		}
 
-		return equals;
+		return Util.equals(parameters, command.parameters);
 	}
 
 	/**
@@ -296,6 +334,30 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		return category;
+	}
+
+	/**
+	 * Returns the parameters for this command. This call triggers provides a
+	 * copy of the array, so excessive calls to this method should be avoided.
+	 * 
+	 * @return The parameters for this command. This value might be
+	 *         <code>null</code>, if the command has no parameters.
+	 * @throws NotDefinedException
+	 *             If the handle is not currently defined.
+	 */
+	public final IParameter[] getParameters() throws NotDefinedException {
+		if (!isDefined()) {
+			throw new NotDefinedException(
+					"Cannot get the parameters from an undefined command"); //$NON-NLS-1$
+		}
+
+		if ((parameters == null) || (parameters.length == 0)) {
+			return null;
+		}
+
+		final IParameter[] returnValue = new IParameter[parameters.length];
+		System.arraycopy(parameters, 0, returnValue, 0, parameters.length);
+		return returnValue;
 	}
 
 	/**
@@ -380,7 +442,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		// Send notification
 		fireCommandChanged(new CommandEvent(this, false, false, false, true,
-				false));
+				false, false));
 
 		return true;
 	}
@@ -406,6 +468,8 @@ public final class Command extends NamedHandleObject implements Comparable {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(parameters);
 			stringBuffer.append(')');
 			string = stringBuffer.toString();
 		}
@@ -432,7 +496,11 @@ public final class Command extends NamedHandleObject implements Comparable {
 		final boolean categoryChanged = category != null;
 		category = null;
 
+		final boolean parametersChanged = parameters != null;
+		parameters = null;
+
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
-				definedChanged, descriptionChanged, false, nameChanged));
+				definedChanged, descriptionChanged, false, nameChanged,
+				parametersChanged));
 	}
 }

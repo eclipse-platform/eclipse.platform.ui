@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.commands.ExecutionException;
@@ -44,6 +45,12 @@ final class CommandWrapper implements ICommand {
 	 * The wrapped command; never <code>null</code>.
 	 */
 	private final Command command;
+
+	/**
+	 * A parameterized representation of the command. This is created lazily. If
+	 * it has not yet been created, it is <code>null</code>.
+	 */
+	private ParameterizedCommand parameterizedCommand;
 
 	/**
 	 * Constructs a new <code>CommandWrapper</code>
@@ -154,8 +161,11 @@ final class CommandWrapper implements ICommand {
 	 */
 	public final List getKeySequenceBindings() {
 		final List legacyBindings = new ArrayList();
+		if (parameterizedCommand == null) {
+			parameterizedCommand = new ParameterizedCommand(command, null);
+		}
 		final TriggerSequence[] activeBindings = bindingManager
-				.getActiveBindingsFor(command.getId());
+				.getActiveBindingsFor(parameterizedCommand);
 		final int activeBindingsCount = activeBindings.length;
 		for (int i = 0; i < activeBindingsCount; i++) {
 			final TriggerSequence triggerSequence = activeBindings[i];

@@ -318,9 +318,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 				while (handlerItr.hasNext()) {
 					final IHandler handler = (IHandler) handlerItr.next();
 					if (handler instanceof LegacyHandlerWrapper) {
-					final HandlerSubmission submission = new HandlerSubmission(
-							null, null, null, commandId, ((LegacyHandlerWrapper) handler).getWrappedHandler(), Priority.LOW);
-					submissions.add(submission);
+						final HandlerSubmission submission = new HandlerSubmission(
+								null, null, null, commandId,
+								((LegacyHandlerWrapper) handler)
+										.getWrappedHandler(), Priority.LOW);
+						submissions.add(submission);
 					}
 				}
 			}
@@ -653,7 +655,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 					handlersByCommandId.put(commandId, bestHandlerSubmission
 							.getHandler());
 				else {
-					// TODO : Possible fix for 84700 (Kim)
 					handlersByCommandId.put(commandId, null);
 				}
 			}

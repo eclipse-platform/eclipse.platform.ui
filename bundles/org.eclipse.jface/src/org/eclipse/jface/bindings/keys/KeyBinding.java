@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings.keys;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
@@ -41,10 +42,10 @@ public final class KeyBinding extends Binding {
 	 *            The key sequence which should trigger this binding. This value
 	 *            must not be <code>null</code>. It also must be a complete,
 	 *            non-empty key sequence.
-	 * @param commandId
-	 *            The command to which this binding applies; this value may be
-	 *            <code>null</code> if the binding is meant to "unbind" (no
-	 *            op).
+	 * @param command
+	 *            The parameterized command to which this binding applies; this
+	 *            value may be <code>null</code> if the binding is meant to
+	 *            "unbind" (no op).
 	 * @param schemeId
 	 *            The scheme to which this binding belongs; this value must not
 	 *            be <code>null</code>.
@@ -65,10 +66,11 @@ public final class KeyBinding extends Binding {
 	 *            The type of binding. This should be either <code>SYSTEM</code>
 	 *            or <code>USER</code>.
 	 */
-	public KeyBinding(final KeySequence keySequence, final String commandId,
-			final String schemeId, final String contextId, final String locale,
-			final String platform, final String windowManager, final int type) {
-		super(commandId, schemeId, contextId, locale, platform, windowManager,
+	public KeyBinding(final KeySequence keySequence,
+			final ParameterizedCommand command, final String schemeId,
+			final String contextId, final String locale, final String platform,
+			final String windowManager, final int type) {
+		super(command, schemeId, contextId, locale, platform, windowManager,
 				type);
 
 		if (keySequence == null) {

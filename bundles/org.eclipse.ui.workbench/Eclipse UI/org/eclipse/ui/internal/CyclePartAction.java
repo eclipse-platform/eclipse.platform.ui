@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -42,6 +44,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -56,9 +59,9 @@ public class CyclePartAction extends PageEventAction {
 	 */
 	private TriggerSequence[] backwardTriggerSequences = null;
 
-	private String commandBackward = null;
+	private ParameterizedCommand commandBackward = null;
 
-	private String commandForward = null;
+	private ParameterizedCommand commandForward = null;
 
 	protected boolean forward;
 
@@ -299,7 +302,7 @@ public class CyclePartAction extends PageEventAction {
 	 * @return the backward action
 	 */
 	public String getBackwardActionDefinitionId() {
-		return commandBackward;
+		return commandBackward.getCommand().getId();
 	}
 
 	/**
@@ -308,7 +311,7 @@ public class CyclePartAction extends PageEventAction {
 	 * @return the forward action
 	 */
 	public String getForwardActionDefinitionId() {
-		return commandForward;
+		return commandForward.getCommand().getId();
 	}
 
 	/**
@@ -508,7 +511,10 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setBackwardActionDefinitionId(String actionDefinitionId) {
-		commandBackward = actionDefinitionId;
+		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
+				.getWorkbench().getService(IWorkbenchServices.COMMAND);
+		final Command command = commandService.getCommand(actionDefinitionId);
+		commandBackward = new ParameterizedCommand(command, null);
 	}
 
 	/**
@@ -518,7 +524,10 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setForwardActionDefinitionId(String actionDefinitionId) {
-		commandForward = actionDefinitionId;
+		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
+				.getWorkbench().getService(IWorkbenchServices.COMMAND);
+		final Command command = commandService.getCommand(actionDefinitionId);
+		commandForward = new ParameterizedCommand(command, null);
 	}
 
 	/**
@@ -527,15 +536,15 @@ public class CyclePartAction extends PageEventAction {
 	protected void setText() {
 		// TBD: Remove text and tooltip when this becomes an invisible action.
 		if (forward) {
-			setText(WorkbenchMessages.CyclePartAction_next_text); 
+			setText(WorkbenchMessages.CyclePartAction_next_text);
 			setToolTipText(WorkbenchMessages.CyclePartAction_next_toolTip);
 			// @issue missing action ids
 			getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
 			setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
 		} else {
-			setText(WorkbenchMessages.CyclePartAction_prev_text); 
-			setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip); 
+			setText(WorkbenchMessages.CyclePartAction_prev_text);
+			setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip);
 			// @issue missing action ids
 			getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);

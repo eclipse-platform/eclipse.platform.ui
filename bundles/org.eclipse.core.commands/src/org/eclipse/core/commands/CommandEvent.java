@@ -40,6 +40,11 @@ public class CommandEvent extends AbstractNamedHandleEvent {
 	private static final int CHANGED_HANDLED = LAST_USED_BIT << 2;
 
 	/**
+	 * The bit used to represent whether the command has changed its parameters.
+	 */
+	private static final int CHANGED_PARAMETERS = LAST_USED_BIT << 3;
+
+	/**
 	 * The command that has changed; this value is never <code>null</code>.
 	 */
 	private final Command command;
@@ -59,10 +64,14 @@ public class CommandEvent extends AbstractNamedHandleEvent {
 	 *            true, iff the handled property changed.
 	 * @param nameChanged
 	 *            true, iff the name property changed.
+	 * @param parametersChanged
+	 *            <code>true</code> if the parameters have changed;
+	 *            <code>false</code> otherwise.
 	 */
 	public CommandEvent(final Command command, final boolean categoryChanged,
 			final boolean definedChanged, final boolean descriptionChanged,
-			final boolean handledChanged, final boolean nameChanged) {
+			final boolean handledChanged, final boolean nameChanged,
+			final boolean parametersChanged) {
 		super(definedChanged, descriptionChanged, nameChanged);
 
 		if (command == null)
@@ -74,6 +83,9 @@ public class CommandEvent extends AbstractNamedHandleEvent {
 		}
 		if (handledChanged) {
 			changedValues |= CHANGED_HANDLED;
+		}
+		if (parametersChanged) {
+			changedValues |= CHANGED_PARAMETERS;
 		}
 	}
 
@@ -103,5 +115,14 @@ public class CommandEvent extends AbstractNamedHandleEvent {
 	 */
 	public final boolean isHandledChanged() {
 		return ((changedValues & CHANGED_HANDLED) != 0);
+	}
+
+	/**
+	 * Returns whether or not the parameters have changed.
+	 * 
+	 * @return true, iff the parameters property changed.
+	 */
+	public final boolean isParametersChanged() {
+		return ((changedValues & CHANGED_PARAMETERS) != 0);
 	}
 }

@@ -13,11 +13,13 @@ package org.eclipse.ui.internal.keys;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -58,8 +60,9 @@ public final class BindingService implements IBindingService {
 		this.bindingManager = bindingManager;
 	}
 
-	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
-		return bindingManager.getActiveBindingsFor(commandId);
+	public final TriggerSequence[] getActiveBindingsFor(
+			final ParameterizedCommand parameterizedCommand) {
+		return bindingManager.getActiveBindingsFor(parameterizedCommand);
 	}
 
 	public final Scheme getActiveScheme() {
@@ -86,7 +89,7 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getPartialMatches(trigger);
 	}
 
-	public final String getPerfectMatch(final TriggerSequence trigger) {
+	public final Binding getPerfectMatch(final TriggerSequence trigger) {
 		return bindingManager.getPerfectMatch(trigger);
 	}
 
@@ -110,8 +113,9 @@ public final class BindingService implements IBindingService {
 		return bindingManager.isPerfectMatch(sequence);
 	}
 
-	public final void readRegistryAndPreferences() {
-		BindingPersistence.read(bindingManager);
+	public final void readRegistryAndPreferences(
+			final ICommandService commandService) {
+		BindingPersistence.read(bindingManager, commandService);
 	}
 
 	public final void savePreferences(final Scheme activeScheme,

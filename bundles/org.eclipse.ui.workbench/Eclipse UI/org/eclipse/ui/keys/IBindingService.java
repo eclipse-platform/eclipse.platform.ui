@@ -13,10 +13,12 @@ package org.eclipse.ui.keys;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IService;
+import org.eclipse.ui.commands.ICommandService;
 
 /**
  * <p>
@@ -46,13 +48,14 @@ public interface IBindingService extends IService {
 	/**
 	 * Gets the active bindings for a given command identifier.
 	 * 
-	 * @param commandId
-	 *            The identifier of the command for which the active bindings
+	 * @param parameterizedCommand
+	 *            The fully-parameterized command for which the active bindings
 	 *            should be found; must not be <code>null</code>.
 	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
-	public TriggerSequence[] getActiveBindingsFor(String commandId);
+	public TriggerSequence[] getActiveBindingsFor(
+			ParameterizedCommand parameterizedCommand);
 
 	/**
 	 * Returns the currently active scheme.
@@ -100,9 +103,8 @@ public interface IBindingService extends IService {
 	 * 
 	 * @param trigger
 	 *            The prefix to look for; must not be <code>null</code>.
-	 * @return A map of triggers (<code>TriggerSequence</code>) to command
-	 *         identifier (<code>String</code>). This map may be empty, but
-	 *         it is never <code>null</code>.
+	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
+	 *         This map may be empty, but it is never <code>null</code>.
 	 */
 	public Map getPartialMatches(TriggerSequence trigger);
 
@@ -112,10 +114,9 @@ public interface IBindingService extends IService {
 	 * 
 	 * @param trigger
 	 *            The trigger to match; may be <code>null</code>.
-	 * @return The command identifier that matches, if any; <code>null</code>
-	 *         otherwise.
+	 * @return The binding that matches, if any; <code>null</code> otherwise.
 	 */
-	public String getPerfectMatch(TriggerSequence trigger);
+	public Binding getPerfectMatch(TriggerSequence trigger);
 
 	/**
 	 * Returns the currently active platform.
@@ -157,7 +158,7 @@ public interface IBindingService extends IService {
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public boolean isPerfectMatch(TriggerSequence trigger);
-	
+
 	/**
 	 * <p>
 	 * Reads the binding information from the registry and the preferences. This
@@ -166,8 +167,13 @@ public interface IBindingService extends IService {
 	 * completes, this binding service will reflect the current state of the
 	 * registry and preference store.
 	 * </p>
+	 * 
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>. This is used to locate command instances
+	 *            when constructing bindings.
 	 */
-	public void readRegistryAndPreferences();
+	public void readRegistryAndPreferences(ICommandService commandService);
 
 	/**
 	 * <p>

@@ -67,16 +67,22 @@ public final class CommandPersistence {
 	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	/**
-	 * The name of the id attribute, which is used on command and category
-	 * definitions.
+	 * The name of the id attribute, which is used on command, category and
+	 * parameter definitions.
 	 */
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	/**
-	 * The name of the name attribute, which appears on command and category
-	 * definitions.
+	 * The name of the name attribute, which appears on command, category and
+	 * parameter definitions.
 	 */
 	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+
+	/**
+	 * The name of the optional attribute, which appears on parameter
+	 * definitions.
+	 */
+	private static final String ATTRIBUTE_OPTIONAL = "optional"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing an action definition. This element only
@@ -100,6 +106,11 @@ public final class CommandPersistence {
 	private static final String ELEMENT_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a parameter.
+	 */
+	private static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
+
+	/**
 	 * The name of the action definitions extension point.
 	 */
 	private static final String EXTENSION_ACTION_DEFINITIONS = "org.eclipse.ui.actionDefinitions"; //$NON-NLS-1$
@@ -112,21 +123,21 @@ public final class CommandPersistence {
 	/**
 	 * The index of the category elements in the indexed array.
 	 * 
-	 * @see CommandPersistence#read(CommandManager)
+	 * @see CommandPersistence#read(CommandManager, ICommandService)
 	 */
 	private static final int INDEX_CATEGORY_DEFINITIONS = 0;
 
 	/**
 	 * The index of the command elements in the indexed array.
 	 * 
-	 * @see CommandPersistence#read(CommandManager)
+	 * @see CommandPersistence#read(CommandManager, ICommandService)
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
 
 	/**
 	 * The index of the handler submissions in the indexed array.
 	 * 
-	 * @see CommandPersistence#read(CommandManager)
+	 * @see CommandPersistence#read(CommandManager, ICommandService)
 	 */
 	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
 
@@ -336,7 +347,7 @@ public final class CommandPersistence {
 		 * If necessary, this list of status items will be constructed. It will
 		 * only contains instances of <code>IStatus</code>.
 		 */
-		List warningsToLog = null;
+		List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
@@ -350,9 +361,6 @@ public final class CommandPersistence {
 						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
 				warningsToLog.add(status);
 				continue;
 			}
@@ -367,9 +375,6 @@ public final class CommandPersistence {
 						+ commandId + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
 				warningsToLog.add(status);
 				continue;
 			}
@@ -392,6 +397,10 @@ public final class CommandPersistence {
 				}
 			}
 
+			// Read out the parameters.
+			final Parameter[] parameters = readParameters(configurationElement,
+					warningsToLog);
+
 			final Command command = commandManager.getCommand(commandId);
 			final Category category = commandManager.getCategory(categoryId);
 			if (!category.isDefined()) {
@@ -401,16 +410,13 @@ public final class CommandPersistence {
 						+ commandId + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.INFO,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-				if (warningsToLog == null) {
-					warningsToLog = new ArrayList();
-				}
 				warningsToLog.add(status);
 			}
-			command.define(name, description, category);
+			command.define(name, description, category, parameters);
 		}
 
 		// If there were any warnings, then log them now.
-		if (warningsToLog != null) {
+		if (!warningsToLog.isEmpty()) {
 			final String message = "Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points."; //$NON-NLS-1$
 			final IStatus status = new MultiStatus(
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
@@ -451,7 +457,7 @@ public final class CommandPersistence {
 					.getAttribute(ATTRIBUTE_COMMAND_ID);
 			if ((commandId == null) || (commandId.length() == 0)) {
 				// The id should never be null. This is invalid.
-				final String message = "Handler submission need a command id: '" //$NON-NLS-1$
+				final String message = "Handler submissions need a command id: '" //$NON-NLS-1$
 						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
@@ -475,6 +481,90 @@ public final class CommandPersistence {
 					message, null);
 			WorkbenchPlugin.log(message, status);
 		}
+	}
+
+	/**
+	 * Reads the parameters from a parent configuration element. This is used to
+	 * read the parameter sub-elements from a command element. Each parameter is
+	 * guaranteed to be valid. If invalid parameters are found, then a warning
+	 * status will be appended to the <code>warningsToLog</code> list.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which the parameters should be
+	 *            read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found will
+	 *            parsing the parameters will be appended to this list. This
+	 *            value must not be <code>null</code>.
+	 * @return The array of parameters found for this configuration element;
+	 *         <code>null</code> if none can be found.
+	 */
+	private static final Parameter[] readParameters(
+			final IConfigurationElement configurationElement,
+			final List warningsToLog) {
+		final IConfigurationElement[] parameterElements = configurationElement
+				.getChildren(ELEMENT_PARAMETER);
+		if ((parameterElements == null) || (parameterElements.length == 0)) {
+			return null;
+		}
+
+		int insertionIndex = 0;
+		Parameter[] parameters = new Parameter[parameterElements.length];
+		for (int i = 0; i < parameterElements.length; i++) {
+			final IConfigurationElement parameterElement = parameterElements[i];
+			// Read out the id
+			final String id = parameterElement.getAttribute(ATTRIBUTE_ID);
+			if ((id == null) || (id.length() == 0)) {
+				// The id should never be null. This is invalid.
+				final String message = "Parameters need an id: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Read out the name.
+			final String name = parameterElement.getAttribute(ATTRIBUTE_NAME);
+			if ((name == null) || (name.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a name: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+						+ id + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			/*
+			 * The IParameterValues will be initialized lazily as an
+			 * IExecutableExtension.
+			 */
+
+			// Read out the optional attribute, if present.
+			final String optionalString = parameterElement
+					.getAttribute(ATTRIBUTE_OPTIONAL);
+			boolean optional;
+			if ((optionalString == null) || (optionalString.length() == 0)) {
+				optional = true;
+			} else {
+				optional = !("false".equalsIgnoreCase(optionalString)); //$NON-NLS-1$
+			}
+
+			final Parameter parameter = new Parameter(id, name,
+					parameterElement, optional);
+			parameters[insertionIndex++] = parameter;
+		}
+
+		if (insertionIndex != parameters.length) {
+			final Parameter[] compactedParameters = new Parameter[insertionIndex];
+			System.arraycopy(parameters, 0, compactedParameters, 0,
+					insertionIndex);
+			parameters = compactedParameters;
+		}
+
+		return parameters;
 	}
 
 	/**

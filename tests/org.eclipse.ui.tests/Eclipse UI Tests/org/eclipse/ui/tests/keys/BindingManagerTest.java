@@ -15,6 +15,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -85,6 +88,12 @@ public final class BindingManagerTest extends UITestCase {
 	private BindingManager bindingManager = null;
 
 	/**
+	 * The command manager for the currently running test. <code>null</code>
+	 * if no test is running.
+	 */
+	private CommandManager commandManager = null;
+
+	/**
 	 * The context manager to use in each test case. A new context manager is
 	 * created for each test case, and it is disposed when the test is over.
 	 */
@@ -112,6 +121,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * cases.
 	 */
 	protected final void doSetUp() {
+		commandManager = new CommandManager();
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager);
 		listener = new TestListener();
@@ -126,6 +136,7 @@ public final class BindingManagerTest extends UITestCase {
 		listener = null;
 		bindingManager = null;
 		contextManager = null;
+		commandManager = null;
 	}
 
 	/**
@@ -168,10 +179,10 @@ public final class BindingManagerTest extends UITestCase {
 
 		// Try to add a binding that should become active.
 		final Binding binding = new TestBinding("conflict1", "na", "na", null,
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertSame("The binding should be active", binding.getCommandId(),
-				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
+		assertSame("The binding should be active", binding, bindingManager
+				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
 
 	/**
@@ -237,11 +248,11 @@ public final class BindingManagerTest extends UITestCase {
 
 		final String commandId = "commandId";
 		final Binding binding = new TestBinding(commandId, "na", "na", null,
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
 
 		final TriggerSequence[] bindings = bindingManager
-				.getActiveBindingsFor(commandId);
+				.getActiveBindingsFor(binding.getParameterizedCommand());
 		assertEquals("There should be one binding", 1, bindings.length);
 		assertSame("The binding should match", TestBinding.TRIGGER_SEQUENCE,
 				bindings[0]);
@@ -269,7 +280,7 @@ public final class BindingManagerTest extends UITestCase {
 
 		// Check that an added binding is included.
 		final Binding binding = new TestBinding(null, "schemeId", "contextId",
-				null, null, Binding.SYSTEM);
+				null, null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
 		final Binding[] bindings = bindingManager.getBindings();
 		assertEquals("There should be one binding", 1, bindings.length);
@@ -352,12 +363,20 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SCENARIO 1
 		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Command perfectCommand = commandManager.getCommand("perfect");
+		final ParameterizedCommand perfectParameterizedCommand = new ParameterizedCommand(
+				perfectCommand, null);
 		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
-				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+				perfectParameterizedCommand, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final KeySequence partialMatch1 = KeySequence
 				.getInstance("CTRL+F CTRL+F");
+		final Command partialCommand1 = commandManager.getCommand("partial1");
+		final ParameterizedCommand partialParameterizedCommand1 = new ParameterizedCommand(
+				partialCommand1, null);
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
-				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand1, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final Binding[] bindings = new Binding[2];
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
@@ -371,8 +390,12 @@ public final class BindingManagerTest extends UITestCase {
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
 				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Command partialCommand2 = commandManager.getCommand("partial2");
+		final ParameterizedCommand partialParameterizedCommand2 = new ParameterizedCommand(
+				partialCommand2, null);
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
-				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand2, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
@@ -380,11 +403,9 @@ public final class BindingManagerTest extends UITestCase {
 		assertEquals("There should be two partial matches", 2, partialMatches
 				.size());
 		assertSame("The partial match should be the one defined",
-				partialMatchBinding1.getCommandId(), partialMatches
-						.get(partialMatch1));
+				partialMatchBinding1, partialMatches.get(partialMatch1));
 		assertSame("The partial match should be the one defined",
-				partialMatchBinding2.getCommandId(), partialMatches
-						.get(partialMatch2));
+				partialMatchBinding2, partialMatches.get(partialMatch2));
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
@@ -393,14 +414,11 @@ public final class BindingManagerTest extends UITestCase {
 		assertEquals("There should be three partial matches", 3, partialMatches
 				.size());
 		assertSame("The partial match should be the one defined",
-				perfectMatchBinding.getCommandId(), partialMatches
-						.get(perfectMatch));
+				perfectMatchBinding, partialMatches.get(perfectMatch));
 		assertSame("The partial match should be the one defined",
-				partialMatchBinding1.getCommandId(), partialMatches
-						.get(partialMatch1));
+				partialMatchBinding1, partialMatches.get(partialMatch1));
 		assertSame("The partial match should be the one defined",
-				partialMatchBinding2.getCommandId(), partialMatches
-						.get(partialMatch2));
+				partialMatchBinding2, partialMatches.get(partialMatch2));
 	}
 
 	/**
@@ -429,37 +447,49 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SCENARIO 1
 		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Command perfectCommand = commandManager.getCommand("perfect");
+		final ParameterizedCommand perfectParameterizedCommand = new ParameterizedCommand(
+				perfectCommand, null);
 		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
-				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+				perfectParameterizedCommand, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final KeySequence partialMatch1 = KeySequence
 				.getInstance("CTRL+F CTRL+F");
+		final Command partialCommand1 = commandManager.getCommand("partial1");
+		final ParameterizedCommand partialParameterizedCommand1 = new ParameterizedCommand(
+				partialCommand1, null);
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
-				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand1, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final Binding[] bindings = new Binding[2];
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
-		String actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
-		assertSame("This should be a perfect match", perfectMatchBinding
-				.getCommandId(), actualCommandId);
+		Binding actualBinding = bindingManager.getPerfectMatch(perfectMatch);
+		assertSame("This should be a perfect match", perfectMatchBinding,
+				actualBinding);
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
 				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Command partialCommand2 = commandManager.getCommand("partial2");
+		final ParameterizedCommand partialParameterizedCommand2 = new ParameterizedCommand(
+				partialCommand2, null);
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
-				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand2, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
-		actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
-		assertNull("This should be no perfect matches", actualCommandId);
+		actualBinding = bindingManager.getPerfectMatch(perfectMatch);
+		assertNull("There should be no perfect matches", actualBinding);
 
 		// SCENARIO 3
 		bindingManager.addBinding(perfectMatchBinding);
-		actualCommandId = bindingManager.getPerfectMatch(KeySequence
+		actualBinding = bindingManager.getPerfectMatch(KeySequence
 				.getInstance());
 		assertNull("This should be no perfect matches for an empty sequence",
-				actualCommandId);
+				actualBinding);
 	}
 
 	/**
@@ -509,12 +539,20 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SCENARIO 1
 		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Command perfectCommand = commandManager.getCommand("perfect");
+		final ParameterizedCommand perfectParameterizedCommand = new ParameterizedCommand(
+				perfectCommand, null);
 		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
-				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+				perfectParameterizedCommand, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final KeySequence partialMatch1 = KeySequence
 				.getInstance("CTRL+F CTRL+F");
+		final Command partialCommand1 = commandManager.getCommand("partial1");
+		final ParameterizedCommand partialParameterizedCommand1 = new ParameterizedCommand(
+				partialCommand1, null);
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
-				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand1, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final Binding[] bindings = new Binding[2];
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
@@ -525,8 +563,12 @@ public final class BindingManagerTest extends UITestCase {
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
 				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Command partialCommand2 = commandManager.getCommand("partial2");
+		final ParameterizedCommand partialParameterizedCommand2 = new ParameterizedCommand(
+				partialCommand2, null);
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
-				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand2, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
@@ -566,12 +608,20 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SCENARIO 1
 		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Command perfectCommand = commandManager.getCommand("perfect");
+		final ParameterizedCommand perfectParameterizedCommand = new ParameterizedCommand(
+				perfectCommand, null);
 		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
-				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+				perfectParameterizedCommand, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final KeySequence partialMatch1 = KeySequence
 				.getInstance("CTRL+F CTRL+F");
+		final Command partialCommand1 = commandManager.getCommand("partial1");
+		final ParameterizedCommand partialParameterizedCommand1 = new ParameterizedCommand(
+				partialCommand1, null);
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
-				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand1, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		final Binding[] bindings = new Binding[2];
 		bindings[0] = perfectMatchBinding;
 		bindings[1] = partialMatchBinding1;
@@ -582,8 +632,12 @@ public final class BindingManagerTest extends UITestCase {
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
 				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Command partialCommand2 = commandManager.getCommand("perfect");
+		final ParameterizedCommand partialParameterizedCommand2 = new ParameterizedCommand(
+				partialCommand2, null);
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
-				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+				partialParameterizedCommand2, "na", "na", null, null, null,
+				Binding.SYSTEM);
 		bindings[0] = partialMatchBinding1;
 		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
@@ -616,26 +670,26 @@ public final class BindingManagerTest extends UITestCase {
 
 		// ADD SOME BINDINGS
 		final Binding binding1 = new TestBinding("command1", "na", "na", null,
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("command2", "na", "na", "zh",
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding2);
 		final Binding binding3 = new TestBinding("command3", "na", "na", null,
-				"gtk", Binding.SYSTEM);
+				"gtk", Binding.SYSTEM, null);
 		bindingManager.addBinding(binding3);
 		final Binding binding4 = new TestBinding("command4", "na", "na", null,
-				"gtk", Binding.USER);
+				"gtk", Binding.USER, null);
 		bindingManager.addBinding(binding4);
 		final Binding binding5 = new TestBinding("command5", "na", "na", "zh",
-				"gtk", Binding.USER);
+				"gtk", Binding.USER, null);
 		bindingManager.addBinding(binding5);
 		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor("command1"));
+				.getActiveBindingsFor(binding1.getParameterizedCommand()));
 		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor("command2"));
+				.getActiveBindingsFor(binding2.getParameterizedCommand()));
 		assertNotNull("There should be three active bindings", bindingManager
-				.getActiveBindingsFor("command4"));
+				.getActiveBindingsFor(binding4.getParameterizedCommand()));
 
 		// REMOVE SOME BINDINGS
 		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
@@ -643,13 +697,13 @@ public final class BindingManagerTest extends UITestCase {
 		assertEquals("There should be four bindings left", 4, bindingManager
 				.getBindings().length);
 		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor("command1"));
+				.getActiveBindingsFor(binding1.getParameterizedCommand()));
 		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor("command2"));
+				.getActiveBindingsFor(binding2.getParameterizedCommand()));
 		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor("command3"));
+				.getActiveBindingsFor(binding3.getParameterizedCommand()));
 		assertNotNull("There should be four active bindings", bindingManager
-				.getActiveBindingsFor("command4"));
+				.getActiveBindingsFor(binding4.getParameterizedCommand()));
 	}
 
 	/**
@@ -703,19 +757,19 @@ public final class BindingManagerTest extends UITestCase {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// SET NULL
-		final String commandId = "commandId";
 		bindingManager.setBindings(null);
 		assertTrue("There should be no active bindings", bindingManager
-				.getActiveBindingsFor(commandId).length == 0);
+				.getActiveBindingsFor(null).length == 0);
 
 		// ADD BINDING
+		final String commandId = "commandId";
 		final Binding binding = new TestBinding(commandId, "na", "na", null,
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		final Binding[] bindings = new Binding[1];
 		bindings[0] = binding;
 		bindingManager.setBindings(bindings);
 		final TriggerSequence[] activeBindings = bindingManager
-				.getActiveBindingsFor(commandId);
+				.getActiveBindingsFor(binding.getParameterizedCommand());
 		assertEquals("There should be one active binding", 1,
 				activeBindings.length);
 		assertSame("The binding should be the one we set",
@@ -751,13 +805,14 @@ public final class BindingManagerTest extends UITestCase {
 		// SET TO SOMETHING
 		final String commandId = "commandId";
 		final Binding binding = new TestBinding(commandId, "na", "na", "xx",
-				null, Binding.SYSTEM);
+				null, Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertTrue("The binding shouldn't be active", bindingManager
-				.getActiveBindingsFor(commandId).length == 0);
+		assertTrue("The binding shouldn't be active",
+				bindingManager.getActiveBindingsFor(binding
+						.getParameterizedCommand()).length == 0);
 		bindingManager.setLocale("xx_XX");
 		final TriggerSequence[] activeBindings = bindingManager
-				.getActiveBindingsFor(commandId);
+				.getActiveBindingsFor(binding.getParameterizedCommand());
 		assertEquals("The binding should become active", 1,
 				activeBindings.length);
 		assertSame("The binding should be the same",
@@ -793,13 +848,14 @@ public final class BindingManagerTest extends UITestCase {
 		// SET TO SOMETHING
 		final String commandId = "commandId";
 		final Binding binding = new TestBinding(commandId, "na", "na", null,
-				"atari", Binding.SYSTEM);
+				"atari", Binding.SYSTEM, null);
 		bindingManager.addBinding(binding);
-		assertTrue("The binding shouldn't be active", bindingManager
-				.getActiveBindingsFor(commandId).length == 0);
+		assertTrue("The binding shouldn't be active",
+				bindingManager.getActiveBindingsFor(binding
+						.getParameterizedCommand()).length == 0);
 		bindingManager.setPlatform("atari");
 		final TriggerSequence[] activeBindings = bindingManager
-				.getActiveBindingsFor(commandId);
+				.getActiveBindingsFor(binding.getParameterizedCommand());
 		assertEquals("The binding should become active", 1,
 				activeBindings.length);
 		assertSame("The binding should be the same",

@@ -109,38 +109,40 @@
             categoryId="org.eclipse.ui.examples.rcp.browser.commands.browserCategory"
             name="Easter Egg"
             id="org.eclipse.ui.examples.rcp.browser.commands.easterEgg"/>
-      <keyConfiguration
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <scheme
             name="Browser Keys"
             id="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <activeKeyConfiguration keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.back"
-            keySequence="Alt+Arrow_Left"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="M3+ARROW_LEFT"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.forward"
-            keySequence="Alt+Arrow_Right"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="M3+ARROW_RIGHT"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.stop"
-            keySequence="Esc"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="ESC"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.refresh"
-            keySequence="F5"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="F5"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.newTab"
-            keySequence="Ctrl+T"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="M1+T"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.history"
-            keySequence="Ctrl+H"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
-      <keyBinding
+            sequence="M1+H"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+      <key
             commandId="org.eclipse.ui.examples.rcp.browser.commands.easterEgg"
-            keySequence="Ctrl+Shift+E"
-            keyConfigurationId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
+            sequence="M1+M2+E"
+            schemeId="org.eclipse.ui.examples.rcp.browser.keyConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

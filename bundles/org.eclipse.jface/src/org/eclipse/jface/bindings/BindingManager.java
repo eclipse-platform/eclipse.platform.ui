@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -92,7 +93,7 @@ public final class BindingManager implements IContextManagerListener,
 		if (map == null) {
 			return;
 		}
-		
+
 		final Object currentValue = map.get(key);
 		if (currentValue != null) {
 			final Collection values = (Collection) currentValue;
@@ -152,19 +153,20 @@ public final class BindingManager implements IContextManagerListener,
 
 	/**
 	 * The active bindings. This is a map of triggers (
-	 * <code>TriggerSequence</code>) to command ids (<code>String</code>).
+	 * <code>TriggerSequence</code>) to bindings (<code>Binding</code>).
 	 * This value will only be <code>null</code> if the active bindings have
 	 * not yet been computed. Otherwise, this value may be empty.
 	 */
 	private Map activeBindings = null;
 
 	/**
-	 * The active bindings indexed by command id. This is a map of command ids (<code>String</code>)
+	 * The active bindings indexed by fully-parameterized commands. This is a
+	 * map of fully-parameterized commands (<code>ParameterizedCommand</code>)
 	 * to triggers ( <code>TriggerSequence</code>). This value will only be
 	 * <code>null</code> if the active bindings have not yet been computed.
 	 * Otherwise, this value may be empty.
 	 */
-	private Map activeBindingsByCommandId = null;
+	private Map activeBindingsByParameterizedCommand = null;
 
 	/**
 	 * The scheme that is currently active. An active scheme is the one that is
@@ -208,7 +210,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * guaranteed to never be <code>null</code>.
 	 */
 	private final ContextManager contextManager;
-	
+
 	/**
 	 * The number of defined schemes.
 	 */
@@ -258,7 +260,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * A map of prefixes (<code>TriggerSequence</code>) to a map of
 	 * available completions (possibly <code>null</code>, which means there
 	 * is an exact match). The available completions is a map of trigger (<code>TriggerSequence</code>)
-	 * to command identifier (<code>String</code>). This value may be
+	 * to bindings (<code>Binding</code>). This value may be
 	 * <code>null</code> if there is no existing solution.
 	 */
 	private Map prefixTable = null;
@@ -390,16 +392,16 @@ public final class BindingManager implements IContextManagerListener,
 			}
 
 			// Break apart the trigger sequence.
-			final String commandId = (String) entry.getValue();
+			final Binding binding = (Binding) entry.getValue();
 			for (int i = 0; i < prefixesLength; i++) {
 				final TriggerSequence prefix = prefixes[i];
 				final Object value = prefixTable.get(prefix);
 				if ((prefixTable.containsKey(prefix)) && (value instanceof Map)) {
-					((Map) value).put(triggerSequence, commandId);
+					((Map) value).put(triggerSequence, binding);
 				} else {
 					final Map map = new HashMap();
 					prefixTable.put(prefix, map);
-					map.put(triggerSequence, commandId);
+					map.put(triggerSequence, binding);
 				}
 			}
 		}
@@ -455,10 +457,10 @@ public final class BindingManager implements IContextManagerListener,
 	 *            but the values may be (i.e., no parent). This map may be
 	 *            empty. It may be <code>null</code> if we shouldn't consider
 	 *            contexts.
-	 * @param commandIdsByTrigger
+	 * @param bindingsByTrigger
 	 *            The empty of map that is intended to be filled with triggers (
-	 *            <code>TriggerSequence</code>) to command identifiers (
-	 *            <code>String</code>). This value must not be
+	 *            <code>TriggerSequence</code>) to bindings (
+	 *            <code>Binding</code>). This value must not be
 	 *            <code>null</code> and must be empty.
 	 * @param triggersByCommandId
 	 *            The empty of map that is intended to be filled with command
@@ -469,7 +471,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *            computed).
 	 */
 	private final void computeBindings(final Map activeContextTree,
-			final Map commandIdsByTrigger, final Map triggersByCommandId) {
+			final Map bindingsByTrigger, final Map triggersByCommandId) {
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
 		 */
@@ -556,28 +558,29 @@ public final class BindingManager implements IContextManagerListener,
 				final Collection bindings = new ArrayList();
 				if (match instanceof Binding) {
 					bindings.add(match);
-					commandIdsByTrigger.put(trigger, bindings);
+					bindingsByTrigger.put(trigger, bindings);
 					addReverseLookup(triggersByCommandId, ((Binding) match)
-							.getCommandId(), trigger);
+							.getParameterizedCommand(), trigger);
 
 				} else if (match instanceof Collection) {
 					bindings.addAll(resolveConflicts((Collection) match));
-					commandIdsByTrigger.put(trigger, bindings);
-					
+					bindingsByTrigger.put(trigger, bindings);
+
 					final Iterator matchItr = bindings.iterator();
 					while (matchItr.hasNext()) {
 						addReverseLookup(triggersByCommandId,
-								((Binding) matchItr.next()).getCommandId(),
-								trigger);
+								((Binding) matchItr.next())
+										.getParameterizedCommand(), trigger);
 					}
 				}
 
 			} else {
 				// We are building the flat map of trigger to commands.
 				if (match instanceof Binding) {
-					final String commandId = ((Binding) match).getCommandId();
-					commandIdsByTrigger.put(trigger, commandId);
-					addReverseLookup(triggersByCommandId, commandId, trigger);
+					final Binding binding = (Binding) match;
+					bindingsByTrigger.put(trigger, binding);
+					addReverseLookup(triggersByCommandId, binding
+							.getParameterizedCommand(), trigger);
 
 				} else if (match instanceof Collection) {
 					final Binding winner = resolveConflicts((Collection) match,
@@ -589,10 +592,9 @@ public final class BindingManager implements IContextManagerListener,
 							System.out.println("BINDINGS >>     " + match); //$NON-NLS-1$
 						}
 					} else {
-						final String commandId = winner.getCommandId();
-						commandIdsByTrigger.put(trigger, commandId);
-						addReverseLookup(triggersByCommandId, commandId,
-								trigger);
+						bindingsByTrigger.put(trigger, winner);
+						addReverseLookup(triggersByCommandId, winner
+								.getParameterizedCommand(), trigger);
 					}
 				}
 			}
@@ -775,10 +777,10 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
-	 * @return The map of triggers (<code>TriggerSequence</code>) to command
-	 *         ids (<code>String</code>) which are currently active. This
-	 *         value may be <code>null</code> if there are no active bindings,
-	 *         and it may be empty.
+	 * @return The map of triggers (<code>TriggerSequence</code>) to
+	 *         bindings (<code>Binding</code>) which are currently active.
+	 *         This value may be <code>null</code> if there are no active
+	 *         bindings, and it may be empty.
 	 */
 	private final Map getActiveBindings() {
 		if (activeBindings == null) {
@@ -798,16 +800,18 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
-	 * @return The map of command ids (<code>String</code>) to triggers (<code>TriggerSequence</code>)
-	 *         which are currently active. This value may be <code>null</code>
-	 *         if there are no active bindings, and it may be empty.
+	 * @return The map of fully-parameterized commands (<code>ParameterizedCommand</code>)
+	 *         to triggers (<code>TriggerSequence</code>) which are
+	 *         currently active. This value may be <code>null</code> if there
+	 *         are no active bindings, and it may be empty.
 	 */
-	private final Map getActiveBindingsByCommandId() {
-		if (activeBindingsByCommandId == null) {
+	private final Map getActiveBindingsByParameterizedCommand() {
+		if (activeBindingsByParameterizedCommand == null) {
 			recomputeBindings();
 		}
 
-		return Collections.unmodifiableMap(activeBindingsByCommandId);
+		return Collections
+				.unmodifiableMap(activeBindingsByParameterizedCommand);
 	}
 
 	/**
@@ -845,7 +849,7 @@ public final class BindingManager implements IContextManagerListener,
 			existingCache = bindingCache;
 			cachedBindings.put(existingCache, existingCache);
 		}
-		Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
+		Map commandIdsByTrigger = existingCache.getBindingsByTrigger();
 		if (commandIdsByTrigger != null) {
 			if (DEBUG) {
 				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
@@ -862,7 +866,7 @@ public final class BindingManager implements IContextManagerListener,
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
 		computeBindings(null, commandIdsByTrigger, null);
-		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
+		existingCache.setBindingsByTrigger(commandIdsByTrigger);
 		return Collections.unmodifiableMap(commandIdsByTrigger);
 	}
 
@@ -908,15 +912,17 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>n</code> is the number of bindings.
 	 * </p>
 	 * 
-	 * @param commandId
-	 *            The identifier for the command whose bindings you wish to
+	 * @param parameterizedCommand
+	 *            The fully-parameterized command whose bindings you wish to
 	 *            find. This argument may be <code>null</code>.
 	 * @return The array of active triggers (<code>TriggerSequence</code>)
 	 *         for a particular command identifier. This value is guaranteed to
 	 *         never be <code>null</code>, but it may be empty.
 	 */
-	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
-		final Object object = getActiveBindingsByCommandId().get(commandId);
+	public final TriggerSequence[] getActiveBindingsFor(
+			final ParameterizedCommand parameterizedCommand) {
+		final Object object = getActiveBindingsByParameterizedCommand().get(
+				parameterizedCommand);
 		if (object instanceof Collection) {
 			final Collection collection = (Collection) object;
 			return (TriggerSequence[]) collection
@@ -979,7 +985,7 @@ public final class BindingManager implements IContextManagerListener,
 		if ((definedSchemes == null) || (definedSchemeCount == 0)) {
 			return new Scheme[0];
 		}
-		
+
 		final Scheme[] returnValue = new Scheme[definedSchemeCount];
 		System.arraycopy(definedSchemes, 0, returnValue, 0, definedSchemeCount);
 		return returnValue;
@@ -1013,9 +1019,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @param trigger
 	 *            The prefix to look for; must not be <code>null</code>.
-	 * @return A map of triggers (<code>TriggerSequence</code>) to command
-	 *         identifier (<code>String</code>). This map may be empty, but
-	 *         it is never <code>null</code>.
+	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
+	 *         This map may be empty, but it is never <code>null</code>.
 	 */
 	public final Map getPartialMatches(final TriggerSequence trigger) {
 		final Map partialMatches = (Map) getPrefixTable().get(trigger);
@@ -1039,11 +1044,10 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @param trigger
 	 *            The trigger to match; may be <code>null</code>.
-	 * @return The command identifier that matches, if any; <code>null</code>
-	 *         otherwise.
+	 * @return The binding that matches, if any; <code>null</code> otherwise.
 	 */
-	public final String getPerfectMatch(final TriggerSequence trigger) {
-		return (String) getActiveBindings().get(trigger);
+	public final Binding getPerfectMatch(final TriggerSequence trigger) {
+		return (Binding) getActiveBindings().get(trigger);
 	}
 
 	/**
@@ -1074,7 +1078,7 @@ public final class BindingManager implements IContextManagerListener,
 	 * @return A map of prefixes (<code>TriggerSequence</code>) to a map of
 	 *         available completions (possibly <code>null</code>, which means
 	 *         there is an exact match). The available completions is a map of
-	 *         trigger (<code>TriggerSequence</code>) to command identifier (<code>String</code>).
+	 *         trigger (<code>TriggerSequence</code>) to binding (<code>Binding</code>).
 	 *         This value will never be <code>null</code> but may be empty.
 	 */
 	private final Map getPrefixTable() {
@@ -1296,7 +1300,7 @@ public final class BindingManager implements IContextManagerListener,
 			existingCache = bindingCache;
 			cachedBindings.put(existingCache, existingCache);
 		}
-		Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
+		Map commandIdsByTrigger = existingCache.getBindingsByTrigger();
 		if (commandIdsByTrigger != null) {
 			if (DEBUG) {
 				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
@@ -1313,12 +1317,12 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
-		final Map triggersByCommandId = new HashMap();
+		final Map triggersByParameterizedCommand = new HashMap();
 		computeBindings(activeContextTree, commandIdsByTrigger,
-				triggersByCommandId);
-		existingCache.setCommandIdsByTrigger(commandIdsByTrigger);
-		existingCache.setTriggersByCommandId(triggersByCommandId);
-		setActiveBindings(commandIdsByTrigger, triggersByCommandId,
+				triggersByParameterizedCommand);
+		existingCache.setBindingsByTrigger(commandIdsByTrigger);
+		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
+		setActiveBindings(commandIdsByTrigger, triggersByParameterizedCommand,
 				buildPrefixTable(commandIdsByTrigger));
 		existingCache.setPrefixTable(prefixTable);
 	}
@@ -1416,8 +1420,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * Attempts to remove deletion markers from the collection of bindings.
 	 * </p>
 	 * <p>
-	 * This method completes in <code>O(n)</code>, where <code>n</code>
-	 * is the number of bindings.
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
 	 * </p>
 	 * 
 	 * @param bindings
@@ -1437,8 +1441,8 @@ public final class BindingManager implements IContextManagerListener,
 		// Extract the deletions.
 		for (int i = 0; i < bindingCount; i++) {
 			final Binding binding = bindingsCopy[i];
-			if ((binding.getCommandId() == null) && (localeMatches(binding))
-					&& (platformMatches(binding))) {
+			if ((binding.getParameterizedCommand() == null)
+					&& (localeMatches(binding)) && (platformMatches(binding))) {
 				deletions.put(binding.getTriggerSequence(), binding);
 				bindingsCopy[i] = null;
 				deletedCount++;
@@ -1638,9 +1642,9 @@ public final class BindingManager implements IContextManagerListener,
 					continue;
 				}
 			}
-			
+
 			/*
-			 * CONTEXTS: Check for context superiority.  Bindings defined in a
+			 * CONTEXTS: Check for context superiority. Bindings defined in a
 			 * child context will take priority over bindings defined in a
 			 * parent context -- assuming that the schemes lead to a conflict.
 			 */
@@ -1723,7 +1727,7 @@ public final class BindingManager implements IContextManagerListener,
 			if (schemeIdAdded) {
 				/*
 				 * Add the defined scheme to the array -- creating and growing
-				 * the array as necessary. 
+				 * the array as necessary.
 				 */
 				if (definedSchemes == null) {
 					definedSchemes = new Scheme[] { scheme };
@@ -1763,7 +1767,7 @@ public final class BindingManager implements IContextManagerListener,
 						definedSchemeCount--;
 					}
 				}
-				
+
 				if (activeScheme == scheme) {
 					activeScheme = null;
 					activeSchemeIds = null;
@@ -1774,8 +1778,9 @@ public final class BindingManager implements IContextManagerListener,
 				}
 			}
 
-			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
-					activeSchemeChanged, scheme, schemeIdAdded, false, false));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
+					null, activeSchemeChanged, scheme, schemeIdAdded, false,
+					false));
 		}
 	}
 
@@ -1786,31 +1791,32 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @param activeBindings
 	 *            This is a map of triggers ( <code>TriggerSequence</code>)
-	 *            to command ids (<code>String</code>). This value will only
+	 *            to bindings (<code>Binding</code>). This value will only
 	 *            be <code>null</code> if the active bindings have not yet
 	 *            been computed. Otherwise, this value may be empty.
 	 * @param activeBindingsByCommandId
-	 *            This is a map of command ids (<code>String</code>) to
-	 *            triggers ( <code>TriggerSequence</code>). This value will
-	 *            only be <code>null</code> if the active bindings have not
-	 *            yet been computed. Otherwise, this value may be empty.
+	 *            This is a map of fully-parameterized commands (<code>ParameterizedCommand</code>)
+	 *            to triggers ( <code>TriggerSequence</code>). This value
+	 *            will only be <code>null</code> if the active bindings have
+	 *            not yet been computed. Otherwise, this value may be empty.
 	 * @param prefixTable
 	 *            A map of prefixes (<code>TriggerSequence</code>) to a map
 	 *            of available completions (possibly <code>null</code>, which
 	 *            means there is an exact match). The available completions is a
-	 *            map of trigger (<code>TriggerSequence</code>) to command
-	 *            identifier (<code>String</code>). This value may be
-	 *            <code>null</code> if there is no existing solution.
+	 *            map of trigger (<code>TriggerSequence</code>) to binding (<code>Binding</code>).
+	 *            This value may be <code>null</code> if there is no existing
+	 *            solution.
 	 */
 	private final void setActiveBindings(final Map activeBindings,
 			final Map activeBindingsByCommandId, final Map prefixTable) {
 		this.activeBindings = activeBindings;
-		final Map previousBindingsByCommandId = this.activeBindingsByCommandId;
-		this.activeBindingsByCommandId = activeBindingsByCommandId;
+		final Map previousBindingsByParameterizedCommand = this.activeBindingsByParameterizedCommand;
+		this.activeBindingsByParameterizedCommand = activeBindingsByCommandId;
 		this.prefixTable = prefixTable;
 
-		fireBindingManagerChanged(new BindingManagerEvent(this, true, previousBindingsByCommandId, false,
-				null, false, false, false));
+		fireBindingManagerChanged(new BindingManagerEvent(this, true,
+				previousBindingsByParameterizedCommand, false, null, false,
+				false, false));
 	}
 
 	/**
@@ -1845,8 +1851,8 @@ public final class BindingManager implements IContextManagerListener,
 		activeScheme = scheme;
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
 		clearSolution();
-		fireBindingManagerChanged(new BindingManagerEvent(this, false, null, true,
-				null, false, false, false));
+		fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
+				true, null, false, false, false));
 	}
 
 	/**
@@ -1863,8 +1869,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param bindings
-	 *            The new array of bindings; may be <code>null</code>. This set
-	 *            is copied into a local data structure.
+	 *            The new array of bindings; may be <code>null</code>. This
+	 *            set is copied into a local data structure.
 	 */
 	public final void setBindings(final Binding[] bindings) {
 		if (Arrays.equals(this.bindings, bindings)) {
@@ -1908,8 +1914,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.locale = locale;
 			this.locales = expand(locale, LOCALE_SEPARATOR);
 			clearSolution();
-			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
-					false, null, false, true, false));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
+					null, false, null, false, true, false));
 		}
 	}
 
@@ -1938,8 +1944,8 @@ public final class BindingManager implements IContextManagerListener,
 			this.platform = platform;
 			this.platforms = expand(platform, Util.ZERO_LENGTH_STRING);
 			clearSolution();
-			fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
-					false, null, false, false, true));
+			fireBindingManagerChanged(new BindingManagerEvent(this, false,
+					null, false, null, false, false, true));
 		}
 	}
 }

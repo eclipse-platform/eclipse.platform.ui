@@ -14,6 +14,9 @@ package org.eclipse.ui.tests.contexts;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -120,7 +123,6 @@ public final class Bug84763Test extends UITestCase {
 	 */
 	public void testWindowChildWhenDialog() throws NotDefinedException,
 			ParseException {
-		System.out.println("testSiblingContext");
 		// Define the contexts to use.
 		final Context dialogAndWindowsContext = contextManager
 				.getContext(IContextIds.CONTEXT_ID_DIALOG_AND_WINDOW);
@@ -141,8 +143,12 @@ public final class Bug84763Test extends UITestCase {
 		final Scheme scheme = bindingManager.getScheme("na");
 		scheme.define("name", null, null);
 		bindingManager.setActiveScheme(scheme);
+		final CommandManager commandManager = new CommandManager();
+		final Command command = commandManager.getCommand("commandId");
+		final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+				command, null);
 		bindingManager.addBinding(new KeyBinding(KeySequence
-				.getInstance("CTRL+F"), "commandId", scheme.getId(),
+				.getInstance("CTRL+F"), parameterizedCommand, scheme.getId(),
 				windowChildContext.getId(), null, null, null, Binding.SYSTEM));
 		bindingManager.getActiveBindingsFor(null);
 

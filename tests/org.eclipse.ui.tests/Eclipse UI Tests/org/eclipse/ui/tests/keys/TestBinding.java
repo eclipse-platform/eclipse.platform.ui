@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -53,6 +56,11 @@ final class TestBinding extends Binding {
 	}
 
 	/**
+	 * A command manager to use for creating commands.
+	 */
+	private static final CommandManager commandManager = new CommandManager();
+
+	/**
 	 * A trigger sequence to be used by all test bindings. This value is never
 	 * <code>null</code>.
 	 */
@@ -73,11 +81,15 @@ final class TestBinding extends Binding {
 	 *            The platform
 	 * @param type
 	 *            The type: SYSTEM or USER
+	 * @param paramaterizations
+	 *            The parameters
 	 */
 	TestBinding(final String commandId, final String schemeId,
 			final String contextId, final String locale, final String platform,
-			final int type) {
-		super(commandId, schemeId, contextId, locale, platform, null, type);
+			final int type, final Parameterization[] parameterizations) {
+		super((commandId == null) ? null : new ParameterizedCommand(
+				commandManager.getCommand(commandId), parameterizations),
+				schemeId, contextId, locale, platform, null, type);
 	}
 
 	/*

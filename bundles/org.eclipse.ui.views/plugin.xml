@@ -38,39 +38,31 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            name="%ViewCommand.propertySheet.name"
-            description="%ViewCommand.propertySheet.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.PropertySheet">
-      </command>
-      <command
-            name="%ViewCommand.contentOutline.name"
-            description="%ViewCommand.contentOutline.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.views.ContentOutline">
-      </command>
-      <keyBinding
-            keySequence="M2+M3+Q O"
+         point="org.eclipse.ui.bindings">
+      <key
+            sequence="M2+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.ContentOutline"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+            	id="org.eclipse.ui.views.showView.viewId"
+            	value="org.eclipse.ui.views.ContentOutline" />
+      </key>
+      <key
             platform="carbon"
-            keySequence="M2+M3+Q O"
+            sequence="M2+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
-            commandId=""
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
-            keySequence="M1+M3+Q O"
+            sequence="M1+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.ContentOutline"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+            	id="org.eclipse.ui.views.showView.viewId" 
+            	value="org.eclipse.ui.views.ContentOutline" />
+      </key>
    </extension>
    
 </plugin>

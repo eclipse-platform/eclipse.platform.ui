@@ -62,10 +62,10 @@ final class CachedBindingSet {
 
 	/**
 	 * The map representing the resolved state of the bindings. This is a map of
-	 * a trigger (<code>TriggerSequence</code>) to command id (<code>String</code>).
+	 * a trigger (<code>TriggerSequence</code>) to binding (<code>Binding</code>).
 	 * This value may be <code>null</code> if it has not yet been initialized.
 	 */
-	private Map commandIdsByTrigger = null;
+	private Map bindingsByTrigger = null;
 
 	/**
 	 * The hash code for this object. This value is computed lazily, and marked
@@ -223,12 +223,12 @@ final class CachedBindingSet {
 	/**
 	 * Returns the map of command identifiers indexed by trigger sequence.
 	 * 
-	 * @return A map of triggers (<code>TriggerSequence</code>) to command
-	 *         identifiers (<code>String</code>). This value may be
-	 *         <code>null</code> if this was not yet initialized.
+	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
+	 *         This value may be <code>null</code> if this was not yet
+	 *         initialized.
 	 */
-	final Map getCommandIdsByTrigger() {
-		return commandIdsByTrigger;
+	final Map getBindingsByTrigger() {
+		return bindingsByTrigger;
 	}
 
 	/**
@@ -285,16 +285,15 @@ final class CachedBindingSet {
 	 * 
 	 * @param commandIdsByTrigger
 	 *            The map to set; must not be <code>null</code>. This is a
-	 *            map of triggers (<code>TriggerSequence</code>) to command
-	 *            identifiers (<code>String</code>).
+	 *            map of triggers (<code>TriggerSequence</code>) to binding (<code>Binding</code>).
 	 */
-	final void setCommandIdsByTrigger(final Map commandIdsByTrigger) {
+	final void setBindingsByTrigger(final Map commandIdsByTrigger) {
 		if (commandIdsByTrigger == null) {
 			throw new NullPointerException(
 					"Cannot set a null binding resolution"); //$NON-NLS-1$
 		}
 
-		this.commandIdsByTrigger = commandIdsByTrigger;
+		this.bindingsByTrigger = commandIdsByTrigger;
 	}
 
 	/**

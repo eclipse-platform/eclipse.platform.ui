@@ -11,16 +11,17 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
@@ -40,7 +41,6 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
@@ -195,12 +195,6 @@ public final class WorkbenchKeyboard {
 	private final IBindingService bindingService;
 
 	/**
-	 * The command manager to be used to resolve key bindings. This member
-	 * variable should never be <code>null</code>.
-	 */
-	private final ICommandService commandService;
-
-	/**
 	 * The listener that runs key events past the global key bindings.
 	 */
 	private final Listener keyDownFilter = new Listener() {
@@ -336,8 +330,6 @@ public final class WorkbenchKeyboard {
 		state = new KeyBindingState(associatedWorkbench);
 		bindingService = (IBindingService) workbench
 				.getService(IWorkbenchServices.BINDING);
-		commandService = (ICommandService) workbench
-				.getService(IWorkbenchServices.COMMAND);
 		workbench.addWindowListener(windowListener);
 	}
 
@@ -376,9 +368,11 @@ public final class WorkbenchKeyboard {
 	 * enabled, then it tries the actual execution. Execution failures are
 	 * logged. When this method completes, the key binding state is reset.
 	 * 
-	 * @param commandId
-	 *            The identifier for the command that should be executed; should
-	 *            not be <code>null</code>.
+	 * @param binding
+	 *            The binding that should be executed; should not be
+	 *            <code>null</code>.
+	 * @param trigger
+	 *            The triggering event; may be <code>null</code>.
 	 * @return <code>true</code> if there was a handler; <code>false</code>
 	 *         otherwise.
 	 * @throws CommandException
@@ -387,18 +381,25 @@ public final class WorkbenchKeyboard {
 	 *             log the message, display a dialog, or ignore this exception
 	 *             entirely.
 	 */
-	final boolean executeCommand(String commandId) throws CommandException {
+	final boolean executeCommand(final Binding binding, final Object trigger)
+			throws CommandException {
+		final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+
 		if (DEBUG) {
 			System.out
 					.println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
-							+ commandId + "')"); //$NON-NLS-1$
+							+ parameterizedCommand.getId() + "', parameters = " //$NON-NLS-1$
+							+ parameterizedCommand.getParameterMap() + ")"); //$NON-NLS-1$
 		}
 
 		// Reset the key binding state (close window, clear status line, etc.)
 		resetState(false);
 
 		// Dispatch to the handler.
-		Command command = commandService.getCommand(commandId);
+		final Command command = parameterizedCommand.getCommand();
+		final boolean commandDefined = command.isDefined();
+		final boolean commandHandled = command.isHandled();
+		final boolean commandEnabled = command.isEnabled();
 
 		if (DEBUG && DEBUG_VERBOSE) {
 			if (!command.isDefined()) {
@@ -410,13 +411,9 @@ public final class WorkbenchKeyboard {
 			}
 		}
 
-		final boolean commandDefined = command.isDefined();
-		final boolean commandHandled = command.isHandled();
-		final boolean commandEnabled = command.isEnabled();
-
 		if (commandDefined && commandHandled && commandEnabled) {
-			command.execute(new ExecutionEvent(Collections.EMPTY_MAP, null,
-					null));
+			command.execute(new ExecutionEvent(parameterizedCommand
+					.getParameterMap(), trigger, null));
 		}
 
 		/*
@@ -530,10 +527,10 @@ public final class WorkbenchKeyboard {
 	 * @param keySequence
 	 *            The key sequence to check for a match; must never be
 	 *            <code>null</code>.
-	 * @return The command identifier for the perfectly matching command;
-	 *         <code>null</code> if no command matches.
+	 * @return The binding for the perfectly matching command; <code>null</code>
+	 *         if no command matches.
 	 */
-	private String getPerfectMatch(KeySequence keySequence) {
+	private Binding getPerfectMatch(KeySequence keySequence) {
 		return bindingService.getPerfectMatch(keySequence);
 	}
 
@@ -657,7 +654,6 @@ public final class WorkbenchKeyboard {
 	 */
 	public boolean press(List potentialKeyStrokes, Event event)
 			throws CommandException {
-		// TODO remove event parameter once key-modified actions are removed
 		if (DEBUG && DEBUG_VERBOSE) {
 			System.out
 					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
@@ -694,8 +690,8 @@ public final class WorkbenchKeyboard {
 				return true;
 
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
-				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
-				return (executeCommand(commandId) || !sequenceBeforeKeyStroke
+				final Binding binding = getPerfectMatch(sequenceAfterKeyStroke);
+				return (executeCommand(binding, event) || !sequenceBeforeKeyStroke
 						.isEmpty());
 
 			} else if ((keyAssistDialog != null)

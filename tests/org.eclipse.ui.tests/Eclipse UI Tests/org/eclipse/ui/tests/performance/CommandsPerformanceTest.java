@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -128,6 +131,12 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	private BindingManager bindingManager = null;
 
 	/**
+	 * The command manager for the currently running test. <code>null</code>
+	 * if no test is running.
+	 */
+	private CommandManager commandManager = null;
+
+	/**
 	 * The context manager for the currently running test. <code>null</code>
 	 * if no test is running.
 	 */
@@ -215,6 +224,9 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 				modifierKeys10, modifierKeys11, modifierKeys12, modifierKeys13,
 				modifierKeys14, modifierKeys15 };
 
+		// Initialize the command manager.
+		commandManager = new CommandManager();
+
 		// Initialize the contexts.
 		contextManager = new ContextManager();
 		final List activeContextIds = new ArrayList();
@@ -264,7 +276,6 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
 
 			// Build the other parameters.
-			final String commandId = null;
 			final String schemeId = ((Scheme) schemes.get(i % schemes.size()))
 					.getId();
 			final String contextId = (String) activeContextIds.get(i
@@ -272,8 +283,8 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			final int type = (i % 2);
 
 			// Construct the binding.
-			final Binding binding = new KeyBinding(keySequence, commandId,
-					schemeId, contextId, locale, platform, null, type);
+			final Binding binding = new KeyBinding(keySequence, null, schemeId,
+					contextId, locale, platform, null, type);
 			bindings[i] = binding;
 		}
 
@@ -325,8 +336,12 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			final int type = (i % 2);
 
 			// Construct the binding.
-			final Binding binding = new KeyBinding(keySequence, commandId,
-					schemeId, contextId, locale, platform, null, type);
+			final Command command = commandManager.getCommand(commandId);
+			final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+					command, null);
+			final Binding binding = new KeyBinding(keySequence,
+					parameterizedCommand, schemeId, contextId, locale,
+					platform, null, type);
 			bindings[i + deletionMarkers] = binding;
 		}
 		bindingManager.setBindings(bindings);
@@ -334,6 +349,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 	protected final void doTearDown() throws Exception {
 		bindingManager = null;
+		commandManager = null;
 		contextManager = null;
 		super.doTearDown();
 	}
@@ -388,7 +404,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		// Time how long it takes to access the cache;
 		startMeasuring();
 		for (int i = 0; i < cacheHits; i++) {
-			bindingManager.getActiveBindingsFor("command1");
+			bindingManager.getActiveBindingsFor(null);
 		}
 		stopMeasuring();
 		commitMeasurements();

@@ -456,6 +456,16 @@
             description="%category.perspective.description"
             id="org.eclipse.ui.category.perspectives" />
       <command
+      		name="%command.showView.name"
+      		description="%command.showView.description"
+      		categoryId="org.eclipse.ui.category.views"
+      		id="org.eclipse.ui.views.showView">
+      		<parameter
+      			id="org.eclipse.ui.views.showView.viewId"
+      			name="%command.showView.viewIdParameter"
+      			values="org.eclipse.ui.internal.registry.ViewRegistry" />
+      </command>
+      <command
       		name="%Perspective.resourcePerspective"
       		description="%command.openResourcePerspective.description"
       		categoryId="org.eclipse.ui.category.perspectives"
@@ -587,80 +597,79 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
       </command>
-      <keyBinding
+   </extension>
+   
+   <extension
+   		 point="org.eclipse.ui.bindings">
+      <key
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
-            keySequence="M1+1"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M1+1"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.navigate.openResource"
-            keySequence="M1+M2+R"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M1+M2+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.project.buildAll"
-            keySequence="M1+B"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M1+B"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M2+M3+W"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M2+M3+W"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M2+M3+W"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M2+M3+W"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M1+M3+W"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M1+M3+W"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.file.newQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M2+M3+N"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M2+M3+N"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
             commandId=""
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M2+M3+N"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M2+M3+N"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
             commandId="org.eclipse.ui.file.newQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="M2+M3+N"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            keySequence="M2+M3+Q X"
+            sequence="M2+M3+N"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            sequence="M2+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.ProblemView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter 
+            	id="org.eclipse.ui.views.showView.viewId"
+            	value="org.eclipse.ui.views.ProblemView" />
+      </key>
+      <key
             platform="carbon"
-            keySequence="M2+M3+Q X"
+            sequence="M2+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
-            commandId=""
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
-            keySequence="M1+M3+Q X"
+            sequence="M1+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.ProblemView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter 
+            	id="org.eclipse.ui.views.showView.viewId" 
+            	value="org.eclipse.ui.views.ProblemView" />
+      </key>
    </extension>
    <extension
          point="org.eclipse.ui.systemSummarySections">

@@ -24,6 +24,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -339,7 +340,13 @@ public final class CommandManagerWrapper implements ICommandManager,
 		try {
 			final org.eclipse.jface.bindings.keys.KeySequence sequence = org.eclipse.jface.bindings.keys.KeySequence
 					.getInstance(keySequence.toString());
-			return bindingManager.getPerfectMatch(sequence);
+			final Binding binding = bindingManager.getPerfectMatch(sequence);
+			if (binding == null) {
+				return null;
+			}
+			
+			return binding.getParameterizedCommand().getId();
+			
 		} catch (final ParseException e) {
 			return null;
 		}

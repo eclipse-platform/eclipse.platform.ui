@@ -169,7 +169,7 @@ public class Category extends NamedHandleObject {
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append("Command("); //$NON-NLS-1$
+			stringBuffer.append("Category("); //$NON-NLS-1$
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);

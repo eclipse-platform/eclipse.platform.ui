@@ -16,11 +16,17 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -40,12 +46,14 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.keys.IBindingService;
@@ -140,12 +148,17 @@ public final class BindingPersistence {
 	 * The name of the attribute storing the identifier for the active scheme.
 	 * This is called a 'keyConfigurationId' for legacy reasons.
 	 */
-	private static final String ATTRIBUTE_SCHEME_ID = ATTRIBUTE_KEY_CONFIGURATION_ID; //$NON-NLS-1$
+	private static final String ATTRIBUTE_SCHEME_ID = "schemeId"; //$NON-NLS-1$
 
 	/**
 	 * The name of the scope attribute for a binding.
 	 */
 	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
+
+	/**
+	 * The name of the sequence attribute for a key binding.
+	 */
+	private static final String ATTRIBUTE_SEQUENCE = "sequence"; //$NON-NLS-1$
 
 	/**
 	 * The name of the string attribute (key sequence) for a binding in the
@@ -192,6 +205,11 @@ public final class BindingPersistence {
 	private static final String ELEMENT_BINDING = "keyBinding"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a key binding.
+	 */
+	private static final String ELEMENT_KEY = "key"; //$NON-NLS-1$
+
+	/**
 	 * The name of the key binding element in the commands extension point.
 	 */
 	private static final String ELEMENT_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
@@ -204,9 +222,24 @@ public final class BindingPersistence {
 	private static final String ELEMENT_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a parameter.
+	 */
+	private static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
+
+	/**
+	 * The name of the scheme element in the bindings extension point.
+	 */
+	private static final String ELEMENT_SCHEME = "scheme"; //$NON-NLS-1$
+
+	/**
 	 * The name of the deprecated accelerator configurations extension point.
 	 */
 	private static final String EXTENSION_ACCELERATOR_CONFIGURATIONS = "org.eclipse.ui.acceleratorConfigurations"; //$NON-NLS-1$
+
+	/**
+	 * The name of the bindings extension point.
+	 */
+	private static final String EXTENSION_BINDINGS = "org.eclipse.ui.bindings"; //$NON-NLS-1$
 
 	/**
 	 * The name of the commands extension point, and the name of the key for the
@@ -218,7 +251,7 @@ public final class BindingPersistence {
 	 * The index of the active scheme configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager)
+	 * @see BindingPersistence#read(BindingManager, ICommandService)
 	 */
 	private static final int INDEX_ACTIVE_SCHEME = 0;
 
@@ -226,7 +259,7 @@ public final class BindingPersistence {
 	 * The index of the binding definition configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager)
+	 * @see BindingPersistence#read(BindingManager, ICommandService)
 	 */
 	private static final int INDEX_BINDING_DEFINITIONS = 1;
 
@@ -234,7 +267,7 @@ public final class BindingPersistence {
 	 * The index of the scheme definition configuration elements in the indexed
 	 * array.
 	 * 
-	 * @see BindingPersistence#read(BindingManager)
+	 * @see BindingPersistence#read(BindingManager, ICommandService)
 	 */
 	private static final int INDEX_SCHEME_DEFINITIONS = 2;
 
@@ -501,14 +534,40 @@ public final class BindingPersistence {
 	 *            The binding manager which should be populated with the values
 	 *            from the registry and preference store; must not be
 	 *            <code>null</code>.
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>.
 	 */
-	public static final void read(final BindingManager bindingManager) {
+	public static final void read(final BindingManager bindingManager,
+			final ICommandService commandService) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int activeSchemeElementCount = 0;
 		int bindingDefinitionCount = 0;
 		int schemeDefinitionCount = 0;
 		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
+
+		// Sort the bindings extension point based on element name.
+		final IConfigurationElement[] bindingsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_BINDINGS);
+		for (int i = 0; i < bindingsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if it is a binding definition.
+			if (ELEMENT_KEY.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements,
+						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+			} else
+			// Check to see if it is a scheme definition.
+			if (ELEMENT_SCHEME.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+			}
+
+		}
 
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
@@ -574,10 +633,11 @@ public final class BindingPersistence {
 				schemeDefinitionCount, bindingManager);
 		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
 				activeSchemeElementCount, preferenceMemento, bindingManager);
-		readBindingsFromCommandsExtensionPoint(
+		readBindingsFromRegistry(
 				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
-				bindingDefinitionCount, bindingManager);
-		readBindingsFromPreferences(preferenceMemento, bindingManager);
+				bindingDefinitionCount, bindingManager, commandService);
+		readBindingsFromPreferences(preferenceMemento, bindingManager,
+				commandService);
 	}
 
 	/**
@@ -705,169 +765,6 @@ public final class BindingPersistence {
 	}
 
 	/**
-	 * Reads all of the binding definitions from the commands extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the commands extension point;
-	 *            must not be <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 * @param bindingManager
-	 *            The binding manager to which the bindings should be added;
-	 *            must not be <code>null</code>.
-	 */
-	private static final void readBindingsFromCommandsExtensionPoint(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount,
-			final BindingManager bindingManager) {
-		/*
-		 * If necessary, this list of status items will be constructed. It will
-		 * only contains instances of <code>IStatus</code>.
-		 */
-		List warningsToLog = null;
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement configurationElement = configurationElements[i];
-
-			/*
-			 * Read out the command id. Doing this before determining if the key
-			 * binding is actually valid is a bit wasteful. However, it is
-			 * helpful to have the command identifier when logging syntax
-			 * errors.
-			 */
-			String commandId = configurationElement
-					.getAttribute(ATTRIBUTE_COMMAND_ID);
-			if ((commandId == null) || (commandId.length() == 0)) {
-				commandId = configurationElement
-						.getAttribute(ATTRIBUTE_COMMAND);
-			}
-			if ((commandId != null) && (commandId.length() == 0)) {
-				commandId = null;
-			}
-
-			// Read out the scheme id.
-			String schemeId = configurationElement
-					.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
-			if ((schemeId == null) || (schemeId.length() == 0)) {
-				schemeId = configurationElement
-						.getAttribute(ATTRIBUTE_CONFIGURATION);
-				if ((schemeId == null) || (schemeId.length() == 0)) {
-					// The scheme id should never be null. This is invalid.
-					final String message = "Key bindings need a scheme: '" //$NON-NLS-1$
-							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-			}
-
-			// Read out the context id.
-			String contextId = configurationElement
-					.getAttribute(ATTRIBUTE_CONTEXT_ID);
-			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
-				contextId = null;
-			} else if ((contextId == null) || (contextId.length() == 0)) {
-				contextId = configurationElement.getAttribute(ATTRIBUTE_SCOPE);
-				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
-					contextId = null;
-				}
-			}
-			if ((contextId == null) || (contextId.length() == 0)) {
-				contextId = IContextIds.CONTEXT_ID_WINDOW;
-			}
-
-			// Read out the key sequence.
-			String keySequenceText = configurationElement
-					.getAttribute(ATTRIBUTE_KEY_SEQUENCE);
-			KeySequence keySequence = null;
-			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
-				keySequenceText = configurationElement
-						.getAttribute(ATTRIBUTE_STRING);
-				if ((keySequenceText == null)
-						|| (keySequenceText.length() == 0)) {
-					// The key sequence should never be null. This is pointless
-					final String message = "Defining a key binding with no key sequence has no effect: '" //$NON-NLS-1$
-							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-
-				// The key sequence is in the old-style format.
-				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
-
-			} else {
-				// The key sequence is in the new-style format.
-				try {
-					keySequence = KeySequence.getInstance(keySequenceText);
-				} catch (final ParseException e) {
-					final String message = "Could not parse '" + keySequenceText //$NON-NLS-1$
-							+ "': '" //$NON-NLS-1$
-							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-				if (keySequence.isEmpty() || !keySequence.isComplete()) {
-					final String message = "Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
-							+ keySequence + "': '" //$NON-NLS-1$
-							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."; //$NON-NLS-1$
-					final IStatus status = new Status(IStatus.WARNING,
-							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-					if (warningsToLog == null) {
-						warningsToLog = new ArrayList();
-					}
-					warningsToLog.add(status);
-					continue;
-				}
-
-			}
-
-			// Read out the locale and platform.
-			String locale = configurationElement.getAttribute(ATTRIBUTE_LOCALE);
-			if ((locale != null) && (locale.length() == 0)) {
-				locale = null;
-			}
-			String platform = configurationElement
-					.getAttribute(ATTRIBUTE_PLATFORM);
-			if ((platform != null) && (platform.length() == 0)) {
-				platform = null;
-			}
-
-			final Binding binding = new KeyBinding(keySequence, commandId,
-					schemeId, contextId, locale, platform, null, Binding.SYSTEM);
-			bindingManager.addBinding(binding);
-		}
-
-		// If there were any warnings, then log them now.
-		if (warningsToLog != null) {
-			final String message = "Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point."; //$NON-NLS-1$
-			final IStatus status = new MultiStatus(
-					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
-							.toArray(new IStatus[warningsToLog.size()]),
-					message, null);
-			WorkbenchPlugin.log(message, status);
-		}
-	}
-
-	/**
 	 * Reads all of the binding definitions from the preferences.
 	 * 
 	 * @param preferences
@@ -875,14 +772,18 @@ public final class BindingPersistence {
 	 * @param bindingManager
 	 *            The binding manager to which the bindings should be added;
 	 *            must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>.
 	 */
 	private static final void readBindingsFromPreferences(
-			final IMemento preferences, final BindingManager bindingManager) {
+			final IMemento preferences, final BindingManager bindingManager,
+			final ICommandService commandService) {
 		/*
 		 * If necessary, this list of status items will be constructed. It will
 		 * only contains instances of <code>IStatus</code>.
 		 */
-		List warningsToLog = null;
+		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
@@ -899,6 +800,12 @@ public final class BindingPersistence {
 				if ((commandId != null) && (commandId.length() == 0)) {
 					commandId = null;
 				}
+				final Command command;
+				if (commandId != null) {
+					command = commandService.getCommand(commandId);
+				} else {
+					command = null;
+				}
 
 				// Read out the scheme id.
 				String schemeId = memento
@@ -911,9 +818,6 @@ public final class BindingPersistence {
 								+ commandId + "'."; //$NON-NLS-1$
 						final IStatus status = new Status(IStatus.WARNING,
 								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						if (warningsToLog == null) {
-							warningsToLog = new ArrayList();
-						}
 						warningsToLog.add(status);
 					}
 				}
@@ -949,9 +853,6 @@ public final class BindingPersistence {
 								+ commandId + "'."; //$NON-NLS-1$
 						final IStatus status = new Status(IStatus.WARNING,
 								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						if (warningsToLog == null) {
-							warningsToLog = new ArrayList();
-						}
 						warningsToLog.add(status);
 						continue;
 					}
@@ -969,9 +870,6 @@ public final class BindingPersistence {
 								+ commandId + "'."; //$NON-NLS-1$
 						final IStatus status = new Status(IStatus.WARNING,
 								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						if (warningsToLog == null) {
-							warningsToLog = new ArrayList();
-						}
 						warningsToLog.add(status);
 						continue;
 					}
@@ -981,9 +879,6 @@ public final class BindingPersistence {
 								+ commandId + "'."; //$NON-NLS-1$
 						final IStatus status = new Status(IStatus.WARNING,
 								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
-						if (warningsToLog == null) {
-							warningsToLog = new ArrayList();
-						}
 						warningsToLog.add(status);
 						continue;
 					}
@@ -1000,15 +895,24 @@ public final class BindingPersistence {
 					platform = null;
 				}
 
-				final Binding binding = new KeyBinding(keySequence, commandId,
-						schemeId, contextId, locale, platform, null,
-						Binding.USER);
+				// Read out the parameters
+				final ParameterizedCommand parameterizedCommand;
+				if (command == null) {
+					parameterizedCommand = null;
+				} else {
+					parameterizedCommand = readParameters(memento,
+							warningsToLog, command);
+				}
+
+				final Binding binding = new KeyBinding(keySequence,
+						parameterizedCommand, schemeId, contextId, locale,
+						platform, null, Binding.USER);
 				bindingManager.addBinding(binding);
 			}
 		}
 
 		// If there were any warnings, then log them now.
-		if (warningsToLog != null) {
+		if (!warningsToLog.isEmpty()) {
 			final String message = "Warnings while parsing the key bindings from the preference store."; //$NON-NLS-1$
 			final IStatus status = new MultiStatus(
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
@@ -1016,6 +920,393 @@ public final class BindingPersistence {
 					message, null);
 			WorkbenchPlugin.log(message, status);
 		}
+	}
+
+	/**
+	 * Reads all of the binding definitions from the commands extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param bindingManager
+	 *            The binding manager to which the bindings should be added;
+	 *            must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>.
+	 */
+	private static final void readBindingsFromRegistry(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final BindingManager bindingManager,
+			final ICommandService commandService) {
+		final Collection bindings = new ArrayList(configurationElementCount);
+		
+		/*
+		 * If necessary, this list of status items will be constructed. It will
+		 * only contains instances of <code>IStatus</code>.
+		 */
+		List warningsToLog = new ArrayList(1);
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			/*
+			 * Read out the command id. Doing this before determining if the key
+			 * binding is actually valid is a bit wasteful. However, it is
+			 * helpful to have the command identifier when logging syntax
+			 * errors.
+			 */
+			String commandId = configurationElement
+					.getAttribute(ATTRIBUTE_COMMAND_ID);
+			if ((commandId == null) || (commandId.length() == 0)) {
+				commandId = configurationElement
+						.getAttribute(ATTRIBUTE_COMMAND);
+			}
+			if ((commandId != null) && (commandId.length() == 0)) {
+				commandId = null;
+			}
+			final Command command;
+			if (commandId != null) {
+				command = commandService.getCommand(commandId);
+				if (!command.isDefined()) {
+					// Reference to an undefined command. This is invalid.
+					final String message = "Cannot bind to an undefined command: '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					warningsToLog.add(status);
+					continue;
+				}
+			} else {
+				command = null;
+			}
+
+			// Read out the scheme id.
+			String schemeId = configurationElement
+					.getAttribute(ATTRIBUTE_SCHEME_ID);
+			if ((schemeId == null) || (schemeId.length() == 0)) {
+				schemeId = configurationElement
+						.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
+				if ((schemeId == null) || (schemeId.length() == 0)) {
+					schemeId = configurationElement
+							.getAttribute(ATTRIBUTE_CONFIGURATION);
+					if ((schemeId == null) || (schemeId.length() == 0)) {
+						// The scheme id should never be null. This is invalid.
+						final String message = "Key bindings need a scheme: '" //$NON-NLS-1$
+								+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+								+ commandId + "'."; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.WARNING,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+						warningsToLog.add(status);
+						continue;
+					}
+				}
+			}
+
+			// Read out the context id.
+			String contextId = configurationElement
+					.getAttribute(ATTRIBUTE_CONTEXT_ID);
+			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+				contextId = null;
+			} else if ((contextId == null) || (contextId.length() == 0)) {
+				contextId = configurationElement.getAttribute(ATTRIBUTE_SCOPE);
+				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+					contextId = null;
+				}
+			}
+			if ((contextId == null) || (contextId.length() == 0)) {
+				contextId = IContextIds.CONTEXT_ID_WINDOW;
+			}
+
+			// Read out the key sequence.
+			KeySequence keySequence = null;
+			String keySequenceText = configurationElement
+					.getAttribute(ATTRIBUTE_SEQUENCE);
+			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
+				keySequenceText = configurationElement
+						.getAttribute(ATTRIBUTE_KEY_SEQUENCE);
+			}
+			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
+				keySequenceText = configurationElement
+						.getAttribute(ATTRIBUTE_STRING);
+				if ((keySequenceText == null)
+						|| (keySequenceText.length() == 0)) {
+					// The key sequence should never be null. This is
+					// pointless
+					final String message = "Defining a key binding with no key sequence has no effect: '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					warningsToLog.add(status);
+					continue;
+				}
+
+				// The key sequence is in the old-style format.
+				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+
+			} else {
+				// The key sequence is in the new-style format.
+				try {
+					keySequence = KeySequence.getInstance(keySequenceText);
+				} catch (final ParseException e) {
+					final String message = "Could not parse '" + keySequenceText //$NON-NLS-1$
+							+ "': '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					warningsToLog.add(status);
+					continue;
+				}
+				if (keySequence.isEmpty() || !keySequence.isComplete()) {
+					final String message = "Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
+							+ keySequence + "': '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					warningsToLog.add(status);
+					continue;
+				}
+
+			}
+
+			// Read out the locale and platform.
+			String locale = configurationElement.getAttribute(ATTRIBUTE_LOCALE);
+			if ((locale != null) && (locale.length() == 0)) {
+				locale = null;
+			}
+			String platform = configurationElement
+					.getAttribute(ATTRIBUTE_PLATFORM);
+			if ((platform != null) && (platform.length() == 0)) {
+				platform = null;
+			}
+
+			// Read out the parameters, if any.
+			final ParameterizedCommand parameterizedCommand;
+			if (command == null) {
+				parameterizedCommand = null;
+			} else {
+				parameterizedCommand = readParameters(configurationElement,
+						warningsToLog, command);
+			}
+
+			final Binding binding = new KeyBinding(keySequence,
+					parameterizedCommand, schemeId, contextId, locale,
+					platform, null, Binding.SYSTEM);
+			bindings.add(binding);
+		}
+		
+		final Binding[] bindingArray = (Binding[]) bindings
+				.toArray(new Binding[bindings.size()]);
+		bindingManager.setBindings(bindingArray);
+
+		// If there were any warnings, then log them now.
+		if (!warningsToLog.isEmpty()) {
+			final String message = "Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point."; //$NON-NLS-1$
+			final IStatus status = new MultiStatus(
+					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
+							.toArray(new IStatus[warningsToLog.size()]),
+					message, null);
+			WorkbenchPlugin.log(message, status);
+		}
+	}
+
+	/**
+	 * Reads the parameters from a parent configuration element. This is used to
+	 * read the parameter sub-elements from a key element. Each parameter is
+	 * guaranteed to be valid. If invalid parameters are found, then a warning
+	 * status will be appended to the <code>warningsToLog</code> list.
+	 * 
+	 * @param configurationElement
+	 *            The configuration element from which the parameters should be
+	 *            read; must not be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found will
+	 *            parsing the parameters will be appended to this list. This
+	 *            value must not be <code>null</code>.
+	 * @param command
+	 *            The command around which the parameterization should be
+	 *            created; must not be <code>null</code>.
+	 * @return The array of parameters found for this configuration element;
+	 *         <code>null</code> if none can be found.
+	 */
+	private static final ParameterizedCommand readParameters(
+			final IConfigurationElement configurationElement,
+			final List warningsToLog, final Command command) {
+		final IConfigurationElement[] parameterElements = configurationElement
+				.getChildren(ELEMENT_PARAMETER);
+		if ((parameterElements == null) || (parameterElements.length == 0)) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		final Collection parameters = new ArrayList();
+		for (int i = 0; i < parameterElements.length; i++) {
+			final IConfigurationElement parameterElement = parameterElements[i];
+
+			// Read out the id.
+			final String id = parameterElement.getAttribute(ATTRIBUTE_ID);
+			if ((id == null) || (id.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a name: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Find the parameter on the command.
+			IParameter parameter = null;
+			try {
+				final IParameter[] commandParameters = command.getParameters();
+				if (parameters != null) {
+					for (int j = 0; j < commandParameters.length; j++) {
+						final IParameter currentParameter = commandParameters[j];
+						if (Util.equals(currentParameter.getId(), id)) {
+							parameter = currentParameter;
+							break;
+						}
+					}
+
+				}
+			} catch (final NotDefinedException e) {
+				// This should not happen.
+			}
+			if (parameter == null) {
+				// The name should never be null. This is invalid.
+				final String message = "Could not find a matching parameter: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', '" + id //$NON-NLS-1$
+						+ "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Read out the value.
+			final String value = parameterElement.getAttribute(ATTRIBUTE_VALUE);
+			if ((value == null) || (value.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a value: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+						+ id + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			parameters.add(new Parameterization(parameter, value));
+		}
+
+		if (parameters.isEmpty()) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		return new ParameterizedCommand(command,
+				(Parameterization[]) parameters
+						.toArray(new Parameterization[parameters.size()]));
+	}
+
+	/**
+	 * Reads the parameters from a parent memento. This is used to read the
+	 * parameter sub-elements from a key element. Each parameter is guaranteed
+	 * to be valid. If invalid parameters are found, then a warning status will
+	 * be appended to the <code>warningsToLog</code> list.
+	 * 
+	 * @param memento
+	 *            The memento from which the parameters should be read; must not
+	 *            be <code>null</code>.
+	 * @param warningsToLog
+	 *            The list of warnings found during parsing. Warnings found will
+	 *            parsing the parameters will be appended to this list. This
+	 *            value must not be <code>null</code>.
+	 * @param command
+	 *            The command around which the parameterization should be
+	 *            created; must not be <code>null</code>.
+	 * @return The array of parameters found for this memento; <code>null</code>
+	 *         if none can be found.
+	 */
+	private static final ParameterizedCommand readParameters(
+			final IMemento memento, final List warningsToLog,
+			final Command command) {
+		final IMemento[] parameterElements = memento
+				.getChildren(ELEMENT_PARAMETER);
+		if ((parameterElements == null) || (parameterElements.length == 0)) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		final Collection parameters = new ArrayList();
+		for (int i = 0; i < parameterElements.length; i++) {
+			final IMemento parameterElement = parameterElements[i];
+
+			// Read out the id.
+			final String id = parameterElement.getString(ATTRIBUTE_ID);
+			if ((id == null) || (id.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a name: preferences."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Find the parameter on the command.
+			IParameter parameter = null;
+			try {
+				final IParameter[] commandParameters = command.getParameters();
+				if (parameters != null) {
+					for (int j = 0; j < commandParameters.length; j++) {
+						final IParameter currentParameter = commandParameters[j];
+						if (Util.equals(currentParameter.getId(), id)) {
+							parameter = currentParameter;
+							break;
+						}
+					}
+
+				}
+			} catch (final NotDefinedException e) {
+				// This should not happen.
+			}
+			if (parameter == null) {
+				// The name should never be null. This is invalid.
+				final String message = "Could not find a matching parameter: preferences, '" //$NON-NLS-1$
+						+ id + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			// Read out the name.
+			final String value = parameterElement.getString(ATTRIBUTE_VALUE);
+			if ((value == null) || (value.length() == 0)) {
+				// The name should never be null. This is invalid.
+				final String message = "Parameters need a value: preferences, '" //$NON-NLS-1$
+						+ id + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				warningsToLog.add(status);
+				continue;
+			}
+
+			parameters.add(new Parameterization(parameter, value));
+		}
+
+		if (parameters.isEmpty()) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		return new ParameterizedCommand(command,
+				(Parameterization[]) parameters
+						.toArray(new Parameterization[parameters.size()]));
 	}
 
 	/**
@@ -1143,7 +1434,7 @@ public final class BindingPersistence {
 		if ((defaultSchemeId == null) ? (schemeId != null) : (!defaultSchemeId
 				.equals(schemeId))) {
 			final IMemento child = memento.createChild(ELEMENT_ACTIVE_SCHEME);
-			child.putString(ATTRIBUTE_SCHEME_ID, schemeId);
+			child.putString(ATTRIBUTE_KEY_CONFIGURATION_ID, schemeId);
 		}
 	}
 
@@ -1184,12 +1475,33 @@ public final class BindingPersistence {
 			final Binding binding) {
 		final IMemento element = parent.createChild(ELEMENT_BINDING);
 		element.putString(ATTRIBUTE_CONTEXT_ID, binding.getContextId());
-		element.putString(ATTRIBUTE_COMMAND_ID, binding.getCommandId());
-		element.putString(ATTRIBUTE_SCHEME_ID, binding.getSchemeId());
+		final ParameterizedCommand parameterizedCommand = binding
+				.getParameterizedCommand();
+		final String commandId = (parameterizedCommand == null) ? null
+				: parameterizedCommand.getId();
+		element.putString(ATTRIBUTE_COMMAND_ID, commandId);
+		element
+				.putString(ATTRIBUTE_KEY_CONFIGURATION_ID, binding
+						.getSchemeId());
 		element.putString(ATTRIBUTE_KEY_SEQUENCE, binding.getTriggerSequence()
 				.toString());
 		element.putString(ATTRIBUTE_LOCALE, binding.getLocale());
 		element.putString(ATTRIBUTE_PLATFORM, binding.getPlatform());
+		if (parameterizedCommand != null) {
+			final Map parameterizations = parameterizedCommand
+					.getParameterMap();
+			final Iterator parameterizationItr = parameterizations.entrySet()
+					.iterator();
+			while (parameterizationItr.hasNext()) {
+				final Map.Entry entry = (Map.Entry) parameterizationItr.next();
+				final String id = (String) entry.getKey();
+				final String value = (String) entry.getValue();
+				final IMemento parameterElement = element
+						.createChild(ELEMENT_PARAMETER);
+				parameterElement.putString(ATTRIBUTE_ID, id);
+				parameterElement.putString(ATTRIBUTE_VALUE, value);
+			}
+		}
 	}
 
 	/**
