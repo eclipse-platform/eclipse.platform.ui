@@ -44,173 +44,187 @@ public class RetargetAction extends PartEventAction {
 			RetargetAction.this.propogateChange(event);
 		}
 	};
-/**
- * Constructs a RetargetAction.
- */
-public RetargetAction(String actionID, String label) {
-	super(label);
-	setId(actionID);
-	setEnabled(false);
-	super.setHelpListener(new HelpListener() {
-		public void helpRequested(HelpEvent e) {
-			HelpListener listener = null;
-			if (handler != null) {
-				// if we have a handler, see if it has a help listener
-				listener = handler.getHelpListener();
-				if (listener == null)
-					// use our own help listener
-					listener = localHelpListener;
-			}
-			if (listener != null)
-				// pass on the event
-				listener.helpRequested(e);
-		}
-	});
-}
-/**
- * Disposes of the action and any resources held.
- * 
- * @since 2.0
- */
-public void dispose() {
-	if (handler != null) {
-		handler.removePropertyChangeListener(propertyChangeListener);
-		handler = null;
-	}
-}
-
-/**
- * Enables the accelerator for this action. 
- *
- * @param boolean the new enable state
- */
-public void enableAccelerator(boolean b) {
-	enableAccelerator = b;
-}
-/* (non-Javadoc)
- * Retaget actions do not have accelerators.  It is up to the
- * part to hook the accelerator.
- */
-public int getAccelerator() {
-	if (enableAccelerator)
-		return super.getAccelerator();
-	else
-		return 0;
-}
-/**
- * A workbench part has been activated. Try to connect
- * to it.
- *
- * @param part the workbench part that has been activated
- */
-public void partActivated(IWorkbenchPart part) {
-	super.partActivated(part);
-	IWorkbenchPartSite site = part.getSite();
-	SubActionBars bars = (SubActionBars) ((PartSite)site).getActionBars();
-	bars.addPropertyChangeListener(propertyChangeListener);
-	setActionHandler(bars.getGlobalActionHandler(getId()));
-}
-/**
- * A workbench part has been closed. 
- *
- * @param part the workbench part that has been closed
- */
-public void partClosed(IWorkbenchPart part) {
-	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
-	if(activePart != null)
-		// We are going to get a part activated message so don't bother setting the 
-		// action handler to null. This prevents enablement flash in the toolbar
-		return;
-	if (part == getActivePart())
-		setActionHandler(null);
-	super.partClosed(part);
-}
-/**
- * A workbench part has been deactivated. Disconnect from it.
- *
- * @param part the workbench part that has been deactivated
- */
-public void partDeactivated(IWorkbenchPart part) {
-	super.partDeactivated(part);
-	IWorkbenchPartSite site = part.getSite();
-	SubActionBars bars = (SubActionBars) ((PartSite)site).getActionBars();
-	bars.removePropertyChangeListener(propertyChangeListener);
-
-	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
-	if(activePart != null)
-		// We are going to get a part activated message so don't bother setting the 
-		// action handler to null. This prevents enablement flash in the toolbar
-		return;
-
-	setActionHandler(null);
-}
-/**
- * Either the action handler itself has changed, or the configured action handlers on the action bars have changed.
- * Update self.
- */
-protected void propogateChange(PropertyChangeEvent event) {
-	if (event.getProperty().equals(Action.ENABLED)) {
-		Boolean bool = (Boolean) event.getNewValue();
-		setEnabled(bool.booleanValue());
-	}
-	else if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
-		setActionHandler(((IActionBars) event.getSource()).getGlobalActionHandler(getId()));
-	}
-}
-
-/**
- * Invoked when an action occurs. 
- */
-public void run() {
-	if (handler != null)
-		handler.run();
-}
-
-/**
- * Invoked when an action occurs. 
- */
-public void runWithEvent(Event event) {
-	if (handler != null)
-		handler.runWithEvent(event);
-}
-
-/**
- * Returns the action handler.
- */
-protected IAction getActionHandler() {
-	return handler;
-}
-
-/**
- * Sets the action handler.
- */
-protected void setActionHandler(IAction newHandler) {
-	// Optimize.
-	if (newHandler == handler)
-		return;
-		
-	// Clear old action.
-	if (handler != null) {
-		handler.removePropertyChangeListener(propertyChangeListener);
-		handler = null;
-	}
-
-	// Set new action.
-	handler = newHandler;
-	if (handler == null) {
+	
+	/**
+	 * Constructs a RetargetAction.
+	 */
+	public RetargetAction(String actionID, String label) {
+		super(label);
+		setId(actionID);
 		setEnabled(false);
-	} else {
-		setEnabled(handler.isEnabled());
-		handler.addPropertyChangeListener(propertyChangeListener);
+		super.setHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent e) {
+				HelpListener listener = null;
+				if (handler != null) {
+					// if we have a handler, see if it has a help listener
+					listener = handler.getHelpListener();
+					if (listener == null)
+						// use our own help listener
+						listener = localHelpListener;
+				}
+				if (listener != null)
+					// pass on the event
+					listener.helpRequested(e);
+			}
+		});
 	}
-}
-/** 
- * The <code>RetargetAction</code> implementation of this method
- * declared on <code>IAction</code> stores the help listener in
- * a local field. The supplied listener is only used if there is
- * no hanlder.
- */
-public void setHelpListener(HelpListener listener) {
-	localHelpListener = listener;
-}
+	
+	/**
+	 * Disposes of the action and any resources held.
+	 */
+	public void dispose() {
+		if (handler != null) {
+			handler.removePropertyChangeListener(propertyChangeListener);
+			handler = null;
+		}
+	}
+
+	/**
+	 * Enables the accelerator for this action. 
+	 *
+	 * @param boolean the new enable state
+	 */
+	public void enableAccelerator(boolean b) {
+		enableAccelerator = b;
+	}
+	
+	/* (non-Javadoc)
+	 * Retaget actions do not have accelerators.  It is up to the
+	 * part to hook the accelerator.
+	 */
+	public int getAccelerator() {
+		if (enableAccelerator)
+			return super.getAccelerator();
+		else
+			return 0;
+	}
+	
+	/**
+	 * A workbench part has been activated. Try to connect
+	 * to it.
+	 *
+	 * @param part the workbench part that has been activated
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		super.partActivated(part);
+		IWorkbenchPartSite site = part.getSite();
+		SubActionBars bars = (SubActionBars) ((PartSite) site).getActionBars();
+		bars.addPropertyChangeListener(propertyChangeListener);
+		setActionHandler(bars.getGlobalActionHandler(getId()));
+	}
+	
+	/**
+	 * A workbench part has been closed. 
+	 *
+	 * @param part the workbench part that has been closed
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
+		if (activePart != null)
+			// We are going to get a part activated message so don't bother setting the 
+			// action handler to null. This prevents enablement flash in the toolbar
+			return;
+		if (part == getActivePart())
+			setActionHandler(null);
+		super.partClosed(part);
+	}
+	
+	/**
+	 * A workbench part has been deactivated. Disconnect from it.
+	 *
+	 * @param part the workbench part that has been deactivated
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+		super.partDeactivated(part);
+		IWorkbenchPartSite site = part.getSite();
+		SubActionBars bars = (SubActionBars) ((PartSite) site).getActionBars();
+		bars.removePropertyChangeListener(propertyChangeListener);
+
+		IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
+		if (activePart != null)
+			// We are going to get a part activated message so don't bother setting the 
+			// action handler to null. This prevents enablement flash in the toolbar
+			return;
+
+		setActionHandler(null);
+	}
+	
+	/**
+	 * Either the action handler itself has changed, or the configured action
+	 * handlers on the action bars have changed. Update self.
+	 */
+	protected void propagateChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(Action.ENABLED)) {
+			Boolean bool = (Boolean) event.getNewValue();
+			setEnabled(bool.booleanValue());
+		} else if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
+			setActionHandler(((IActionBars) event.getSource()).getGlobalActionHandler(getId()));
+		}
+	}
+
+	/**
+	 * Either the action handler itself has changed, or the configured action
+	 * handlers on the action bars have changed. Update self.
+	 * 
+	 * @deprecated Override propagateChange instead.
+	 */
+	protected void propogateChange(PropertyChangeEvent event) {
+		propagateChange(event);
+	}
+
+	/**
+	 * Invoked when an action occurs. 
+	 */
+	public void run() {
+		if (handler != null)
+			handler.run();
+	}
+
+	/**
+	 * Invoked when an action occurs. 
+	 */
+	public void runWithEvent(Event event) {
+		if (handler != null)
+			handler.runWithEvent(event);
+	}
+
+	/**
+	 * Returns the action handler.
+	 */
+	protected IAction getActionHandler() {
+		return handler;
+	}
+
+	/**
+	 * Sets the action handler.
+	 */
+	protected void setActionHandler(IAction newHandler) {
+		// Optimize.
+		if (newHandler == handler)
+			return;
+
+		// Clear old action.
+		if (handler != null) {
+			handler.removePropertyChangeListener(propertyChangeListener);
+			handler = null;
+		}
+
+		// Set new action.
+		handler = newHandler;
+		if (handler == null) {
+			setEnabled(false);
+		} else {
+			setEnabled(handler.isEnabled());
+			handler.addPropertyChangeListener(propertyChangeListener);
+		}
+	}
+	
+	/** 
+	 * The <code>RetargetAction</code> implementation of this method declared on
+	 * <code>IAction</code> stores the help listener in a local field. The
+	 * supplied listener is only used if there is no hanlder.
+	 */
+	public void setHelpListener(HelpListener listener) {
+		localHelpListener = listener;
+	}
 }

@@ -39,8 +39,8 @@ public LabelRetargetAction(String actionID, String text) {
 /**
  * The action handler has changed.  Update self.
  */
-protected void propogateChange(PropertyChangeEvent event) {
-	super.propogateChange(event);
+protected void propagateChange(PropertyChangeEvent event) {
+	super.propagateChange(event);
 	String prop = event.getProperty();
 	if (prop.equals(Action.TEXT)) {
 		String str = (String) event.getNewValue();
