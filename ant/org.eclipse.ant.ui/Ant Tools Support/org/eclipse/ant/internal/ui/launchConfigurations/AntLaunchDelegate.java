@@ -568,7 +568,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		path= path.append("os"); //$NON-NLS-1$
-		path= path.append(SWT.getPlatform());
+		path= path.append(Platform.getOS());
 		path= path.append(Platform.getOSArch());
 		return path.toOSString();
 	}
