@@ -13,11 +13,12 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -209,9 +210,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		MemoryViewDelegatingModelPresentation()
 		{
-			IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-
-			IExtensionPoint point= descriptor.getExtensionPoint(IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
+			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
 			if (point != null) {
 				IExtension[] extensions= point.getExtensions();
 				for (int i= 0; i < extensions.length; i++) {
@@ -341,11 +340,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			if(((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress() == null)
 			{
-				Status stat = new Status(
-						IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-						DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null 
-				);
-				DebugException e = new DebugException(stat);
+				DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null));
 				displayError(e);				
 			}
 		}
@@ -542,11 +537,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			MemoryViewTabLabelProvider labelProvider = new MemoryViewTabLabelProvider(this, renderer);
 			fTableViewer.setLabelProvider(labelProvider);
 
-			Status stat = new Status(
-					IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					DebugException.INTERNAL_ERROR, "renderer property is not defined for: " + fRenderingId, null  //$NON-NLS-1$
-			);
-			DebugUIPlugin.log(stat);
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Renderer property is not defined for: " + fRenderingId, null)); //$NON-NLS-1$
 		}
 		
 		contentProvider.setViewer(fTableViewer);
@@ -585,11 +576,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 		if (!ok)
 		{
-			Status stat = new Status(
-				 IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.INTERNAL_ERROR, DebugUIMessages.getString(FORMAT_IS_INVALID), null 
-				);
-			DebugException e = new DebugException(stat);
+			DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(FORMAT_IS_INVALID), null));
 			displayError(e);
 			return fTextViewer.getControl();
 		}
@@ -1417,11 +1404,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				
 				if (address == null)
 				{	
-					Status stat = new Status(
-							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null 
-					);
-					DebugException e = new DebugException(stat);
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null));
 					displayError(e);
 					return;
 				}
@@ -1974,7 +1957,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
 				{
 					Status stat = new Status(
-					 IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
 					 DebugException.NOT_SUPPORTED, DebugUIMessages.getString(ADDRESS_IS_OUT_OF_RANGE), null 
 					);
 					DebugException e = new DebugException(stat);

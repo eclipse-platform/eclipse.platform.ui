@@ -1051,7 +1051,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
 			if (status.getCode() != IStatus.OK) {
 				throw new CoreException(new Status(IStatus.ERROR,
-													 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+													 DebugUIPlugin.getUniqueIdentifier(),
 													 0,
 													 status.getMessage(),
 													 null));
@@ -1061,7 +1061,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if (!getOriginal().getName().equals(currentName)) {
 				if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 					throw new CoreException(new Status(IStatus.ERROR,
-														 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
 														 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
 														 null));

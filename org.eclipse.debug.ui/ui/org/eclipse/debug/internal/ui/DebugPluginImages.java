@@ -23,6 +23,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 /**
  * The images provided by the debug plugin.
@@ -198,7 +199,8 @@ public class DebugPluginImages {
 		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configElements.length; i++) {
 			IConfigurationElement configElement = configElements[i];
-			URL iconURL = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+			Bundle bundle = Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+			URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 			String iconPath = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ICON);
 			ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
 			try {

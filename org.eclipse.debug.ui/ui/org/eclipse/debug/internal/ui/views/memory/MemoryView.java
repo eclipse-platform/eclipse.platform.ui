@@ -658,9 +658,10 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 		} catch (Exception e) {		
 			
 			Status status = new Status(IStatus.ERROR, 
-				DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				DebugUIPlugin.getUniqueIdentifier(),
 				0, "Exception occurred when the Memory  View is disposed", e); //$NON-NLS-1$
-		DebugUIPlugin.log(status);}
+			DebugUIPlugin.log(status);
+		}
 		
 		super.dispose();
 	}
@@ -846,7 +847,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 		catch(SWTException se)
 		{
 			Status status = new Status(IStatus.ERROR, 
-					DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					DebugUIPlugin.getUniqueIdentifier(),
 					0, "SWT Exception occurred in Memory View selection changed", se); //$NON-NLS-1$
 			DebugUIPlugin.log(status);
 		}

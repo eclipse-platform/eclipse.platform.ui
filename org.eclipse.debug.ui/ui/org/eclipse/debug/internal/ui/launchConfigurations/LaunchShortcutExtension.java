@@ -27,6 +27,7 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.ui.ILaunchShortcut;
@@ -34,6 +35,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -250,7 +252,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			// iconPath may be null because imageIcon is optional
 			if (iconPath != null) {
 				try {
-					URL iconURL = getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+					Bundle bundle = Platform.getBundle(getConfigurationElement().getDeclaringExtension().getNamespace());
+					URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 					iconURL = new URL(iconURL, iconPath);
 					fImageDescriptor = ImageDescriptor.createFromURL(iconURL);
 				} catch (MalformedURLException e) {

@@ -15,9 +15,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -142,7 +144,8 @@ public class LaunchGroupExtension implements ILaunchGroup {
 	 * @return ImageDescriptor
 	 */
 	protected ImageDescriptor createImageDescriptor(String attribute) {
-		URL iconURL = getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+		Bundle bundle = Platform.getBundle(getConfigurationElement().getDeclaringExtension().getNamespace());
+		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		String iconPath = getConfigurationElement().getAttribute(attribute);
 		if (iconPath != null) {
 			try {

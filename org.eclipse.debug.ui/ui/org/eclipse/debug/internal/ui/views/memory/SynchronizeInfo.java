@@ -12,10 +12,9 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Display;
@@ -62,10 +61,7 @@ public class SynchronizeInfo
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			Status stat = new Status(IStatus.ERROR, 
-					DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-					0, exception.getMessage(), exception);
-			DebugUIPlugin.log(stat);
+			DebugUIPlugin.log(exception);
 		}
 
 		/* (non-Javadoc)

@@ -22,15 +22,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -431,8 +433,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 */
 	private void loadLaunchShortcuts() {
 		// Get the configuration elements
-		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 
 		// Load the configuration elements into a Map 
@@ -450,8 +451,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	private void loadLaunchGroups() {
 		if (fLaunchGroups == null) {
 			// Get the configuration elements
-			IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-			IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
 			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 	
 			// Load the configuration elements into a Map 

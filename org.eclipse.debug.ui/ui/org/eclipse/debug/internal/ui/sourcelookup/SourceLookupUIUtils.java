@@ -24,6 +24,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 /**
  * Utility methods for the UI portion of the source lookup solution.
@@ -101,7 +102,8 @@ public class SourceLookupUIUtils {
 	}
 	
 	private void registerContainerImages(IConfigurationElement configElement){
-		URL iconURL = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+		Bundle bundle = Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		String iconPath = configElement.getAttribute(ICON_ATTRIBUTE);
 		ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
 		String configTypeID = configElement.getAttribute(CONTAINER_ID_ATTRIBUTE);

@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -152,8 +152,7 @@ public class DebugUITools {
 	 * @since 2.0
 	 */
 	public static IDebugModelPresentation newDebugModelPresentation(String identifier) {
-		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint point= descriptor.getExtensionPoint(IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
+		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
 		if (point != null) {
 			IExtension[] extensions= point.getExtensions();
 			for (int i= 0; i < extensions.length; i++) {
