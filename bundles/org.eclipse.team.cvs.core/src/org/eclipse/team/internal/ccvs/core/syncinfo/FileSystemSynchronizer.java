@@ -119,8 +119,8 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 				File cvsignore = new File(file, SyncFileUtil.IGNORE_FILE);
 				String[] patterns = SyncFileUtil.readLines(cvsignore);
 				if(patterns.length>0) {
-					CacheData cacheInfo = new CacheData(file, patterns, CACHE_EXPIRATION_MINUTES);
-					cache.put(cacheInfo);
+					idInfo = new CacheData(file, patterns, CACHE_EXPIRATION_MINUTES);
+					cache.put(idInfo);
 				}
 			} catch(CVSException e) {
 				TeamPlugin.log(IStatus.ERROR, Policy.bind("FileSystemSynchronizer_Error_loading_from_.cvsignore_file_2"), e); //$NON-NLS-1$
