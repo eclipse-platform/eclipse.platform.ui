@@ -1125,8 +1125,7 @@ public class LinkedModeUI {
 				docs.add(doc);
 		}
 		
-		if (flags == ILinkedModeListener.EXTERNAL_MODIFICATION)
-			fModel.exit(flags);
+		fModel.stopForwarding(flags);
 
 		Runnable runnable= new Runnable() {
 			public void run() {

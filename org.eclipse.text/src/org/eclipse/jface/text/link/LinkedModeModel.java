@@ -66,11 +66,6 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
 public class LinkedModeModel {
 	
 	/**
-	 * Listener flag to signal internal message.
-	 */
-	private static final int INTERNAL= 1 << 20;
-
-	/**
 	 * Checks whether there is already a model installed on <code>document</code>.
 	 * 
 	 * @param document the <code>IDocument</code> of interest
@@ -198,7 +193,7 @@ public class LinkedModeModel {
 		 */
 		public void documentChanged(DocumentEvent event) {
 			if (fExit) {
-				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION | INTERNAL);
+				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
 				return;
 			}
 			fExit= false;
@@ -215,7 +210,7 @@ public class LinkedModeModel {
 				Map map= group.handleEvent(event);
 				if (result != null && map != null) {
 					// exit if more than one position was changed
-					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION | INTERNAL);
+					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
 					return;
 				}
 				if (map != null)
@@ -307,22 +302,14 @@ public class LinkedModeModel {
 	}
 
 	/**
-	 * Causes this model to exit. Called either if a document change
-	 * outside this model is detected, or by the UI.
+	 * Causes this model to exit. Called either if an illegal document change
+	 * is detected, or by the UI.
 	 * 
 	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
 	 */
 	public void exit(int flags) {
 		if (!fIsActive)
 			return;
-		if ((flags & ILinkedModeListener.EXTERNAL_MODIFICATION) != 0
-				&& (flags & INTERNAL) == 0) {
-			// deferred exit
-			fDocumentListener.fExit= true;
-			return;
-		}
-		
-		flags= flags & ~INTERNAL;
 		
 		fIsActive= false;
 
@@ -351,6 +338,17 @@ public class LinkedModeModel {
 
 		if (fParentEnvironment != null)
 			fParentEnvironment.resume(flags);
+	}
+	
+	/**
+	 * Causes this model to stop forwarding updates. The positions are not
+	 * unregistered however, which will only happen when <code>exit</code> 
+	 * is called, or after the next document change.
+	 * 
+	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
+	 */
+	public void stopForwarding(int flags) {
+		fDocumentListener.fExit= true;
 	}
 
 	/**
