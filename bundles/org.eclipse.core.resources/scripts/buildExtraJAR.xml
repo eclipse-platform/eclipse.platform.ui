@@ -21,6 +21,7 @@
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
+		<property name="version.suffix" value="_3.0.0"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
@@ -37,7 +38,7 @@
 			failonerror="false" 
 			verbose="true" 
 			debug="on" 
-			includeAntRuntime="no" 
+			includeAntRuntime="yes" 
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
 					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
@@ -45,9 +46,8 @@
 					${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}/resources.jar;
 					${basedir}/../org.eclipse.osgi/bin;
 					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
-					${basedir}/../org.apache.ant/lib/ant.jar;
-					${basedir}/../org.apache.ant/lib/ant-launcher.jar;
-					${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;
+					${basedir}/../org.eclipse.ant.core/bin;
+					${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
