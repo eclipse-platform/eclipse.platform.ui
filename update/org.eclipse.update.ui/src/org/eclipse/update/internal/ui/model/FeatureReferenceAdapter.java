@@ -8,9 +8,11 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;
@@ -55,13 +57,13 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 		if (included.length == 0) return;
 		IRunnableWithProgress op = new IRunnableWithProgress () {
 			public void run(IProgressMonitor monitor) {
-				monitor.beginTask("Loading: ", included.length);
+				monitor.beginTask(UpdateUI.getString("SiteBookmark.downloading"), included.length);
 				for (int i=0; i<included.length; i++) {
 					IFeatureReference ref = included[i];
 					try {
 						monitor.subTask(ref.getURL().toString());
-						ref.getFeature(null);
-						monitor.worked(1);
+						ref.getFeature(new SubProgressMonitor(monitor, 1));
+						//monitor.worked(1);
 					}
 					catch (CoreException e) {
 					}
