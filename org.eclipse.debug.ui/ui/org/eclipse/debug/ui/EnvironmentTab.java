@@ -181,11 +181,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
-		Dialog.applyDialogFont(mainComposite);
-
+		
 		createEnvironmentTable(mainComposite);
 		createTableButtons(mainComposite);
 		createAppendReplace(mainComposite);
+		
+		Dialog.applyDialogFont(mainComposite);
 	}
 	
 	/**
