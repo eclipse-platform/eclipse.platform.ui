@@ -35,7 +35,7 @@ public class PreferencesService implements IPreferencesService {
 	private static IPreferencesService instance = null;
 	private static Map defaultsRegistry = new HashMap();
 	private static Map scopeRegistry = new HashMap();
-	private static RootPreferences root = new RootPreferences();
+	static RootPreferences root = new RootPreferences();
 	private static IStatus statusOK;
 	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
 	private static final char EXPORT_ROOT_PREFIX = '!';
@@ -434,9 +434,17 @@ public class PreferencesService implements IPreferencesService {
 			throw new CoreException(createStatusError(message, e));
 		}
 
+		// save the prefs
+		try {
+			getRootNode().node(preferences.absolutePath()).flush();
+		} catch (BackingStoreException e) {
+			String message = "Problems saving preferences.";
+			throw new CoreException(createStatusError(message, e));
+		}
+
 		if (InternalPlatform.DEBUG_PREFERENCES) {
 			System.out.println("Current list of all settings:"); //$NON-NLS-1$
-			System.out.println(((EclipsePreferences) Platform.getPreferencesService().getRootNode()).toDeepDebugString());
+			System.out.println(((EclipsePreferences) getRootNode()).toDeepDebugString());
 		}
 
 		return result;

@@ -28,16 +28,24 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		super(null, null);
 	}
 
-	private TestScope(EclipsePreferences parent, String key) {
+	public void flush() {
+		// don't store the values but a side effect is that the nodes
+		// are marked as not dirty.
+		makeClean();
+	}
+	
+	public void sync() {
+		// don't store the values but a side effect is that the nodes
+		// are marked as not dirty.
+		makeClean();
+	}
+
+	private TestScope(IEclipsePreferences parent, String key) {
 		super(parent, key);
 	}
 
-	public void flush() throws BackingStoreException {
-		// do nothing (don't persist to disk)
-	}
-
-	public void sync() throws BackingStoreException {
-		// do nothing (don't persist to disk)
+	public boolean isDirty() {
+		return dirty;
 	}
 
 	public String getName() {
@@ -52,7 +60,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return null;
 	}
 
-	public IEclipsePreferences create(EclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
 		return new TestScope(nodeParent, nodeName);
 	}
 }
