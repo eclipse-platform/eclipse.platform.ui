@@ -137,7 +137,7 @@ public IPath addTrailingSeparator() {
  */
 public IPath append(String tail) {
 	//optimize addition of a single segment
-	if (tail.indexOf(SEPARATOR) == -1) {
+	if (tail.indexOf(SEPARATOR) == -1 && tail.indexOf("\\") == -1) {
 		int tailLength = tail.length();
 		if (tailLength < 3) {
 			//some special cases
@@ -152,7 +152,7 @@ public IPath append(String tail) {
 		String[] newSegments = new String[myLen+1];
 		System.arraycopy(segments, 0, newSegments, 0, myLen);
 		newSegments[myLen] = tail;
-		return new Path(device, newSegments, separators);
+		return new Path(device, newSegments, separators & ~HAS_TRAILING);
 	}
 	//go with easy implementation for now
 	return append(new Path(tail));
