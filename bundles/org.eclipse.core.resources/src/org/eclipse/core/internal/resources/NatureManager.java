@@ -515,7 +515,7 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions, IProj
 				hasLinks = hasLinks(project) ? Boolean.TRUE : Boolean.FALSE;
 			}
 			if (hasLinks.booleanValue())
-				return failure(Policy.bind("links.vetoNature", project.getName(), id));
+				return failure(Policy.bind("links.vetoNature", project.getName(), id));//$NON-NLS-1$
 		}
 	}
 	return ResourceStatus.OK_STATUS;
