@@ -35,6 +35,11 @@ public class UrlUtil {
 	// Locales that infocenter can serve in addition to the default locale.
 	// null indicates that infocenter can serve every possible client locale.
 	private static Collection locales;
+	
+	private static final int INFOCENTER_DIRECTION_BY_LOCALE = 1;
+	private static final int INFOCENTER_DIRECTION_LTR = 2;
+	private static final int INFOCENTER_DIRECTION_RTL = 3;
+	private static int infocenterDirection = INFOCENTER_DIRECTION_BY_LOCALE;
 
 	/**
 	 * Encodes string for embedding in JavaScript source
@@ -378,6 +383,10 @@ public class UrlUtil {
 			return;
 		}
 		initializeLocales();
+		if ((BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER)) {
+			initializeIcDirection();
+		}
+
 	}
 	/**
 	 *  
@@ -439,14 +448,51 @@ public class UrlUtil {
 			}
 		}
 	}
+	
+	private static void initializeIcDirection() {
+		// from property
+		String orientation = System.getProperty("eclipse.orientation");
+		if ("rtl".equals(orientation)) {
+			infocenterDirection = INFOCENTER_DIRECTION_RTL;
+			return;
+		} else if ("ltr".equals(orientation)) {
+			infocenterDirection = INFOCENTER_DIRECTION_LTR;
+			return;
+		}
+		// from command line
+		String[] args = Platform.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
+			if ("-dir".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
+				if ((i + 1) < args.length
+						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
+					infocenterDirection = INFOCENTER_DIRECTION_RTL;
+					return;
+				} else {
+					infocenterDirection = INFOCENTER_DIRECTION_LTR;
+					return;
+				}
+			}
+		}
+		// by client locale
+	}
+	
 	public static boolean isRTL(HttpServletRequest request,
 			HttpServletResponse response) {
-		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
-			// TODO a better job determining RTL for infocenter
-			// String locale = getLocale(request, response);
-			// ...
-			// return ...
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+			return BaseHelpSystem.isRTL();
+		} else {
+			if (infocenterDirection == INFOCENTER_DIRECTION_RTL) {
+				return true;
+			} else if (infocenterDirection == INFOCENTER_DIRECTION_LTR) {
+				return false;
+			}
+			String locale = getLocale(request, response);
+			if (locale.startsWith("ar") || locale.startsWith("fa")
+					|| locale.startsWith("he") || locale.startsWith("iw")) {
+				return true;
+			} else {
+				return false;
+			}
 		}
-		return BaseHelpSystem.isRTL();
 	}
 }
