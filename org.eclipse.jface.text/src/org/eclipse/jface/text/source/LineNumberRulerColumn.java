@@ -103,8 +103,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent event) {
-			stopSelecting();
-			stopAutoScroll();
+			// see bug 45700
+			if (event.button == 1) {
+				stopSelecting();
+				stopAutoScroll();
+			}
 		}
 		
 		/*
@@ -112,7 +115,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-			startSelecting();
+			// see bug 45700
+			if (event.button == 1) {
+				startSelecting();
+			}
 		}
 		
 		/*
