@@ -140,10 +140,10 @@ and then populates it with actions which are enabled by a selection of
 <tt>ListElements</tt>
 with various state.&nbsp; A <tt>ListElement</tt> has two attributes: <i>name</i>
 (a string) and <i>flag</i> (a boolean).&nbsp; In this example, the All
-action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER>)
-is enabled whenever a ListElement is selected.&nbsp; The Red action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_b.jpg" height=13 width=24 align=ABSCENTER>)
+action (<img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER>)
+is enabled whenever a ListElement is selected.&nbsp; The Red action (<img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when a ListElement with name = red is selected.&nbsp; And the
-Not Red action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_c.jpg" height=13 width=24 align=ABSCENTER>)
+Not Red action (<img SRC="tag_c.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when a ListElement with name != red is selected.
 <blockquote><tt>&lt;extension point = "org.eclipse.ui.actionSets"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;actionSet id="org.eclipse.ui.tests.internal.ListElementActions"</tt>
@@ -156,7 +156,7 @@ path="additions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;separator name="group1"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/menu></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac1"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="All"</tt>
@@ -173,7 +173,7 @@ enablesFor="1"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;/enablement></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_b.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac2"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="Red"</tt>
@@ -196,7 +196,7 @@ enablesFor="1"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;/enablement></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_c.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_c.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac3"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="Not Red"</tt>
@@ -225,9 +225,9 @@ enablesFor="1"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/actionSet></tt>
 <br><tt>&lt;/extension></tt></blockquote>
 In the next example the <i>pluginState</i> element is used to control the
-enablement of actions in an action set.&nbsp; The Installed action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER>)
+enablement of actions in an action set.&nbsp; The Installed action (<img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when the plugin with <tt>x.y.z.myPlugin</tt> is installed.&nbsp;
-The Activated action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_b.jpg" height=13 width=24 align=ABSCENTER>)
+The Activated action (<img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when the same plugin has been activated.
 <blockquote><tt>&lt;extension point = "org.eclipse.ui.actionSets"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;actionSet id="org.eclipse.ui.tests.internal.ListElementActions"</tt>
@@ -240,7 +240,7 @@ path="additions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;separator name="group1"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/menu></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac8"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="Installed"</tt>
@@ -255,7 +255,7 @@ class="org.eclipse.ui.tests.api.MockActionDelegate"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;/enablement></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_b.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_b.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac10"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="Activated"</tt>
@@ -273,7 +273,7 @@ class="org.eclipse.ui.tests.api.MockActionDelegate"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/actionSet></tt>
 <br><tt>&lt;/extension></tt></blockquote>
 In the next example the systemProperty element is demonstrated.&nbsp; The
-System Property action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER>)
+System Property action (<img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when the ActionExpressionVar system property is equal to "bubba".
 <blockquote><tt>&lt;extension point = "org.eclipse.ui.actionSets"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;actionSet id="org.eclipse.ui.tests.internal.ListElementActions"</tt>
@@ -286,7 +286,7 @@ path="additions"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;separator name="group1"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/menu></tt>
-<br><img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
+<br><img SRC="tag_a.jpg" height=13 width=24 align=ABSCENTER><tt>&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;action id="org.eclipse.ui.tests.internal.ac11"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 label="System Property"</tt>
