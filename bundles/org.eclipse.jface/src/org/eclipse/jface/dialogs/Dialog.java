@@ -788,7 +788,7 @@ public abstract class Dialog extends Window {
 	 * Applies the dialog font to all controls that currently have the default
 	 * font.
 	 * 
-	 * @param Control the control to apply the font to. Font will also be applied to
+	 * @param control the control to apply the font to. Font will also be applied to
 	 * its children. If the control is <code>null</code> nothing happens.
 	 */
 	public static void applyDialogFont(Control control) {
