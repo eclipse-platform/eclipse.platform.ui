@@ -24,7 +24,6 @@ import org.eclipse.search.internal.workingsets.WorkingSetSelectionDialog;
  * <li>convenient access to the search result view of the active workbench
  *   window.</li>
  * </ul>
- * <p>
  *
  * @see ISearchResultView
  */
