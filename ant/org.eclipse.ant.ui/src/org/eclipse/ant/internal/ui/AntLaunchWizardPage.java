@@ -3,7 +3,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Listener;
 import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.events.KeyListener;import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class AntLaunchWizardPage extends WizardPage implements ICheckStateListener {
@@ -30,7 +30,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 			selectedTargets.removeElement(checkedTarget);
 			
 		labelProvider.setSelectedTargets(selectedTargets);
-		listViewer.refresh();
+		listViewer.refresh();				// need to tell the wizard container to refresh his buttons		getWizard().getContainer().updateButtons();
 	}
 	
 	public void createControl(Composite parent) {
@@ -58,7 +58,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		
 		new Label(composite,SWT.NONE).setText(Policy.bind("wizard.argumentsLabel"));
 		argumentsField = new Text(composite,SWT.BORDER);
-		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		// adds a listener to tell the wizard when it can tell its container to refresh the buttons		argumentsField.addKeyListener(new KeyListener() {			public void keyPressed(KeyEvent e) {}						public void keyReleased(KeyEvent e) {				AntLaunchWizardPage.this.getWizard().getContainer().updateButtons();			}		});
 		
 		showLogOnSuccess = new Button(composite, SWT.CHECK);
 		showLogOnSuccess.setText(Policy.bind("wizard.displayLogLabel"));

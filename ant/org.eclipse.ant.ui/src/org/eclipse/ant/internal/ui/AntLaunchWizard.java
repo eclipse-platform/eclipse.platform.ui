@@ -12,7 +12,7 @@ public class AntLaunchWizard extends Wizard {
 	public AntLaunchWizard(EclipseProject project,IFile antFile) {
 		super();
 		this.project = project;
-		this.antFile = antFile;
+		this.antFile = antFile;		setWindowTitle(Policy.bind("wizard.title"));		//setNeedsProgressMonitor(true);
 	}
 	/**	 * Adds pages to the wizard and initialize them.	 * 	 */	
 	public void addPages() {
@@ -98,5 +98,5 @@ public class AntLaunchWizard extends Wizard {
 					Policy.bind("status.targetNotWritten", antFile.getFullPath().toString()),
 					e));
 		}
-	}
+	}	/**	 * Returns true if the wizard can finish, i.e. if a target is selected or if an argument 	 * has benn entered in the command line.	 * 	 * @return boolean true if the wizard can finish, false if not	 */		public boolean canFinish() {		return (page1.getSelectedTargets().size() != 0) || (page1.getArgumentsFromField().trim() != "");	}
 }
