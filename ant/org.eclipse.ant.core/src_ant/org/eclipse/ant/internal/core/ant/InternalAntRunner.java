@@ -167,32 +167,34 @@ public class InternalAntRunner {
 		if (fBuildListeners == null) {
 			fBuildListeners = new ArrayList(5);
 		}
-		this.fBuildListeners = classNames;
+		fBuildListeners = classNames;
 	}
 
 	/**
-	 * Adds a build logger .
+	 * Adds a build logger.
 	 * 
 	 * @param
 	 */
 	public void addBuildLogger(String className) {
-		this.fLoggerClassname = className;
+		fLoggerClassname = className;
 	}
 
 	/**
 	 * Adds user properties.
 	 */
 	public void addUserProperties(Map properties) {
-		this.fUserProperties = properties;
+		fUserProperties = properties;
 	}
 
 	protected void addBuildListeners(Project project) {
 		try {
 			project.addBuildListener(createLogger());
-			for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
-				String className = (String) iterator.next();
-				Class listener = Class.forName(className);
-				project.addBuildListener((BuildListener) listener.newInstance());
+			if (fBuildListeners != null) {
+				for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
+					String className = (String) iterator.next();
+					Class listener = Class.forName(className);
+					project.addBuildListener((BuildListener) listener.newInstance());
+				}
 			}
 		} catch (Exception e) {
 			throw new BuildException(e);
@@ -296,8 +298,9 @@ public class InternalAntRunner {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < fExtraArguments.length; i++) {
 			sb.append(fExtraArguments[i]);
+			sb.append(' ');
 		}
-		project.log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString()})); //$NON-NLS-1$
+		project.log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new String[]{sb.toString().trim()})); //$NON-NLS-1$
 	}
 
 	protected void createMonitorBuildListener(Project project) {
@@ -378,8 +381,9 @@ public class InternalAntRunner {
 	private int findTargetPosition(Vector names, String name) {
 		int result = names.size();
 		for (int i = 0; i < names.size() && result == names.size(); i++) {
-			if (name.compareTo((String) names.elementAt(i)) < 0)
+			if (name.compareTo((String) names.elementAt(i)) < 0) {
 				result = i;
+			}
 		}
 		return result;
 	}
@@ -572,7 +576,7 @@ public class InternalAntRunner {
 	 * @param buildFileLocation the file system location of the build file
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
-		this.fBuildFileLocation = buildFileLocation;
+		fBuildFileLocation = buildFileLocation;
 	}
 
 	protected String getBuildFileLocation() {
@@ -588,14 +592,14 @@ public class InternalAntRunner {
 	 * @param 
 	 */
 	public void setMessageOutputLevel(int level) {
-		this.fMessageOutputLevel = level;
+		fMessageOutputLevel = level;
 	}
 
 	/**
 	 * 
 	 */
 	public void setArguments(String[] args) {
-		this.fExtraArguments = args;
+		fExtraArguments = args;
 	}
 
 	/**
@@ -644,6 +648,27 @@ public class InternalAntRunner {
 			return false;
 		}
 		
+		if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
+			printVersion();
+			fMessageOutputLevel = Project.MSG_VERBOSE;
+		}
+		
+		if (commands.remove("-debug")) { //$NON-NLS-1$
+			printVersion();
+			fMessageOutputLevel = Project.MSG_DEBUG;
+		}
+		
+		if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
+			fMessageOutputLevel = Project.MSG_WARN;
+		}
+		
+		if (commands.remove("-emacs")) { //$NON-NLS-1$
+			fEmacsMode = true;
+		}
+		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
+			fProjectHelp = true;
+		}
+		
 		String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
 		if (args == null) {
 			args = getArguments(commands, "-l"); //$NON-NLS-1$
@@ -662,24 +687,6 @@ public class InternalAntRunner {
 				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_INFO); //$NON-NLS-1$
 				return false;
 			}
-		}
-
-		if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
-			fMessageOutputLevel = Project.MSG_WARN;
-		}
-		if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
-			printVersion();
-			fMessageOutputLevel = Project.MSG_VERBOSE;
-		}
-		if (commands.remove("-debug")) { //$NON-NLS-1$
-			printVersion();
-			fMessageOutputLevel = Project.MSG_DEBUG;
-		}
-		if (commands.remove("-emacs")) { //$NON-NLS-1$
-			fEmacsMode = true;
-		}
-		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
-			fProjectHelp = true;
 		}
 		
 		args = getArguments(commands, "-buildfile"); //$NON-NLS-1$
@@ -860,8 +867,9 @@ public class InternalAntRunner {
 		// what kind of list it will return. We do need a list that
 		// implements the method List.remove(int) and ArrayList does.
 		ArrayList result = new ArrayList(args.length);
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < args.length; i++) {
 			result.add(args[i]);
+		}
 		return result;
 	}
 
@@ -869,7 +877,7 @@ public class InternalAntRunner {
 	 * Sets the build progress monitor.
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
-		this.fMonitor = monitor;
+		fMonitor = monitor;
 	}
 
 	protected Project getCurrentProject() {
