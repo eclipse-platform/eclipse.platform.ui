@@ -4,10 +4,9 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
-		<property name="tempdir" value="../../tmp" />
 		<property name="plugin"  value="org.eclipse.core.expressions" />
 		<property name="version"  value="_3.1.0" />
-		<property name="destjar"  value="${destdir}/${plugin}${version}.jar" />
+		<property name="dest"  value="${destdir}/${plugin}${version}" />
 	</target>
 
 	<target name="build" depends="init">
@@ -15,19 +14,17 @@
 	</target>
 
 	<target name="export" depends="build">
-		<delete dir="${tempdir}" />
-		<mkdir dir="${tempdir}" />
 		<mkdir dir="${destdir}" />
-		<delete file="${destjar}" />
-		<zip zipfile="${tempdir}/src.zip">
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		<jar 
+			jarfile="${dest}/expressions.jar"
+			basedir="bin"
+		/>
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
+		<zip zipfile="${dest}/expressionssrc.zip">
 		    <fileset dir="src" />
   		</zip>		
-		<jar jarfile="${destjar}">
-			<fileset dir="bin" />
-			<fileset file="${tempdir}/src.zip" />
-			<fileset file="plugin.xml" />
-			<fileset file="plugin.properties" />
-		</jar>
-		<delete file="${tempdir}/src.zip" />
 	</target>
 </project>
