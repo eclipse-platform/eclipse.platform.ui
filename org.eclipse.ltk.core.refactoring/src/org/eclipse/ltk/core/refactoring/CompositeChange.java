@@ -28,10 +28,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Represents a composite change. Composite changes can be marked
- * as synthetic. Synthetic composite changes will not be shown in the
- * refactoring preview tree. When rendering the change tree the children 
- * of a synthetic composite change will be shown as children of the
- * parent change.
+ * as synthetic. A synthetic composite changes might not be rendered
+ * in the refactoring preview tree to save display real-estate.
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -177,6 +175,9 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>setEnabled</code> to all its children.
 	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
@@ -188,6 +189,9 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>initializeValidationData</code> to all its 
 	 * children.
+	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
@@ -206,6 +210,9 @@ public class CompositeChange extends Change {
 	 * until the first one returns a status with a severity of <code>FATAL
 	 * </code>. If one of the children throws an exception the remaining children
 	 * will not receive the <code>isValid</code> call.
+	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
@@ -232,6 +239,9 @@ public class CompositeChange extends Change {
 	 * will not receive the <code>perform</code> call. In this case the method <code>
 	 * getUndoUntilException</code> can be used to get an undo object containing the
 	 * undos of all executed children.
+	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
@@ -291,7 +301,8 @@ public class CompositeChange extends Change {
 	}
 	
 	/**
-	 * Note: this is an internal method and should not be overridden.
+	 * Note: this is an internal method and should not be overridden outside of
+	 * the refacotring framework.
 	 * <p>
 	 * The method gets called if one of the changes managed by this
 	 * composite change generates and exception when performed.
@@ -309,6 +320,9 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>dispose</code> to all its children. It is guaranteed
 	 * that all children receive the <code>dispose</code> call.
+	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public void dispose() {
@@ -329,7 +343,9 @@ public class CompositeChange extends Change {
 	 * Returns the undo object containing all undo changes of those children
 	 * that got successfully executed while performing this change. Returns
 	 * <code>null</code> if all changes were executed successfully.
-	 * 
+	 * <p>
+	 * This method is not intended to be overridden or extended.
+	 * </p>
 	 * @return the undo object containing all undo changes of those children
 	 *  that got successfully executed while performing this change
 	 */
@@ -338,7 +354,9 @@ public class CompositeChange extends Change {
 	}
 		
 	/**
-	 * Hook to create an undo change.
+	 * Hook to create an undo change. The method should be overridden
+	 * by clients which provide their own composite change to create
+	 * a corresponding undo change.
 	 * 
 	 * @param childUndos the child undo. The undos appear in the
 	 *  list in the reverse order of their execution. So the first
