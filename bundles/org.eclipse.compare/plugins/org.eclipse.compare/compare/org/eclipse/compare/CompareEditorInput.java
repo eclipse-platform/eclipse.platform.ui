@@ -406,47 +406,56 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fComposite.layout();
 
 		// setup the wiring for top left pane
-		fStructureInputPane.addSelectionChangedListener(
-			new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent e) {
-					feed1(e.getSelection());
+		fStructureInputPane.addOpenListener(
+			new IOpenListener() {
+				public void open(OpenEvent oe) {
+					feed1(oe.getSelection());
+				}
+			}
+		);
+		fStructureInputPane.addDoubleClickListener(
+			new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent event) {
+					feedDefault1(event.getSelection());
 				}
 			}
 		);
 		
-		if (!structureCompareOnSingleClick()) {
-			fStructureInputPane.addDoubleClickListener(
-				new IDoubleClickListener() {
-					public void doubleClick(DoubleClickEvent e) {
-						feedDefault1(e.getSelection());
-					}
-				}
-			);
-		}
-
 		// setup the wiring for second pane
-		fStructurePane1.addSelectionChangedListener(
-			new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent e) {
-					feed2(e.getSelection());
+		fStructurePane1.addOpenListener(
+			new IOpenListener() {
+				public void open(OpenEvent oe) {
+					feed2(oe.getSelection());
 				}
 			}
 		);
 
 		// setup the wiring for third pane
-		fStructurePane2.addSelectionChangedListener(
-			new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent e) {
-					feed3(e.getSelection());
+		fStructurePane2.addOpenListener(
+			new IOpenListener() {
+				public void open(OpenEvent oe) {
+					feed3(oe.getSelection());
 				}
 			}
 		);
 		
-		// now deal with activation
+		// now deal with activation/deactivation
 		Listener activationListener= new Listener() {
+			int fOldOpenStrategy;
+			
 			public void handleEvent(Event event) {
 				if (event.widget instanceof CompareViewerSwitchingPane) {
-					fFocusPane= (CompareViewerSwitchingPane) event.widget;
+					
+					switch (event.type) {
+					case SWT.Activate:
+						fFocusPane= (CompareViewerSwitchingPane) event.widget;
+						fOldOpenStrategy= OpenStrategy.getOpenMethod();
+						OpenStrategy.setOpenMethod(OpenStrategy.SINGLE_CLICK | OpenStrategy.ARROW_KEYS_OPEN);
+						break;
+					case SWT.Deactivate:
+						OpenStrategy.setOpenMethod(fOldOpenStrategy);
+						break;
+					}
 				}
 			}
 		};
@@ -454,12 +463,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fStructurePane1.addListener(SWT.Activate, activationListener);
 		fStructurePane2.addListener(SWT.Activate, activationListener);
 		fContentInputPane.addListener(SWT.Activate, activationListener);
-	
-		if (fInput instanceof ICompareInput) {
-			ICompareInput input2= (ICompareInput) fInput;
-			fStructureInputPane.setInput(input2);
-			feed1(fStructureInputPane.getSelection());
-		}
+		
+		fStructureInputPane.addListener(SWT.Deactivate, activationListener);
+		fStructurePane1.addListener(SWT.Deactivate, activationListener);
+		fStructurePane2.addListener(SWT.Deactivate, activationListener);
+		fContentInputPane.addListener(SWT.Deactivate, activationListener);
+		
+
+		if (fInput instanceof ICompareInput)
+			fStructureInputPane.setInput((ICompareInput) fInput);
 		
 		fComposite.setData("Nav", //$NON-NLS-1$
 			new CompareViewerSwitchingPane[] {

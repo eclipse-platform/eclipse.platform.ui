@@ -34,12 +34,20 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	private Viewer fViewer;
 	private Object fInput;
 	private ListenerList fSelectionListeners= new ListenerList();
-	private ListenerList fOpenListeners= new ListenerList();
+	private ListenerList fDoubleClickListener= new ListenerList();
+	private ListenerList fOpenListener= new ListenerList();
 	private boolean fControlVisibility= false;
 	private String fTitle;
 	private String fTitleArgument;
-
-
+	
+	private IOpenListener fOpenHandler= new IOpenListener() {
+		public void open(OpenEvent event) {
+			Object[] listeners= fOpenListener.getListeners();
+			for (int i= 0; i < listeners.length; i++)
+				((IOpenListener) listeners[i]).open(event);
+		}
+	};
+	
 	/**
 	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
 	 * specified SWT style bits.
@@ -64,8 +72,11 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 				public void widgetDisposed(DisposeEvent e) {
 					if (fViewer instanceof ISelectionProvider)
 						((ISelectionProvider) fViewer).removeSelectionChangedListener(CompareViewerSwitchingPane.this);
-					if (fViewer instanceof StructuredViewer)
-						 ((StructuredViewer) fViewer).removeDoubleClickListener(CompareViewerSwitchingPane.this);
+					if (fViewer instanceof StructuredViewer) {
+						StructuredViewer sv= (StructuredViewer) fViewer;
+						sv.removeDoubleClickListener(CompareViewerSwitchingPane.this);
+						sv.removeOpenListener(fOpenHandler);
+					}
 					fViewer= null;
 					fInput= null;
 					fSelectionListeners= null;
@@ -96,8 +107,11 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			if (fViewer instanceof ISelectionProvider)
 				 ((ISelectionProvider) fViewer).removeSelectionChangedListener(this);
 				 
-			if (fViewer instanceof StructuredViewer)
-				((StructuredViewer)fViewer).removeDoubleClickListener(this);
+			if (fViewer instanceof StructuredViewer) {
+				StructuredViewer sv= (StructuredViewer) fViewer;
+				sv.removeDoubleClickListener(this);
+				sv.removeOpenListener(fOpenHandler);
+			}
 
 			Control content= getContent();
 			setContent(null);
@@ -124,9 +138,13 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 
 			if (fViewer instanceof ISelectionProvider)
 				 ((ISelectionProvider) fViewer).addSelectionChangedListener(this);
-			if (fViewer instanceof StructuredViewer)
-				((StructuredViewer)fViewer).addDoubleClickListener(this);
 
+			if (fViewer instanceof StructuredViewer) {
+				StructuredViewer sv= (StructuredViewer) fViewer;
+				sv.addDoubleClickListener(this);
+				sv.addOpenListener(fOpenHandler);
+			}
+			
 			if (oldEmpty != newEmpty) {	// relayout my container
 				Composite parent= getParent();
 				if (parent instanceof Splitter)
@@ -158,15 +176,23 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	}
 
 	public void addDoubleClickListener(IDoubleClickListener l) {
-		fOpenListeners.add(l);
+		fDoubleClickListener.add(l);
 	}
 
 	public void removeDoubleClickListener(IDoubleClickListener l) {
-		fOpenListeners.remove(l);
+		fDoubleClickListener.remove(l);
+	}
+
+	public void addOpenListener(IOpenListener l) {
+		fOpenListener.add(l);
+	}
+
+	public void removeOpenListener(IOpenListener l) {
+		fOpenListener.remove(l);
 	}
 
 	public void doubleClick(DoubleClickEvent event) {
-		Object[] listeners= fOpenListeners.getListeners();
+		Object[] listeners= fDoubleClickListener.getListeners();
 		for (int i= 0; i < listeners.length; i++)
 			((IDoubleClickListener) listeners[i]).doubleClick(event);
 	}

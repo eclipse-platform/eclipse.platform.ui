@@ -45,14 +45,6 @@ public abstract class ResizableDialog extends Dialog {
 		
 		final Shell s= getShell();
 		if (s != null) {
-			s.addShellListener(
-				new ShellAdapter() {
-					public void shellClosed(ShellEvent arg0) {
-						if (fNewBounds != null)
-							saveBounds(fNewBounds);
-					}
-				}
-			);
 			s.addControlListener(
 				new ControlListener() {
 					public void controlMoved(ControlEvent arg0) {
@@ -123,6 +115,13 @@ public abstract class ResizableDialog extends Dialog {
 		return loc;
 	}
 	
+	public boolean close() {
+		boolean closed= super.close();
+		if (closed && fNewBounds != null)
+			saveBounds(fNewBounds);
+		return closed;
+	}
+
 	private void saveBounds(Rectangle bounds) {
 		IDialogSettings dialogBounds= fSettings.getSection(DIALOG_BOUNDS_KEY);
 		if (dialogBounds == null) {
