@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -121,6 +122,8 @@ public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPag
 			}
 		});
 		setControl(client);
+		
+		Dialog.applyDialogFont(parent);
 	}
 
 	public void setVisible(boolean visible) { // TO DO: Optimize out the case where a feature does not have a license?

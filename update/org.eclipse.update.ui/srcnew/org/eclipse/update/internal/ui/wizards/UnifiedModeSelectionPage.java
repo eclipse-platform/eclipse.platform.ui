@@ -6,6 +6,7 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -89,6 +90,9 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 			}
 		});		
 		switchMode();
+		
+		Dialog.applyDialogFont(parent);
+		
 		return composite;
 	}
 	

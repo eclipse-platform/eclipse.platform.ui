@@ -14,7 +14,9 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -255,6 +257,9 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2");
+		
+		Dialog.applyDialogFont(parent);
+		
 		return client;
 	}
 

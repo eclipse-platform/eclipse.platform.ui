@@ -12,7 +12,8 @@ package org.eclipse.update.internal.ui.wizards;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -318,6 +319,9 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		pageChanged();
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiReviewPage2");
+		
+		Dialog.applyDialogFont(parent);
+		
 		return client;
 	}
 

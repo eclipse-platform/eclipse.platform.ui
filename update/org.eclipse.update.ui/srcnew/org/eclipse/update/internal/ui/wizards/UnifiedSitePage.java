@@ -6,6 +6,7 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -201,6 +202,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 			}
 		});
 
+		Dialog.applyDialogFont(parent);
+		
 		return client;
 	}
 

@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 import java.util.*;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -160,6 +161,9 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		deselectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2");
+		
+		Dialog.applyDialogFont(parent);
+		
 		return client;
 	}
 
