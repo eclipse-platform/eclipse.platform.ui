@@ -4,6 +4,7 @@
  */
 package org.eclipse.compare.contentmergeviewer;
 
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
@@ -56,9 +58,8 @@ import org.eclipse.compare.internal.MergeViewerAction;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
 import org.eclipse.compare.internal.StoppableThread;
-
-import org.eclipse.compare.rangedifferencer.RangeDifference;
-import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.eclipse.compare.rangedifferencer.*;
+import org.eclipse.compare.structuremergeviewer.Differencer;
 
 /**
  * A text merge viewer uses the <code>RangeDifferencer</code> to perform a
@@ -200,6 +201,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private int fPts[]= new int[8];	// scratch area for polygon drawing
 	
+	//PR1GI3HDZ
+	private boolean fIgnoreAncestor= false;
+	private ActionContributionItem fIgnoreAncestorItem;
+	//end PR1GI3HDZ
+
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
 	private ActionContributionItem fCopyDiffLeftToRightItem;
@@ -257,6 +263,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fRightPos= createPosition(rightDoc, rightStart, rightEnd);
 			if (ancestorDoc != null)
 				fAncestorPos= createPosition(ancestorDoc, ancestorStart, ancestorEnd);
+		}
+		
+		Image getImage() {
+			int code= Differencer.CHANGE;
+			switch (fDirection) {
+			case RangeDifference.RIGHT:
+				code+= Differencer.LEFT;
+				break;
+			case RangeDifference.LEFT:
+				code+= Differencer.RIGHT;
+				break;
+			case RangeDifference.ANCESTOR:
+			case RangeDifference.CONFLICT:
+				code+= Differencer.CONFLICTING;
+				break;
+			}
+			if (code != 0)
+				return getCompareConfiguration().getImage(code);
+			return null;
 		}
 		
 		Position createPosition(IDocument doc, int start, int end) {
@@ -1063,7 +1088,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				
 		boolean threeWay= isThreeWay();
 		
-		if (threeWay) {
+		if (threeWay && !fIgnoreAncestor) {
 			aDoc= fAncestor.getDocument();
 			aRegion= fAncestor.getRegion();
 		}
@@ -1376,14 +1401,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				rightToLeft= cp.isLeftEditable(getInput());
 				leftToRight= cp.isRightEditable(getInput());
 			}
+			fDirectionLabel.setImage(fCurrentDiff.getImage());
+		} else {
+			fDirectionLabel.setImage(null);
 		}
 		
 		if (fCopyDiffLeftToRightItem != null)			
 			((Action)fCopyDiffLeftToRightItem.getAction()).setEnabled(leftToRight);
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
+			
+		
 	}
-	
 	
 	protected void updateHeader() {
 		
@@ -1398,6 +1427,23 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
 		
+		//PR1GI3HDZ
+		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
+		Action ignoreAncestorAction= new Action() {
+			public void run() {
+				setIgnoreAncestor(! fIgnoreAncestor);
+				Utilities.initToggleAction(this, getResourceBundle(), ignoreAncestorActionKey, fIgnoreAncestor);
+			}
+		};
+		ignoreAncestorAction.setChecked(fIgnoreAncestor);
+		Utilities.initAction(ignoreAncestorAction, getResourceBundle(), ignoreAncestorActionKey);
+		Utilities.initToggleAction(ignoreAncestorAction, getResourceBundle(), ignoreAncestorActionKey, fIgnoreAncestor);
+		
+		fIgnoreAncestorItem= new ActionContributionItem(ignoreAncestorAction);
+		fIgnoreAncestorItem.setVisible(false);
+		tbm.appendToGroup("modes", fIgnoreAncestorItem); //$NON-NLS-1$
+		// end PR1GI3HDZ
+
 		tbm.add(new Separator());
 					
 		Action a= new Action() {
@@ -1480,6 +1526,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			super.propertyChange(event);
 	}
 	
+	private void setIgnoreAncestor(boolean ignore) {
+		if (ignore != fIgnoreAncestor) {
+			fIgnoreAncestor= ignore;
+			setAncestorVisibility(false, !fIgnoreAncestor);
+		
+			// clear stuff
+			fCurrentDiff= null;
+		 	fChangeDiffs= null;
+			fAllDiffs= null;
+					
+			doDiff();
+					
+			invalidateLines();
+			updateVScrollBar();
+			
+			selectFirstDiff();
+		}
+	}
+	
 	private void selectFirstDiff() {
 		Diff firstDiff= null;
 		if (CompareNavigator.getDirection(fComposite))
@@ -1505,6 +1570,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fComposite.layout(true);
 	}
 					
+	protected void updateToolItems() {
+					
+		//PR1GI3HDZ
+		if (fIgnoreAncestorItem != null)
+			fIgnoreAncestorItem.setVisible(isThreeWay());
+		//end PR1GI3HDZ
+		
+		super.updateToolItems();
+	}
+	
 	//---- painting lines
 	
 	/**
@@ -1921,7 +1996,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			// before we set fCurrentDiff we change the selection
 			// so that the paint code uses the old background colors
 			// otherwise selection isn't drawn correctly
-			if (isThreeWay())
+			if (isThreeWay() && !fIgnoreAncestor)
 				fAncestor.setSelection(d.fAncestorPos);
 			fLeft.setSelection(d.fLeftPos);
 			fRight.setSelection(d.fRightPos);
@@ -1956,7 +2031,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			int ls= fLeft.getLineRange(d.fLeftPos, region).x;
 			int rs= fRight.getLineRange(d.fRightPos, region).x;
 			
-			if (isThreeWay()) {
+			if (isThreeWay() && !fIgnoreAncestor) {
 				int as= fAncestor.getLineRange(d.fAncestorPos, region).x;
 				if (as >= fAncestor.getTopIndex() && as <= fAncestor.getBottomIndex())
 					ancestorIsVisible= true;
@@ -1967,41 +2042,67 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 			if (rs >= fRight.getTopIndex() && rs <= fRight.getBottomIndex())
 				rightIsVisible= true;
-
-			if (leftIsVisible && rightIsVisible)
-				return;
 		}
 
-		int vpos= 0;
-		
-		MergeSourceViewer allButThis= null;
-		if (leftIsVisible) {
-			vpos= realToVirtualPosition(fLeft, fLeft.getTopIndex());
-			allButThis= fLeft;
-		} else if (rightIsVisible) {
-			vpos= realToVirtualPosition(fRight, fRight.getTopIndex());
-			allButThis= fRight;
-		} else if (ancestorIsVisible) {
-			vpos= realToVirtualPosition(fAncestor, fAncestor.getTopIndex());
-			allButThis= fAncestor;
-		} else {
-			if (fAllDiffs != null) {
-				Iterator e= fAllDiffs.iterator();
-				for (int i= 0; e.hasNext(); i++) {
-					Diff diff= (Diff) e.next();
-					if (diff == d)
-						break;
-					vpos+= diff.getMaxDiffHeight(fShowAncestor);
+		// vertical scrolling
+		if (!leftIsVisible || !rightIsVisible) {
+			int vpos= 0;
+			
+			MergeSourceViewer allButThis= null;
+			if (leftIsVisible) {
+				vpos= realToVirtualPosition(fLeft, fLeft.getTopIndex());
+				allButThis= fLeft;
+			} else if (rightIsVisible) {
+				vpos= realToVirtualPosition(fRight, fRight.getTopIndex());
+				allButThis= fRight;
+			} else if (ancestorIsVisible) {
+				vpos= realToVirtualPosition(fAncestor, fAncestor.getTopIndex());
+				allButThis= fAncestor;
+			} else {
+				if (fAllDiffs != null) {
+					Iterator e= fAllDiffs.iterator();
+					for (int i= 0; e.hasNext(); i++) {
+						Diff diff= (Diff) e.next();
+						if (diff == d)
+							break;
+						vpos+= diff.getMaxDiffHeight(fShowAncestor);
+					}
 				}
+				//vpos-= fRight.getViewportLines()/4;
 			}
-			//vpos-= fRight.getViewportLines()/4;
+							
+			scrollVertical(vpos, allButThis);
+			
+			if (fVScrollBar != null) {
+				//int value= Math.max(0, Math.min(vpos, getVirtualHeight() - maxExtentHeight));
+				fVScrollBar.setSelection(vpos);
+			}
 		}
-						
-		scrollVertical(vpos, allButThis);
 		
-		if (fVScrollBar != null) {
-			//int value= Math.max(0, Math.min(vpos, getVirtualHeight() - maxExtentHeight));
-			fVScrollBar.setSelection(vpos);
+		// horizontal scrolling
+		if (d.fIsToken) {
+			// we only scroll horizontally for token diffs
+			reveal(fAncestor, d.fAncestorPos);
+			reveal(fLeft, d.fLeftPos);
+			reveal(fRight, d.fRightPos);
+		} else {
+			// in all other cases we reset the horizontal offset
+			hscroll(fAncestor);
+			hscroll(fLeft);
+			hscroll(fRight);
+		}
+	}
+	
+	private static void reveal(MergeSourceViewer v, Position p) {
+		if (v != null && p != null)
+			v.revealRange(p.offset, p.length);
+	}
+	
+	private static void hscroll(MergeSourceViewer v) {
+		if (v != null) {
+			StyledText st= v.getTextWidget();
+			if (st != null)
+				st.setHorizontalIndex(0);
 		}
 	}
 	

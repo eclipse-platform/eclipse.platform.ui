@@ -4,12 +4,14 @@
  */
 package org.eclipse.compare.internal;
 
-import java.util.ResourceBundle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.JFaceResources;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import org.eclipse.jface.preference.*;
+
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
+
 
 public class ComparePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 		
@@ -29,12 +31,7 @@ public class ComparePreferencePage extends FieldEditorPreferencePage implements 
 		store.setDefault(SHOW_PSEUDO_CONFLICTS, false);
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		
-		Font font= JFaceResources.getTextFont();
-		if (font != null) {
-			FontData[] data= font.getFontData();
-			if (data != null && data.length > 0)
-				PreferenceConverter.setDefault(store, TEXT_FONT, data[0]);
-		}
+		WorkbenchChainedTextFontFieldEditor.startPropagate(store, TEXT_FONT);
 	}
 
 	public void init(IWorkbench workbench) {
@@ -68,7 +65,7 @@ public class ComparePreferencePage extends FieldEditorPreferencePage implements 
 		}
 		
 		{
-			FontFieldEditor editor= new FontFieldEditor(TEXT_FONT,
+			WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(TEXT_FONT,
 				Utilities.getString("ComparePreferences.textFont.label"), parent); //$NON-NLS-1$
 			addField(editor);
 		}

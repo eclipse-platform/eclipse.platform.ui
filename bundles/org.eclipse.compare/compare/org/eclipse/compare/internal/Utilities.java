@@ -241,6 +241,32 @@ public class Utilities {
 		}
 	}
 	
+	public static void initToggleAction(IAction a, ResourceBundle bundle, String prefix, boolean checked) {
+
+		String tooltip= null;
+		if (checked)
+			tooltip= getString(bundle, prefix + "tooltip.checked", null);	//$NON-NLS-1$
+		else
+			tooltip= getString(bundle, prefix + "tooltip.unchecked", null);	//$NON-NLS-1$
+		if (tooltip == null)
+			tooltip= getString(bundle, prefix + "tooltip", null);	//$NON-NLS-1$
+		
+		if (tooltip != null)
+			a.setToolTipText(tooltip);
+			
+		String description= null;
+		if (checked)
+			description= getString(bundle, prefix + "description.checked", null);	//$NON-NLS-1$
+		else
+			description= getString(bundle, prefix + "description.unchecked", null);	//$NON-NLS-1$
+		if (description == null)
+			description= getString(bundle, prefix + "description", null);	//$NON-NLS-1$
+		
+		if (description != null)
+			a.setDescription(description);
+			
+	}
+
 	public static String getString(ResourceBundle bundle, String key, String dfltValue) {
 		
 		if (bundle != null) {

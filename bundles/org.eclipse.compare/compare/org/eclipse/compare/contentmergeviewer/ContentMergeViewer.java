@@ -253,7 +253,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	private CLabel fAncestorLabel;
 	private CLabel fLeftLabel;
 	private CLabel fRightLabel;
-	private CLabel fDirectionLabel;
+	/* package */ CLabel fDirectionLabel;
 	/* package */ Control fCenter;
 		
 	//---- SWT resources to be disposed
@@ -456,7 +456,22 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			return;
 		}
 	}
-		
+	
+	//PR1GI3HDZ
+	void setAncestorVisibility(boolean visible, boolean enabled) {
+		if (fAncestorItem != null) {
+			Action action= (Action) fAncestorItem.getAction();
+			if (action != null) {
+				action.setChecked(visible);
+				action.setEnabled(enabled);
+			}
+		}
+		if (fCompareConfiguration != null)
+			fCompareConfiguration.setProperty(ANCESTOR_ENABLED, new Boolean(visible));
+	}
+	//end PR1GI3HDZ
+
+
 	//---- input
 			 
 	/* package */ boolean isThreeWay() {

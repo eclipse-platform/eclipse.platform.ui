@@ -123,15 +123,16 @@ public class MergeSourceViewer extends SourceViewer
 		return t != null && !t.isDisposed();
 	}
 				
-	public void setSelection(Position p) {
-		setSelectedRange(p.getOffset(), p.getLength());
+	public void setSelection(Position position) {
+		if (position != null)
+			setSelectedRange(position.getOffset(), position.getLength());
 	}
 	
-	public void setLineBackground(Position p, Color c) {
+	public void setLineBackground(Position position, Color c) {
 		StyledText t= getTextWidget();
 		if (t != null && !t.isDisposed()) {
 			Point region= new Point(0, 0);
-			getLineRange(p, region);
+			getLineRange(position, region);
 		
 			region.x-= getDocumentRegionOffset();
 		

@@ -16,11 +16,15 @@ public class ChangePropertyAction extends Action {
 
 	private CompareConfiguration fCompareConfiguration;
 	private String fPropertyKey;
+	private ResourceBundle fBundle;
+	private String fPrefix;
 
 
 	public ChangePropertyAction(ResourceBundle bundle, CompareConfiguration cc, String rkey, String pkey) {
 		fPropertyKey= pkey;
-		Utilities.initAction(this, bundle, rkey);
+		fBundle= bundle;
+		fPrefix= rkey;
+		Utilities.initAction(this, fBundle, fPrefix);
 		setCompareConfiguration(cc);
 	}
 
@@ -31,6 +35,11 @@ public class ChangePropertyAction extends Action {
 			fCompareConfiguration.setProperty(fPropertyKey, new Boolean(b));
 	}
 
+	public void setChecked(boolean state) {
+		super.setChecked(state);
+		Utilities.initToggleAction(this, fBundle, fPrefix, state);
+	}
+	
 	public void setCompareConfiguration(CompareConfiguration cc) {
 		fCompareConfiguration= cc;
 		setChecked(Utilities.getBoolean(fCompareConfiguration, fPropertyKey, false));

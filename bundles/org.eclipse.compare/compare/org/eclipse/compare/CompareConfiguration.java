@@ -94,6 +94,7 @@ public class CompareConfiguration {
 	private Image fAncestorImage;
 	private Image fRightImage;
 	private Image fLeftImage;
+	private Image[] fImages= new Image[16];
 	
 	/**
 	 * Creates a new configuration with editable left and right sides,
@@ -110,6 +111,25 @@ public class CompareConfiguration {
 		}
 	}
 
+	/**
+	 * Returns an image showing the specified change kind.
+	 * The different kind of changes are defined in the <code>Differencer</code>.
+	 * Newly created images are remembered by this class and
+	 * disposed when the <code>dispose</code> method is called.
+	 *
+	 * @param kind the kind of change as defined in <code>Differencer</code>.
+	 * @return an modification of the base image reflecting the kind of change.
+	 * @see org.eclipse.compare.structuremergeviewer.Differencer
+	 */
+	public Image getImage(int kind) {
+		Image image= fImages[kind & 15];
+		if (image == null) {
+			image= fgImages[kind & 15].createImage();
+			fImages[kind & 15]= image;
+		}
+		return image;
+	}
+	
 	/**
 	 * Returns an image showing the specified change kind applied to a
 	 * given base image. The different kind of changes are defined in the <code>Differencer</code>.
