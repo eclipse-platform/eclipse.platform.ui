@@ -345,7 +345,6 @@ public class ExpandableComposite extends Composite {
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
-
 			initCache(changed);
 
 			int width = 0;
@@ -357,11 +356,9 @@ public class ExpandableComposite extends Composite {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			int thmargin = 0;
-			// int tvmargin = 0;
 
 			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
-				// tvmargin = GAP;
 			}
 			if (size != null)
 				width = size.x;
@@ -397,15 +394,13 @@ public class ExpandableComposite extends Composite {
 			int width = 0;
 			Point size = null;
 			if (textLabel != null)
-				textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point tcsize = null;
 			int thmargin = 0;
-			// int tvmargin = 0;
 
 			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
-				// tvmargin = GAP;
-			}
+			}	
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
@@ -703,7 +698,7 @@ public class ExpandableComposite extends Composite {
 	private void toggleState() {
 		boolean newState = !isExpanded();
 		fireExpanding(newState, true);
-		internalSetExpanded(!isExpanded());
+		internalSetExpanded(newState);
 		fireExpanding(newState, false);
 	}
 

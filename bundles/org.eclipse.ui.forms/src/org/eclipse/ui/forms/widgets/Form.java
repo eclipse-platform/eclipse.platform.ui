@@ -62,12 +62,19 @@ public class Form extends Composite {
 	private boolean backgroundImageTiled;
 	private boolean backgroundImageClipped=true;
 	private int backgroundImageAlignment=SWT.LEFT;
+	private GradientInfo gradientInfo;
 	private String text;
 	private Composite body;
 	private ToolBarManager toolBarManager;
 	private SizeCache bodyCache = new SizeCache();
 	private SizeCache toolbarCache = new SizeCache();
 	private FormText selectionText;
+	
+	private class GradientInfo {
+		Color [] gradientColors;
+		int [] percents;
+		boolean vertical;
+	}
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
@@ -124,13 +131,13 @@ public class Form extends Composite {
 			if (ihHint > 0 && ihHint != SWT.DEFAULT)
 				ihHint -= height;
 			
-			
 			Point bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint, body),
 					FormUtil.getHeightHint(ihHint, body));
 			width = Math.max(bsize.x, width);
 			height += bsize.y;
 			return new Point(width, height);
 		}
+		
 		protected void layout(Composite composite, boolean flushCache) {
 		    if (flushCache) {
 		        bodyCache.flush();
@@ -251,6 +258,13 @@ public class Form extends Composite {
 		redraw();
 	}
 
+	public void setTextBackground(Color [] gradientColors, int [] percents, boolean vertical) {
+		gradientInfo = new GradientInfo();
+		gradientInfo.gradientColors = gradientColors;
+		gradientInfo.percents = percents;
+		gradientInfo.vertical = vertical;
+	}
+	
 	/**
 	 * Returns the optional background image of this form. The image is
 	 * rendered starting at the position 0,0 and is painted behind the title.
@@ -335,6 +349,9 @@ public class Form extends Composite {
 		if (backgroundImage != null) {
 			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
 		}
+		else if (gradientInfo != null) {
+			drawTextGradient(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
+		}
 		FormUtil.paintWrapText(bufferGC, text, tbounds);
 		gc.drawImage(buffer, 0, 0);
 		bufferGC.dispose();
@@ -368,6 +385,42 @@ public class Form extends Composite {
 					break;
 			}
 		}
+	}
+	private void drawTextGradient(GC gc, int width, int height) {
+		final Color oldBackground = gc.getBackground();
+		if (gradientInfo.gradientColors.length == 1) {
+			if (gradientInfo.gradientColors[0] != null) gc.setBackground(gradientInfo.gradientColors[0]);
+			gc.fillRectangle(0, 0, width, height);
+		} else {
+			final Color oldForeground = gc.getForeground();
+			Color lastColor = gradientInfo.gradientColors[0];
+			if (lastColor == null) lastColor = oldBackground;
+			int pos = 0;
+			for (int i = 0; i < gradientInfo.percents.length; ++i) {
+				gc.setForeground(lastColor);
+				lastColor = gradientInfo.gradientColors[i + 1];
+				if (lastColor == null) lastColor = oldBackground;
+				gc.setBackground(lastColor);
+				if (gradientInfo.vertical) {
+					final int gradientHeight = (gradientInfo.percents[i] * height / 100) - pos;
+					gc.fillGradientRectangle(0, pos, width, gradientHeight, true);
+					pos += gradientHeight;
+				} else {
+					final int gradientWidth = (gradientInfo.percents[i] * width / 100) - pos;
+					gc.fillGradientRectangle(pos, 0, gradientWidth, height, false);
+					pos += gradientWidth;
+				}
+			}
+			if (gradientInfo.vertical && pos < height) {
+				gc.setBackground(getBackground());
+				gc.fillRectangle(0, pos, width, height - pos);
+			}
+			if (!gradientInfo.vertical && pos < width) {
+				gc.setBackground(getBackground());
+				gc.fillRectangle(pos, 0, width - pos, height);
+			}
+			gc.setForeground(oldForeground);
+		}		
 	}
 	/**
 	 * @return Returns the backgroundImageTiled.

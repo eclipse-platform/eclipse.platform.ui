@@ -157,7 +157,6 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 						clientArea.height, c));
 		
 		//Point currentSize = c.getSize();
-
 		if (!(expandHorizontal && expandVertical)) {
 		    c.setSize(newSize);		    
 		}
