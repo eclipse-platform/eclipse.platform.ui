@@ -5,12 +5,8 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.RetargetAction;
-
-import java.util.*;
-import java.util.List;
 
 /**
  * An <code>EditorToolBarManager</code> is used to sort the contributions

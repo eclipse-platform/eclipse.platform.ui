@@ -6,16 +6,13 @@ package org.eclipse.ui.internal;
  */
 
 import java.util.*;
-import java.util.List;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.core.runtime.*;
+
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.window.Window;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Represents the area set aside for editor workbooks.

@@ -4,17 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.MultiEditor;
-
 import java.util.*;
-import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.MultiEditor;
 
 /**
  * EditorPresentation is a wrapper for PartTabworkbook.

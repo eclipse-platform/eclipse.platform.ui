@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.CoolItemToolBarManager;
 
 /**
  * The action bars for an editor.

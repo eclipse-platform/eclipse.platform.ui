@@ -4,17 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
-import java.util.*;
-import java.util.List;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
 /**
  * <code>PartSite</code> is the general implementation for an
  * <code>IWorkbenchPartSite</code>.  A site maintains the context for a part,

@@ -4,12 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.RetargetAction;
-
 import java.util.*;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * An <code>EditorMenuManager</code> is used to sort the contributions

@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.part.ViewPart;
 
 import java.util.List;
 

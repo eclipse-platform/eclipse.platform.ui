@@ -4,13 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import java.io.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Controls the drag and drop of an editor or view

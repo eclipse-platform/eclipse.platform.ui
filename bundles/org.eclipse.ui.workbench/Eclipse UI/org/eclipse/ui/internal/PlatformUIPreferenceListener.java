@@ -7,11 +7,10 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 
 /**
  * The PlatformUIPreferenceListener is a class that listens to 

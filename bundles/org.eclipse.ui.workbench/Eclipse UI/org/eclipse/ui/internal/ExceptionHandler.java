@@ -4,22 +4,15 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.SWTException;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 
 /**
  * Handles exceptions or errors caught in the event loop.

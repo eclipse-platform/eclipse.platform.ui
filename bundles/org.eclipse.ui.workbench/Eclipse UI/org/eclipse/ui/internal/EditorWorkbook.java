@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
 
 
 /**

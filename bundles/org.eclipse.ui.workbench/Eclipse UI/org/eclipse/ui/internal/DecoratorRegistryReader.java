@@ -8,12 +8,10 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorRegistryReader is the class that reads the

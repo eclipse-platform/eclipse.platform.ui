@@ -4,12 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.action.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.*;
+import org.eclipse.ui.*;
 
 /**
  * This class reads the registry for extensions that plug into

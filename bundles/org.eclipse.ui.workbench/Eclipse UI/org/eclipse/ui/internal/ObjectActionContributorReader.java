@@ -6,8 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.*;
-import java.util.*;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**

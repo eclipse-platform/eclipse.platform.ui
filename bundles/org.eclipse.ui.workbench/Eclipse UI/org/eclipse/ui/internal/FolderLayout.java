@@ -4,10 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import java.util.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This layout is used to define the initial set of views and placeholders

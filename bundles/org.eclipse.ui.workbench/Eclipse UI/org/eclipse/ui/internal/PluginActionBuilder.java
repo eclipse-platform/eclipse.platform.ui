@@ -4,12 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**

@@ -4,12 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.*;
-import org.eclipse.help.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.custom.BusyIndicator;
 /**
  * Holds the information for text appearing in the about dialog
  */

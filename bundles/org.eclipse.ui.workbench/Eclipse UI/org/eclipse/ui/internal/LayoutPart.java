@@ -12,14 +12,13 @@ Contributors:
     - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A presentation part is used to build the presentation for the

@@ -1,8 +1,7 @@
 package org.eclipse.ui.internal;
  
-import java.util.Arrays;
-
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.*;
 
 public class KeyTable {

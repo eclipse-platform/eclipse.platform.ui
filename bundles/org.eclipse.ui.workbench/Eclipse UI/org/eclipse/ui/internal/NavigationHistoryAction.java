@@ -11,10 +11,8 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.ui.*;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The <code>NavigationHistoryAction</code> moves navigation history 

@@ -6,10 +6,8 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  *	Closes all active editors

@@ -9,10 +9,8 @@ http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.ViewPart;
 
 import java.util.*;
 import java.util.List;

@@ -3,15 +3,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.registry.*;
 
 /** 
  * Implementation of an IKeyBindingService.

@@ -16,7 +16,6 @@ import java.util.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * This factory is used to define the initial layout of a part sash container.

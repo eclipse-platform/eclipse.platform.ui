@@ -5,10 +5,9 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
 
 /**
  * This builder reads the actions for an action set from the registry.

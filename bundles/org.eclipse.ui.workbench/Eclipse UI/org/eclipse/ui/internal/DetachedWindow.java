@@ -4,14 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.jface.window.*;
