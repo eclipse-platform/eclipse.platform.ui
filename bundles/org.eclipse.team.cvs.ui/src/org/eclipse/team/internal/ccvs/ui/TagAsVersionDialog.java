@@ -47,7 +47,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	
 	private Text tagText;
 	
-	private String tagName;
+	private String tagName = "";
 	
 	private static final int TABLE_HEIGHT_HINT = 150;
 	
@@ -117,6 +117,17 @@ public class TagAsVersionDialog extends DetailsDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 		
+		Label label = new Label(composite, SWT.WRAP);
+		label.setText(Policy.bind("TagAction.existingVersions"));
+		GridData data = new GridData(
+			GridData.GRAB_HORIZONTAL |
+			GridData.GRAB_VERTICAL |
+			GridData.HORIZONTAL_ALIGN_FILL |
+			GridData.VERTICAL_ALIGN_CENTER);
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+		label.setLayoutData(data);
+		label.setFont(composite.getFont());
+		
 		existingVersionTable = createTable(composite);
 		existingVersionTable.setContentProvider(new WorkbenchContentProvider());
 		existingVersionTable.setLabelProvider(new WorkbenchLabelProvider());
@@ -175,16 +186,21 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 * Validates tag name
 	 */
 	protected void updateEnablements() {
-		IStatus status = CVSTag.validateTagName(tagName);
 		String message = null;
-		if (!status.isOK()) {
-			message = status.getMessage();
+		if(tagName.length() == 0) {
+			message = "";
+		} else {		
+			IStatus status = CVSTag.validateTagName(tagName);
+			if (!status.isOK()) {
+				message = status.getMessage();
+			}
+			
+			boolean exists = doesTagNameExists(tagName);
+			if(exists) {
+				message = Policy.bind("TagAction.tagAlreadyExists"); //$NON-NLS-1$
+			}
 		}
-		
-		boolean exists = doesTagNameExists(tagName);
-		if(exists) {
-			message = Policy.bind("TagAction.tagAlreadyExists"); //$NON-NLS-1$
-		}
+		setPageComplete(message == null);
 		setErrorMessage(message);
 	}
 	

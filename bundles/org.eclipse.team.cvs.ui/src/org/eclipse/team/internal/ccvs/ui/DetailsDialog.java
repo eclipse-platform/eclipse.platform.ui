@@ -107,6 +107,7 @@ abstract public class DetailsDialog extends Dialog {
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
+		updateEnablements();
 	}
 
 	/* (non-Javadoc)
@@ -126,8 +127,6 @@ abstract public class DetailsDialog extends Dialog {
 			GridData.HORIZONTAL_ALIGN_FILL));
 		errorMessageLabel.setFont(parent.getFont());
 		errorMessageLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
-		
-		updateEnablements();
 		
 		return composite;
 	}
@@ -171,15 +170,19 @@ abstract public class DetailsDialog extends Dialog {
 	}
 	
 	final protected void setErrorMessage(String error) {
-		if(errorMessageLabel != null && okButton != null) {
+		if(errorMessageLabel != null) {
 			if(error == null || error.length() == 0) {
 				errorMessageLabel.setText("");
-				okButton.setEnabled(true);
 			} else {
 				errorMessageLabel.setText(error);
-				okButton.setEnabled(false);
 			}
 			errorMessageLabel.update();
+		}
+	}
+	
+	final protected void setPageComplete(boolean complete) {
+		if(okButton != null ) {
+			okButton.setEnabled(complete);
 		}
 	}
 	

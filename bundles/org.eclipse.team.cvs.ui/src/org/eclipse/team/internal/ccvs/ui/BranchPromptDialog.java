@@ -152,6 +152,17 @@ public class BranchPromptDialog extends DetailsDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 		
+		Label label = new Label(composite, SWT.WRAP);
+		label.setText(Policy.bind("BranchWizardPage.existingVersionsAndBranches"));
+		GridData data = new GridData(
+			GridData.GRAB_HORIZONTAL |
+			GridData.GRAB_VERTICAL |
+			GridData.HORIZONTAL_ALIGN_FILL |
+			GridData.VERTICAL_ALIGN_CENTER);
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+		label.setLayoutData(data);
+		label.setFont(composite.getFont());
+		
 		tagTree = createTree(composite);
 		tagTree.setInput(new ProjectElement(folder, false /*show HEAD tag*/));
 		Runnable refresh = new Runnable() {
@@ -194,9 +205,10 @@ public class BranchPromptDialog extends DetailsDialog {
 	 */
 	protected void updateEnablements() {
 		String message = null;
+		boolean complete = false;
 		
 		if (branchTag.length() == 0) {
-			message = null;
+			message = "";
 		} else {
 			IStatus status = CVSTag.validateTagName(branchTag);
 			if (!status.isOK()) {
@@ -207,7 +219,7 @@ public class BranchPromptDialog extends DetailsDialog {
 					if (!status.isOK()) {
 						message = Policy.bind("BranchWizard.versionNameWarning", status.getMessage()); //$NON-NLS-1$
 					} else {
-						if(versionTag.equals(branchTag)) {
+						if(versionTag.length() != 0 && versionTag.equals(branchTag)) {
 							message = Policy.bind("BranchWizard.branchAndVersionMustBeDifferent"); //$NON-NLS-1$
 						} else {
 							if(doesTagNameExists(versionTag)) {
@@ -220,6 +232,7 @@ public class BranchPromptDialog extends DetailsDialog {
 				}
 			}
 		}
+		setPageComplete(message == null);
 		setErrorMessage(message);
 	}	
 
