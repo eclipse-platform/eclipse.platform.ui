@@ -20,19 +20,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
-
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
@@ -95,9 +93,13 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
 		String descriptionCharset = getCharsetFromDescription();
 		if (descriptionCharset != null && !(descriptionCharset.equals(encoding))) {
-
+			Shell shell = null;
+			DialogPage page = getPage();
+			if(page != null)
+				shell = page.getShell();
+			
 			MessageDialog dialog = new MessageDialog(
-					getPage().getShell(),
+					shell,
 					IDEWorkbenchMessages
 							.getString("ResourceEncodingFieldEditor.EncodingConflictTitle"), //$NON-NLS-1$
 					null,
