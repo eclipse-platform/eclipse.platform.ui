@@ -185,8 +185,10 @@ public class MainPreferencePage
 		httpProxyPortText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try {
-					int num = Integer.valueOf(httpProxyPortText.getText())
-							.intValue();
+					String portValue = httpProxyPortText.getText();
+					int num = 80;
+					if (portValue != null && portValue.trim().length() > 0)
+						num = Integer.valueOf(portValue).intValue();
 					if (0 <= num && num <= 0xFFFF) {
 						// port is valid
 						MainPreferencePage.this.setValid(true);
