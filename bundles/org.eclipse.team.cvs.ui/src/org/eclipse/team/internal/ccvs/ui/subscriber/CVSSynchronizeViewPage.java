@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.sets.*;
@@ -50,10 +51,8 @@ public class CVSSynchronizeViewPage extends TeamSubscriberParticipantPage implem
 
 	public CVSSynchronizeViewPage(TeamSubscriberParticipant page, ISynchronizeView view, SubscriberInput input) {
 		super(page, view, input);
-		getInput().getFilteredSyncSet().addSyncSetChangedListener(this);
-		CVSUIPlugin.addPropertyChangeListener(this);
-	}
-
+	}	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,7 +71,7 @@ public class CVSSynchronizeViewPage extends TeamSubscriberParticipantPage implem
 	 */
 	public void syncSetChanged(SyncSetChangedEvent event) {
 		StructuredViewer viewer = getViewer();
-		if (viewer != null) {
+		if (viewer != null && getInput() != null) {
 			IStructuredContentProvider cp = (IStructuredContentProvider) viewer.getContentProvider();
 			StructuredSelection selection = new StructuredSelection(cp.getElements(getInput()));
 			for (Iterator it = delegates.iterator(); it.hasNext(); ) {
@@ -119,8 +118,17 @@ public class CVSSynchronizeViewPage extends TeamSubscriberParticipantPage implem
 	public void propertyChange(PropertyChangeEvent event) {		
 		super.propertyChange(event);
 		String prop = event.getProperty();
-		if(prop.equals(CVSUIPlugin.P_DECORATORS_CHANGED)) {
+		if(prop.equals(CVSUIPlugin.P_DECORATORS_CHANGED) && getViewer() != null && getInput() != null) {
 			getViewer().refresh(true /* update labels */);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		getInput().getFilteredSyncSet().addSyncSetChangedListener(this);
+		CVSUIPlugin.addPropertyChangeListener(this);		
 	}
 }
