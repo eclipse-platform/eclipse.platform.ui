@@ -396,18 +396,18 @@ class DeadlockDetector {
 		//there is a deadlock in the graph
 		Thread[] threads = getThreadsInDeadlock(client);
 		Thread candidate = resolutionCandidate(threads);
-		ISchedulingRule[] locks = realLocksForThread(candidate);
-		Deadlock deadlock = new Deadlock(threads, locks, candidate);
+		ISchedulingRule[] locksToSuspend = realLocksForThread(candidate);
+		Deadlock deadlock = new Deadlock(threads, locksToSuspend, candidate);
 		//find a thread whose locks can be suspended to resolve the deadlock
 		if (JobManager.DEBUG_LOCKS)
 			reportDeadlock(deadlock);
 		if (JobManager.DEBUG_DEADLOCK)
 			throw new IllegalStateException("Deadlock detected. Caused by thread " + client.getName() + '.'); //$NON-NLS-1$
-		//update the graph to indicate that the locks will now be suspended
-		// to indicate that the lock will be suspended, we set the thread to wait for the lock
-		// when the lock is forced to be released, the entry will be cleared
-		for (int i = 0; i < locks.length; i++)
-			setToWait(deadlock.getCandidate(), locks[i], true);
+		// Update the graph to indicate that the locks will now be suspended.
+		// To indicate that the lock will be suspended, we set the thread to wait for the lock.
+		// When the lock is forced to be released, the entry will be cleared.
+		for (int i = 0; i < locksToSuspend.length; i++)
+			setToWait(deadlock.getCandidate(), locksToSuspend[i], true);
 		return deadlock;
 	}
 
