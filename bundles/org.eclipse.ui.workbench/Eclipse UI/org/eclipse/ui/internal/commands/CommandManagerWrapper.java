@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Platform;
@@ -604,7 +605,31 @@ public final class CommandManagerWrapper implements ICommandManager,
 		bindingManager.setPlatform(activePlatform);
 	}
 
-	public void setHandlersByCommandId(Map handlersByCommandId) {
-		// TODO Implement.
+	/**
+	 * Updates the handlers for a block of commands all at once.
+	 * 
+	 * @param handlersByCommandId
+	 *            The map of command identifier (<code>String</code>) to
+	 *            handler (<code>IHandler</code>).
+	 */
+	public final void setHandlersByCommandId(final Map handlersByCommandId) {
+		final Iterator entryItr = handlersByCommandId.entrySet().iterator();
+		while (entryItr.hasNext()) {
+			final Map.Entry entry = (Map.Entry) entryItr.next();
+			final String commandId = (String) entry.getKey();
+			
+			// Convert the handler to the right kind of handler.
+			final Object value = entry.getValue();
+			final IHandler handler;
+			if (value instanceof IHandler) {
+				handler = (IHandler) value;
+			} else {
+				handler = new LegacyHandlerWrapper((org.eclipse.ui.commands.IHandler) value);
+			}
+			
+			// Set the handler on the command.
+			final Command command = commandManager.getCommand(commandId);
+			command.setHandler(handler);
+		}
 	}
 }
