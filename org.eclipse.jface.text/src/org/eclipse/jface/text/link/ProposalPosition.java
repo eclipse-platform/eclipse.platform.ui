@@ -40,6 +40,11 @@ public class ProposalPosition extends LinkedPosition {
 		fProposals= proposals;
 	}
 	
+	public ProposalPosition(IDocument document, int offset, int length, ICompletionProposal[] proposals) {
+		super(document, offset, length, LinkedPositionGroup.NO_STOP);
+		fProposals= proposals;
+	}
+	
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

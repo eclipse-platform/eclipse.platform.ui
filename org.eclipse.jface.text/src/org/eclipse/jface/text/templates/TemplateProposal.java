@@ -139,12 +139,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				String[] values= variable.getValues();
 				ICompletionProposal[] proposals= new ICompletionProposal[values.length];
 				for (int j= 0; j < values.length; j++) {
-					proposals[j]= new CompletionProposal(values[j], offsets[0], length, length);
+					proposals[j]= new CompletionProposal(values[j], offsets[0] + start, length, offsets[0] + length);
 				}
 				
 				for (int j= 0; j != offsets.length; j++)
-					if (proposals.length > 1)
-						group.addPosition(new ProposalPosition(document, offsets[j] + start, length, j == 0 ? 1 : LinkedPositionGroup.NO_STOP, proposals));
+					if (j == 0 && proposals.length > 1)
+						group.addPosition(new ProposalPosition(document, offsets[j] + start, length, proposals));
 					else
 						group.addPosition(new LinkedPosition(document, offsets[j] + start, length));
 				
