@@ -669,6 +669,14 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 				initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 			}
 			
+			if (fChangeRulerColumn != null
+				&&	(LINE_NUMBER_COLOR.equals(property) 
+				||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)
+				||	PREFERENCE_COLOR_BACKGROUND.equals(property))) {
+					
+				initializeChangeRulerColumn(fChangeRulerColumn);
+			}
+			
 			if (fLineNumberRulerColumn instanceof LineNumberChangeRulerColumn
 					&& ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE.equals(property)) {
 				initializeChangeRulerColumn(getChangeColumn());
