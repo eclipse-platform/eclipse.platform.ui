@@ -543,6 +543,19 @@ private void handleWidgetSelection(Event e, boolean selection) {
 public int hashCode() {
 	return action.hashCode();
 }
+
+/**
+ * Returns whether the given action has any images.
+ * 
+ * @param action the action
+ * @return <code>true</code> if the action has any images, <code>false</code> if not
+ */
+private boolean hasImages(IAction action) {
+	return action.getImageDescriptor() != null
+	|| action.getHoverImageDescriptor() != null
+	|| action.getDisabledImageDescriptor() != null;
+}
+
 /* (non-Javadoc)
  * Method declared on IContributionItem.
  */
@@ -607,8 +620,16 @@ public void update(String propertyName) {
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;
 
+			if (textChanged) {
+				String text = action.getText();
+				if (text != null && !hasImages(action)) {
+					text = Action.removeAcceleratorText(text);
+					ti.setText(text);
+				}
+			}
+			
 			if (imageChanged)
-				updateImages(true);
+				updateImages(action.getText() == null);  // only substitute a missing image if it has no text
 			
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
