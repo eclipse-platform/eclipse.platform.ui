@@ -98,11 +98,12 @@ private boolean checkOverwrite(
 
 	Runnable query = new Runnable() {
 		public void run() {
+			String pathName = destination.getFullPath().makeRelative().toString();
 			result[0] =
 				MessageDialog.openQuestion(
 					shell,
 					RESOURCE_EXISTS_TITLE,
-					MessageFormat.format(RESOURCE_EXISTS_MESSAGE, new Object[] {destination.toString()}));
+					MessageFormat.format(RESOURCE_EXISTS_MESSAGE, new Object[] {pathName}));
 		}
 
 	};
