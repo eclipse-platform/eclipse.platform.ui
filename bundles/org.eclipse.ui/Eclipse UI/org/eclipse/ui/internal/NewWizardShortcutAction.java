@@ -1,23 +1,23 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 
 
 /**
@@ -64,11 +64,19 @@ public void run() {
 	}
 
 	ISelection selection = workbench.getActiveWorkbenchWindow().getSelectionService().getSelection();
-	IStructuredSelection selectionToPass = null;
-	if (selection instanceof IStructuredSelection)
+	IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
+	if (selection instanceof IStructuredSelection) {
 		selectionToPass = wizardElement.adaptedSelection((IStructuredSelection) selection);
-	else
-		selectionToPass = StructuredSelection.EMPTY;
+	} else if (selection == null) {
+		// Build the selection from the IFile of the editor
+		IWorkbenchPart part = workbench.getActiveWorkbenchWindow().getPartService().getActivePart();
+		if (part instanceof IEditorPart) {
+			IEditorInput input = ((IEditorPart)part).getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				selectionToPass = new StructuredSelection(((IFileEditorInput)input).getFile());
+			}
+		}
+	}
 		
 	wizard.init(workbench, selectionToPass);
 

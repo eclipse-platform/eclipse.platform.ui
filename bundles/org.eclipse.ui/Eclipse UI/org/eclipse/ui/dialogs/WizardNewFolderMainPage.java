@@ -1,28 +1,32 @@
 package org.eclipse.ui.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.text.MessageFormat;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a folder resource.
  * <p>
@@ -204,7 +208,7 @@ protected void initializePage() {
 		} else if (next instanceof IAdaptable) {
 			selectedResource = (IResource)((IAdaptable)next).getAdapter(IResource.class);
 		}
-		if (selectedResource != null && !enum.hasNext()) {	// ie.- not a multi-selection
+		if (selectedResource != null) {
 			if (selectedResource.getType() == IResource.FILE)
 				selectedResource = selectedResource.getParent();
 			if (selectedResource.isAccessible())
