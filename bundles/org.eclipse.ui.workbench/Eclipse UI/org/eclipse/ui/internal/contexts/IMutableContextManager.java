@@ -31,7 +31,9 @@ import org.eclipse.ui.contexts.IContextManager;
 public interface IMutableContextManager extends IContextManager {
 
     /**
-     * Sets the set of identifiers to enabled contexts.
+     * Sets the set of identifiers to enabled contexts. If there are any
+     * ancestors of these contexts that are not enabled, they should be enabled
+     * as well.
      * 
      * @param enabledContextIds
      *            the set of identifiers to enabled contexts. This set may be
