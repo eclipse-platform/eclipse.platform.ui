@@ -20,11 +20,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -112,7 +114,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			final WorkbenchPreferenceGroup group = groups[i];
 			ToolItem newItem = new ToolItem(toolbar,SWT.RADIO);
 			newItem.setText(group.getName());
-			newItem.setImage(group.getImage());
+			
+			Image image = group.getImage();
+			if(image == null)
+				image = JFaceResources.getImage(Dialog.DLG_IMG_INFO);
+			newItem.setImage(image);
 			newItem.addSelectionListener(new SelectionAdapter(){
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)

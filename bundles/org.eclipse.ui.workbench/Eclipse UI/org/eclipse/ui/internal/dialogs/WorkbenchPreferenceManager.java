@@ -58,10 +58,9 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 	 * @param returnValue
 	 */
 	private void addIds(WorkbenchPreferenceGroup group, Hashtable returnValue) {
-		String [] pageIds = group.getPageIds();
-		for (int i = 0; i < pageIds.length; i++) {
-			String string = pageIds[i];
-			returnValue.put(string,group);
+		Iterator pageIds = group.getPageIds().iterator();
+		while(pageIds.hasNext()){
+			returnValue.put(pageIds.next(),group);
 		}
 		
 		Iterator children = group.getChildren().iterator();

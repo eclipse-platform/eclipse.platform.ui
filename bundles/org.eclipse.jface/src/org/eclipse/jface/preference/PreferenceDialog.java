@@ -690,9 +690,11 @@ public class PreferenceDialog extends Dialog implements
 	 * @return the first element, or null if empty.
 	 */
 	protected IPreferenceNode getSingleSelection(ISelection selection) {
-		if (!selection.isEmpty())
-			return (IPreferenceNode) ((IStructuredSelection) selection)
-					.getFirstElement();
+		if (!selection.isEmpty()){
+			IStructuredSelection structured = (IStructuredSelection) selection;
+			if(structured.getFirstElement() instanceof IPreferenceNode)
+				return (IPreferenceNode) structured.getFirstElement();
+		}
 		return null;
 	}
 

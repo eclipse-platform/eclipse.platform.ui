@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -293,7 +294,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		String icon = element.getAttribute(ATT_ICON);
 		String parent = element.getAttribute(ATT_PARENT_GROUP);
 
-		String[] pageIds = readPages(element);
+		Collection pageIds = readPages(element);
 
 		ImageDescriptor descriptor = null;
 
@@ -357,11 +358,11 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	/**
 	 * Read the pages for the receiver from element.
 	 * @param element
-	 * @return String[] the ids of the children
+	 * @return Collection the ids of the children
 	 */
-	private String[] readPages(IConfigurationElement element) {
+	private Collection readPages(IConfigurationElement element) {
 		IConfigurationElement[] pages = element.getChildren(TAG_PAGE);
-		ArrayList list = new ArrayList();
+		HashSet list = new HashSet();
 		for (int i = 0; i < pages.length; i++) {
 			IConfigurationElement page = pages[i];
 			String id = page.getAttribute(ATT_ID);
@@ -369,10 +370,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 				list.add(id);
 		}
 
-		String[] ids = new String[list.size()];
-		list.toArray(ids);
-		return ids;
-
+		return list;
 	}
 
 	/**
@@ -387,9 +385,9 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 		while (groupIterator.hasNext()) {
 			WorkbenchPreferenceGroup nextGroup = (WorkbenchPreferenceGroup) groupIterator.next();
-			String[] pages = nextGroup.getPageIds();
-			for (int i = 0; i < pages.length; i++) {
-				nodeToGroupMapping.put(pages[i], nextGroup);
+			Iterator pages = nextGroup.getPageIds().iterator();
+			while(pages.hasNext()){
+				nodeToGroupMapping.put(pages.next(), nextGroup);
 			}
 		}
 

@@ -15,10 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * WorkbenchPreferenceGroup is the representation of a category
@@ -31,7 +29,7 @@ public class WorkbenchPreferenceGroup {
 	private String parentGroupId;
 	private Collection childGroups = new ArrayList();
 	private Collection pages = new ArrayList();
-	private String[] pageIds;
+	private Collection pageIds;
 	private ImageDescriptor imageDescriptor;
 	private Image image;
 
@@ -44,7 +42,7 @@ public class WorkbenchPreferenceGroup {
 	 * @param icon The ImageDescriptor for the icon for the
 	 * receiver. May be <code>null</code>.
 	 */
-	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, String[] ids, ImageDescriptor icon) {
+	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, Collection ids, ImageDescriptor icon) {
 		id = uniqueID;
 		name = displayableName;
 		parentGroupId = parentId;
@@ -94,7 +92,7 @@ public class WorkbenchPreferenceGroup {
 	public Image getImage() {
 		
 		if(imageDescriptor == null)
-			return JFaceResources.getImage(Dialog.DLG_IMG_INFO);
+			return null;
 		
 		if(image == null)
 			image = imageDescriptor.createImage();
@@ -130,9 +128,9 @@ public class WorkbenchPreferenceGroup {
 
 	/**
 	 * Return the pageIds for the receiver.
-	 * @return String[]
+	 * @return Collection
 	 */
-	public String[] getPageIds() {
+	public Collection getPageIds() {
 		return pageIds;
 	}
 
@@ -142,6 +140,18 @@ public class WorkbenchPreferenceGroup {
 	 */
 	public Collection getChildren() {
 		return childGroups;
+	}
+	
+	/**
+	 * Return the all of the child groups and
+	 * nodes.
+	 * @return Collection
+	 */
+	public Object[] getGroupsAndNodes() {
+		Collection allChildren = new ArrayList();
+		allChildren.addAll(childGroups);
+		allChildren.addAll(pages);
+		return allChildren.toArray();
 	}
 
 }
