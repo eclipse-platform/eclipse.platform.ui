@@ -32,6 +32,7 @@ public class UnifiedSearchCategory2 extends UpdateSearchCategory {
 		public void run(
 			ISite site,
 			String [] categoriesToSkip,
+			IUpdateSearchFilter filter,
 			IUpdateSearchResultCollector collector, 
 			IProgressMonitor monitor) {
 			ISiteFeatureReference[] refs = site.getFeatureReferences();
@@ -63,7 +64,8 @@ public class UnifiedSearchCategory2 extends UpdateSearchCategory {
 				try {
 					if (!skipFeature) {
 						IFeature feature = ref.getFeature(null);
-						collector.accept(feature);
+						if (filter.accept(feature))
+							collector.accept(feature);
 						monitor.subTask(feature.getLabel());
 					}
 				} catch (CoreException e) {

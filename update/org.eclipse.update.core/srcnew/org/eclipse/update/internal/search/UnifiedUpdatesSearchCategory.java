@@ -239,6 +239,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		public void run(
 			ISite site,
 			String[] categoriesToSkip,
+			IUpdateSearchFilter filter,
 			IUpdateSearchResultCollector collector,
 			IProgressMonitor monitor) {
 			ArrayList hits = new ArrayList();
@@ -280,7 +281,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			}
 			IFeature[] result;
 			if (hits.size() > 0) {
-				collectValidHits(hits, collector);
+				collectValidHits(hits, filter, collector);
 			}
 			monitor.worked(1);
 			monitor.done();
@@ -295,6 +296,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 
 	private void collectValidHits(
 		ArrayList hits,
+		IUpdateSearchFilter filter,
 		IUpdateSearchResultCollector collector) {
 		Object[] array = hits.toArray();
 		HitSorter sorter = new HitSorter();
@@ -315,12 +317,15 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 					IFeature patch = job.getFeature();
 					// Do not add the patch if already installed
 					IFeature[] sameId = UpdateManager.getInstalledFeatures(patch, false);
-					if (sameId.length==0)
-						collector.accept(patch);
+					if (sameId.length==0) {
+						if (filter.accept(patch))
+							collector.accept(patch);
+					}
 				}
 				else if (topHit == null) {
 					topHit = job.getFeature();
-					collector.accept(topHit);
+					if (filter.accept(topHit))
+						collector.accept(topHit);
 				}
 			}
 		}

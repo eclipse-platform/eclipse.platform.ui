@@ -1,9 +1,13 @@
-/*
- * Created on May 26, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.search;
 
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -19,7 +23,7 @@ import org.eclipse.update.internal.operations.UpdateManager;
  * @see IUpdateSearchFilter
  */
 public class BackLevelFilter implements IUpdateSearchFilter {
-	public boolean select(IFeature match) {
+	public boolean accept(IFeature match) {
 		PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
 		IFeature [] installed = UpdateManager.getInstalledFeatures(match, false);
 		if (installed.length==0) return true;

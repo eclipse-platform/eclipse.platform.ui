@@ -41,8 +41,9 @@ public interface IUpdateSearchQuery {
  * 
  * @param site the update site to scan
  * @param categoriesToSkip an array of category names that need to be skipped or <samp>null</samp> if categories should not be taken into account.
+ * @param filter a filter to apply before passing the match to collector
  * @param collector an object that is used for reporting search results
  * @param monitor a progress monitor to report search progress within the provided site
  */
-	public void run(ISite site, String [] categoriesToSkip, IUpdateSearchResultCollector collector, IProgressMonitor monitor);
+	public void run(ISite site, String [] categoriesToSkip, IUpdateSearchFilter filter, IUpdateSearchResultCollector collector, IProgressMonitor monitor);
 }

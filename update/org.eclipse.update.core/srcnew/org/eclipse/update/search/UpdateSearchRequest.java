@@ -35,7 +35,34 @@ public class UpdateSearchRequest {
 	private IUpdateSearchCategory category;
 	private UpdateSearchScope scope;
 	private boolean searchInProgress = false;
-	private ArrayList filters;
+	private AggregateFilter aggregateFilter = new AggregateFilter();
+
+	class AggregateFilter implements IUpdateSearchFilter {
+		private ArrayList filters;
+		public void addFilter(IUpdateSearchFilter filter) {
+			if (filters == null)
+				filters = new ArrayList();
+			if (filters.contains(filter) == false)
+				filters.add(filter);
+		}
+		
+		public void removeFilter(IUpdateSearchFilter filter) {
+			if (filters == null)
+				return;
+			filters.remove(filter);
+		}
+	
+		public boolean accept(IFeature match) {
+			if (filters == null)
+				return true;
+			for (int i = 0; i < filters.size(); i++) {
+				IUpdateSearchFilter filter = (IUpdateSearchFilter) filters.get(i);
+				if (filter.accept(match) == false)
+					return false;
+			}
+			return true;
+		}
+	}
 
 	/**
 	 * The constructor that accepts the search category and 
@@ -49,48 +76,28 @@ public class UpdateSearchRequest {
 		this.category = category;
 		this.scope = scope;
 	}
-/**
- * Adds a filter to this request. This method does nothing
- * if search is alrady in progress. 
- * @param filter the filter 
- * @see UpdateSearchRequest#filter
- */	
-	
+	/**
+	 * Adds a filter to this request. This method does nothing
+	 * if search is alrady in progress. 
+	 * @param filter the filter 
+	 * @see UpdateSearchRequest#removeFilter
+	 */
 	public void addFilter(IUpdateSearchFilter filter) {
 		if (searchInProgress)
 			return;
-		if (filters==null) filters=new ArrayList();
-		if (filters.contains(filter)==false)
-			filters.add(filter);
+		aggregateFilter.addFilter(filter);
 	}
-/**
- * Removes the filter from this request. This method does
- * nothing if search is alrady in progress.
- * @param filter the filter to remove
- * @see UpdateSearchRequest#filter
- */
-	
+	/**
+	 * Removes the filter from this request. This method does
+	 * nothing if search is alrady in progress.
+	 * @param filter the filter to remove
+	 * @see UpdateSearchRequest#addFilter
+	 */
+
 	public void removeFilter(IUpdateSearchFilter filter) {
 		if (searchInProgress)
 			return;
-		if (filters==null) return;
-		filters.remove(filter);
-	}
-	
-/**
- * Applies filters to the provided feature.
- * @param match the feature to filter
- * @return <samp>true</samp> if the feature passes the filters
- * or <samp>false</samp>otherwise.
- */
-	public boolean filter(IFeature match) {
-		if (filters==null) return true;
-		for (int i=0; i<filters.size(); i++) {
-			IUpdateSearchFilter filter = (IUpdateSearchFilter)filters.get(i);
-			if (filter.select(match)==false)
-				return false;
-		}
-		return true;
+		aggregateFilter.removeFilter(filter);
 	}
 
 	/**
@@ -243,6 +250,7 @@ public class UpdateSearchRequest {
 		query.run(
 			site,
 			categoriesToSkip,
+			aggregateFilter,
 			collector,
 			new SubProgressMonitor(monitor, 9));
 		return null;

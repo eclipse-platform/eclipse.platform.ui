@@ -61,6 +61,7 @@ public class UnifiedReviewPage
 	private Text descLabel;
 	private Button statusButton;
 	private Button moreInfoButton;
+	private Button propertiesButton;
 	private Button filterCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
 	private SearchRunner2 searchRunner;
@@ -272,6 +273,22 @@ public class UnifiedReviewPage
 			}
 		});
 		moreInfoButton.setEnabled(false);
+		
+		
+		propertiesButton = new Button(buttonContainer, SWT.PUSH);
+		propertiesButton.setText("&Properties");
+		gd =
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_BEGINNING);
+		propertiesButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(propertiesButton);
+		propertiesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleProperties();
+			}
+		});
+		propertiesButton.setEnabled(false);
 
 		statusButton = new Button(buttonContainer, SWT.PUSH);
 		statusButton.setText("&Show Status...");
@@ -411,8 +428,6 @@ public class UnifiedReviewPage
 	}
 
 	public void accept(final IFeature feature) {
-		UpdateSearchRequest request = searchRunner.getSearchProvider().getSearchRequest();
-		if (!request.filter(feature)) return;
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				PendingOperation job = new PendingOperation(feature);
@@ -443,6 +458,7 @@ public class UnifiedReviewPage
 		if (desc == null)
 			desc = "";
 		descLabel.setText(desc);
+		propertiesButton.setEnabled(feature != null);
 		moreInfoButton.setEnabled(job != null && getMoreInfoURL(job) != null);
 	}
 
