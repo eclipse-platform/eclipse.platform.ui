@@ -27,7 +27,7 @@ public class TestTreeViewerAdvisor extends TreeViewerAdvisor {
 	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
 		SynchronizeModelManager manager =  new SynchronizeModelManager(configuration) {
 			protected ISynchronizeModelProvider createModelProvider(String id) {
-				return new HierarchicalModelProvider(getConfiguration(), getSyncInfoSet());
+				return new HierarchicalModelProvider(getSyncInfoSet());
 			}
 			protected ISynchronizeModelProviderDescriptor[] getSupportedModelProviders() {
 				return new ISynchronizeModelProviderDescriptor[] {
