@@ -7,20 +7,11 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 
 public abstract class TargetProvider {
-
-	private IProject project;
-	
 	/**
-	 * Answers a constant qualified name that uniquely identifies this provider, used to
-	 * distinguish this provider from others in the workspace.
-	 */
-	abstract public QualifiedName getIdentifier();
-
-	/**
-	 * Answer a string for displaying this target in prompts, etc.
+	 * Answers the location for this target.
 	 * @return a printable string
 	 */	
-	public abstract String getDisplayName();
+	public abstract TargetLocation getLocation();
 	
 	/**
 	 * Updates the local resource to have the same content as the corresponding remote
@@ -57,20 +48,13 @@ public abstract class TargetProvider {
 	 * array.
 	 */
 	public abstract void put(IResource[] resources, IProgressMonitor progress) throws TeamException;
-
-	/**
-	 * Set the project that this is a target provider for.
-	 * @param project the project we are to be a provider for
-	 */
-	public void setProject(IProject project) {
-		this.project = project;
-	}
+	
+	public abstract void deregister(IProject project);
 	
 	/**
-	 * Return the project that this is a target provider for.
-	 * @return The project this is a provider for.
+	 * @see Object#toString()
 	 */
-	public IProject getProject() {
-		return this.project;
+	public String toString() {
+		return getLocation().toString();
 	}
 }

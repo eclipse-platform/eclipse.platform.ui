@@ -11,6 +11,7 @@
 package org.eclipse.team.core;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * This exception is thrown by the team provider API.  It represents a failure in an API call.
@@ -66,5 +67,10 @@ public class TeamException extends Exception {
 	 */
 	public IStatus getStatus() {
 		return status;
+	}
+	
+	public TeamException(String message, Exception e) {
+		super(e.getMessage());
+		this.status = new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, e);
 	}
 }

@@ -8,14 +8,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.TargetLocation;
 
 /**
  * This abstract class implements the state of a local and corresponding remote resource,
@@ -57,6 +58,12 @@ public abstract class ResourceState {
 	 * as it is type-dependent.)
 	 */
 	protected IResource localResource;
+	
+	protected TargetLocation location;
+	
+	protected QualifiedName stateKey;
+
+	protected IPath root;
 
 	/**
 	 * Constructor for a resource state given a local resource.
@@ -64,17 +71,16 @@ public abstract class ResourceState {
 	 * 
 	 * @param localResource the local part of a synchronized pair of resources.
 	 */
-	public ResourceState(IResource localResource) {
+	public ResourceState(IResource localResource, IPath root) {
 		super();
-		SynchronizedTargetProvider.getSynchronizer().add(getStateType());
+		this.root = root;
+		this.stateKey = new QualifiedName(getType(), root.toString());
+		SynchronizedTargetProvider.getSynchronizer().add(stateKey);
 		this.localResource = localResource;
+		this.location = location;
 	}
-
-	/**
-	 * Subclasses should implement this method to answer a qualified name
-	 * used to uniquely identify the type of state represented by the receiver.
-	 */
-	abstract public QualifiedName getStateType();
+	
+	public abstract String getType();
 
 	/**
 	 * Get the timestamp that represents the base state of the local resource, that is
@@ -335,7 +341,7 @@ public abstract class ResourceState {
 	public final void loadState() {
 		try {
 			byte[] storedState =
-				SynchronizedTargetProvider.getSynchronizer().getSyncInfo(getStateType(), localResource);
+				SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource);
 			if (storedState != null)
 				fromBytes(storedState);
 		} catch (CoreException e) {
@@ -372,7 +378,7 @@ public abstract class ResourceState {
 	public final void storeState() {
 		try {
 			SynchronizedTargetProvider.getSynchronizer().setSyncInfo(
-				getStateType(),
+				stateKey,
 				localResource,
 				toBytes());
 			ResourcesPlugin.getWorkspace().save(false, null);
@@ -417,7 +423,7 @@ public abstract class ResourceState {
 	final public void removeState() {
 		try {
 			SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
-				getStateType(),
+				stateKey,
 				localResource,
 				IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
@@ -433,4 +439,20 @@ public abstract class ResourceState {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
+	/**
+	 * Gets the location.
+	 * @return Returns a TargetLocation
+	 */
+	public TargetLocation getLocation() {
+		return location;
+	}
+
+	
+	/**
+	 * Gets the root.
+	 * @return Returns a IPath
+	 */
+	public IPath getRoot() {
+		return root;
+	}
 }

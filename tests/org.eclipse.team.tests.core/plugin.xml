@@ -35,6 +35,17 @@
       </test>
    </extension>
    <extension
+         point="org.eclipse.core.tests.harness.tests">
+      <test
+            id="target.all">
+         <run
+               class="org.eclipse.team.tests.core.TargetProviderTests">
+         </run>
+      </test>
+   </extension>
+   
+   
+   <extension
          id="bic-provider"
          name="Bic Provider"
          point="org.eclipse.core.resources.natures">
