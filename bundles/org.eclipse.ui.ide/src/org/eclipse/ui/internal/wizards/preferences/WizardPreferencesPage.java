@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -267,7 +268,11 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         transfersTable = new Table(group, SWT.CHECK | SWT.BORDER);
         transfersTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        final Label text = new Label(group, SWT.WRAP);
+		Label description = new Label(group, SWT.NONE);
+		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		description.setText(PreferencesMessages.WizardPreferences_description);
+		
+        final Text text = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
         text.setLayoutData(new GridData(GridData.FILL_BOTH));
         transfersTable.addSelectionListener(new SelectionListener() {
 
