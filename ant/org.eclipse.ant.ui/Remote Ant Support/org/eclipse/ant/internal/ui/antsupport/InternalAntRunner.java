@@ -956,14 +956,18 @@ public class InternalAntRunner {
 	}
 	
 	private void setProperties(Project project) {
-		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
-		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
+		setBuiltInProperties(project);
 		if (userProperties != null) {
 			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
 			}
 		} 
+	}
+
+	private void setBuiltInProperties(Project project) {
+		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
+		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 	}
 
 	/*
