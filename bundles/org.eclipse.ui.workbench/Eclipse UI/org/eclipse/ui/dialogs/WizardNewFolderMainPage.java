@@ -1,19 +1,15 @@
 package org.eclipse.ui.dialogs;
 
-/**
- * Copyright (c) 2000, 2003 IBM Corp. and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+/******************************************************************************* 
+ * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials! 
+ * are made available under the terms of the Common Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html 
  * 
  * Contributors: 
- * 	Nick Edgar: Initial Implementation
- * 	Simon Arsenault: Fix for PR 2248, 2473
- *  Randy Giffen: Help Support
- *  Karice MacIntyre: Print Support
- *  Leon J. Breedt: Added multiple folder creation support
- *  Tod Creasey: Integration of patches      
+ *   IBM Corporation - initial API and implementation 
+ *   Leon J. Breedt: Added multiple folder creation support
  */
 
 import java.lang.reflect.InvocationTargetException;

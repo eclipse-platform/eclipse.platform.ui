@@ -1,18 +1,15 @@
 package org.eclipse.ui.internal.misc;
 
-/**
- * Copyright (c) 2000, 2002 IBM Corp. and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+/******************************************************************************* 
+ * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials! 
+ * are made available under the terms of the Common Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html 
  * 
  * Contributors: 
- *  Randy Giffen: Added initial file selection
- * 	Eduardo Pereira: Fix for 1GIT1G6
- *  Karice McIntyre: Fix for 1GF68LO and pruint support
- *  Leon J. Breedt: Added multiple folder creation support
- *  Tod Creasey: Integration of patches and fonts   
+ *      IBM Corporation - initial API and implementation 
+ *  	Leon J. Breedt: Added multiple folder creation support
  */
 
 import org.eclipse.core.resources.*;

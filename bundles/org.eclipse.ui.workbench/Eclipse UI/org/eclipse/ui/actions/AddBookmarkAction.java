@@ -1,15 +1,16 @@
 package org.eclipse.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2002 IBM Corp. and others. All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
- 
-Contributors:
-  IBM Corp. - Initial design and implementation.
-  Sebastian Davids <sdavids@gmx.de>
-    - Fix for bug 20510 - Add Bookmark action has wrong label in navigator or packages view
+/******************************************************************************* 
+ * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials! 
+ * are made available under the terms of the Common Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html 
+ * 
+ * Contributors: 
+ *        IBM Corporation - initial API and implementation 
+ *   Sebastian Davids <sdavids@gmx.de>
+ *     - Fix for bug 20510 - Add Bookmark action has wrong label in navigator or packages view
 *********************************************************************/
 
 import org.eclipse.core.resources.*;
