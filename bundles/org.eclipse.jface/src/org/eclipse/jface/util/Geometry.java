@@ -453,6 +453,25 @@ public class Geometry {
     }
 
     /**
+     * Moves each edge of the given rectangle outward by the given amount. Negative values
+     * cause the rectangle to contract. Does not allow the rectangle's width or height to be
+     * reduced below zero.
+     *  
+     * @param rect normalized rectangle to modify
+     * @param left distance to move the left edge outward (negative values move the edge inward)
+     * @param right distance to move the right edge outward (negative values move the edge inward) 
+     * @param top distance to move the top edge outward (negative values move the edge inward)
+     * @param bottom distance to move the bottom edge outward (negative values move the edge inward)
+     * @since 3.1
+     */
+    public static void expand(Rectangle rect, int left, int right, int top, int bottom) {
+        rect.x -= left;
+        rect.width = Math.max(0, rect.width + left + right);
+        rect.y -= top;
+        rect.height = Math.max(0, rect.height + top + bottom);
+    }
+    
+    /**
      * Normalizes the given rectangle. That is, any rectangle with
      * negative width or height becomes a rectangle with positive
      * width or height that extends to the upper-left of the original
