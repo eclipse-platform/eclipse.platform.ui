@@ -62,6 +62,15 @@ public class RepositorySorter extends ViewerSorter {
 			}
 		}
 		
+		// Sort versions in reverse alphabetical order
+		if (o1 instanceof ICVSRemoteFolder && o2 instanceof ICVSRemoteFolder) {
+			ICVSRemoteFolder f1 = (ICVSRemoteFolder)o1;
+			ICVSRemoteFolder f2 = (ICVSRemoteFolder)o2;
+			if (f1.getName().equals(f2.getName())) {
+				return f2.getTag().compareTo(f1.getTag());
+			}
+		}
+		
 		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {
 			return ((ICVSRepositoryLocation)o1).getLocation().compareTo(((ICVSRepositoryLocation)o2).getLocation());
 		}
