@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.jface.text.Position;
 
@@ -230,8 +231,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		fViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-				if (!showCurrentMatch())
+				boolean hasCurrentMatch= showCurrentMatch();
+				if (event.getViewer() instanceof TreeViewer && event.getSelection() instanceof IStructuredSelection) {
+					TreeViewer tv= (TreeViewer) event.getViewer();
+					Object element= ((IStructuredSelection)event.getSelection()).getFirstElement();
+					tv.setExpandedState(element, !tv.getExpandedState(element));
+					return;
+				} else if (!hasCurrentMatch){
 					gotoNextMatch();
+				}
 			}
 		});
 		
@@ -442,7 +450,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * @inheritdoc
+	 * { @inheritDoc }
 	 */
 	public void setViewPart(ISearchResultViewPart part) {
 		fViewPart= part;
