@@ -143,7 +143,7 @@ public class DeltaAdapter {
 	}
 
 	public boolean isValid() {
-		return getStatus() == null;
+		return getStatus() == null || status.getCode() == IStatus.WARNING;
 	}
 
 	private void initializeFeatures() {

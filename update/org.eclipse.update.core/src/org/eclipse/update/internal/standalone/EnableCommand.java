@@ -99,7 +99,9 @@ public class EnableCommand extends ScriptedCommand {
 		if (isVerifyOnly()) {
 			IStatus status =
 				OperationsManager.getValidator().validatePendingConfig(feature);
-			return status == null;
+			if (status != null && status.getCode() == IStatus.WARNING)
+				UpdateCore.log(status);
+			return status == null || status.getCode() == IStatus.WARNING;
 		}
 
 		final IConfigFeatureOperation configOperation =

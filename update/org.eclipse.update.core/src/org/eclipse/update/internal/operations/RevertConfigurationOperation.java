@@ -37,7 +37,7 @@ public class RevertConfigurationOperation extends Operation implements IRevertCo
 		throws CoreException, InvocationTargetException {
 		IStatus status =
 			OperationsManager.getValidator().validatePendingRevert(config);
-		if (status != null) {
+		if (status != null && status.getCode() == IStatus.ERROR) {
 			throw new CoreException(status);
 		}
 

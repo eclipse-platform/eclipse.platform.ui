@@ -35,7 +35,7 @@ public class ConfigOperation
 
 		IStatus status =
 			OperationsManager.getValidator().validatePendingConfig(feature);
-		if (status != null) {
+		if (status != null && status.getCode() == IStatus.ERROR) {
 			throw new CoreException(status);
 		}
 

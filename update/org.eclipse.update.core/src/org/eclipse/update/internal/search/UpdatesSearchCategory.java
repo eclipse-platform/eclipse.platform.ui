@@ -298,7 +298,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			if (!UpdateUtils.hasLicense(job.getFeature()))
 				continue;
 			IStatus status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
-			if (status == null) {
+			if (status == null || status.getCode() == IStatus.WARNING) {
 				if (hit.isPatch()) {
 					IFeature patch = job.getFeature();
 					// Do not add the patch if already installed

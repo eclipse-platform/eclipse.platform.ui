@@ -17,6 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -590,14 +591,16 @@ public class ReviewPage
 		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		validationStatus =
 			OperationsManager.getValidator().validatePendingChanges(jobs);
-		setPageComplete(validationStatus == null);
-		String errorMessage = null;
-
-		if (validationStatus != null) {
-			errorMessage =
-				UpdateUI.getString("InstallWizard.ReviewPage.invalid.long"); //$NON-NLS-1$
+		setPageComplete(validationStatus == null || validationStatus.getCode() == IStatus.WARNING);
+		
+		if (validationStatus == null) {
+			setErrorMessage(null);
+		} else if (validationStatus.getCode() == IStatus.WARNING) {
+			setErrorMessage(null);
+			setMessage(validationStatus.getMessage(), IMessageProvider.WARNING);
+		} else {
+			setErrorMessage(UpdateUI.getString("InstallWizard.ReviewPage.invalid.long")); //$NON-NLS-1$
 		}
-		setErrorMessage(errorMessage);
 	}
 
 	private void showStatus() {

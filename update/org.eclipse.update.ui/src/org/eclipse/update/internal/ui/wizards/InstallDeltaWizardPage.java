@@ -201,7 +201,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		if (selection.size() == 1) {
 			Object obj = selection.getFirstElement();
 			if (obj instanceof DeltaAdapter) {
-				enableShowErrors = !((DeltaAdapter) obj).isValid();
+				enableShowErrors = ((DeltaAdapter) obj).getStatus() != null;
 			}
 		}
 		if (enableDelete) {
@@ -236,10 +236,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 		DeltaAdapter adapter = (DeltaAdapter) sel.getFirstElement();
 		IStatus status = adapter.getStatus();
 
-		if (status != null) {
-			ErrorDialog.openError(getShell(), null, null, status);
-			return;
-		}
+		setPageComplete(status == null || status.getCode() == IStatus.WARNING);
+		ErrorDialog.openError(getShell(), null, null, status);
 	}
 
 	private void handleCheckStateChanged(Object obj, boolean checked) {
@@ -282,6 +280,8 @@ public class InstallDeltaWizardPage extends WizardPage {
 		int nremoved = 0;
 		int nselected = 0;
 		int errors = 0;
+		int warnings = 0;
+		String message = null;
 
 		for (int i = 0; i < features.size(); i++) {
 			DeltaAdapter adapter = (DeltaAdapter) features.get(i);
@@ -289,15 +289,24 @@ public class InstallDeltaWizardPage extends WizardPage {
 				nremoved++;
 			else if (adapter.isSelected()) {
 				nselected++;
-				if (adapter.getStatus() != null)
+				IStatus status = adapter.getStatus();
+				if (status != null && status.getCode() == IStatus.WARNING) {
+					warnings++;
+					message = status.getMessage();
+				} else if (status != null && status.getCode() == IStatus.ERROR) {
 					errors++;
+				}
 			}
 		}
 		setPageComplete(errors == 0 && (nremoved > 0 || nselected > 0));
-		String message = null;
-		if (errors > 0)
-			message = UpdateUI.getString("InstallDeltaWizard.message"); //$NON-NLS-1$
-		setErrorMessage(message);
+		if (errors > 0) {
+			setErrorMessage(UpdateUI.getString("InstallDeltaWizard.message")); //$NON-NLS-1$
+		} else if (warnings > 0) {
+			setErrorMessage(null);
+			setMessage(message, IMessageProvider.WARNING);
+		} else {
+			setErrorMessage(null);
+		}
 	}
 
 	public DeltaAdapter[] getDeltaAdapters() {

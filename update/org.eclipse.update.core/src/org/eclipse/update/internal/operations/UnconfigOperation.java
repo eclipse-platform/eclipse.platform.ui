@@ -35,7 +35,7 @@ public class UnconfigOperation
 
 		IStatus status =
 			OperationsManager.getValidator().validatePendingUnconfig(feature);
-		if (status != null) {
+		if (status != null && status.getCode() == IStatus.ERROR) {
 			throw new CoreException(status);
 		}
 

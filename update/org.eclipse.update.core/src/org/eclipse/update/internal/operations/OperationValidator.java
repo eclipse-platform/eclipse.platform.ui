@@ -129,7 +129,10 @@ public class OperationValidator implements IOperationValidator{
 	}
 	
 	/*
-	 * Called by UI before performing operation
+	 * Called by UI before performing operation.
+	 * Returns null if no errors, a status with IStatus.WARNING code when
+	 * the initial configuration is broken, or a status with IStatus.ERROR
+	 * when there the operation introduces new errors
 	 */
 	public IStatus validatePendingInstall(IFeature oldFeature, IFeature newFeature) {
 		// check initial state
@@ -141,7 +144,7 @@ public class OperationValidator implements IOperationValidator{
 		validateInstall(oldFeature, newFeature, status);
 
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 	
 	/*
@@ -211,7 +214,7 @@ public class OperationValidator implements IOperationValidator{
 		}
 
 		// report status
-		return createReportStatus(beforeStatus, status);
+		return createCombinedReportStatus(beforeStatus, status);
 	}
 
 	/*
@@ -257,7 +260,7 @@ public class OperationValidator implements IOperationValidator{
 
 		// report status
 		if (status.size() > 0)
-			return createMultiStatus(KEY_ROOT_MESSAGE, status);
+			return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR);
 		return null;
 	}
 
@@ -1302,13 +1305,14 @@ public class OperationValidator implements IOperationValidator{
 
 	private static IStatus createMultiStatus(
 		String rootKey,
-		ArrayList children) {
+		ArrayList children, 
+		int code) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
 		String message = UpdateUtils.getString(rootKey);
 		return new MultiStatus(
 			UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
-			IStatus.ERROR,
+			code,
 			carray,
 			message,
 			null);
@@ -1340,33 +1344,38 @@ public class OperationValidator implements IOperationValidator{
 		return new FeatureStatus(feature, status);
 	}
 	
-	private static IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
-		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
-	}
+//	private static IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
+//		// report status
+//		if (status.size() > 0) {
+//			if (beforeStatus.size() > 0)
+//				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus,IStatus.ERROR);
+//			else
+//				return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR);
+//		}
+//		return null;
+//	}
 	
 	private static IStatus createCombinedReportStatus(ArrayList beforeStatus, ArrayList status ) {
-		if (isBetterStatus(beforeStatus, status))
-			return null;
-		
-		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0){
-				ArrayList combined = new ArrayList();
-				combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus));
-				combined.add(createMultiStatus("ActivityConstraints.afterMessage", status));
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined);
+		if (beforeStatus.size() == 0) { // good initial config
+			if (status.size() == 0) {
+				return null; // all fine
 			} else {
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
+				return createMultiStatus(KEY_ROOT_MESSAGE, status,IStatus.ERROR); // error after operation
 			}
-		}
-		return null;		
+		} else { // beforeStatus.size() > 0  : initial config errors
+			if (status.size() == 0) {
+				return null; // errors will be fixed
+			} else {
+				if (isBetterStatus(beforeStatus, status)) {
+					return createMultiStatus("ActivityConstraints.warning", beforeStatus, IStatus.WARNING); // errors may be fixed
+				} else {
+					ArrayList combined = new ArrayList();
+					combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus,IStatus.ERROR));
+					combined.add(createMultiStatus("ActivityConstraints.afterMessage", status, IStatus.ERROR));
+					return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined,IStatus.ERROR);
+				}
+			}
+		} 
 	}
 	
 	private static ArrayList createList(String commaSeparatedList) {

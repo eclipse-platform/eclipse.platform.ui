@@ -99,7 +99,9 @@ public class DisableCommand extends ScriptedCommand {
 			IStatus status =
 				OperationsManager.getValidator().validatePendingUnconfig(
 					feature);
-			return status == null;
+			if (status != null && status.getCode() == IStatus.WARNING)
+				UpdateCore.log(status);
+			return status == null || status.getCode() == IStatus.WARNING;
 		}
 
 		final IUnconfigFeatureOperation configOperation =

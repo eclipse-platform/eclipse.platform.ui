@@ -86,7 +86,22 @@ public class ReplaceFeatureVersionWizardPage extends WizardPage {
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				setPageComplete(true);
+				IStructuredSelection ssel = (IStructuredSelection)tableViewer.getSelection();
+				if (ssel == null)
+					return;
+				IFeature chosenFeature = (IFeature)ssel.getFirstElement();
+				IStatus validationStatus =
+					OperationsManager.getValidator().validatePendingReplaceVersion(currentFeature, chosenFeature);
+				setPageComplete(validationStatus == null || validationStatus.getCode() == IStatus.WARNING);
+		
+				if (validationStatus == null) {
+					setErrorMessage(null);
+				} else if (validationStatus.getCode() == IStatus.WARNING) {
+					setErrorMessage(null);
+					setMessage(validationStatus.getMessage(), IMessageProvider.WARNING);
+				} else {
+					setErrorMessage(validationStatus.getMessage());
+				}
 			}
 		});
 		
@@ -105,16 +120,16 @@ public class ReplaceFeatureVersionWizardPage extends WizardPage {
 	}
 	
 	private boolean swap(final IFeature currentFeature, final IFeature anotherFeature) {
-		IStatus status =
-			OperationsManager.getValidator().validatePendingReplaceVersion(currentFeature, anotherFeature);
-		if (status != null) {
-			ErrorDialog.openError(
-				UpdateUI.getActiveWorkbenchShell(),
-				null,
-				null,
-				status);
-			return false;
-		}
+//		IStatus status =
+//			OperationsManager.getValidator().validatePendingReplaceVersion(currentFeature, anotherFeature);
+//		if (status != null) {
+//			ErrorDialog.openError(
+//				UpdateUI.getActiveWorkbenchShell(),
+//				null,
+//				null,
+//				status);
+//			return false;
+//		}
 
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)

@@ -194,7 +194,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 		IStatus status =
 			OperationsManager.getValidator().validatePendingRevert(target);
-		if (status != null) {
+		if (status != null && status.getCode() == IStatus.ERROR) {
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),
 				null,
