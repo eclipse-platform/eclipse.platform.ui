@@ -30,8 +30,9 @@ public interface IPreferenceConstants {
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 	
-	// (int) If > 0, an editor will be reused once 'N' editors are opened.
-	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
+	// (boolean) If true a editor of the same type will be reused
+	// otherwise a new editor will be opened.
+	public static final String REUSE_EDITORS = "REUSE_EDITORS"; //$NON-NLS-1$
 
 	// (boolean) If true a perspective with an input will be reused
 	// if the user opens a new perspective on the same input

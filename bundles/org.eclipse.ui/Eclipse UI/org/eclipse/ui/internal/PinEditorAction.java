@@ -22,7 +22,10 @@ protected PinEditorAction(IWorkbenchWindow window) {
  */
 public void run() {
 	IEditorPart editor = getActiveEditor();
-	((EditorSite)editor.getEditorSite()).setReuseEditor(!isChecked());
+	if(editor instanceof IReusableEditor) {
+		((EditorSite)editor.getEditorSite()).setReuseEditor(!isChecked());
+		//updateState();
+	}
 }
 /**
  * @see ActiveEdirorAction#updateState()
@@ -34,13 +37,13 @@ protected void updateState() {
 		return;
 	}
 	IWorkbenchPage page = window.getActivePage();
-	if(page == null) {
+	if(page == null || (!page.getReuseEditors())) {
 		setChecked(false);
 		setEnabled(false);
 		return;
 	}
 	IEditorPart editor = getActiveEditor();
-	boolean enabled = editor != null;
+	boolean enabled = (editor != null) && (editor instanceof IReusableEditor);
 	setEnabled(enabled);
 	if(enabled)
 		setChecked(!((EditorSite)editor.getEditorSite()).getReuseEditor());

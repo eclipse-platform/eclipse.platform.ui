@@ -522,19 +522,28 @@ public void showActionSet(String actionSetID);
  */
 public IViewPart showView(String viewId) throws PartInitException;
 /**
- * Returns the number of open editors before reusing editors.
+ * Returns true if the editors of the same type
+ * should be reused in this page otherwise return 
+ * false.
  *
- * @return a int
+ * @return a boolean
  * 
  * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
  */
-public int getEditorReuseThreshold();
+public boolean getReuseEditors();
 /**
- * Set the number of open editors before reusing editors.
- * If < 0 the user preference settings will be used.
+ * Set whether or not editors should be reused in this
+ * page overwriting the global workbench preference
+ * "Reuse editors".
  * 
  * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
  */
-public void setEditorReuseThreshold(int openEditors);
-
+public void setReuseEditors(boolean reuse);
+/**
+ * Make sure this page uses the global workbench preference
+ * "Reuse editors" instead of the local setting.
+ * 
+ * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
+ */
+public void clearReuseEditors();
 }

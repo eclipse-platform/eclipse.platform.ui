@@ -59,7 +59,7 @@ private void addContributorsFor(List types, List result) {
  * Returns the class search order starting with <code>extensibleClass</code>.
  * The search order is defined in this class' comment.
  */
-private Vector computeClassOrder(Class extensibleClass) {
+protected Vector computeClassOrder(Class extensibleClass) {
 	Vector result = new Vector(4);
 	Class clazz = extensibleClass;
 	while (clazz != null) {
@@ -82,6 +82,8 @@ private List computeInterfaceOrder(List classList) {
 	}
 	return result;
 }
+
+
 /**
  * Flushes the cache of contributor search paths.  This is generally required
  * whenever a contributor is added or removed.  
@@ -97,21 +99,31 @@ public void flushLookup() {
  * the given object class.
  */
 protected List getContributors(Class objectClass) {
-	List result=null;
 	
 	// If there's a cache look for the object class.
 	if (lookup!=null) {
-		result = (ArrayList) lookup.get(objectClass);
+		List result = (ArrayList) lookup.get(objectClass);
 		if (result != null)
 		   return result;
 	}
 	
 	// Class not found.  Build the result set for classes and interfaces.
-	result = new ArrayList();
-	List classList = computeClassOrder(objectClass);	// classes
+	List classList = computeClassOrder(objectClass);	// classes	
+	return getContributorsForList(objectClass, classList);
+}
+
+/**
+ * Returns all the contributors registered against
+ * all of the classes in the classList and store them for
+ * objectClass.
+ */
+protected List getContributorsForList(Class objectClass, List classList) {
+	
+	List result = new ArrayList();
 	addContributorsFor(classList, result);
 	classList = computeInterfaceOrder(classList);	// interfaces
 	addContributorsFor(classList, result);
+	
 	if (result.size()==0) 
 		return null;
 
@@ -122,6 +134,7 @@ protected List getContributors(Class objectClass) {
 	
 	return result;
 }
+
 /**
  * Returns true if contributors exist in the manager for
  * this object.

@@ -13,8 +13,6 @@ import org.eclipse.swt.widgets.*;
  * A field editor for an integer type preference.
  */
 public class IntegerFieldEditor extends StringFieldEditor {
-	private int minValidValue = 0;
-	private int maxValidValue = Integer.MAX_VALUE;
 /**
  * Creates a new integer field editor 
  */
@@ -34,14 +32,6 @@ public IntegerFieldEditor(String name, String labelText, Composite parent) {
 	setErrorMessage(JFaceResources.getString("IntegerFieldEditor.errorMessage"));//$NON-NLS-1$
 	createControl(parent);
 }
-
-/**
- * Set the range of valid values for this field
- */
-public void setValidRange(int min,int max) {
-	minValidValue = min;
-	maxValidValue = max;
-}
 /* (non-Javadoc)
  * Method declared on StringFieldEditor.
  * Checks whether the entered String is a valid integer or not.
@@ -55,8 +45,8 @@ protected boolean checkState() {
 
 	String numberString = text.getText();
 	try {
-		int number = Integer.valueOf(numberString).intValue();
-		if (number >= minValidValue && number <= maxValidValue) {
+		Integer number = Integer.valueOf(numberString);
+		if (number.intValue() >= 0) {
 			clearErrorMessage();
 			return true;
 		} else {

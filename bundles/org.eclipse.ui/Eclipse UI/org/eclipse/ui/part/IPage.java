@@ -41,18 +41,16 @@ public void dispose();
  */
 public Control getControl();
 /**
- * Initializes this page with the given page site.  
+ * Allows the page to make contributions to the given action bars.
+ * The contributions will be visible when the page is visible.
  * <p>
- * This method is automatically called by the workbench shortly after page 
- * construction.  It marks the start of the pages's lifecycle. Clients must 
- * not call this method.
+ * This method is automatically called shortly after 
+ * <code>createControl</code> is called
  * </p>
  *
- * @param site the page site
- * @exception PartInitException if this page was not initialized successfully
+ * @param actionBars the action bars for this page
  */
-public void init(IPageSite site) throws PartInitException;
-
+public void setActionBars(IActionBars actionBars);
 /**
  * Asks this page to take focus within its pagebook view.
  */

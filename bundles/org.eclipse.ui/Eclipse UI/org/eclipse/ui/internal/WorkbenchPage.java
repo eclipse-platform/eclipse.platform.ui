@@ -46,9 +46,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private Perspective activePersp;
 	private ViewFactory viewFactory;
 	private ArrayList perspList = new ArrayList(1);
-	//Number of open editors before reusing. If < 0, use the 
-	//user preference settings.
-	private int reuseEditors = -1;
+	private int reuseEditors = 0;
 	private Listener mouseDownListener;
 /**
  * Constructs a new page with a given perspective and input.
@@ -480,12 +478,7 @@ public void cycleEditors(boolean forward) {
 		activate(editor);
 	}
 }
-/**
- * Add a editor to the activation list.
- */
-protected void addEditor(IEditorPart editor) {
-	activationList.add(editor);
-}
+
 /**
  * Deactivate the last known active editor to force its
  * action items to be removed, not just disabled.
@@ -1060,25 +1053,22 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			bringToTop(editor);
 		return editor;
 	}
-	getClientComposite().setRedraw(false);
+
 	// Otherwise, create a new one.
 	if(useEditorID)
 		editor = getEditorManager().openEditor(editorID, input);
 	else
 		editor = getEditorManager().openEditor((IFileEditorInput)input,true);
-				
+		
 	if (editor != null) {
 		//firePartOpened(editor);
 		setEditorAreaVisible(true);
-		if (activate) {
+		if (activate)
 			activate(editor);
-		} else {
-			activationList.add(editor);
+		else
 			bringToTop(editor);
-		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 	}
-	getClientComposite().setRedraw(true);
 	return editor;
 }
 /**
@@ -1474,46 +1464,42 @@ private void zoomOut() {
 /**
  * See IWorkbenchPage.
  */
-public int getEditorReuseThreshold() {
-	//reuseEditors <= 0 -> use the global preference IPreferenceConstants.REUSE_EDITORS.
-	//reuseEditors > 0 -> reuse editors after openning 'N' editors.
-	if(reuseEditors > 0)
-		return reuseEditors;
-
+public boolean getReuseEditors() {
+	//reuseEditors == 0 -> use the global preference IPreferenceConstants.REUSE_EDITORS.
+	//reuseEditors == 1 -> do not reuse editors
+	//reuseEditors == 2 -> reuse editors.
+	if(reuseEditors == 2)
+		return true;
+	else if(reuseEditors == 1)
+		return false;
+	
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
+	return store.getBoolean(IPreferenceConstants.REUSE_EDITORS);
 }
 /**
  * See IWorkbenchPage.
  */
-public void setEditorReuseThreshold(int openEditors) {
-	reuseEditors = openEditors;
+public void setReuseEditors(boolean reuse) {
+	if(reuse)
+		reuseEditors = 2;
+	else
+		reuseEditors = 1;
 }
-/*
- * Returns the editors in activation order (oldest first).
+/**
+ * See IWorkbenchPage.
  */
-public IEditorPart[] getSortedEditors() {
-	ArrayList editors = activationList.getEditors();
-	IEditorPart[] result = new IEditorPart[editors.size()];
-	return (IEditorPart[])editors.toArray(result);
+public void clearReuseEditors() {
+	reuseEditors = 0;
 }
-
 class ActivationList {
 	List parts = new ArrayList();
 	void setActive(IWorkbenchPart part) {
-		if((part instanceof IViewPart) && isFastView((IViewPart)part))
+		if((part instanceof IViewPart) && WorkbenchPage.this.isFastView((IViewPart)part))
 			return;
 		if(part == getActive())
 			return;
 		parts.remove(part);
 		parts.add(part);
-	}
-	void add(IWorkbenchPart part) {
-		if((part instanceof IViewPart) && isFastView((IViewPart)part))
-			return;
-		if(parts.indexOf(part) >= 0)
-			return;
-		parts.add(0,part);
 	}
 	IWorkbenchPart getActive() {
 		if(parts.isEmpty())
