@@ -50,8 +50,9 @@ public class FileStatesPage
 	private Text maxStatesText;
 	private Text maxStateSizeText;
 	
-	private int workbenchFileStatesMaximum = 0;
-	private long workbenchStateSizeMaximum = 0;
+	//Choose a maximum to prevent OutOfMemoryErrors
+	private int FILE_STATES_MAXIMUM = 10000;
+	private long STATE_SIZE_MAXIMUM = 100;
 
 /**
  * This method takes the string for the title of a text field and the value for the
@@ -293,13 +294,10 @@ private int validateMaxFileStates(){
 	if(maxFileStates == FAILED_VALUE)
 		return maxFileStates;
 		
-	if(workbenchFileStatesMaximum == 0)
-		workbenchFileStatesMaximum = getWorkspaceDescription().getMaxFileStates();
-		
-	if(maxFileStates > workbenchFileStatesMaximum){
+	if(maxFileStates > FILE_STATES_MAXIMUM){
 		setErrorMessage(WorkbenchMessages.format(
 			"FileHistory.aboveMaxEntries", 
-			new String[] {String.valueOf(workbenchFileStatesMaximum)}
+			new String[] {String.valueOf(FILE_STATES_MAXIMUM)}
 			));
 		return FAILED_VALUE;
 	}
@@ -318,14 +316,11 @@ private long validateMaxFileStateSize(){
 	long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
 	if(maxFileStateSize == FAILED_VALUE)
 		return maxFileStateSize;
-		
-	if(workbenchStateSizeMaximum == 0)
-		workbenchStateSizeMaximum = getWorkspaceDescription().getMaxFileStateSize() / MEGABYTES;
-		
-	if(maxFileStateSize > workbenchStateSizeMaximum){
+			
+	if(maxFileStateSize > STATE_SIZE_MAXIMUM){
 		setErrorMessage(WorkbenchMessages.format(
 			"FileHistory.aboveMaxFileSize", 
-			new String[] {String.valueOf(workbenchStateSizeMaximum)}
+			new String[] {String.valueOf(STATE_SIZE_MAXIMUM)}
 			));
 		return FAILED_VALUE;
 	}
