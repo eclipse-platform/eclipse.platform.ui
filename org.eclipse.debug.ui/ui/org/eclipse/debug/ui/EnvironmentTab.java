@@ -28,6 +28,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.*;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -180,7 +181,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
-		mainComposite.setFont(parent.getFont());
+		Dialog.applyDialogFont(mainComposite);
 
 		createEnvironmentTable(mainComposite);
 		createTableButtons(mainComposite);
@@ -200,6 +201,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout= new GridLayout();
 		appendReplaceComposite.setLayoutData(gridData);
 		appendReplaceComposite.setLayout(layout);
+		appendReplaceComposite.setFont(parent.getFont());
 		
 		appendEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.getString("EnvironmentTab.16")); //$NON-NLS-1$
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
