@@ -46,8 +46,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	
 	/**
 	 * Job status return value that is used to indicate asynchronous job completion.
-	 * @see Job#run
-	 * @see Job#done
+	 * @see Job#run(IProgressMonitor)
+	 * @see Job#done(IStatus)
 	 */
 	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, IPlatform.PI_RUNTIME, 1, "", null);//$NON-NLS-1$
 
@@ -58,9 +58,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Interactive jobs should be either fast running or very low on CPU
 	 * usage to avoid blocking other interactive jobs from running.
 	 * 
-	 * @see IJobManager#getPriority
-	 * @see IJobManager#setPriority
-	 * @see Job#run
+	 * @see #getPriority()
+	 * @see #setPriority(int)
+	 * @see #run(IProgressMonitor)
 	 */
 	public static final int INTERACTIVE = 10;
 	/** 
@@ -69,26 +69,26 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * but may take longer in some cases.  Short jobs are given priority
 	 * over all other jobs except interactive jobs.
 	 * 
-	 * @see IJobManager#getPriority
-	 * @see IJobManager#setPriority
-	 * @see Job#run
+	 * @see #getPriority()
+	 * @see #setPriority(int)
+	 * @see #run(IProgressMonitor)
 	 */
 	public static final int SHORT = 20;
 	/** 
 	 * Job priority constant (value 30) for long-running background jobs.
 	 * 
-	 * see IJobManager#getPriority
-	 * @see IJobManager#setPriority
-	 * @see Job#run
+	 * @see #getPriority()
+	 * @see #setPriority(int)
+	 * @see #run(IProgressMonitor)
 	 */
 	public static final int LONG = 30;
 	/** 
 	 * Job priority constant (value 40) for build jobs.  Build jobs are
 	 * generally run after all other background jobs complete.
 	 * 
-	 * @see IJobManager#getPriority
-	 * @see IJobManager#setPriority
-	 * @see Job#run
+	 * @see #getPriority()
+	 * @see #setPriority(int)
+	 * @see #run(IProgressMonitor)
 	 */
 	public static final int BUILD = 40;
 
@@ -98,9 +98,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * compute extra information that the user may be interested in seeing
 	 * but is generally not waiting for.
 	 * 
-	 * @see IJobManager#getPriority
-	 * @see IJobManager#setPriority
-	 * @see Job#run
+	 * @see #getPriority()
+	 * @see #setPriority(int)
+	 * @see #run(IProgressMonitor)
 	 */
 	public static final int DECORATE = 50;
 	/** 
@@ -108,26 +108,26 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * currently sleeping, waiting, or running (i.e., the job manager doesn't know 
 	 * anything about the job). 
 	 * 
-	 * @see IJobManager#getState
+	 * @see #getState()
 	 */
 	public static final int NONE = 0;
 	/** 
 	 * Job state code (value 1) indicating that a job is sleeping.
 	 * 
-	 * @see Job#run
-	 * @see IJobManager#getState
+	 * @see #run(IProgressMonitor)
+	 * @see #getState()
 	 */
 	public static final int SLEEPING = 0x01;
 	/** 
 	 * Job state code (value 2) indicating that a job is waiting to be run.
 	 * 
-	 * @see IJobManager#getState
+	 * @see #getState()
 	 */
 	public static final int WAITING = 0x02;
 	/** 
 	 * Job state code (value 4) indicating that a job is currently running
 	 * 
-	 * @see IJobManager#getState
+	 * @see #getState()
 	 */
 	public static final int RUNNING = 0x04;
 
@@ -160,6 +160,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * for families they do not recognize.
 	 * </p>
 	 * 
+	 * @param family the job family identifier
 	 * @return <code>true</code> if this job belongs to the given family, and 
 	 * <code>false</code> otherwise.
 	 */
@@ -281,8 +282,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * if this job is not running, or is not blocking any other job.
 	 * @return <code>true</code> if this job is blocking a waiting non-system
 	 * job, and <code>false</code> otherwise.
-	 * @see #getRule
-	 * @see #isSystem
+	 * @see #getRule()
+	 * @see #isSystem()
 	 */
 	public final boolean isBlocking() {
 		return super.isBlocking();
@@ -295,7 +296,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @return <code>true</code> if this job is a system job, and
 	 * <code>false</code> otherwise.
-	 * @see setSystem
+	 * @see #setSystem(boolean)
 	 */
 	public final boolean isSystem()  {
 		return super.isSystem();
