@@ -72,19 +72,12 @@ public class BuildTests extends AbstractAntUIBuildTest {
 	 * Tests launching Ant and that the
 	 * correct colors are in the console doc
 	 */
-	public void testColor() throws BadLocationException, CoreException {
-		
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB);	
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_ERROR_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB);
-		//AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB);
-		
+	public void testColor() throws BadLocationException, CoreException {		
 		launch("echoing");
 		int offset= 15; //buildfile
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB));
+		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB), color);
 		try {
 			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo
 		} catch (BadLocationException e) {
@@ -92,6 +85,77 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		}
 		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB));
+		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB), color);
 	}
+	
+	/**
+	 * Tests launching Ant and getting the build failed message
+	 * logged to the console.
+	 * Bug 42333.
+	 */
+//	public void testBuildFailedMessageDebug() throws CoreException {
+//		launchInDebug("bad");
+//		assertTrue("Incorrect number of messages logged for build. Should be 35. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 35);
+//		String message= ConsoleLineTracker.getMessage(33);
+//		assertTrue("Incorrect last message. Should start with Build Failed:. Message: " + message, message.startsWith("BUILD FAILED:"));
+//		}
+//  
+//	  /**
+//	 * Tests launching Ant and that the
+//	 * correct links are in the console doc
+//	 */
+//	public void testLinksDebug() throws CoreException {
+//		launchInDebug("echoing");
+//		int offset= 0; 
+//		try {
+//			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
+//		} catch (BadLocationException e) {
+//			assertTrue("failed getting offset of line", false);
+//		}
+//		IConsoleHyperlink link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+//		assertNotNull("No hyperlink found at offset " + offset, link);
+//	
+//		try {
+//			offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo link
+//		} catch (BadLocationException e) {
+//			assertTrue("failed getting offset of line", false);
+//		}
+//		link= getHyperlink(offset, ConsoleLineTracker.getDocument());
+//		assertNotNull("No hyperlink found at offset " + offset, link);
+//	}
+//
+//	/**
+//	 * Tests launching Ant and that the
+//	 * correct colors are in the console doc
+//	 */
+//	public void testColorDebug() throws BadLocationException, CoreException {
+//		launchInDebug("echoing");
+//		int offset= 0; 
+//		try {
+//			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 15; //buildfile line 3
+//		} catch (BadLocationException e) {
+//			assertTrue("failed getting offset of line", false);
+//		}
+//		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+//		assertNotNull("No color found at " + offset, color);
+//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_RGB), color);
+//		
+//		try {
+//			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 3; //debug info
+//		} catch (BadLocationException e) {
+//			assertTrue("failed getting offset of line", false);
+//		}
+//		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+//		assertNotNull("No color found at " + offset, color);
+//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB), color);
+//		
+//		try {
+//			offset= ConsoleLineTracker.getDocument().getLineOffset(33) + 10; //echo line 33
+//		} catch (BadLocationException e) {
+//			assertTrue("failed getting offset of line", false);
+//		}
+//		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
+//		assertNotNull("No color found at " + offset, color);
+//		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_RGB), color);
+//	}
 }

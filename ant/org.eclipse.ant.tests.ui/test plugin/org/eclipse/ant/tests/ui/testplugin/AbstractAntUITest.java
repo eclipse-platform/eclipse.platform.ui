@@ -35,6 +35,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -52,6 +53,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -154,6 +156,20 @@ public abstract class AbstractAntUITest extends TestCase {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		launchAndTerminate(config, 10000);
+	}
+	
+	/**
+	* Launches the Ant build in debug mode with the buildfile name (no extension).
+	* 
+	* @param mainTypeName the program to launch
+	* @return thread in which the first suspend event occurred
+	*/
+	protected void launchInDebug(String buildFileName) throws CoreException {
+		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
+		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug");
+		assertNotNull("Could not locate launch configuration for " + buildFileName, copy);
+		launchAndTerminate(copy, 10000);
 	}
 	
 	/**
