@@ -12,15 +12,19 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 
+/**
+ * This is a lightweight wrapper around EditorPane. It adapts an EditorPane into an IPresentablePart.
+ * All methods here should either redirect directly to EditorPane or do trivial conversions.
+ */
 public class PresentableEditorPart implements IPresentablePart {
 
     private final List listeners = new ArrayList();
@@ -54,11 +58,11 @@ public class PresentableEditorPart implements IPresentablePart {
     public String getName() {
         WorkbenchPartReference ref = (WorkbenchPartReference) pane
                 .getPartReference();
-        return ref.getRegisteredName();
+        return Util.safeString(ref.getRegisteredName());
     }
 
     public String getTitle() {
-        return getEditorReference().getTitle();
+        return Util.safeString(getEditorReference().getTitle());
     }
 
     public Image getTitleImage() {
@@ -66,7 +70,7 @@ public class PresentableEditorPart implements IPresentablePart {
     }
 
     public String getTitleToolTip() {
-        return getEditorReference().getTitleToolTip();
+        return Util.safeString(getEditorReference().getTitleToolTip());
     }
 
     public boolean isDirty() {
@@ -128,4 +132,5 @@ public class PresentableEditorPart implements IPresentablePart {
 	public String getTitleStatus() {
 		return new String();
 	}
+
 }

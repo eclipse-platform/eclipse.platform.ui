@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -649,6 +650,11 @@ public class BasicStackPresentation extends StackPresentation {
 		tabItem.setText(part.getName());
 		
 		tabItem.setImage(part.getTitleImage());
+		
+        String toolTipText = part.getTitleToolTip();
+        if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+        	tabItem.setToolTipText(toolTipText);
+        }
 		
 		FontRegistry registry = 
 		    PlatformUI.getWorkbench().

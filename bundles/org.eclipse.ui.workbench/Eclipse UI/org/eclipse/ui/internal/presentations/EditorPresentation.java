@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.themes.ITheme;
@@ -171,7 +172,10 @@ public class EditorPresentation extends BasicStackPresentation {
         tabItem.setText(getLabelText(part, true,
                 (getTabFolder().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));
-        tabItem.setToolTipText(getLabelToolTipText(part));
+        String toolTipText = part.getTitleToolTip();
+        if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+        	tabItem.setToolTipText(toolTipText);
+        }
     }
 
     String getLabelText(IPresentablePart presentablePart, boolean dirtyLeft,
@@ -213,10 +217,6 @@ public class EditorPresentation extends BasicStackPresentation {
 
     Image getLabelImage(IPresentablePart presentablePart) {
         return presentablePart.getTitleImage();
-    }
-
-    String getLabelToolTipText(IPresentablePart presentablePart) {
-        return presentablePart.getTitleToolTip();
     }
 
     /*

@@ -68,7 +68,7 @@ public interface IPresentablePart {
 	/**
 	 * Sets the bounds of this part.
 	 *  
-	 * @param bounds
+	 * @param bounds bounding rectangle (not null)
 	 */
 	public void setBounds(Rectangle bounds);
 	
@@ -100,14 +100,14 @@ public interface IPresentablePart {
 	 * </ul>
 	 * </p>
 	 *
-	 * @param listener a property listener
+	 * @param listener a property listener (not null)
 	 */
 	public void addPropertyListener(IPropertyListener listener);
 	
 	/**
 	 * Remove a listener that was previously added using addPropertyListener.
 	 *
-	 * @param listener a property listener
+	 * @param listener a property listener (not null)
 	 */
 	public void removePropertyListener(IPropertyListener listener);
 	
@@ -115,7 +115,7 @@ public interface IPresentablePart {
 	 * Returns the short name of the part. This is used as the text on
 	 * the tab when this part is stacked on top of other parts.
 	 * 
-	 * @return the short name of the part
+	 * @return the short name of the part (not null)
 	 */
 	public String getName();
 	
@@ -128,7 +128,7 @@ public interface IPresentablePart {
 	 * container.  
 	 * </p>
 	 *
-	 * @return the workbench part title
+	 * @return the workbench part title (not null)
 	 */
 	public String getTitle();
 
@@ -142,7 +142,7 @@ public interface IPresentablePart {
 	 * to display the entire title.
 	 * </p> 
 	 * 
-	 * @return the status message or the empty string if none
+	 * @return the status message or the empty string if none (not null)
 	 */
 	public String getTitleStatus();
 	
@@ -169,7 +169,7 @@ public interface IPresentablePart {
 	 * visual container.  
 	 * </p>
 	 *
-	 * @return the workbench part title tool tip
+	 * @return the workbench part title tool tip (not null)
 	 */
 	public String getTitleToolTip();
 	
@@ -208,7 +208,7 @@ public interface IPresentablePart {
 	/**
 	 * Returns the SWT control for this part
 	 * 
-	 * @return the part's control
+	 * @return the part's control (not null)
 	 */
 	public Control getControl();
 	

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -21,9 +20,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 
+/**
+ * This is a lightweight wrapper around the ViewPane. It allows a ViewPane to be used as an IPresentablePart.
+ * All methods here should either redirect directly to ViewPane or do trivial conversions.
+ */
 public class PresentableViewPart implements IPresentablePart {
 
     private final List listeners = new ArrayList();
@@ -65,11 +69,11 @@ public class PresentableViewPart implements IPresentablePart {
     public String getName() {
         WorkbenchPartReference ref = (WorkbenchPartReference) pane
                 .getPartReference();
-        return ref.getRegisteredName();
+        return Util.safeString(ref.getRegisteredName());
     }
 
     public String getTitle() {
-        return getViewReference().getTitle();
+        return Util.safeString(getViewReference().getTitle());
     }
 
     public Image getTitleImage() {
@@ -77,7 +81,7 @@ public class PresentableViewPart implements IPresentablePart {
     }
 
     public String getTitleToolTip() {
-        return getViewReference().getTitleToolTip();
+        return Util.safeString(getViewReference().getTitleToolTip());
     }
 
     private IViewReference getViewReference() {
