@@ -155,7 +155,7 @@ public class InternalSearchUI {
 		try {
 			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
 			URL icon;
-			icon= new URL(install, "icons/full/cview16/searchres.gif"); //$NON-NLS-1$
+			icon= new URL(install, "icons/full/eview16/searchres.gif"); //$NON-NLS-1$
 			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), icon);  //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			// don't set any icon
