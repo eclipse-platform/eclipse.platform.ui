@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -44,6 +45,7 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
         //warm run
         ILaunchConfiguration configuration= getLaunchConfiguration("big");
 		IStructuredSelection selection= new StructuredSelection(configuration);
+		tagAsSummary("Open LCD on Targets tab", Dimension.CPU_TIME);
 		for (int i = 0; i < 20; i++) {
 		    openLCD(selection, fgIdentifier); 
         }
