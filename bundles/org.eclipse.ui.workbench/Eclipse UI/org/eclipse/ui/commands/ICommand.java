@@ -143,7 +143,7 @@ public interface ICommand extends Comparable {
      * @return the list of key sequence bindings. This list may be empty, but is
      *         guaranteed not to be <code>null</code>. If this list is not
      *         empty, it is guaranteed to only contain instances of
-     *         <code>KeySequence</code>.
+     *         <code>IKeySequenceBinding</code>.
      */
     List getKeySequenceBindings();
 
