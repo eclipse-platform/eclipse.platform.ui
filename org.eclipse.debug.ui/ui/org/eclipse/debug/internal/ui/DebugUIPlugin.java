@@ -475,17 +475,27 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * Must be called in the UI thread.
 	 */
 	protected void activateDebuggerPart(SwitchContext switchContext, String mode) {
-		LaunchesView debugPart= null;
-		try {
-			if (mode == ILaunchManager.DEBUG_MODE) {
-				debugPart= (LaunchesView) switchContext.getPage().showView(IDebugUIConstants.ID_DEBUG_VIEW);							
-			} else {
-				debugPart= (LaunchesView) switchContext.getPage().showView(IDebugUIConstants.ID_PROCESS_VIEW);
-			}
-		} catch (PartInitException pie) {
-			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, pie.getMessage(), pie);
-			errorDialog(getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_1"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._2"), status); //$NON-NLS-1$ //$NON-NLS-2$
+		String viewId= 
+			mode.equals(ILaunchManager.DEBUG_MODE) ? IDebugUIConstants.ID_DEBUG_VIEW: IDebugUIConstants.ID_PROCESS_VIEW;
+		
+		LaunchesView debugPart= (LaunchesView) switchContext.getPage().findView(viewId);							
+		
+		if (debugPart == null) {
+			switchContext.setPageCreated(true);
 		}
+		
+	
+		if (debugPart == null) {
+			try {
+				debugPart= (LaunchesView) switchContext.getPage().showView(viewId);							
+			} catch (PartInitException pie) {
+				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, pie.getMessage(), pie);
+				errorDialog(getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_1"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._2"), status); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} else {
+			switchContext.getPage().activate(debugPart);
+		}
+		
 		switchContext.setDebuggerView(debugPart);
 	}
 	
