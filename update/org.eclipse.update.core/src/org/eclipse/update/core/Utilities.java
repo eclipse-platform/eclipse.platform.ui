@@ -189,7 +189,7 @@ public class Utilities {
 			if (s!=null)
 				completeString.append(s);
 			if (e!=null){
-				completeString.append("[");
+				completeString.append(" [");
 				completeString.append(e.toString());
 				completeString.append("]");
 			}

@@ -125,7 +125,8 @@ public abstract class FeatureContentProvider
 				throw e;
 			} catch (Exception e){
 				Utilities.removeLocalFile(key);
-				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);				
+				UpdateManagerPlugin.warn("Unable to create file "+localFile);
+				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{ref}),e);				
 			} finally {
 				//Do not close IS if user cancel,
 				//closing IS will read the entire Stream until the end

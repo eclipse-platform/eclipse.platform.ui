@@ -9,6 +9,7 @@ import java.net.*;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.URLEncoder;
 
@@ -108,14 +109,7 @@ public class ContentReference {
 			if (connection == null) {
 				URL resolvedURL = URLEncoder.encode(url);
 				connection = resolvedURL.openConnection();
-				// did the server return an error code ?
-				if (connection instanceof HttpURLConnection) {
-					int result =
-						((HttpURLConnection) connection).getResponseCode();
-					if (result != HttpURLConnection.HTTP_OK) {
-						throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] { this.toString(), new Integer(result)})); //$NON-NLS-1$						
-					}
-				}
+				checkConnectionResult();
 			}
 			return connection.getInputStream();
 		} else
@@ -139,14 +133,7 @@ public class ContentReference {
 				} catch (IOException e) {
 					return ContentReference.UNKNOWN_SIZE;
 				}
-				// did the server return an error code ?
-				if (connection instanceof HttpURLConnection) {
-					int result =
-						((HttpURLConnection) connection).getResponseCode();
-					if (result != HttpURLConnection.HTTP_OK) {
-						throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] { this.toString(), new Integer(result)})); //$NON-NLS-1$						
-					}
-				}				
+				checkConnectionResult();			
 			}
 			long size = connection.getContentLength();
 			return size == -1 ? ContentReference.UNKNOWN_SIZE : size;
@@ -223,4 +210,27 @@ public class ContentReference {
 		else
 			return url.toExternalForm();
 	}
+	
+	/*
+	 * 
+	 */
+	 private void checkConnectionResult()throws IOException {
+		// did the server return an error code ?
+		if (connection instanceof HttpURLConnection) {
+			int result = HttpURLConnection.HTTP_OK;
+			HttpURLConnection httpConnection = null;
+			try {
+				httpConnection = (HttpURLConnection) connection;
+				result = httpConnection.getResponseCode();
+			} catch (IOException e){
+				// if an error occured, try again
+				result = httpConnection.getResponseCode();
+			}		
+					
+			if (result != HttpURLConnection.HTTP_OK){
+				String serverMsg = httpConnection.getResponseMessage();
+				throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] {new Integer(result), serverMsg})); //$NON-NLS-1$						
+			}
+		}	 	
+	 }
 }

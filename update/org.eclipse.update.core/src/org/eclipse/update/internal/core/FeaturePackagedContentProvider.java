@@ -79,13 +79,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 					null,
 					monitor);
 		} catch (IOException e) {
-			Object[] values =
-				new Object[] { Feature.FEATURE_XML, getURL(), featureJarReference};
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeaturePackagedContentProvider.ErrorRetrieving",
-					values),
-				e);
+			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, getURL(), e);
 			//$NON-NLS-1$ 
 		}
 
@@ -174,22 +168,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			String urlString =
-				(getFeature() == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoFeature")
-					: "" + getFeature().getURL();
-			//$NON-NLS-1$ //$NON-NLS-2$
-			String refString =
-				(currentReference == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoReference")
-					: currentReference.getIdentifier();
-			//$NON-NLS-1$
-			String[] values = new String[] { archiveID, refString, urlString };
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeaturePackagedContentProvider.ErrorRetrieving",
-					values),
-				e);
+			throw errorRetrieving(archiveID,currentReference,getFeature().getURL(),e);
 			//$NON-NLS-1$
 		}
 		return references;
@@ -221,22 +200,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 					new JarContentReference(archiveID, url),
 					monitor);
 		} catch (IOException e) {
-			String urlString =
-				(getFeature() == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoFeature")
-					: "" + getFeature().getURL();
-			//$NON-NLS-1$ //$NON-NLS-2$
-			String refString =
-				(references[0] == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoReference")
-					: references[0].getIdentifier();
-			//$NON-NLS-1$
-			String[] values = new String[] { archiveID, refString, urlString };
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeaturePackagedContentProvider.ErrorRetrieving",
-					values),
-				e);
+			throw errorRetrieving(archiveID,references[0],getFeature().getURL(),e);
 			//$NON-NLS-1$
 		}
 		return references;
@@ -277,22 +241,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			references[0] = currentReference;
 
 		} catch (IOException e) {
-			String urlString =
-				(getFeature() == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoFeature")
-					: "" + getFeature().getURL();
-			//$NON-NLS-1$ //$NON-NLS-2$
-			String refString =
-				(currentReference == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoReference")
-					: currentReference.getIdentifier();
-			//$NON-NLS-1$
-			String[] values = new String[] { archiveID, refString, urlString };
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeaturePackagedContentProvider.ErrorRetrieving",
-					values),
-				e);
+			throw errorRetrieving(archiveID,currentReference,getFeature().getURL(),e);
 			//$NON-NLS-1$
 		}
 
@@ -341,26 +290,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			};
 
 		} catch (IOException e) {
-			String urlString =
-				(getFeature() == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoFeature")
-					: "" + getFeature().getURL();
-			//$NON-NLS-1$ //$NON-NLS-2$			
-			String refString =
-				(references[0] == null)
-					? Policy.bind("FeaturePackagedContentProvider.NoReference")
-					: references[0].getIdentifier();
-			//$NON-NLS-1$
-			String[] values =
-				new String[] {
-					pluginEntry.getVersionedIdentifier().toString(),
-					refString,
-					urlString };
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeaturePackagedContentProvider.ErrorRetrieving",
-					values),
-				e);
+			throw errorRetrieving(pluginEntry.getVersionedIdentifier().toString(),references[0],getFeature().getURL(),e);
 			//$NON-NLS-1$
 		}
 		return pluginReferences;
@@ -390,5 +320,29 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			}
 		return result;
 	}
+
+	/*
+	 * 
+	 */
+	 private CoreException errorRetrieving(String obj, ContentReference archive, URL url, Exception e){
+	 	
+	 		String urlString = "";
+	 		String refString = "";
+	 		
+	 		if (url != null){
+	 			urlString = Policy.bind("FeaturePackagedContentProvider.URLString",url.toExternalForm()); //$NON-NLS-1$
+	 		}
+			
+			if(archive == null) {
+				refString = Policy.bind("FeaturePackagedContentProvider.ContentReferenceString",archive.getIdentifier());//$NON-NLS-1$
+			}
+
+			String[] values = new String[] {obj,refString,urlString };
+			
+			return Utilities.newCoreException(
+				Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving",values),e);
+			//$NON-NLS-1$	 	
+	 	
+	 }
 
 }
