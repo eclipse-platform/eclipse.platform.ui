@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
@@ -576,7 +577,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDuplicateAction().setConfirmationRequestor(requestor);
 		getNewAction().setConfirmationRequestor(requestor);
 							
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			/**
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
