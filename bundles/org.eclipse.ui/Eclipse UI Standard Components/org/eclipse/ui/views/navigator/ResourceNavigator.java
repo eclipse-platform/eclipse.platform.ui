@@ -178,7 +178,7 @@ public class ResourceNavigator
 		viewer.setLabelProvider(
 			new CombinedDecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				getPlugin().getWorkbench().getDecoratorManager()));
+				getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.addFilter(this.patternFilter);
 		viewer.addFilter(workingSetFilter);
 		

@@ -38,4 +38,12 @@ public interface IDecoratorManager extends ILabelDecorator{
 	 * <code>false</code> to disable it
 	 */
 	void setEnabled(String decoratorId, boolean enabled);
+	
+	/**
+	 * Reset the cachedDecorators and fire listeners as
+	 * the enabled state of some decorators has changed.
+	 * Also store the currently enabled decorators as
+	 * a workbench preference.
+	 */
+	public void reset();
 }
