@@ -4,6 +4,8 @@
  */
 package org.eclipse.help.internal.browser;
 
+import java.util.*;
+
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
@@ -34,8 +36,11 @@ public class CustomBrowser implements IBrowser {
 		String path =
 			HelpPlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY);
+
+		String[] command = prepareCommand(path, url);
+
 		try {
-			Process pr = Runtime.getRuntime().exec(new String[] { path, url });
+			Process pr = Runtime.getRuntime().exec(command);
 			Thread outConsumer = new StreamConsumer(pr.getInputStream());
 			outConsumer.setName("Custom browser adapter output reader");
 			outConsumer.start();
@@ -77,4 +82,69 @@ public class CustomBrowser implements IBrowser {
 	public void setSize(int width, int height) {
 	}
 
+	/**
+	 * Creates the final command to launch.
+	 * @param path
+	 * @param url
+	 * @return String[]
+	 */
+	private String[] prepareCommand(String path, String url) {
+		ArrayList tokenList = new ArrayList();
+		//Divide along quotation marks
+		StringTokenizer qTokenizer =
+			new StringTokenizer(path.trim(), "\"", true);
+		boolean withinQuotation = false;
+		String quotedString = "";
+		while (qTokenizer.hasMoreTokens()) {
+			String curToken = qTokenizer.nextToken();
+			if (curToken.equals("\"")) {
+				if (withinQuotation) {
+					tokenList.add(quotedString);
+				} else {
+					quotedString = "";
+				}
+				withinQuotation = !withinQuotation;
+				continue;
+			} else if (withinQuotation) {
+				quotedString = curToken;
+				continue;
+			} else {
+				//divide unquoted strings along white space
+				StringTokenizer parser = new StringTokenizer(curToken.trim());
+				while (parser.hasMoreTokens()) {
+					tokenList.add(parser.nextToken());
+				}
+			}
+		}
+		// substitute %1 by url
+		boolean substituted = false;
+		for (int i=0; i<tokenList.size(); i++){
+			String token = (String)tokenList.get(i);
+			if ("%1".equals(token)) {
+				tokenList.set(i, url);
+				substituted = true;
+			}
+		}
+		// add the url if not substituted already
+		if (!substituted)
+			tokenList.add(url);
+			
+		// may need to prepend the launching command, OS-dependent.
+		
+		String os = System.getProperty("os.name").toLowerCase();
+		boolean isWindows = os.indexOf("windows") != -1;
+		boolean isWindows98 = isWindows && os.indexOf("98") != -1;
+		
+		if (isWindows){
+			if (isWindows98)
+				tokenList.add(0, "command");
+			else
+				tokenList.add(0, "cmd");
+			tokenList.add(1, "/c");
+		}
+	
+		String[] command = new String[tokenList.size()];
+		tokenList.toArray(command);
+		return command;	
+	}
 }

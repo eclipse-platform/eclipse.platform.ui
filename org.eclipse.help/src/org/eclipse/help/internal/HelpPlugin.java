@@ -144,5 +144,13 @@ public class HelpPlugin extends Plugin {
 	*/
 	protected void initializeDefaultPluginPreferences() {
 		Preferences prefs = getPluginPreferences();
+
+		String os = System.getProperty("os.name").toLowerCase();
+		boolean isWindows = os.indexOf("windows") != -1;
+
+		if (isWindows)
+			prefs.setDefault("custom_browser_path", "start %1");
+		else
+			prefs.setDefault("custom_browser_path", "mozilla %1");
 	}
 }

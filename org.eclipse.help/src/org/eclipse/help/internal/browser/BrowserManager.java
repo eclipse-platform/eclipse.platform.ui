@@ -40,7 +40,7 @@ public class BrowserManager {
 				if (Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.help.ui") != null)
 					setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
 				else
-					setDefaultBrowserID("org.eclipse.help.simplebrowser");
+					setDefaultBrowserID("org.eclipse.help.custombrowser");
 			} else if (System.getProperty("os.name").startsWith("Linux")) {
 				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
 			} else if (System.getProperty("os.name").startsWith("SunOS")) {
