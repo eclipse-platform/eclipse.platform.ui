@@ -133,18 +133,18 @@ public class ActionSetActionBars extends SubActionBars2 {
         // look for starting point
         while (insertIndex < items.length) {
             IContributionItem item = items[insertIndex];
-            if (item.getId().equals(startId)) break;
+            if (item.getId() != null && item.getId().equals(startId)) break;
             ++insertIndex;
         }
 
         // Find the index that this item should be inserted in
         for (int i = insertIndex + 1; i < items.length; i++) {
-            IContributionItem item = (IContributionItem) items[i];
+            IContributionItem item = items[i];
             String testId = item.getId();
 
             if (item.isGroupMarker()) break;
 
-            if (itemId != null) {
+            if (itemId != null && testId != null) {
                 if (itemId.compareTo(testId) < 1) break;
             }
             insertIndex = i;
