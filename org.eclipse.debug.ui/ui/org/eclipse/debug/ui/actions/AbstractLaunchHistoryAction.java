@@ -12,11 +12,7 @@ package org.eclipse.debug.ui.actions;
 
  
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -37,9 +33,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.internal.Workbench;
 
 /**
  * Abstract implementation of an action that displays a drop-down launch
