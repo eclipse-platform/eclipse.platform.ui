@@ -11,7 +11,7 @@ public class FlushableExtension extends Extension {
 		synchronized (this) {
 			if (!fullyLoaded) {
 				fullyLoaded = true;
-				RegistryCacheReader reader = ((ExtensionRegistry) getRegistry()).getCacheReader();
+				RegistryCacheReader reader = getRegistry().getCacheReader();
 				if (reader != null)
 					elements = new SoftReference(reader.loadConfigurationElements(this, subElementsCacheOffset));
 			}
@@ -19,10 +19,9 @@ public class FlushableExtension extends Extension {
 				elements =  new IConfigurationElement[0];
 			
 			if (((SoftReference) elements).get() == null) {
-				RegistryCacheReader reader = ((ExtensionRegistry) getRegistry()).getCacheReader();
+				RegistryCacheReader reader = getRegistry().getCacheReader();
 				if (reader != null)
 					elements = new SoftReference(reader.loadConfigurationElements(this, subElementsCacheOffset));
-				System.out.println("Re-reading the weak ref: " + getExtensionPointIdentifier() + " id " + getSimpleIdentifier());  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return (IConfigurationElement[]) ((SoftReference) elements).get();
