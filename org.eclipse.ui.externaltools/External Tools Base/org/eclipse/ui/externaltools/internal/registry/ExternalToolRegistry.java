@@ -371,15 +371,14 @@ public class ExternalToolRegistry {
 			String msg = MessageFormat.format("The file for tool {0} could not be found", new Object[] {tool.getName()});
 			return ExternalToolsPlugin.newErrorStatus(msg, null);
 		}
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(filename);
+		File file= new File(filename.toOSString());
 		IPath newPath= generateToolFilename(newName);
-		try {
-			file.move(newPath, false, true, null);
-		} catch (CoreException exception) {
-			String msg = MessageFormat.format("An exception occurred creating file {0}", new Object[] {newPath.toString()});
+		if (!file.renameTo(new File(newPath.toOSString()))) {
+			String msg = MessageFormat.format("Failed to create new file for external tool: {0}", new Object[] {newPath.toString()});
 			return ExternalToolsPlugin.newErrorStatus(msg, null);
 		}
-		filenames.put(tool.getName().toLowerCase(), newPath);
+		filenames.remove(tool.getName().toLowerCase());
+		filenames.put(newName.toLowerCase(), newPath);
 		return ExternalToolsPlugin.OK_STATUS;
 	}
 

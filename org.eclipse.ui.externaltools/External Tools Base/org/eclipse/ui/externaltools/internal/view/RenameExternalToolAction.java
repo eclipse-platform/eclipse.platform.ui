@@ -9,12 +9,23 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.model.ExternalTool;
+import org.eclipse.ui.externaltools.model.ExternalToolStorage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -47,11 +58,38 @@ public class RenameExternalToolAction extends Action {
 		return selectedTool;
 	}
 	
+	private Shell getShell() {
+		return Display.getCurrent().getActiveShell();
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Action.
 	 */
 	public void run() {
-		org.eclipse.jface.dialogs.MessageDialog.openInformation(view.getSite().getShell(), "Action", "This action is not yet implemented");
+		if (selectedTool != null) {
+			InputDialog dialog= new InputDialog(getShell(), "Rename Tool", "Enter a new name for the tool", selectedTool.getName(), new IInputValidator() {
+				public String isValid(String newText) {
+					if (newText.equals(selectedTool.getName())) {
+						return null;
+					} else if (ExternalToolsPlugin.getDefault().getToolRegistry(getShell()).hasToolNamed(newText)) {
+						return "An external tool of that name already exists";
+					}
+					return ExternalTool.validateToolName(newText);
+				}
+			});
+			if (dialog.open() == Dialog.OK) {
+				String newName= dialog.getValue();
+				if (newName.equals(selectedTool.getName())) {
+					return;
+				}
+				try {
+					selectedTool.rename(newName);
+					ExternalToolStorage.saveTool(selectedTool, getShell());
+				} catch (CoreException exception) {
+					ErrorDialog.openError(getShell(), "External Tool Error", MessageFormat.format("An exception occurred while renaming {0}", new String[] {selectedTool.getName()}), exception.getStatus());
+				}
+			}
+		}
 	}
 
 	/**
