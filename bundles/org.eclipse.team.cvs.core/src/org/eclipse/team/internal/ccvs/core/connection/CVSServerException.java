@@ -26,10 +26,11 @@ public class CVSServerException extends CVSException {
 		if ( ! status.isMultiStatus())
 			return false;
 		IStatus[] children = ((MultiStatus)status).getChildren();
-		if (children.length != 1)
-			return false;
-		if (children[0].getCode() == CVSStatus.NO_SUCH_TAG)
-			return true;
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getCode() == CVSStatus.NO_SUCH_TAG) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
