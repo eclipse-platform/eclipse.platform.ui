@@ -23,13 +23,13 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
-import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntEditorConstants;
+import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -269,6 +269,7 @@ public class AntModel {
 	}
 	
 	private AntTaskNode newTaskNode(Task newTask, Attributes attributes) {
+		String id= attributes.getValue("id"); //$NON-NLS-1$
 		String taskName= newTask.getTaskName();
 		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
 			return new AntPropertyNode(newTask, attributes);
@@ -326,7 +327,11 @@ public class AntModel {
             return new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_FILE)); //$NON-NLS-1$
         }
             
-		return new AntTaskNode(newTask);
+		AntTaskNode newNode= new AntTaskNode(newTask);
+		if (id != null) {
+			newNode.setId(id);
+		}
+		return newNode;
 	}
 
 	private String generateLabel(String taskName, Attributes attributes, String attributeName) {
@@ -406,8 +411,16 @@ public class AntModel {
 				String prefix= "<"; //$NON-NLS-1$
 				if (column <= 0) {
 					offset= getOffset(line, 0);
-					String lineText= fDocument.get(fDocument.getLineOffset(line - 1), fDocument.getLineLength(line-1));
-					offset+= lineText.lastIndexOf(prefix + element.getName()) + 1;
+					int lastCharColumn= getLastCharColumn(line);
+					String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
+					int lastIndex= lineText.indexOf(prefix + element.getName());
+					if (lastIndex > -1) {
+						offset+= lastIndex + 1;
+					} else {
+						offset= getOffset(line, lastCharColumn);
+						IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
+						offset= result.getOffset();
+					}
 					//lastExternalEntityOffset= offset;
 				} else {
 					offset= getOffset(line, column);
@@ -448,6 +461,10 @@ public class AntModel {
 
 	public void setCurrentElementLength(int lineNumber, int column) {
 		fLastNode= (AntElementNode)fStillOpenElements.pop();
+		if (fLastNode == fCurrentTargetNode) {
+			//the current target element has been closed
+			fCurrentTargetNode= null;
+		}
 		computeLength(fLastNode, lineNumber, column);
 	}
 	
@@ -469,7 +486,7 @@ public class AntModel {
 		}
 	}
 
-	protected IProblem createProblem(Exception exception, int offset, int length,  int severity) {
+	private IProblem createProblem(Exception exception, int offset, int length,  int severity) {
 		return new XMLProblem(exception.getMessage(), severity, offset, length);
 	}
 
@@ -638,13 +655,23 @@ public class AntModel {
 		return (AntElementNode)fStillOpenElements.peek();
 	}
 
-	/**
-	 * @param propertyName
-	 * @return
-	 */
 	public String getPropertyValue(String propertyName) {
 		AntElementNode[] nodes= getRootElements();
 		AntProjectNode projectNode= (AntProjectNode)nodes[0];
 		return projectNode.getProject().getProperty(propertyName);
+	}
+
+	public Object getReferenceObject(String refId) {
+		AntElementNode[] nodes= getRootElements();
+		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		try {
+			Project project= projectNode.getProject();
+			Object ref= project.getReference(refId);
+			return ref;
+			
+		} catch (BuildException be) {
+			handleBuildException(be, null);
+		}
+		return null;
 	}
 }
