@@ -50,7 +50,6 @@ import org.eclipse.ui.PlatformUI;
  * </ul>
  *
  * @see IObjectContributor
- * @see IObjectContributorManager
  */
 public abstract class ObjectContributorManager implements IExtensionRemovalHandler, IExtensionAdditionHandler {
 	
@@ -208,6 +207,9 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
      * Returns true if contributors exist in the manager for
      * this object and any of it's super classes, interfaces, or
      * adapters.
+     * 
+     * @param object the object to test
+     * @return whether the object has contributors
      */
     public boolean hasContributorsFor(Object object) {
 
@@ -237,8 +239,15 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
     }
 
     /**
-     *
-     */
+	 * Return whether the given contributor is applicable to all elements in the
+	 * selection.
+	 * 
+	 * @param selection
+	 *            the selection
+	 * @param contributor
+	 *            the contributor
+	 * @return whether it is applicable
+	 */
     public boolean isApplicableTo(IStructuredSelection selection,
             IObjectContributor contributor) {
         Iterator elements = selection.iterator();
@@ -250,8 +259,16 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
     }
 
     /**
-     *
-     */
+	 * Return whether the given contributor is applicable to all elements in the
+	 * list.
+	 * 
+	 * @param list
+	 *            the selection
+	 * @param contributor
+	 *            the contributor
+	 * @return whether it is applicable
+	 */
+
     public boolean isApplicableTo(List list, IObjectContributor contributor) {
         Iterator elements = list.iterator();
         while (elements.hasNext()) {
@@ -262,7 +279,10 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
     }
 
     /**
-     * @see IContributorManager#registerContributor
+     * Register a contributor.
+     * 
+     * @param contributor the contributor
+     * @param targetType the target type
      */
     public void registerContributor(IObjectContributor contributor,
             String targetType) {
@@ -290,7 +310,7 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
     }
 
     /**
-     * @see IContributorManager#unregisterAllContributors
+     * Unregister all contributors.
      */
     public void unregisterAllContributors() {
         contributors = new Hashtable(5);
@@ -298,7 +318,10 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
     }
 
     /**
-     * @see IContributorManager#unregisterContributor
+     * Unregister a contributor from the target type.
+     * 
+     * @param contributor the contributor
+     * @param targetType the target type
      */
     public void unregisterContributor(IObjectContributor contributor,
             String targetType) {    	
@@ -311,8 +334,11 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
         flushLookup();
     }
 
+
     /**
-     * @see IContributorManager#unregisterContributors
+     * Unregister all contributors for the target type.
+     * 
+     * @param targetType the target type
      */
     public void unregisterContributors(String targetType) {
         contributors.remove(targetType);
@@ -419,7 +445,7 @@ public abstract class ObjectContributorManager implements IExtensionRemovalHandl
 			adaptableList = new ArrayList(contributors.size());
 			// ignore resource adapters because these must be adapted via the
 			// IContributorResourceAdapter.
-			if (LegacyResourceSupport.isResourceType(adapterType))
+			if (LegacyResourceSupport.isResourceType(adapterType) || LegacyResourceSupport.isResourceMappingType(adapterType))
 				return Collections.EMPTY_LIST;
 			adaptableList = (List) contributors.get(adapterType);
 			if (adaptableList == null || adaptableList.size() == 0)

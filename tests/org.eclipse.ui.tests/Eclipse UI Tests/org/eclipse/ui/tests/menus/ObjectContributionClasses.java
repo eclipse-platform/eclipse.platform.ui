@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IContributorResourceAdapter;
+import org.eclipse.ui.IContributorResourceAdapter2;
 
 public class ObjectContributionClasses implements IAdapterFactory {
 	
@@ -71,10 +70,16 @@ public class ObjectContributionClasses implements IAdapterFactory {
 			return null;
 		}		
 	}
+    
+    public interface IModelElement {
+    }
 	
+    public static class ModelElement extends PlatformObject implements IModelElement {
+    }
+    
 	// Default contributor adapter
 	
-	public static class ResourceAdapter implements IContributorResourceAdapter {
+	public static class ResourceAdapter implements IContributorResourceAdapter2 {
 		public IResource getAdaptedResource(IAdaptable adaptable) {
 			if(adaptable instanceof CResource) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -83,12 +88,15 @@ public class ObjectContributionClasses implements IAdapterFactory {
 				return ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME).getFile("dummy");
 			}
 			return null;
-		}	
+		}
+        public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
+            return (ResourceMapping)getAdaptedResource(adaptable).getAdapter(ResourceMapping.class);
+        }	
 	}
 	
 	// Adapter methods
 	
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public Object getAdapter(final Object adaptableObject, Class adapterType) {
 		if(adapterType == IContributorResourceAdapter.class) {
 			return new ResourceAdapter();
 		}
@@ -101,10 +109,26 @@ public class ObjectContributionClasses implements IAdapterFactory {
 		if(adapterType == ICommon.class) {
 			return new Common();
 		}
+        if(adapterType == ResourceMapping.class) {
+            return new ResourceMapping() {    
+                public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
+                    return new ResourceTraversal[] {
+                            new ResourceTraversal(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, IResource.DEPTH_INFINITE, IResource.NONE)
+                    };
+                }
+                public IProject[] getProjects() {
+                    return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+                }
+                public Object getModelObject() {
+                    return adaptableObject;
+                }
+            };
+        }
+        
 		return null;
 	}
 
 	public Class[] getAdapterList() {
-		return new Class[] { ICommon.class, IResource.class, IFile.class, IContributorResourceAdapter.class};
+		return new Class[] { ICommon.class, IResource.class, IFile.class, IContributorResourceAdapter.class, ResourceMapping.class};
 	}
 }

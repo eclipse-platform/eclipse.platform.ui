@@ -1866,6 +1866,16 @@
              adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IB">
           <adapter type="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"/>
        </factory>
+       <factory
+             class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
+             adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IModelElement">
+          <adapter type="org.eclipse.core.resources.IResource"/>
+       </factory>
+       <factory
+             class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
+             adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IModelElement">
+          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+       </factory>
     </extension>
     
     <extension
@@ -1875,7 +1885,7 @@
             adaptable="true"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="ICommon Item 1"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="ICommon.1">
          </action>
@@ -1884,7 +1894,7 @@
             objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="ICommon Item 2"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="ICommon.2">
          </action>
@@ -1894,7 +1904,7 @@
             adaptable="true"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="Common Item 1"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="Common.1">
          </action>
@@ -1903,7 +1913,7 @@
             objectClass="org.eclipse.ui.tests.menus.ObjectContributionClasses$Common"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="Common Item 2"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="Common.2">
          </action>
@@ -1913,7 +1923,7 @@
             adaptable="true"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="Resource Item"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="IResource.1">
          </action>
@@ -1923,7 +1933,7 @@
             adaptable="true"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="Project Item"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="IProject.1">
          </action>
@@ -1933,9 +1943,19 @@
             adaptable="true"
             id="adatableObjectContributions">
          <action
-               label="Label"
+               label="File Item"
                class="org.eclipse.ui.tests.api.MockActionDelegate"
                id="IFile.1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
+            adaptable="true"
+            id="adatableObjectContributions">
+         <action
+               label="Resource Mapping Item"
+               class="org.eclipse.ui.tests.api.MockActionDelegate"
+               id="ResourceMapping.1">
          </action>
       </objectContribution>
    </extension>

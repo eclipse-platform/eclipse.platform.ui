@@ -47,6 +47,11 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
     /**
      * Contributes submenus and/or actions applicable to the selection in the
      * provided viewer into the provided popup menu.
+     * 
+     * @param part the part being contributed to
+     * @param popupMenu the menu being contributed to
+     * @param selProv the selection provider
+     * @return whether anything was contributed
      */
     public boolean contributeObjectActions(IWorkbenchPart part,
             IMenuManager popupMenu, ISelectionProvider selProv) {
@@ -75,12 +80,25 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         // elements are resources themselves or do not adapt to
         // IResource.
         Class resourceClass = getCommonResourceClass(elements);
+        Class resourceMappingClass = getResourceMappingClass(elements);
 
         // Get the contributors.	
         List contributors = new ArrayList();
+        // Add the resource contributions to avoid duplication
 		if (resourceClass != null) {
 			contributors.addAll(getResourceContributors(resourceClass));
 		}
+        // Add the resource mappings explicitly to avoid possible duplication
+        if (resourceMappingClass == null) {
+            // Still show the menus if the object is not adaptable but the adapter manager
+            // has an entry for it
+            resourceMappingClass = LegacyResourceSupport.getResourceMappingClass();
+            if (resourceMappingClass != null && commonAdapters.contains(resourceMappingClass.getName())) {
+                contributors.addAll(getResourceContributors(resourceMappingClass));
+            }
+        } else {
+            contributors.addAll(getResourceContributors(resourceMappingClass));
+        }
 		if (! commonAdapters.isEmpty()) {
 			for (Iterator it = commonAdapters.iterator(); it.hasNext();) {
 				String adapter = (String) it.next();
@@ -346,6 +364,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
     /**
      * Returns the shared instance of this manager.
+     * @return the shared instance of this manager
      */
     public static ObjectActionContributorManager getManager() {
         if (sharedInstance == null) {
@@ -403,6 +422,44 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         return getCommonClass(testList);
     }
 
+    /**
+     * Return the ResourceMapping class if the elements all adapt to it.
+     */
+    private Class getResourceMappingClass(List objects) {
+        if (objects == null || objects.size() == 0) {
+            return null;
+        }
+        Class resourceMappingClass = LegacyResourceSupport.getResourceMappingClass();
+        if (resourceMappingClass == null) {
+            // resources plug-in not loaded - no resources. period.
+            return null;
+        }
+
+        List testList = new ArrayList();
+
+        for (int i = 0; i < objects.size(); i++) {
+            Object object = objects.get(i);
+
+            if (object instanceof IAdaptable) {
+                if (resourceMappingClass.isInstance(object)) {
+                    continue;
+                }
+
+                Object resourceMapping = LegacyResourceSupport.getAdaptedContributorResourceMapping(object);
+
+                if (resourceMapping == null) {
+                    //Not a resource and does not adapt. No common resource class
+                    return null;
+                }
+                testList.add(resourceMapping);
+            } else {
+                return null;
+            }
+        }
+        // If we get here then all objects adapt to ResourceMapping
+        return resourceMappingClass;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
 	 */

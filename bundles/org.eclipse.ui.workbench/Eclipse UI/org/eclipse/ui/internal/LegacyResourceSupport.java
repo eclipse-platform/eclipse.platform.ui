@@ -64,6 +64,14 @@ public final class LegacyResourceSupport {
 
     /**
      * Cached value of
+     * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter2")</code>;
+     * <code>null</code> if not initialized or not present.
+     * @since 3.1
+     */
+    private static Class icontributorResourceAdapter2Class = null;
+    
+    /**
+     * Cached value of
      * <code>Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter")</code>;
      * <code>null</code> if not initialized or not present.
      * @since 3.0
@@ -71,10 +79,12 @@ public final class LegacyResourceSupport {
     private static Class defaultContributorResourceAdapterClass = null;
 
     /**
-     * Indicates whether the resources plug-in is even around.
-     * Without the resources plug-in, adapting to resource is moot.
+     * Cached value of
+     * <code>Class.forName("org.eclipse.core.resources.mapping.ResourceMappingr")</code>;
+     * <code>null</code> if not initialized or not present.
+     * @since 3.0
      */
-    private static boolean resourcesPossible = true;
+    private static Class resourceMappingClass = null;
 
     /**
      * Indicates whether the IDE plug-in (which supplies the
@@ -100,40 +110,12 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return ifileClass;
         }
-        if (!resourcesPossible) {
-            // tried before and failed
-            return null;
+        Class c = loadClass("org.eclipse.core.resources", "org.eclipse.core.resources.IFile"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
+            ifileClass = c;
         }
-
-        // resource plug-in is not on prereq chain of generic wb plug-in
-        // hence: IResource.class won't compile
-        // and Class.forName("org.eclipse.core.resources.IResource") won't find it
-        // need to be trickier...
-        Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-        if (bundle == null) {
-            // resources plug-in is not around
-            // assume that it will never be around
-            resourcesPossible = false;
-            return null;
-        }
-        // resources plug-in is around
-        // it's not our job to activate the plug-in
-        if (!BundleUtility.isActivated(bundle)) {
-            // assume it might come alive later
-            resourcesPossible = true;
-            return null;
-        }
-        try {
-            Class c = bundle.loadClass("org.eclipse.core.resources.IFile"); //$NON-NLS-1$
-            // remember for next time
-            iresourceClass = c;
-            return iresourceClass;
-        } catch (ClassNotFoundException e) {
-            // unable to load IFile - sounds pretty serious
-            // treat as if resources plug-in were unavailable
-            resourcesPossible = false;
-            return null;
-        }
+        return c;
     }
 
     /**
@@ -153,42 +135,39 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return iresourceClass;
         }
-        if (!resourcesPossible) {
-            // tried before and failed
-            return null;
-        }
-
-        // resource plug-in is not on prereq chain of generic wb plug-in
-        // hence: IResource.class won't compile
-        // and Class.forName("org.eclipse.core.resources.IResource") won't find it
-        // need to be trickier...
-        Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-        if (bundle == null) {
-            // resources plug-in is not around
-            // assume that it will never be around
-            resourcesPossible = false;
-            return null;
-        }
-        // resources plug-in is around
-        // it's not our job to activate the plug-in
-        if (!BundleUtility.isActivated(bundle)) {
-            // assume it might come alive later
-            resourcesPossible = true;
-            return null;
-        }
-        try {
-            Class c = bundle.loadClass("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
-            // remember for next time
+        Class c = loadClass("org.eclipse.core.resources", "org.eclipse.core.resources.IResource"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
             iresourceClass = c;
-            return iresourceClass;
-        } catch (ClassNotFoundException e) {
-            // unable to load IResource - sounds pretty serious
-            // treat as if resources plug-in were unavailable
-            resourcesPossible = false;
-            return null;
         }
+        return c;
     }
 
+    /**
+     * Returns <code>ResourceMapping.class</code> or <code>null</code> if the
+     * class is not available.
+     * <p>
+     * This method exists to avoid explicit references from the generic
+     * workbench to the resources plug-in.
+     * </p>
+     * 
+     * @return <code>ResourceMapping.class</code> or <code>null</code> if class
+     * not available
+     * @since 3.1
+     */
+    public static Class getResourceMappingClass() {
+        if (resourceMappingClass != null) {
+            // tried before and succeeded
+            return resourceMappingClass;
+        }
+        Class c = loadClass("org.eclipse.core.resources", "org.eclipse.core.resources.mapping.ResourceMapping"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
+            resourceMappingClass = c;
+        }
+        return c;
+    }
+    
     /**
      * Returns <code>IContributorResourceAdapter.class</code> or
      * <code>null</code> if the class is not available.
@@ -206,23 +185,52 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return icontributorResourceAdapterClass;
         }
+        Class c = loadClass("org.eclipse.ui.ide", "org.eclipse.ui.IContributorResourceAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
+            icontributorResourceAdapterClass = c;
+        }
+        return c;
+    }
+
+    /**
+     * Returns <code>IContributorResourceAdapter2.class</code> or
+     * <code>null</code> if the class is not available.
+     * <p>
+     * This method exists to avoid explicit references from the generic
+     * workbench to the IDE plug-in.
+     * </p>
+     * 
+     * @return <code>IContributorResourceAdapter.class</code> or
+     * <code>null</code> if class not available
+     * @since 3.1
+     */
+    public static Class getIContributorResourceAdapter2Class() {
+        if (icontributorResourceAdapter2Class != null) {
+            // tried before and succeeded
+            return icontributorResourceAdapter2Class;
+        }
+        Class c = loadClass("org.eclipse.ui.ide", "org.eclipse.ui.IContributorResourceAdapter2"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
+            icontributorResourceAdapter2Class = c;
+        }
+        return c;
+    }
+    
+    private static Class loadClass(String bundleName, String className) {
         if (!resourceAdapterPossible) {
             // tried before and failed
             return null;
         }
-
-        // IDE plug-in is not on prereq chain of generic wb plug-in
-        // hence: IContributorResourceAdapter.class won't compile
-        // and Class.forName("org.eclipse.ui.IContributorResourceAdapter") won't find it
-        // need to be trickier...
-        Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
+        Bundle bundle = Platform.getBundle(bundleName);
         if (bundle == null) {
-            // IDE plug-in is not around
+            // Required plug-in is not around
             // assume that it will never be around
             resourceAdapterPossible = false;
             return null;
         }
-        // IDE plug-in is around
+        // Required plug-in is around
         // it's not our job to activate the plug-in
         if (!BundleUtility.isActivated(bundle)) {
             // assume it might come alive later
@@ -230,19 +238,15 @@ public final class LegacyResourceSupport {
             return null;
         }
         try {
-            Class c = bundle
-                    .loadClass("org.eclipse.ui.IContributorResourceAdapter"); //$NON-NLS-1$
-            // remember for next time
-            icontributorResourceAdapterClass = c;
-            return icontributorResourceAdapterClass;
+            return bundle.loadClass(className);
         } catch (ClassNotFoundException e) {
-            // unable to load IContributorResourceAdapter - sounds pretty serious
-            // treat as if IDE plug-in were unavailable
+            // unable to load the class - sounds pretty serious
+            // treat as if the plug-in were unavailable
             resourceAdapterPossible = false;
             return null;
         }
     }
-
+    
     /**
      * Returns <code>DefaultContributorResourceAdapter.class</code> or
      * <code>null</code> if the class is not available.
@@ -260,41 +264,12 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return defaultContributorResourceAdapterClass;
         }
-        if (!resourceAdapterPossible) {
-            // tried before and failed
-            return null;
-        }
-
-        // IDE plug-in is not on prereq chain of generic wb plug-in
-        // hence: DefaultContributorResourceAdapter.class won't compile
-        // and Class.forName("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter") won't find it
-        // need to be trickier...
-        Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
-        if (bundle == null) {
-            // IDE plug-in is not around
-            // assume that it will never be around
-            resourceAdapterPossible = false;
-            return null;
-        }
-        // IDE plug-in is around
-        // it's not our job to activate the plug-in
-        if (!BundleUtility.isActivated(bundle)) {
-            // assume it might come alive later
-            resourceAdapterPossible = true;
-            return null;
-        }
-        try {
-            Class c = bundle
-                    .loadClass("org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter"); //$NON-NLS-1$
-            // remember for next time
+        Class c = loadClass("org.eclipse.ui.ide", "org.eclipse.ui.internal.ide.DefaultContributorResourceAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (c != null) {
+            // The class was found so record it
             defaultContributorResourceAdapterClass = c;
-            return defaultContributorResourceAdapterClass;
-        } catch (ClassNotFoundException e) {
-            // unable to load DefaultContributorResourceAdapter - sounds pretty serious
-            // treat as if IDE plug-in were unavailable
-            resourceAdapterPossible = false;
-            return null;
         }
+        return c;
     }
     
     /**
@@ -313,6 +288,19 @@ public final class LegacyResourceSupport {
             }
         }
         return false;
+    }
+    
+    /**
+     * Returns <code>true</code> if the provided type name is an
+     * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
+     * @param objectClassName
+     * @return <code>true</code> if the provided type name is an
+     * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
+     * 
+     * @since 3.1
+     */
+    public static boolean isResourceMappingType(String objectClassName) {
+        return objectClassName.equals("org.eclipse.core.resources.mapping.ResourceMapping"); //$NON-NLS-1$
     }
     
     /**
@@ -389,6 +377,64 @@ public final class LegacyResourceSupport {
 	}
     
     /**
+     * Returns the adapted resource mapping using the <code>IContributorResourceAdapter2</code>
+     * registered for the given object. If the Resources plug-in is not loaded
+     * the object can not be adapted.
+     * 
+     * @param object the object to adapt to <code>ResourceMapping</code>.
+     * @return returns the adapted resource using the <code>IContributorResourceAdapter2</code>
+     * or <code>null</code> if the Resources plug-in is not loaded.
+     * 
+     * @since 3.1
+     */
+    public static Object getAdaptedContributorResourceMapping(Object object) {
+        Class resourceMappingClass = LegacyResourceSupport.getResourceMappingClass();
+        if (resourceMappingClass == null) {
+            return null;
+        }
+        if (resourceMappingClass.isInstance(object)) {
+            return null;
+        }
+        if (object instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) object;
+            Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
+            if (contributorResourceAdapterClass == null) {
+                return null;
+            }
+            Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
+            if (resourceAdapter == null || ! LegacyResourceSupport.getIContributorResourceAdapter2Class().isInstance(resourceAdapter)) {
+                // reflective equivalent of
+                //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+                try {
+                    Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
+                    Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
+                    resourceAdapter = m.invoke(null, new Object[0]);
+                } catch (Exception e) {
+                    // shouldn't happen - but play it safe
+                    return null;
+                }
+            }
+            Object result;
+            // reflective equivalent of
+            //    result = ((IContributorResourceAdapter2) resourceAdapter).getAdaptedResource(adaptable);
+            try {
+                Class contributorResourceAdapter2Class = LegacyResourceSupport.getIContributorResourceAdapter2Class();
+                if (contributorResourceAdapter2Class == null)
+                    return null;
+                Method m = contributorResourceAdapter2Class.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
+                result = m.invoke(resourceAdapter, new Object[]{adaptable});
+            } catch (Exception e) {
+                // shouldn't happen - but play it safe
+                return null;
+            }
+            return result;
+        }
+        // Fallback to querying the adapter manager directly
+        Object result = Platform.getAdapterManager().getAdapter(object, resourceMappingClass);
+        return result;
+    }
+    
+    /**
      * Adapts a selection to the given objectClass considering the Legacy resource 
      * support. Non resource objectClasses are adapted using the <code>IAdapterManager</code>
      * and this may load the plug-in that contributes the adapter factory.
@@ -435,6 +481,15 @@ public final class LegacyResourceSupport {
 			// Handle IResource
 			if (LegacyResourceSupport.isResourceType(objectClass)) {
 				adaptedElement = getAdaptedResource(element);
+            } else if (LegacyResourceSupport.isResourceMappingType(objectClass)) {
+                adaptedElement = getAdaptedResourceMapping(element);
+                if (adaptedElement == null) {
+                    // The object doesn't adapt directly so check if it adapts transitively
+                    Object resource = getAdaptedResource(element);
+                    if (resource != null) {
+                        adaptedElement =( (IAdaptable)resource).getAdapter(LegacyResourceSupport.getResourceMappingClass());
+                    }
+                }
 			} else {
 				// Handle all other types by using the adapter factory.
 				adaptedElement = Platform.getAdapterManager().loadAdapter(element, objectClass);
@@ -469,6 +524,32 @@ public final class LegacyResourceSupport {
 		return adaptedValue;
 	}
 
+    /**
+     * Adapt the given element to an <code>ResourceMapping</code> using the following 
+     * search order:
+     * <ol>
+     * <li> using the IContributorResourceAdapter2 registered for the given element, or
+     * <li> directly asking the element if it adapts.
+     * </ol>
+     * 
+     * @param element the element to adapt
+     * @return an <code>ResourceMapping</code> instance if the element could be adapted or <code>null</code>
+     * otherwise.
+     * @since 3.1
+     */
+    public static Object getAdaptedResourceMapping(Object element) {
+        Class resourceMappingClass = LegacyResourceSupport.getResourceMappingClass();
+        Object adaptedValue = null;
+        if (resourceMappingClass != null) {
+            if (resourceMappingClass.isInstance(element)) {
+                adaptedValue = element;
+            } else {
+                adaptedValue = LegacyResourceSupport.getAdaptedContributorResourceMapping(element);
+            }
+        }
+        return adaptedValue;
+    }
+    
     /**
      * Prevents construction
      */

@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IContributorResourceAdapter;
+import org.eclipse.ui.IContributorResourceAdapter2;
 
 /**
  * The DefaultContributorResourceAdapter is the default
@@ -20,7 +22,7 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * one to one resource adaption.
  */
 public class DefaultContributorResourceAdapter implements
-        IContributorResourceAdapter {
+        IContributorResourceAdapter2 {
 
     private static IContributorResourceAdapter singleton;
 
@@ -33,6 +35,7 @@ public class DefaultContributorResourceAdapter implements
 
     /**
      * Return the default instance used for TaskList adapting.
+     * @return the default instance used for TaskList adapting
      */
     public static IContributorResourceAdapter getDefault() {
         if (singleton == null)
@@ -45,6 +48,10 @@ public class DefaultContributorResourceAdapter implements
      */
     public IResource getAdaptedResource(IAdaptable adaptable) {
         return (IResource) adaptable.getAdapter(IResource.class);
+    }
+
+    public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
+        return (ResourceMapping) adaptable.getAdapter(ResourceMapping.class);
     }
 }
 

@@ -11,34 +11,15 @@
 package org.eclipse.ui.tests.menus;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.SubContributionItem;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.PluginActionContributionItem;
-import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -137,6 +118,18 @@ public final class ObjectContributionTest extends UITestCase {
 				IResource.class,
 				false
 			);
+        assertPopupMenus("6", 
+                new String[] {"ResourceMapping.1"}, 
+                new StructuredSelection(new Object[] {new ObjectContributionClasses.CFile(), new ObjectContributionClasses.CResource()}),
+                ResourceMapping.class,
+                true
+            );
+        assertPopupMenus("7", 
+                new String[] {"ResourceMapping.1", "IResource.1"}, 
+                new StructuredSelection(new Object[] {new ObjectContributionClasses.ModelElement()}),
+                ResourceMapping.class,
+                true
+            );
     }
     
     /**
