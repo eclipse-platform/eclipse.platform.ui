@@ -20,12 +20,34 @@ public class FormText extends Canvas {
 	private String text="";
 	private int textMarginWidth=5;
 	private int textMarginHeight=5;
+	private boolean hasFocus=false;
 
 	public FormText(Composite parent, int style) {
 		super(parent, style);
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paint(e);
+			}
+		});
+		addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character == '\r') {
+				   System.out.println("Form text active: "+getText());
+				}
+			}
+		});
+		addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				if (!hasFocus) {
+				   hasFocus=true;
+				   redraw();
+				}
+			}
+			public void focusLost(FocusEvent e) {
+				if (hasFocus) {
+					hasFocus=false;
+					redraw();
+				}
 			}
 		});
 	}
@@ -130,11 +152,16 @@ public class FormText extends Canvas {
 	       gc.drawImage(backgroundImage, 0, 0);
 		}
 	   	gc.setFont(getFont());
+	   	gc.setForeground(getForeground());
 	   	if ((getStyle() & SWT.WRAP)!=0) {
 	   		paintWrapText(gc, size, text, textMarginWidth, textMarginHeight);
 	   	}
 	   	else {
 		   gc.drawText(getText(), textMarginWidth, textMarginHeight, true);
 	   	}
+	   	if (hasFocus) {
+	   		gc.setLineStyle(SWT.LINE_DOT);
+	   		gc.drawRectangle(0, 0, size.x-1, size.y-1);
+		}
 	}
 }

@@ -121,6 +121,13 @@ public static void main (String [] args) {
      td.colspan = 2;
      td.align = TableData.FILL;
      exp.getControl().setLayoutData(td);
+     
+     
+     FormText ft = new FormText(c, SWT.WRAP);
+     ft.setText("Some text in the form text that should also wrap");
+
+     ft = new FormText(c, SWT.WRAP);
+     ft.setText("Some more form text here");
    
      shell.open ();
      while (!shell.isDisposed ()) {
