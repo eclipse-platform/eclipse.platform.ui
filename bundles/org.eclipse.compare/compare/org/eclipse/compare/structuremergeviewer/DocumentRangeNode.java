@@ -324,16 +324,16 @@ public class DocumentRangeNode
 
 		if (child != null) { // there is a destination
 			
-			if (child instanceof DocumentRangeNode) {
-				DocumentRangeNode drn= (DocumentRangeNode) child;
-
-				IDocument doc= drn.getDocument();
-				Position range= drn.getRange();
-				try {
-					doc.replace(range.getOffset(), range.getLength(), srcContents);
-				} catch (BadLocationException ex) {
-				}
-			}
+//			if (child instanceof DocumentRangeNode) {
+//				DocumentRangeNode drn= (DocumentRangeNode) child;
+//
+//				IDocument doc= drn.getDocument();
+//				Position range= drn.getRange();
+//				try {
+//					doc.replace(range.getOffset(), range.getLength(), srcContents);
+//				} catch (BadLocationException ex) {
+//				}
+//			}
 		} else {
 			// no destination: we have to add the contents into the parent
 			add(srcContents, null /*srcParentNode*/, src);
@@ -345,7 +345,7 @@ public class DocumentRangeNode
 	 * see IEditableContent.setContent
 	 */
 	public void setContent(byte[] content) {
-		fBaseDocument.set(new String(content));
+//		fBaseDocument.set(new String(content));
 	}
 }
 
