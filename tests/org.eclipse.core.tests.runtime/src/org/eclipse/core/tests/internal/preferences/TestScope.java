@@ -73,10 +73,6 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 			accept(visitor);
 		} catch (BackingStoreException e) {
 			// shouldn't happen
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("Exception visiting nodes during #makeClean"); //$NON-NLS-1$
-				e.printStackTrace();
-			}
 		}
 	}
 	

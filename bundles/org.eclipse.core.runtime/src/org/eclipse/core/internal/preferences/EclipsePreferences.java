@@ -97,7 +97,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			nodeListeners = new ListenerList();
 		nodeListeners.add(listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -109,7 +109,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			preferenceListeners = new ListenerList();
 		preferenceListeners.add(listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private IEclipsePreferences calculateRoot() {
@@ -184,7 +184,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 						((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
 					} else {
 						if (InternalPlatform.DEBUG_PREFERENCES)
-							System.out.println("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 				}
 			}
@@ -520,11 +520,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void load(IPath location) throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Loading preferences from file: " + location); //$NON-NLS-1$
+			Policy.debug("Loading preferences from file: " + location); //$NON-NLS-1$
 		InputStream input = null;
 		Properties fromDisk = new Properties();
 		try {
@@ -533,7 +533,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		} catch (FileNotFoundException e) {
 			// file doesn't exist but that's ok.
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Preference file does not exist: " + location); //$NON-NLS-1$
+				Policy.debug("Preference file does not exist: " + location); //$NON-NLS-1$
 			return;
 		} catch (IOException e) {
 			String message = Policy.bind("preferences.loadException", location.toString()); //$NON-NLS-1$
@@ -905,7 +905,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (nodeListeners.size() == 0)
 			nodeListeners = null;
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -919,17 +919,17 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (preferenceListeners.size() == 0)
 			preferenceListeners = null;
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void save(IPath location) throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Saving preferences to file: " + location); //$NON-NLS-1$
+			Policy.debug("Saving preferences to file: " + location); //$NON-NLS-1$
 		Properties table = convertToProperties(new Properties(), new Path(absolutePath()));
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.

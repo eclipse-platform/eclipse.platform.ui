@@ -405,17 +405,15 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("Plugin preferences already loaded for " + bundle.getSymbolicName()); //$NON-NLS-1$
-			}
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Plugin preferences already loaded for " + bundle.getSymbolicName()); //$NON-NLS-1$
 			// N.B. preferences instance field set means already created
 			// and initialized (or in process of being initialized)
 			return preferences;
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
 		preferences = new PreferenceForwarder(bundle.getSymbolicName());
@@ -426,9 +424,8 @@ public abstract class Plugin implements BundleActivator {
 		applyInternalPluginDefaultOverrides();
 		// 3. override with defaults from primary feature or command line
 		applyExternalPluginDefaultOverrides();
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Completed loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Completed loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		return preferences;
 	}
 
@@ -505,15 +502,13 @@ public abstract class Plugin implements BundleActivator {
 		URL baseURL = FindSupport.find(bundle, new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
 
 		if (baseURL == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences from " + baseURL); //$NON-NLS-1$
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences from " + baseURL); //$NON-NLS-1$
 		Properties overrides = new Properties();
 		BufferedInputStream in = null;
 		try {
@@ -522,8 +517,7 @@ public abstract class Plugin implements BundleActivator {
 		} catch (IOException e) {
 			// cannot read ini file - fail silently
 			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("IOException encountered loading preference file " + //$NON-NLS-1$
-				baseURL);
+				Policy.debug("IOException encountered loading preference file " + baseURL); //$NON-NLS-1$
 				e.printStackTrace();
 			}
 			return;
@@ -535,8 +529,7 @@ public abstract class Plugin implements BundleActivator {
 			} catch (IOException e) {
 				// ignore problems closing file
 				if (InternalPlatform.DEBUG_PREFERENCES) {
-					System.out.println("IOException encountered closing preference file " + //$NON-NLS-1$
-					baseURL);
+					Policy.debug("IOException encountered closing preference file " + baseURL); //$NON-NLS-1$
 					e.printStackTrace();
 				}
 			}
@@ -557,16 +550,16 @@ public abstract class Plugin implements BundleActivator {
 			preferences.setDefault(key, value);
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
+			Policy.debug("Preferences now set as follows:"); //$NON-NLS-1$
 			String[] prefNames = preferences.propertyNames();
 			for (int i = 0; i < prefNames.length; i++) {
 				String value = preferences.getString(prefNames[i]);
-				System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			prefNames = preferences.defaultPropertyNames();
 			for (int i = 0; i < prefNames.length; i++) {
 				String value = preferences.getDefaultString(prefNames[i]);
-				System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

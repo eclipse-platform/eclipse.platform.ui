@@ -725,23 +725,20 @@ public final class InternalPlatform implements IPlatform {
 
 		if (pluginCustomizationFile == null) {
 			// no command line overrides to process
-			if (DEBUG_PREFERENCES) {
-				System.out.println("Command line argument -pluginCustomization not used."); //$NON-NLS-1$
-			}
+			if (DEBUG_PREFERENCES)
+				Policy.debug("Command line argument -pluginCustomization not used."); //$NON-NLS-1$
 			return;
 		}
 
 		try {
 			URL pluginCustomizationURL = new File(pluginCustomizationFile).toURL();
-			if (DEBUG_PREFERENCES) {
-				System.out.println("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
-			}
+			if (DEBUG_PREFERENCES)
+				Policy.debug("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
 			applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences, null);
 		} catch (MalformedURLException e) {
 			// fail silently
 			if (DEBUG_PREFERENCES) {
-				System.out.println("MalformedURLException creating URL for plugin customization file " //$NON-NLS-1$
-				+pluginCustomizationFile);
+				Policy.debug("MalformedURLException creating URL for plugin customization file " + pluginCustomizationFile); //$NON-NLS-1$
 				e.printStackTrace();
 			}
 			return;
@@ -770,28 +767,23 @@ public final class InternalPlatform implements IPlatform {
 			File inFile = new File(propertiesURL.getFile());
 			if (!inFile.exists()) {
 				// We don't have a preferences file to worry about
-				if (DEBUG_PREFERENCES) {
-					System.out.println("Preference file " + //$NON-NLS-1$
-					propertiesURL + " not found."); //$NON-NLS-1$
-				}
+				if (DEBUG_PREFERENCES)
+					Policy.debug("Preference file " + propertiesURL + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 
 			in = new SafeFileInputStream(inFile);
 			if (in == null) {
 				// fail quietly
-				if (DEBUG_PREFERENCES) {
-					System.out.println("Failed to open " + //$NON-NLS-1$
-					propertiesURL);
-				}
+				if (DEBUG_PREFERENCES)
+					Policy.debug("Failed to open " + propertiesURL); //$NON-NLS-1$
 				return;
 			}
 			overrides.load(in);
 		} catch (IOException e) {
 			// cannot read ini file - fail silently
 			if (DEBUG_PREFERENCES) {
-				System.out.println("IOException reading preference file " + //$NON-NLS-1$
-				propertiesURL);
+				Policy.debug("IOException reading preference file " + propertiesURL); //$NON-NLS-1$
 				e.printStackTrace();
 			}
 			return;
@@ -803,8 +795,7 @@ public final class InternalPlatform implements IPlatform {
 			} catch (IOException e) {
 				// ignore problems closing file
 				if (DEBUG_PREFERENCES) {
-					System.out.println("IOException closing preference file " + //$NON-NLS-1$
-					propertiesURL);
+					Policy.debug("IOException closing preference file " + propertiesURL); //$NON-NLS-1$
 					e.printStackTrace();
 				}
 			}
@@ -832,16 +823,16 @@ public final class InternalPlatform implements IPlatform {
 			}
 		}
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
+			Policy.debug("Preferences now set as follows:"); //$NON-NLS-1$
 			String[] prefNames = preferences.propertyNames();
 			for (int i = 0; i < prefNames.length; i++) {
 				String value = preferences.getString(prefNames[i]);
-				System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			prefNames = preferences.defaultPropertyNames();
 			for (int i = 0; i < prefNames.length; i++) {
 				String value = preferences.getDefaultString(prefNames[i]);
-				System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

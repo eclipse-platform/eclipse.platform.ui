@@ -109,10 +109,8 @@ public class PreferencesService implements IPreferencesService {
 		if (preferences == null)
 			throw new IllegalArgumentException();
 
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Applying exported preferences:"); //$NON-NLS-1$
-			System.out.println(((ExportedPreferences) preferences).toDeepDebugString());
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Applying exported preferences: " + ((ExportedPreferences) preferences).toDeepDebugString()); //$NON-NLS-1$
 
 		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "Problems applying preference changes.", null);
 
@@ -131,7 +129,7 @@ public class PreferencesService implements IPreferencesService {
 				boolean removed = false;
 				if (epNode.isExportRoot()) {
 					if (InternalPlatform.DEBUG_PREFERENCES)
-						System.out.println("Found export root: " + epNode.absolutePath()); //$NON-NLS-1$
+						Policy.debug("Found export root: " + epNode.absolutePath()); //$NON-NLS-1$
 					// TODO should only have to do this if any of my children have properties to set
 					globalNode.removeNode();
 					removed = true;
@@ -152,7 +150,7 @@ public class PreferencesService implements IPreferencesService {
 						String value = node.get(key, null);
 						if (value != null) {
 							if (InternalPlatform.DEBUG_PREFERENCES)
-								System.out.println("Setting: " + globalNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
+								Policy.debug("Setting: " + globalNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 							globalNode.put(key, value);
 						}
 					}
@@ -179,10 +177,8 @@ public class PreferencesService implements IPreferencesService {
 			throw new CoreException(createStatusError(message, e));
 		}
 
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Current list of all settings:"); //$NON-NLS-1$
-			System.out.println(((EclipsePreferences) getRootNode()).toDeepDebugString());
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Current list of all settings: " + ((EclipsePreferences) getRootNode()).toDeepDebugString()); //$NON-NLS-1$
 
 		return result;
 	}
@@ -230,10 +226,8 @@ public class PreferencesService implements IPreferencesService {
 				current.put(key, value);
 			}
 		}
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Converted preferences file to IExportedPreferences tree:"); //$NON-NLS-1$
-			System.out.println(((ExportedPreferences) result).toDeepDebugString());
-		}
+		if (InternalPlatform.DEBUG_PREFERENCES)
+			Policy.debug("Converted preferences file to IExportedPreferences tree: " + ((ExportedPreferences) result).toDeepDebugString()); //$NON-NLS-1$
 		return result;
 	}
 
@@ -492,7 +486,7 @@ public class PreferencesService implements IPreferencesService {
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException {
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Importing preferences..."); //$NON-NLS-1$
+			Policy.debug("Importing preferences..."); //$NON-NLS-1$
 		return applyPreferences(readPreferences(input));
 	}
 
@@ -515,7 +509,7 @@ public class PreferencesService implements IPreferencesService {
 			throw new IllegalArgumentException();
 
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Reading preferences from stream..."); //$NON-NLS-1$
+			Policy.debug("Reading preferences from stream..."); //$NON-NLS-1$
 
 		// read the file into a properties object
 		Properties properties = new Properties();
@@ -535,11 +529,11 @@ public class PreferencesService implements IPreferencesService {
 		// manipulate the file if it from a legacy preference export
 		if (isLegacy(properties)) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Read legacy preferences file, converting to 3.0 format..."); //$NON-NLS-1$
+				Policy.debug("Read legacy preferences file, converting to 3.0 format..."); //$NON-NLS-1$
 			properties = convertFromLegacy(properties);
 		} else {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Read preferences file."); //$NON-NLS-1$
+				Policy.debug("Read preferences file."); //$NON-NLS-1$
 			properties.remove(VERSION_KEY);
 		}
 
