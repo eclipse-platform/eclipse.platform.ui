@@ -47,9 +47,9 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		tableViewer = (TableViewer) viewer;
-		tableViewer.setSorter(getSorter());
 		elements.clear();
 		if (newInput != null) {
+			tableViewer.setSorter(getSorter());
 			List list;
 			if (newInput instanceof List) {
 				list= (List) newInput;
