@@ -1074,7 +1074,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      */
     protected int determineProposalMode(IDocument document, int aCursorPosition, String aPrefix) {
 
-    	if (document.getLength() == 0) {
+    	if (document.getLength() == 0 || (document.getLength() == 1 && document.get().equals("<"))) { //$NON-NLS-1$
     		return PROPOSAL_MODE_BUILDFILE;
     	}
     	
