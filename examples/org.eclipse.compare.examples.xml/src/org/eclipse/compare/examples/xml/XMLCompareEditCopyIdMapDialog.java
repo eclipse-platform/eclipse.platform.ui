@@ -33,30 +33,31 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 	private Text fIdMapText;
 	private String fResult;
 
-/**
- * Constructs a new edit copy mapping dialog.
- */	
+	/**
+	 * Constructs a new edit copy mapping dialog.
+	 */	
 	public XMLCompareEditCopyIdMapDialog(Shell parent, IdMap idmap, HashMap idmaps, HashMap idmapsInternal) {
 		super(parent);
 	
 		setTitle(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.title")); //$NON-NLS-1$
 
-		fIdMaps = idmaps;
+		fIdMaps= idmaps;
 		fIdMapsInternal= idmapsInternal;
 	}
 	
 	public String getResult() {
 		return fResult;
 	}
-/**
- * Creates and returns the contents of the upper part 
- * of the dialog (above the button bar).
- *
- * Subclasses should override.
- *
- * @param the parent composite to contain the dialog area
- * @return the dialog area control
- */		
+	
+	/**
+	 * Creates and returns the contents of the upper part 
+	 * of the dialog (above the button bar).
+	 *
+	 * Subclasses should override.
+	 *
+	 * @param the parent composite to contain the dialog area
+	 * @return the dialog area control
+	 */		
 	protected Control createDialogArea(Composite ancestor) {
 		Composite composite= (Composite) super.createDialogArea(ancestor);
 		
@@ -90,9 +91,9 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 		return composite;
 	}
 	
-/**
- * Validate user input
- */		
+	/**
+	 * Validate user input
+	 */		
 	private void doValidation() {
 		StatusInfo status= new StatusInfo();
 		String newText= fIdMapText.getText();
@@ -104,12 +105,12 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 			status.setError(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.error.nameExists")); //$NON-NLS-1$
 		updateStatus(status);
 	}
-/**
- * Notifies that the ok button of this dialog has been pressed.
- */		
+	
+	/**
+	 * Notifies that the ok button of this dialog has been pressed.
+	 */		
 	protected void okPressed() {
-		fResult = fIdMapText.getText();
+		fResult= fIdMapText.getText();
 		super.okPressed();
 	}
-	
 }

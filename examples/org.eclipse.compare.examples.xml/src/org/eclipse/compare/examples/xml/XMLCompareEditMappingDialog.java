@@ -47,24 +47,25 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
 
 	
-		fEdit = edit;
+		fEdit= edit;
 		if (fEdit)
 			setTitle(XMLCompareMessages.getString("XMLCompareEditMappingDialog.editTitle")); //$NON-NLS-1$
 		else
 			setTitle(XMLCompareMessages.getString("XMLCompareEditMappingDialog.newTitle")); //$NON-NLS-1$
 
 		fMapping= mapping;
-		fIdmapHM = idmapHM;
+		fIdmapHM= idmapHM;
 	}
-/**
- * Creates and returns the contents of the upper part 
- * of the dialog (above the button bar).
- *
- * Subclasses should override.
- *
- * @param the parent composite to contain the dialog area
- * @return the dialog area control
- */	
+	
+	/**
+	 * Creates and returns the contents of the upper part 
+	 * of the dialog (above the button bar).
+	 *
+	 * Subclasses should override.
+	 *
+	 * @param the parent composite to contain the dialog area
+	 * @return the dialog area control
+	 */	
 	protected Control createDialogArea(Composite ancestor) {
 		Composite composite= (Composite) super.createDialogArea(ancestor);
 		
@@ -95,8 +96,8 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 
 		fSignatureText= new Text(inner, SWT.BORDER);
 		fSignatureText.setText(fMapping.getSignature());
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = convertWidthInCharsToPixels(50);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint= convertWidthInCharsToPixels(50);
 		fSignatureText.setLayoutData(data);
 		fSignatureText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
@@ -126,62 +127,63 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 		return composite;
 	}
 	
-/**
- * Validate user input
- */	
+	/**
+	 * Validate user input
+	 */	
 	private void doValidation() {
 		StatusInfo status= new StatusInfo();
-		String text = fElementText.getText();
-		String mappingKey = Mapping.getKey(fSignatureText.getText(), text);
-		String errormsg = ""; //$NON-NLS-1$
-		boolean isError = false;
+		String text= fElementText.getText();
+		String mappingKey= Mapping.getKey(fSignatureText.getText(), text);
+		String errormsg= ""; //$NON-NLS-1$
+		boolean isError= false;
 		if (text.length() == 0) {
-			errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.noname"); //$NON-NLS-1$
-			isError = true;
+			errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.noname"); //$NON-NLS-1$
+			isError= true;
 		} else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidname"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidname"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		} else if (!fEdit && fIdmapHM != null && fIdmapHM.containsKey(mappingKey)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.mappingExists"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.mappingExists"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		}
-		text = fSignatureText.getText();
+		text= fSignatureText.getText();
 		if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidsignature"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidsignature"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		}
-		text = fIdAttributeText.getText();
+		text= fIdAttributeText.getText();
 		if (text.length() == 0)
-			isError = true;
+			isError= true;
 		else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalididattribute"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalididattribute"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		}
 		if (isError) status.setError(errormsg);
 		updateStatus(status);
 	}
-/**
- * Notifies that the ok button of this dialog has been pressed.
- */	
+	
+	/**
+	 * Notifies that the ok button of this dialog has been pressed.
+	 */	
 	protected void okPressed() {
 		fMapping.setElement(fElementText.getText());
 		fMapping.setSignature(fSignatureText.getText());
-		String idtext = fIdAttributeText.getText();
+		String idtext= fIdAttributeText.getText();
 		if (fIdTypeChildBodyButton.getSelection()) {
-			idtext = new Character(XMLStructureCreator.ID_TYPE_BODY) + idtext;
+			idtext= new Character(XMLStructureCreator.ID_TYPE_BODY) + idtext;
 		}
 		fMapping.setIdAttribute(idtext);
 		super.okPressed();
 	}
 	
 	private void createIdSourceGroup(Composite composite) {
-		Label titleLabel = new Label(composite, SWT.NONE);
+		Label titleLabel= new Label(composite, SWT.NONE);
 		titleLabel.setText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.idtype")); //$NON-NLS-1$
 		titleLabel.setToolTipText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.idtype.tooltip")); //$NON-NLS-1$
 	
-		Composite buttonComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		Composite buttonComposite= new Composite(composite, SWT.LEFT);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
 		buttonComposite.setLayout(layout);
 		composite.setData(new GridData());
 	
@@ -190,12 +192,12 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 		fIdTypeAttributeButton.setToolTipText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.idtype.attribute.tooltip")); //$NON-NLS-1$
 	
 		//child body button
-		fIdTypeChildBodyButton = createRadioButton(buttonComposite, XMLCompareMessages.getString("XMLComparePreference.idtype.child_body")); //$NON-NLS-1$
+		fIdTypeChildBodyButton= createRadioButton(buttonComposite, XMLCompareMessages.getString("XMLComparePreference.idtype.child_body")); //$NON-NLS-1$
 		fIdTypeChildBodyButton.setToolTipText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.idtype.childbody.tooltip")); //$NON-NLS-1$
 	
-		String idtext = fMapping.getIdAttribute();
+		String idtext= fMapping.getIdAttribute();
 		if (fEdit && idtext.charAt(0) == XMLStructureCreator.ID_TYPE_BODY) {
-			idtext = idtext.substring(1,idtext.length());
+			idtext= idtext.substring(1,idtext.length());
 			fIdTypeChildBodyButton.setSelection(true);
 		} else
 			fIdTypeAttributeButton.setSelection(true);
@@ -204,9 +206,9 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 	}
 
 	private Button createRadioButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
+		Button button= new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
-		GridData data = new GridData();
+		GridData data= new GridData();
 		button.setLayoutData(data);
 		return button;
 	}	

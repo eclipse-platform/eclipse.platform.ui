@@ -87,6 +87,5 @@ public class Mapping {
 			return XMLStructureCreator.ROOT_ID + XMLStructureCreator.SIGN_SEPARATOR + element + XMLStructureCreator.SIGN_SEPARATOR;
 		else
 			return XMLStructureCreator.ROOT_ID + XMLStructureCreator.SIGN_SEPARATOR + signature + XMLStructureCreator.SIGN_SEPARATOR + element + XMLStructureCreator.SIGN_SEPARATOR;
-
 	}
 }

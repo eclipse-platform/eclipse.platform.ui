@@ -16,19 +16,16 @@ class SelectMatcherAction extends Action {
 
 	private XMLStructureViewer fViewer;
 	private String fDesc;
-	
-	/**
-	 *	Create a new instance of this class
-	 */
+
 	public SelectMatcherAction(String desc, XMLStructureViewer viewer) {
-		fViewer = viewer;
-		fDesc = desc;
+		fViewer= viewer;
+		fDesc= desc;
 		setText(fDesc);
 		setToolTipText(fDesc);
 	}
 
 	public void run() {
-		((XMLStructureCreator)fViewer.getStructureCreator()).setIdMap(fDesc);
+		((XMLStructureCreator) fViewer.getStructureCreator()).setIdMap(fDesc);
 		fViewer.contentChanged();
 	}
 }

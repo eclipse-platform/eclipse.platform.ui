@@ -37,9 +37,9 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 	private Text fElementText;
 	private Text fSignatureText;
 
-/**
- * Constructs a new edit mapping dialog.
- */		
+	/**
+	 * Constructs a new edit mapping dialog.
+	 */		
 	public XMLCompareEditOrderedDialog(Shell parent, Mapping mapping, ArrayList idmapAL, boolean edit) {
 		super(parent);
 	
@@ -47,24 +47,25 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
 
 	
-		fEdit = edit;
+		fEdit= edit;
 		if (fEdit)
 			setTitle(XMLCompareMessages.getString("XMLCompareEditOrderedDialog.editTitle")); //$NON-NLS-1$
 		else
 			setTitle(XMLCompareMessages.getString("XMLCompareEditOrderedDialog.newTitle")); //$NON-NLS-1$
 
 		fMapping= mapping;
-		fIdmapAL = idmapAL;
+		fIdmapAL= idmapAL;
 	}
-/**
- * Creates and returns the contents of the upper part 
- * of the dialog (above the button bar).
- *
- * Subclasses should override.
- *
- * @param the parent composite to contain the dialog area
- * @return the dialog area control
- */	
+	
+	/**
+	 * Creates and returns the contents of the upper part 
+	 * of the dialog (above the button bar).
+	 *
+	 * Subclasses should override.
+	 *
+	 * @param the parent composite to contain the dialog area
+	 * @return the dialog area control
+	 */	
 	protected Control createDialogArea(Composite ancestor) {
 		Composite composite= (Composite) super.createDialogArea(ancestor);
 		
@@ -95,8 +96,8 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 
 		fSignatureText= new Text(inner, SWT.BORDER);
 		fSignatureText.setText(fMapping.getSignature());
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = convertWidthInCharsToPixels(50);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint= convertWidthInCharsToPixels(50);
 		fSignatureText.setLayoutData(data);
 		fSignatureText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
@@ -109,40 +110,40 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 		return composite;
 	}
 	
-/**
- * Validate user input
- */	
+	/**
+	 * Validate user input
+	 */	
 	private void doValidation() {
 		StatusInfo status= new StatusInfo();
-		String text = fElementText.getText();
-		String mappingKey = Mapping.getKey(fSignatureText.getText(), text);
-		String errormsg = ""; //$NON-NLS-1$
-		boolean isError = false;
+		String text= fElementText.getText();
+		String mappingKey= Mapping.getKey(fSignatureText.getText(), text);
+		String errormsg= ""; //$NON-NLS-1$
+		boolean isError= false;
 		if (text.length() == 0) {
-			errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.noname"); //$NON-NLS-1$
-			isError = true;
+			errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.noname"); //$NON-NLS-1$
+			isError= true;
 		} else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidname"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidname"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		} else if (!fEdit && fIdmapAL.contains(mappingKey)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditOrderedDialog.error.orderedExists"); //$NON-NLS-1$ //$NON-NLS-2$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditOrderedDialog.error.orderedExists"); //$NON-NLS-1$ //$NON-NLS-2$
+			isError= true;
 		}
-		text = fSignatureText.getText();
+		text= fSignatureText.getText();
 		if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg = XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidsignature"); //$NON-NLS-2$ //$NON-NLS-1$
-			isError = true;
+			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidsignature"); //$NON-NLS-2$ //$NON-NLS-1$
+			isError= true;
 		}
 		if (isError) status.setError(errormsg);
 		updateStatus(status);
 	}
-/**
- * Notifies that the ok button of this dialog has been pressed.
- */	
+	
+	/**
+	 * Notifies that the ok button of this dialog has been pressed.
+	 */	
 	protected void okPressed() {
 		fMapping.setElement(fElementText.getText());
 		fMapping.setSignature(fSignatureText.getText());
 		super.okPressed();
 	}
-	
 }

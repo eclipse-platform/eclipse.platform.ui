@@ -40,26 +40,27 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 	public XMLCompareAddIdMapDialog(Shell parent, IdMap idmap, HashMap idmaps, HashMap idmapsInternal, HashMap idextensiontoname, boolean edit) {
 		super(parent);
 	
-		fEdit = edit;
+		fEdit= edit;
 		if (fEdit)
 			setTitle(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.editTitle")); //$NON-NLS-1$
 		else
 			setTitle(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.newTitle")); //$NON-NLS-1$
 
-		fIdMap = idmap;
-		fIdMaps = idmaps;
+		fIdMap= idmap;
+		fIdMaps= idmaps;
 		fIdMapsInternal= idmapsInternal;
 		fIdExtensionToName= idextensiontoname;
 	}
-/**
- * Creates and returns the contents of the upper part 
- * of the dialog (above the button bar).
- *
- * Subclasses should override.
- *
- * @param the parent composite to contain the dialog area
- * @return the dialog area control
- */		
+	
+	/**
+	 * Creates and returns the contents of the upper part 
+	 * of the dialog (above the button bar).
+	 *
+	 * Subclasses should override.
+	 *
+	 * @param the parent composite to contain the dialog area
+	 * @return the dialog area control
+	 */		
 	protected Control createDialogArea(Composite ancestor) {
 		Composite composite= (Composite) super.createDialogArea(ancestor);
 		
@@ -105,9 +106,9 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 		return composite;
 	}
 	
-/**
- * Validate user input
- */		
+	/**
+	 * Validate user input
+	 */		
 	private void doValidation() {
 		StatusInfo status= new StatusInfo();
 		String newText= fIdMapText.getText();
@@ -128,13 +129,13 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 		}
 		updateStatus(status);
 	}
-/**
- * Notifies that the ok button of this dialog has been pressed.
- */	
+	
+	/**
+	 * Notifies that the ok button of this dialog has been pressed.
+	 */	
 	protected void okPressed() {
 		fIdMap.setName(fIdMapText.getText());
 		fIdMap.setExtension(fIdMapExtText.getText().toLowerCase());
 		super.okPressed();
 	}
-	
 }

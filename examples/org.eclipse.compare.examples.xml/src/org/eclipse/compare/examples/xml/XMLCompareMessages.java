@@ -15,8 +15,7 @@ import java.util.ResourceBundle;
 
 public class XMLCompareMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.compare.examples.xml.xmlcompare"; //$NON-NLS-1$
-	//$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.compare.examples.xml.xmlcompare"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);

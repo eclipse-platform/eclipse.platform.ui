@@ -64,13 +64,13 @@ public class XMLStructureViewer extends StructureDiffViewer {
 	private HashMap fOrderedElements;
 
 	protected static final char SIGN_SEPARATOR= XMLStructureCreator.SIGN_SEPARATOR;
+	
 	/**
 	 * Creates a new viewer for the given SWT tree control with the specified configuration.
 	 *
 	 * @param tree the tree control
 	 * @param configuration the configuration for this viewer
 	 */
-	
 	class XMLSorter extends ViewerSorter {
 	
 		ArrayList fOrdered;
@@ -137,9 +137,6 @@ public class XMLStructureViewer extends StructureDiffViewer {
 		}		
 	}	
 
-
-
-	
 	public XMLStructureViewer(Tree tree, CompareConfiguration configuration) {
 		super(tree, configuration);
 		initialize();
