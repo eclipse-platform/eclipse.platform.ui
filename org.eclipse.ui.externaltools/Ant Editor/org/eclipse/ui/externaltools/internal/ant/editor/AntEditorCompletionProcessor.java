@@ -327,7 +327,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param aDocmuentString the text of the currently edited file as one string.
      * @param the prefix
      */
-    protected ICompletionProposal[] getProposalsFromDocument(String aDocumentString, String aPrefix) {
+    private ICompletionProposal[] getProposalsFromDocument(String aDocumentString, String aPrefix) {
         String tempTaskString = null;
 
         /*
@@ -373,7 +373,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * may be an empty string.
      */
     protected ICompletionProposal[] getAttributeProposals(String aTaskName, String aPrefix) {
-        ArrayList tempProposals = new ArrayList();
+        List tempProposals = new ArrayList();
         IElement tempElement = dtd.getElement(aTaskName);
         if (tempElement != null) {
         	Iterator tempKeys = tempElement.getAttributes().keySet().iterator();
@@ -440,8 +440,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param aPrefix prefix, that all proposals should start with. The prefix
      * may be an empty string.
      */
-    protected ICompletionProposal[] getAttributeValueProposals(String aTaskName, String anAttributeName, String aPrefix) {
-        ArrayList tempProposals = new ArrayList();
+    private ICompletionProposal[] getAttributeValueProposals(String aTaskName, String anAttributeName, String aPrefix) {
+        List tempProposals = new ArrayList();
         IElement tempElement = dtd.getElement(aTaskName);
         if (tempElement != null) {
         	IAttribute tempAttribute = (IAttribute) tempElement.getAttributes().get(anAttributeName);
@@ -573,15 +573,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 					tempReplacementString, 
 					tempReplacementOffset, 
 					tempReplacementLength, 
-					tempRootElementName.length()+2, 
+					tempRootElementName.length() + 2, 
 					tempImage, 
 					tempRootElementName, 
 					null, 
 					tempProposalInfo);
 				tempProposals.add(tempProposal);
-				//commented this out because it doesn't quite replace the above
-				//ICompletionProposal tempProposal = makeProposal(tempRootElementName, aPrefix, aWholeDocumentString);
-				//tempProposals.add(tempProposal);
 			}
         }
         else {
@@ -618,9 +615,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 							tempProposalInfo);
 						tempProposals.add(tempProposal);
 					}
-					//commented this out because it doesn't quite replace the above
-					//ICompletionProposal tempProposal = makeProposal(tempElementName, aPrefix, aWholeDocumentString);
-					//tempProposals.add(tempProposal);
 				}
 			}
         }
@@ -934,7 +928,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @return the handler that has been used for parsing or <code>null</code>
      * if parsing couldn't be done because of some error.
      */
-    protected AntEditorSaxDefaultHandler parseEditedFileSearchingForParent(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
+    private AntEditorSaxDefaultHandler parseEditedFileSearchingForParent(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
         // Get a new SAX Parser
         SAXParser tempParser = null;
         try {
@@ -988,7 +982,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * 
      * @return a map with all the found properties
      */
-    protected Map findPropertiesFromDocument(String aWholeDocumentString) {
+    private Map findPropertiesFromDocument(String aWholeDocumentString) {
 		/*
 		 * What is implemented here:
 		 * - We first use the ant plug-in to create a Project instance.
@@ -1129,7 +1123,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @return the not closed parent task element or <code>null</code> if not 
      * found.
      */
-    protected Element findNotClosedParentElement(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
+    private Element findNotClosedParentElement(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
         AntEditorSaxDefaultHandler tempHandler = parseEditedFileSearchingForParent(aWholeDocumentString, aLineNumber, aColumnNumber);
         if(tempHandler != null) {
             
@@ -1148,7 +1142,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * 
      * @return the enclosing target element or <code>null</code> if not found.
      */
- 	protected Element findEnclosingTargetElement(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
+ 	private Element findEnclosingTargetElement(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
 
         // Get a new SAX Parser
         SAXParser tempParser = null;
