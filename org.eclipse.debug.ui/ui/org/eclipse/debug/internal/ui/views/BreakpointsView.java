@@ -265,17 +265,15 @@ public class BreakpointsView extends AbstractDebugView {
 		 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 		 */
 		public void breakpointAdded(final IBreakpoint breakpoint) {
-			if (isAvailable()) {
-				if (breakpoint.getMarker().exists()) {		
-					asyncExec(new Runnable() {
-						public void run() {
-							if (isAvailable()) {
-								((TableViewer)getViewer()).add(breakpoint);
-								updateActions();
-							}
+			if (isAvailable()&& breakpoint.getMarker().exists()) {		
+				asyncExec(new Runnable() {
+					public void run() {
+						if (isAvailable() && breakpoint.getMarker().exists()) {
+							((TableViewer)getViewer()).add(breakpoint);
+							updateActions();
 						}
-					});
-				}
+					}
+				});
 			}
 		}
 	
@@ -300,17 +298,15 @@ public class BreakpointsView extends AbstractDebugView {
 		 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 		 */
 		public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
-			if (isAvailable()) {
-				if (breakpoint.getMarker().exists()) {
-					asyncExec(new Runnable() {
-						public void run() {
-							if (isAvailable()) {
-								((TableViewer)getViewer()).refresh(breakpoint);
-								updateActions();
-							}
+			if (isAvailable()&& breakpoint.getMarker().exists()) {
+				asyncExec(new Runnable() {
+					public void run() {
+						if (isAvailable() && breakpoint.getMarker().exists()) {
+							((TableViewer)getViewer()).refresh(breakpoint);
+							updateActions();
 						}
-					});
-				}
+					}
+				});
 			}
 		}
 	}
