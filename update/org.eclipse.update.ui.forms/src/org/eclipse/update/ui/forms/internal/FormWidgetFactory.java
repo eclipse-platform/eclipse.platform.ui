@@ -354,17 +354,26 @@ public class FormWidgetFactory {
 	}
 	private void initialize() {
 		clientAreaColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		registerColor(COLOR_BORDER, 195, 191, 179);
+		//registerColor(COLOR_BORDER, 195, 191, 179);
 		registerColor(COLOR_COMPOSITE_SEPARATOR, 152, 170, 203);
 		registerColor(DEFAULT_HEADER_COLOR, 0x48, 0x70, 0x98);
 		backgroundColor = clientAreaColor;
-		borderColor = getColor(COLOR_BORDER);
+		//borderColor = getColor(COLOR_BORDER);
+		if (isWhiteBackground())
+			borderColor = getColor(COLOR_BORDER);
+		else
+			borderColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		foregroundColor = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		hyperlinkHandler = new HyperlinkHandler();
 		hyperlinkHandler.setBackground(backgroundColor);
 		updateHyperlinkColors();
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
+	}
+	
+	public boolean isWhiteBackground() {
+		return backgroundColor.getRed()==255 && backgroundColor.getGreen()==255 &&
+			backgroundColor.getBlue()==255;
 	}
 
 	public void updateHyperlinkColors() {

@@ -17,6 +17,7 @@ public class HyperlinkSegment
 	implements IHyperlinkSegment {
 	private String actionId;
 	private HyperlinkSettings settings;
+	private boolean hoover;
 
 	
 	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
@@ -36,6 +37,13 @@ public class HyperlinkSegment
 		return null;
 	}
 	
+	public void setHoover(boolean value) {
+		this.hoover = value;
+	}
+	public boolean isHoover() {
+		return hoover;
+	}
+	
 	/*
 		public boolean isSelectable() {
 		return true;
@@ -53,7 +61,7 @@ public class HyperlinkSegment
 		this.actionId = id;
 	}
 	public void paint(GC gc, int width, Locator locator, Hashtable objectTable, boolean selected) {
-		setColor(settings.getForeground());
+		setColor(hoover? settings.getActiveForeground() : settings.getForeground());
 		super.paint(gc, width, locator, objectTable, selected);
 	}
 }

@@ -226,6 +226,7 @@ public class FormEngine extends Canvas {
 		HyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkEntered(link);
+		//paintActiveLink(link, true);
 	}
 
 	private void exitLink(IHyperlinkSegment link) {
@@ -234,6 +235,12 @@ public class FormEngine extends Canvas {
 		HyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkExited(link);
+		//paintActiveLink(link, false);
+	}
+	
+	private void paintActiveLink(IHyperlinkSegment link, boolean active) {
+		link.setHoover(active);
+		redraw();
 	}
 
 	private void activateSelectedLink() {

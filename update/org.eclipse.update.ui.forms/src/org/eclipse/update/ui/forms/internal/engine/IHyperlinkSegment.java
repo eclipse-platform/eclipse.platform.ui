@@ -15,4 +15,7 @@ public interface IHyperlinkSegment extends ITextSegment, IObjectReference {
 	HyperlinkAction getAction(Hashtable objectTable);
 	
 	boolean contains(int x, int y);
+	
+	boolean isHoover();
+	void setHoover(boolean hoover);
 }
