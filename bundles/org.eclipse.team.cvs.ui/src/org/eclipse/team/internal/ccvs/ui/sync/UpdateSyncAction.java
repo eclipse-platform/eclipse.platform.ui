@@ -47,6 +47,7 @@ import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncSet;
 import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 
 /**
  * UpdateSyncAction is run on a set of sync nodes when the "Update" menu item is performed
@@ -193,10 +194,13 @@ public class UpdateSyncAction extends MergeAction {
 				case ITeamNode.CONFLICTING:
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
-							// To do: conflicting addition: must make incoming first
-							makeIncoming.add(changedNode);
-							deletions.add(changedNode);
-							updateIgnoreLocalShallow.add(changedNode);
+							if(changedNode instanceof IDiffContainer) {
+								parentConflictElements.add(changedNode);
+							} else {
+								makeIncoming.add(changedNode);
+								deletions.add(changedNode);
+								updateIgnoreLocalShallow.add(changedNode);
+							}
 							break;
 						case Differencer.DELETION:
 							// Doesn't happen, these nodes don't appear in the tree.
@@ -306,11 +310,15 @@ public class UpdateSyncAction extends MergeAction {
 		// each parent that doesn't already have sync info).
 		Vector v = new Vector();
 		int parentKind = parentElement.getKind();
-		while (((parentKind & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) &&
-			((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.INCOMING)) {
+		int direction = parentKind & Differencer.DIRECTION_MASK;
+		int change = parentKind & Differencer.CHANGE_TYPE_MASK;
+		while ((change == Differencer.ADDITION) && 
+			   ((direction == ITeamNode.INCOMING) || (direction == ITeamNode.CONFLICTING))) {
 			v.add(0, parentElement);
 			parentElement = parentElement.getParent();
 			parentKind = parentElement == null ? 0 : parentElement.getKind();
+			direction = parentKind & Differencer.DIRECTION_MASK;
+		 	change = parentKind & Differencer.CHANGE_TYPE_MASK;
 		}
 		Iterator parentIt = v.iterator();
 		while (parentIt.hasNext()) {
@@ -319,10 +327,11 @@ public class UpdateSyncAction extends MergeAction {
 				CVSRemoteSyncElement syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)next).getMergeResource().getSyncElement();
 				// Create the sync info
 				syncElement.makeInSync(new NullProgressMonitor());
+				((ChangedTeamContainer)next).setKind(IRemoteSyncElement.IN_SYNC);
 			}
 		}
 	}
-			
+		
 	protected IResource[] getIResourcesFrom(ITeamNode[] nodes) {
 		List resources = new ArrayList(nodes.length);
 		for (int i = 0; i < nodes.length; i++) {

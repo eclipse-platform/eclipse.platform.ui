@@ -15,6 +15,7 @@ import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -277,6 +278,37 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
 		
+		// special handling for folders, the generic sync algorithm doesn't work well
+		// with CVS because folders are not in namespaces (e.g. they exist in all versions
+		// and branches).
+		if(isContainer()) {
+			int folderKind = IRemoteSyncElement.IN_SYNC;
+			IResource local = getLocal();
+			ICVSRemoteFolder remote = (ICVSRemoteFolder)getRemote();
+			ICVSFolder cvsFolder = (ICVSFolder)localSync.getCVSResource();
+			if(!local.exists()) {
+				if(remote != null) {
+					folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
+				} else {
+					// conflicting deletion ignore
+				}
+			} else {
+				if(remote == null) { 
+					if(cvsFolder.isCVSFolder()) {
+						folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION;
+					} else {
+						folderKind = IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION;
+					}
+				} else if(!cvsFolder.isCVSFolder()) {
+					folderKind = IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION;
+				} else {
+					// folder exists both locally and remotely and are considered in sync, however 
+					// we aren't checking the folder mappings to ensure that they are the same.
+				}
+			}
+			return folderKind;
+		}
+		
 		// 1. Run the generic sync calculation algorithm, then handle CVS specific
 		// sync cases.
 		int kind = super.getSyncKind(granularity, progress);
@@ -300,23 +332,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		
 		// 3. unmanage delete/delete conflicts and return that they are in sync
 		kind = handleDeletionConflicts(kind);
-		
-		// 4. Special handling is required for folders
-		if (isContainer()) {
-			// Due to the way CVS works, there's really no such thing as an outgoing folder deletion.
-			// Furthermore, if there's a base and a remote, it's really an incoming folder addition
-			if (kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION)) {
-				kind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
-			} else if (kind == IRemoteSyncElement.IN_SYNC
-					|| kind == (IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION | IRemoteSyncElement.PSEUDO_CONFLICT)) {
-				// If the folders are in sync, make sure the local is managed
-				ICVSFolder cvsResource = (ICVSFolder)localSync.getCVSResource();
-				if(! cvsResource.isCVSFolder()) {
-					// The local isn't managed so mark it as a conflict
-					kind = IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION;
-				}
-			}
-		}
 		
 		return kind;
 	}

@@ -94,20 +94,9 @@ public class UpdateMergeAction extends UpdateSyncAction {
 		manager.update(getIResourcesFrom(nodes), options, createBackup, monitor);
 	}
 	
-	private ITeamNode[] removeOutgoing(ITeamNode[] nodes) {
-		List incomingNodes = new ArrayList();
-		for (int i = 0; i < nodes.length; i++) {
-			// filter out pseudo conflicts
-			if((nodes[i].getKind() & RemoteSyncElement.PSEUDO_CONFLICT) == 0) {
-				switch((nodes[i].getKind() & RemoteSyncElement.DIRECTION_MASK)) {
-					case RemoteSyncElement.OUTGOING: break; // ignore
-					case RemoteSyncElement.INCOMING:
-					case RemoteSyncElement.CONFLICTING:
-						incomingNodes.add(nodes[i]);
-				}
-			}
-		}
-		return (ITeamNode[])incomingNodes.toArray(new ITeamNode[incomingNodes.size()]);
+	private ITeamNode[] removeOutgoing(ITeamNode[] nodes) {		
+		// no filter done yet
+		return nodes;
 	}
 	
 	private void makeRemoteLocal(CVSRemoteSyncElement element, IProgressMonitor monitor) throws CVSException {

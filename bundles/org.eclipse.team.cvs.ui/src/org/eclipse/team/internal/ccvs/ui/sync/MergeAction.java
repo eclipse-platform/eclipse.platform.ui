@@ -108,7 +108,12 @@ abstract class MergeAction extends Action {
 		} catch (InterruptedException e) {
 		}
 		if (result[0] != null) {
+			// all returned nodes that have a changed sync kind are assumed
+			// to have been operated on and will be removed from the diff tree.
 			removeNodes(result[0].getChangedNodes());
+			
+			// any node that claims that it's IN_SYNC will be automatically 
+			// filtered from the diff tree - see DiffElement.setKind().
 			diffModel.updateView();
 		}
 	}
