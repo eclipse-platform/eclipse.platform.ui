@@ -28,6 +28,20 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class LaunchViewer extends TreeViewer {
 		
+	/**
+	 * Overridden to fix bug 39709 - dupicate items in launch viewer. The
+	 * workaround is requried since debug creation events (which result in
+	 * additions to the tree) are processed asynchrnously with the expanding
+	 * of a launch/debug target in the tree. 
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object)
+	 */
+	public void add(Object parentElement, Object childElement) {
+		if (doFindItem(childElement) == null) {
+			super.add(parentElement, childElement);
+		}
+	}
+
 	public LaunchViewer(Composite parent) {
 		super(new Tree(parent, SWT.MULTI));
 		setUseHashlookup(true);
