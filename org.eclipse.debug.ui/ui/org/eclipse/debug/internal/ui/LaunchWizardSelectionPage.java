@@ -55,6 +55,14 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	protected String fMode;
 
 	/**
+	 * Indicates whether the project context of the launch has
+	 * changed since the creation of this wizard.
+	 * If the context has changed, the list of launchables
+	 * needs updating.
+	 */	
+	protected boolean fLaunchablesUpdateNeeded;
+
+	/**
 	 * A content provider for the elements list
 	 */
 	class ElementsContentProvider implements IStructuredContentProvider {
@@ -144,6 +152,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		fLaunchersList.setInput(fLaunchersList);
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
 		updateDefaultProject();
+		fLaunchablesUpdateNeeded= false;
 	}
 
 	/**
@@ -183,7 +192,14 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		if (fLaunchers.length == 0) {
 			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_LAUNCHER));
 		} else {
-			fLaunchersList.setSelection(new StructuredSelection(fLaunchers[0]));
+			IStructuredSelection selection= (IStructuredSelection)fLaunchersList.getSelection();
+			if (selection.isEmpty()) {
+				fLaunchersList.setSelection(new StructuredSelection(fLaunchers[0]));
+			} else if (fLaunchablesUpdateNeeded) {
+				//update the list of launchables if the project has changed
+				fLaunchersList.setSelection(selection);
+				fLaunchablesUpdateNeeded= false;
+			}
 		}
 	}
 
@@ -234,6 +250,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		String projectName= "";
 		if (project != null) {
 			projectName= project.getName();
+			fLaunchablesUpdateNeeded= true;
 		} else {
 			projectName= DebugUIUtils.getResourceString(UNKNOWN);
 		}
@@ -245,6 +262,8 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		super.setVisible(visible);
 		if (visible) {
 			initializeSettings();
+		} else {
+			fLaunchablesUpdateNeeded= false;
 		}
 	}
 }
