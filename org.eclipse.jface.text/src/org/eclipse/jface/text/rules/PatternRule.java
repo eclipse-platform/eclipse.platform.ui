@@ -42,7 +42,7 @@ public class PatternRule implements IPredicateRule {
 		}
 	}
 
-	/** Internal setting for the uninitialized column constraint */
+	/** Internal setting for the un-initialized column constraint */
 	protected static final int UNDEFINED= -1;
 
 	/** The token to be returned on success */
@@ -66,7 +66,7 @@ public class PatternRule implements IPredicateRule {
 	protected boolean fBreaksOnEOF;
 
 	/**
-	 * Line delimiter comparator, orders in decreasing delimiter lengths.
+	 * Line delimiter comparator which orders according to decreasing delimiter length.
 	 * @since 3.1
 	 */
 	private Comparator fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
@@ -211,9 +211,12 @@ public class PatternRule implements IPredicateRule {
 	 * @return <code>true</code> if the end sequence has been detected
 	 */
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
-		int c;
-		char[][] delimiters= scanner.getLegalLineDelimiters();
+		char[][] originalDelimiters= scanner.getLegalLineDelimiters();
+		char[][] delimiters= new char[originalDelimiters.length][];
+		System.arraycopy(originalDelimiters, 0, delimiters, 0, originalDelimiters.length);
 		Arrays.sort(delimiters, fLineDelimiterComparator);
+		
+		int c;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
 				// Skip escaped character(s)
