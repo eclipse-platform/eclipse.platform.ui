@@ -126,6 +126,11 @@ public final class MoveSourceEdit extends TextEdit {
 	//---- API for MoveTargetEdit ---------------------------------------------
 	
 	/* package */ String getContent() {
+		// The source content can be null if the edit wasn't executed
+		// due to an exclusion list of the text edit processor. Return
+		// the empty string which can be moved without any harm.
+		if (fSourceContent == null)
+			return ""; //$NON-NLS-1$
 		return fSourceContent;
 	}
 	
@@ -159,28 +164,60 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 	}
 	
-	//---- pass one ----------------------------------------------------------------
+	//---- Visitor -------------------------------------------------------------
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.text.edits.TextEdit#traversePassOne
+	 * @see TextEdit#accept0
 	 */
-	/* package */ void traversePassOne(TextEditProcessor processor, IDocument document) {
-		// Do not process the children. The are covered by the actual
-		// perform operation.
-		if (processor.considerEdit(this)) {
-			performPassOne(processor, document);
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
 		}
 	}
+
+	//---- consistency check ----------------------------------------------------------------
 	
-	/* non Java-doc
-	 * @see TextEdit#performPassOne
-	 */	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
+		// Since source computation takes place in a recursive fashion (see
+		// performSourceComputation) we only do something if we don't have a 
+		// computated source already.
+		if (fSourceContent == null) {
+			if (sourceEdits.size() <= result) {
+				List list= new ArrayList();
+				list.add(this);
+				for (int i= sourceEdits.size(); i < result; i++)
+					sourceEdits.add(null);
+				sourceEdits.add(list);
+			} else {
+				List list= (List)sourceEdits.get(result);
+				if (list == null) {
+					list= new ArrayList();
+					sourceEdits.add(result, list);
+				}
+				list.add(this);
+			}
+		}
+		return result;
+	}
+	
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_source"));  //$NON-NLS-1$
-		
+	}
+
+	//---- source computation --------------------------------------------------------------
+	
+	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+		if (processor.considerEdit(this)) {
+			performSourceComputation(processor, document);
+		}
+	}
+	
+	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			TextEdit[] children= removeChildren();
 			if (children.length > 0) {
@@ -214,15 +251,15 @@ public final class MoveSourceEdit extends TextEdit {
 		return TextEdit.NONE;
 	}
 	
-	//---- pass two ----------------------------------------------------------------
+	//---- document updating ----------------------------------------------------------------
 	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
 		fDelta= -getLength();
 		return fDelta;
 	}
 	
-	//---- pass three --------------------------------------------------------------
+	//---- region updating --------------------------------------------------------------
 	
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren

@@ -114,24 +114,41 @@ public final class MoveTargetEdit extends TextEdit {
 		}
 	}
 	
-	//---- pass one ----------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see TextEdit#accept0
+	 */
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
+	//---- consistency check ----------------------------------------------------------
 	
 	/* non Java-doc
-	 * @see TextEdit#performPassOne
+	 * @see TextEdit#traverseConsistencyCheck
 	 */	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
+	}
+	
+	/* non Java-doc
+	 * @see TextEdit#performConsistencyCheck
+	 */	
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.different_target")); //$NON-NLS-1$
 	}
 	
-	//---- pass two ----------------------------------------------------------------
+	//---- document updating ----------------------------------------------------------------
 	
 	/* non Java-doc
-	 * @see TextEdit#performPassTwo
+	 * @see TextEdit#performDocumentUpdating
 	 */	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
 		fDelta= source.length() - getLength();
@@ -152,12 +169,12 @@ public final class MoveTargetEdit extends TextEdit {
 		return fDelta;
 	}
 	
-	//---- pass three --------------------------------------------------------------
+	//---- region updating --------------------------------------------------------------
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
 	 */
-	/* package */ int traversePassThree(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
+	/* package */ int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
 		// the children got already updated / normalized while they got removed
 		// from the source edit. So we only have to adjust the offset computed to
 		// far.

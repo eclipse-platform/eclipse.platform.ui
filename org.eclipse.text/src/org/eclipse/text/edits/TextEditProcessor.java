@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -32,6 +36,8 @@ public class TextEditProcessor {
 	
 	private boolean fChecked;
 	private MalformedTreeException fException;
+	
+	private List fSourceEdits;
 	
 	/**
 	 * Constructs a new edit processor for the given
@@ -133,7 +139,8 @@ public class TextEditProcessor {
 	//---- checking --------------------------------------------------------------------
 	
 	/* package */ void checkIntegrityDo() throws MalformedTreeException {
-		fRoot.traversePassOne(this, fDocument);
+		fSourceEdits= new ArrayList();
+		fRoot.traverseConsistencyCheck(this, fDocument, fSourceEdits);
 		if (fRoot.getExclusiveEnd() > fDocument.getLength())
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
 	}
@@ -150,14 +157,27 @@ public class TextEditProcessor {
 		try {
 			if (createUndo())
 				collector.connect(fDocument);
-			fRoot.traversePassTwo(this, fDocument);
+			computeSources();
+			fRoot.traverseDocumentUpdating(this, fDocument);
 			if (updateRegions()) {
-				fRoot.traversePassThree(this, fDocument, 0, false);
+				fRoot.traverseRegionUpdating(this, fDocument, 0, false);
 			}
 		} finally {
 			collector.disconnect(fDocument);
 		}
 		return collector.undo;
+	}
+	
+	private void computeSources() {
+		for (Iterator iter= fSourceEdits.iterator(); iter.hasNext();) {
+			List list= (List)iter.next();
+			if (list != null) {
+				for (Iterator edits= list.iterator(); edits.hasNext();) {
+					TextEdit edit= (TextEdit)edits.next();
+					edit.traverseSourceComputation(this, fDocument);
+				}
+			}
+		}
 	}
 	
 	/* package */ UndoEdit executeUndo() throws BadLocationException {
@@ -167,7 +187,7 @@ public class TextEditProcessor {
 				collector.connect(fDocument);
 			TextEdit[] edits= fRoot.getChildren();
 			for (int i= edits.length - 1; i >= 0; i--) {
-				edits[i].performPassTwo(fDocument);
+				edits[i].performDocumentUpdating(fDocument);
 			}
 		} finally {
 			collector.disconnect(fDocument);

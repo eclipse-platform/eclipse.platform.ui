@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.Assert;
@@ -38,8 +39,52 @@ public final class CopySourceEdit extends TextEdit {
 	private CopyTargetEdit fTarget;
 	private ISourceModifier fModifier;
 	
-	private String fSourceContent= ""; //$NON-NLS-1$
+	private String fSourceContent;
 	private TextEdit fSourceRoot;
+	
+	private static class PartialCopier extends TextEditVisitor {
+		TextEdit fResult;
+		List fParents= new ArrayList();
+		TextEdit fCurrentParent;
+
+		public static TextEdit perform(TextEdit source) {
+			PartialCopier copier= new PartialCopier();
+			source.accept(copier);
+			return copier.fResult;
+		}
+		private void manageCopy(TextEdit copy) {
+			if (fResult == null)
+				fResult= copy;
+			if (fCurrentParent != null) {
+				fCurrentParent.addChild(copy);
+			}
+			fParents.add(fCurrentParent);
+			fCurrentParent= copy;
+		}
+		public void postVisit(TextEdit edit) {
+			fCurrentParent= (TextEdit)fParents.remove(fParents.size() - 1);
+		}
+		public boolean visitNode(TextEdit edit) {
+			manageCopy(edit.doCopy());
+			return true;
+		}
+		public boolean visit(CopySourceEdit edit) {
+			manageCopy(new RangeMarker(edit.getOffset(), edit.getLength()));
+			return true;
+		}
+		public boolean visit(CopyTargetEdit edit) {
+			manageCopy(new InsertEdit(edit.getOffset(), edit.getSourceEdit().getContent()));
+			return true;
+		}
+		public boolean visit(MoveSourceEdit edit) {
+			manageCopy(new DeleteEdit(edit.getOffset(), edit.getLength()));
+			return true;
+		}
+		public boolean visit(MoveTargetEdit edit) {
+			manageCopy(new InsertEdit(edit.getOffset(), edit.getSourceEdit().getContent()));
+			return true;
+		}
+	}
 	
 	/**
 	 * Constructs a new copy source edit.
@@ -125,9 +170,24 @@ public final class CopySourceEdit extends TextEdit {
 		return new CopySourceEdit(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see TextEdit#accept0
+	 */
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
 	//---- API for CopyTargetEdit ------------------------------------------------
 
 	/* package */ String getContent() {
+		// The source content can be null if the edit wasn't executed
+		// due to an exclusion list of the text edit processor. Return
+		// the empty string which can be moved without any harm.
+		if (fSourceContent == null)
+			return ""; //$NON-NLS-1$
 		return fSourceContent;
 	}
 	
@@ -147,37 +207,54 @@ public final class CopySourceEdit extends TextEdit {
 		}
 	}
 	
-	//---- pass one ----------------------------------------------------------------
+	//---- consistency check ----------------------------------------------------
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.text.edits.TextEdit#traversePassOne
-	 */
-	/* package */ void traversePassOne(TextEditProcessor processor, IDocument document) {
-		if (processor.considerEdit(this)) {
-			MultiTextEdit root= new MultiTextEdit(getOffset(), getLength());
-			root.internalSetChildren(internalGetChildren());
-			try {
-				fSourceContent= document.get(getOffset(), getLength());
-			} catch (BadLocationException cannotHappen) {
-				Assert.isTrue(false);
+	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
+		// Since source computation takes place in a recursive fashion (see
+		// performSourceComputation) we only do something if we don't have a 
+		// computated source already.
+		if (fSourceContent == null) {
+			if (sourceEdits.size() <= result) {
+				List list= new ArrayList();
+				list.add(this);
+				for (int i= sourceEdits.size(); i < result; i++)
+					sourceEdits.add(null);
+				sourceEdits.add(list);
+			} else {
+				List list= (List)sourceEdits.get(result);
+				if (list == null) {
+					list= new ArrayList();
+					sourceEdits.add(result, list);
+				}
+				list.add(this);
 			}
-			fSourceRoot= root.copy();
-			fixCopyTree(fSourceRoot);
-			fSourceRoot.moveTree(-getOffset());
 		}
-		super.traversePassOne(processor, document);
+		return result;
 	}
 	
-	/* non Java-doc
-	 * @see TextEdit#performPassOne
-	 */	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_source")); //$NON-NLS-1$
-		
+	}
+	
+	//---- source computation -------------------------------------------------------
+	
+	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+		if (processor.considerEdit(this)) {
+			performSourceComputation(processor, document);
+		}
+	}
+	
+	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
+			MultiTextEdit root= new MultiTextEdit(getOffset(), getLength());
+			root.internalSetChildren(internalGetChildren());
+			fSourceContent= document.get(getOffset(), getLength());
+			fSourceRoot= PartialCopier.perform(root);
+			fSourceRoot.moveTree(-getOffset());
 			if (fSourceRoot.hasChildren()) {
 				EditDocument subDocument= new EditDocument(fSourceContent);
 				fSourceRoot.apply(subDocument, TextEdit.NONE);
@@ -214,70 +291,14 @@ public final class CopySourceEdit extends TextEdit {
 		}
 	}
 	
-	private void fixCopyTree(TextEdit edit) {
-		TextEdit replacement= null;
-		if (edit instanceof MoveSourceEdit) {
-			MoveSourceEdit ms= (MoveSourceEdit)edit;
-			if (ms.getTargetEdit() == null) {
-				replacement= new DeleteEdit(ms.getOffset(), ms.getLength());
-			}
-		} else if (edit instanceof MoveTargetEdit) {
-			MoveTargetEdit mt= (MoveTargetEdit)edit;
-			if (mt.getSourceEdit() == null) {
-				replacement= new RangeMarker(mt.getOffset(), mt.getLength());
-			}
-		} else if (edit instanceof CopySourceEdit) {
-			CopySourceEdit cs= (CopySourceEdit)edit;
-			if (cs.getTargetEdit() == null) {
-				replacement= new RangeMarker(cs.getOffset(), cs.getLength());
-			}
-		} else if (edit instanceof CopyTargetEdit) {
-			CopyTargetEdit ct= (CopyTargetEdit)edit;
-			if (ct.getSourceEdit() == null) {
-				replacement= new RangeMarker(ct.getOffset(), ct.getLength());
-			}
-		}
-		if (replacement != null) {
-			// replace at parent
-			{
-				TextEdit parent= edit.getParent();
-				List children= parent.internalGetChildren();
-				
-				int index= children.indexOf(edit);
-				children.remove(index);
-				children.add(index, replacement);
-				edit.internalSetParent(null);
-				replacement.internalSetParent(parent);
-			}
-			
-			// move children
-			{
-				TextEdit[] children= edit.removeChildren();
-				for (int i= 0; i < children.length; i++) {
-					TextEdit child= children[i];
-					replacement.addChild(child);
-					fixCopyTree(child);
-				}
-			}
-		} else {
-			TextEdit[] children= edit.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				fixCopyTree(children[i]);
-			}
-		}
-	}
+	//---- document updating ----------------------------------------------------------------
 	
-	//---- pass two ----------------------------------------------------------------
-	
-	/* non Java-doc
-	 * @see TextEdit#performPassTwo
-	 */	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
-	//---- pass three ----------------------------------------------------------------
+	//---- region updating ----------------------------------------------------------------
 	
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren

@@ -64,10 +64,20 @@ public final class ReplaceEdit extends TextEdit {
 		return new ReplaceEdit(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see TextEdit#accept0
+	 */
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
 	/* non Java-doc
-	 * @see TextEdit#performPassTwo
+	 * @see TextEdit#performDocumentUpdating
 	 */	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), fText);
 		fDelta= fText.length() - getLength();
 		return fDelta;

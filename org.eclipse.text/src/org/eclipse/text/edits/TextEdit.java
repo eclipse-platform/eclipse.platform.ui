@@ -527,6 +527,66 @@ public abstract class TextEdit {
 	protected void postProcessCopy(TextEditCopier copier) {
 	}
 	
+	//---- Visitor support -------------------------------------------------
+	
+	/**
+	 * Accepts the given visitor on a visit of the current edit.
+	 * 
+	 * @param visitor the visitor object
+	 * @exception IllegalArgumentException if the visitor is null
+	 */
+	public final void accept(TextEditVisitor visitor) {
+		Assert.isNotNull(visitor);
+		// begin with the generic pre-visit
+		visitor.preVisit(this);
+		// dynamic dispatch to internal method for type-specific visit/endVisit
+		accept0(visitor);
+		// end with the generic post-visit
+		visitor.postVisit(this);
+	}
+	
+	/**
+	 * Accepts the given visitor on a type-specific visit of the current edit.
+	 * This method must be implemented in all concrete text edits.
+	 * <p>
+	 * General template for implementation on each concrete TextEdit class:
+	 * <pre>
+	 * <code>
+	 * boolean visitChildren = visitor.visit(this);
+	 * if (visitChildren) {
+	 *    acceptChildren(visitor);
+	 * }
+	 * </code>
+	 * </pre>
+	 * Note that the caller (<code>accept</code>) takes care of invoking
+	 * <code>visitor.preVisit(this)</code> and <code>visitor.postVisit(this)</code>.
+	 * </p>
+	 * 
+	 * @param visitor the visitor object
+	 */
+	protected abstract void accept0(TextEditVisitor visitor);
+	
+	
+	/**
+	 * Accepts the given visitor on the edits children.
+	 * <p>
+	 * This method must be used by the concrete implementations of
+	 * <code>accept</code> to traverse list-values properties; it
+	 * encapsulates the proper handling of on-the-fly changes to the list.
+	 * </p>
+	 * 
+	 * @param visitor the visitor object
+	 */
+	protected final void acceptChildren(TextEditVisitor visitor) {
+		if (fChildren == null)
+			return;
+		Iterator iterator= fChildren.iterator();
+		while (iterator.hasNext()) {
+			TextEdit curr= (TextEdit) iterator.next();
+			curr.accept(visitor);
+		}
+	}
+	
 	//---- Execution -------------------------------------------------------
 	
 	/**
@@ -673,35 +733,43 @@ public abstract class TextEdit {
 		fLength= DELETED_VALUE;
 	}
 	
-	//---- New edit processing ----------------------------------------------
+	//---- Edit processing ----------------------------------------------
 	
-	/* package */ void traversePassOne(TextEditProcessor processor, IDocument document) {
+	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+		int result= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
 				TextEdit child= (TextEdit)fChildren.get(i);
-				child.traversePassOne(processor, document);
+				result= Math.max(result, child.traverseConsistencyCheck(processor, document, sourceEdits));
 			}
 		}
 		if (processor.considerEdit(this)) {
-			performPassOne(processor, document);
+			performConsistencyCheck(processor, document);
 		}
+		return result;
 	}
 	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) {
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) {
 	}
 	
-	/* package */ int traversePassTwo(TextEditProcessor processor, IDocument document) throws BadLocationException {
+	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
+	}
+	
+	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
+	}
+	
+	/* package */ int traverseDocumentUpdating(TextEditProcessor processor, IDocument document) throws BadLocationException {
 		int delta= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
 				TextEdit child= (TextEdit)fChildren.get(i);
-				delta+= child.traversePassTwo(processor, document);
+				delta+= child.traverseDocumentUpdating(processor, document);
 			}
 		}
 		if (processor.considerEdit(this)) {
 			if (delta != 0)
 				adjustLength(delta);
-			int r= performPassTwo(document);
+			int r= performDocumentUpdating(document);
 			if (r != 0)
 				adjustLength(r);
 			delta+= r;
@@ -709,21 +777,21 @@ public abstract class TextEdit {
 		return delta;
 	}
 	
-	/* package */ abstract int performPassTwo(IDocument document) throws BadLocationException;
+	/* package */ abstract int performDocumentUpdating(IDocument document) throws BadLocationException;
 	
-	/* package */ int traversePassThree(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
-		performPassThree(accumulatedDelta, delete);
+	/* package */ int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
+		performRegionUpdating(accumulatedDelta, delete);
 		if (fChildren != null) {
 			boolean childDelete= delete || deleteChildren();
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
 				TextEdit child= (TextEdit)iter.next();
-				accumulatedDelta= child.traversePassThree(processor, document, accumulatedDelta, childDelete);
+				accumulatedDelta= child.traverseRegionUpdating(processor, document, accumulatedDelta, childDelete);
 			}
 		}
 		return accumulatedDelta + fDelta;
 	}
 	
-	/* package */ void performPassThree(int accumulatedDelta, boolean delete) {
+	/* package */ void performRegionUpdating(int accumulatedDelta, boolean delete) {
 		if (delete)
 			markAsDeleted();
 		else

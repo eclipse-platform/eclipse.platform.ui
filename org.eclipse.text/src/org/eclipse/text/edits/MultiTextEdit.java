@@ -70,11 +70,11 @@ public class MultiTextEdit extends TextEdit {
 	 * Checks the edit's integrity. 
 	 * <p>
 	 * Note that this method <b>should only be called</b> by the edit
-	 * framework and not by normal clients.
+	 * framework and not by normal clients.</p>
 	 *<p>
 	 * This default implementation does nothing. Subclasses may override
-	 * if needed.
-	 *  
+	 * if needed.</p>
+	 * 
 	 * @exception MalformedTreeException if the edit isn't in a valid state
 	 *  and can therefore not be executed
 	 */
@@ -90,17 +90,27 @@ public class MultiTextEdit extends TextEdit {
 		return new MultiTextEdit(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see TextEdit#accept0
+	 */
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
 	/* non Java-doc
-	 * @see TextEdit#performPassOne
+	 * @see TextEdit#performConsistencyCheck
 	 */	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		checkIntegrity();
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#performPassTwo
+	 * @see TextEdit#performDocumentUpdating
 	 */	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}

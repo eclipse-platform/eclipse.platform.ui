@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.util.List;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -112,10 +114,27 @@ public final class CopyTargetEdit extends TextEdit {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see TextEdit#accept0
+	 */
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
 	/* non Java-doc
-	 * @see TextEdit#performPassOne
+	 * @see TextEdit#traverseConsistencyCheck
 	 */	
-	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
+	}
+	
+	/* non Java-doc
+	 * @see TextEdit#performConsistencyCheck
+	 */	
+	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
@@ -123,9 +142,9 @@ public final class CopyTargetEdit extends TextEdit {
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#performPassTwo
+	 * @see TextEdit#performDocumentUpdating
 	 */	
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
 		fDelta= source.length() - getLength();

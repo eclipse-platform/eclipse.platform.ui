@@ -67,9 +67,19 @@ public final class UndoEdit extends TextEdit {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.text.edits.TextEdit#perform(org.eclipse.jface.text.IDocument)
+	 * @see TextEdit#accept0
 	 */
-	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+	protected void accept0(TextEditVisitor visitor) {
+		boolean visitChildren = visitor.visit(this);
+		if (visitChildren) {
+			acceptChildren(visitor);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see TextEdit#performDocumentUpdating
+	 */
+	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
