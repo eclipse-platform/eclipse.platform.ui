@@ -788,12 +788,16 @@ public class CopyFilesAndFoldersOperation {
 				"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
 				new Object[] {source.getName()});				
 		}
-		if (source.getProject().equals(destination.getProject()) == false) {
+		if (source.getProject().equals(destination.getProject()) == false &&
+			source.getType() == IResource.FOLDER) {
+			// prevent merging linked folders that point to the same
+			// file system folder 
 			try {
 				IResource[] members = destination.members();
 				IPath sourceLocation = source.getLocation();
 				for (int j = 0; j < members.length; j++) {
-					if (sourceLocation.equals(members[j].getLocation())) {
+					if (sourceLocation.equals(members[j].getLocation()) && 
+						source.getName().equals(members[j].getName())) {
 						return WorkbenchMessages.format(
 							"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
 							new Object[] {source.getName()});
