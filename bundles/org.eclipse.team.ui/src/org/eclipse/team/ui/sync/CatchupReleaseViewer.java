@@ -42,6 +42,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
+import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 
 /**
  * This viewer adds a custom filter and some merge actions.
@@ -50,6 +51,26 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  * by the view.
  */
 public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionChangedListener {
+	
+	class ShowInNavigatorAction extends Action implements ISelectionChangedListener {
+		IViewSite viewSite;
+		public ShowInNavigatorAction(IViewSite viewSite, String title) {
+			super(title, null);
+			this.viewSite = viewSite;
+		}
+		public void run() {
+			showSelectionInNavigator(viewSite);
+		}
+		public void selectionChanged(SelectionChangedEvent event) {
+			IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+			if (selection.size() != 1) {
+				setEnabled(false);
+				return;
+			}
+			ITeamNode node = (ITeamNode)selection.getFirstElement();
+			setEnabled(node.getResource().isAccessible());
+		}
+	};
 	
 	/**
 	 * This filter hides all empty categories tree nodes.
@@ -119,7 +140,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private FilterAction showOnlyConflicts;
 	private Action refresh;
 	private Action expandAll;
-	private Action showInNavigator;
+	private ShowInNavigatorAction showInNavigator;
 	private Action ignoreWhiteSpace;
 	
 	// Property constant for diff mode kind
@@ -225,11 +246,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		
 		// Show in navigator
 		if (diffModel.getViewSite() != null) {
-			showInNavigator = new Action(Policy.bind("CatchupReleaseViewer.showInNavigator"), null) {
-				public void run() {
-					showSelectionInNavigator(diffModel.getViewSite());
-				}
-			};
+			showInNavigator = new ShowInNavigatorAction(diffModel.getViewSite(), Policy.bind("CatchupReleaseViewer.showInNavigator"));
+			addSelectionChangedListener(showInNavigator);
 		}
 		
 		// Ignore white space
