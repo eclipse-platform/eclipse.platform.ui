@@ -672,7 +672,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @return a collection of
      *         {@link org.eclipse.jface.text.templates.TemplateProposal}s
      */
-    private Collection getTemplateProposals(IDocument document, String prefix) {
+    protected Collection getTemplateProposals(IDocument document, String prefix) {
 
         List proposals = new ArrayList();
 

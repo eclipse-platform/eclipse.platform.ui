@@ -13,6 +13,8 @@ package org.eclipse.ant.tests.ui.editor.support;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import junit.framework.Assert;
 
@@ -52,6 +54,11 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     public ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
     	cursorPosition= Math.max(0, document.getLength() - 1);
     	return super.getTaskProposals(document, parentName, aPrefix);
+    }
+    
+    //TODO add template proposal testing
+    protected Collection getTemplateProposals(IDocument document, String prefix) {
+    	return new ArrayList();
     }
 
     public int determineProposalMode(String text, int aCursorPosition, String aPrefix) {
