@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;
 
 /**
@@ -19,10 +20,16 @@ import org.eclipse.swt.graphics.GC;
  * @author
  */
 public abstract class ParagraphSegment {
+	protected Rectangle repaintRegion;
 	public abstract boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable, boolean computeHeightOnly);
 	public abstract void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected, SelectionData selData);
+	public abstract void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData);	
 	public abstract boolean contains(int x, int y);
+	public abstract boolean intersects(Rectangle rect);
 	public String getTooltipText() {
 		return null;
+	}
+	public void setRepaintRegion(Rectangle rect) {
+		repaintRegion = rect;
 	}
 }

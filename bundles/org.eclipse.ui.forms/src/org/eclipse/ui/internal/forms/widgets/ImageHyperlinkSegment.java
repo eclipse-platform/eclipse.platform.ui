@@ -38,37 +38,6 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		return href;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC, boolean)
-	 */
-	public void repaint(GC gc, boolean hover, SelectionData selData) {
-		/*
-		FontMetrics fm = gc.getFontMetrics();
-		int lineHeight = fm.getHeight();
-		int descent = fm.getDescent();
-		boolean rolloverMode = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_HOVER;
-		for (int i=0; i<areaRectangles.size(); i++) {
-			AreaRectangle areaRectangle = (AreaRectangle)areaRectangles.get(i);
-			Rectangle rect = areaRectangle.rect;
-			String text = areaRectangle.getText();
-			Point extent = gc.textExtent(text);
-			int textX = rect.x + 1;
-			gc.drawString(text, textX, rect.y, false);
-			if (underline || hover || rolloverMode) {
-				int lineY = rect.y + lineHeight - descent + 1;
-				Color saved=null;
-				if (rolloverMode && !hover) {
-					saved = gc.getForeground();
-					gc.setForeground(gc.getBackground());
-				}
-				gc.drawLine(textX, lineY, textX+extent.x, lineY);
-				if (saved!=null)
-					gc.setForeground(saved);
-			}
-		}
-		*/
-	}
-	
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected) {
 		Rectangle bounds = getBounds();
 		if (bounds == null)

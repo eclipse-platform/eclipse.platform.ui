@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;
 
 /**
@@ -41,7 +42,12 @@ public class BreakSegment extends ParagraphSegment {
 		locator.rowHeight = 0;
 		locator.rowCounter++;		
 	}
+	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+	}
 	public boolean contains(int x, int y) {
+		return false;
+	}
+	public boolean intersects(Rectangle rect) {
 		return false;
 	}
 }

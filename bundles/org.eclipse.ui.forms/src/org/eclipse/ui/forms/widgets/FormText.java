@@ -132,6 +132,8 @@ public final class FormText extends Canvas {
 	private Hashtable resourceTable = new Hashtable();
 
 	private IHyperlinkSegment entered;
+	private boolean mouseFocus = false;
+	private boolean incrementalRepaint = false;
 
 	private boolean mouseDown = false;
 
@@ -225,6 +227,7 @@ public final class FormText extends Canvas {
 
 		protected void layout(Composite composite, boolean flushCache) {
 			selData = null;
+			incrementalRepaint = false;
 		}
 	}
 
@@ -496,6 +499,7 @@ public final class FormText extends Canvas {
 		else
 			model.parseRegularText(text, expandURLs);
 		loading = false;
+		incrementalRepaint = false;
 		layout();
 		redraw();
 	}
@@ -515,6 +519,7 @@ public final class FormText extends Canvas {
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
 		loading = false;
+		incrementalRepaint = false;
 		layout();
 		redraw();
 	}
@@ -566,8 +571,6 @@ public final class FormText extends Canvas {
 	}
 
 	public void setMenu(Menu menu) {
-		if (menu == null)
-			return;
 		Menu currentMenu = super.getMenu();
 		if (currentMenu != null && INTERNAL_MENU.equals(currentMenu.getData())) {
 			currentMenu.dispose();
@@ -884,6 +887,7 @@ public final class FormText extends Canvas {
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
 			// select a hyperlink
+			mouseFocus=true;
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
 				IHyperlinkSegment oldLink = model.getSelectedLink();
@@ -1016,7 +1020,7 @@ public final class FormText extends Canvas {
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == model.getSelectedLink());
-		link.repaint(gc, hover, selData);
+		((ParagraphSegment)link).repaint(gc, hover, resourceTable, selected, selData);
 		if (selected) {
 			link.paintFocus(gc, getBackground(), getForeground(), false);
 			link.paintFocus(gc, getBackground(), getForeground(), true);
@@ -1042,7 +1046,7 @@ public final class FormText extends Canvas {
 				listener.linkActivated(e);
 			}
 		}
-		if (!isDisposed()) {
+		if (!isDisposed() && model.linkExists(link)) {
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 			IHyperlinkSegment selectedLink = model.getSelectedLink();
 			if (selectedLink!=link) {
@@ -1070,6 +1074,11 @@ public final class FormText extends Canvas {
 		ensureBoldFontPresent(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
+		
+		if (!loading && incrementalRepaint) {
+			repaint(gc, e.x, e.y, e.width, e.height);
+			return;
+		}
 
 		Locator loc = new Locator();
 		loc.marginWidth = marginWidth;
@@ -1110,6 +1119,29 @@ public final class FormText extends Canvas {
 		gc.drawImage(textBuffer, 0, 0);
 		textGC.dispose();
 		textBuffer.dispose();
+		incrementalRepaint=true;
+	}
+	
+	private void repaint(GC gc, int x, int y, int width, int height) {
+		Image textBuffer = new Image(getDisplay(), width, height);
+		textBuffer.setBackground(getBackground());
+		GC textGC = new GC(textBuffer, gc.getStyle());
+		textGC.setForeground(getForeground());
+		textGC.setBackground(getBackground());
+		textGC.setFont(getFont());
+		textGC.fillRectangle(0, 0, width, height);
+		Rectangle repaintRegion = new Rectangle(x, y, width, height);
+
+		Paragraph[] paragraphs = model.getParagraphs();
+		IHyperlinkSegment selectedLink = model.getSelectedLink();
+		for (int i = 0; i < paragraphs.length; i++) {
+			Paragraph p = paragraphs[i];
+			p.repaint(textGC, repaintRegion, resourceTable, selectedLink, selData);
+		}
+		gc.drawImage(textBuffer, x, y);
+		textGC.dispose();
+		textBuffer.dispose();
+		incrementalRepaint=true;		
 	}
 
 	private int getParagraphSpacing(int lineHeight) {
@@ -1150,6 +1182,10 @@ public final class FormText extends Canvas {
 	 * .getInstance()}); }
 	 */
 	private void ensureVisible(IHyperlinkSegment segment) {
+		if (mouseFocus) {
+			mouseFocus=false;
+			return;
+		}
 		if (segment == null)
 			return;
 		Rectangle bounds = segment.getBounds();

@@ -24,6 +24,7 @@ public class BulletParagraph extends Paragraph {
 	private int SPACING = 10;
 	private int indent = -1;
 	private int bindent = -1;
+	private Rectangle bbounds;
 	/**
 	 * Constructor for BulletParagraph.
 	 * @param addVerticalSpace
@@ -95,8 +96,13 @@ public class BulletParagraph extends Paragraph {
 		paintBullet(gc, loc, lineHeight, resourceTable, selData);
 		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink, selData);
 	}
-
-	public void paintBullet(
+	
+	public void repaint(GC gc, Rectangle repaintRegion, Hashtable resourceTable, IHyperlinkSegment selectedLink, SelectionData selData) {
+		repaintBullet(gc, repaintRegion, resourceTable, selData);
+		super.repaint(gc, repaintRegion, resourceTable, selectedLink, selData); 
+	}
+	
+	private void paintBullet(
 		GC gc,
 		Locator loc,
 		int lineHeight,
@@ -112,14 +118,48 @@ public class BulletParagraph extends Paragraph {
 			gc.fillRectangle(x, y + 1, 5, 3);
 			gc.fillRectangle(x + 1, y, 3, 5);
 			gc.setBackground(bg);
+			bbounds = new Rectangle(x, y, CIRCLE_DIAM, CIRCLE_DIAM);
 		} else if (style == TEXT && text != null) {
 			gc.drawText(text, x, loc.y);
+			int height = gc.getFontMetrics().getHeight();
+			Point textSize = gc.textExtent(text);
+			bbounds = new Rectangle(x, loc.y, textSize.x, textSize.y);
 		} else if (style == IMAGE && text != null) {
 			Image image = (Image) resourceTable.get(text);
 			if (image != null) {
-				int y = loc.y + rowHeight / 2 - image.getBounds().height / 2;
+				Rectangle ibounds = image.getBounds();
+				int y = loc.y + rowHeight / 2 - ibounds.height / 2;
 				gc.drawImage(image, x, y);
+				bbounds = new Rectangle(x, y, ibounds.width, ibounds.height);
 			}
+		}
+	}
+	public void repaintBullet(
+			GC gc,
+			Rectangle repaintRegion,
+			Hashtable resourceTable,
+			SelectionData selData) {
+		if (bbounds==null)
+			return;
+		int x = bbounds.x;
+		int y = bbounds.y;
+		if (repaintRegion!=null) {
+			x -= repaintRegion.x;
+			y -= repaintRegion.y;
+		}		
+		if (style == CIRCLE) {
+			Color bg = gc.getBackground();
+			Color fg = gc.getForeground();
+			gc.setBackground(fg);
+			gc.fillRectangle(x, y + 1, 5, 3);
+			gc.fillRectangle(x + 1, y, 3, 5);
+			gc.setBackground(bg);
+		} else if (style == TEXT && text != null) {
+			gc.drawText(text, x, y);
+		} else if (style == IMAGE && text != null) {
+			Image image = (Image) resourceTable.get(text);
+			if (image != null)
+				gc.drawImage(image, x, y);
 		}
 	}
 }

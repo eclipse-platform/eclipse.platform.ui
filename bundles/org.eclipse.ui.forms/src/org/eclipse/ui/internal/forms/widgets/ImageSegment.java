@@ -170,6 +170,12 @@ public class ImageSegment extends ParagraphSegment {
 			return false;
 		return bounds.contains(x, y);
 	}
+	public boolean intersects(Rectangle rect) {
+		System.out.println("rect="+rect+", bounds="+bounds);
+		if (bounds==null)
+			return false;
+		return bounds.intersects(rect);
+	}
 
 	public Rectangle getBounds() {
 		return bounds;
@@ -189,5 +195,68 @@ public class ImageSegment extends ParagraphSegment {
 	 */
 	public void setNowrap(boolean nowrap) {
 		this.nowrap = nowrap;
+	}
+	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
+		Image image = getImage(resourceTable);
+		int iwidth = 0;
+		int iheight = 0;
+		if (image != null) {
+			Rectangle rect = image.getBounds();
+			iwidth = rect.width + (isSelectable()?2:0);
+			iheight = rect.height + (isSelectable()?2:0);
+		} else
+			return;
+		int ix = bounds.x+(isSelectable()?1:0);
+		int iy = bounds.y+(isSelectable()?1:0);
+			
+		if (selData != null) {
+			int leftOffset = selData.getLeftOffset(bounds.height);
+			int rightOffset = selData.getRightOffset(bounds.height);
+			boolean firstRow = selData.isFirstSelectionRow(bounds.y,
+					bounds.height);
+			boolean lastRow = selData.isLastSelectionRow(bounds.y,
+					bounds.height);
+			boolean selectedRow = selData
+					.isSelectedRow(bounds.y, bounds.height);			
+			if (selectedRow) {
+				if ((firstRow && leftOffset > ix) ||
+					(lastRow && rightOffset < ix + iwidth/2)) {
+					drawClipImage(gc, image, ix, iy);
+				}
+				else {
+					Color savedBg = gc.getBackground();
+					gc.setBackground(selData.bg);
+					int sx = ix;
+					int sy = iy;
+					if (repaintRegion!=null) {
+						sx -= repaintRegion.x;
+						sy -= repaintRegion.y;
+					}
+					gc.fillRectangle(sx, sy, iwidth, iheight);
+					Image selImage = getSelectedImage(resourceTable, selData);
+					gc.drawImage(selImage, sx, sy);
+					gc.setBackground(savedBg);
+				}
+			}
+			else
+				drawClipImage(gc, image, ix, iy);
+		} else
+			drawClipImage(gc, image, ix, iy);
+		if (selected) {
+			int fx = bounds.x;
+			int fy = bounds.y;
+			if (repaintRegion!=null) {
+				fx -= repaintRegion.x;
+				fy -= repaintRegion.y;
+			}
+			gc.drawFocus(fx, fy, bounds.width, bounds.height);
+		}
+	}
+	private void drawClipImage(GC gc, Image image, int ix, int iy) {
+		if (repaintRegion!=null) {
+			ix -= repaintRegion.x;
+			iy -= repaintRegion.y;
+		}
+		gc.drawImage(image, ix, iy);			
 	}
 }

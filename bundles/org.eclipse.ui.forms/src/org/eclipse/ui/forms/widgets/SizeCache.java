@@ -154,8 +154,9 @@ public class SizeCache {
         widthAtMinimumHeight = -1;
         
         if (recursive || dirtySize != null) {
-            if (control == null) {
+            if (control == null || control.isDisposed()) {
                 dirtySize = new Point(0,0);
+                control = null;
             } else {
                 dirtySize = control.getSize();
             }
@@ -180,7 +181,7 @@ public class SizeCache {
      * @return the preferred size of the control
      */
     public Point computeSize(int widthHint, int heightHint) {
-        if (control == null) {
+        if (control == null || control.isDisposed()) {
             return new Point(0, 0);
         }
         
@@ -341,7 +342,7 @@ public class SizeCache {
      * @return
      */
     static boolean independentLengthAndWidth(Control control) {
-        if (control == null) {
+        if (control == null || control.isDisposed()) {
             return true;
         }
 

@@ -541,6 +541,16 @@ public class FormTextModel {
 			return null;
 		return hyperlinks[selectedLinkIndex];
 	}
+	
+	public boolean linkExists(IHyperlinkSegment link) {
+		if (hyperlinks==null)
+			return false;
+		for (int i=0; i<hyperlinks.length; i++) {
+			if (hyperlinks[i]==link)
+				return true;
+		}
+		return false;
+	}
 
 	public boolean traverseLinks(boolean next) {
 		IHyperlinkSegment[] links = getHyperlinks();

@@ -534,6 +534,18 @@ public class ExpandableComposite extends Composite {
 		if (textLabel != null)
 			textLabel.setMenu(getMenu());
 	}
+	
+/**
+ * Overrides 'super' to pass the menu to the text label.
+ * @param menu the menu from the parent to attach to 
+ * this control.
+ */
+	
+	public void setMenu(Menu menu) {
+		if (textLabel != null)
+			textLabel.setMenu(menu);
+		super.setMenu(menu);
+	}
 
 	/**
 	 * Prevents assignment of the layout manager - expandable composite uses its

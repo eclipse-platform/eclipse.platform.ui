@@ -90,10 +90,12 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC, boolean)
 	 */
-	public void repaint(GC gc, boolean hover, SelectionData selData) {
+	public void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData) {
 		for (int i=0; i<segments.size(); i++) {
-			IHyperlinkSegment segment = (IHyperlinkSegment)segments.get(i);
-			segment.repaint(gc, hover, selData);
+			ParagraphSegment segment = (ParagraphSegment)segments.get(i);
+			segment.setRepaintRegion(repaintRegion);
+			segment.repaint(gc, hover, resourceTable, selected, selData);
+			segment.setRepaintRegion(null);
 		}
 	}
 	public String getText() {
@@ -133,6 +135,14 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 		for (int i=0; i<segments.size(); i++) {
 			IHyperlinkSegment segment = (IHyperlinkSegment)segments.get(i);
 			if (segment.contains(x, y))
+				return true;
+		}
+		return false;
+	}
+	public boolean intersects(Rectangle rect) {
+		for (int i=0; i<segments.size(); i++) {
+			IHyperlinkSegment segment = (IHyperlinkSegment)segments.get(i);
+			if (segment.intersects(rect))
 				return true;
 		}
 		return false;

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.forms.widgets;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.ui.forms.HyperlinkSettings;
 
@@ -165,6 +166,22 @@ public class Paragraph {
 			}
 		}
 	}
+	public void repaint(GC gc, Rectangle repaintRegion, Hashtable resourceTable, IHyperlinkSegment selectedLink, SelectionData selData) {
+		ParagraphSegment [] segments = getSegments();
+
+		for (int i = 0; i < segments.length; i++) {
+			ParagraphSegment segment = segments[i];
+			if (!segment.intersects(repaintRegion))
+				continue;
+			boolean doSelect = false;
+			if (selectedLink != null && segment.equals(selectedLink))
+				doSelect = true;
+			segment.setRepaintRegion(repaintRegion);
+			segment.repaint(gc, false, resourceTable, doSelect, selData);
+			segment.setRepaintRegion(null);
+		}
+	}
+	
 	public String getAccessibleText() {
 		ParagraphSegment [] segments = getSegments();
 		StringWriter swriter = new StringWriter();
