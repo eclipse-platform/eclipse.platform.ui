@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -50,7 +51,7 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 				fOperation.getDescription(),
 				fOperation.getImageDescriptor(),
 				null,
-				null,
+				new FileLabelProvider(FileLabelProvider.SHOW_LABEL_PATH),
 				new GotoMarkerAction(),
 				new GroupByKeyComputer(),
 				fOperation);
