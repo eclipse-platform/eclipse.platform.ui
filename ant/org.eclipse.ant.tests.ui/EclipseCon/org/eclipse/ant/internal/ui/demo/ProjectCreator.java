@@ -32,7 +32,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 
 public class ProjectCreator {
 		
-	public void createJavaProjectFromJavacNode(String projectName, Javac javacTask) throws CoreException {
+	public IJavaProject createJavaProjectFromJavacNode(String projectName, Javac javacTask) throws CoreException {
 		
 		IJavaProject javaProject = createJavaProject(projectName);
 		
@@ -47,6 +47,7 @@ public class ProjectCreator {
 		setClasspath(javacTask, javaProject);
 		
 		javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		return javaProject;
 	}
 	
 	private void setClasspath(Javac javacTask, IJavaProject javaProject) throws JavaModelException {
