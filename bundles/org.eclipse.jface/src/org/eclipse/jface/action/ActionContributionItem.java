@@ -51,6 +51,18 @@ public class ActionContributionItem extends ContributionItem {
 	 * no image present.
 	 */
 	public static int MODE_FORCE_TEXT = 1;
+	/**
+	 * This is the lower bound of the continuous range of accelerator values
+	 * that should be handled specially on GTK.  This is to circumnavigate the
+	 * special input mode in some cases.
+	 */
+	private static final int LOWER_GTK_ACCEL_BOUND = SWT.MOD1 | SWT.MOD2 | 'A';
+	/**
+	 * This is the lower bound of the continuous range of accelerator values
+	 * that should be handled specially on GTK.  This is to circumnavigate the
+	 * special input mode in some cases.
+	 */
+	private static final int UPPER_GTK_ACCEL_BOUND = SWT.MOD1 | SWT.MOD2 | 'F';
 
 	/** a string inserted in the middle of text that has been shortened */
 	private static final String ellipsis = "..."; //$NON-NLS-1$
@@ -552,13 +564,13 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Returns whether the given action has any images.
 	 * 
-	 * @param action the action
+	 * @param actionToCheck the action
 	 * @return <code>true</code> if the action has any images, <code>false</code> if not
 	 */
-	private boolean hasImages(IAction action) {
-		return action.getImageDescriptor() != null
-			|| action.getHoverImageDescriptor() != null
-			|| action.getDisabledImageDescriptor() != null;
+	private boolean hasImages(IAction actionToCheck) {
+		return actionToCheck.getImageDescriptor() != null
+			|| actionToCheck.getHoverImageDescriptor() != null
+			|| actionToCheck.getDisabledImageDescriptor() != null;
 	}
 
 	/**
@@ -566,10 +578,10 @@ public class ActionContributionItem extends ContributionItem {
 	 * is active.
 	 */
 	private boolean isCommandActive() {
-		IAction action = getAction();
+		IAction actionToCheck = getAction();
 
-		if (action != null) {
-			String commandId = action.getActionDefinitionId();
+		if (actionToCheck != null) {
+			String commandId = actionToCheck.getActionDefinitionId();
 			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 
 			if (callback != null)
@@ -728,22 +740,36 @@ public class ActionContributionItem extends ContributionItem {
 				if (textChanged) {
 					int accelerator = 0;
 					String acceleratorText = null;
-					IAction action = getAction();
+					IAction updatedAction = getAction();
 					String text = null;
 
 					// Set the accelerator using the action's accelerator.
-					accelerator = action.getAccelerator();
-
+					accelerator = updatedAction.getAccelerator();
+					
+					/* Process accelerators on GTK in a special way to avoid
+					 * Bug 42009.  We will override the native input method by
+					 * allowing these reserved accelerators to be placed on the
+					 * menu.  We will only do this for "Ctrl+Shift+[A-F]".
+					 */
+					CommandResolver.ICallback callback =
+						CommandResolver.getInstance().getCommandResolver();
+					String commandId = updatedAction.getActionDefinitionId();
+					if (SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
+						if ((callback != null) && (commandId != null)) {
+						    Integer commandAccelerator = callback.getAccelerator(commandId);
+						    if (commandAccelerator != null) {
+						        int accelInt = callback.getAccelerator(commandId).intValue();
+						        if ((accelInt >= LOWER_GTK_ACCEL_BOUND) && (accelInt <= UPPER_GTK_ACCEL_BOUND)) {
+						            accelerator = accelInt;
+						            acceleratorText = callback.getAcceleratorText(commandId);
+						        }
+						    }
+					    }
+					}
+					
 					if (accelerator == 0) {
-						CommandResolver.ICallback callback =
-							CommandResolver.getInstance().getCommandResolver();
-
-						if (callback != null) {
-							String commandId = action.getActionDefinitionId();
-
-							if (commandId != null) {
-								acceleratorText = callback.getAcceleratorText(commandId);
-							}
+						if ((callback != null) && (commandId != null)) {
+						    acceleratorText = callback.getAcceleratorText(commandId);
 						}
 					} else {
 						acceleratorText = Action.convertAccelerator(accelerator);
@@ -760,7 +786,7 @@ public class ActionContributionItem extends ContributionItem {
 					mi.setAccelerator(accelerator);
 
 					if (text == null)
-						text = action.getText();
+						text = updatedAction.getText();
 
 					if (text == null)
 						text = ""; //$NON-NLS-1$
