@@ -248,16 +248,12 @@ import org.eclipse.swt.widgets.*;
 		final boolean animated = (totalWork == UNKNOWN || totalWork == 0);
 		// make sure the progress bar is made visible while
 		// the task is running. Fixes bug 32198 for the non-animated case.
-		Thread t= new Thread() {
+		Runnable timer = new Runnable() {
 			public void run() {
-				try {
-					sleep(DELAY_PROGRESS);
-					StatusLine.this.startTask(timestamp, animated);
-				} catch (InterruptedException e) {
-				}
+				StatusLine.this.startTask(timestamp, animated);
 			}
 		};
-		t.start();
+		fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
 		if (!animated) {
 			fProgressBar.beginTask(totalWork);
 		}		
@@ -454,23 +450,13 @@ import org.eclipse.swt.widgets.*;
 	 */
 	void startTask(final long timestamp, final boolean animated) {
 		if (!fProgressIsVisible && fStartTime == timestamp) {
-			if (fProgressBar != null && !fProgressBar.isDisposed()) {
-				fProgressBar.getDisplay().asyncExec(
-					new Runnable() {
-						public void run() {
-							if (fStartTime == timestamp) {
-								showProgress();
-								if (animated) {
-									if (fProgressBar != null && !fProgressBar.isDisposed()) {
-										fProgressBar.beginAnimatedTask();
-									}
-								}
-							}
-						}
-					}
-				);
+			showProgress();
+			if (animated) {
+				if (fProgressBar != null && !fProgressBar.isDisposed()) {
+					fProgressBar.beginAnimatedTask();
+				}
 			}
-		}	
+		}
 	}
 	/**
 	 * Notifies that a subtask of the main task is beginning.
