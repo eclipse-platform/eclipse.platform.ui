@@ -609,64 +609,98 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Assumes the busy cursor is active.
 	 */
 	private void busyResetPerspective() {
-		// Always unzoom
-		if (isZoomed())
-			zoomOut();
 
-		// Get the current perspective.
-		// This describes the working layout of the page and differs from
-		// the original template.
-		Perspective oldPersp = getActivePerspective();
-
-		// Map the current perspective to the original template.
-		// If the original template cannot be found then it has been deleted.
-		// In
-		// that case just return. (PR#1GDSABU).
-		IPerspectiveRegistry reg =
-			WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-		PerspectiveDescriptor desc =
-			(PerspectiveDescriptor) reg.findPerspectiveWithId(
-				oldPersp.getDesc().getId());
-		if (desc == null)
-			desc =
+	    ViewIntroAdapterPart introViewAdapter = ((WorkbenchIntroManager)getWorkbenchWindow().getWorkbench().getIntroManager()).getViewIntroAdapterPart();
+	    PartPane introPane = null;
+	    boolean introFullScreen = false;
+	    if (introViewAdapter != null) {
+	        introPane = ((PartSite)introViewAdapter.getSite()).getPane();
+	        introViewAdapter.setHandleZoomEvents(false);
+	        introFullScreen = introPane.isZoomed();
+	    }
+	    
+	    //try to prevent intro flicker.
+	    if (introFullScreen)
+	        window.getShell().setRedraw(false);
+	    
+	    try {
+	        
+			// Always unzoom
+			if (isZoomed())
+				zoomOut();
+	
+			// Get the current perspective.
+			// This describes the working layout of the page and differs from
+			// the original template.
+			Perspective oldPersp = getActivePerspective();
+	
+			// Map the current perspective to the original template.
+			// If the original template cannot be found then it has been deleted.
+			// In
+			// that case just return. (PR#1GDSABU).
+			IPerspectiveRegistry reg =
+				WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+			PerspectiveDescriptor desc =
 				(PerspectiveDescriptor) reg.findPerspectiveWithId(
-					((PerspectiveDescriptor) oldPersp.getDesc())
-						.getOriginalId());
-		if (desc == null)
-			return;
-
-		IContributionItem item =
-			window.findPerspectiveShortcut(oldPersp.getDesc(), this);
-		if (item == null)
-			return;
-
-		// Notify listeners that we are doing a reset.
-		window.firePerspectiveChanged(this, desc, CHANGE_RESET);
-
-		// Create new persp from original template.
-		Perspective newPersp = createPerspective(desc);
-		if (newPersp == null) {
-			// We're not going through with the reset, so it is complete.
+					oldPersp.getDesc().getId());
+			if (desc == null)
+				desc =
+					(PerspectiveDescriptor) reg.findPerspectiveWithId(
+						((PerspectiveDescriptor) oldPersp.getDesc())
+							.getOriginalId());
+			if (desc == null)
+				return;
+	
+			IContributionItem item =
+				window.findPerspectiveShortcut(oldPersp.getDesc(), this);
+			if (item == null)
+				return;
+	
+			// Notify listeners that we are doing a reset.
+			window.firePerspectiveChanged(this, desc, CHANGE_RESET);
+	
+			// Create new persp from original template.
+			Perspective newPersp = createPerspective(desc);
+			if (newPersp == null) {
+				// We're not going through with the reset, so it is complete.
+				window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
+				return;
+			}
+	
+			// Update the perspective list and shortcut
+			perspList.swap(oldPersp, newPersp);
+	
+			((PerspectiveBarContributionItem) item).setPerspective(newPersp.getDesc());
+	
+			// Install new persp.
+			setPerspective(newPersp);
+	
+			// Destroy old persp.
+			disposePerspective(oldPersp);
+	
+			// Update the Coolbar layout.
+			resetToolBarLayout();
+			
+			// restore the maximized intro
+			if (introViewAdapter != null) {
+			    if (introFullScreen) 		    
+				    toggleZoom(introPane.getPartReference());
+			    // we want the intro back to a normal state before we fire the event
+			    introViewAdapter.setHandleZoomEvents(true);
+			}
+			// Notify listeners that we have completed our reset.
 			window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
-			return;
-		}
+	    }
+	    finally {
+	        // reset the handling of zoom events (possibly for the second time) in case there was 
+	        // an exception thrown
+	        if (introViewAdapter != null)
+	            introViewAdapter.setHandleZoomEvents(true);
 
-		// Update the perspective list and shortcut
-		perspList.swap(oldPersp, newPersp);
-
-		((PerspectiveBarContributionItem) item).setPerspective(newPersp.getDesc());
-
-		// Install new persp.
-		setPerspective(newPersp);
-
-		// Destroy old persp.
-		disposePerspective(oldPersp);
-
-		// Notify listeners that we have completed our reset.
-		window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
-
-		// Update the Coolbar layout.
-		resetToolBarLayout();
+	        if (introFullScreen)
+	            window.getShell().setRedraw(true);
+	    }
+		
 	}
 	/**
 	 * Implements <code>setPerspective</code>.
@@ -1211,6 +1245,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				disposePart(ref);
 			}
 		}
+		stickyPerspectives.remove(persp.getDesc());
 	}
 	/**
 	 * @return NavigationHistory

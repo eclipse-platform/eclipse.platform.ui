@@ -28,8 +28,6 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
  * Simple <code>IIntroSite</code> that wraps a <code>IViewSite</code>.  For use in conjunction with 
  * <code>ViewIntroAdapterPart</code>.
  * 
- * <em>EXPERIMENTAL</em>
- * 
  * @since 3.0
  */
 final class ViewIntroAdapterSite implements IIntroSite {

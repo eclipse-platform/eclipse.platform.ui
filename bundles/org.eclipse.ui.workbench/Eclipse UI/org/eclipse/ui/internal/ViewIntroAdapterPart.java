@@ -29,14 +29,13 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * Simple view that will wrap an <code>IIntroPart</code>.
  * 
- * <em>EXPERIMENTAL</em>
- * 
  * @since 3.0
  */
 public final class ViewIntroAdapterPart extends ViewPart {
 
 	private IIntroPart introPart;
 	private IIntroSite introSite;
+	private boolean handleZoomEvents = true;
 
 	/**
 	 * Adds a listener that toggles standby state if the view pane is zoomed. 
@@ -44,10 +43,12 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	private void addPaneListener() {	
 		((PartSite)getSite()).getPane().addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(PartPane.PROP_ZOOMED)) {
-					boolean standby = !((Boolean)event.getNewValue()).booleanValue();
-					setStandby(standby);
-				}
+			    if (handleZoomEvents) {
+					if (event.getProperty().equals(PartPane.PROP_ZOOMED)) {
+						boolean standby = !((Boolean)event.getNewValue()).booleanValue();
+						setStandby(standby);
+					}
+			    }
 			}
 		});
 	}
@@ -71,6 +72,15 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		window.getShell().layout();
     }
 
+    /**
+     * Toggles handling of zoom events.
+     * 
+     * @param handle whether to handle zoom events
+     */
+    public void setHandleZoomEvents(boolean handle) {
+        handleZoomEvents = handle;
+    }
+    
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
