@@ -42,7 +42,7 @@ public class Util {
 		
 		// Remove leading slash if there is one
 		String result = resourceName.substring(rootName.length()).replace('\\', '/');
-		if (resourceName.startsWith("/")) {
+		if (result.startsWith("/")) {
 			result = result.substring(1);
 		}
 		return result;
