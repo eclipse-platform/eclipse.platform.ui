@@ -177,10 +177,11 @@ public class AntModel {
 		if (fgInstanceCount == 0) {
 			fgClassLoader= null;
 		}
-		if (getProjectNode() != null) {
+		AntProjectNode projectNode= getProjectNode();
+		if (projectNode != null) {
 			//cleanup the introspection helpers that may have been generated
-			IntrospectionHelper.getHelper(getProjectNode().getProject(), AntModel.class);
-			getProjectNode().getProject().fireBuildFinished(null);
+			IntrospectionHelper.getHelper(projectNode.getProject(), AntModel.class);
+			projectNode.getProject().fireBuildFinished(null);
 		}
 	}
 	
@@ -547,11 +548,12 @@ public class AntModel {
 			} else {
 				line= location.getLineNumber();
 				if (line == 0) {
-					if (getProjectNode() != null) {
-						length= getProjectNode().getSelectionLength();
-						nonWhitespaceOffset= getProjectNode().getOffset();
+					AntProjectNode projectNode= getProjectNode();
+					if (projectNode != null) {
+						length= projectNode.getSelectionLength();
+						nonWhitespaceOffset= projectNode.getOffset();
 						if (severity == XMLProblem.SEVERITY_ERROR) {
-							getProjectNode().setProblemSeverity(XMLProblem.NO_PROBLEM);
+							projectNode.setProblemSeverity(XMLProblem.NO_PROBLEM);
 						}
 					} else {
 						return;
@@ -1220,7 +1222,9 @@ public class AntModel {
 	
 	public AntProjectNode getProjectNode(boolean doReconcile) {
 		if (doReconcile) {
-			reconcile(null);
+			synchronized (this) { //ensure to wait for any current synchronization
+				reconcile(null);
+			}
 		}
 		return fProjectNode;
 	}
