@@ -791,6 +791,22 @@ public class Main {
 				configArgs[configArgIndex++] = i;
 				continue;
 			}
+
+			// look for the VM args arg.  We have to do that before looking to see
+			// if the next element is a -arg as the thing following -vmargs may in
+			// fact be another -arg.
+			if (arguments[i].equalsIgnoreCase(VMARGS)) {
+				// consume the -vmargs arg itself
+				arguments[i] = null;
+				i++;
+				vmargs = new String[arguments.length - i];
+				for (int j = 0; i < arguments.length; i++) {
+					vmargs[j++] = arguments[i];
+					arguments[i] = null;
+				}
+				continue;
+			}
+			
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
 			if (i == arguments.length - 1 || arguments[i + 1].startsWith("-")) //$NON-NLS-1$
@@ -848,17 +864,6 @@ public class Main {
 			if (arguments[i - 1].equalsIgnoreCase(VM)) {
 				vm = arg;
 				found = true;
-			}
-
-			// look for the VM args arg
-			if (arguments[i - 1].equalsIgnoreCase(VMARGS)) {
-				// consume the -vmargs arg itself
-				arguments[i - 1] = null;
-				vmargs = new String[arguments.length - i];
-				for (int j = 0; i < arguments.length; i++) {
-					vmargs[j++] = arguments[i];
-					arguments[i] = null;
-				}
 			}
 
 			// done checking for args.  Remember where an arg was found 
@@ -1182,7 +1187,6 @@ public class Main {
 		if (eIndex == -1)
 			return null; // invalid command
 		args[0] = command.substring(sIndex, eIndex);
-
 		// get the command part
 		sIndex = eIndex + 1;
 		eIndex = command.indexOf(" ", sIndex); //$NON-NLS-1$
@@ -1196,6 +1200,7 @@ public class Main {
 		// add on our data
 		if (data != null)
 			args[3] = data;
+
 		Process result = null;
 		try {
 			result = Runtime.getRuntime().exec(args);
