@@ -1,5 +1,6 @@
 package org.eclipse.core.internal.jobs;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.jobs.ILock;
 
 /**
@@ -59,11 +60,9 @@ public class OrderedLock implements ILock {
 	public boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
-		if (delay < 0)
-			return attempt();
-		Semaphore semaphore = createSemaphore();
-		boolean success = false;
-		if (semaphore != null) {
+		boolean success = attempt();
+		if (!success && delay > 0) {
+			Semaphore semaphore = enqueue(new Semaphore(Thread.currentThread()));
 			if (DEBUG)
 				System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... :-/"); //$NON-NLS-1$ //$NON-NLS-2$
 			//free all greater locks that this thread currently holds
@@ -79,7 +78,8 @@ public class OrderedLock implements ILock {
 			if (DEBUG)
 				System.out.println("[" + Thread.currentThread() + "] Operation started... :-)"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		depth++;
+		if (success)
+			depth++;
 		return success;
 	}
 	/* (non-Javadoc)
@@ -101,7 +101,7 @@ public class OrderedLock implements ILock {
 	 * Attempts to acquire the lock.  Returns false if the lock is not available and
 	 * true if the lock has been successfully acquired.
 	 */
-	protected boolean attempt() {
+	protected synchronized boolean attempt() {
 		//return null if we already own the lock
 		if (currentOperationThread == Thread.currentThread())
 			return true;
@@ -167,10 +167,10 @@ public class OrderedLock implements ILock {
 		return oldDepth;
 	}
 	/**
-	 * Returns the thread of the current operation, or null if
+	 * Returns the thread of the current operation, or <code>null</code> if
 	 * there is no current operation
 	 */
-	protected synchronized Thread getCurrentOperationThread() {
+	public synchronized Thread getCurrentOperationThread() {
 		return currentOperationThread;
 	}
 
@@ -181,9 +181,9 @@ public class OrderedLock implements ILock {
 		if (currentOperationThread != Thread.currentThread() || depth == 0)
 			return;
 		//only release the lock when the depth reaches zero
-		if (--depth == 0) {
+		Assert.isTrue(depth >= 0, "Lock released too many times"); //$NON-NLS-1$
+		if (--depth == 0)
 			doRelease();
-		}
 	}
 	/**
 	 * Forces the lock to be at the given depth.  Used when re-acquiring a suspended
