@@ -61,11 +61,14 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	 */
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof WorkingSetSourceContainer) {			
-			return obj.equals(fWorkingSet);			
+			return ((WorkingSetSourceContainer)obj).fWorkingSet.equals(fWorkingSet);			
 		}				
 		return false;
 	}		
-	
+
+	public int hashCode() {
+		return fWorkingSet.hashCode();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
