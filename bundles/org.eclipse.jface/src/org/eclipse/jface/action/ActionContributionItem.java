@@ -678,12 +678,12 @@ public void update(String propertyName) {
 					text = getParent().getOverrides().getText(this);
 
 					if (acceleratorText == null)
-						acceleratorText = overrides.getAcceleratorText(this); // TODO remove
+						acceleratorText = overrides.getAcceleratorText(this);
 
 					if (accelerator == null)
-						accelerator = overrides.getAccelerator(this); // TODO remove
+						accelerator = overrides.getAccelerator(this); 
 				}
-				
+
 				if (accelerator == null)
 					accelerator = new Integer(action.getAccelerator());
 
