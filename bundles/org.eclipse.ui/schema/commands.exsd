@@ -189,7 +189,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <annotation>
                <documentation>
                   The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and contexts which may have been borrowed from their parents.
-@deprecate Please use &quot;commandId&quot; instead.
+@deprecated Please use &quot;commandId&quot; instead.
                </documentation>
                <appInfo>
                   <meta.attribute deprecated="true"/>
