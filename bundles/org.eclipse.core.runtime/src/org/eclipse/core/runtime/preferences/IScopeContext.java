@@ -11,7 +11,6 @@
 package org.eclipse.core.runtime.preferences;
 
 import org.eclipse.core.runtime.IPath;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * Clients implement this interface to provide context to a 
@@ -52,7 +51,7 @@ public interface IScopeContext {
 	 * @return the node containing the plug-in preferences or <code>null</code>
 	 * @see IPreferencesService
 	 */
-	public Preferences getNode(String qualifier);
+	public IEclipsePreferences getNode(String qualifier);
 
 	/**
 	 * Return a path to a location in the file-system where clients are able

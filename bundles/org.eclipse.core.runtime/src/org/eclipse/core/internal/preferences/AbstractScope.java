@@ -12,8 +12,8 @@ package org.eclipse.core.internal.preferences;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * Abstract super-class for scope context object contributed
@@ -33,8 +33,8 @@ public abstract class AbstractScope implements IScopeContext {
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getNode(java.lang.String)
 	 */
-	public Preferences getNode(String qualifier) {
-		return Platform.getPreferencesService().getRootNode().node(getName()).node(qualifier);
+	public IEclipsePreferences getNode(String qualifier) {
+		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(getName()).node(qualifier);
 	}
 
 	/*

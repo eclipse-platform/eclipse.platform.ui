@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * @since 3.0
@@ -45,8 +44,8 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return SCOPE;
 	}
 
-	public Preferences getNode(String qualifier) {
-		return Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
+	public IEclipsePreferences getNode(String qualifier) {
+		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
 	}
 
 	public IPath getLocation() {
