@@ -155,6 +155,15 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         if (values.length == 0)
             return new ArrayList(0);
 
+        IPropertySource firstSource = getPropertySource(values[0]);
+        if (firstSource == null) {
+            return new ArrayList(0);
+        }
+        
+        if (values.length == 1) {
+            return Arrays.asList(firstSource.getPropertyDescriptors());
+        }
+        
         // get all descriptors from each object
         Map[] propertyDescriptorMaps = new Map[values.length];
         for (int i = 0; i < values.length; i++) {
@@ -185,8 +194,16 @@ public class PropertySheetEntry implements IPropertySheetEntry {
             }
         }
 
-        // sorting is handled in the PropertySheetViewer, return unsorted
-        return new ArrayList(intersection.values());
+        // sorting is handled in the PropertySheetViewer, return unsorted (in the original order)
+        ArrayList result = new ArrayList(intersection.size());
+        IPropertyDescriptor[] firstDescs = firstSource.getPropertyDescriptors();
+        for (int i = 0; i < firstDescs.length; i++) {
+            IPropertyDescriptor desc = firstDescs[i];
+            if (intersection.containsKey(desc.getId())) {
+                result.add(desc);
+            }
+        }
+        return result;
     }
 
     /**

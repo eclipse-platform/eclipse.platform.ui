@@ -455,7 +455,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * default sorter)
      * @since 3.1
 	 */
-	public void setSorter(PropertySheetSorter sorter) {
+	protected void setSorter(PropertySheetSorter sorter) {
 		this.sorter = sorter;
         if (viewer != null) {
         	viewer.setSorter(sorter);

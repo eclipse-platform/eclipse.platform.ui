@@ -14,7 +14,6 @@ package org.eclipse.ui.views.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,10 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -51,6 +47,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 
@@ -1019,13 +1018,33 @@ class PropertySheetViewer extends Viewer {
         // Add the PSE_MISC category if it has entries
         if (addMisc)
             categoryCache.put(MISCELLANEOUS_CATEGORY_NAME, misc);
-
-        // Sort the categories
-        Collection categoryCacheValues = categoryCache.values();
-        PropertySheetCategory[] toSort = (PropertySheetCategory[]) categoryCacheValues
-        	.toArray(new PropertySheetCategory[categoryCacheValues.size()]);
-        sorter.sort(toSort);
-        categories = toSort;
+        
+        // Sort the categories.
+        // Rather than just sorting categoryCache.values(), we'd like the original order to be preserved
+        // (with misc added at the end, if needed) before passing to the sorter.
+        ArrayList categoryList = new ArrayList();
+        Set seen = new HashSet(childEntries.size());
+        for (int i = 0; i < childEntries.size(); i++) {
+            IPropertySheetEntry childEntry = (IPropertySheetEntry) childEntries
+                    .get(i);
+            String categoryName = childEntry.getCategory();
+            if (categoryName != null && !seen.contains(categoryName)) {
+                seen.add(categoryName);
+                PropertySheetCategory category = (PropertySheetCategory) categoryCache
+                        .get(categoryName);
+                if (category != null) { 
+                    categoryList.add(category);
+                }
+            }
+        }
+        if (addMisc && !seen.contains(MISCELLANEOUS_CATEGORY_NAME)) {
+            categoryList.add(misc);
+        }
+        
+        PropertySheetCategory[] categoryArray = (PropertySheetCategory[]) categoryList
+        	.toArray(new PropertySheetCategory[categoryList.size()]);
+        sorter.sort(categoryArray);
+        categories = categoryArray;
     }
 
     /**
