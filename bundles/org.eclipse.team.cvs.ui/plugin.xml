@@ -908,4 +908,20 @@
           </description>
       </wizard>
    </extension>
+   
+   <!-- ********** Import Wizard ************** --> 
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            icon="icons/full/etool16/newconnect_wiz.gif"
+            name="%newProjectCheckoutWizard"
+            class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
+            project="true"
+            id="org.eclipse.team.cvs.ui.newProjectCheckout">
+            <description> 
+              %newProjectCheckoutWizardDescription
+          </description>
+      </wizard>
+   </extension>
+   
 </plugin>
