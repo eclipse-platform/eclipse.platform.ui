@@ -87,6 +87,7 @@ public class CommitAction extends TeamAction {
 				CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
 				if (!cvsProvider.isManaged(resources[i])) return false;
 				if (!cvsProvider.isCheckedOut(resources[i])) return false;
+				if (!cvsProvider.isDirty(resources[i])) return false;
 			}
 			return true;
 		} catch (TeamException e) {
