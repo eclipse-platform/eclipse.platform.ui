@@ -478,7 +478,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Sets whether or not this job is a system job.  System jobs are typically not 
 	 * revealed to users in any UI presentation of jobs.  Other than their UI presentation,
 	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
-	 * are treated as non-system jobs.
+	 * are treated as non-system jobs. This method must be called before the job 
+	 * is scheduled.
 	 * 
 	 * @param value <code>true</code> if this job should be a system job, and
 	 * <code>false</code> otherwise.
@@ -489,7 +490,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 	/**
 	 * Sets whether or not this job has been directly initiated by a UI end user. 
-	 * These jobs may be presented differently in the UI.
+	 * These jobs may be presented differently in the UI. This method must be 
+	 * called before the job is scheduled.
 	 * 
 	 * @param value <code>true</code> if this job is a user-initiated job, and
 	 * <code>false</code> otherwise.
