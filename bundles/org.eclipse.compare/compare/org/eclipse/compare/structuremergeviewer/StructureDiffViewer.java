@@ -311,6 +311,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			boolean ignoreWhiteSpace= Utilities.getBoolean(getCompareConfiguration(), CompareConfiguration.IGNORE_WHITESPACE, false);		
 			String s1= fStructureCreator.getContents(o1, ignoreWhiteSpace);
 			String s2= fStructureCreator.getContents(o2, ignoreWhiteSpace);
+			if (s1 == null || s2 == null)
+				return false;
 			return s1.equals(s2);
 		}
 		return false;
