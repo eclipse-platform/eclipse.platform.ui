@@ -218,7 +218,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			if (fFound) {
 				// beep once
 				fFound= false;
-				fTextViewer.getTextWidget().getDisplay().beep();
+				StyledText text= fTextViewer.getTextWidget();
+				if (text != null && !text.isDisposed())
+					text.getDisplay().beep();
 			}
 			
 			String pattern= EditorMessages.getString("Editor.FindIncremental.not_found.pattern"); //$NON-NLS-1$
@@ -233,6 +235,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch) {
+
+		if (fTarget == null)
+			return -1;	
 
 		if (forwardSearch) {
 			if (wrapSearch) {
