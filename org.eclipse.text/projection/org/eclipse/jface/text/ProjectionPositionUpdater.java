@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.text;
 
-import org.eclipse.jface.text.DefaultPositionUpdater;
 
 /**
  * The position updater used to adapt the positions corresponding to the fragments of 

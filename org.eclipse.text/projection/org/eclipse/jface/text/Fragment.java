@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import org.eclipse.jface.text.Position;
 
 /**
  * Represents a fragment of a <code>ProjectionDocument</code>.<p>
