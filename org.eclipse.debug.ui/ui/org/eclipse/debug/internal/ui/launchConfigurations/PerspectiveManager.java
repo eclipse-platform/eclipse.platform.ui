@@ -101,14 +101,17 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 */
 	public void launchRegistered(ILaunch launch) {
 		String perspectiveId = null;
-		try {
-			perspectiveId = getPerspectiveId(launch);
-		} catch (final CoreException e) {
-			String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
-			switchFailed(e.getStatus(), name);
-		}
-		if (perspectiveId != null) {
-			switchToPerspective(perspectiveId);
+		// check event filters
+		if (DebugUIPlugin.getDefault().showLaunch(launch)) {
+			try {
+				perspectiveId = getPerspectiveId(launch);
+			} catch (final CoreException e) {
+				String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
+				switchFailed(e.getStatus(), name);
+			}
+			if (perspectiveId != null) {
+				switchToPerspective(perspectiveId);
+			}
 		}
 	}
 
@@ -221,6 +224,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
 		if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == event.BREAKPOINT) {
+			// apply event filters
+			if (!DebugUIPlugin.getDefault().showSuspendEvent(event)) {
+				return;
+			}
 			ILaunch launch = null;
 			Object source = event.getSource();
 			if (source instanceof IDebugElement) {

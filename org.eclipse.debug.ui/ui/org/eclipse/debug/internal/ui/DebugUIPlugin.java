@@ -177,7 +177,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * Poll the filters to determine if the event should be shown
 	 */
-	protected boolean showSuspendEvent(DebugEvent event) {
+	public boolean showSuspendEvent(DebugEvent event) {
 		Object s= event.getSource();
 		if (s instanceof ITerminate) {
 			if (((ITerminate)s).isTerminated()) {
@@ -198,7 +198,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * Poll the filters to determine if the launch should be shown
 	 */
-	protected boolean showLaunch(ILaunch launch) {
+	public boolean showLaunch(ILaunch launch) {
 		if (!fEventFilters.isEmpty()) {
 			Object[] filters = fEventFilters.getListeners();
 			for (int i = 0; i < filters.length; i++) {
