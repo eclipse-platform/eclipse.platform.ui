@@ -792,7 +792,7 @@ public abstract class ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			IWorkbenchAction action = new QuitAction();
+			IWorkbenchAction action = new QuitAction(window);
 			action.setId(getId());
 			return action;
 		}
