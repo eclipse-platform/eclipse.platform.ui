@@ -129,7 +129,7 @@ public class TableViewer extends StructuredViewer {
 			
 			int requiredCount = index + 1;
 			if(requiredCount > getTable().getItemCount())
-				getTable().setItemCount(10);
+				getTable().setItemCount(requiredCount);
 			Integer key = new Integer(index);
 			virtualElements.put(key,element);
 		}
