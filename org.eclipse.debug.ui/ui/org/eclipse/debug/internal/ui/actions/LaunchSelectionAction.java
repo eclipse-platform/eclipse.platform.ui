@@ -63,7 +63,9 @@ public class LaunchSelectionAction extends Action {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				if (getElement() != null || !DebugUIPlugin.getDefault().hasWizard(getLauncher())) {
-					getLauncher().launch(new Object[] {getElement()}, getMode());
+					if (DebugUIPlugin.saveAndBuild()) {
+						getLauncher().launch(new Object[] {getElement()}, getMode());
+					}
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 					if (shell != null) {
