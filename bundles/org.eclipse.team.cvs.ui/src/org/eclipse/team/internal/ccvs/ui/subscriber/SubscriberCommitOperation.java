@@ -62,19 +62,21 @@ public class SubscriberCommitOperation extends CVSSubscriberOperation {
 	 * @see org.eclipse.team.internal.ui.actions.SubscriberOperation#getSyncInfoSet()
 	 */
 	protected SyncInfoSet getSyncInfoSet() {
-		syncSet = super.getSyncInfoSet();
-		if (!promptForConflictHandling(syncSet)) {
-			syncSet.clear();
-			return syncSet;
-		}
-		try {
-			if (!promptForUnaddedHandling(syncSet)) {
+		if (syncSet == null) {
+			syncSet = super.getSyncInfoSet();
+			if (!promptForConflictHandling(syncSet)) {
 				syncSet.clear();
 				return syncSet;
 			}
-		} catch (CVSException e) {
-			Utils.handle(e);
-			syncSet.clear();
+			try {
+				if (!promptForUnaddedHandling(syncSet)) {
+					syncSet.clear();
+					return syncSet;
+				}
+			} catch (CVSException e) {
+				Utils.handle(e);
+				syncSet.clear();
+			}
 		}
 		return syncSet;
 	}
