@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
@@ -194,13 +195,20 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	 */
 	public void cleanRegistry() {
 		Set elements = cache.keySet();
+		Set keysToRemove = new HashSet();
 		Iterator iter = elements.iterator();
 		while (iter.hasNext()) {
-			String pluginId = (String)iter.next();
+			Object pluginId = iter.next();
 			RegistryElement elem = (RegistryElement)cache.get(pluginId);
 			if (elem != null && elem.state == REGISTRY_CACHE_STATE_DELETED) {
-				cache.remove(pluginId);
+				keysToRemove.add(pluginId);
 			}
+		}
+		
+		//Now remove the deleted ones
+		Iterator removeIterator = keysToRemove.iterator();
+		while(removeIterator.hasNext()){
+			cache.remove(removeIterator.next());
 		}
 	}
 }
