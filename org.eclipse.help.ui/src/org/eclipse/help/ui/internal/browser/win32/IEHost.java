@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 public class IEHost implements Runnable, ICommandStateChangedListener {
 	public static final String SYS_PROPERTY_INSTALLURL = "installURL";
 	public static final String SYS_PROPERTY_PRODUCTIMAGEURL = "windowImage";
+	public static final String SYS_PROPERTY_PRODUCTNAME = "name";
 	public static final String SYS_PROPERTY_STATELOCATION = "stateLocation";
 	public static final String CMD_CLOSE = "close";
 	public static final String CMD_DISPLAY_URL = "displayURL";
@@ -34,6 +35,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private static final String BROWSER_HEIGTH = "browser.h";
 	private static final String BROWSER_MAXIMIZED = "browser.maximized";
 	private static String installURL;
+	private static String productName;
 	private static String productImageURL;
 	private static String stateLocation;
 	private Display display;
@@ -84,6 +86,11 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		if (productImageURL == null) {
 			System.err.println(
 				"Property " + SYS_PROPERTY_PRODUCTIMAGEURL + " must be set.");
+			return;
+		}
+		productName = System.getProperty(SYS_PROPERTY_PRODUCTNAME);
+		if (productName == null) {
+			System.err.println("Property " + SYS_PROPERTY_PRODUCTNAME + " must be set.");
 			return;
 		}
 		stateLocation = System.getProperty(SYS_PROPERTY_STATELOCATION);
@@ -152,7 +159,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				}
 			}
 		});
-		shell.setText(ieResources.getString("browserTitle"));
+		shell.setText(ieResources.getString("browserTitle", productName));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;

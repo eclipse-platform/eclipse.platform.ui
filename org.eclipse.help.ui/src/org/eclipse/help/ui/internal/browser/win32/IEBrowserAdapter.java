@@ -68,6 +68,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 				program,
 				"-D" + IEHost.SYS_PROPERTY_INSTALLURL + "=" + installURL,
 				"-D" + IEHost.SYS_PROPERTY_PRODUCTIMAGEURL + "=" + imageURL,
+				"-D" + IEHost.SYS_PROPERTY_PRODUCTNAME + "=" + getProductName(),
 				"-D" + IEHost.SYS_PROPERTY_STATELOCATION + "=" + stateLocation,
 				"-Djava.library.path=" + libraryPath,
 				"-cp",
@@ -317,5 +318,16 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 			Logger.logError(WorkbenchResources.getString("WE029"), ioe);
 		}
 		return null;
+	}
+	/**
+	 * Obtains Name of the product
+	 * @return String
+	 */
+	private String getProductName() {
+		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
+		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
+		IPluginDescriptor pfd =
+			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+		return pfd.getLabel();
 	}
 }
