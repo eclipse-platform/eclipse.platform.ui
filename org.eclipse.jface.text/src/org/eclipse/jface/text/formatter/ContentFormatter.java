@@ -624,6 +624,12 @@ public class ContentFormatter implements IContentFormatter {
 			if (!document.containsPosition(category, p.offset, p.length)) {
 				try {
 					if (ChildDocumentManager.CHILDDOCUMENTS.equals(category)) {
+						/* 
+						 * We assume child document offsets to be at the beginning
+						 * of a line. Because the formatter might have moved the
+						 * position to be somewhere in the middle of a line we
+						 * patch it here. 
+						 */  
 						int lineOffset= document.getLineInformationOfOffset(p.offset).getOffset(); 
 						p.setLength(p.length + p.offset - lineOffset);
 						p.setOffset(lineOffset);
