@@ -263,6 +263,8 @@ public class JobView extends ViewPart {
 					handleResize();
 				}
 			});
+			
+			refresh();
 		}
 		
 		Job getJob() {
@@ -321,6 +323,12 @@ public class JobView extends ViewPart {
 			
 			if (jobTreeElement instanceof JobInfo) {
 				JobInfo ji= (JobInfo) jobTreeElement;
+				Object[] objects = ji.getChildren();
+				if (objects.length > 0) {
+					JobTreeElement jte= (JobTreeElement) objects[0];
+					return jte.getDisplayString();
+				}				
+				
 				TaskInfo ti= ji.getTaskInfo();
 				if (ti != null) {
 					String s= ti.getDisplayString();
