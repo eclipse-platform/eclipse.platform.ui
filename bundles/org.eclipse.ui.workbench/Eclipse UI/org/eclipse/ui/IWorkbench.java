@@ -515,10 +515,6 @@ public interface IWorkbench extends IAdaptable {
 	 * elements that persist for the life of the workbench. For example,
 	 * <code>IEditorDescriptor</code> objects fall into this category.
 	 * </p>
-	 * <p>
-	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
-	 * 3.1 release.
-	 * </p>
 	 * 
 	 * @return the extension tracker
 	 * @see IWorkbenchWindow#getExtensionTracker()

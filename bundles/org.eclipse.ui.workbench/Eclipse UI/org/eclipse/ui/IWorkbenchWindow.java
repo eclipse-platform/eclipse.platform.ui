@@ -177,10 +177,6 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
 	 * action objects corresponding to new wizards contributed by plug-ins fall
 	 * into this category.
 	 * </p>
-	 * <p>
-	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
-	 * 3.1 release.
-	 * </p>
 	 * 
 	 * @return the extension tracker
 	 * @see IWorkbench#getExtensionTracker()

@@ -858,11 +858,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * elements that only exist over the lifespan of a page. For example,
 	 * <code>ViewPart</code> objects fall into this category.
 	 * </p>
-	 * <p>
-	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
-	 * 3.1 release.
-	 * </p>
-	 * 
+     * 
 	 * @return the extension tracker
 	 * @see IWorkbench#getExtensionTracker()
 	 * @see IWorkbenchWindow#getExtensionTracker()
