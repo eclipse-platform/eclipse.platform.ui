@@ -140,6 +140,9 @@ declarative or implements
                <documentation>
                   if the decorator is &lt;b&gt;&lt;i&gt;lightweight&lt;/i&gt;&lt;/b&gt; and the &lt;b&gt;&lt;i&gt;class&lt;/i&gt;&lt;/b&gt; is not specified this is the path to the overlay image to apply
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="location">
