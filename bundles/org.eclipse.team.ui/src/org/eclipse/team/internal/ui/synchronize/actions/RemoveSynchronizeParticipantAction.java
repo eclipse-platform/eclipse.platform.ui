@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action to remove the given participant from the synchronize manager.
@@ -35,7 +39,18 @@ public class RemoveSynchronizeParticipantAction extends Action {
 	}
 	
 	public void run() {
-		TeamUI.getSynchronizeManager().removeSynchronizeParticipants(
-				new ISynchronizeParticipant[] {participant});
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
+					TeamUI.getSynchronizeManager().removeSynchronizeParticipants(
+							new ISynchronizeParticipant[] {participant});
+				}
+			});
+		} catch (InvocationTargetException e) {
+			Utils.handle(e);
+		} catch (InterruptedException e) {
+			// Cancelled. Just ignore
+		}
 	}
 }
