@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -61,6 +63,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	private Object pageData;
 	
 	IWorkingCopyManager workingCopyManager;
+	
+	private Collection updateJobs = new ArrayList();
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -315,6 +319,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 						WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
 						errorStatus);
 			}
+			
+	   //Run the update jobs
+	   Iterator updateIterator = updateJobs.iterator();
+	   while (updateIterator.hasNext()) {
+		((Job) updateIterator.next()).schedule();
+		
+	}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#registerUpdateJob(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void registerUpdateJob(Job job){
+		updateJobs.add(job);
 	}
 
 }

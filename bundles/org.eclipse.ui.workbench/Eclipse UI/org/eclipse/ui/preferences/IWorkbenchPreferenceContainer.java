@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.preferences;
 
+import org.eclipse.core.runtime.jobs.Job;
+
 /**
  * IWorkbenchPreferenceContainer is the class that specifies
  * the workbench specific preferences support.
  * @since 3.1
- * <strong>NOTE</strong> This is experimental API and subject
- * to change during the 3.1 development cycle.
  *
  */
 public interface IWorkbenchPreferenceContainer {
@@ -40,5 +40,11 @@ public interface IWorkbenchPreferenceContainer {
 	 * @return IWorkingCopyManager
 	 */
 	public IWorkingCopyManager getWorkingCopyManager();
+	
+	/**
+	 * Register a job to be run after the container has been closed.
+	 * @param job
+	 */
+	public void registerUpdateJob(Job job);
 
 }
