@@ -6,14 +6,9 @@
       <meta.schema plugin="org.eclipse.ui" id="exportWizards" name="Export Wizards"/>
    </appInfo>
    <documentation>
-      This extension point provides for plugging in alternative export
-engines. These engines will be shown as choices in the export
-dialog box. 
+      This extension point is used to register export wizard extensions. Export wizards appear as choices within the "Export Dialog", and are used to export resources from the workbench. 
 &lt;p&gt;
-Wizards can be made unavailable for certain source
-objects (current selection) using optional selection subelements.
-For example, an export wizard can be made available only for
-source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
+Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
    </documentation>
 </annotation>
 
@@ -116,15 +111,14 @@ when the wizard is invoked.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name filter that will be run against the target object name 
-in order to calculate if the wizard applies to it
+                  an optional name filter.  Each object in the workbench selection must match the name filter to be passed to the wizard.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the target object class for which the wizard applies to
+                  a fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -178,6 +172,17 @@ must be a name of the class that implements
       <documentation>
          The workbench comes preloaded with basic export engines 
 for files and directories.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="fontDefinitions" name="Font Definitions"/>
+      <meta.schema plugin="org.eclipse.ui" id="markerUpdaters" name="Marker Updaters"/>
    </appInfo>
    <documentation>
-      This extension point is used to register fonts with the JFace FontRegistry and with the workbench preference store for use by the Fonts preference page.
+      This extension point is used for registering marker update strategies with marker annotation models. A resource that is opened in a text editor is associated with a marker annotation model. For each marker attached to the resource this model manages a position that is updated with each change applied to the text in the editor. If the resource is saved, the text in the editor and the position managed for a marker are passed over to the registered marker update strategies. These strategies can then update the marker's attributes based on the text and the position. Marker update strategies are requested to implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IMarkerUpdater&lt;/samp&gt;. The update strategies can be registered either for a particular marker type or all marker types. The latter by omitting any marker type in the extension.
    </documentation>
 </annotation>
 
@@ -38,41 +38,33 @@
       </complexType>
    </element>
 
-   <element name="fontDefinition">
+   <element name="updater">
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  the name of the marker type
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the qualified name of the marker updater class
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that can be used to identify this font definition.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a translatable name of the font to be presented to the user.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="defaultsTo" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the id of another  font definition that is the default setting for the receiver. When there is no preference for this font the font registry will have the value of defaultsTo set for it in the registry.
+                  the unique id of this provider
                </documentation>
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="description" type="string">
-      <annotation>
-         <documentation>
-            a short description of the fonts usage
-         </documentation>
-      </annotation>
    </element>
 
    <annotation>
@@ -80,7 +72,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Release 2.1
+         Release 1.0
       </documentation>
    </annotation>
 
@@ -89,28 +81,29 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of an a font definition extension:
-&lt;p&gt;
-&lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.fontDefinition"&gt; 
-      &lt;fontDefinition 
-         id="org.eclipse.examples.textFont" 
-         label="Text"&gt; 
-         &lt;description&gt;
-            The text font
-         &lt;/description&gt;
-      &lt;/fontDefinition&gt; 
-
-      &lt;fontDefinition 
-        id="org.eclipse.examples.userFont" 
-        label="User"
-        defaultsTo="org.eclipse.jface.textFont"&gt; 
-        &lt;description&gt;
-           The user font
-        &lt;/description&gt;
-      &lt;/fontDefinition&gt; 
-   &lt;/extension&gt; 
+         &lt;pre&gt;
+&lt;extension point= "org.eclipse.ui.markerUpdaters"&gt; 
+    &lt;updater 
+        id="org.eclipse.jdt.ui.markerUpdaters.JavaSearchMarkerUpdater" 
+        class="org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater" 
+        markerType="org.eclipse.search.searchmarker"&gt; 
+    &lt;/updater&gt; 
+&lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;p&gt;
+This example registers &lt;samp&gt;org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater&lt;/samp&gt; as a marker updater for all markers of the 
+type &lt;samp&gt;org.eclipse.search.searchmarker&lt;/samp&gt; including all its derived types.
+&lt;/p&gt;
+&lt;pre&gt;
+&lt;extension point= "org.eclipse.ui.markerUpdaters"&gt; 
+    &lt;updater 
+        id="org.eclipse.ui.texteditor.BasicMarkerUpdater" 
+        class="org.eclipse.ui.texteditor.BasicMarkerUpdater"&gt; 
+    &lt;/updater&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;p&gt;
+This example registers &lt;samp&gt;org.eclipse.ui.texteditor.BasicMarkerUpdater&lt;/samp&gt; as a marker updater independent from the type of the marker. 
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -120,15 +113,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The defaultsTo tag is used as a directive by
-the Workbench to set the value of the font definition to the value of defaultsTo
-whenever the defaultsTo fontDefinition is updated. This only occurs if the
-fontDefinition is at its default value - once it is set by the user this updates
-will not occur. The workbench provides 4 fonts: 
-&lt;P&gt;&lt;b&gt;org.eclipse.jface.bannerfont&lt;/b&gt;. The banner font is used in wizard banners.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.dialogfont&lt;/b&gt;. The dialog font is the font for widgets in dialogs.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.headerfont&lt;/b&gt;. The header font is used for section headers in composite text pages.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.textfont&lt;/b&gt;. The text font is used by text editors.
+         Registered marker updaters have to implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IMarkerUpdater&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -137,8 +122,7 @@ will not occur. The workbench provides 4 fonts:
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides the font
-definitions for the text, dialog, banner and header fonts.
+         
       </documentation>
    </annotation>
 

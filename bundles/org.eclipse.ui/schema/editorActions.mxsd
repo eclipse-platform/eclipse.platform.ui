@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="editorActions" name="Editor Menus and Actions"/>
+      <meta.schema plugin="org.eclipse.ui" id="editorActions" name="Editor Menus, Toolbars and Actions"/>
    </appInfo>
    <documentation>
       This extension point is used to add actions to the menu 
@@ -32,21 +32,21 @@ The active editor is passed to the delegate by invoking
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -69,7 +69,7 @@ The active editor is passed to the delegate by invoking
          <attribute name="targetID" type="string" use="required">
             <annotation>
                <documentation>
-                  an ID of a previously registered editor that is the target of this contribution
+                  a unique identifier of a previously registered editor that is the target of this contribution
                </documentation>
             </annotation>
          </attribute>
@@ -140,6 +140,15 @@ mnemonic and accelerator information (see example).
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="accelerator" type="string">
+            <annotation>
+               <documentation>
+                  The accelerator for the action.  This is specified as a combination of the keys CTRL, SHIFT and ALT and an accelerator key.
+These values are not internationalized and should not be translated.
+Specification of the accelerator for the entry title should be done in the label - this value will not be used to build a menu entry.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="menubarPath" type="string">
             <annotation>
                <documentation>
@@ -169,10 +178,40 @@ holder icon. The path is relative to the location of the plugin.xml file of the 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="disabledIcon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually represent the action in its context when the action is disabled.
+If it is omitted, the normal icon will simply appear greyed out.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="hoverIcon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually represent the action in its context when the mouse is over the action.
+If its is omitted, the normal icon will be used.  This path is relative to the location of the plugin.xml file of the contributing plug-in.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="tooltip" type="string">
             <annotation>
                <documentation>
                   used if the action is to appear in the tool bar. Otherwise, it is ignored.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  a unique identifier indicating the help context id for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help for the given context id.
                </documentation>
             </annotation>
          </attribute>
@@ -214,38 +253,6 @@ The following attribute formats are supported:
           &lt;br&gt;&lt;b&gt;*&lt;/b&gt; - any number of items selected
 &lt;/ul&gt;
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="accelerator" type="string">
-            <annotation>
-               <documentation>
-                  The accelerator for the action.  This is specified as a combination of the keys CTRL, SHIFT and ALT and an accelerator key.
-These values are not internationalized and should not be translated.
-Specification of the accelerator for the entry title should be done in the label = this value will not be used to build a menu entry.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="disabledIcon" type="string">
-            <annotation>
-               <documentation>
-                  a relative pathof an icon that will be used to visually represent the action in its context when the action is disabled.
-If it is omitted, the normal icon will simply appear greyed out.
-The path is relative to the location of the plugin.xml file of the contributing plug-in.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="hoverIcon" type="string">
-            <annotation>
-               <documentation>
-                  a relative path of an icon that will be used to visually represent the action in its context when the mouse is over the action.
-If its is omitted, the normal icon will be used.  This path is relative to the location of the plugin.xml file of the contributing plug-in.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -295,6 +302,11 @@ is specified and the match fails, the action will be disabled.
    </element>
 
    <element name="enablement">
+      <annotation>
+         <documentation>
+            In version 2.0 of Eclipse, an enablement element may be used to define the enablement for the action.  For more information on the use of enablement element, refer to actionExpressions.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="and"/>
@@ -448,13 +460,14 @@ point:
       &lt;editorContribution 
          id="com.xyz.xyzContribution" 
          targetID="com.ibm.XMLEditor"&gt; 
-         &lt;menu id="com.xyz.xyzMenu" label="&amp;amp;XYZ Menu"&gt; 
+         &lt;menu id="XYZ" label="&amp;amp;XYZ Menu"&gt; 
             &lt;separator name="group1"/&gt; 
          &lt;/menu&gt; 
-         &lt;action id="com.xyz.runXYZ" 
+         &lt;action 
+              id="com.xyz.runXYZ" 
               label="&amp;amp;Run XYZ Tool" 
-              menubarPath="com.xyz.xyzMenu/group1" 
-              toolbarPath="Normal/XYZ" 
+              menubarPath="XYZ/group1" 
+              toolbarPath="Normal/additions" 
               state="true" 
               icon="icons/runXYZ.gif" 
               tooltip="Run XYZ Tool" 
@@ -465,9 +478,36 @@ point:
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-In the example above, the specified action will appear 
-as a check box item in the menu, and as a toggle 
-button in the toolbar.
+In the example above, the specified action will appear as a check box item in the new top-level menu named "XYZ Menu", and as a toggle button in the toolbar. 
+&lt;p&gt;
+The following is an example of an editor action extension point: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.editorActions"&gt; 
+      &lt;editorContribution 
+         id="com.xyz.xyz2Contribution" 
+         targetID="com.ibm.XMLEditor"&gt; 
+         &lt;menu 
+            id="XYZ2" 
+            label="&amp;amp;XYZ2 Menu" 
+            path="edit/additions"&gt; 
+            &lt;separator name="group1"/&gt; 
+         &lt;/menu&gt; 
+         &lt;action 
+              id="com.xyz.runXYZ2" 
+              label="&amp;amp;Run XYZ2 Tool" 
+              menubarPath="edit/XYZ2/group1" 
+              state="true" 
+              icon="icons/runXYZ2.gif" 
+              tooltip="Run XYZ2 Tool" 
+              helpContextId="com.xyz.run_action_context2" 
+              class="com.xyz.actions.RunXYZ2"&gt; 
+         &lt;/action&gt; 
+      &lt;/editorContribution&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+In the example above, the specified action will appear as a check box item in the sub-menu named "XYZ2 Menu" in the top level "Edit" menu.
       </documentation>
    </annotation>
 
@@ -506,6 +546,34 @@ additions - represents a group to the left of the Window menu.
 Actions and menus added into these paths will only 
 be shown while the associated editor is active. When 
 the editor is closed, menus and actions will be removed.
+&lt;p&gt;
+The enablement criteria for an action extension are initially defined by
+&lt;samp&gt;enablesFor&lt;/samp&gt;,
+&lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt;. However, once the action
+delegate has been instantiated, it may control the action enable state
+directly within its
+&lt;samp&gt;selectionChanged&lt;/samp&gt; method.
+&lt;p&gt;
+Action and menu labels may contain special characters that encode mnemonics and accelerators using the following rules:
+&lt;ol&gt;
+&lt;li&gt;
+Mnemonics are specified using the ampersand ('&amp;amp;') character in front
+of a selected character in the translated text. Since ampersand is not
+allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity.&lt;/li&gt;
+
+&lt;li&gt;
+Optional accelerators are specified at the and of the name string, using
+&lt;samp&gt;@&lt;/samp&gt;
+followed by the series of modifiers and the final accelerator character
+(for example, &lt;samp&gt;&amp;amp;amp;Save@Ctrl+S&lt;/samp&gt;). Modifiers can be chained
+using the '+' sign as the delimiter (as in &lt;samp&gt;@Ctrl+Shift+S&lt;/samp&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+If two or more actions are contributed to a menu or toolbar by a single
+extension the actions will appear in the reverse order of how they are
+listed in the plugin.xml file. This behavior is admittedly unintuitive. 
+However, it was discovered after the Eclipse Platform API was frozen. 
+Changing the behavior now would break every plug-in which relies upon the
+existing behavior.
       </documentation>
    </annotation>
 
@@ -514,9 +582,18 @@ the editor is closed, menus and actions will be removed.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench does not provide built-in content editors. 
-Plug-ins can contribute into editors provided by other 
-plug-ins.
+         The workbench provides a built-in "Default Text Editor". Plug-ins can contribute into this default editor or editors provided by other plug-ins.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

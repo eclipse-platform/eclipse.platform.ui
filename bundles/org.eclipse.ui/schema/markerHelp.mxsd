@@ -18,21 +18,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -94,13 +94,13 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.ui.markerHelp"&gt;
-		&lt;markerHelp
-			markerType="org.eclipse.ui.examples.readmetool.readmemarker"
-			helpContextId="org.eclipse.ui.examples.readmetool.marker_example1_context"&gt;
-			&lt;attribute name="org.eclipse.ui.examples.readmetool.id" value="1234"/&gt;
-		&lt;/markerHelp&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.ui.markerHelp"&gt;
+  &lt;markerHelp
+   markerType="org.eclipse.ui.examples.readmetool.readmemarker"
+   helpContextId="org.eclipse.ui.examples.readmetool.marker_example1_context"&gt;
+   &lt;attribute name="org.eclipse.ui.examples.readmetool.id" value="1234"/&gt;
+  &lt;/markerHelp&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
@@ -126,7 +126,7 @@ That is, a context id associated with three matching attribute values will be re
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -135,7 +135,9 @@ That is, a context id associated with three matching attribute values will be re
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

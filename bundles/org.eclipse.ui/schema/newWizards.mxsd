@@ -3,26 +3,14 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Resource Creation Wizards"/>
+      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Creation Wizards"/>
    </appInfo>
    <documentation>
-      The workbench supports a common New dialog that organizes the
-various artifact creation wizards and setup actions into specific
-usage categories. This extension point allows new items to be
-added to the dialog, merged into the appropriate category. The
-purpose of this extension point is to allow registration of one
-or more executable components whose invocation results in creating
-one or more of workbench resources (solutions, projects, folders
-and/or files). 
+      This extension point is used to register resource creation wizard extensions. Creation wizards appear as choices within the "New Dialog", and are typically used to create folders and files. 
 &lt;p&gt;
-Wizards should be organized into categories
-based on their commonality. Categories are defined by one plug-in,
-and can be referenced using the category attribute by other plug-ins.
-Uncategorized wizards, as well as wizards with invalid category
-paths, will end up in"Other" category. 
+In the "New Dialog", wizards are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called "Java" which is appropriate for "Class" or "Package" creation wizards.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. Uncategorized wizards, as well as wizards with invalid category paths, will end up in an "Other" category. 
 &lt;p&gt;
-Wizards may optionally specify a description subelement whose body should contain short
-text about the wizard.
+Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
    </documentation>
 </annotation>
 
@@ -35,21 +23,21 @@ text about the wizard.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -142,7 +130,7 @@ added to the "Other" category.
          <attribute name="finalPerspective" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional attribute which identifies a perspective to activate when IProject resource creation is finished.
                </documentation>
             </annotation>
          </attribute>
@@ -225,6 +213,17 @@ project, folder and file. These wizards are registered
 using the same mechanism as described above. 
 Additional wizards may also appear, subject to 
 particular platform installation.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="viewActions" name="View Menus and Actions"/>
+      <meta.schema plugin="org.eclipse.ui" id="viewActions" name="View Menus,Toolbars and Actions"/>
    </appInfo>
    <documentation>
       This extension point is used to add actions to the menu 
@@ -25,21 +25,21 @@ areas. Optional additions by other plug-ins are appended.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -62,7 +62,7 @@ areas. Optional additions by other plug-ins are appended.
          <attribute name="targetID" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the view (as specified in the registry) into which the contribution is made
+                  the unique identifier of the view (as specified in the registry) into which the contribution is made.
                </documentation>
             </annotation>
          </attribute>
@@ -229,15 +229,6 @@ n - a precise number of items selected.  Example: 4.
 * - any number of items selected
 &lt;/li&gt;
 &lt;/ul&gt;
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="accelerator" type="string">
-            <annotation>
-               <documentation>
-                  The accelerator for the action.  This is specified as a combination of the keys CTRL, SHIFT and ALT and an accelerator key.
-These values are not internationalized and should not be translated.
-Specification of the accelerator for the entry title should be done in the label - this value will not be used to build a menu entry.
                </documentation>
             </annotation>
          </attribute>
@@ -516,6 +507,12 @@ is really needed. It extends
 and adds an additional method that allows the 
 delegate to initialize with the view 
 instance it is contributing into.
+&lt;p&gt;
+The enablement criteria for an action extension are initially defined by &lt;samp&gt;enablesFor&lt;/samp&gt;, &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt;.  However, once the action delegate has been instantiated, it may control the action enable state directly within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method. 
+&lt;p&gt;
+Action and menu labels may contain special characters that encode mnemonics which are specified using the ampersand ('&amp;amp;') character in front of a mnemonic character in the translatable text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity. 
+&lt;p&gt;
+If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the  Eclipse Platform API was frozen.  Changing the behavior now would break every plug-in which relies upon the existing behavior.
       </documentation>
    </annotation>
 
@@ -532,6 +529,17 @@ publish the action identifiers for a view within a
 public interface.  For example, the actions and 
 major groups for the workbench window are defined 
 in &lt;samp&gt;org.eclipse.ui.IWorkbenchActionConstants&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

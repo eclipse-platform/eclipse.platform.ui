@@ -3,19 +3,16 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="projectNatureImages" name="Project Nature Images"/>
+      <meta.schema plugin="org.eclipse.ui" id="actionDefinitions" name="Action Definitions"/>
    </appInfo>
    <documentation>
-      This extension point is used to associate an image with a project nature.
-The supplied image is used to form a composite image consisting of the standard project image combined with the image of its nature.
-The supplied image is drawn over the top right corner of the base image.
+      This extension point is used to register action definitions. Accelerators (see the Accelerator Sets extension point) use action definitions to reference actions. An action associates itself with a given accelerator by registering with that accelerator's associated action definition. An action registers itself with an action definition by calling the setActionDefinitionId(String id) method and supplying the action definition's id as an argument.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="image" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,57 +38,52 @@ The supplied image is drawn over the top right corner of the base image.
       </complexType>
    </element>
 
-   <element name="image">
+   <element name="actionDefinition">
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that will be used to identify this nature image.
+                  a unique name that can be used to identify this action.
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="natureId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the unique name of the nature for which the image is being supplied.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a relative name of the image that will be associated with this perspective.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="description" type="string">
-   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         Release 2.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a nature image extension:
-
+         Following is an example of an action definition extension: 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.ui.projectNatureImages"&gt;
-  &lt;image 
-   id="org.eclipse.ui.javaNatureImage"
-   natureId="Resource"
-   icon="icons/javaNature.gif"&gt;
-  &lt;/image&gt;
- &lt;/extension&gt;
+   &lt;extension point="org.eclipse.ui.actionDefinitions"&gt; 
+      &lt;actionDefinition 
+        id="org.eclipse.ui.file.save"&gt; 
+      &lt;/actionDefinition&gt; 
+      &lt;actionDefinition 
+        id="org.eclipse.ui.file.saveAll"&gt; 
+      &lt;/actionDefinition&gt; 
+      &lt;actionDefinition 
+        id="org.eclipse.ui.file.close"&gt; 
+      &lt;/actionDefinition&gt; 
+      &lt;actionDefinition 
+        id="org.eclipse.ui.file.closeAll"&gt; 
+      &lt;/actionDefinition&gt; 
+      &lt;actionDefinition 
+        id="org.eclipse.ui.file.print"&gt; 
+      &lt;/actionDefinition&gt; 
+   &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -102,7 +94,9 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;natureId&lt;/samp&gt; attribute is the nature id as defined by the plugin creating the project.
+         The methods public void setActionDefinitionId(String id) and public String getActionDefinitionId() have been added to IAction. 
+&lt;p&gt;
+&lt;B&gt;&lt;font color="#FF0000"&gt;NOTE&lt;/font&gt; -&lt;/b&gt; other attributes may be added in the future, as needed.
       </documentation>
    </annotation>
 
@@ -111,7 +105,7 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         The workbench provides many action definitions.
       </documentation>
    </annotation>
 

@@ -15,9 +15,7 @@ the active editor.  The user can make a view
 visible from the View menu or close it from the 
 view local title bar. 
 &lt;p&gt;
-In order to reduce the visual clutter in the 
-Perspective menu, views should be grouped 
-using categories. Each category will create a submenu.
+In order to reduce the visual clutter in the Show View Dialog, views should be grouped using categories.
    </documentation>
 </annotation>
 
@@ -30,21 +28,21 @@ using categories. Each category will create a submenu.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -193,15 +191,18 @@ practice to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides a number of standard views 
-including Navigator, Properties, Outline and Tasks. 
-From the user point of view, these views are no 
-different from any other view provided by the plug-ins. 
-All the views can be shown from the View menu. 
-The position of a view is persistent: it is saved 
-when the view is closed and restored when the view 
-is reopened in a single session.  
-The position is also persisted between workbench sessions.
+         The workbench provides a number of standard views including Navigator, Properties, Outline and Tasks. From the user point of view, these views are no different from any other view provided by the plug-ins. All the views can be shown from the "Show View" submenu of the "Window" menu. The position of a view is persistent: it is saved when the view is closed and restored when the view is reopened in a single session.  The position is also persisted between workbench sessions.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

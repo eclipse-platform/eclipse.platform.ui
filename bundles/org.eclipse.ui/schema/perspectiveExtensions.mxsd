@@ -26,21 +26,21 @@ are appended to the initial definition.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -64,8 +64,7 @@ are appended to the initial definition.
          <attribute name="targetID" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the perspective (as specified in the registry) 
-into which the contribution is made.
+                  the unique identifier of the perspective (as specified in the registry) into which the contribution is made.
                </documentation>
             </annotation>
          </attribute>
@@ -77,8 +76,7 @@ into which the contribution is made.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the action set which will 
-be added to the perspective.
+                  the unique identifier of the action set which will be added to the perspective.
                </documentation>
             </annotation>
          </attribute>
@@ -90,8 +88,7 @@ be added to the perspective.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the view which will be added to the 
-perspective "Show View" menu.
+                  the unique identifier of the view which will be added to the perspective's "Show View" submenu of the "Window" menu.
                </documentation>
             </annotation>
          </attribute>
@@ -103,7 +100,7 @@ perspective "Show View" menu.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the perspective which will be added to the perspective "Open" menu.
+                  the unique identifier of the perspective which will be added to the perspective's "Open Perspective" submenu of the "Window" menu.
                </documentation>
             </annotation>
          </attribute>
@@ -115,7 +112,7 @@ perspective "Show View" menu.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the new wizard which will be added to the perspective "File New..." menu.
+                  the unique identifier of the new wizard which will be added to the perspective's "New" submenu of the "File" menu.
                </documentation>
             </annotation>
          </attribute>
@@ -127,24 +124,30 @@ perspective "Show View" menu.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of the view which will be added to the perspective layout.
+                  the unique identifier of the view which will be added to the perspective layout.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="relative" type="string" use="required">
             <annotation>
                <documentation>
-                  the ID of a view which already exists in the perspective. 
-This will be used as a reference point for placement of 
-the view.  The relationship between these two views 
-is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
+                  the unique identifier of a view which already exists in the perspective.  This will be used as a reference point for placement of the view.  The relationship between these two views is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="relationship" use="required">
             <annotation>
                <documentation>
-                  
+                  specifies the relationship between &lt;samp&gt;id&lt;/samp&gt; and
+&lt;samp&gt;relative&lt;/samp&gt;. 
+The following values are supported:
+&lt;ul&gt;
+&lt;b&gt;fast&lt;/b&gt; - the view extension will be created as a fast view.
+&lt;br&gt;&lt;b&gt;stack&lt;/b&gt; - the view extension will be stacked with the relative
+view in a folder.
+&lt;br&gt;&lt;b&gt;left, right, top, bottom&lt;/b&gt; - the view extension will be placed
+beside the relative view. In this case a &lt;samp&gt;ratio&lt;/samp&gt; must also
+be defined.&lt;/ul&gt;
                </documentation>
             </annotation>
             <simpleType>
@@ -167,7 +170,7 @@ is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
          <attribute name="ratio" type="string">
             <annotation>
                <documentation>
-                  
+                  the percentage of area within the relative view which will be donated to the view extension. If the view extension is a fast view, the ratio is the percentage of the workbench the fast view will cover when active. This must be defined as a floating point value and lie between 0.05 and 0.95.
                </documentation>
             </annotation>
          </attribute>
@@ -225,7 +228,7 @@ added beside the Resource Navigator.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         The items defined within the perspective extension are contributed to the initial contents of the target perspective.  Following this, the user may remove any contribution or add others to a perspective from within the workbench user interface.
       </documentation>
    </annotation>
 
@@ -235,6 +238,16 @@ added beside the Resource Navigator.
       </appInfo>
       <documentation>
          
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

@@ -6,26 +6,13 @@
       <meta.schema plugin="org.eclipse.ui" id="propertyPages" name="Property Pages"/>
    </appInfo>
    <documentation>
-      Property pages offer an alternative to making object properties
-available for viewing and editing through the workbenchProperties
-view. Properties may be restrictive if editing requires controls
-that cannot be created in-place due to their size. The problem
-issolved by offering a button with a "..." label that launches
-an editor in a separate dialog box. However, if many of the properties
-requirethis solution, it may be better to relocate them into
-property pages. Another reason to use property pages would be
-when a number ofproperties logically go together and need to
-be clustered in a page, rather than scattered in the property
-sheet (this problem may bepartially solved by grouping properties
-in the property sheet together). In some applications, it may
-even make sense to expose someproperties via the property sheet,
-and some via the property pages. 
+      This extension point is used to add additional property page for objects of a given type.  Once defined, these property pages will appear in the Properties Dialog for objects of that type. 
 &lt;p&gt;
-Property pages are shown in
-a dialog box that is normally visible when Properties menu item
-is selected on a pop-up menu for an object.In addition to the
-object class, the name filter can optionally be supplied to register
-property pages only for specific object types.
+A property page is a user friendly way to interact with the properties of an object.  Unlike the Properties view, which restricts the space available for editing an object property, a property page may benefit from the freedom to define larger, more complex controls with labels, icons, etc.  Properties which logically go together may also be clustered in a page, rather than scattered in the property sheet. However, in most applications it will be appropriate to expose some properties of an object via the property sheet and some via the property pages. 
+&lt;p&gt;
+Property pages are shown in a dialog box that is normally visible when the "Properties" menu item is selected on a pop-up menu for an object. In addition to the object class, the name filter can optionally be supplied to register property pages only for specific object types. 
+&lt;p&gt;
+If these filtering mechanisms are inadequate a property page may use the filter mechanism.  In this case the attributes of the target object are described in a series of key value pairs.  The attributes which apply to the selection are type specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
    </documentation>
 </annotation>
 
@@ -37,21 +24,21 @@ property pages only for specific object types.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -105,8 +92,7 @@ property pages only for specific object types.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;
-interface.
+                  a fully qualified name of the class that implements &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.dialogs.PropertyPage:org.eclipse.ui.IWorkbenchPropertyPage"/>
@@ -162,13 +148,14 @@ define the target object for a property page.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point="org.eclipse.ui.propertyPages"&gt; 
-      &lt;page 
-         id="com.xyz.projectPage" 
-         name="XYZ Java Properties" 
-         objectClass="org.eclipse.core.resources.IFile" 
-         class="com.xyz.ppages.JavaPropertyPage" 
-         nameFilter="*.java"&gt; 
-      &lt;/page&gt; 
+        &lt;page 
+            id="com.xyz.projectPage" 
+            name="XYZ Java Properties" 
+            objectClass="org.eclipse.core.resources.IFile" 
+            class="com.xyz.ppages.JavaPropertyPage" 
+            nameFilter="*.java"&gt; 
+            &lt;filter name="readOnly" value="true"/&gt; 
+        &lt;/page&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -180,7 +167,7 @@ define the target object for a property page.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Attribute &lt;samp&gt;class&lt;/samp&gt; must specify a fully qualified name 
+         The attribute &lt;samp&gt;class&lt;/samp&gt; must specify a fully qualified name 
 of the class that implements 
 &lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/samp&gt;.
       </documentation>
@@ -199,6 +186,17 @@ resources: all objects showing up in the workbench
 (even domain specific objects created by the plug-ins) 
 may have property pages and other plug-ins are 
 allowed to register property pages for them.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

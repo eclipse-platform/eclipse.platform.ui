@@ -114,11 +114,7 @@ The label should include mnemonic information.
             <annotation>
                <documentation>
                   a location of the menu starting from the root of the menu
-bar. If omitted, the menu will be added between the 
-Perspective and Window menus on the menu bar. Each token 
-in the path must refer to an existing menu in the 
-workbench, except the last one, which should represent a 
-named group in the last menu in the path.
+bar. If omitted, the menu will be added before the Window menu on the menu bar. Each token in the path must refer to an existing menu in the workbench, except the last one, which should represent a named group in the last menu in the path.
                </documentation>
             </annotation>
          </attribute>
@@ -180,6 +176,13 @@ information (see example).
                   an integer that is used to specify the keycode of the accelerator for the action.
 This is the integer value resulting from a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) and a character code.
 For example, for Ctrl+Z, use SWT.CTRL|'Z' = (1&lt;&lt;18)|'Z' = 262234.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="definitionId" type="string">
+            <annotation>
+               <documentation>
+                  the id specified in the action definition. Only needed when an action set specifies accelerators through the key binding service. See the extension points Action Definitions and Accelerator Sets
                </documentation>
             </annotation>
          </attribute>
@@ -304,7 +307,7 @@ If this attribute is true, the class attribute should not be supplied.
          <attribute name="allowLabelUpdate" type="boolean">
             <annotation>
                <documentation>
-                  only applies if retarget is ture.  If this attribute is true, then the retarget action will update its label and tooltip from its handler.
+                  only applies if retarget is true.  If this attribute is true, then the retarget action will update its label and tooltip from its handler.
                </documentation>
             </annotation>
          </attribute>
@@ -315,6 +318,15 @@ If this attribute is true, the class attribute should not be supplied.
 If this attribute is specified and the condition is met, the action is enabled.
 If the condition is not met, the action is disabled.
 If no attribute is specified, the action is enabled for any number of items selected.
+The following attribute formats are supported: 
+&lt;ul&gt;
+&lt;br&gt;&lt;b&gt;!&lt;/b&gt; - 0 items selected
+&lt;br&gt;&lt;b&gt;?&lt;/b&gt; - 0 or 1 items selected
+&lt;br&gt;&lt;b&gt;+&lt;/b&gt; - 1 or more items selected
+&lt;br&gt;&lt;b&gt;multiple, 2+&lt;/b&gt; - 2 or more items selected
+&lt;br&gt;&lt;b&gt;n&lt;/b&gt; - a precise number of items selected.&amp;nbsp; Example: 4.
+&lt;br&gt;&lt;b&gt;*&lt;/b&gt; - any number of items selected&lt;/ul&gt;
+&lt;/ul&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -380,6 +392,11 @@ short description of the action set.
    </element>
 
    <element name="enablement">
+      <annotation>
+         <documentation>
+            In version 2.0 of Eclipse, an enablement element may be used to define the enablement for the action.  For more information on the use of enablement element, refer to actionExpressions.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="and"/>
@@ -587,11 +604,22 @@ The latter should be implemented in cases
 where &lt;samp&gt;pulldown&lt;/samp&gt; is &lt;samp&gt;true&lt;/samp&gt;.  
 This class is loaded as late as possible to avoid 
 loading the entire plug-in before it is really needed.
-
+&lt;p&gt;
 The enablement criteria for an action extension is initially defined by &lt;samp&gt;enablesFor&lt;/samp&gt;, &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt;.
 However, once the action delegate has been instantiated, it may control the action enable state directly within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
-
+&lt;p&gt;
 It is important to note that the workbench does not generate menus on a plug-in's behalf.  Menu paths must reference menus that already exist.
+&lt;p&gt;
+Action and menu labels may contain special characters that encode mnemonics and accelerators using the following rules:
+&lt;ol&gt;
+&lt;li&gt;
+Mnemonics are specified using the ampersand ('&amp;amp;') character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity.&lt;/li&gt;
+&lt;li&gt;
+Optional accelerators are specified at the end of the name string, using &lt;samp&gt;@&lt;/samp&gt; followed by a series of modifiers and the final accelerator character (for example, &lt;samp&gt;&amp;amp;amp;Save@Ctrl+S&lt;/samp&gt;). Modifier can be chained using
+the '+' sign as the delimiter (as in &lt;samp&gt;@Ctrl+Shift+S&lt;/samp&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the Eclipse Platform API was frozen.
+Changing the behavior now would break every plug-in which relies upon theexisting behavior.
       </documentation>
    </annotation>
 
@@ -601,9 +629,7 @@ It is important to note that the workbench does not generate menus on a plug-in'
       </appInfo>
       <documentation>
          Plug-ins may use this extension point to add new top level
-menus (for example, Debug). Plug-ins can
-also define named groups which allow other plug-ins to 
-contribute their actions into them. 
+menus (for example, Debug). Plug-ins can also define named groups which allow other plug-ins to contribute their actions into them. 
 
 &lt;p&gt;
 Top level menus are created by using the following values
@@ -631,6 +657,17 @@ window. For example, adding a new workbench view
 results in a new menu item appearing in the
 Perspective menu. Import, Export, and New Wizards 
 extensions are also added automatically to the window.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

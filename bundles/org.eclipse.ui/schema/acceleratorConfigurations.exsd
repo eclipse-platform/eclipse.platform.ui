@@ -3,10 +3,16 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="fontDefinitions" name="Font Definitions"/>
+      <meta.schema plugin="org.eclipse.ui" id="acceleratorConfigurations" name="Accelerator Configurations"/>
    </appInfo>
    <documentation>
-      This extension point is used to register fonts with the JFace FontRegistry and with the workbench preference store for use by the Fonts preference page.
+      This extension point is used to register accelerator configuration extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may be active at a time. 
+&lt;p&gt;
+An accelerator configuration represents a general style or theme of accelerators for Workbench actions. For example, the Workbench provides the "Emacs" accelerator configuration. When the "Emacs" accelerator configuration is active, accelerators belonging to accelerator sets registered to the "Emacs" configuration are active. These accelerators are defined to mimic the accelerators in Emacs (a popular text editor amongst developers). 
+&lt;p&gt;
+An accelerator set registers with an accelerator configuration by listing the configuration's id as the value of its "configurationId" attribute (see the Accelerator Sets extension point). Many accelerator sets can be registered to the same accelerator configuration. 
+&lt;p&gt;
+Note the accelerator configuration name presented to the user is the same as the value of the attribute "name" of the extension element of org.eclipse.ui.acceleratorConfigurations extension point.
    </documentation>
 </annotation>
 
@@ -38,41 +44,30 @@
       </complexType>
    </element>
 
-   <element name="fontDefinition">
+   <element name="acceleratorConfiguration">
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that can be used to identify this font definition.
+                  a unique name that can be used to identify this accelerator configuration.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name of the font to be presented to the user.
+                  a translatable name of the accelerator configuration to be presented to the user.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="defaultsTo" type="string" use="required">
+         <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of another  font definition that is the default setting for the receiver. When there is no preference for this font the font registry will have the value of defaultsTo set for it in the registry.
+                  a short description of the accelerator configuration.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="description" type="string">
-      <annotation>
-         <documentation>
-            a short description of the fonts usage
-         </documentation>
-      </annotation>
    </element>
 
    <annotation>
@@ -80,7 +75,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Release 2.1
+         Release 2.0
       </documentation>
    </annotation>
 
@@ -89,27 +84,21 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of an a font definition extension:
+         Following is an example of an accelerator configuration extension: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.fontDefinition"&gt; 
-      &lt;fontDefinition 
-         id="org.eclipse.examples.textFont" 
-         label="Text"&gt; 
-         &lt;description&gt;
-            The text font
-         &lt;/description&gt;
-      &lt;/fontDefinition&gt; 
-
-      &lt;fontDefinition 
-        id="org.eclipse.examples.userFont" 
-        label="User"
-        defaultsTo="org.eclipse.jface.textFont"&gt; 
-        &lt;description&gt;
-           The user font
-        &lt;/description&gt;
-      &lt;/fontDefinition&gt; 
-   &lt;/extension&gt; 
+   &lt;extension point="org.eclipse.ui.acceleratorConfigurations"&gt; 
+      &lt;acceleratorConfiguration 
+        id="org.eclipse.ui.viAcceleratorConfiguration" 
+        name="VI" 
+        description="VI style accelerator configuration"&gt; 
+      &lt;/acceleratorConfiguration&gt; 
+      &lt;acceleratorConfiguration 
+        id="org.eclipse.ui.jonDoeAcceleratorConfiguration" 
+        name="Jon Doe" 
+        description="Jon Doe's personal accelerator configuration"&gt; 
+      &lt;/acceleratorConfiguration&gt; 
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -120,15 +109,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The defaultsTo tag is used as a directive by
-the Workbench to set the value of the font definition to the value of defaultsTo
-whenever the defaultsTo fontDefinition is updated. This only occurs if the
-fontDefinition is at its default value - once it is set by the user this updates
-will not occur. The workbench provides 4 fonts: 
-&lt;P&gt;&lt;b&gt;org.eclipse.jface.bannerfont&lt;/b&gt;. The banner font is used in wizard banners.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.dialogfont&lt;/b&gt;. The dialog font is the font for widgets in dialogs.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.headerfont&lt;/b&gt;. The header font is used for section headers in composite text pages.&lt;br&gt;
-&lt;b&gt;org.eclipse.jface.textfont&lt;/b&gt;. The text font is used by text editors.
+         
       </documentation>
    </annotation>
 
@@ -137,8 +118,7 @@ will not occur. The workbench provides 4 fonts:
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides the font
-definitions for the text, dialog, banner and header fonts.
+         The workbench provides the Default and Emacs accelerator configurations.
       </documentation>
    </annotation>
 

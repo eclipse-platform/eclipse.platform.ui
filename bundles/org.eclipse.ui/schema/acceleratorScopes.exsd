@@ -3,19 +3,18 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="projectNatureImages" name="Project Nature Images"/>
+      <meta.schema plugin="org.eclipse.ui" id="acceleratorScopes" name="Accelerator Scopes"/>
    </appInfo>
    <documentation>
-      This extension point is used to associate an image with a project nature.
-The supplied image is used to form a composite image consisting of the standard project image combined with the image of its nature.
-The supplied image is drawn over the top right corner of the base image.
+      This extension point is used to register accelerator scope extensions. Accelerator scopes are scopes for which accelerator sets may be applicable. For example, if an accelerator set is applicable for the scope entitled "Text Editor Scope", the accelerators of that accelerator set will only operate if the "Text Editor Scope" or one of its children is active (in other words, if the active part is a participating text editor). 
+&lt;p&gt;
+An accelerator set declares what scope it is applicable for by listing the scope's id as the value of its "scopeId" attribute (see the Accelerator Sets extension point). Many accelerator sets can be applicable for the same accelerator scope.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="image" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,57 +40,69 @@ The supplied image is drawn over the top right corner of the base image.
       </complexType>
    </element>
 
-   <element name="image">
+   <element name="acceleratorScope">
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that will be used to identify this nature image.
+                  a unique name that can be used to identify this accelerator scope.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="natureId" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique name of the nature for which the image is being supplied.
+                  a translatable name of the accelerator scope.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string" use="required">
+         <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
-                  a relative name of the image that will be associated with this perspective.
+                  a short description of the accelerator scope.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parentScope" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute which represents a scope which is active whenever this scope is active. For most scopes, org.eclipse.ui.globalScope will be the parent scope
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="description" type="string">
-   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         Release 2.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a nature image extension:
-
+         Following is an example of an accelerator scope extension: 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.ui.projectNatureImages"&gt;
-  &lt;image 
-   id="org.eclipse.ui.javaNatureImage"
-   natureId="Resource"
-   icon="icons/javaNature.gif"&gt;
-  &lt;/image&gt;
- &lt;/extension&gt;
+   &lt;extension point="org.eclipse.ui.acceleratorScopes"&gt; 
+      &lt;acceleratorScope 
+        id="org.eclipse.ui.globalScope" 
+        name="Global" 
+        description="Action accelerator key applicable to all views and editors unless explicitly overridden."&gt; 
+      &lt;/acceleratorScope&gt; 
+      &lt;acceleratorScope 
+        id="org.eclipse.ui.javaEditorScope" 
+        name="Java Editor" 
+        description="Action accelerator key applicable only when java editor active." 
+        parentScope="org.eclipse.ui.globalScope"&gt; 
+      &lt;/acceleratorScope&gt; 
+   &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -102,7 +113,7 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;natureId&lt;/samp&gt; attribute is the nature id as defined by the plugin creating the project.
+         The method public IKeyBindingService getKeyBindingService() was added to IEditorSite.
       </documentation>
    </annotation>
 
@@ -111,7 +122,7 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         The workbench provides the Global accelerator scope and the Text Editor accelerator scope.
       </documentation>
    </annotation>
 

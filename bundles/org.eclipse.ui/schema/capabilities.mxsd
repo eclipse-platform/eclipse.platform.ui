@@ -6,13 +6,10 @@
       <meta.schema plugin="org.eclipse.ui" id="capabilities" name="Capabilities"/>
    </appInfo>
    <documentation>
-      This extension point is used to register project capability extensions.  Capabilities are the UI equivalent of CORE's project natures,
-and have a one-to-one relationship with project natures.  The workbench allows the user to add and remove capabilities from
-a project at any time using the properties dialog or in the new project wizard.
+      This extension point is used to register project capability extensions.  Capabilities are the UI equivalent of CORE's project natures, and have a one-to-one relationship with project natures.  The workbench allows the user to add and remove capabilities from a project at any time using the properties dialog or in the new project wizard.
 &lt;p&gt;
-Capabilities represent particular abilities of a project.  For example, a project may have a "Java" capability that allows the project's
-*.java files to be compiled using a Java compiler.
-If the roloe of the project changes over time, the project's capabilities can be modified to suit the new needs.
+Capabilities represent particular abilities of a project.  For example, a project may have a "Java" capability that allows the project's *.java files to be compiled using a Java compiler.
+If the role of the project changes over time, the project's capabilities can be modified to suit the new needs.
 For example, a project may start as a simple Java capability, but may later gain a new requirement to use JNI to some legacy library.
 The user may then add a "C++" capability (if one exists) to the project to meet this new requirement.
 &lt;p&gt;
@@ -20,6 +17,16 @@ Some capabilities may wish to handle the user interface for other capabilities.
 This generally occurs when a capability requires a number of other capabilities (note that prerequisite information is derived from the org.eclipse.core.resources.natures extension point).
 For example, a "Web" capability needs the "Java" capability to compile servlets, but may want to present a much more simpler page to configure the "Java" capability
 or maybe not even present any pages about the "Java" capability and just add it with appropriate defaults.
+&lt;p&gt;
+The install wizard for a capability is responsible for collecting the necessary information from the user in order to add its nature and the natures of any capabilities it handles the UI for. The install wizard must handle the situation where some or all of the required capabilities are already installed and configured. 
+&lt;p&gt;
+The uninstall wizard for a capability is responsible for collecting the necessary information from the user in order to remove its nature. Also must remove any other natures from capabilities that the user wants removed and the capability handles the UI for. These other capabilities that the user wants removed will be provided in the init method. 
+&lt;p&gt;
+Capabilities can specify which perspectives a user can switch to when added to the project. This allows the user to discover new perspectives that can take advantage of the new capabilities. Capabilities that handle the user interface for other capabilities also control the list of perspectives for these capabilities. For example, the "Web" capability handles the user interface for the "Java" capability it requires. The "Web" capability can choose to include the various Java perspectives, or not. 
+&lt;p&gt;
+The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. 
+&lt;p&gt;
+Note the capability name presented to the user comes from the attribute "name" in the extension element of the org.eclipse.core.resources.natures extension point.
    </documentation>
 </annotation>
 
@@ -32,21 +39,21 @@ or maybe not even present any pages about the "Java" capability and just add it 
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -141,7 +148,7 @@ and adding this capability's nature along will all other natures from capabiliti
                   a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.ui.ICapabilityUninstallWizard&lt;/samp&gt; interface.
 The wizard is responsible for collecting any necessary information from the user,
 and removing this capability's nature along with any other natures from capabilities that the user wants removed and this capability handles the UI for.
-If omitted, the workbench will provide a wizard that will remove this capability's nature from the project along with any other natures from capabilites that the user wants removed and this capability handles the UI for.
+If omitted, the workbench will provide a wizard that will remove this capability's nature from the project along with any other natures from capabilities that the user wants removed and this capability handles the UI for.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.ICapabilityUninstallWizard"/>
@@ -175,7 +182,7 @@ If omitted, the workbench will provide a wizard that will remove this capability
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  th unique identifier of another capability for which its UI will be handled.
+                  the unique identifier of another capability for which its UI will be handled.
                </documentation>
             </annotation>
          </attribute>
@@ -208,31 +215,46 @@ If omitted, the workbench will provide a wizard that will remove this capability
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.ui.capabilities"&gt;
-  &lt;category id="com.xyz.weather" name="Weather Elements"/&gt;
-  &lt;capability
-   id="com.xyz.snowCapability"
-   natureId="com.xyz.snowNature"
-   category="com.xyz.weather"
-   icon="./icons/snowCapability.gif"
-   installWizard="com.xyz.SnowCapabilityWizard"
-   description="Turn your project into a winter wonderland!"&gt;
-   &lt;handleUI id="com.xyz.waterCapability"/&gt;
-   &lt;perspectiveChoice id="com.xyz.skiPerspective"/&gt;
-   &lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
-  &lt;/capability&gt;
-  &lt;capability
-   id="com.xyz.waterCapability"
-   natureId="com.xyz.waterNature"
-   category="com.xyz.weather"
-   icon="./icons/waterCapability.gif"
-   installWizard="com.xyz.WaterCapabilityWizard"
-   installDetails="You will be asked to supply a locale id."
-   description="Turn your project into a waterly wonderland!"&gt;
-   &lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
-   &lt;perspectiveChoice id="com.xyz.drinkPerspective"/&gt;
-  &lt;/capability&gt;
- &lt;/extension&gt;
+   &lt;extension
+         point="org.eclipse.ui.capabilities"&gt;
+      &lt;category
+            name="Weather Elements"
+            id="com.xyz.weather"&gt;
+      &lt;/category&gt;
+      &lt;capability
+            installWizard="com.xyz.SnowCapabilityWizard"
+            icon="./icons/snowCapability.gif"
+            description="Turn your project into a winter wonderland!"
+            category="com.xyz.weather"
+            natureId="com.xyz.snowNature"
+            installDetails="You will be asked to supply a locale id."
+            id="com.xyz.snowCapability"&gt;
+         &lt;handleUI
+               id="com.xyz.waterCapability"&gt;
+         &lt;/handleUI&gt;
+         &lt;perspectiveChoice
+               id="com.xyz.skiPerspective"&gt;
+         &lt;/perspectiveChoice&gt;
+         &lt;perspectiveChoice
+               id="com.xyz.rainPerspective"&gt;
+         &lt;/perspectiveChoice&gt;
+      &lt;/capability&gt;
+      &lt;capability
+            installWizard="com.xyz.WaterCapabilityWizard"
+            icon="./icons/waterCapability.gif"
+            description="Turn your project into a watery wonderland!"
+            category="com.xyz.weather"
+            natureId="com.xyz.waterNature"
+            installDetails="You will be asked to supply a locale id."
+            id="com.xyz.waterCapability"&gt;
+         &lt;perspectiveChoice
+               id="com.xyz.rainPerspective"&gt;
+         &lt;/perspectiveChoice&gt;
+         &lt;perspectiveChoice
+               id="com.xyz.drinkPerspective"&gt;
+         &lt;/perspectiveChoice&gt;
+      &lt;/capability&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -245,7 +267,7 @@ If omitted, the workbench will provide a wizard that will remove this capability
       <documentation>
          The value of the &lt;samp&gt;installWizard&lt;/samp&gt; attribute must represent a class that implements &lt;samp&gt;org.eclipse.ui.ICapabilityInstallWizard&lt;/samp&gt; interface.
 The IProject passed in the init method will exist and can be queried for the instance of other natures.
-The cpability install wizard must not close nor delete the project passed in the init method.
+The capability install wizard must not close nor delete the project passed in the init method.
 &lt;p&gt;
 The value of the &lt;samp&gt;uninstallWizard&lt;/samp&gt; attribute must represent a class that implements &lt;samp&gt;org.eclipse.ui.ICapabilityUninstallWizard&lt;/samp&gt; interface.
 The IProject passed in the init method will exist and can be queried for the existence of other natures.
@@ -258,7 +280,7 @@ The capability uninstall wizard must not close nor delete the project passed in 
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbendh does not provide any capabilities.
+         The workbench does not provide any capabilities.
       </documentation>
    </annotation>
 
@@ -267,7 +289,9 @@ The capability uninstall wizard must not close nor delete the project passed in 
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

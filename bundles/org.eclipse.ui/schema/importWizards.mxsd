@@ -6,14 +6,9 @@
       <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
    </appInfo>
    <documentation>
-      This extension point provides for plugging in alternative import
-engines. 
-These engines will be shown as choices in the import dialog box.
-Wizards can be made unavailable for certain target objects 
-(current selection) using optional selection subelements. For
-example,
-an import wizard can be made available only for objects of type
-&lt;samp&gt;IProject&lt;/samp&gt;.
+      This extension point is used to register import wizard extensions. Import wizards appear as choices within the "Import Dialog" and are used to import resources into the workbench. 
+&lt;P&gt;
+Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
    </documentation>
 </annotation>
 
@@ -82,8 +77,7 @@ an import wizard can be made available only for objects of type
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements 
-               &lt;tt&gt;org.eclipse.ui.IImportWizard&lt;/tt&gt; interface
+                  a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt; interface
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IImportWizard"/>
@@ -93,7 +87,7 @@ an import wizard can be made available only for objects of type
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  an URI of the icon that will be used alongside the wizard name in the import engine listing
+                  a relative name of the icon that will be used alongside the wizard name in the import engine listing.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -106,8 +100,7 @@ an import wizard can be made available only for objects of type
    <element name="description" type="string">
       <annotation>
          <documentation>
-            an optional subelement whose body should represent a short description of the 
-         import engine functionality.
+            an optional subelement whose body should represent a short description of the import engine functionality.
          </documentation>
       </annotation>
    </element>
@@ -115,23 +108,21 @@ an import wizard can be made available only for objects of type
    <element name="selection">
       <annotation>
          <documentation>
-            an optional element that restricts the types and names of objects that can be selected 
-         when the wizard is invoked.
+            an optional element that restricts the types and names of objects that can be selected when the wizard is invoked.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional name filter that will be run against the target object name 
-               in order to calculate if the wizard applies to it
+                  an optional name filter.  Each object in the workbench selection must match the name filter to be passed to the wizard.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the target object class for which the wizard applies to
+                  fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -172,8 +163,7 @@ an import wizard can be made available only for objects of type
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent
- a name of the class that implements 
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent a name of the class that implements 
  &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt;.
       </documentation>
    </annotation>
@@ -183,8 +173,18 @@ an import wizard can be made available only for objects of type
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench comes preloaded with the basic import engines for
-files and directories.
+         The workbench comes preloaded with the basic import engines for files and directories.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 

@@ -7,7 +7,7 @@
    </appInfo>
    <documentation>
       This extension point is used to add new editors to the 
-workench.  A editor is a visual component within a 
+workbench.  A editor is a visual component within a 
 workbench page. It is typically used to edit or browse 
 a document or input object.  To open an editor, the user 
 will typically invoke "Open" on an &lt;samp&gt;IFile&lt;/samp&gt;.  
@@ -48,21 +48,21 @@ with it by any means except through the file system.
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -105,15 +105,7 @@ will use the icon provided by the operating system.
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  one or more tokens that will be used to recognize the type in
-the resource name. A resource type consists of its extension
-and an optional extended type. This allows definition of several
-types that have the same extension, but different extended 
-types (for example, registering different editors for different
-classes of XML files while still keeping the familiar *.xml extension).
-By specifying multiple extensions, it is possible to account
-for variations that can be found in the real world (for example,
-both "htm" and "html" are valid for hypertext documents).
+                  an optional field containing the list of file types understood by the editor.  This is a string containing comma separate file extensions.  For instance, an editor which understands hypertext documents may register for "htm, html".
                </documentation>
             </annotation>
          </attribute>
@@ -121,8 +113,7 @@ both "htm" and "html" are valid for hypertext documents).
             <annotation>
                <documentation>
                   a name of the class that implements &lt;samp&gt;org.eclipse.ui.IEditorPart&lt;/samp&gt;.
-This attribute may  be left undefined if this is an  external
-editor.
+  Attributes &lt;samp&gt;class&lt;/samp&gt; and &lt;samp&gt;command&lt;/samp&gt; are mutually exclusive.  If this attribute is defined then &lt;samp&gt;contributorClass&lt;/samp&gt; should also be defined.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorPart"/>
@@ -132,7 +123,7 @@ editor.
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  a command to run in order to launch an external editor. Attributes
+                  a command to run in order to launch an external editor. The executable command must be located on the system path or in the plug-in's directory. Attributes
 &lt;samp&gt;class&lt;/samp&gt; and &lt;samp&gt;command&lt;/samp&gt; are mutually exclusive.
                </documentation>
             </annotation>
@@ -141,11 +132,8 @@ editor.
             <annotation>
                <documentation>
                   a name of the class that implements 
-&lt;samp&gt;org.eclipse.ui.IEditorActionBarContributor&lt;/samp&gt;.
-This class provides for contributions to the workbench menu bar
-and toolbar when the editor is active. Only one instance of the
-contributor is made per editor ID, regardless of the number of
-editor instances currently opened.
+&lt;samp&gt;org.eclipse.ui.IEditorActionBarContributor&lt;/samp&gt;. The &lt;samp&gt;contributorClass&lt;/samp&gt; field should only be defined if the class field is defined.
+This class is used to add new actions to the workbench menu and tool bar which reflect the features of the editor type.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorActionBarContributor"/>
@@ -177,7 +165,7 @@ documents may register for "ejb.htm, ejb.html".
          <attribute name="launcher" type="string">
             <annotation>
                <documentation>
-                  - the name of a class which implements 
+                  the name of a class which implements 
 &lt;samp&gt;org.eclipse.ui.IEditorLauncher&lt;/samp&gt;. 
 A launcher will open an external editor. 
 Attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt; and 
@@ -251,8 +239,8 @@ editor of a particular type.  For instance, there may
 be one or more open Java Editors.  To avoid the creation
 of duplicate actions and action images the editor 
 concept has been split into two.  An 
-&lt;samp&gt;IEditorActionBarContributor&lt;/samp&gt; is responsable
-for the creation of actions.  The editor is responsable 
+&lt;samp&gt;IEditorActionBarContributor&lt;/samp&gt; is responsible
+for the creation of actions.  The editor is responsible 
 for action implementation.  Furthermore, the contributor 
 is shared by each open editor.  As a result of this 
 design there is only one set of actions for one or 
@@ -286,9 +274,17 @@ editor is closed, menus and actions will be removed.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench does not provide any built-in content editors, but the 
-end user product may contain some as part of the shipping bundle. 
-In that case, editors will be registered as extensions using the syntax described above.
+         The workbench provides a "Default Text Editor". The end user product may contain other editors as part of the shipping bundle. In that case, editors will be registered as extensions using the syntax described above.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 
