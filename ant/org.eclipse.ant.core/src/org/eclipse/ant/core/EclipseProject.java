@@ -111,10 +111,10 @@ protected void fireBuildStarted() {
 	super.fireBuildStarted();
 }
 /**
- * Sends a target started notification to all the listeners when a top level target 
+ * Sends a target started notification to all the listeners when an execute target 
  * has just been started.
  */
-protected void fireTopLevelTargetStarted(Target target) {
+protected void fireExecuteTargetStarted(Target target) {
     BuildEvent event = new BuildEvent(target);
     Vector buildListeners = getBuildListeners();
     for (int i = 0; i < buildListeners.size(); i++) {
@@ -123,10 +123,10 @@ protected void fireTopLevelTargetStarted(Target target) {
     }
 }
 /**
- * Sends a target finished notification to all the listeners when a top level target
+ * Sends a target finished notification to all the listeners when an execute target
  * has just been finished.
  */
-protected void fireTopLevelTargetFinished(Target target, Throwable exception) {
+protected void fireExecuteTargetFinished(Target target, Throwable exception) {
     BuildEvent event = new BuildEvent(target);
     event.setException(exception);
     Vector buildListeners = getBuildListeners();
@@ -160,15 +160,6 @@ public void init() throws BuildException {
 	// the platform we need to add them here.  
 	addTaskDefinition("ant", EclipseAnt.class);
 	addTaskDefinition("javac", EclipseJavac.class);
-	addTaskDefinition("incremental", IncrementalBuild.class);
-	addTaskDefinition("eclipse.incremental", IncrementalBuild.class);
-	addTaskDefinition("refreshLocal", RefreshLocal.class);
-	addTaskDefinition("eclipse.refreshLocal", RefreshLocal.class);
-	addTaskDefinition("eclipse.createProject", CreateProject.class);
-	addTaskDefinition("eclipse.deleteProject", DeleteProject.class);
-	addTaskDefinition("eclipse.moveProject", MoveProject.class);
-	addTaskDefinition("eclipse.copyProject", CopyProject.class);
-	addTaskDefinition("eclipse.convertPath", ConvertPath.class);
 	addDataTypeDefinition("commapatternset", CommaPatternSet.class);
 	addDataTypeDefinition("command", CommandDataType.class);
 	System.setProperty("ant.regexp.matcherimpl", "org.eclipse.ant.core.XercesRegexpMatcher");
@@ -221,12 +212,15 @@ public Object internalCreateDataType(String typeName) throws BuildException {
  */
 public void executeTarget(String targetName) throws BuildException {
 	Target targetToExecute = (Target) getTargets().get(targetName);
+	if (targetToExecute == null)
+		// can happen if the user has specified a target name that is not valid
+		throw new BuildException(Policy.bind("exception.targetDoesNotExist", targetName));
     try {
-        fireTopLevelTargetStarted(targetToExecute);
+        fireExecuteTargetStarted(targetToExecute);
         super.executeTarget(targetName);
-        fireTopLevelTargetFinished(targetToExecute, null);
+        fireExecuteTargetFinished(targetToExecute, null);
     } catch(RuntimeException exc) {
-        fireTopLevelTargetFinished(targetToExecute, exc);
+        fireExecuteTargetFinished(targetToExecute, exc);
         throw exc;
     }
 }
