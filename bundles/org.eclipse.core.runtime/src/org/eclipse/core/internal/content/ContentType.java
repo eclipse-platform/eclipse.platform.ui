@@ -31,7 +31,21 @@ public class ContentType implements IContentType {
 	private static final int USER_DEFINED_SPEC = IGNORE_USER_DEFINED;
 	final static byte VALID = 1;
 
-	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement describerElement) {
+	private ContentType aliasTarget;
+	private String baseTypeId;
+	private IContentType[] children;
+	private String defaultCharset;
+	private IConfigurationElement contentTypeElement;
+	private boolean failedDescriberCreation;
+	private List fileSpecs;
+	private ContentTypeManager manager;
+	private String name;
+	private String namespace;
+	private byte priority;
+	private String simpleId;
+	private byte validation;
+
+	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(manager);
 		contentType.simpleId = simpleId;
 		contentType.namespace = namespace;
@@ -45,7 +59,7 @@ public class ContentType implements IContentType {
 				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | PRE_DEFINED_SPEC));
 		}
 		contentType.defaultCharset = defaultCharset;
-		contentType.describerElement = describerElement;
+		contentType.contentTypeElement = contentTypeElement;
 		contentType.baseTypeId = baseTypeId;
 		return contentType;
 	}
@@ -103,20 +117,6 @@ public class ContentType implements IContentType {
 		return result.substring(0, result.length() - 1);
 	}
 
-	private ContentType aliasTarget;
-	private String baseTypeId;
-	private IContentType[] children;
-	private String defaultCharset;
-	private IConfigurationElement describerElement;
-	private boolean failedDescriberCreation;
-	private List fileSpecs;
-	private ContentTypeManager manager;
-	private String name;
-	private String namespace;
-	private byte priority;
-	private String simpleId;
-	private byte validation;
-
 	public ContentType(ContentTypeManager manager) {
 		this.manager = manager;
 	}
@@ -166,12 +166,19 @@ public class ContentType implements IContentType {
 		return defaultCharset;
 	}
 
+	public int getDepth() {
+		ContentType baseType = (ContentType) getBaseType();
+		if (baseType == null)
+			return 0;
+		return 1 + baseType.getDepth();
+	}
+
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
-		if (!failedDescriberCreation && describerElement != null)
+		if (!failedDescriberCreation && contentTypeElement.getChildren("describer").length > 0)
 			try {
-				return (IContentDescriber) describerElement.createExecutableExtension("class"); //$NON-NLS-1$
+				return (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
 			} catch (CoreException ce) {
 				// ensure this is logged once during a session
 				failedDescriberCreation = true;

@@ -65,9 +65,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		String[] fileExtensions = ContentType.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
 		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
-		// only the first one will be taken
-		IConfigurationElement[] describerElements = contentTypeCE.getChildren("describer"); //$NON-NLS-1$		
-		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, describerElements.length > 0 ? describerElements[0] : null);
+		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, contentTypeCE);
 	}
 
 	protected IConfigurationElement[] getConfigurationElements() {

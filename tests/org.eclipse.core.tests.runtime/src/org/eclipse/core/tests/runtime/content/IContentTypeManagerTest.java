@@ -22,8 +22,10 @@ import org.osgi.framework.Bundle;
 
 public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><root/>";
-	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root/>";
-	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root/>";
+	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><some-element/>";
+	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><some-element/>";
+	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root-element/>";
+	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><some-element/>";
 	private final static String BOM_UTF_32_BE = "\u0000\u0000\u00FE\u00FF";
 	private final static String BOM_UTF_32_LE = "\u00FF\u00FE\u0000\u0000";
 	private final static String BOM_UTF_16_BE = "\u00FE\u00FF";
@@ -93,11 +95,19 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
+		// if only inappropriate is provided, none will be selected
 		assertNull("1.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate}));
+		// if inappropriate and appropriate are provided, appropriate will be selected		
 		assertEquals("2.0", appropriate, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate}));
+		// if inappropriate, appropriate and a more specific appropriate type are provided, the specific type will be selected		
 		assertEquals("3.0", appropriateSpecific1, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1}));
 		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
-		assertNull("4.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}));
+		// if all are provided, the more specific types will appear before the more generic types
+		IContentType[] selected = contentTypeManager.findContentTypesFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2});
+		assertEquals("4.0", 3, selected.length);		
+		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
+		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
+		assertTrue("4.3", appropriate == selected[2]);
 	}
 
 	public void testContentDescription() throws IOException {
@@ -261,6 +271,15 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 			//remove installed bundle
 			installed.uninstall();
 		}
+	}
+
+	public void testRootElementAndDTDDescriber() throws IOException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType rootElement = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".root-element");
+		IContentType dtdElement = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".dtd");
+		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, "ISO-8859-1"), "fake.xml");
+		assertTrue("1.0", contentTypes.length > 0);
+		assertEquals("1.1", rootElement, contentTypes[0]);
 	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {

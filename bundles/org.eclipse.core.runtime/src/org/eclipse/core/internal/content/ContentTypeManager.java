@@ -34,6 +34,18 @@ public class ContentTypeManager implements IContentTypeManager {
 	private static ContentTypeManager instance;
 	private static final int MARK_LIMIT = 0x400;
 
+	private ContentTypeBuilder builder;
+	private Map catalog = new HashMap();
+	private Comparator comparator = new ContentTypeComparator();
+
+	private Comparator depthComparator = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			return ((ContentType) o2).getDepth() - ((ContentType) o1).getDepth();
+		}
+	};
+	private Map fileExtensions = new HashMap();
+	private Map fileNames = new HashMap();
+
 	/*
 	 * Returns the extension for a file name (omiting the leading '.'). 
 	 */
@@ -68,12 +80,6 @@ public class ContentTypeManager implements IContentTypeManager {
 				contents.reset();
 		}
 	}
-
-	private ContentTypeBuilder builder;
-	private Map catalog = new HashMap();
-	private Comparator comparator = new ContentTypeComparator();
-	private Map fileExtensions = new HashMap();
-	private Map fileNames = new HashMap();
 
 	/**
 	 * Constructs a new content type manager.
@@ -139,22 +145,18 @@ public class ContentTypeManager implements IContentTypeManager {
 	/*
 	 * "public" to make testing easier 
 	 */
-	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
+	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
 		ByteArrayInputStream buffer = readBuffer(contents);
 		if (buffer == null)
 			return null;
 		if (subset == null)
 			subset = getAllContentTypes();
-		List appropriate = new ArrayList();
-		for (int i = 0; i < subset.length; i++) {
-			buffer.reset();
-			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
-			if (describer != null)
-				if (describe(describer, buffer, null, 0) == IContentDescriber.INVALID)
-					continue;
-			appropriate.add(subset[i]);
-		}
-		return mostAppropriate(appropriate);
+		return internalFindContentTypesFor(buffer, subset);
+	}
+
+	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
+		IContentType[] result = findContentTypesFor(contents, subset);
+		return result.length > 0 ? result[0] : null;
 	}
 
 	/**
@@ -172,18 +174,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		// basic implementation just gets all content types		
 		IContentType[] associated = findContentTypesFor(fileName);
 		return associated.length == 0 ? null : associated[0];
-	}
-
-	/*
-	 * "public" to make testing easier 
-	 */
-	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		if (subset.length == 0)
-			return new IContentType[0];
-		ByteArrayInputStream buffer = readBuffer(contents);
-		if (buffer == null)
-			return new IContentType[0];
-		return internalFindContentTypesFor(buffer, subset);
 	}
 
 	/**
@@ -313,7 +303,12 @@ public class ContentTypeManager implements IContentTypeManager {
 			else
 				appropriate.add(subset[i]);
 		}
-		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
+		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
+		if (valid > 1)
+			Arrays.sort(result, 0, valid, depthComparator);
+		if (result.length - valid > 1)
+			Arrays.sort(result, valid, result.length, depthComparator);
+		return result;
 	}
 
 	ContentType internalGetContentType(String contentTypeIdentifier) {
@@ -343,12 +338,12 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 	}
 
-	private int moreAppropriate(IContentType type1, IContentType type2) {
-		return isBaseTypeOf(type1, type2) ? -1 : (isBaseTypeOf(type2, type1) ? 1 : 0);
+	private IContentType moreAppropriate(IContentType type1, IContentType type2) {
+		return isBaseTypeOf(type1, type2) ? type2 : type1;
 	}
 
 	//TODO: should take any user-defined precedences into account
-	//TODO: should pick a common ancestor if two different specific types are deemed appropriate
+	//TODO: could pick a common ancestor if two different specific types are deemed appropriate
 	private IContentType mostAppropriate(List candidates) {
 		int candidatesCount = candidates.size();
 		if (candidatesCount == 0)
@@ -359,18 +354,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		for (Iterator i = candidates.iterator(); i.hasNext();) {
 			IContentType current = (IContentType) i.next();
 			i.remove();
-			switch (moreAppropriate(current, chosen)) {
-				case -1 :
-					// currently chosen is more appropriate
-					break;
-				case 1 :
-					// a more appropriate content type has been found - elect it as the new chosen one
-					chosen = current;
-					continue;
-				default :
-					// two candidates are equally appropriate - cannot choose
-					return null;
-			}
+			chosen = moreAppropriate(chosen, current);
 		}
 		return chosen;
 	}
