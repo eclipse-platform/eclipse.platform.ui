@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2.0
+Bundle-ManifestVersion: 2
 Bundle-Name: %CarbonFragment.fragmentName
 Bundle-SymbolicName: org.eclipse.ui.carbon; singleton=true
 Bundle-Version: 3.1.0
