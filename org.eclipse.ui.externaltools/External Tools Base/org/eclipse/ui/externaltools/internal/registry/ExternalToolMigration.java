@@ -9,26 +9,15 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 
@@ -104,82 +93,6 @@ public final class ExternalToolMigration {
 	 */
 	private ExternalToolMigration() {
 		super();
-	}
-
-	/**
-	 * Loads the external tools from storage and
-	 * adds them to the registry.
-	 */
-	/*package*/
-	// This method is not called. It is left here in case 
-	// we decide to do tool migration in the future
-	private static void readInOldTools() {
-		readIn20Tools();
-		readIn21Tools();
-	}
-
-	private static void readIn21Tools() {
-	}
-
-	public static void readIn20Tools() {
-		boolean migrationSuccessful = true;
-		IPath path = ExternalToolsPlugin.getDefault().getStateLocation();
-		File file = path.append(STATE_FILE_NAME).toFile();
-		if (!file.exists())
-			return;
-
-		InputStreamReader reader = null;
-		try {
-			FileInputStream input = new FileInputStream(file);
-			reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
-			XMLMemento memento = XMLMemento.createReadRoot(reader);
-
-			// Get the external tool children element
-			IMemento[] tools = memento.getChildren(TAG_TOOL);
-			for (int i = 0; i < tools.length; i++) {
-				HashMap args = new HashMap();
-				IMemento[] entries = tools[i].getChildren(TAG_ENTRY);
-				for (int j = 0; j < entries.length; j++) {
-					String key = entries[j].getString(TAG_KEY);
-					if (key != null) {
-						String value = entries[j].getTextData();
-						args.put(key, value);
-					}
-				}
-				ILaunchConfigurationWorkingCopy config = configFromArgumentMap(args);
-				if (config != null) {
-					try {
-						config.doSave();
-					} catch (CoreException e) {
-						// Decide what to do when saving fails.
-					}
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// Silently ignore this...
-		} catch (IOException e) {
-			ExternalToolsPlugin.getDefault().log(ExternalToolsRegistryMessages.getString("ExternalToolMigration.File_I/O_error_with_reading_old_external_tools._1"), e);  //$NON-NLS-1$
-			migrationSuccessful = false;
-		} catch (WorkbenchException e) {
-			ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
-			System.err.println(ExternalToolsRegistryMessages.getString("ExternalToolMigration.Error_reading_old_external_tools._See_.log_file_for_more_details_2"));  //$NON-NLS-1$
-			migrationSuccessful = false;
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					ExternalToolsPlugin.getDefault().log(ExternalToolsRegistryMessages.getString("ExternalToolMigration.Unable_to_close_external_tool_old_state_reader._3"), e);  //$NON-NLS-1$
-				}
-			}
-		}
-
-		if (migrationSuccessful) {
-			if (!file.renameTo(path.append(STATE_FILE_NAME_OLD).toFile())) {
-				ExternalToolsPlugin.getDefault().log(ExternalToolsRegistryMessages.getString("ExternalToolMigration.Unable_to_rename"), null);  //$NON-NLS-1$
-				System.err.println(ExternalToolsRegistryMessages.getString("ExternalToolMigration.Unable_to_rename"));  //$NON-NLS-1$
-			}
-		}
 	}
 
 	/**
