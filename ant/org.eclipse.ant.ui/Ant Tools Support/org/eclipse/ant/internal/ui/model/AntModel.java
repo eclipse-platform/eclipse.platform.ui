@@ -442,7 +442,7 @@ public class AntModel implements IAntModel {
 	}
 
 	/**
-	 * Check that we have a default target defined and that the 
+	 * Check that if a default target is specified it exists and that the 
 	 * target dependencies exist. 
 	 */
 	private void checkTargets() {
@@ -450,14 +450,9 @@ public class AntModel implements IAntModel {
 			return;
 		}
 		String defaultTargetName= fProjectNode.getDefaultTargetName();
-		if (defaultTargetName == null || fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
-			//no default target
-			String message;
-			if (defaultTargetName == null) {
-				message= AntModelMessages.getString("AntModel.0"); //$NON-NLS-1$
-			} else {
-				message= MessageFormat.format(AntModelMessages.getString("AntModel.43"), new String[]{defaultTargetName}); //$NON-NLS-1$
-			}
+		if (defaultTargetName != null && fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
+			//no default target when one specified (default target does not have to be specified)
+			String message= MessageFormat.format(AntModelMessages.getString("AntModel.43"), new String[]{defaultTargetName}); //$NON-NLS-1$
 			IProblem problem= createProblem(message, fProjectNode.getOffset(), fProjectNode.getSelectionLength(), AntModelProblem.SEVERITY_ERROR);
 			acceptProblem(problem);
 			markHierarchy(fProjectNode, AntModelProblem.SEVERITY_ERROR, message);

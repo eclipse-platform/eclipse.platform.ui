@@ -1070,10 +1070,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		
         if (attributeNode != null) {
 			appendRequiredAttributes(replacement, attributeNode);
-        } else if ("project".equals(aTaskName)){ //$NON-NLS-1$
-        	replacement.append(" default=\"\""); //$NON-NLS-1$
-			additionalProposalOffset= 9;
-        }
+        } 
         
         if (hasNested) {
         	replacement.append("></"); //$NON-NLS-1$
