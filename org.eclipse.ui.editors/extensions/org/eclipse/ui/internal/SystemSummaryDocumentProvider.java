@@ -1,10 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
- 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,9 +27,12 @@ import java.util.TreeSet;
 
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.PreferenceExporter;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.jface.text.Document;
@@ -94,6 +103,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		appendProperties(writer);
 		appendFeatures(writer);
 		appendRegistry(writer);
+		appendUserPreferences(writer);
 		appendUpdateManagerLog(writer);
 		appendLog(writer);
 		writer.close();
@@ -199,6 +209,49 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		}
 	}	
 	
+	/*
+	 * Appends the preferences
+	 */
+	private void appendUserPreferences(PrintWriter writer) {
+		String tmpFile = ".tmpPrefFile"; //$NON-NLS-1$
+		IPath path = new Path(InternalPlatform.getMetaArea().getLocation().append(tmpFile).toOSString());
+		File file = path.toFile();
+		file.delete();
+		
+		try {
+			PreferenceExporter.exportPreferences(path);
+		} catch (CoreException e) {
+			writer.println("Error exporting user preferences " + e.toString()); //$NON-NLS-1$
+		}				
+		writer.println();
+		writer.println("*** User Preferences:"); //$NON-NLS-1$
+
+		BufferedReader reader = null;
+		try {
+			FileInputStream in = new FileInputStream(file);
+			reader = new BufferedReader(new InputStreamReader(in, "8859_1")); //$NON-NLS-1$
+			char[] chars= new char[8192];
+			int read= reader.read(chars);
+			while (read > 0) {
+				writer.write(chars, 0, read);
+				read= reader.read(chars);
+			}
+			reader.close();
+			reader= null;			
+		} catch (IOException e) {
+			writer.println("Error reading user preference file " + e.toString()); //$NON-NLS-1$
+		}
+					
+		if (reader != null) {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				writer.println("Error closing user preference file " + e.toString()); //$NON-NLS-1$
+			}
+		}	
+		file.delete();
+	}	
+		
 	/*
 	 * Appends the contents of the Plugin Registry.
 	 */
