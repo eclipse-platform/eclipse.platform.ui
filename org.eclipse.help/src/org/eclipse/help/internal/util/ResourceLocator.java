@@ -249,7 +249,7 @@ public class ResourceLocator {
 				URL zipFileURL =
 					pluginDesc.getPlugin().find(zipFilePath, override);
 				if (zipFileURL != null) {
-					URL realZipURL = Platform.resolve(zipFileURL);
+					URL realZipURL = Platform.asLocalURL(Platform.resolve(zipFileURL));
 					cached = realZipURL.toExternalForm();
 				} else {
 					cached = ZIP_NOT_FOUND;

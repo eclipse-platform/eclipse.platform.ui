@@ -130,7 +130,7 @@ public class WebappManager {
 		}
 
 		try {
-			String webappLocation = Platform.resolve(webappURL).getFile();
+			String webappLocation = Platform.asLocalURL(Platform.resolve(webappURL)).getFile();
 			return new Path(webappLocation);
 		} catch (IOException ioe) {
 			throw new CoreException(

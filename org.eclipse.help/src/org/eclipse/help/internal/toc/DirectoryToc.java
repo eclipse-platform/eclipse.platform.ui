@@ -133,7 +133,7 @@ public class DirectoryToc {
 		Collection ret = new ArrayList(0);
 		URL realZipURL;
 		try {
-			realZipURL = Platform.resolve(url);
+			realZipURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
 				HelpResources.getString("E036", url.toString()),
@@ -196,7 +196,7 @@ public class DirectoryToc {
 		Collection col = new ArrayList();
 		URL realURL;
 		try {
-			realURL = Platform.resolve(url);
+			realURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
 				HelpResources.getString("E038", url.toString()),

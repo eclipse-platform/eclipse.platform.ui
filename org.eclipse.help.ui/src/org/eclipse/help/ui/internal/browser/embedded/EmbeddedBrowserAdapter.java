@@ -60,11 +60,11 @@ public class EmbeddedBrowserAdapter implements IBrowser, Runnable {
 
 		try {
 			URL instURL =
-				Platform.resolve(
+				Platform.asLocalURL(Platform.resolve(
 					HelpUIPlugin
 						.getDefault()
 						.getDescriptor()
-						.getInstallURL());
+						.getInstallURL()));
 			installURL = instURL.toExternalForm();
 		} catch (IOException ioe) {
 			HelpUIPlugin.logError(
@@ -332,7 +332,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, Runnable {
 		for (Iterator it = installURLs.iterator(); it.hasNext();) {
 			URL installURL = (URL) it.next();
 			try {
-				installURL = Platform.resolve(installURL);
+				installURL = Platform.asLocalURL(Platform.resolve(installURL));
 			} catch (IOException ioe) {
 				continue;
 			}
@@ -386,7 +386,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, Runnable {
 		if (aboutURL == null)
 			return null;
 		try {
-			aboutURL = Platform.resolve(aboutURL);
+			aboutURL = Platform.asLocalURL(Platform.resolve(aboutURL));
 			Properties aboutProps = new Properties();
 			aboutProps.load(aboutURL.openStream());
 			String windowIconPathStr = (String) aboutProps.get("windowImage");
@@ -400,7 +400,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, Runnable {
 			windowIconURL = pfd.find(windowIconPath, override);
 			if (windowIconURL == null)
 				return null;
-			windowIconURL = Platform.resolve(windowIconURL);
+			windowIconURL = Platform.asLocalURL(Platform.resolve(windowIconURL));
 			return windowIconURL.toString();
 		} catch (IOException ioe) {
 			HelpUIPlugin.logError(
