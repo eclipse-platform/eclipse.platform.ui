@@ -71,13 +71,13 @@ public class AntLaunchWizard extends Wizard {
 		this.targetList = targetList;
 		this.antFile = antFile;
 		this.window = window;
-		String name = antFile.getFullPath().toString();
-		this.antTool = ExternalToolsPlugin.getDefault().getRegistry().getExternalTool(name);
+		String antPath = antFile.getFullPath().toString();
+		this.antTool = ExternalToolsPlugin.getDefault().getRegistry().getExternalTool(antPath);
 		if (this.antTool == null) {
 			this.antTool = new ExternalTool();
-			this.antTool.setName(name);
+			this.antTool.setName(antPath);
 			this.antTool.setType(ExternalTool.TOOL_TYPE_ANT);
-			this.antTool.setLocation(antFile.getLocation().toString());
+			this.antTool.setLocation(ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, antPath));
 			this.isNewTool = true;
 		}
 		setWindowTitle(ToolMessages.getString("AntLaunchWizard.shellTitle")); //$NON-NLS-1$;
