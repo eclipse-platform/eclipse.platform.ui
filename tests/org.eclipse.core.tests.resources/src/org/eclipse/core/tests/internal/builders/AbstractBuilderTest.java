@@ -119,7 +119,9 @@ public abstract class AbstractBuilderTest extends EclipseWorkspaceTest {
 		try {
 			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 		} catch (OperationCanceledException e) {
+			//ignore
 		} catch (InterruptedException e) {
+			//ignore
 		}
 	}
 }
