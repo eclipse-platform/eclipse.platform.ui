@@ -12,16 +12,22 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -58,6 +64,7 @@ public class WWinKeyBindingService {
 	private WorkbenchWindow window;
 
 	private AcceleratorMenu accMenu;
+	private final KeyModeContributionItem statusItem = new KeyModeContributionItem("KeyModeContribution"); //$NON-NLS-1$
 
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent event) {
@@ -85,8 +92,8 @@ public class WWinKeyBindingService {
 				i++;
 			}		
 		}
-	
-		window.getActionBars().getStatusLineManager().setMessage(stringBuffer.toString());
+
+		statusItem.setText(stringBuffer.toString());	
 	}
 
 	public void clear() {		
@@ -139,8 +146,10 @@ public class WWinKeyBindingService {
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
-	public WWinKeyBindingService(final WorkbenchWindow window) {
-		this.window = window;
+	public WWinKeyBindingService(WorkbenchWindow workbenchWindow) {
+		this.window = workbenchWindow;
+		window.getStatusLineManager().add(statusItem);
+		
 		IWorkbenchPage[] pages = window.getPages();
 		final IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
@@ -157,7 +166,8 @@ public class WWinKeyBindingService {
 			public void shellDeactivated(ShellEvent e) {
 				clear();
 			}
-		};		
+		};
+		// TODO: Just use getPartService to add listener.		
 		for(int i=0; i<pages.length;i++) {
 			pages[i].addPartListener(partListener);
 		}
@@ -372,5 +382,77 @@ public class WWinKeyBindingService {
 			accMenu.removeVerifyListener(verifyListener);
 		else
 			accMenu.addVerifyListener(verifyListener);
-	}    
+	}
+
+
+	/**
+	 * Contribution item for the status line.
+	 */
+	private static class KeyModeContributionItem extends ContributionItem {
+		/**
+		 * Precomputed label width hint
+		 */
+		private int fixedWidth = -1;
+		/**
+		 * Current message to display
+		 */
+		private String text;
+		/** 
+		 * The status line label widget
+		 */
+		private CLabel label;
+	
+		/**
+		 * Creates a new item with the given id.
+		 * 
+		 * @param id the item's id
+		 */
+		public KeyModeContributionItem(String id) {
+			super(id);
+		}
+	
+		/**
+		 * Sets the message for this contribution. If the message
+		 * is valid, then the contribution will be made visible,
+		 * otherwise the contribution will be hidden.
+		 *  
+		 * @param msg the message to show, or <code>null</code>
+		 */
+		public void setText(String msg) {
+			text = msg;
+			if (label != null && !label.isDisposed()) {
+				label.setText(text);
+			}
+			if (text == null || text.length() < 1) {
+				if (isVisible()) {
+					setVisible(false);
+					getParent().update(true);
+				}
+			} else {
+				if (!isVisible()) {
+					setVisible(true);
+					getParent().update(true);
+				}
+			}
+		}
+	
+		/*
+		 * @see IContributionItem#fill(Composite)
+		 */
+		public void fill(Composite parent) {
+			label= new CLabel(parent, SWT.SHADOW_IN);
+			StatusLineLayoutData data = new StatusLineLayoutData();
+			if (fixedWidth < 0) {
+				GC gc = new GC(parent);
+				gc.setFont(parent.getFont());
+				fixedWidth = gc.getFontMetrics().getAverageCharWidth() * 22;
+				gc.dispose();
+			}
+			data.widthHint = fixedWidth;
+			label.setLayoutData(data);
+		
+			if (text != null)
+				label.setText(text);
+		}
+	}
 }
