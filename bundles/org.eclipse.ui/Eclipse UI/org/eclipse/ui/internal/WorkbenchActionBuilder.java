@@ -558,6 +558,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	private void createShortcutBar() {
 		ToolBarManager shortcutBar = window.getShortcutBar();
+		shortcutBar.add(new PerspectiveContributionItem(window));
 		shortcutBar.add(new Separator(window.GRP_PAGES));
 		shortcutBar.add(new Separator(window.GRP_PERSPECTIVES));
 		shortcutBar.add(new Separator(window.GRP_FAST_VIEWS));
