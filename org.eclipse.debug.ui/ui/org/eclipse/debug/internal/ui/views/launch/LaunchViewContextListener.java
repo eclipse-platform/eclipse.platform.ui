@@ -283,10 +283,24 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * @see org.eclipse.ui.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.ui.contexts.ContextManagerEvent)
 	 */
 	public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
-		contextActivated(contextManagerEvent.getEnabledContexts());
-		contextsDisabled(contextManagerEvent.getDisabledContexts());
+		String[] enabled = getNewlyEnabledContexts(contextManagerEvent);
+		String[] disabled = getNewlyDisabledContexts(contextManagerEvent);
+		contextActivated(enabled);
+		contextsDisabled(disabled);
 	}
 	
+	private String[] getNewlyEnabledContexts(ContextManagerEvent contextManagerEvent) {
+	    Set set = new HashSet(contextManagerEvent.getContextManager().getEnabledContextIds());
+	    set.removeAll(contextManagerEvent.getPreviouslyEnabledContextIds());
+	    return (String[]) set.toArray(new String[set.size()]);
+	}
+
+	private String[] getNewlyDisabledContexts(ContextManagerEvent contextManagerEvent) {
+	    Set set = new HashSet(contextManagerEvent.getPreviouslyEnabledContextIds());
+	    set.removeAll(contextManagerEvent.getContextManager().getEnabledContextIds());
+	    return (String[]) set.toArray(new String[set.size()]);
+	}
+
 	/**
 	 * The context with the given ID has been submitted for
 	 * enablement. Activate the appropriate views.
