@@ -99,7 +99,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 				validatePage();
 			}
 		});
-		createClientControl(container, 2);
+		createClientControl(container, layout.numColumns);
 		label = new Label(container, SWT.NULL);
 		label.setText(UpdateUIPlugin.getResourceString(KEY_CREATE_IN));
 		containerText = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -140,6 +140,12 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			tree.setSelection(new StructuredSelection(folder), true);
 		validatePage();
 		setControl(container);
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible)
+			nameText.setFocus();
 	}
 
 	protected abstract void createClientControl(Composite parent, int span);

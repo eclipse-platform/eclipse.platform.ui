@@ -102,7 +102,7 @@ public class UpdateModel implements IAdaptable {
 		if (change!=null)
 		   removePendingChange(change);
 	}	
-
+	
 	public void addBookmark(NamedModelObject bookmark) {
 		bookmarks.add(bookmark);
 		bookmark.setModel(this);

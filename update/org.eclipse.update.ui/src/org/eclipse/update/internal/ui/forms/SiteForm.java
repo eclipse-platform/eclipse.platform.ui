@@ -16,6 +16,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.ui.forms.internal.*;
@@ -24,7 +25,10 @@ import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 public class SiteForm extends UpdateWebForm {
 	private static final String KEY_DESC = "SitePage.desc";
 	private static final String KEY_LINK = "SitePage.link";
+	private static final String KEY_WDESC = "SitePage.wdesc";
+	private static final String KEY_WLINK = "SitePage.wlink";
 	private Label url;
+	private FormEngine desc;
 	private SelectableFormLabel link;
 	private ISiteAdapter currentAdapter;
 	private Image updateSitesImage;
@@ -54,14 +58,18 @@ public class SiteForm extends UpdateWebForm {
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 20;
 		layout.numColumns = 1;
+		boolean webSiteFlag = computeWebSiteFlag(currentAdapter);
 
 		FormWidgetFactory factory = getFactory();
 		url = factory.createHeadingLabel(parent, null);
 
-		FormEngine desc = factory.createFormEngine(parent);
+		desc = factory.createFormEngine(parent);
 		setFocusControl(desc);
 		desc.registerTextObject(KEY_UPDATE_SITES_IMAGE, updateSitesImage);
-		desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
+		String text =
+			UpdateUIPlugin.getResourceString(
+				webSiteFlag ? KEY_WDESC : KEY_DESC);
+		desc.load(text, true, true);
 		TableData td = new TableData();
 		td.align = TableData.FILL;
 		td.grabHorizontal = true;
@@ -73,49 +81,29 @@ public class SiteForm extends UpdateWebForm {
 
 		listener = new HyperlinkAdapter() {
 			public void linkEntered(Control link) {
-				ISite site = currentAdapter.getSite();
-				if (site != null) {
-					URL infoURL = getRawURL(site); // do not show callback string
-					if (infoURL != null) {
-						manager.setMessage(infoURL.toString());
-					}
-				}
+				URL currentURL = getCurrentURL(true);
+				if (currentURL != null)
+					manager.setMessage(currentURL.toString());
 			}
 			public void linkExited(Control link) {
 				manager.setMessage(null);
 			}
 			public void linkActivated(Control link) {
-				if (currentAdapter == null)
+				final URL currentURL = getCurrentURL(false);
+				if (currentURL == null)
 					return;
-				BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+				BusyIndicator
+					.showWhile(getControl().getDisplay(), new Runnable() {
 					public void run() {
-						ISite site = currentAdapter.getSite();
-						if (site != null) {
-							URL infoURL = getURLforSite(site); // navigate with callback string
-							if (infoURL != null) {
-								DetailsView dv = (DetailsView) getPage().getView();
-								dv.showURL(infoURL.toString());
-							}
-						}
+						DetailsView.showURL(currentURL.toString());
 					}
 				});
 			}
-			public URL getURLforSite(ISite site) {
-				URL link = getRawURL(site);
-				if (link == null)
-					return null;
-				String callback = WebInstallHandler.getCallbackString();
-				if (callback == null)
-					return link;
-				try {
-					return new URL(link.toExternalForm() + callback);
-				} catch (MalformedURLException e) {
-					return link;
-				}
-			}
 		};
 		link = new SelectableFormLabel(parent, SWT.NULL);
-		link.setText(UpdateUIPlugin.getResourceString(KEY_LINK));
+		link.setText(
+			UpdateUIPlugin.getResourceString(
+				webSiteFlag ? KEY_WLINK : KEY_LINK));
 		factory.turnIntoHyperlink(link, listener);
 		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm");
 	}
@@ -127,6 +115,18 @@ public class SiteForm extends UpdateWebForm {
 	}
 
 	private void inputChanged(ISiteAdapter adapter) {
+		boolean oldWebSiteFlag = computeWebSiteFlag(currentAdapter);
+		boolean newWebSiteFlag = computeWebSiteFlag(adapter);
+
+		if (oldWebSiteFlag != newWebSiteFlag) {
+			String text =
+				UpdateUIPlugin.getResourceString(
+					newWebSiteFlag ? KEY_WDESC : KEY_DESC);
+			desc.load(text, true, true);
+			link.setText(
+				UpdateUIPlugin.getResourceString(
+					newWebSiteFlag ? KEY_WLINK : KEY_LINK));
+		}
 		setHeadingText(adapter.getLabel());
 		url.setText(adapter.getURL().toString());
 		updateLinkVisibility(adapter);
@@ -136,7 +136,45 @@ public class SiteForm extends UpdateWebForm {
 		getControl().redraw();
 		currentAdapter = adapter;
 	}
-	
+
+	private URL getCurrentURL(boolean rawURL) {
+		if (currentAdapter == null)
+			return null;
+		boolean webSite = computeWebSiteFlag(currentAdapter);
+		if (webSite)
+			return currentAdapter.getURL();
+		else {
+			ISite site = currentAdapter.getSite();
+			if (site == null)
+				return null;
+			if (rawURL)
+				return getRawURL(site);
+			else
+				return getURLforSite(site);
+		}
+	}
+	public URL getURLforSite(ISite site) {
+		URL link = getRawURL(site);
+		if (link == null)
+			return null;
+		String callback = WebInstallHandler.getCallbackString();
+		if (callback == null)
+			return link;
+		try {
+			return new URL(link.toExternalForm() + callback);
+		} catch (MalformedURLException e) {
+			return link;
+		}
+	}
+
+	private boolean computeWebSiteFlag(ISiteAdapter adapter) {
+		return (
+			adapter instanceof SiteBookmark
+				&& ((SiteBookmark) adapter).isWebBookmark())
+			? true
+			: false;
+	}
+
 	public void objectChanged(Object object, String property) {
 		if (object.equals(currentAdapter)) {
 			inputChanged(currentAdapter);

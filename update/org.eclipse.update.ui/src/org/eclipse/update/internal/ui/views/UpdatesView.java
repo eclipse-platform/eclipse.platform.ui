@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
@@ -12,11 +13,10 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -47,6 +47,10 @@ public class UpdatesView
 	private static final String KEY_SHOW_SEARCH_RESULT =
 		"UpdatesView.Popup.showSearchResult";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
+	private static final String KEY_OPEN_WEB = "UpdatesView.Popup.delete";
+	private static final String KEY_CUT = "UpdatesView.Popup.cut";
+	private static final String KEY_COPY = "UpdatesView.Popup.copy";
+	private static final String KEY_PASTE = "UpdatesView.Popup.paste";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
 	private static final String KEY_REFRESH_TOOLTIP =
 		"UpdatesView.Popup.refresh.tooltip";
@@ -79,6 +83,10 @@ public class UpdatesView
 	private Action newFolderAction;
 	private Action newSearchAction;
 	private Action newLocalAction;
+	private Action openWebAction;
+	private Action cutAction;
+	private Action copyAction;
+	private Action pasteAction;
 	private DeleteAction deleteAction;
 	private Action fileFilterAction;
 	private Action filterEnvironmentAction;
@@ -102,9 +110,11 @@ public class UpdatesView
 	private FileFilter fileFilter = new FileFilter();
 	private EnvironmentFilter environmentFilter = new EnvironmentFilter();
 	private Cursor handCursor;
+	private Clipboard clipboard;
 
 	class DeleteAction extends Action implements IUpdate {
 		public DeleteAction() {
+			super("delete");
 		}
 		public void run() {
 			performDelete();
@@ -152,7 +162,7 @@ public class UpdatesView
 			updateForSelection((IStructuredSelection) event.getSelection());
 		}
 	}
-	
+
 	class UpdatesViewSorter extends ViewerSorter {
 		public int category(Object obj) {
 			// Level 0
@@ -162,7 +172,9 @@ public class UpdatesView
 				return 2;
 			if (obj instanceof MyComputer)
 				return 3;
-			if (obj instanceof SiteBookmark || obj instanceof BookmarkFolder || obj instanceof SearchObject)
+			if (obj instanceof SiteBookmark
+				|| obj instanceof BookmarkFolder
+				|| obj instanceof SearchObject)
 				return 4;
 			return super.category(obj);
 		}
@@ -222,7 +234,7 @@ public class UpdatesView
 
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof SiteBookmark) {
-				SiteBookmark bookmark = (SiteBookmark)parent;
+				SiteBookmark bookmark = (SiteBookmark) parent;
 				return bookmark.isWebBookmark() == false;
 			}
 			if (parent instanceof MyComputer) {
@@ -328,8 +340,8 @@ public class UpdatesView
 				return getSearchObjectImage((SearchObject) obj);
 			}
 			if (obj instanceof IFeature) {
-				boolean efix = UpdateUIPlugin.isPatch((IFeature)obj);
-				return efix?efixImage:featureImage;
+				boolean efix = UpdateUIPlugin.isPatch((IFeature) obj);
+				return efix ? efixImage : featureImage;
 			}
 			if (obj instanceof IFeatureAdapter) {
 				IFeatureAdapter adapter = (IFeatureAdapter) obj;
@@ -337,7 +349,7 @@ public class UpdatesView
 				if (feature instanceof MissingFeature)
 					return errorFeatureImage;
 				boolean efix = UpdateUIPlugin.isPatch(feature);
-				return efix?efixImage:featureImage;
+				return efix ? efixImage : featureImage;
 			}
 			return super.getImage(obj);
 		}
@@ -352,30 +364,39 @@ public class UpdatesView
 			return null;
 		}
 	}
-	
+
 	class UpdateTreeViewer extends TreeViewer {
+		private Object lastElement;
 		public UpdateTreeViewer(Composite parent, int styles) {
 			super(parent, styles);
+			/*
 			getTree().addMouseMoveListener(new MouseMoveListener() {
 				public void mouseMove(MouseEvent e) {
 					processItem(getTree().getItem(new Point(e.x, e.y)));
 				}
 			});
 			handCursor = new Cursor(getTree().getDisplay(), SWT.CURSOR_HAND);
+			*/
 		}
 		private void processItem(Item item) {
-			Object element = item!=null ? item.getData():null;
+			Object element = item != null ? item.getData() : null;
+			if (element == lastElement)
+				return;
 			Cursor cursor = null;
+			String tooltip = null;
 
 			if (element instanceof SiteBookmark) {
-				SiteBookmark bookmark = (SiteBookmark)element;
-				if (bookmark.isWebBookmark())
+				SiteBookmark bookmark = (SiteBookmark) element;
+				if (bookmark.isWebBookmark()) {
 					cursor = handCursor;
+					tooltip = bookmark.getURL().toString();
+				}
 			}
+			lastElement = element;
 			getTree().setCursor(cursor);
+			getTree().setToolTipText(tooltip);
 		}
 	}
-		
 
 	/**
 	 * The constructor.
@@ -387,7 +408,7 @@ public class UpdatesView
 		updateSearchObject = new DefaultUpdatesSearchObject();
 		initializeImages();
 	}
-	
+
 	protected TreeViewer createTree(Composite parent, int styles) {
 		return new UpdateTreeViewer(parent, styles);
 	}
@@ -396,7 +417,12 @@ public class UpdatesView
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
 		disposeImages();
-		if (handCursor!=null) handCursor.dispose();
+		if (handCursor != null)
+			handCursor.dispose();
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
 		super.dispose();
 	}
 
@@ -404,7 +430,26 @@ public class UpdatesView
 		viewer.setContentProvider(new SiteProvider());
 		viewer.setLabelProvider(new SiteLabelProvider());
 		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
-		WorkbenchHelp.setHelp(viewer.getControl(), "org.eclipse.update.ui.UpdatesView");
+		WorkbenchHelp.setHelp(
+			viewer.getControl(),
+			"org.eclipse.update.ui.UpdatesView");
+	}
+
+	protected void initDragAndDrop() {
+		clipboard = new Clipboard(viewer.getControl().getDisplay());
+		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transfers =
+			new Transfer[] {
+				UpdateModelDataTransfer.getInstance(),
+				TextTransfer.getInstance()};
+		viewer.addDragSupport(
+			ops,
+			transfers,
+			new UpdatesDragAdapter((ISelectionProvider) viewer));
+		viewer.addDropSupport(
+			ops | DND.DROP_DEFAULT,
+			transfers,
+			new UpdatesDropAdapter(viewer));
 	}
 
 	public void makeActions() {
@@ -418,57 +463,98 @@ public class UpdatesView
 				performNewBookmark();
 			}
 		};
-		WorkbenchHelp.setHelp(newAction, "org.eclipse.update.ui.UpdatesView_newAction");
+		WorkbenchHelp.setHelp(
+			newAction,
+			"org.eclipse.update.ui.UpdatesView_newAction");
 		newAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SITE));
 
-		newFolderAction = new Action() {
+		newFolderAction = new Action("newFolder") {
 			public void run() {
 				performNewBookmarkFolder();
 			}
 		};
-		WorkbenchHelp.setHelp(newFolderAction, "org.eclipse.update.ui.UpdatesView_newFolderAction");
+		WorkbenchHelp.setHelp(
+			newFolderAction,
+			"org.eclipse.update.ui.UpdatesView_newFolderAction");
 		newFolderAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
 
-		newSearchAction = new Action() {
+		newSearchAction = new Action("newSearch") {
 			public void run() {
 				performNewSearch();
 			}
 		};
-		WorkbenchHelp.setHelp(newSearchAction, "org.eclipse.update.ui.UpdatesView_newSearchAction");
+		WorkbenchHelp.setHelp(
+			newSearchAction,
+			"org.eclipse.update.ui.UpdatesView_newSearchAction");
 		newSearchAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
 
-		newLocalAction = new Action() {
+		newLocalAction = new Action("newLocal") {
 			public void run() {
 				performNewLocal();
 			}
 		};
-		
-		WorkbenchHelp.setHelp(newLocalAction, "org.eclipse.update.ui.UpdatesView_newLocalAction");
+
+		WorkbenchHelp.setHelp(
+			newLocalAction,
+			"org.eclipse.update.ui.UpdatesView_newLocalAction");
 		newLocalAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
 
-		showSearchResultAction = new Action() {
+		showSearchResultAction = new Action("showSearch") {
 			public void run() {
 				performShowSearchResult();
 			}
 		};
-		WorkbenchHelp.setHelp(newLocalAction, "org.eclipse.update.ui.UpdatesView_showSearchResultAction");
+		WorkbenchHelp.setHelp(
+			newLocalAction,
+			"org.eclipse.update.ui.UpdatesView_showSearchResultAction");
 		showSearchResultAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_RESULT));
 
-
 		deleteAction = new DeleteAction();
-		WorkbenchHelp.setHelp(deleteAction, "org.eclipse.update.ui.UpdatesView_deleteAction");
+		WorkbenchHelp.setHelp(
+			deleteAction,
+			"org.eclipse.update.ui.UpdatesView_deleteAction");
 		deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
 
-		refreshAction = new Action() {
+		openWebAction = new Action("openWeb") {
+			public void run() {
+				performOpenWeb();
+			}
+		};
+		openWebAction.setText(UpdateUIPlugin.getResourceString(KEY_OPEN_WEB));
+
+		cutAction = new Action("cut") {
+			public void run() {
+				performCut();
+			}
+		};
+		cutAction.setText(UpdateUIPlugin.getResourceString(KEY_CUT));
+
+		copyAction = new Action("copy") {
+			public void run() {
+				performCopy();
+			}
+		};
+		copyAction.setText(UpdateUIPlugin.getResourceString(KEY_COPY));
+
+		pasteAction = new Action("paste") {
+			public void run() {
+				performPaste();
+			}
+		};
+		pasteAction.setText(UpdateUIPlugin.getResourceString(KEY_PASTE));
+
+		refreshAction = new Action("refresh") {
 			public void run() {
 				performRefresh();
 			}
 		};
-		WorkbenchHelp.setHelp(refreshAction, "org.eclipse.update.ui.UpdatesView_refreshAction");
+		WorkbenchHelp.setHelp(
+			refreshAction,
+			"org.eclipse.update.ui.UpdatesView_refreshAction");
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
 		refreshAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
@@ -486,7 +572,9 @@ public class UpdatesView
 					viewer.addFilter(fileFilter);
 			}
 		};
-		WorkbenchHelp.setHelp(fileFilterAction, "org.eclipse.update.ui.UpdatesView_fileFilterAction");
+		WorkbenchHelp.setHelp(
+			fileFilterAction,
+			"org.eclipse.update.ui.UpdatesView_fileFilterAction");
 		fileFilterAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
@@ -503,7 +591,9 @@ public class UpdatesView
 				setStoredEnvironmentValue(checked);
 			}
 		};
-		WorkbenchHelp.setHelp(filterEnvironmentAction, "org.eclipse.update.ui.UpdatesView_filterEnvironmentAction");
+		WorkbenchHelp.setHelp(
+			filterEnvironmentAction,
+			"org.eclipse.update.ui.UpdatesView_filterEnvironmentAction");
 		filterEnvironmentAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_FILTER_ENVIRONMENT));
 		boolean envValue = getStoredEnvironmentValue();
@@ -517,21 +607,34 @@ public class UpdatesView
 				showCategories(!showCategoriesAction.isChecked());
 			}
 		};
-		WorkbenchHelp.setHelp(showCategoriesAction, "org.eclipse.update.ui.UpdatesView_showCategoriesAction");
+		WorkbenchHelp.setHelp(
+			showCategoriesAction,
+			"org.eclipse.update.ui.UpdatesView_showCategoriesAction");
 		showCategoriesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
 
-		linkExtensionAction = new Action() {
+		linkExtensionAction = new Action("link") {
 			public void run() {
 				linkProductExtension();
 			}
 		};
-		WorkbenchHelp.setHelp(linkExtensionAction, "org.eclipse.update.ui.UpdatesView_linkExtensionAction");
+		WorkbenchHelp.setHelp(
+			linkExtensionAction,
+			"org.eclipse.update.ui.UpdatesView_linkExtensionAction");
 		linkExtensionAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 
 		viewer.addSelectionChangedListener(selectionListener);
+		hookGlobalActions();
+	}
+	
+	private void hookGlobalActions() {
+		IViewSite site = getViewSite();
+		IActionBars bars = site.getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cutAction);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, pasteAction);
 	}
 
 	private boolean getStoredEnvironmentValue() {
@@ -577,21 +680,42 @@ public class UpdatesView
 			SiteBookmark site = (SiteBookmark) obj;
 			if (site.getType() == SiteBookmark.LOCAL)
 				manager.add(newLocalAction);
+			if (site.isWebBookmark())
+				manager.add(openWebAction);
 		}
 		if (obj instanceof ExtensionRoot) {
 			manager.add(linkExtensionAction);
 		}
-		if (canDelete(obj))
-			manager.add(deleteAction);
+		manager.add(new Separator());
+		cutAction.setEnabled(canCopy());
+		copyAction.setEnabled(cutAction.isEnabled());
+		pasteAction.setEnabled(canPaste());
+		deleteAction.setEnabled(canDelete());
+		manager.add(cutAction);
+		manager.add(copyAction);
+		manager.add(pasteAction);
+		manager.add(deleteAction);
 		manager.add(new Separator());
 		if (obj instanceof SearchObject) {
 			manager.add(showSearchResultAction);
 			manager.add(new Separator());
 		}
-		
+
 		super.fillContextMenu(manager);
 		if (obj instanceof NamedModelObject)
 			manager.add(propertiesAction);
+	}
+
+	private boolean canDelete() {
+		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		if (sel.isEmpty())
+			return false;
+		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (!canDelete(obj))
+				return false;
+		}
+		return true;
 	}
 
 	private boolean canDelete(Object obj) {
@@ -701,44 +825,132 @@ public class UpdatesView
 	}
 
 	private void performDelete() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (!confirmDeletion(ssel))
 				return;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				if (obj instanceof NamedModelObject) {
-					NamedModelObject child = (NamedModelObject) obj;
-					BookmarkFolder folder =
-						(BookmarkFolder) child.getParent(child);
-					if (folder != null)
-						folder.removeChildren(new NamedModelObject[] { child });
-					else
-						model.removeBookmark(child);
-				}
+			doDelete(ssel);
+		}
+	}
+
+	private void doDelete(IStructuredSelection selection) {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (obj instanceof NamedModelObject) {
+				NamedModelObject child = (NamedModelObject) obj;
+				BookmarkFolder folder = (BookmarkFolder) child.getParent(child);
+				if (folder != null)
+					folder.removeChildren(new NamedModelObject[] { child });
+				else
+					model.removeBookmark(child);
 			}
 		}
 	}
+
+	private void performOpenWeb() {
+		SiteBookmark bookmark = (SiteBookmark) getSelectedObject();
+		URL url = bookmark.getURL();
+		if (url != null) {
+			DetailsView.showURL(url.toString());
+		}
+	}
+
+	private void performCut() {
+		if (!canDelete())
+			return;
+		if (!performCopy())
+			return;
+		doDelete((IStructuredSelection) viewer.getSelection());
+	}
 	
+	private boolean canCopy() {
+		IStructuredSelection selection =
+			(IStructuredSelection) viewer.getSelection();
+		return UpdatesDragAdapter.canCopy(selection);
+	}
+		
+
+	private boolean performCopy() {
+		IStructuredSelection selection =
+			(IStructuredSelection) viewer.getSelection();
+		if (!UpdatesDragAdapter.canCopy(selection))
+			return false;
+		NamedModelObject[] objects =
+			UpdatesDragAdapter.createObjectRepresentation(selection);
+		String text = UpdatesDragAdapter.createTextualRepresentation(selection);
+		return setClipboardContent(objects, text);
+	}
+
+	private boolean setClipboardContent(
+		NamedModelObject[] objects,
+		String names) {
+		try {
+			// set the clipboard contents
+			clipboard.setContents(
+				new Object[] { objects, names },
+				new Transfer[] {
+					UpdateModelDataTransfer.getInstance(),
+					TextTransfer.getInstance()});
+			return true;
+		} catch (SWTError e) {
+			UpdateUIPlugin.logException(e);
+			return false;
+		}
+	}
+	
+	private boolean canPaste() {
+		// try a data transfer
+		UpdateModelDataTransfer dataTransfer =
+			UpdateModelDataTransfer.getInstance();
+		return clipboard.getContents(dataTransfer) != null;
+	}
+
+	private void performPaste() {
+		// try a data transfer
+		UpdateModelDataTransfer dataTransfer =
+			UpdateModelDataTransfer.getInstance();
+		Object[] objects =
+			(Object[]) clipboard.getContents(dataTransfer);
+
+		if (objects != null) {
+			int operation = DND.DROP_COPY;
+			BookmarkFolder parentFolder =
+				(BookmarkFolder) UpdatesDropAdapter.getRealTarget(
+					getSelectedObject());
+			for (int i = 0; i < objects.length; i++) {
+				NamedModelObject object = (NamedModelObject)objects[i];
+				if (!UpdatesDropAdapter.addToModel(viewer.getControl().getShell(),
+					operation,
+					parentFolder,
+					object))
+					return;
+			}
+			return;
+		}
+		// try a text transfer
+	}
+
 	private void performShowSearchResult() {
 		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
-		SearchResultView view = (SearchResultView)page.findView(UpdatePerspective.ID_SEARCH_RESULTS);
-		if (view!=null) {
+		SearchResultView view =
+			(SearchResultView) page.findView(
+				UpdatePerspective.ID_SEARCH_RESULTS);
+		if (view != null) {
 			page.bringToTop(view);
-		}
-		else {
+		} else {
 			try {
-				view = (SearchResultView)page.showView(UpdatePerspective.ID_SEARCH_RESULTS);
+				view =
+					(SearchResultView) page.showView(
+						UpdatePerspective.ID_SEARCH_RESULTS);
 				view.setSelectionActive(true);
-			}
-			catch (PartInitException e) {
+			} catch (PartInitException e) {
 				UpdateUIPlugin.logException(e);
 			}
 		}
-		if (view!=null)
-			view.setCurrentSearch((SearchObject)getSelectedObject());
+		if (view != null)
+			view.setCurrentSearch((SearchObject) getSelectedObject());
 	}
 
 	private void performRefresh() {
@@ -884,10 +1096,10 @@ public class UpdatesView
 			return;
 		if (child instanceof NamedModelObject
 			/*
-			|| child instanceof SearchResultSite
-			|| child instanceof IFeature
-			|| child instanceof IFeatureAdapter 
-			*/
+		|| child instanceof SearchResultSite
+		|| child instanceof IFeature
+		|| child instanceof IFeatureAdapter 
+		*/
 			) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 			if (parent == null)
@@ -903,7 +1115,8 @@ public class UpdatesView
 		if (children[0] instanceof PendingChange)
 			return;
 		if (children[0] instanceof NamedModelObject
-			/*|| children[0] instanceof SearchResultSite */) {
+			/*|| children[0] instanceof SearchResultSite */
+			) {
 			viewer.remove(children);
 			viewer.setSelection(new StructuredSelection());
 		}

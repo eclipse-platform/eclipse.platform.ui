@@ -4,14 +4,16 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
+import java.io.Serializable;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class NamedModelObject extends UIModelObject 
-							implements IWorkbenchAdapter {
+							implements IWorkbenchAdapter, Serializable  {
 	private String name;
-	private NamedModelObject parent;
+	transient private NamedModelObject parent;
 	
 	public static final String P_NAME="p_name";
 	

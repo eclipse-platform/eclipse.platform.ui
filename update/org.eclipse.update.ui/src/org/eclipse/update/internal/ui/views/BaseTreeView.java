@@ -39,8 +39,7 @@ public abstract class BaseTreeView extends ViewPart {
 		viewer = createTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		initProviders();
-		//viewer.setInput(getInitialInput());
-		//initDragAndDrop();
+		initDragAndDrop();
 		//initRefreshKey();
 		//initRenameKey();
 		//updateTitle();
@@ -120,6 +119,9 @@ public abstract class BaseTreeView extends ViewPart {
 		};
 		WorkbenchHelp.setHelp(showDetailsAction, "org.eclipse.update.ui.BaseTreeViewer_showDetailsAction");
 		showDetailsAction.setText(UpdateUIPlugin.getResourceString(KEY_SHOW_DETAILS));
+	}
+	
+	protected void initDragAndDrop() {
 	}
 	
 	protected void deleteKeyPressed(Widget widget) {

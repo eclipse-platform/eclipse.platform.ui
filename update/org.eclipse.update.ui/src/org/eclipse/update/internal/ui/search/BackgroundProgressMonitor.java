@@ -1,18 +1,24 @@
 package org.eclipse.update.internal.ui.search;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import java.io.Serializable;
 import java.util.*;
 import org.eclipse.swt.widgets.Display;
 
-public class BackgroundProgressMonitor implements IProgressMonitor {
-	private Vector monitors=new Vector();
-	private boolean canceled=false;
-	private String taskName;
-	private String subTaskName;
-	private double totalWorked=0.0;
-	private int taskCount;
-	private boolean inProgress;
-	private Display display;
+public class BackgroundProgressMonitor implements IProgressMonitor, Serializable {
+	private Vector monitors;
+	private transient boolean canceled;
+	private transient String taskName;
+	private transient String subTaskName;
+	private transient double totalWorked=0.0;
+	private transient int taskCount;
+	private transient boolean inProgress;
+	private transient Display display;
+	
+	public BackgroundProgressMonitor() {
+		monitors =new Vector();
+	}
 	
 	public void setDisplay(Display display) {
 		this.display = display;

@@ -844,8 +844,7 @@ public class DetailsForm extends PropertyWebForm {
 	private void openURL(final String url) {
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
-				DetailsView dv = (DetailsView) getPage().getView();
-				dv.showURL(url);
+				DetailsView.showURL(url);
 			}
 		});
 	}

@@ -104,7 +104,7 @@ public class DetailsView extends MultiPageView {
 		addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	}
 
-	public boolean showURL(String url) {
+	public static boolean showURL(String url) {
 		boolean useEmbedded = false;
 		boolean focusGrabbed = false;
 		boolean win32 = SWT.getPlatform().equals("win32");
@@ -174,7 +174,7 @@ public class DetailsView extends MultiPageView {
 			"org.eclipse.update.ui.DetailsView");
 	}
 
-	public void showPageWithInput(String pageId, Object input) {
+	public void showPageWithInput(IWorkbenchPart part, String pageId, Object input) {
 		if (pageId.equals(HOME_PAGE) == false) {
 			if (!(input instanceof UIModelObject
 				|| input instanceof ModelObject))
@@ -196,6 +196,16 @@ public class DetailsView extends MultiPageView {
 			IViewPart view = page.findView(UpdatePerspective.ID_DETAILS);
 			if (view != null)
 				page.bringToTop(view);
+			else {
+				try {
+					page.showView(UpdatePerspective.ID_DETAILS);
+				}
+				catch (PartInitException e) {
+					UpdateUIPlugin.logException(e);
+				}
+				// Restore focus to the selection provider
+				if (part!=null) part.setFocus();
+			}
 		}
 	}
 
@@ -219,59 +229,59 @@ public class DetailsView extends MultiPageView {
 			if (ssel.size() == 1) {
 				el = ssel.getFirstElement();
 				if (el instanceof IFeature || el instanceof IFeatureAdapter) {
-					showPageWithInput(DETAILS_PAGE, el);
+					showPageWithInput(part, DETAILS_PAGE, el);
 					return;
 				}
 				if (el instanceof SiteBookmark) {
-					SiteBookmark bookmark = (SiteBookmark) el;
-					if (!bookmark.isWebBookmark())
-						showPageWithInput(SITE_PAGE, el);
-					else
-						showWebBookmark(part, bookmark);
+					//SiteBookmark bookmark = (SiteBookmark) el;
+					//if (!bookmark.isWebBookmark())
+						showPageWithInput(part, SITE_PAGE, el);
+					//else
+						//showWebBookmark(part, bookmark);
 					return;
 				}
 				if (el instanceof SiteCategory) {
-					showPageWithInput(CATEGORY_PAGE, el);
+					showPageWithInput(part, CATEGORY_PAGE, el);
 					return;
 				}
 				if (el instanceof ILocalSite) {
-					showPageWithInput(CONFIG_PAGE, el);
+					showPageWithInput(part, CONFIG_PAGE, el);
 					return;
 				}
 				if (el instanceof IInstallConfiguration
 					|| el instanceof PreservedConfiguration) {
-					showPageWithInput(INSTALL_CONFIGURATION_PAGE, el);
+					showPageWithInput(part, INSTALL_CONFIGURATION_PAGE, el);
 					return;
 				}
 				if (el instanceof IConfiguredSiteAdapter) {
-					showPageWithInput(INSTALL_SITE_PAGE, el);
+					showPageWithInput(part, INSTALL_SITE_PAGE, el);
 					return;
 				}
 				if (el instanceof MyComputer) {
-					showPageWithInput(MY_COMPUTER_PAGE, el);
+					showPageWithInput(part, MY_COMPUTER_PAGE, el);
 					return;
 				}
 				if (el instanceof ExtensionRoot) {
-					showPageWithInput(EXTENSION_ROOT_PAGE, el);
+					showPageWithInput(part, EXTENSION_ROOT_PAGE, el);
 					return;
 				}
 				if (el instanceof DiscoveryFolder) {
-					showPageWithInput(DISCOVERY_PAGE, el);
+					showPageWithInput(part, DISCOVERY_PAGE, el);
 					return;
 				}
 				if (el instanceof SearchObject) {
-					showPageWithInput(SEARCH_PAGE, el);
+					showPageWithInput(part, SEARCH_PAGE, el);
 					return;
 				}
 				if (el instanceof SearchResultSite) {
-					showPageWithInput(SITE_PAGE, el);
+					showPageWithInput(part, SITE_PAGE, el);
 					return;
 				}
 				//fallback - show empty page
-				showPageWithInput(UNKNOWN_PAGE, el);
+				showPageWithInput(part, UNKNOWN_PAGE, el);
 			} else
 				// defect 14692
-				showPageWithInput(
+				showPageWithInput(part, 
 					(homeAction != null) ? HOME_PAGE : UNKNOWN_PAGE,
 					null);
 		}
@@ -358,7 +368,7 @@ public class DetailsView extends MultiPageView {
 	}
 
 	private void performHome() {
-		showPageWithInput(HOME_PAGE, null);
+		showPageWithInput(null, HOME_PAGE, null);
 	}
 
 	private boolean canPerformBackward() {

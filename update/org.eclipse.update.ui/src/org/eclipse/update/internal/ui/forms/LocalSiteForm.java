@@ -61,7 +61,7 @@ public class LocalSiteForm extends UpdateWebForm {
 
 		HTTPAction action = new HTTPAction() {
 			public void linkActivated(IHyperlinkSegment link) {
-				((DetailsView) getPage().getView()).showURL(link.getText());
+				DetailsView.showURL(link.getText());
 			}
 		};
 		IActionBars bars = getPage().getView().getViewSite().getActionBars();

@@ -16,14 +16,16 @@ public class SiteBookmark extends NamedModelObject
 	public static final int USER = 0;
 	public static final int LOCAL = 1;
 	public static final int LOCAL_BOOKMARK = 2;
+	public static final String P_URL="p_url";
+	
 	private URL url;
-	private ISite site;
-	private Vector catalog;
-	private SiteCategory otherCategory;
+	transient private ISite site;
+	transient private Vector catalog;
+	transient private SiteCategory otherCategory;
 	private int type;
 	private boolean webBookmark;
 
-	public static final String P_URL="p_url";
+
 	
 	public SiteBookmark() {
 	}

@@ -4,16 +4,29 @@ package org.eclipse.update.internal.ui.win32.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.ole.win32.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.ole.win32.OleEvent;
+import org.eclipse.swt.ole.win32.OleListener;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.update.internal.ui.views.IEmbeddedWebBrowser;
 
 public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
@@ -53,16 +66,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
 		container.setLayout(layout);
-		if (BootLoader.getWS().equals("win32") == false) {
-			Text infoText =
-				new Text(container, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			infoText.setLayoutData(gd);
-			infoText.setEditable(false);
-			infoText.setText(
-				UpdateUIPlugin.getResourceString(KEY_NOT_AVAILABLE));
-			return;
-		}
+
 		Composite navContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
@@ -167,6 +171,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		if (addressCombo.getItemCount() > ADDRESS_SIZE) {
 			addressCombo.remove(addressCombo.getItemCount() - 1);
 		}
+		addressCombo.getParent().layout(true);
 	}
 
 	private void makeActions() {

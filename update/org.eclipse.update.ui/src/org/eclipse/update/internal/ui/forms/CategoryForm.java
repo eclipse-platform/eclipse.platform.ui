@@ -65,8 +65,7 @@ protected void createContents(Composite parent) {
 						IURLEntry info = category.getDescription();
 						URL infoURL = info.getURL();
 						if (infoURL!=null) {
-							DetailsView dv = (DetailsView)getPage().getView();
-							dv.showURL(infoURL.toString());
+							DetailsView.showURL(infoURL.toString());
 						}
 					}
 				}

@@ -120,7 +120,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 
 	public static String getFormattedMessage(String key, String arg) {
 		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new Object[] { arg });
+		return java.text.MessageFormat.format(text, new String [] { arg });
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class InfoLink extends HyperlinkAdapter {
 		if (info==null) return;
 		URL url = info.getURL();
 		if (url!=null) {
-			view.showURL(url.toString());
+			DetailsView.showURL(url.toString());
 			return;
 		}
 		String annotation = info.getAnnotation();

@@ -60,9 +60,15 @@ public class SiteBookmarkPropertyPage
 		
 		updateButton = new Button(container, SWT.RADIO);
 		updateButton.setText(UpdateUIPlugin.getResourceString(KEY_UPDATE_SITE));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		updateButton.setLayoutData(gd);
 		
 		webButton = new Button(container, SWT.RADIO);
 		webButton.setText(UpdateUIPlugin.getResourceString(KEY_WEB_SITE));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		webButton.setLayoutData(gd);
 		
 		initializeFields();
 		return container;

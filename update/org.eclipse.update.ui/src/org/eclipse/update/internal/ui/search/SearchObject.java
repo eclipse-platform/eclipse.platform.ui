@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.search;
  * All Rights Reserved.
  */
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
@@ -31,18 +32,18 @@ public class SearchObject extends NamedModelObject {
 	protected static final String S_FILTER = "searchFilter"; //$NON-NLS-1$
 	protected static final String S_DRIVES = "searchDrives"; //$NON-NLS-1$
 
-	private Vector result = new Vector();
-	private boolean searchInProgress;
+	private Vector result;
+	transient private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
-	private BackgroundThread searchThread;
-	private SiteBookmark[] myComputerSites = null;
+	transient private BackgroundThread searchThread;
+	transient private SiteBookmark[] myComputerSites = null;
 	private String categoryId;
 	private boolean categoryFixed;
 	private Hashtable settings = new Hashtable();
 	private boolean persistent = true;
 	private boolean instantSearch = false;
 
-	class SearchAdapter extends MonitorAdapter {
+	class SearchAdapter extends MonitorAdapter implements Serializable {
 		public void done() {
 			searchInProgress = false;
 		}
@@ -63,6 +64,7 @@ public class SearchObject extends NamedModelObject {
 		this.categoryFixed = categoryFixed;
 		backgroundProgress = new BackgroundProgressMonitor();
 		backgroundProgress.addProgressMonitor(new SearchAdapter());
+		result = new Vector();
 	}
 
 	public boolean isCategoryFixed() {

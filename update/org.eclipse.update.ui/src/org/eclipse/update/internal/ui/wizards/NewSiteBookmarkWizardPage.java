@@ -92,14 +92,6 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 			gd.horizontalSpan = span;
 			gd.horizontalIndent = 10;
 			webButton.setLayoutData(gd);
-
-//			SelectionListener listener = new SelectionAdapter() {
-//				public void widgetSelected(SelectionEvent e) {
-//					validatePage();
-//				}
-//			};
-//			updateButton.addSelectionListener(listener);
-//			//webButton.addSelectionListener(listener);
 		}
 
 		WorkbenchHelp.setHelp(
@@ -124,9 +116,10 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		BookmarkFolder parentFolder = getFolder();
 		boolean webBookmark = false;
-		if (localBookmark==null)
+		if (localBookmark == null)
 			webBookmark = webButton.getSelection();
-		SiteBookmark newBookmark = new SiteBookmark(getName(), url, webBookmark);
+		SiteBookmark newBookmark =
+			new SiteBookmark(getName(), url, webBookmark);
 		addToModel(newBookmark);
 		return true;
 	}
