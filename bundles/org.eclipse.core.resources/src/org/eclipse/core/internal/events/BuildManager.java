@@ -193,7 +193,7 @@ protected void basicBuild(IProject project, int trigger, ICommand[] commands, Mu
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork); //$NON-NLS-1$
+		monitor.beginTask(ICoreConstants.MSG_EVENTS_BUILDING_0, Policy.totalWork); //$NON-NLS-1$
 		if (!canRun(trigger))
 			return;
 		try {
@@ -205,7 +205,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			leftover.removeAll(Arrays.asList(ordered));
 			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Policy.bind("events.errors"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, ICoreConstants.MSG_EVENTS_ERRORS, null);
 			for (int i = 0; i < ordered.length; i++)
 				if (ordered[i].isAccessible())
 					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
@@ -228,7 +228,7 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 		return;
 	try {
 		building = true;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
 		basicBuild(project, trigger, status, monitor);
 		if (!status.isOK())
 			throw new ResourceException(status);
@@ -246,7 +246,7 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 			return;
 		try {
 			building = true;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
 			basicBuild(project, kind, builderName, args, status, Policy.subMonitorFor(monitor, 1));
 			if (!status.isOK())
 				throw new ResourceException(status);

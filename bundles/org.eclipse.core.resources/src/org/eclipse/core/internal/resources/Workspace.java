@@ -149,7 +149,7 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 private void broadcastChanges(ElementTree currentTree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
 	if (operationTree == null)
 		return;
-	monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
+	monitor.subTask(MSG_RESOURCES_UPDATING); 
 	notificationManager.broadcastChanges(currentTree, type, lockTree, updateState);
 }
 /**
@@ -854,7 +854,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			OperationCanceledException cancel = null;
 			CoreException signal = null;
 			monitor = Policy.monitorFor(monitor);
-			monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
+			monitor.subTask(MSG_RESOURCES_UPDATING); //$NON-NLS-1$
 			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
 			if (isAutoBuilding() && shouldBuild()) {
 				try {
