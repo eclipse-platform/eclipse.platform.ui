@@ -791,7 +791,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			// collapse contained regions
 			if (collapsed != null) {
 				for (int i= 0; i < collapsed.length; i++) {
-					IRegion[] regions= computeCollapsedRegions(fProjectionAnnotationModel.getPosition(collapsed[i]), collapsed[i].getCaptionOffset());
+					IRegion[] regions= computeCollapsedRegions(fProjectionAnnotationModel.getPosition(collapsed[i]));
 					if (regions != null)
 						for (int j= 0; j < regions.length; j++)
 							removeMasterDocumentRange(projection, regions[j].getOffset(), regions[j].getLength());
@@ -1095,48 +1095,25 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * the position of an expanded projection annotation.
 	 * 
 	 * @param position the position
-	 * @param captionOffset the relative offset of the caption within the
-	 *        position
 	 * @return the ranges that must be collapsed, or <code>null</code> if
 	 *         there are none
 	 * @since 3.1
 	 */	
-	IRegion[] computeCollapsedRegions(Position position, int captionOffset) {
+	IRegion[] computeCollapsedRegions(Position position) {
 		try {
 			IDocument document= getDocument();
 			
-			int positionOffset= position.getOffset();
-			int positionEnd= positionOffset + position.getLength();
-			
-			int firstLine= document.getLineOfOffset(positionOffset);
-			int captionLine= document.getLineOfOffset(positionOffset + captionOffset);
-			int lastLine= document.getLineOfOffset(positionEnd);
-			
-			Assert.isTrue(firstLine <= captionLine, "first folded line is greater than the caption line"); //$NON-NLS-1$
-			Assert.isTrue(captionLine <= lastLine, "caption line is greater than the last folded line"); //$NON-NLS-1$
-			
-			IRegion preRegion;
-			if (firstLine < captionLine) {
-				int preOffset= document.getLineOffset(firstLine);
-				IRegion preEndLineInfo= document.getLineInformation(captionLine);
-				int preEnd= preEndLineInfo.getOffset();
-				preRegion= new Region(preOffset, preEnd - preOffset);
-			} else {
-				preRegion= null;
+			if (position instanceof IProjectionPosition) {
+				IProjectionPosition projPosition= (IProjectionPosition) position;
+				return projPosition.computeProjectionRegions(document);
 			}
 			
-			if (captionLine < lastLine) {
-				int postOffset= document.getLineOffset(captionLine + 1);
-				IRegion postRegion= new Region(postOffset, positionEnd - postOffset);
-				
-				if (preRegion == null)
-					return new IRegion[] {postRegion};
-				
-				return new IRegion[] {preRegion, postRegion};
-			}
+			int line= document.getLineOfOffset(position.getOffset());
+			int offset= document.getLineOffset(line + 1);
 			
-			if (preRegion != null)
-				return new IRegion[] {preRegion};
+			int length= position.getLength() - (offset - position.getOffset());
+			if (length > 0)
+				return new IRegion[] {new Region(offset, length)};
 			
 			return null;
 		} catch (BadLocationException x) {
@@ -1156,28 +1133,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public Position computeCollapsedRegionAnchor(Position position) {
 		try {
 			IDocument document= getDocument();
-			IRegion lineInfo= document.getLineInformationOfOffset(position.getOffset());
-			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
-		} catch (BadLocationException x) {
-		}		
-		return null;
-	}
-	
-	/**
-	 * Computes the collapsed region anchor for the given position. Assuming
-	 * that the position is the position of an expanded projection annotation,
-	 * the anchor is the region that is still visible after the projection
-	 * annotation has been collapsed.
-	 * 
-	 * @param position the position
-	 * @param captionOffset the relative offset of the caption within the
-	 *        position
-	 * @return the collapsed region anchor
-	 */
-	Position computeCollapsedRegionAnchor(Position position, int captionOffset) {
-		try {
-			IDocument document= getDocument();
-			IRegion lineInfo= document.getLineInformationOfOffset(position.getOffset() + captionOffset);
+			
+			int captionOffset;
+			if (position instanceof IProjectionPosition) {
+				IProjectionPosition projPosition= (IProjectionPosition) position;
+				captionOffset= projPosition.computeCaptionOffset(document);
+			} else {
+				captionOffset= position.getOffset();
+			}
+			
+			IRegion lineInfo= document.getLineInformationOfOffset(captionOffset);
 			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
 		} catch (BadLocationException x) {
 		}		
@@ -1195,7 +1160,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (annotation.isCollapsed()) {
 				if (!covers(coverage, position)) {
 					coverage.add(position);
-					IRegion[] regions= computeCollapsedRegions(position, annotation.getCaptionOffset());
+					IRegion[] regions= computeCollapsedRegions(position);
 					if (regions != null)
 						for (int j= 0; j < regions.length; j++)
 							collapse(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
@@ -1250,7 +1215,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					if (position != null) {
-						IRegion[] regions= computeCollapsedRegions(position, annotation.getCaptionOffset());
+						IRegion[] regions= computeCollapsedRegions(position);
 						if (regions != null)
 							for (int i= 0; i < regions.length; i++)
 								removeMasterDocumentRange(projection, regions[i].getOffset(), regions[i].getLength());
@@ -1625,20 +1590,53 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			return null;
 		
 		int modelOffset= modelSelection.getOffset();
-		int modelLength= modelSelection.getLength();
+		int modelEndOffset= modelOffset + modelSelection.getLength();
 		if (getVisibleDocument().getLength() == 0)
-			modelLength= 0;
+			modelEndOffset= modelOffset;
 		
+		/*
+		 * Special case 1: the selection's end is right at the offset of a collapsed
+		 * region. We include the collapsed region into the selection if it starts
+		 * at a line start.
+		 */
 		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
 		int modelExclusiveEnd= widgetOffset2ModelOffset(widgetSelectionExclusiveEnd);
+		if (modelEndOffset < modelExclusiveEnd) {
+			IDocument document= getDocument();
+			try {
+				IRegion nextModelLine= document.getLineInformationOfOffset(modelExclusiveEnd);
+				if (nextModelLine.getOffset() == modelExclusiveEnd)
+					modelEndOffset= modelExclusiveEnd;
+			} catch (BadLocationException e) {
+				// ignore
+			}
+		}
 		
-		if (modelOffset + modelLength < modelExclusiveEnd)
-			return new Point(modelOffset, modelExclusiveEnd - modelOffset);
+		/*
+		 * Special case 2: the selection's offset is right at the offset of a
+		 * collapsed region. We include the collapsed region if it starts at a 
+		 * line start.
+		 */
+		if (widgetSelection.x == 0) {
+			modelOffset= 0;
+		} else {
+			int modelExclusiveStart= widgetOffset2ModelOffset(widgetSelection.x - 1);
+			if (modelExclusiveStart < modelOffset - 1) {
+				IDocument document= getDocument();
+				try {
+					IRegion modelLine= document.getLineInformationOfOffset(modelOffset);
+					if (modelLine.getOffset() == modelOffset)
+						modelOffset= modelExclusiveStart + 1;
+				} catch (BadLocationException e) {
+					// ignore
+				}
+			}
+		}
 		
 		if (widgetSelectionExclusiveEnd == getVisibleDocument().getLength() && widgetSelectionExclusiveEnd > 0)
-			return new Point(modelOffset, getDocument().getLength() - modelOffset);
+			modelEndOffset= getDocument().getLength();
 		
-		return new Point(modelOffset, modelLength);
+		return new Point(modelOffset, modelEndOffset - modelOffset);
 	}
 	
 	/*

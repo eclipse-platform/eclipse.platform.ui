@@ -60,7 +60,12 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	private boolean isCaptionLine(ProjectionAnnotation annotation, Position position, IDocument document, int line) {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
-				int startLine= document.getLineOfOffset(position.getOffset() + annotation.getCaptionOffset());
+				int captionOffset;
+				if (position instanceof IProjectionPosition)
+					captionOffset= ((IProjectionPosition) position).computeCaptionOffset(document);
+				else
+					captionOffset= 0;
+				int startLine= document.getLineOfOffset(position.getOffset() + captionOffset);
 				return line == startLine;
 			} catch (BadLocationException x) {
 			}

@@ -138,7 +138,13 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 				int endLine= document.getLineOfOffset(position.getOffset() + position.getLength());
 				if (startLine <= line && line < endLine) {
 					if (annotation.isCollapsed()) {
-						int captionLine= document.getLineOfOffset(position.getOffset() + annotation.getCaptionOffset());
+						int captionOffset;
+						if (position instanceof IProjectionPosition)
+							captionOffset= ((IProjectionPosition) position).computeCaptionOffset(document);
+						else
+							captionOffset= 0;
+
+						int captionLine= document.getLineOfOffset(position.getOffset() + captionOffset);
 						if (startLine <= captionLine && captionLine < endLine)
 							return Math.abs(line - captionLine);
 					}

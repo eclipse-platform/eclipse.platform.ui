@@ -167,19 +167,4 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	public void markExpanded() {
 		fIsCollapsed= false;
 	}
-	
-	/**
-	 * Returns the offset of the region that will serve as the caption of the
-	 * receiver if it is collapsed. The offset is relative to the start of the
-	 * receiver's position.
-	 * <p>
-	 * The default implementation returns zero.
-	 * </p>
-	 * 
-	 * @return the offset of the region that serves as the caption of the
-	 *         collapsed annotation
-	 */
-	protected int getCaptionOffset() {
-		return 0;
-	}
 }
