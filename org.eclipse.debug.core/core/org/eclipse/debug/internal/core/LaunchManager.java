@@ -1272,6 +1272,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		private ILaunchesListener fListener;
 		private int fType;
 		private ILaunch[] fLaunches;
+		private ILaunch[] fRegistered;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -1293,25 +1294,31 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					fListener.launchesRemoved(fLaunches);
 					break;
 				case CHANGED:
-					List registered = null;
-					for (int j = 0; j < fLaunches.length; j++) {
-						if (isRegistered(fLaunches[j])) {
-							if (registered != null) {
-								registered.add(fLaunches[j]);
-							} 
-						} else {
-							if (registered == null) {
-								registered = new ArrayList(fLaunches.length);
-								for (int k = 0; k < j; k++) {
-									registered.add(fLaunches[k]);
+					if (fRegistered == null) {
+						List registered = null;
+						for (int j = 0; j < fLaunches.length; j++) {
+							if (isRegistered(fLaunches[j])) {
+								if (registered != null) {
+									registered.add(fLaunches[j]);
+								} 
+							} else {
+								if (registered == null) {
+									registered = new ArrayList(fLaunches.length);
+									for (int k = 0; k < j; k++) {
+										registered.add(fLaunches[k]);
+									}
 								}
 							}
 						}
+						if (registered == null) {
+							fRegistered = fLaunches;
+						} else {
+							fRegistered = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
+						}
 					}
-					if (registered != null) {
-						fLaunches = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
+					if (fRegistered.length > 0) {
+						fListener.launchesChanged(fRegistered);
 					}
-					fListener.launchesChanged(fLaunches);
 					break;
 			}
 		}
@@ -1325,6 +1332,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		public void notify(ILaunch[] launches, int update) {
 			fLaunches = launches;
 			fType = update;
+			fRegistered = null;
 			Object[] copiedListeners= fLaunchesListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (ILaunchesListener)copiedListeners[i];
