@@ -412,6 +412,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 
 		active = false;
+		
+		updateSystemMenu();
 	}
 
 	private StackPresentation getPresentation() {
