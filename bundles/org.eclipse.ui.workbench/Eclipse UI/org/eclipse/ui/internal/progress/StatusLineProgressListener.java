@@ -23,8 +23,8 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * The StatusLineProgressListener is a class that prints the current
- * progress on the status line.
+ * The StatusLineProgressListener is a class that prints the current progress
+ * on the status line.
  */
 class StatusLineProgressListener implements IJobProgressManagerListener {
 
@@ -36,6 +36,7 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 
 		/**
 		 * Return a new instance of the receiver.
+		 * 
 		 * @param name
 		 */
 		public RefreshJob() {
@@ -54,8 +55,9 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		}
 
 		/**
-		 * Set the message for the receiver. If it is a new
-		 * message return a boolean.
+		 * Set the message for the receiver. If it is a new message return a
+		 * boolean.
+		 * 
 		 * @param newMessage
 		 * @return boolean. true if an update is required
 		 */
@@ -67,8 +69,9 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		}
 
 		/**
-		 * Return the status line manager if there is one. Return
-		 * null if one cannot be found.
+		 * Return the status line manager if there is one. Return null if one
+		 * cannot be found.
+		 * 
 		 * @return
 		 */
 		private IStatusLineManager getStatusLineManager() {
@@ -82,16 +85,18 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 
 	RefreshJob refreshJob = new RefreshJob();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void add(JobInfo info) {
 		jobInfos.add(info);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void refresh(JobInfo info) {
 
@@ -101,14 +106,16 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		updateForMessage(info.getDisplayString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 	 */
 	public void refreshAll() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void remove(JobInfo info) {
 
@@ -117,38 +124,42 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		updateForMessage(getNextMessage());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 	 */
 	public boolean showsDebug() {
 		return false;
 	}
 
 	/**
-	 * Return the String to update on the status line. If there
-	 * is another running job return it's info - otherwise just
-	 * return the empty String.
-	 * Synchronized as iterators are not Thread safe on thier
-	 * own.
+	 * Return the String to update on the status line. If there is another
+	 * running job return it's info - otherwise just return the empty String.
+	 * 
 	 * @return
 	 */
-	private synchronized String getNextMessage() {
+	private String getNextMessage() {
 
-		Iterator remainingJobs = jobInfos.iterator();
-		while (remainingJobs.hasNext()) {
-			JobInfo next = (JobInfo) remainingJobs.next();
-			if (next.getJob().getState() == Job.RUNNING)
-				return next.getDisplayString();
+		synchronized (jobInfos) {
+			//Synchronized as iterators are not Thread safe on thier
+			//own.
+			Iterator remainingJobs = jobInfos.iterator();
+			while (remainingJobs.hasNext()) {
+				JobInfo next = (JobInfo) remainingJobs.next();
+				if (next.getJob().getState() == Job.RUNNING)
+					return next.getDisplayString();
+			}
 		}
 		return new String();
 
 	}
 
 	/**
-	 * Queue and update job for the receiver for this message.
-	 * If this was the same as the previous message then do 
-	 * nothing. 
-	 * @param message String
+	 * Queue and update job for the receiver for this message. If this was the
+	 * same as the previous message then do nothing.
+	 * 
+	 * @param message
+	 *           String
 	 */
 	private void updateForMessage(String message) {
 
