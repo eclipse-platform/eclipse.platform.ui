@@ -27,7 +27,7 @@ public class OptionTests extends AbstractAntTest {
 	
 	protected static final String UNKNOWN_ARG= "Unknown argument: ";
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
-	protected static final String VERSION= "Apache Ant version 1.5.4 compiled on August 12 2003";
+	protected static final String VERSION= "Apache Ant version 1.6.0 compiled on December 18 2003";
 	 
 	public OptionTests(String name) {
 		super(name);
@@ -65,7 +65,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testProjecthelp() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-projecthelp"});
-		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
 		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
 	}
 	
@@ -74,7 +74,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusP() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-p"});
-		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
 		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
 	}
 	

@@ -48,7 +48,7 @@ public class TypeTests extends AbstractAntTest {
 		try {
 			run("CustomType.xml");
 		} catch (CoreException ce) {
-			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("Unexpected element \"anttestpath\""));
+			assertTrue("Exception from undefined type is incorrect: "+ ce.getMessage(), ce.getMessage().endsWith("as this is not an Ant bug."));
 			return;
 		} finally {
 			restorePreferenceDefaults();	
@@ -69,7 +69,7 @@ public class TypeTests extends AbstractAntTest {
 		try {
 			run("ExtensionPointType.xml");
 		} catch (CoreException ce) {
-			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("Unexpected element \"coolType\""));
+			assertTrue("Exception from undefined type is incorrect: " + ce.getMessage(), ce.getMessage().endsWith("as this is not an Ant bug."));
 			return;
 		} finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);

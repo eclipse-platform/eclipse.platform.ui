@@ -205,7 +205,10 @@ public class InternalAntRunner {
 			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Buildfile__{0}_is_not_a_file_1"), //$NON-NLS-1$
 							new String[]{buildFile.getAbsolutePath()}));
 		}
-		ProjectHelper.configureProject(project, buildFile);
+		ProjectHelper helper = ProjectHelper.getProjectHelper();
+		project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
+		helper.parse(project, buildFile);
+		
 	}
 
 	private void printArguments(Project project) {

@@ -187,7 +187,10 @@ public class CodeCompletionTest extends AbstractAntUITest {
       
 		antProject.setUserProperty("ant.file", file.getAbsolutePath());
 
-        ProjectHelper.configureProject(antProject, file);  // File will be parsed here
+        // File will be parsed here
+        ProjectHelper helper = ProjectHelper.getProjectHelper();
+        antProject.addReference("ant.projectHelper", helper); //$NON-NLS-1$
+        helper.parse(antProject, file);
         Map map = antProject.getProperties();
         assertEquals("valD", map.get("propD"));
         assertEquals("val1", map.get("prop1"));
@@ -575,41 +578,19 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
 		assertEquals(0, mode);
 	}
-
-	/**
-	 * Tests the property proposals in for the case that they are defined in
-	 * a seperate property file.
-	 */
-	public void testPropertiesWithIncompleteBuildFile() {
-	    // test with not valid (complete) build file
-		Project antProject = new Project();
-		antProject.init();
-	    File file = getBuildFile("buildtest2.xml");
-		antProject.setUserProperty("ant.file", file.getAbsolutePath());
-	    try {
-			ProjectHelper.configureProject(antProject, file);  // File will be parsed here
-	    }
-	    catch(BuildException e) {
-	        // ignore a build exception on purpose 
-	    }    
-	    Map map = antProject.getProperties();
-	    assertEquals("valD", map.get("propD"));
-	    assertEquals("val1", map.get("prop1"));
-	    assertEquals("val2", map.get("prop2"));
-	}
 	
 	public void testPropertiesWithWholeDocString() {
 		// test with not valid whole document string
-	  	Project antProject = new Project();
-	  	antProject.init();
-	  	File file= getBuildFile("empty.xml");
+		Project antProject = new Project();
+		antProject.init();
+		File file= getBuildFile("empty.xml");
 		antProject.setUserProperty("ant.file", file.getAbsolutePath());
 		StringBuffer buff = new StringBuffer();
 		buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		buff.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
 		buff.append("<property name=\"propA\" value=\"valA\" />\n");
-	   buff.append("<property file=\"buildtest1.properties\" />\n");
-	   buff.append("<target name=\"main\" depends=\"properties\">\n");
+		buff.append("<property file=\"buildtest1.properties\" />\n");
+		buff.append("<target name=\"main\" depends=\"properties\">\n");
 	   try {
 		   org.eclipse.ant.internal.ui.editor.utils.ProjectHelper.configureProject(antProject, file, buff.toString());  // File will be parsed here
 	   }
