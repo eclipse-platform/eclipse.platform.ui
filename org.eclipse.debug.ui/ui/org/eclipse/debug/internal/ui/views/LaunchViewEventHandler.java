@@ -14,20 +14,19 @@ import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -90,7 +89,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 */
 	public void doHandleDebugEvent(DebugEvent event) {
 		Object element= event.getSource();
-		if (element instanceof IDebugElement && ((IDebugElement) element).getElementType() == IDebugElement.VARIABLE) {
+		if (element instanceof IVariable || element instanceof IValue || element instanceof IExpression) {
 			// the debug view does not show variables
 			return;
 		}

@@ -37,28 +37,24 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	 * @see BasicContentProvider#doGetChildren(Object)
 	 */
 	protected Object[] doGetChildren(Object parent) {
-		if (parent instanceof IDebugElement) {
-			IDebugElement de= (IDebugElement)parent;
-			Object[] children= null;
-			try {
-				int elementType= de.getElementType();
-				if (elementType == de.STACK_FRAME) {
-					IStackFrame sf= (IStackFrame)parent;
-					if (sf.isSuspended()) {
-						children = sf.getVariables();
-					}
-				} else if (elementType == de.VARIABLE) {
-					children = ((IVariable)parent).getValue().getVariables();
+		Object[] children= null;
+		try {
+			if (parent instanceof IStackFrame) {
+				IStackFrame sf= (IStackFrame)parent;
+				if (sf.isSuspended()) {
+					children = sf.getVariables();
 				}
-				if (children != null) {
-					for (int i = 0; i < children.length; i++) {
-						fParentCache.put(children[i], parent);
-					}
-					return children;
-				}
-			} catch (DebugException e) {
-				DebugUIPlugin.logError(e);
+			} else if (parent instanceof IVariable) {
+				children = ((IVariable)parent).getValue().getVariables();
 			}
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					fParentCache.put(children[i], parent);
+				}
+				return children;
+			}
+		} catch (DebugException e) {
+			DebugUIPlugin.logError(e);
 		}
 		return new Object[0];
 	}

@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -396,16 +395,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				if (selection instanceof IStructuredSelection) {
 					obj= ((IStructuredSelection) selection).getFirstElement();
 				}
-				if (obj == null || !(obj instanceof IDebugElement)) {
-					return;
-				}
-					
-				IDebugElement debugElement= (IDebugElement) obj;
-				if (debugElement.getElementType() != IDebugElement.STACK_FRAME) {
+				if (obj == null || !(obj instanceof IStackFrame)) {
 					return;
 				}
 				
-				IStackFrame stackFrame= (IStackFrame) debugElement;
+				IStackFrame stackFrame= (IStackFrame) obj;
 				
 				// Get the corresponding element.
 				ILaunch launch = stackFrame.getLaunch();

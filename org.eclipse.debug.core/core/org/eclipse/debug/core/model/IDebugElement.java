@@ -41,48 +41,6 @@ import org.eclipse.debug.core.ILaunch;
 public interface IDebugElement extends IAdaptable {
 	
 	/**
-	 * Debug target type.
-	 *
-	 * @see IDebugTarget
-	 */
-	public static final int DEBUG_TARGET= 0x0002;
-
-	/**
-	 * Thread type.
-	 *
-	 * @see IThread
-	 */
-	public static final int THREAD= 0x0004;
-
-	/**
-	 * Stack frame type.
-	 *
-	 * @see IStackFrame
-	 */
-	public static final int STACK_FRAME= 0x0008;
-
-	/**
-	 * Variable type.
-	 *
-	 * @see IVariable
-	 */
-	public static final int VARIABLE= 0x0010;
-	
-	/**
-	 * Value type.
-	 *
-	 * @see IValue
-	 */
-	public static final int VALUE= 0x0012;
-	
-	/**
-	 * Returns the type of this element, encoded as an integer - one
-	 * of the constants defined in this interface.
-	 *
-	 * @return debug element type constant
-	 */
-	public int getElementType();
-	/**
 	 * Returns the unique identifier of the plug-in
 	 * this debug element originated from.
 	 *

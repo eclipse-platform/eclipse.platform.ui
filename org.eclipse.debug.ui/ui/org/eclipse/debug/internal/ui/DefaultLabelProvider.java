@@ -97,25 +97,16 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 * @see ILabelProvider#getText(Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof IDebugElement) {
-			try {
-				switch (((IDebugElement) element).getElementType()) {
-					case IDebugElement.DEBUG_TARGET:
-						return ((IDebugTarget)element).getName();
-					case IDebugElement.THREAD:
-						return ((IThread)element).getName();
-					case IDebugElement.STACK_FRAME:
-						return ((IStackFrame)element).getName();
-					case IDebugElement.VARIABLE:
-						return ((IVariable)element).getName();
-					default:
-						return ""; //$NON-NLS-1$
-				}
-			} catch (DebugException de) {
-				DebugUIPlugin.logError(de);
-			}
-		} else
-			if (element instanceof IMarker) {
+		try {
+			if (element instanceof IDebugTarget) {
+				return ((IDebugTarget)element).getName();
+			} else if (element instanceof IThread) {
+				return ((IThread)element).getName();
+			} else if (element instanceof IStackFrame) {
+				return ((IStackFrame)element).getName();
+			} else if (element instanceof IVariable) {
+				return ((IVariable)element).getName();
+			} else if (element instanceof IMarker) {
 				IMarker m= (IMarker) element;
 				try {
 					if (m.exists() && m.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
@@ -125,6 +116,10 @@ public class DefaultLabelProvider implements ILabelProvider {
 					DebugUIPlugin.logError(e);
 				}
 			}
+		} catch (DebugException e) {
+			DebugUIPlugin.logError(e);
+		}
+		
 		return DebugUIMessages.getString("DelegatingModelPresentation.<unknown>_4"); //$NON-NLS-1$
 	}
 

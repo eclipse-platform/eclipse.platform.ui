@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
@@ -176,7 +178,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	}
 	
 	protected boolean shouldAppendChildren(Object e) {
-		return e instanceof IDebugElement && ((IDebugElement)e).getElementType() < IDebugElement.STACK_FRAME;
+		return e instanceof IDebugTarget || e instanceof IThread;
 	}
 	/*
 	 * @see ControlActionDelegate#getStatusMessage()
