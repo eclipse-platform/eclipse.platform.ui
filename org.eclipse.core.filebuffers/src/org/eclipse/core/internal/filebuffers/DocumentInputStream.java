@@ -8,23 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.internal.filebuffers;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 
+
 /**
  * An <code>InputStream</code> that reads from an <code>IDocument</code>.
- * The input stream ensures that its content is the same as the document content
- * when the stream was created.
+ * The input stream ensures that its content is the same as the document
+ * content when the stream was created.
  * <p>
- * Note that {@link InputStream#close()} must be called to release any acquired
+ * Note that {@link #close()} must be called to release any acquired
  * resources.
  * </p>
  * 
@@ -99,36 +100,29 @@ class DocumentInputStream extends InputStream {
 		}
 	}
 
-	/** Character sequence */
+	/** The character sequence. */
 	private volatile CharSequence fCharSequence;
 	
-	/** Document length */
+	/** Document length. */
 	private int fLength;
 	
-	/** Current offset */
+	/** The current offset. */
 	private int fOffset= 0;
 	
-	/** Document */
+	/** The document. */
 	private IDocument fDocument;
 	
-	/** Document listener */
+	/** The document listener. */
 	private IDocumentListener fDocumentListener= new InternalDocumentListener();
 	
 	/**
-	 * Initialize the stream to read from the given document.
+	 * Creates a new document input stream and initializes
+	 * the stream to read from the given document.
 	 * 
 	 * @param document the document
 	 */
 	public DocumentInputStream(IDocument document) {
-		acquireDocument(document);
-	}
-
-	/**
-	 * Initialize the stream to read from the given document.
-	 * 
-	 * @param document the document
-	 */
-	private void acquireDocument(IDocument document) {
+		Assert.isNotNull(document);
 		fDocument= document;
 		fCharSequence= new DocumentCharSequence(fDocument);
 		fDocument.addDocumentListener(fDocumentListener);
@@ -141,8 +135,10 @@ class DocumentInputStream extends InputStream {
 	public int read() throws IOException {
 		try {
 			return fOffset < fLength ? fCharSequence.charAt(fOffset++) : -1;
+		} catch (NullPointerException x) {
+			throw new IOException(FileBuffersMessages.getString("DocumentInputStream.error.streamClosed")); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException x) {
-			throw new IOException(FileBuffersMessages.getString("DocumentInputStream.error.read") + x.getLocalizedMessage()); //$NON-NLS-1$
+			throw new IOException(FileBuffersMessages.getFormattedString("DocumentInputStream.error.read", x.getLocalizedMessage())); //$NON-NLS-1$
 		}
 	}
 	
@@ -175,11 +171,9 @@ class DocumentInputStream extends InputStream {
 	/**
 	 * Removes the document listener.
 	 */
-	private void releaseDocument() {
-		IDocument document= fDocument;
-		IDocumentListener documentListener= fDocumentListener;
-		if (document != null && documentListener != null)
-			document.removeDocumentListener(documentListener);
+	private synchronized void releaseDocument() {
+		if (fDocument != null)
+			fDocument.removeDocumentListener(fDocumentListener);
 		fDocument= null;
 		fDocumentListener= null;
 	}
