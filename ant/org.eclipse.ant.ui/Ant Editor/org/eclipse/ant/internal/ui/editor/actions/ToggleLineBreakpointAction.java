@@ -42,6 +42,7 @@ public class ToggleLineBreakpointAction implements IToggleBreakpointsTarget {
 		}
 		if (resource == null) {
 			Display.getCurrent().beep();
+            return;
 		}
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -55,8 +56,7 @@ public class ToggleLineBreakpointAction implements IToggleBreakpointsTarget {
 			}
 		}
 		// create line breakpoint (doc line numbers start at 0)
-		AntLineBreakpoint lineBreakpoint = new AntLineBreakpoint(resource, lineNumber + 1);
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(lineBreakpoint);
+		new AntLineBreakpoint(resource, lineNumber + 1);
 	}
 	
 	/* (non-Javadoc)
