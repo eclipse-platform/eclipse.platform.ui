@@ -75,7 +75,7 @@ public class BrowserControlSite extends OleControlSite {
 		addEventListener(WebBrowser.DownloadBegin, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				startedDownload = true;
-				webProgress.setSelection(0);
+				//webProgress.setSelection(0);
 				prevMax = -1;
 			}
 		});
@@ -83,7 +83,7 @@ public class BrowserControlSite extends OleControlSite {
 		addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				startedDownload = false;
-				webProgress.setSelection(0);
+				//webProgress.setSelection(0);
 				if (statusLineManager!=null) 
 				   statusLineManager.getProgressMonitor().done();
 				if (redirection)
@@ -133,13 +133,15 @@ public class BrowserControlSite extends OleControlSite {
 				if (progress == null || maxProgress == null || progress.getInt() == -1) {
 					return;
 				}
+				/*
 				if (maxProgress.getInt()!=100)
 				   webProgress.setMaximum(maxProgress.getInt());
+				*/
 				if (prevMax != maxProgress.getInt()) {
 					statusLineManager.getProgressMonitor().beginTask("", maxProgress.getInt());
 					prevMax = maxProgress.getInt();
 				}
-				webProgress.setSelection(progress.getInt());
+				//webProgress.setSelection(progress.getInt());
 				int newValue = progress.getInt();
 				int worked = newValue - workSoFar;
 				workSoFar = newValue;
@@ -153,17 +155,17 @@ public class BrowserControlSite extends OleControlSite {
 				Variant newText = event.arguments[0];
 				String msg = newText.getString();
 
-				if (webStatus!=null) {
+				//if (webStatus!=null) {
 					if (msg != null) {
-						webStatus.setText(msg);
+						//webStatus.setText(msg);
 						if (statusLineManager!=null) 
 						   statusLineManager.setMessage(msg);
 					}
 					else {
-						webStatus.setText("");
+						//webStatus.setText("");
 						if (statusLineManager!=null) statusLineManager.setMessage("");
 					}
-				}
+				//}
 			}
 		});
 	}

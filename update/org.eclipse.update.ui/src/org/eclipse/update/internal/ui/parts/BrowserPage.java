@@ -129,14 +129,16 @@ public class BrowserPage implements IUpdateFormPage {
 
 		Control c = browser.getControl();
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		/*
 		Composite statusContainer = new Composite(container, SWT.NONE);
 		statusContainer.setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL));
+		*/
 		final BrowserControlSite site = browser.getControlSite();
 		IStatusLineManager smng = getView().getViewSite().getActionBars().getStatusLineManager();
 		site.setStatusLineManager(smng);
 
-		site.setStatusContainer(statusContainer);
+		//site.setStatusContainer(statusContainer);
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
 				String url = browser.getLocationURL();
