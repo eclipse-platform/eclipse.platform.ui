@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.File;
 import java.util.Set;
 import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
@@ -46,7 +47,11 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * <code>EXISTING_VARIABLE</code>.
 	 */
 	private int type;
-
+	/**
+	 * The type of variable that can be edited in this dialog.
+	 * <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
+	 */
+	private int variableType;
 	/**
 	 * The name of the variable being edited.
 	 */
@@ -117,17 +122,19 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell the parent shell
 	 * @param type the dialog type: <code>NEW_VARIABLE</code> or
-	 * <code>EXISTING_VARIABLE</code>
+	 * 	<code>EXISTING_VARIABLE</code>
+	 * @param variableType the type of variable that can be edited in 
+	 * 	this dialog. <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
 	 * @param pathVariableManager a reference to the path variable manager
 	 * @param namesInUse a set of variable names currently in use 
 	 */
-	public PathVariableDialog(Shell parentShell, int type, IPathVariableManager pathVariableManager, Set namesInUse) {
+	public PathVariableDialog(Shell parentShell, int type, int variableType, IPathVariableManager pathVariableManager, Set namesInUse) {
 		super(parentShell);
 		this.type = type;
 		this.typeKeySuffix = type == NEW_VARIABLE ? "newVariable" : "existingVariable"; //$NON-NLS-1$ //$NON-NLS-2$        
 		this.variableName = ""; //$NON-NLS-1$
 		this.variableValue = ""; //$NON-NLS-1$
-
+		this.variableType = variableType;
 		this.pathVariableManager = pathVariableManager;
 		this.namesInUse = namesInUse;
 
@@ -254,6 +261,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 		// select file path button
 		fileButton = new Button(contents, SWT.PUSH);
 		fileButton.setText(WorkbenchMessages.getString("PathVariableDialog.file")); //$NON-NLS-1$
+		if ((variableType & IResource.FILE) == 0)
+			fileButton.setEnabled(false);
 
 		data = setButtonFormLayoutData(fileButton);
 		data.top = new FormAttachment(variableNameLabel, convertVerticalDLUsToPixels(10));
@@ -270,6 +279,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 		// select folder path button
 		folderButton = new Button(contents, SWT.PUSH);
 		folderButton.setText(WorkbenchMessages.getString("PathVariableDialog.folder")); //$NON-NLS-1$
+		if ((variableType & IResource.FOLDER) == 0)
+			folderButton.setEnabled(false);
 
 		data = setButtonFormLayoutData(folderButton);
 		data.top = new FormAttachment(variableValueLabel, convertVerticalDLUsToPixels(10));
