@@ -27,7 +27,7 @@ public interface IInstallHandlerEntry {
 	 * @return url
 	 * @since 2.0 
 	 */
-	URL getURL();
+	public URL getURL();
 
 	/**
 	 * Returns optional name of a library containing the install
@@ -37,7 +37,7 @@ public interface IInstallHandlerEntry {
 	 * @return install handler library name
 	 * @since 2.0 
 	 */
-	String getLibrary();
+	public String getLibrary();
 
 	/**
 	 * Returns install handler name.
@@ -57,6 +57,6 @@ public interface IInstallHandlerEntry {
 	 * @return handler name
 	 * @since 2.0 
 	 */
-	String getHandlerName();
+	public String getHandlerName();
 
 }

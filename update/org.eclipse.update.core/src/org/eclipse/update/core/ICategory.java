@@ -30,7 +30,7 @@ public interface ICategory {
 	 * @return the category name
 	 * @since 2.0 
 	 */
-	String getName();
+	public String getName();
 
 	/**
 	 * Retrieve the displayable label for the category
@@ -38,7 +38,7 @@ public interface ICategory {
 	 * @return displayable category label, or <code>null</code>
 	 * @since 2.0 
 	 */
-	String getLabel();
+	public String getLabel();
 
 	/** 
 	 * Retrieve the detailed category description
@@ -46,5 +46,5 @@ public interface ICategory {
 	 * @return category description, or <code>null</code>
 	 * @since 2.0 
 	 */
-	IURLEntry getDescription();
+	public IURLEntry getDescription();
 }

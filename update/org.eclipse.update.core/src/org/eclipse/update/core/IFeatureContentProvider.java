@@ -46,7 +46,7 @@ public interface IFeatureContentProvider {
 	 * @return feature url
 	 * @since 2.0
 	 */
-	URL getURL();
+	public URL getURL();
 
 	/**
 	 * Returns a content reference to the feature manifest. The feature manifest
@@ -61,7 +61,7 @@ public interface IFeatureContentProvider {
 	 * @return feature manifest reference
 	 * @since 2.0
 	 */
-	ContentReference getFeatureManifestReference(InstallMonitor monitor)
+	public ContentReference getFeatureManifestReference(InstallMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -79,7 +79,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	ContentReference[] getArchiveReferences(InstallMonitor monitor)
+	public ContentReference[] getArchiveReferences(InstallMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -107,7 +107,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor)
+	public ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -127,7 +127,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	ContentReference[] getPluginEntryArchiveReferences(
+	public ContentReference[] getPluginEntryArchiveReferences(
 		IPluginEntry pluginEntry,
 		InstallMonitor monitor)
 		throws CoreException;
@@ -157,11 +157,11 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	ContentReference[] getNonPluginEntryArchiveReferences(
+	public ContentReference[] getNonPluginEntryArchiveReferences(
 		INonPluginEntry nonPluginEntry,
 		InstallMonitor monitor)
 		throws CoreException;
-		
+
 	/**
 	 * Returns an array of content references to the feature definition files
 	 * (ie. the "logical" view of the files defining the feature). These
@@ -175,7 +175,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException when an error occurs
 	 * @since 2.0 
 	 */
-	ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor)
+	public ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -188,7 +188,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	ContentReference[] getPluginEntryContentReferences(
+	public ContentReference[] getPluginEntryContentReferences(
 		IPluginEntry pluginEntry,
 		InstallMonitor monitor)
 		throws CoreException;
@@ -205,7 +205,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	long getDownloadSizeFor(
+	public long getDownloadSizeFor(
 		IPluginEntry[] pluginEntries,
 		INonPluginEntry[] nonPluginEntries);
 
@@ -221,7 +221,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	long getInstallSizeFor(
+	public long getInstallSizeFor(
 		IPluginEntry[] pluginEntries,
 		INonPluginEntry[] nonPluginEntries);
 
@@ -236,7 +236,7 @@ public interface IFeatureContentProvider {
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	IVerifier getVerifier() throws CoreException;
+	public IVerifier getVerifier() throws CoreException;
 
 	/**
 	 * Returns the feature associated with this content provider.
@@ -244,7 +244,7 @@ public interface IFeatureContentProvider {
 	 * @return feature for this content provider
 	 * @since 2.0
 	 */
-	IFeature getFeature();
+	public IFeature getFeature();
 
 	/**
 	 * Sets the feature associated with this content provider.
@@ -254,5 +254,5 @@ public interface IFeatureContentProvider {
 	 * @param feature feature for this content provider
 	 * @since 2.0
 	 */
-	void setFeature(IFeature feature);
+	public void setFeature(IFeature feature);
 }

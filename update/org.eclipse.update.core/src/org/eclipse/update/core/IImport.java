@@ -3,7 +3,7 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 /**
  * Plug-in dependency entry.
  * Describes a feture dependency on a particular plug-in. The dependency 
@@ -29,7 +29,7 @@ public interface IImport {
 	 * Dependency can be satisfied only with plug-in version matching 
 	 * exactly the specified version.
 	 * @since 2.0
-	 */	
+	 */
 	public static final int RULE_PERFECT = 1;
 
 	/**
@@ -54,14 +54,14 @@ public interface IImport {
 	 * @since 2.0
 	 */
 	public static final int RULE_GRATER_OR_EQUAL = 4;
-	
+
 	/** 
 	 * Returns an identifier of the dependent plug-in.
 	 * 
 	 * @return plug-in identifier
 	 * @since 2.0 
 	 */
-	VersionedIdentifier getVersionedIdentifier();
+	public VersionedIdentifier getVersionedIdentifier();
 
 	/**
 	 * Returns the matching rule for the dependency.
@@ -69,5 +69,5 @@ public interface IImport {
 	 * @return matching rule
 	 * @since 2.0 
 	 */
-	int getRule();
+	public int getRule();
 }

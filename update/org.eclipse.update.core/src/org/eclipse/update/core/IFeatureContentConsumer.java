@@ -44,7 +44,7 @@ public interface IFeatureContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	void store(ContentReference contentReference, IProgressMonitor monitor)
+	public void store(ContentReference contentReference, IProgressMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -58,7 +58,7 @@ public interface IFeatureContentConsumer {
 	 * @since 2.0 
 	 */
 
-	IContentConsumer open(IPluginEntry pluginEntry) throws CoreException;
+	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException;
 
 	/**
 	 * Opens a generic content consumer for the specified non-plug-in entry.
@@ -70,7 +70,8 @@ public interface IFeatureContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	IContentConsumer open(INonPluginEntry nonPluginEntry) throws CoreException;
+	public IContentConsumer open(INonPluginEntry nonPluginEntry)
+		throws CoreException;
 
 	/**
 	 * Closes this content consumer. This indicates a successful completion
@@ -81,7 +82,7 @@ public interface IFeatureContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	IFeatureReference close() throws CoreException;
+	public IFeatureReference close() throws CoreException;
 
 	/**
 	 * Closes this content consumer, indicating the store operations should
@@ -92,7 +93,7 @@ public interface IFeatureContentConsumer {
 	 * @since 2.0 
 	 */
 
-	void abort() throws CoreException;
+	public void abort() throws CoreException;
 
 	/**
 	 * Sets the feature for this content consumer.
@@ -102,6 +103,6 @@ public interface IFeatureContentConsumer {
 	 * @param feature feature for this content consumer
 	 * @since 2.0
 	 */
-	void setFeature(IFeature feature);
+	public void setFeature(IFeature feature);
 
 }

@@ -4,38 +4,45 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.internal.core.*;
 
+/**
+ * Convenience implementation of plug-in entry.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.IPluginEntry
+ * @see org.eclipse.update.core.model.PluginEntryModel
+ * @since 2.0
+ */
 public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 
 	/**
-	 * Constructor
+	 * Plug-in entry default constructor
 	 */
 	public PluginEntry() {
 		super();
 	}
 
-	
 	/**
+	 * Returns the identifier of this plugin entry
+	 * 
 	 * @see IPluginEntry#getIdentifier()
+	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
 		return new VersionedIdentifier(getPluginIdentifier(), getPluginVersion());
 	}
 
-	
 	/**
-	 * Sets the identifier
-	 * @param identifier The identifier to set
+	 * Sets the identifier of this plugin entry. 
+	 * 
+	 * @see IPluginEntry#setVersionedIdentifier(VersionedIdentifier)
 	 * @since 2.0
 	 */
 	public void setVersionedIdentifier(VersionedIdentifier identifier) {
 		setPluginIdentifier(identifier.getIdentifier());
 		setPluginVersion(identifier.getVersion().toString());
 	}
-	
-	
+
 }

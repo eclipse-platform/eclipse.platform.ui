@@ -37,5 +37,5 @@ public interface IFeatureFactory {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	IFeature createFeature(URL url, ISite site) throws CoreException;
+	public IFeature createFeature(URL url, ISite site) throws CoreException;
 }

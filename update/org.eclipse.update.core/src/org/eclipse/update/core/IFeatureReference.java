@@ -26,7 +26,7 @@ public interface IFeatureReference {
 	 * @return feature URL 
 	 * @since 2.0 
 	 */
-	URL getURL();
+	public URL getURL();
 
 	/**
 	 * Returns the update site for the referenced feature
@@ -34,7 +34,7 @@ public interface IFeatureReference {
 	 * @return feature site
 	 * @since 2.0 
 	 */
-	ISite getSite();
+	public ISite getSite();
 
 	/**
 	 * Returns an array of categories the referenced feature belong to.
@@ -42,7 +42,7 @@ public interface IFeatureReference {
 	 * @return an array of categories, or an empty array
 	 * @since 2.0 
 	 */
-	ICategory[] getCategories();
+	public ICategory[] getCategories();
 
 	/**
 	 * Returns the referenced feature.
@@ -51,7 +51,7 @@ public interface IFeatureReference {
 	 * @return the referenced feature
 	 * @since 2.0 
 	 */
-	IFeature getFeature() throws CoreException;
+	public IFeature getFeature() throws CoreException;
 
 	/**
 	 * Adds a category to the referenced feature.
@@ -59,7 +59,7 @@ public interface IFeatureReference {
 	 * @param category new category
 	 * @since 2.0 
 	 */
-	void addCategory(ICategory category);
+	public void addCategory(ICategory category);
 
 	/**
 	 * Sets the feature reference URL.
@@ -69,7 +69,7 @@ public interface IFeatureReference {
 	 * @param url reference URL
 	 * @since 2.0 
 	 */
-	void setURL(URL url) throws CoreException;
+	public void setURL(URL url) throws CoreException;
 
 	/**
 	 * Associates a site with the feature reference.
@@ -79,6 +79,6 @@ public interface IFeatureReference {
 	 * @param site site for the feature reference
 	 * @since 2.0 
 	 */
-	void setSite(ISite site);
+	public void setSite(ISite site);
 
 }

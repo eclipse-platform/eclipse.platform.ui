@@ -31,7 +31,7 @@ public interface IContentConsumer {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	void store(ContentReference contentReference, IProgressMonitor monitor)
+	public void store(ContentReference contentReference, IProgressMonitor monitor)
 		throws CoreException;
 
 	/**
@@ -42,6 +42,6 @@ public interface IContentConsumer {
 	 * @since 2.0 
 	 */
 
-	void close() throws CoreException;
+	public void close() throws CoreException;
 
 }

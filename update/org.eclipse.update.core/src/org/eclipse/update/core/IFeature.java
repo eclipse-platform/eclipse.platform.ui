@@ -37,7 +37,7 @@ public interface IFeature {
 	 * @return the feature identifier.
 	 * @since 2.0 
 	 */
-	VersionedIdentifier getVersionedIdentifier();
+	public VersionedIdentifier getVersionedIdentifier();
 
 	/**
 	 * Returns the site this feature is associated with.
@@ -45,7 +45,7 @@ public interface IFeature {
 	 * @return the site for this feature
 	 * @since 2.0 
 	 */
-	ISite getSite();
+	public ISite getSite();
 
 	/**
 	 * Returns the displayable label of the feature.
@@ -53,7 +53,7 @@ public interface IFeature {
 	 * @return feature label, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getLabel();
+	public String getLabel();
 
 	/**
 	 * Returns the feature URL.
@@ -64,7 +64,7 @@ public interface IFeature {
 	 * @return feature URL
 	 * @since 2.0 
 	 */
-	URL getURL();
+	public URL getURL();
 
 	/**
 	 * Returns an information entry referencing the location of the
@@ -74,7 +74,7 @@ public interface IFeature {
 	 * @return update site entry, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	IURLEntry getUpdateSiteEntry();
+	public IURLEntry getUpdateSiteEntry();
 
 	/**
 	 * Return an array of information entries referencing locations of other
@@ -84,7 +84,7 @@ public interface IFeature {
 	 * @return an array of site entries, or an empty array.
 	 * @since 2.0 
 	 */
-	IURLEntry[] getDiscoverySiteEntries();
+	public IURLEntry[] getDiscoverySiteEntries();
 
 	/**
 	 * Returns a displayable label identifying the provider of this feature
@@ -92,7 +92,7 @@ public interface IFeature {
 	 * @return provider label, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getProvider();
+	public String getProvider();
 
 	/**
 	 * Returns and optional custom install handler entry.
@@ -101,7 +101,7 @@ public interface IFeature {
 	 * none was specified
 	 * @since 2.0
 	 */
-	IInstallHandlerEntry getInstallHandlerEntry();
+	public IInstallHandlerEntry getInstallHandlerEntry();
 
 	/**
 	 * Returns the feature description.
@@ -109,7 +109,7 @@ public interface IFeature {
 	 * @return feature rescription, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	IURLEntry getDescription();
+	public IURLEntry getDescription();
 
 	/**
 	 * Returns the copyright information for the feature.
@@ -117,7 +117,7 @@ public interface IFeature {
 	 * @return copyright information, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	IURLEntry getCopyright();
+	public IURLEntry getCopyright();
 
 	/**
 	 * Returns the license information for the feature.
@@ -125,7 +125,7 @@ public interface IFeature {
 	 * @return feature license, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	IURLEntry getLicense();
+	public IURLEntry getLicense();
 
 	/**
 	 * Returns optional operating system specification.
@@ -141,7 +141,7 @@ public interface IFeature {
 	 * @return the operating system specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getOS();
+	public String getOS();
 
 	/**
 	 * Returns optional windowing system specification. 
@@ -157,7 +157,7 @@ public interface IFeature {
 	 * @return the windowing system specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getWS();
+	public String getWS();
 
 	/**
 	 * Returns optional system architecture specification. 
@@ -173,7 +173,7 @@ public interface IFeature {
 	 * @return system architecture specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getArch();
+	public String getArch();
 
 	/**
 	 * Returns optional locale specification. 
@@ -189,7 +189,7 @@ public interface IFeature {
 	 * @return the locale specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
-	String getNL();
+	public String getNL();
 
 	/**
 	 * Return optional image for the feature.
@@ -197,7 +197,7 @@ public interface IFeature {
 	 * @return the URL pointing to the image, , or <code>null</code>.
 	 * @since 2.0 
 	 */
-	URL getImage();
+	public URL getImage();
 
 	/**
 	 * Return a list of plug-in dependencies for this feature. A plug-in
@@ -207,7 +207,7 @@ public interface IFeature {
 	 * @return the list of required plug-in dependencies, or an empty array.
 	 * @since 2.0 
 	 */
-	IImport[] getImports();
+	public IImport[] getImports();
 
 	/**
 	 * Install the contents of this feature into the specified target feature.
@@ -230,7 +230,7 @@ public interface IFeature {
 	 * @return an erray of plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
-	IPluginEntry[] getPluginEntries();
+	public IPluginEntry[] getPluginEntries();
 
 	/**
 	 * Returns the count of referenced plug-in entries.
@@ -238,15 +238,15 @@ public interface IFeature {
 	 * @return plug-in entry count
 	 * @since 2.0
 	 */
-	int getPluginEntryCount();
-	
+	public int getPluginEntryCount();
+
 	/**
 	 * Returns an array of non-plug-in entries referenced by this feature
 	 * 
 	 * @return an erray of non-plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
-	INonPluginEntry[] getNonPluginEntries();
+	public INonPluginEntry[] getNonPluginEntries();
 
 	/**
 	 * Returns the count of referenced non-plug-in entries.
@@ -254,7 +254,7 @@ public interface IFeature {
 	 * @return non-plug-in entry count
 	 * @since 2.0
 	 */
-	int getNonPluginEntryCount();
+	public int getNonPluginEntryCount();
 
 	/**
 	 * Returns the download size of the feature, if it can be determined.
@@ -264,7 +264,7 @@ public interface IFeature {
 	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	long getDownloadSize();
+	public long getDownloadSize();
 
 	/**
 	 * Returns the install size of the feature, if it can be determined.
@@ -274,7 +274,7 @@ public interface IFeature {
 	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	long getInstallSize();
+	public long getInstallSize();
 
 	/**
 	 * Indicates whether the feature can be used as a primary feature.
@@ -283,7 +283,7 @@ public interface IFeature {
 	 * otherwise <code>false</code>
 	 * @since 2.0 
 	 */
-	boolean isPrimary();
+	public boolean isPrimary();
 
 	/**
 	 * Returns an optional identifier of an application to be used when
@@ -294,7 +294,7 @@ public interface IFeature {
 	 * @return application identifier, or <code>null</code>
 	 * @since 2.0 
 	 */
-	String getApplication();
+	public String getApplication();
 
 	/**
 	 * Returns the content provider for this feature. A content provider
@@ -307,7 +307,8 @@ public interface IFeature {
 	 * @exception CoreExcepton
 	 * @since 2.0
 	 */
-	IFeatureContentProvider getFeatureContentProvider() throws CoreException;
+	public IFeatureContentProvider getFeatureContentProvider()
+		throws CoreException;
 
 	/**
 	 * Returns the content consumer for this feature. A content consumer
@@ -324,7 +325,8 @@ public interface IFeature {
 	 * @exception UnsupportedOperationException
 	 * @since 2.0
 	 */
-	IFeatureContentConsumer getFeatureContentConsumer() throws CoreException;
+	public IFeatureContentConsumer getFeatureContentConsumer()
+		throws CoreException;
 
 	/**
 	 * Sets the site for this feature. This is typically performed as part
@@ -335,7 +337,7 @@ public interface IFeature {
 	 * @throws CoreException site for this feature is already set
 	 * @since 2.0 
 	 */
-	void setSite(ISite site) throws CoreException;	
+	public void setSite(ISite site) throws CoreException;
 
 	/**
 	 * Sets the content provider for this feature. This is typically
@@ -346,6 +348,6 @@ public interface IFeature {
 	 * @param featureContentProvider content provider
 	 * @since 2.0
 	 */
-	void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
+	public void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
 
 }

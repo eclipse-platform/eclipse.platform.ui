@@ -1,5 +1,7 @@
 package org.eclipse.update.core.model;
 
+// FIXME: this class is being retired
+
 import org.xml.sax.SAXParseException;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -16,6 +18,9 @@ public class ParsingException extends Exception {
 
 	private Throwable exception;
 	
+	/**
+	 * @deprecated
+	 */
 	public ParsingException(Throwable exception){
 		super(exception.getMessage());
 		this.exception = exception;
