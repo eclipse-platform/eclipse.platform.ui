@@ -281,24 +281,20 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			public void run() {
 				String targetId = id;
 				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window == null) {
-					return;
-				}
-				if (targetId == null) {
-					return;
-				}
-				// re-open the window if minimized 
-				Shell shell= window.getShell();
-				if (shell != null) {
-					if (shell.getMinimized()) {
-						shell.setMinimized(false);
+				if (window != null && targetId != null) {
+					// re-open the window if minimized 
+					Shell shell= window.getShell();
+					if (shell != null) {
+						if (shell.getMinimized()) {
+							shell.setMinimized(false);
+						}
+						if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+							shell.forceActive();
+						}
 					}
-					if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
-						shell.forceActive();
+					if (shouldSwitchPerspectiveForSuspend(targetId, launch[0])) {
+						switchToPerspective(targetId);
 					}
-				}
-				if (shouldSwitchPerspectiveForSuspend(targetId, launch[0])) {
-					switchToPerspective(targetId);
 				}
 				if (fSuspendOccurred && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
 					doShowDebugView();
