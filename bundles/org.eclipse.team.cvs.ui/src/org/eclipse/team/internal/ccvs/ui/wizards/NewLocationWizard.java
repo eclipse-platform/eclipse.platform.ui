@@ -5,13 +5,17 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSProvider;
@@ -54,17 +58,34 @@ public class NewLocationWizard extends Wizard {
 	public boolean performFinish() {
 		mainPage.finish(new NullProgressMonitor());
 		Properties properties = mainPage.getProperties();
-		ICVSRepositoryLocation root = null;
+		final ICVSRepositoryLocation[] root = new ICVSRepositoryLocation[1];
 		ICVSProvider provider = CVSProviderPlugin.getProvider();
 		try {
-			root = provider.createRepository(properties);
+			root[0] = provider.createRepository(properties);
 			if (mainPage.getValidate()) {
-				root.validateConnection(new NullProgressMonitor());
+				try {
+					new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								root[0].validateConnection(monitor);
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					return false;
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						throw (TeamException)t;
+					}
+				}
 			}
-			provider.addRepository(root);
+			provider.addRepository(root[0]);
 		} catch (TeamException e) {
 			IStatus error = e.getStatus();
-			if (root == null) {
+			if (root[0] == null) {
 				// Exception creating the root, we cannot continue
 				ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, error);
 				return false;
@@ -75,9 +96,9 @@ public class NewLocationWizard extends Wizard {
 					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
 				try {
 					if (keep) {
-						provider.addRepository(root);
+						provider.addRepository(root[0]);
 					} else {
-						provider.disposeRepository(root);
+						provider.disposeRepository(root[0]);
 					}
 				} catch (TeamException e1) {
 					ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
