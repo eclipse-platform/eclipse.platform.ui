@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.webapp.servlet.ServletResources;
+import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -55,7 +56,8 @@ public class WorkingSetManagerData extends RequestData {
 	public void addWorkingSet() {
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
 			return;
-		String name = request.getParameter("workingSet");
+		String name = UrlUtil.isIE(request) ? UrlUtil.unescape(UrlUtil.getRawRequestParameter(request, "workingSet")) :
+																 request.getParameter("workingSet");
 		if (name != null && name.length() > 0) {
 
 			String[] hrefs = request.getParameterValues("hrefs");
