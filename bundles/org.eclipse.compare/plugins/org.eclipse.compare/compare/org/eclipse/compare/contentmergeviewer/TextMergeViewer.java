@@ -1020,6 +1020,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				paintBirdsEyeView(this, gc);
 			}
 		};
+		fBirdsEyeCanvas.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 		fBirdsEyeCanvas.addMouseListener(
 			new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
