@@ -539,7 +539,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getCheatSheetID()
 	 */
 	public String getCheatSheetID() {
-		return getContent().getID();
+		if(getContent() != null) {
+			return getContent().getID();
+		}
+		
+		return null;
 	}
 
 	/**
@@ -832,9 +836,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	public void setInput(String id) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.setInput(String id)"); //$NON-NLS-1$
 
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
 		CheatSheetElement element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
 		if(element == null) {
 			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_INVALID_CHEATSHEET_ID, new Object[] {id});
