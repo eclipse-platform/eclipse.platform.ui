@@ -105,14 +105,18 @@ public class DetailsView extends MultiPageView {
 		addPage(MULTIPLE_SELECTION_PAGE, new MultipleSelectionPage(this, "Multiple Selection"));
 		addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	}
-
+	
 	public static boolean showURL(String url) {
+		return showURL(url, true);
+	}
+
+	public static boolean showURL(String url, boolean considerEmbedded) {
 		boolean useEmbedded = false;
 		boolean focusGrabbed = false;
 		boolean win32 = SWT.getPlatform().equals("win32");
 		
 		url = WebInstallHandler.getEncodedURLName(url);
-		if (win32) {
+		if (win32 && considerEmbedded) {
 			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
 		}
 		if (useEmbedded) {

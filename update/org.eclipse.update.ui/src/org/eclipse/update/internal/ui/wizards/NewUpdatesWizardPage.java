@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,6 +19,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.views.DetailsView;
 
 public class NewUpdatesWizardPage extends BannerPage {
 	// NL keys
@@ -29,6 +31,10 @@ public class NewUpdatesWizardPage extends BannerPage {
 		"NewUpdatesWizard.MainPage.selectAll";
 	private static final String KEY_DESELECT_ALL =
 		"NewUpdatesWizard.MainPage.deselectAll";
+	private static final String KEY_MORE_INFO =
+		"NewUpdatesWizard.MainPage.moreInfo";
+	private static final String KEY_FEATURE_DESC =
+		"NewUpdatesWizard.MainPage.featureDesc";
 	private static final String KEY_COUNTER =
 		"NewUpdatesWizard.MainPage.counter";
 	private static final String KEY_C_FEATURE =
@@ -50,6 +56,8 @@ public class NewUpdatesWizardPage extends BannerPage {
 	private PendingChange[] pendingChanges;
 	private Label counterLabel;
 	private Button filterCheck;
+	private Button moreInfoButton;
+	private Text descriptionArea;
 	private ContainmentFilter filter = new ContainmentFilter();
 
 	class TableContentProvider
@@ -219,9 +227,34 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
+		
+		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
+		moreInfoButton.setText(UpdateUIPlugin.getResourceString(KEY_MORE_INFO));
+		moreInfoButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doMoreInfo();
+			}
+		});
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		moreInfoButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(moreInfoButton);
 
 		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		tableViewer.setCheckedElements(pendingChanges);
+		
+		Label label = new Label(client, SWT.NULL);
+		label.setText(UpdateUIPlugin.getResourceString(KEY_FEATURE_DESC));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+
+		descriptionArea = new Text(client, SWT.BORDER |SWT.MULTI|SWT.READ_ONLY);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.heightHint = 64;
+		descriptionArea.setLayoutData(gd);
+		
+		new Label(client, SWT.NULL);		
+		
 		counterLabel = new Label(client, SWT.NULL);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
@@ -242,6 +275,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		filterCheck.setLayoutData(gd);
+		
 		pageChanged();
 		WorkbenchHelp.setHelp(
 			client,
@@ -290,7 +324,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		tableViewer =
 			CheckboxTableViewer.newCheckList(
 				parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		gd = new GridData(GridData.FILL_BOTH);
 		Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
@@ -322,6 +356,39 @@ public class NewUpdatesWizardPage extends BannerPage {
 				pageChanged();
 			}
 		});
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				tableSelectionChanged((IStructuredSelection)e.getSelection());
+			}
+		});
+	}
+	
+	private void tableSelectionChanged(IStructuredSelection selection) {
+		PendingChange selectedJob = (PendingChange)selection.getFirstElement();
+		IFeature feature = selectedJob!=null?selectedJob.getFeature():null;
+		IURLEntry descEntry = null;
+		
+		if (feature!=null)
+			descEntry = feature.getDescription();
+
+		moreInfoButton.setEnabled(descEntry!=null && descEntry.getURL()!=null);
+		String text = descEntry!=null?descEntry.getAnnotation():null;
+		descriptionArea.setText(text!=null?text:"");		
+	}
+	
+	private void doMoreInfo() {
+		IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
+		PendingChange selectedJob = (PendingChange)selection.getFirstElement();
+		IFeature feature = selectedJob!=null?selectedJob.getFeature():null;
+		URL url = null;
+		
+		if (feature!=null) {
+			IURLEntry descEntry = feature.getDescription();
+			if (descEntry!=null)
+				url = descEntry.getURL();
+		}
+		if (url!=null)
+			DetailsView.showURL(url.toString(), false);
 	}
 
 	public void setVisible(boolean visible) {

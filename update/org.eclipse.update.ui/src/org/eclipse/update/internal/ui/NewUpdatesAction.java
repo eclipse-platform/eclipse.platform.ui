@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.update.core.ISite;
@@ -104,7 +105,7 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 		NewUpdatesWizard wizard = new NewUpdatesWizard(searchObject);
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
-		dialog.getShell().setSize(600, 450);
+		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
 			UpdateUIPlugin.informRestartNeeded();
