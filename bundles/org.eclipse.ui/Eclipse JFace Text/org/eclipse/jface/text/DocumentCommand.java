@@ -69,7 +69,7 @@ public final class DocumentCommand {
 		int start= this.offset - offset;
 		
 		event.text= text;
-		event.doit= (start == event.start && start + length == event.end);
+		event.doit= (start == event.start && start + length == event.end) && doit;
 		return event.doit;
 	}
 }
