@@ -34,8 +34,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 		String factoryClass = "org.eclipse.help.internal.ui.win32.BrowserFactory";
 		try {
 			if (!System.getProperty("os.name").startsWith("Win"))
-				factoryClass =
-					factoryClass = "org.eclipse.help.internal.ui.motif.BrowserFactory";
+				factoryClass = "org.eclipse.help.internal.ui.motif.BrowserFactory";
 			Class c = Class.forName(factoryClass);
 			IBrowserFactory factory = (IBrowserFactory) c.newInstance();
 			// this could throw a HelpDesktopException
