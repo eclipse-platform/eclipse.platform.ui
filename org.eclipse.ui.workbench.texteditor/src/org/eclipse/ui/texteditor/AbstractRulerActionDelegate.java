@@ -108,7 +108,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	 * Requests the adaptee to update itself to the current state.
 	 */
 	private void update() {
-		if (fAction != null && fAction instanceof IUpdate) {
+		if (fAction instanceof IUpdate) {
 			((IUpdate) fAction).update();
 			if (fCallerAction != null) {
 				fCallerAction.setText(fAction.getText());
