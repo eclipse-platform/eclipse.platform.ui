@@ -203,7 +203,9 @@ function selectTopic(topic)
  */
 function onloadHandler(title)
 {
-	if(parent.args && parent.args["tab"]=="toc")
+	parent.tocTitle=title;
+	if(parent.document.getElementById("toc").style.visibility = "visible");
+		// the frame is visible and is being replaced
 		parent.setToolbarTitle(title);
 }
 
