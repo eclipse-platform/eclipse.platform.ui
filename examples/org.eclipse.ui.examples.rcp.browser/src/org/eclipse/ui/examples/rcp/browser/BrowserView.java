@@ -63,22 +63,19 @@ public class BrowserView extends ViewPart {
 	private Text location;
 	private String initialUrl = "http://eclipse.org"; //$NON-NLS-1$
 	
-	private Action backAction = new Action() {
-		{ setText("Back"); }
+	private Action backAction = new Action("Back") {
 		public void run() {
 			browser.back();
 		}
 	};
 	
-	private Action forwardAction = new Action() {
-		{ setText("Forward"); }
+	private Action forwardAction = new Action("Forward") {
 		public void run() {
 			browser.forward();
 		}
 	};
 
-	private Action stopAction = new Action() {
-		{ setText("Stop"); }
+	private Action stopAction = new Action("Stop") {
 		public void run() {
 			browser.stop();
 			// cancel any partial progress.
@@ -86,8 +83,7 @@ public class BrowserView extends ViewPart {
 		}
 	};
 
-	private Action refreshAction = new Action() {
-		{ setText("Refresh"); }
+	private Action refreshAction = new Action("Refresh") {
 		public void run() {
 			browser.refresh();
 		}
