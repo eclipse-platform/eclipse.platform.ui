@@ -336,7 +336,7 @@ protected void createTitleBar() {
 //	isvToolBar2 = new ToolBar(composite, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	
-	control.setTopLeft(isvToolBar);
+	control.setTopCenter(isvToolBar);
 	
 //	isvToolBar2.addMouseListener(new MouseAdapter(){
 //		public void mouseDoubleClick(MouseEvent event) {
