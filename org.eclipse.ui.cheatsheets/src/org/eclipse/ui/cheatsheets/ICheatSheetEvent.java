@@ -18,7 +18,7 @@ import org.eclipse.ui.cheatsheets.ICheatSheetManager;
  * Events over the life time of a running cheat sheet
  * follow this pattern:
  * <pre>
- * opened { started | restored } { restarted | end_reached }* closed
+ * opened { started | restored } { restarted | completed }* closed
  * </pre> 
  * </p>
  * <p>
@@ -59,9 +59,8 @@ public interface ICheatSheetEvent {
 	/**
 	 * Event type constant (value {@value}) indicating that
 	 * the cheat sheet has been completed.
-	 * TODO (lorne) - rename CHEATSHEET_COMPLETED ?
 	 */
-	public static final int CHEATSHEET_END_REACHED = 4;
+	public static final int CHEATSHEET_COMPLETED = 4;
 
 	/**
 	 * Event type constant (value {@value}) indicating that
