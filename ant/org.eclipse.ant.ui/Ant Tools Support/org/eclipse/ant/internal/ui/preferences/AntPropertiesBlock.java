@@ -25,7 +25,9 @@ import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -54,6 +56,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -134,6 +137,25 @@ public class AntPropertiesBlock {
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
+		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection.length == 0) {
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				}
+				for (int i= 0; i < selection.length; i++) {
+					if (!(selection[i] instanceof IFile)) {
+						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					}
+					IFile file= (IFile)selection[i];
+					if (!"properties".equalsIgnoreCase(file.getFileExtension())) { //$NON-NLS-1$
+						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					}
+				}
+				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+			}			
+		};
+		dialog.setValidator(validator);
+		
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
 			for (int i = 0; i < elements.length; i++) {
