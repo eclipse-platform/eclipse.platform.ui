@@ -107,9 +107,21 @@ public class InternalProject extends Project {
 			Throwable t = ite.getTargetException();
 			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, t.toString()}); //$NON-NLS-1$
 			throw new BuildException(message, t);
-		} catch (Throwable t) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, t.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, t);
+		} catch (IllegalArgumentException e) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, e);
+		} catch (InstantiationException e) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, e);
+		} catch (IllegalAccessException e) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, e);
+		} catch (NoSuchMethodException nse) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, nse.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, nse);
+		} catch (NoClassDefFoundError ncdfe) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, ncdfe.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, ncdfe);
 		}
 	}
 
