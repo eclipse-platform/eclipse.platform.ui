@@ -76,8 +76,6 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	private PluginRegistryReader pluginRegistryReader;
 	
 	PluginCommandRegistry(IPluginRegistry pluginRegistry) {
-		super();	
-
 		if (pluginRegistry == null)
 			throw new NullPointerException();
 		

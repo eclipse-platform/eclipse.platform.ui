@@ -771,6 +771,5 @@ final class Persistence {
 	// TODO deprecated end
 
 	private Persistence() {
-		super();
 	}	
 }

@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.util.Util;
 abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
-		super();
 	}
 
 	public void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions) {

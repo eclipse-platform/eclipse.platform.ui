@@ -18,9 +18,7 @@ final class HandleEvent implements IHandleEvent {
 
 	private IHandle handle;
 
-	HandleEvent(IHandle handle) {
-		super();
-		
+	HandleEvent(IHandle handle) {	
 		if (handle == null)
 			throw new NullPointerException();
 		

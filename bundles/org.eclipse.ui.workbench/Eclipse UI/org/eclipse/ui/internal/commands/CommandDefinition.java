@@ -87,8 +87,6 @@ final class CommandDefinition implements Comparable, ICommandDefinition {
 	private transient String string;
 	
 	CommandDefinition(boolean allowsContextBindings, boolean allowsImageBindings, boolean allowsKeyBindings, String categoryId, String description, String id, String name, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

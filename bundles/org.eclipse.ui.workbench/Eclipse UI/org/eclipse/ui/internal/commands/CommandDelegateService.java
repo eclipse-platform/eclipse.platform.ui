@@ -31,7 +31,6 @@ public final class CommandDelegateService implements ICommandDelegateService {
 	private List commandDelegateServiceListeners;
 
 	public CommandDelegateService() {
-		super();
 	}
 
 	public void addCommandDelegate(String commandId, ICommandDelegate commandDelegate) {

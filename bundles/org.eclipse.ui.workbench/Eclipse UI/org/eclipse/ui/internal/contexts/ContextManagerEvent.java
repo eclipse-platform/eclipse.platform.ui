@@ -20,8 +20,6 @@ final class ContextManagerEvent implements IContextManagerEvent {
 	private IContextManager contextManager;
 
 	ContextManagerEvent(IContextManager contextManager) {
-		super();
-		
 		if (contextManager == null)
 			throw new NullPointerException();
 		

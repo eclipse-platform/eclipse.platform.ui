@@ -91,8 +91,6 @@ final class Command implements Comparable, ICommand {
 	private transient String string;
 	
 	Command(boolean active, String categoryId, List contextBindings, String description, String id, List imageBindings, List keyBindings, String name, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

@@ -189,7 +189,6 @@ public final class KeyBindingMachine {
 	private SortedMap tree;
 
 	private KeyBindingMachine() {
-		super();
 		keyConfigurationMap = new TreeMap();
 		contextMap = new TreeMap();
 		keyBindingSet = new TreeSet();

@@ -20,8 +20,6 @@ final class ContextActivationServiceEvent implements IContextActivationServiceEv
 	private IContextActivationService contextActivationService;
 
 	ContextActivationServiceEvent(IContextActivationService contextActivationService) {
-		super();
-		
 		if (contextActivationService == null)
 			throw new NullPointerException();
 		

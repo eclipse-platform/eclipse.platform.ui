@@ -46,8 +46,6 @@ final class PluginContextRegistry extends AbstractContextRegistry {
 	private PluginRegistryReader pluginRegistryReader;
 	
 	PluginContextRegistry(IPluginRegistry pluginRegistry) {
-		super();	
-
 		if (pluginRegistry == null)
 			throw new NullPointerException();
 		

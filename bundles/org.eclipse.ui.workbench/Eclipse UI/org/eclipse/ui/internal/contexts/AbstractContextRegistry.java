@@ -28,7 +28,6 @@ abstract class AbstractContextRegistry implements IContextRegistry {
 	protected List contextDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractContextRegistry() {
-		super();
 	}
 
 	public void addContextRegistryListener(IContextRegistryListener contextRegistryListener) {

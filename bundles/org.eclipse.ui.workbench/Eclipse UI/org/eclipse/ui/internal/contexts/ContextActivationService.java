@@ -30,7 +30,6 @@ public final class ContextActivationService implements IContextActivationService
 	private List contextActivationServiceListeners;
 
 	public ContextActivationService() {
-		super();
 	}
 
 	public void activateContext(String contextId) {

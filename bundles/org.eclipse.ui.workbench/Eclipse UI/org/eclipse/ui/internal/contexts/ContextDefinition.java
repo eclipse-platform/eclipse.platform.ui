@@ -84,8 +84,6 @@ final class ContextDefinition implements Comparable, IContextDefinition {
 	private transient String string;
 	
 	ContextDefinition(String description, String id, String name, String parentId, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

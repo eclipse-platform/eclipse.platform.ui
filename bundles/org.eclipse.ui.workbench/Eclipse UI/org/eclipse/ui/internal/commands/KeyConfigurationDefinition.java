@@ -84,8 +84,6 @@ final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationD
 	private transient String string;	
 	
 	KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

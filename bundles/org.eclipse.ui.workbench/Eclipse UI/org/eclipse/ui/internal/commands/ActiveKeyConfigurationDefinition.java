@@ -27,8 +27,6 @@ final class ActiveKeyConfigurationDefinition implements Comparable, IActiveKeyCo
 	private transient String string;
 
 	ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
-		super();
-		
 		if (keyConfigurationId == null)
 			throw new NullPointerException();
 		

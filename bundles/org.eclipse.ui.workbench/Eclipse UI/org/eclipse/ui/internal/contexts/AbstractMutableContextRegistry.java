@@ -19,7 +19,6 @@ import org.eclipse.ui.internal.util.Util;
 abstract class AbstractMutableContextRegistry extends AbstractContextRegistry implements IMutableContextRegistry {
 
 	protected AbstractMutableContextRegistry() {
-		super();
 	}
 
 	public void setContextDefinitions(List contextDefinitions) {

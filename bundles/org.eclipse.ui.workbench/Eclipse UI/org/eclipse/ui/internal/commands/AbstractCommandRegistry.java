@@ -34,7 +34,6 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractCommandRegistry() {
-		super();
 	}
 
 	public void addCommandRegistryListener(ICommandRegistryListener commandRegistryListener) {

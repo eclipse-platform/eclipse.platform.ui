@@ -32,8 +32,6 @@ final class PreferenceContextRegistry extends AbstractMutableContextRegistry {
 	private IPreferenceStore preferenceStore;
 
 	PreferenceContextRegistry(IPreferenceStore preferenceStore) {
-		super();
-		
 		if (preferenceStore == null)
 			throw new NullPointerException();
 		

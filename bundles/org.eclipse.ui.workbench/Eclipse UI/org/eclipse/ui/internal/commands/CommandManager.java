@@ -60,7 +60,6 @@ public final class CommandManager implements ICommandManager {
 	private PreferenceCommandRegistry preferenceCommandRegistry;
 
 	private CommandManager() {
-		super();
 		if (pluginCommandRegistry == null)
 			pluginCommandRegistry = new PluginCommandRegistry(Platform.getPluginRegistry());
 			

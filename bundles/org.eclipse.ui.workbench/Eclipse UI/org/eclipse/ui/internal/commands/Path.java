@@ -43,7 +43,6 @@ final class Path implements Comparable {
 	private List strings;
 
 	private Path(List strings) {
-		super();
 		this.strings = Util.safeCopy(strings, String.class);
 
 		if (this.strings.size() >= MAXIMUM_STRINGS)

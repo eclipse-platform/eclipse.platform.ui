@@ -29,7 +29,6 @@ final class State implements Comparable {
 	private List paths;
 
 	private State(List paths) {
-		super();
 		this.paths = Util.safeCopy(paths, Path.class);
 		
 		if (this.paths.size() >= MAXIMUM_PATHS)

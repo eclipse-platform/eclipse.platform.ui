@@ -25,7 +25,6 @@ final class CommandEnvelope implements Comparable {
 	private String command;
 	
 	private CommandEnvelope(String command) {
-		super();
 		this.command = command;
 	}
 	

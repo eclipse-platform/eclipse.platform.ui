@@ -299,6 +299,5 @@ public final class Util {
 	}	
 	
 	private Util() {
-		super();
 	}
 }

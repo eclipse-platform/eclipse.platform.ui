@@ -32,8 +32,6 @@ final class PreferenceCommandRegistry extends AbstractMutableCommandRegistry {
 	private IPreferenceStore preferenceStore;
 
 	PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
-		super();
-		
 		if (preferenceStore == null)
 			throw new NullPointerException();
 		

@@ -20,8 +20,6 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 	private ICommandManager commandManager;
 
 	CommandManagerEvent(ICommandManager commandManager) {
-		super();
-		
 		if (commandManager == null)
 			throw new NullPointerException();
 		

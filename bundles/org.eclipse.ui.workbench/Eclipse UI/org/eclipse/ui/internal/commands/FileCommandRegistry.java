@@ -32,9 +32,7 @@ final class FileCommandRegistry extends AbstractMutableCommandRegistry {
 
 	private File file;
 
-	FileCommandRegistry(File file) {
-		super();
-		
+	FileCommandRegistry(File file) {	
 		if (file == null)
 			throw new NullPointerException();
 		

@@ -101,6 +101,5 @@ final class Persistence {
 	}
 
 	private Persistence() {
-		super();
 	}	
 }

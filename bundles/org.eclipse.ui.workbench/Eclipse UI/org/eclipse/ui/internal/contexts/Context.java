@@ -85,8 +85,6 @@ final class Context implements Comparable, IContext {
 	private transient String string;
 
 	Context(boolean active, String description, String id, String name, String parentId, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

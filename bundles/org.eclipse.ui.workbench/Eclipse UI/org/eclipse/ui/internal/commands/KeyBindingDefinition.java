@@ -32,9 +32,7 @@ final class KeyBindingDefinition implements Comparable, IKeyBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {
-		super();
-		
+	KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
 		if (commandId == null || contextId == null || keyConfigurationId == null || keySequence == null || locale == null || platform == null)
 			throw new NullPointerException();
 		

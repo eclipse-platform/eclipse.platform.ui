@@ -83,8 +83,6 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	private transient String string;
 	
 	CategoryDefinition(String description, String id, String name, String pluginId) {
-		super();
-		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		

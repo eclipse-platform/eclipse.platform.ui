@@ -20,8 +20,6 @@ final class CommandDelegateServiceEvent implements ICommandDelegateServiceEvent 
 	private ICommandDelegateService commandDelegateService;
 
 	CommandDelegateServiceEvent(ICommandDelegateService commandDelegateService) {
-		super();
-		
 		if (commandDelegateService == null)
 			throw new NullPointerException();
 		

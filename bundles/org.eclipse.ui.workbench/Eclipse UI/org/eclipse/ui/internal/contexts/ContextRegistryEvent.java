@@ -20,8 +20,6 @@ final class ContextRegistryEvent implements IContextRegistryEvent {
 	private IContextRegistry contextRegistry;
 
 	ContextRegistryEvent(IContextRegistry contextRegistry) {
-		super();
-		
 		if (contextRegistry == null)
 			throw new NullPointerException();
 		

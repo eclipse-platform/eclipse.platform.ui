@@ -20,8 +20,6 @@ final class CommandRegistryEvent implements ICommandRegistryEvent {
 	private ICommandRegistry commandRegistry;
 
 	CommandRegistryEvent(ICommandRegistry commandRegistry) {
-		super();
-		
 		if (commandRegistry == null)
 			throw new NullPointerException();
 		

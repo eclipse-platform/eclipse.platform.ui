@@ -31,8 +31,6 @@ final class ImageBindingDefinition implements Comparable, IImageBindingDefinitio
 	private transient String string;
 
 	ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {
-		super();
-		
 		if (commandId == null || imageStyle == null || imageUri == null || locale == null || platform == null)
 			throw new NullPointerException();
 		

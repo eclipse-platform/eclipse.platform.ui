@@ -19,8 +19,6 @@ public final class ConfigurationElementMemento implements IMemento {
 	private IConfigurationElement configurationElement;
 
 	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
-		super();
-		
 		if (configurationElement == null)
 			throw new NullPointerException();
 		

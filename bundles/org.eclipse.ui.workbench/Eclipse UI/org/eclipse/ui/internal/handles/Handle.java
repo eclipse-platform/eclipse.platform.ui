@@ -18,7 +18,6 @@ public class Handle implements IHandle {
 	private Object object;
 
 	public Handle(String id) {
-		super();
 		this.id = id;
 	}
 	

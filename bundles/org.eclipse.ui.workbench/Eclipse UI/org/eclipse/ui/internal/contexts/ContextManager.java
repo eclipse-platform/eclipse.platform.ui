@@ -54,7 +54,6 @@ public final class ContextManager implements IContextManager {
 	private PreferenceContextRegistry preferenceContextRegistry;
 
 	private ContextManager() {
-		super();
 		if (pluginContextRegistry == null)
 			pluginContextRegistry = new PluginContextRegistry(Platform.getPluginRegistry());
 			
@@ -213,5 +212,5 @@ public final class ContextManager implements IContextManager {
 				}
 			}			
 		}
-	}			
+	}		
 }

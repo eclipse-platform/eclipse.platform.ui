@@ -33,8 +33,6 @@ final class FileContextRegistry extends AbstractMutableContextRegistry {
 	private File file;
 
 	FileContextRegistry(File file) {
-		super();
-		
 		if (file == null)
 			throw new NullPointerException();
 		

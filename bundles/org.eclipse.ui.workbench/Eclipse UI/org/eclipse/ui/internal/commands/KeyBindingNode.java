@@ -301,6 +301,5 @@ final class KeyBindingNode {
 	private SortedMap contextConfigurationMap = new TreeMap();
 	
 	private KeyBindingNode() {
-		super();
 	}
 }

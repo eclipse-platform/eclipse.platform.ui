@@ -28,8 +28,6 @@ final class ContextBindingDefinition implements Comparable, IContextBindingDefin
 	private transient String string;
 
 	ContextBindingDefinition(String commandId, String contextId, String pluginId) {
-		super();
-		
 		if (commandId == null || contextId == null)
 			throw new NullPointerException();
 		
