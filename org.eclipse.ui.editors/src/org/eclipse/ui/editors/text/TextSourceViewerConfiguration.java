@@ -35,7 +35,12 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  */
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
-	/** The preference store used to initialize this configuration. */
+	/**
+	 * The preference store used to initialize this configuration.
+	 * <p>
+	 * Note: protected since 3.1
+	 * </p>
+	 */
 	protected IPreferenceStore fPreferenceStore;
 
 	/**
