@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.ui.text;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
@@ -134,6 +136,36 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 
 	}
+	
+	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
+		private ArrayList fListeners= new ArrayList(5);
+		
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.add(listener);
+		}
+
+		public ISelection getSelection() {
+			return fViewer.getSelection();
+		}
+
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.remove(listener);
+		}
+
+		public void setSelection(ISelection selection) {
+			fViewer.setSelection(selection);
+		}
+
+		public void selectionChanged(SelectionChangedEvent event) {
+			// forward to my listeners
+			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
+			for (Iterator listeners= fListeners.iterator(); listeners.hasNext();) {
+				ISelectionChangedListener listener= (ISelectionChangedListener) listeners.next();
+				listener.selectionChanged(wrappedEvent);
+			}
+		}
+
+	}
 
 	private transient boolean  fIsUIUpdateScheduled= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
@@ -173,6 +205,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Flag (<code>value 2</code>) denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
+	private SelectionProviderAdapter fViewerAdapter;
 	
 	/**
 	 * This constructor must be passed a combination of layout flags combined
@@ -421,9 +454,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewerContainer.setSize(100, 100);
 		fViewerContainer.setLayout(new FillLayout());
+
+		fViewerAdapter= new SelectionProviderAdapter();
+		getSite().setSelectionProvider(fViewerAdapter);
+		// Register menu
+		getSite().registerContextMenu(fViewPart.getViewSite().getId(), fMenu, fViewerAdapter);
+
+		
 		createViewer(fViewerContainer, fCurrentLayout);
 		showBusyLabel(fIsBusyShown);
 		NewSearchUI.addQueryListener(fQueryListener);
+
 	}
 
 	private Control createBusyControl() {
@@ -536,13 +577,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fCurrentLayout = layout;
 		ISelection selection = fViewer.getSelection();
 		ISearchResult result = disconnectViewer();
-		fViewer.getControl().dispose();
-		fViewer = null;
+		disposeViewer();
 		createViewer(fViewerContainer, layout);
 		fViewerContainer.layout(true);
 		connectViewer(result);
 		fViewer.setSelection(selection, true);
 		getSettings().put(KEY_LAYOUT, layout);
+	}
+
+	private void disposeViewer() {
+		fViewer.removeSelectionChangedListener(fViewerAdapter);
+		fViewer.getControl().dispose();
+		fViewer = null;
 	}
 
 	private void updateLayoutActions() {
@@ -590,11 +636,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				fRemoveSelectedMatches.setEnabled(!event.getSelection().isEmpty());
 			}
 		});
+		
+		fViewer.addSelectionChangedListener(fViewerAdapter);
+		
 		Menu menu = fMenu.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
-		getSite().setSelectionProvider(fViewer);
-		// Register menu
-		getSite().registerContextMenu(fViewPart.getViewSite().getId(), fMenu, fViewer);
 		updateLayoutActions();
 	}
 
