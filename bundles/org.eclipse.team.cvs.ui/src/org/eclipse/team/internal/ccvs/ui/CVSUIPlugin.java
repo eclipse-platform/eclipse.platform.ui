@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -119,6 +120,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
+	 * Initializes the preferences for this plugin if necessary.
+	 */
+	protected void initializePreferences() {
+		IPreferenceStore store = getPreferenceStore();
+		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
+	}
+
+	/**
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
@@ -131,5 +140,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, IRemoteRoot.class);
 		
 		initializeImages();
+		initializePreferences();
 	}
 }

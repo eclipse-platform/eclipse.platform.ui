@@ -20,5 +20,9 @@ public interface ICVSUIConstants {
 	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif";
+	
+	// preferences
+	public final String PREF_SHOW_COMMENTS = "pref_show_comments";
+	
 }
 

@@ -12,6 +12,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -116,8 +117,9 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 				openAction.run(null);
 			}
 		});
-		
+
 		// Toggle text visible action
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) {
 			public void run() {
 				if (sashForm.getMaximizedControl() != null) {
@@ -125,9 +127,10 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 				} else {
 					sashForm.setMaximizedControl(viewer.getControl());
 				}
+				store.setValue(ICVSUIConstants.PREF_SHOW_COMMENTS, toggleTextAction.isChecked());
 			}
 		};
-		toggleTextAction.setChecked(true);
+		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
 		
 		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -194,6 +197,9 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		sashForm.setWeights(new int[] { 70, 30 });
 		getSite().getPage().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		contributeActions();
+		if (!CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS)) {
+			sashForm.setMaximizedControl(viewer.getControl());
+		}
 		// set F1 help
 		//WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer (this, IVCMHelpContextIds.RESOURCE_HISTORY_VIEW));
 		initDragAndDrop();
