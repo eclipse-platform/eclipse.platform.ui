@@ -21,6 +21,7 @@ import org.osgi.framework.Bundle;
  * in a extensions manifest.
  */
 public class Namespace extends NestedRegistryModelObject {
+	// null if this does not correspond to a fragment
 	private String hostId;
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
@@ -123,7 +124,7 @@ public class Namespace extends NestedRegistryModelObject {
 	}
 
 	public String toString() {
-		return "BundleModel: " + getName(); //$NON-NLS-1$
+		return "Namespace: " + getName(); //$NON-NLS-1$
 	}
 
 	/**
@@ -163,23 +164,23 @@ public class Namespace extends NestedRegistryModelObject {
 	public String getResourceString(String value) {
 		if (resourceBundle != null)
 			return ResourceTranslator.getResourceString(null, value, resourceBundle);
-		
+
 		if (missingResourceBundle)
 			return value;
-		
+
 		if (resourceBundle == null) {
-			try{
+			try {
 				resourceBundle = ResourceTranslator.getResourceBundle(bundle);
-			} catch(MissingResourceException e) {
+			} catch (MissingResourceException e) {
 				resourceBundle = null;
 			}
 		}
-		
+
 		if (resourceBundle == null) {
 			missingResourceBundle = true;
 			return value;
 		}
-		
+
 		return ResourceTranslator.getResourceString(null, value, resourceBundle);
 	}
 }
