@@ -19,7 +19,7 @@ import org.w3c.dom.*;
 /**
  * An intro container extension.
  */
-public class IntroExtensionContent extends AbstractBaseIntroElement {
+public class IntroExtensionContent extends AbstractIntroElement {
 
     protected static final String TAG_CONTAINER_EXTENSION = "extensionContent"; //$NON-NLS-1$
 

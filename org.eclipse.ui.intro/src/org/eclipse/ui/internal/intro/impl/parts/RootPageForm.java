@@ -4,7 +4,6 @@
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,9 +26,10 @@ import org.eclipse.ui.internal.intro.impl.util.*;
  */
 public class RootPageForm implements IIntroConstants {
 
-    private FormToolkit toolkit = null;
-    private IntroHomePage rootPage = null;
-    private Label descriptionLabel = null;
+    private FormToolkit toolkit;
+    private IntroHomePage rootPage;
+    private Form parentForm;
+    private Label descriptionLabel;
 
     class PageComposite extends Composite {
 
@@ -59,7 +59,7 @@ public class RootPageForm implements IIntroConstants {
                 boolean flushCache) {
             int innerWHint = wHint;
             if (wHint != SWT.DEFAULT)
-                innerWHint -= LABEL_MARGIN_WIDTH + LABEL_MARGIN_WIDTH;
+                    innerWHint -= LABEL_MARGIN_WIDTH + LABEL_MARGIN_WIDTH;
             Control[] children = composite.getChildren();
             Point s1 = children[0].computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point s2 = children[1].computeSize(innerWHint, SWT.DEFAULT);
@@ -150,9 +150,11 @@ public class RootPageForm implements IIntroConstants {
     /**
      *  
      */
-    public RootPageForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
+    public RootPageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
+            Form parentForm) {
         this.toolkit = toolkit;
         this.rootPage = modelRoot.getHomePage();
+        this.parentForm = parentForm;
     }
 
     /**
@@ -162,10 +164,13 @@ public class RootPageForm implements IIntroConstants {
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook mainPageBook,
-            FormStyleManager shardStyleManager) {
+            SharedStyleManager shardStyleManager) {
         // first, create the root page style manager from shared style manager.
-        FormStyleManager rootPageStyleManager = new FormStyleManager(rootPage,
+        PageStyleManager rootPageStyleManager = new PageStyleManager(rootPage,
                 shardStyleManager.getProperties());
+
+        // Set title of Main form from root page title.
+        parentForm.setText(rootPage.getTitle());
 
         // Composite for full root page. It has custom layout, and two
         // children: the links composite and the description label.
@@ -191,7 +196,7 @@ public class RootPageForm implements IIntroConstants {
      * Creates links in the root page assuming that root page only has links. If
      * not use for non-empty div links.
      */
-    private void createRootPageLinks(FormStyleManager rootPageStyleManager,
+    private void createRootPageLinks(PageStyleManager rootPageStyleManager,
             Composite pageComposite) {
 
         Composite linkComposite = toolkit.createComposite(pageComposite);
@@ -212,7 +217,7 @@ public class RootPageForm implements IIntroConstants {
     /**
      * Creates the given links in the root page with the root page style.
      */
-    private void doCreateRootPageLinks(FormStyleManager rootPageStyleManager,
+    private void doCreateRootPageLinks(PageStyleManager rootPageStyleManager,
             Composite linkComposite, IntroLink[] links) {
 
         int numberOfLinks = links.length;
@@ -239,7 +244,7 @@ public class RootPageForm implements IIntroConstants {
      * @param link
      */
     private void createImageHyperlink(Composite body, IntroLink link,
-            FormStyleManager styleManager) {
+            PageStyleManager styleManager) {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
         imageLink.setImage(styleManager.getImage(link, "link-icon", //$NON-NLS-1$
                 ImageUtil.DEFAULT_ROOT_LINK));
@@ -266,11 +271,11 @@ public class RootPageForm implements IIntroConstants {
      * 
      * @param body
      */
-    private Label createHoverLabel(FormStyleManager styleManager, Composite body) {
+    private Label createHoverLabel(PageStyleManager styleManager, Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
         Color fg = styleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
         if (fg == null)
-            fg = toolkit.getColors().getColor(FormColors.TITLE);
+                fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);
         label.setAlignment(SWT.CENTER);
         label.setFont(DEFAULT_FONT);

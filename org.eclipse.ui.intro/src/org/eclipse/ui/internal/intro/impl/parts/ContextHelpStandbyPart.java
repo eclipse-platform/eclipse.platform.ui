@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.help.*;
+import org.eclipse.help.internal.context.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -43,7 +44,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
     // private StandbyPart standbyPart;
-
     class PartListener implements IPartListener2 {
 
         /*
@@ -113,8 +113,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         }
     }
 
-
-
     /*
      * (non-Javadoc)
      * 
@@ -122,7 +120,8 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      */
     public void init(IIntroPart introPart) {
         partListener = new PartListener();
-        defaultText = IntroPlugin.getString("ContextHelpStandbyPart.defaultText"); //$NON-NLS-1$
+        defaultText = IntroPlugin
+                .getString("ContextHelpStandbyPart.defaultText"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
     }
 
@@ -132,7 +131,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         TableWrapLayout layout = new TableWrapLayout();
         form.getBody().setLayout(layout);
         //Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
-
         // help container. Has three colums (search, text, go)
         Composite helpContainer = toolkit.createComposite(form.getBody());
         GridLayout glayout = new GridLayout();
@@ -141,7 +139,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         helpContainer.setLayout(glayout);
         helpContainer.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
         toolkit.paintBordersFor(helpContainer);
-
         Label label = toolkit.createLabel(helpContainer, IntroPlugin
                 .getString("ContextHelpStandbyPart.search")); //$NON-NLS-1$
         label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
@@ -168,7 +165,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
             public void keyReleased(KeyEvent e) {
                 if (e.character == '\r') {
                     if (button.isEnabled())
-                        doSearch(phraseText.getText());
+                            doSearch(phraseText.getText());
                 }
             }
         });
@@ -214,14 +211,12 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private void handlePartActivation(IWorkbenchPartReference ref,
             boolean activated) {
         if (text.isDisposed())
-            return;
-
+                return;
         IWorkbenchPart part = ref.getPart(false);
-
         String partId = part.getSite().getId();
         // Ignore ourselves
         if (partId.equals("org.eclipse.ui.internal.introview")) //$NON-NLS-1$
-            return;
+                return;
         if (activated) {
             title.setText(IntroPlugin
                     .getString("ContextHelpStandbyPart.whatIsArea.Title") //$NON-NLS-1$
@@ -259,7 +254,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         do {
             contextId = (String) node.getData(HELP_KEY);
             if (contextId != null)
-                break;
+                    break;
             node = node.getParent();
         } while (node != null);
         if (contextId != null) { return HelpSystem.getContext(contextId); }
@@ -270,7 +265,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
         sbuf.append("<p>"); //$NON-NLS-1$
-        sbuf.append(decodeContextBoldTags(context.getText()));
+        sbuf.append(decodeContextBoldTags(context));
         sbuf.append("</p>"); //$NON-NLS-1$
         IHelpResource[] links = context.getRelatedTopics();
         if (links.length > 0) {
@@ -292,8 +287,21 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         return sbuf.toString();
     }
 
-    private String decodeContextBoldTags(String contextString) {
-        String decodedString = contextString.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
+    /**
+     * Make sure to support the Help system bold tag. Help systen returns a
+     * regular string for getText(). Use internal apis for now to get bold.
+     * 
+     * @param context
+     * @return
+     */
+    private String decodeContextBoldTags(IContext context) {
+        String styledText;
+        if (context instanceof IStyledContext) {
+            styledText = ((IStyledContext) context).getStyledText();
+        } else {
+            styledText = context.getText();
+        }
+        String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
         decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
         return decodedString;
     }
@@ -301,20 +309,19 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private void openLink(Object href) {
         String url = (String) href;
         if (url != null)
-            WorkbenchHelp.displayHelpResource(url);
+                WorkbenchHelp.displayHelpResource(url);
     }
 
     public void dispose() {
         IWorkbenchWindow window = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
         if (window == null)
-            return;
+                return;
         IPartService service = window.getPartService();
         if (service == null)
-            return;
+                return;
         service.removePartListener(partListener);
     }
-
 
     /*
      * (non-Javadoc)
@@ -323,7 +330,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      */
     public void setFocus() {
         // REVISIT Auto-generated method stub
-
     }
 
     /*

@@ -29,7 +29,7 @@ public class IntroModelSerializer {
         // Root Page
         IntroHomePage rootPage = root.getHomePage();
         printHomePage(rootPage, buffer);
-        printPageChildren(rootPage, buffer);  
+        printPageChildren(rootPage, buffer);
 
         IntroPage[] pages = root.getPages();
         printPages(pages, buffer);
@@ -52,7 +52,8 @@ public class IntroModelSerializer {
                 + model.getPresentation().getHomePageId());
         IntroHead headContent = model.getPresentation().getHead();
         if (headContent != null)
-            text.append("\nPresentation Shared Head = " + headContent.getSrc()); //$NON-NLS-1$
+                text
+                        .append("\nPresentation Shared Head = " + headContent.getSrc()); //$NON-NLS-1$
         text.append("\nNumber of pages (not including Root Page) = " //$NON-NLS-1$
                 + model.getPages().length);
         text.append("\nNumber of shared divs = " //$NON-NLS-1$
@@ -78,7 +79,6 @@ public class IntroModelSerializer {
         text.append("\n\talt-style = " + rootPage.getAltStyle()); //$NON-NLS-1$
         text.append("\n\tstandby style = " + rootPage.getStandbyStyle()); //$NON-NLS-1$
         text.append("\n\tstandby alt-style = " + rootPage.getStandbyAltStyle()); //$NON-NLS-1$
-        text.append("\n\ttext = " + rootPage.getPageDescription()); //$NON-NLS-1$
         text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
         text.append("\n\tstandby-url = " + rootPage.getStandbyUrl()); //$NON-NLS-1$
         text.append("\n\tclass-id = " + rootPage.getClassId()); //$NON-NLS-1$
@@ -155,7 +155,6 @@ public class IntroModelSerializer {
         text.append(indent + "DIV: id = " + div.getId()); //$NON-NLS-1$
         indent = indent + "\t\t"; //$NON-NLS-1$
         text.append(indent + "label = " + div.getLabel()); //$NON-NLS-1$
-        text.append(indent + "text = " + div.getText()); //$NON-NLS-1$
         text.append(indent + "children = " + div.getChildren().length); //$NON-NLS-1$
         text.append(indent + "class-id = " + div.getClassId()); //$NON-NLS-1$
         printContainerChildren(div, text, indent + "\t\t"); //$NON-NLS-1$
@@ -191,9 +190,9 @@ public class IntroModelSerializer {
         text.append(indent + "isInlined = " + html.isInlined()); //$NON-NLS-1$
         text.append(indent + "class-id = " + html.getClassId()); //$NON-NLS-1$
         if (html.getIntroImage() != null)
-            printImage(text, html.getIntroImage(), indent + "\t\t"); //$NON-NLS-1$
+                printImage(text, html.getIntroImage(), indent + "\t\t"); //$NON-NLS-1$
         if (html.getIntroText() != null)
-            printText(text, html.getIntroText(), indent + "\t\t"); //$NON-NLS-1$
+                printText(text, html.getIntroText(), indent + "\t\t"); //$NON-NLS-1$
 
     }
 
@@ -229,7 +228,6 @@ public class IntroModelSerializer {
             text.append("\n\ttitle = " + pages[i].getTitle()); //$NON-NLS-1$
             text.append("\n\tstyle = " + pages[i].getStyle()); //$NON-NLS-1$
             text.append("\n\talt-style = " + pages[i].getAltStyle()); //$NON-NLS-1$
-            text.append("\n\ttext = " + pages[i].getPageDescription()); //$NON-NLS-1$
             text.append("\n\tclass-id = " + pages[i].getClassId()); //$NON-NLS-1$
             printPageStyles(pages[i], text);
             printPageChildren(pages[i], text);

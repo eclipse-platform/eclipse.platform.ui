@@ -53,10 +53,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public AbstractIntroElement[] getChildren() {
         if (!loaded)
-            loadChildren();
+                loadChildren();
 
         if (!resolved)
-            resolveChildren();
+                resolveChildren();
 
         AbstractIntroElement[] childrenElements = (AbstractIntroElement[]) convertToModelArray(
                 children, AbstractIntroElement.ELEMENT);
@@ -107,7 +107,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         for (int i = 0; i < childrenElements.length; i++) {
             AbstractIntroElement element = childrenElements[i];
             if (element.isOfType(elementMask))
-                typedChildren.addElement(element);
+                    typedChildren.addElement(element);
         }
         return convertToModelArray(typedChildren, elementMask);
     }
@@ -188,7 +188,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE)
-                vector.add(node);
+                    vector.add(node);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
@@ -241,7 +241,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             child = new IntroHTML(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroInclude.TAG_INCLUDE))
-            child = new IntroInclude(childElement, bundle);
+                child = new IntroInclude(childElement, bundle);
         return child;
     }
 
@@ -254,7 +254,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             AbstractIntroElement child = (AbstractIntroElement) children
                     .elementAt(i);
             if (child.getType() == AbstractIntroElement.INCLUDE)
-                resolveInclude((IntroInclude) child);
+                    resolveInclude((IntroInclude) child);
         }
         resolved = true;
     }
@@ -269,12 +269,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     private void resolveInclude(IntroInclude include) {
         AbstractIntroElement target = findIncludeTarget(include);
         if (target == null)
-            // target could not be found.
-            return;
+                // target could not be found.
+                return;
         if (target.isOfType(AbstractIntroElement.DIV
                 | AbstractIntroElement.ABSTRACT_TEXT
                 | AbstractIntroElement.IMAGE | AbstractIntroElement.TEXT))
-            insertTarget(include, target);
+                insertTarget(include, target);
     }
 
     /**
@@ -292,44 +292,44 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
                 .getParent();
         String targetConfigID = include.getConfigId();
         if (targetConfigID != null)
-            targetModelRoot = ExtensionPointManager.getInst().getModel(
-                    targetConfigID);
+                targetModelRoot = ExtensionPointManager.getInst().getModel(
+                        targetConfigID);
         if (targetModelRoot == null)
-            // if the target config was not found, skip this include.
-            return null;
+                // if the target config was not found, skip this include.
+                return null;
         AbstractIntroElement target = findTarget(targetModelRoot, path);
         return target;
     }
 
     /**
-     * Finds a path in a model.
+     * Finds the child element that corresponds to the given path in a model.
      * 
      * @param model
      * @param path
      * @return
      */
-    protected AbstractIntroElement findTarget(IntroModelRoot model, String path) {
+    public AbstractIntroElement findTarget(IntroModelRoot model, String path) {
         // extract path segments. Get first segment to start search.
         String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (model == null)
-            // if the target config was not found, return.
-            return null;
+                // if the target config was not found, return.
+                return null;
 
         AbstractIntroElement target = model.findChild(pathSegments[0]);
         if (target == null)
-            // there is no element with the specified path.
-            return null;
+                // there is no element with the specified path.
+                return null;
 
         // found parent segment. now find each child segment.
         for (int i = 1; i < pathSegments.length; i++) {
             if (!target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
-                // parent is not a container, so no point going on.
-                return null;
+                    // parent is not a container, so no point going on.
+                    return null;
             String pathSegment = pathSegments[i];
             target = ((AbstractIntroContainer) target).findChild(pathSegment);
             if (target == null)
-                // tried to find next segment and failed.
-                return null;
+                    // tried to find next segment and failed.
+                    return null;
         }
         return target;
     }
@@ -342,20 +342,21 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public AbstractIntroElement findChild(String elementId) {
         if (!loaded)
-            loadChildren();
+                loadChildren();
 
         for (int i = 0; i < children.size(); i++) {
             AbstractIntroElement aChild = (AbstractIntroElement) children
                     .elementAt(i);
             if (!aChild.isOfType(BASE_ELEMENT))
-                // includes and heads do not have ids, and so can not be
-                // referenced directly. This means that they can not be targets
-                // for other includes. Skip, just in case someone adds an id to
-                // it!
-                continue;
+                    // includes and heads do not have ids, and so can not be
+                    // referenced directly. This means that they can not be
+                    // targets for other includes. Skip, just in case someone
+                    // adds an id to it! Also, this applies to all elements in
+                    // the model that do not have ids.
+                    continue;
             AbstractBaseIntroElement child = (AbstractBaseIntroElement) aChild;
             if (child.getId() != null && child.getId().equals(elementId))
-                return child;
+                    return child;
         }
         // no child found.
         return null;
@@ -364,8 +365,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     private void insertTarget(IntroInclude include, AbstractIntroElement target) {
         int includeLocation = children.indexOf(include);
         if (includeLocation == -1)
-            // should never be here.
-            return;
+                // should never be here.
+                return;
         children.remove(includeLocation);
         // handle merging target styles first, before changing target parent.
         handleIncludeStyleInheritence(include, target);
@@ -388,20 +389,20 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             AbstractIntroElement target) {
 
         if (include.getMergeStyle() == false)
-            // target styles are not needed. nothing to do.
-            return;
+                // target styles are not needed. nothing to do.
+                return;
 
         if (target.getParent().getType() == AbstractIntroElement.MODEL_ROOT
                 || target.getParentPage().equals(include.getParentPage()))
-            // If we are including from this same page ie: target is in the
-            // same page, OR if we are including a shared div, defined
-            // under a config, do not include styles.
-            return;
+                // If we are including from this same page ie: target is in the
+                // same page, OR if we are including a shared div, defined
+                // under a config, do not include styles.
+                return;
 
         // Update the parent page styles. skip style if it is null;
         String style = target.getParentPage().getStyle();
         if (style != null)
-            getParentPage().addStyle(style);
+                getParentPage().addStyle(style);
 
         // for alt-style cache bundle for loading resources.
         style = target.getParentPage().getAltStyle();

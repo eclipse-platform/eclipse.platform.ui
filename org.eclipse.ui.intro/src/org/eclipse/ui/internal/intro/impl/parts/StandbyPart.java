@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -151,8 +151,7 @@ public class StandbyPart {
     private void setTopControl(Control c) {
         StackLayout layout = (StackLayout) content.getLayout();
         layout.topControl = c;
-        if (c instanceof Composite)
-            ((Composite) c).layout();
+        if (c instanceof Composite) ((Composite) c).layout();
         content.layout();
         container.layout();
     }
@@ -195,8 +194,7 @@ public class StandbyPart {
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
-        if (cachedControlKey != null)
-            cachedControlKey.getPart().setFocus();
+        if (cachedControlKey != null) cachedControlKey.getPart().setFocus();
     }
 
     /**
@@ -235,7 +233,7 @@ public class StandbyPart {
      */
     private ControlKey getCachedContent(String key) {
         if (cachedContentParts.containsKey(key))
-            return (ControlKey) cachedContentParts.get(key);
+                return (ControlKey) cachedContentParts.get(key);
         return null;
     }
 

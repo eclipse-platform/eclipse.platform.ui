@@ -23,10 +23,15 @@ public interface IIntroConstants {
     // through markup.
     String HELP_CONTEXT_STANDBY_PART = "org.eclipse.intro.config.contextHelp"; //$NON-NLS-1$
 
-    // Form implementation consts.
+    // Form implementation consts:
+    // ---------------------------
     // key to retrieve the into link model object from imageHyperlink widget.
     // convention: actual string value is class name.
     String INTRO_LINK = "IntroLink"; //$NON-NLS-1$
+
+    // key to retrive page sub-title from PageContentForm
+    String PAGE_SUBTITLE = "PageSubtitle";
+
     // default fonts
     Font DEFAULT_FONT = JFaceResources.getBannerFont();
 }

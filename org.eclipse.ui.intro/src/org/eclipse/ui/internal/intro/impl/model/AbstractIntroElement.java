@@ -113,13 +113,13 @@ public abstract class AbstractIntroElement {
      * Type constant which identifies the AbstractCommonIntroElement element.
      */
     public static final int BASE_ELEMENT = ABSTRACT_CONTAINER | ABSTRACT_TEXT
-            | CONTAINER_EXTENSION | IMAGE | TEXT | PAGE_TITLE;
+            | IMAGE | TEXT | PAGE_TITLE;
 
     /**
      * Type constant which identifies any element in the Intro Model.
      */
-    public static final int ELEMENT = BASE_ELEMENT | HEAD | INCLUDE
-            | PRESENTATION;
+    public static final int ELEMENT = BASE_ELEMENT | CONTAINER_EXTENSION | HEAD
+            | INCLUDE | PRESENTATION;
 
 
     private AbstractIntroElement parent;
@@ -158,6 +158,15 @@ public abstract class AbstractIntroElement {
         return cfgElement;
     }
 
+    /**
+     * DOM getAttribute retruns an empty string (not null) if attribute is not
+     * defined. Override this behavior to be consistent with Intro Model, and
+     * IConfiguration element.
+     * 
+     * @param element
+     * @param att
+     * @return
+     */
     protected String getAttribute(Element element, String att) {
         if (element.hasAttribute(att))
             return element.getAttribute(att);
@@ -234,11 +243,11 @@ public abstract class AbstractIntroElement {
     public AbstractIntroPage getParentPage() {
         // return yourself if you are a page.
         if (isOfType(AbstractIntroElement.ABSTRACT_PAGE))
-            return (AbstractIntroPage) this;
+                return (AbstractIntroPage) this;
 
         AbstractIntroElement parent = getParent();
         if (parent == null)
-            return null;
+                return null;
 
         while (parent != null && parent.getParent() != null
                 && !parent.isOfType(AbstractIntroElement.ABSTRACT_PAGE))
@@ -286,12 +295,12 @@ public abstract class AbstractIntroElement {
             AbstractIntroElement[] elements, int elementMask) {
         // if we have an empty list, no point going on.
         if (elements.length == 0)
-            return false;
+                return false;
 
         for (int i = 0; i < elements.length; i++) {
             AbstractIntroElement element = elements[i];
             if (!element.isOfType(elementMask))
-                return false;
+                    return false;
         }
         return true;
     }

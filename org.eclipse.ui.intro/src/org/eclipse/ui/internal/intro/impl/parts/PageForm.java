@@ -23,18 +23,19 @@ import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 
 /**
- * A Composite that represents an Intro Page. It is swapped in the main page
- * book in the FormIntroPartImplementation class. It has the navigation toolbar
- * UI and it has a page book for swapping in categories of Intro Pages.
+ * A Form that represents an Intro Page. It is swapped in the main page book in
+ * the FormIntroPartImplementation class. It has the navigation toolbar UI and
+ * it has a page book for swapping in categories of Intro Pages.
  */
 public class PageForm implements IIntroConstants, IPropertyListener {
 
-    private FormToolkit toolkit = null;
-    private ScrolledPageBook mainPageBook = null;
-    private ScrolledPageBook categoryPageBook = null;
-    private FormStyleManager styleManager;
-    private IntroModelRoot model = null;
-    private Form formContent;
+    private FormToolkit toolkit;
+    private ScrolledPageBook categoryPageBook;
+    private SharedStyleManager sharedStyleManager;
+    private PageStyleManager rootPageStyleManager;
+    private IntroModelRoot model;
+    private Form parentForm;
+    private Form pageForm;
 
     // Id to this page. There is only a single instance of this page in the
     // main page book.
@@ -69,11 +70,13 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     /**
      *  
      */
-    public PageForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
+    public PageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
+            Form parentForm) {
         this.toolkit = toolkit;
         this.model = modelRoot;
-        // add this PageForm as a listener to model changes to update the title
-        // of this form.
+        this.parentForm = parentForm;
+        // add this PageForm as a listener to model changes to switch the page
+        // content of pageBook.
         model.addPropertyListener(this);
     }
 
@@ -85,32 +88,34 @@ public class PageForm implements IIntroConstants, IPropertyListener {
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook mainPageBook,
-            FormStyleManager sharedStyleManager) {
+            SharedStyleManager sharedStyleManager) {
 
-        // Create a style manager from shared style manager because we need it
-        // for the UI navigation composite. And we need to pass it around to
-        // category forms. So, do not null it.
-        this.styleManager = new FormStyleManager(model.getHomePage(),
+        // Create a style manager from shared style manager. We only need it
+        // for the UI navigation composite.
+        rootPageStyleManager = new PageStyleManager(model.getHomePage(),
                 sharedStyleManager.getProperties());
 
-        this.mainPageBook = mainPageBook;
+        // Cash the shared style manager. We need to pass it around to category
+        // forms. So, do not null it!
+        this.sharedStyleManager = sharedStyleManager;
+
         // creating page in Main page book.
-        formContent = toolkit.createForm(mainPageBook.getContainer());
-        mainPageBook.registerPage(PAGE_FORM_ID, formContent);
+        pageForm = toolkit.createForm(mainPageBook.getContainer());
+        mainPageBook.registerPage(PAGE_FORM_ID, pageForm);
         GridLayout layout = new GridLayout();
-        formContent.getBody().setLayout(layout);
+        pageForm.getBody().setLayout(layout);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        //Util.highlight(formContent.getBody(), SWT.COLOR_RED);
+        //Util.highlight(pageForm.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
-        categoryPageBook = toolkit.createPageBook(formContent.getBody(),
+        categoryPageBook = toolkit.createPageBook(pageForm.getBody(),
                 SWT.H_SCROLL | SWT.V_SCROLL);
         categoryPageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // adding navigation UI.
-        Composite navigationComposite = toolkit.createComposite(formContent
+        Composite navigationComposite = toolkit.createComposite(pageForm
                 .getBody());
         navigationComposite.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_CENTER));
@@ -121,7 +126,12 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         // add image hyperlinks for all links.
         createSmallNavigator(navigationComposite, model.getHomePage()
                 .getLinks());
-        formContent.setText(model.getCurrentPage().getPageSubtitle());
+
+        pageForm.setText(rootPageStyleManager.getPageSubTitle());
+
+        // Clear memory. No need for root style manager any more.
+        rootPageStyleManager = null;
+
     }
 
     private void createSmallNavigator(Composite parent, IntroLink[] links) {
@@ -150,7 +160,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 .getId(), ".small-link-icon"); //$NON-NLS-1$
         String defaultPageKey = link.getParentPage().getId()
                 + ".small-link-icon"; //$NON-NLS-1$
-        Image image = styleManager.getImage(key, defaultPageKey,
+        Image image = rootPageStyleManager.getImage(key, defaultPageKey,
                 ImageUtil.DEFAULT_SMALL_ROOT_LINK);
         imageLink.setImage(image);
 
@@ -158,7 +168,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         key = StringUtil.concat(link.getParentPage().getId(), ".", //$NON-NLS-1$
                 link.getId(), ".small-hover-icon"); //$NON-NLS-1$
         defaultPageKey = link.getParentPage().getId() + ".small-hover-icon"; //$NON-NLS-1$
-        image = styleManager.getImage(key, defaultPageKey, null);
+        image = rootPageStyleManager.getImage(key, defaultPageKey, null);
         imageLink.setHoverImage(image);
         imageLink.setToolTipText(link.getLabel());
         // each link is centered in cell.
@@ -180,17 +190,29 @@ public class PageForm implements IIntroConstants, IPropertyListener {
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-            // update Form title.
-            String pageId = model.getCurrentPageId();
-            formContent.setText(model.getCurrentPage().getPageSubtitle());
+            // make sure to avoid flicker.
+            pageForm.setRedraw(false);
 
-            // update page book with a Category Form.
+            // update page book with correct Category Form composite.
+            String pageId = model.getCurrentPageId();
             if (!categoryPageBook.hasPage(pageId)) {
                 // if we do not have a category form for this page create one.
-                CategoryForm categoryForm = new CategoryForm(toolkit, model);
-                categoryForm.createPartControl(categoryPageBook, styleManager);
+                PageContentForm categoryForm = new PageContentForm(toolkit,
+                        model);
+                categoryForm.createPartControl(categoryPageBook,
+                        sharedStyleManager);
             }
             categoryPageBook.showPage(model.getCurrentPage().getId());
+
+            // Get cached page subtitle from control data.
+            Composite page = (Composite) categoryPageBook.getCurrentPage();
+            // update main Form title.
+            parentForm.setText(model.getCurrentPage().getTitle());
+            // update this page form's title, ie: Page subtitle, if it exists.
+            pageForm.setText((String) page.getData(PAGE_SUBTITLE));
+
+            pageForm.setRedraw(true);
+
             //TODO need to transfer focus to the first link in
             // the page somehow; we may need IIntroPage interface with
             // a few methods like 'setFocus()' etc.

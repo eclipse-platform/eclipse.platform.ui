@@ -30,13 +30,10 @@ public class FormIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener {
 
     private FormToolkit toolkit = null;
-
     private ScrolledPageBook mainPageBook = null;
-
     // cache model instance for reuse.
     private IntroModelRoot model = getModelRoot();
-
-    private FormStyleManager sharedStyleManager;
+    private SharedStyleManager sharedStyleManager;
 
     static {
         // REVISIT: register all common images here. Even if this part
@@ -59,13 +56,13 @@ public class FormIntroPartImplementation extends
         public void run() {
             IntroHomePage rootPage = getModelRoot().getHomePage();
             if (rootPage.isDynamic())
-                getModelRoot().setCurrentPageId(rootPage.getId());
+                    getModelRoot().setCurrentPageId(rootPage.getId());
         }
     };
 
     public FormIntroPartImplementation() {
         // Shared style manager
-        sharedStyleManager = new FormStyleManager(getModelRoot());
+        sharedStyleManager = new SharedStyleManager(getModelRoot());
     }
 
     public void createPartControl(Composite container) {
@@ -85,16 +82,16 @@ public class FormIntroPartImplementation extends
         Form mainForm = toolkit.createForm(container);
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
-            mainForm.setForeground(fg);
-        Image bgImage = sharedStyleManager.getImage("title.image", null, null); //$NON-NLS-1$
-        if (bgImage != null) {
-            mainForm.setBackgroundImage(bgImage);
-            String repeat = sharedStyleManager
-                    .getProperty("title.image.repeat"); //$NON-NLS-1$
-            if (repeat != null && repeat.toLowerCase().equals("true")) //$NON-NLS-1$
-                mainForm.setBackgroundImageTiled(true);
-        }
-        mainForm.setText(getModelRoot().getHomePage().getTitle());
+                mainForm.setForeground(fg);
+        // Image bgImage = sharedStyleManager.getImage("title.image", null, null); //$NON-NLS-1$
+        // if (bgImage != null) {
+        //    mainForm.setBackgroundImage(bgImage);
+        //    String repeat = sharedStyleManager
+        //            .getProperty("title.image.repeat"); //$NON-NLS-1$
+        //    if (repeat != null && repeat.toLowerCase().equals("true")) //$NON-NLS-1$
+        //           mainForm.setBackgroundImageTiled(true);
+        //}
+        
 
         mainPageBook = createMainPageBook(toolkit, mainForm);
         // Add this presentation as a listener to model.
@@ -118,7 +115,7 @@ public class FormIntroPartImplementation extends
         // creating root page form.
         if (!pageBook.hasPage(model.getHomePage().getId())) {
             // if we do not have a root page form. create one and show it.
-            RootPageForm rootPageForm = new RootPageForm(toolkit, model);
+            RootPageForm rootPageForm = new RootPageForm(toolkit, model, form);
             rootPageForm.createPartControl(pageBook, sharedStyleManager);
             pageBook.showPage(model.getHomePage().getId());
         }
@@ -126,7 +123,7 @@ public class FormIntroPartImplementation extends
         // creating static page form.
         if (!pageBook.hasPage(PageForm.PAGE_FORM_ID)) {
             // if we do not have this page create one in main page book.
-            PageForm pageForm = new PageForm(toolkit, model);
+            PageForm pageForm = new PageForm(toolkit, model, form);
             pageForm.createPartControl(pageBook, sharedStyleManager);
         }
 
@@ -149,15 +146,15 @@ public class FormIntroPartImplementation extends
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
             if (pageId == null | pageId.equals("")) //$NON-NLS-1$
-                // If page ID was not set properly. exit.
-                return;
+                    // If page ID was not set properly. exit.
+                    return;
 
             String rootPageId = getModelRoot().getHomePage().getId();
 
             // if we are showing a regular intro page, set the page id to the
             // static PageForm id.
             if (!pageId.equals(rootPageId))
-                pageId = PageForm.PAGE_FORM_ID;
+                    pageId = PageForm.PAGE_FORM_ID;
 
             mainPageBook.showPage(pageId);
         }

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -19,10 +19,7 @@ import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 
-public class FormStyleManager {
-
-    protected static final String LAYOUT_TABLE = "table"; //$NON-NLS-1$
-    protected static final String LAYOUT_COLUMNS = "columns"; //$NON-NLS-1$
+public class SharedStyleManager {
 
     private Properties pageProperties;
     private Hashtable altStyleProperties = new Hashtable();
@@ -35,30 +32,32 @@ public class FormStyleManager {
      * 
      * @param modelRoot
      */
-    public FormStyleManager(IntroModelRoot modelRoot) {
+    public SharedStyleManager(IntroModelRoot modelRoot) {
         bundle = modelRoot.getBundle();
         pageProperties = new Properties();
-        String sharedStyle = modelRoot.getPresentation().getImplementationStyle();
+        String sharedStyle = modelRoot.getPresentation()
+                .getImplementationStyle();
         if (sharedStyle != null)
-            load(pageProperties, sharedStyle);
+                load(pageProperties, sharedStyle);
     }
 
     /**
-     * Constructor used when a page styles need to be loaded. The plugin
-     * descriptor is retrieved from the page model class. The default properties
-     * are assumed to be the presentation shared properties.
+     * Constructor used when page styles need to be loaded. The plugin's bundle
+     * is retrieved from the page model class. The default properties are
+     * assumed to be the presentation shared properties. The inherrited
+     * properties are properties that we got from included and extension styles.
      * 
      * @param modelRoot
      */
-    public FormStyleManager(AbstractIntroPage page, Properties sharedProperties) {
+    public SharedStyleManager(AbstractIntroPage page, Properties sharedProperties) {
         this.page = page;
         bundle = page.getBundle();
         pageProperties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)
-            load(pageProperties, altStyle);
+                load(pageProperties, altStyle);
 
-        // AltStyles hastable has alt-styles as keys, the bundles as
+        // AltStyles hashtable has alt-styles as keys, the bundles as
         // values.
         Hashtable altStyles = page.getAltStyles();
         Enumeration styles = altStyles.keys();
@@ -73,7 +72,7 @@ public class FormStyleManager {
 
     private void load(Properties properties, String style) {
         if (style == null)
-            return;
+                return;
         try {
             URL styleURL = new URL(style);
             InputStream is = styleURL.openStream();
@@ -90,16 +89,6 @@ public class FormStyleManager {
         return aProperties.getProperty(key);
     }
 
-    /**
-     * Finds the bundle from which as shared style was loaded.
-     * 
-     * @param key
-     * @return
-     */
-    private Bundle getAltStyleBundle(String key) {
-        Properties aProperties = findProperty(key);
-        return (Bundle) altStyleProperties.get(aProperties);
-    }
 
     /**
      * Finds a Properties that represents an inherited shared style, or this
@@ -115,16 +104,27 @@ public class FormStyleManager {
             Properties aProperties = (Properties) inheritedPageProperties
                     .nextElement();
             if (aProperties.containsKey(key))
-                return aProperties;
+                    return aProperties;
         }
         // search the page and shared properties last.
         return pageProperties;
     }
 
+    /**
+     * Finds the bundle from which as shared style was loaded.
+     * 
+     * @param key
+     * @return
+     */
+    private Bundle getAltStyleBundle(String key) {
+        Properties aProperties = findProperty(key);
+        return (Bundle) altStyleProperties.get(aProperties);
+    }
+
     private RGB getRGB(String key) {
         String value = getProperty(key);
         if (value == null)
-            return null;
+                return null;
         if (value.charAt(0) == '#') {
             // HEX
             try {
@@ -152,14 +152,14 @@ public class FormStyleManager {
         if (color == null) {
             RGB rgb = getRGB(key);
             if (rgb != null)
-                color = colors.createColor(key, rgb);
+                    color = colors.createColor(key, rgb);
         }
         return color;
     }
 
     private String createColorKey(AbstractIntroPage page, String qualifier) {
         if (page != null)
-            return StringUtil.concat(page.getId(), ".", qualifier); //$NON-NLS-1$
+                return StringUtil.concat(page.getId(), ".", qualifier); //$NON-NLS-1$
         return qualifier;
     }
 
@@ -207,21 +207,21 @@ public class FormStyleManager {
         }
         if (value != null) {
             if (ImageUtil.hasImage(currentKey))
-                return ImageUtil.getImage(currentKey);
+                    return ImageUtil.getImage(currentKey);
             // try to register the image.
             Bundle bundle = getAltStyleBundle(currentKey);
             if (bundle == null)
-                // it means that we are getting a key defined in this page's
-                // styles. (ie: not an inherited style).
-                bundle = this.bundle;
+                    // it means that we are getting a key defined in this page's
+                    // styles. (ie: not an inherited style).
+                    bundle = this.bundle;
             ImageUtil.registerImage(currentKey, bundle, value);
             Image image = ImageUtil.getImage(currentKey);
             if (image != null)
-                return image;
+                    return image;
         }
         // try default
         if (defaultKey != null)
-            return ImageUtil.getImage(defaultKey);
+                return ImageUtil.getImage(defaultKey);
         return null;
     }
 
@@ -244,8 +244,8 @@ public class FormStyleManager {
     }
 
 
-    public int getNumberOfColumns(IntroDiv category) {
-        String key = page.getId() + "." + category.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
+    public int getNumberOfColumns(IntroDiv group) {
+        String key = page.getId() + "." + group.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
         return getIntProperty(key);
     }
 
@@ -259,13 +259,6 @@ public class FormStyleManager {
         return ncolumns;
     }
 
-    public boolean getShowLinkDescription() {
-        String key = page.getId() + ".layout.link-description"; //$NON-NLS-1$
-        String value = getProperty(key);
-        if (value == null)
-            value = "false"; //$NON-NLS-1$
-        return value.toLowerCase().equals("true"); //$NON-NLS-1$
-    }
 
     public int getVerticalLinkSpacing() {
         String key = page.getId() + ".layout.link-vspacing"; //$NON-NLS-1$
@@ -279,4 +272,85 @@ public class FormStyleManager {
     }
 
 
+    /**
+     * Finds the description text of the given group. Looks for the Text child
+     * element whos id is specified as follows:
+     * <p>
+     * <pageId>. <path_to_group>.description-id= <id of child description Text
+     * element>
+     * </p>
+     * If not found, use the default description style.
+     * 
+     * @param group
+     * @return
+     */
+    public String getDescription(IntroDiv group) {
+        String key = page.getId() + "." + group.getId() + ".description-id";
+        String childId = getProperty(key);
+        String description = findTextFromId(group, childId);
+        if (description != null)
+                return description;
+        return findTextFromStyleId(group, getDescriptionStyle());
+    }
+
+    /**
+     * Finds the description text of the associated page. Looks for the Text
+     * child element whos id is specified as follows:
+     * <p>
+     * <pageId>.description-id= <id of child description Text element>
+     * </p>
+     * If not found, use the default description style.
+     * 
+     * @param group
+     * @return
+     */
+    public String getDescription() {
+        String key = page.getId() + ".description-id";
+        String childId = getProperty(key);
+        String description = findTextFromId(page, childId);
+        if (description != null)
+                return description;
+        return findTextFromStyleId(page, getDescriptionStyle());
+    }
+
+
+
+    private String getDescriptionStyle() {
+        String key = "description-style-id";
+        return getProperty(key);
+    }
+
+    private String findTextFromId(AbstractIntroContainer parent, String childId) {
+        AbstractIntroElement child = parent.findChild(childId);
+        if (child.isOfType(AbstractIntroElement.TEXT))
+                return ((IntroText) child).getText();
+        return null;
+    }
+
+    /**
+     * Returns the first direct child text element with the given style-id.
+     * 
+     * @return
+     */
+    private String findTextFromStyleId(AbstractIntroContainer parent,
+            String styleId) {
+
+        IntroText[] allText = (IntroText[]) parent
+                .getChildrenOfType(AbstractIntroElement.TEXT);
+        for (int i = 0; i < allText.length; i++) {
+            if (allText[i].getClassId().equals(styleId))
+                    return allText[i].getText();
+        }
+        return null;
+    }
+
+    public boolean getShowLinkDescription() {
+        String key = page.getId() + ".layout.link-description"; //$NON-NLS-1$
+        String value = getProperty(key);
+        if (value == null)
+                value = "false"; //$NON-NLS-1$
+        return value.toLowerCase().equals("true"); //$NON-NLS-1$
+    }
+
 }
+

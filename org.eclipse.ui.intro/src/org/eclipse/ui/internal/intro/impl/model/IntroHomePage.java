@@ -112,45 +112,35 @@ public class IntroHomePage extends AbstractIntroPage {
         // DONOW:
         IntroLink[] links = (IntroLink[]) getChildrenOfType(AbstractIntroElement.LINK);
         if (links.length != 0)
-            return links;
+                return links;
 
         // root page does not have any links, append all links off non-filtered
         // divs.
-        IntroDiv[] rootPageDivs = getDivs();
+        IntroDiv[] rootPageDivs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
         Vector linkVector = new Vector();
+
         for (int i = 0; i < rootPageDivs.length; i++)
-            linkVector.addAll(Arrays.asList(rootPageDivs[i].getLinks()));
+            addLinks(rootPageDivs[i], linkVector);
+
         links = new IntroLink[linkVector.size()];
         linkVector.copyInto(links);
 
         return links;
     }
 
-    /**
-     * Returns the divs in this root page. HTML presentation divs are filtered
-     * out, for now.
-     */
-    public IntroDiv[] getDivs() {
-        // get real page divs.
-        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(AbstractIntroElement.DIV);
-
-        // filter bad stuff for now.
-        Vector vectorDivs = new Vector(Arrays.asList(divs));
-        for (int i = 0; i < vectorDivs.size(); i++) {
-            IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
-            if (aDiv.getId().equals("background-image") //$NON-NLS-1$
-                    || aDiv.getId().equals("root-background")) { //$NON-NLS-1$
-                vectorDivs.remove(aDiv);
-                i--;
-            }
-
-        }
-
-        // return proper object type.
-        IntroDiv[] filteredDivs = new IntroDiv[vectorDivs.size()];
-        vectorDivs.copyInto(filteredDivs);
-        return filteredDivs;
+    private void addLinks(IntroDiv div, Vector linksVector) {
+        linksVector.addAll(Arrays.asList(getLinks(div)));
+        IntroDiv[] divs = (IntroDiv[]) div
+                .getChildrenOfType(AbstractIntroElement.DIV);
+        for (int i = 0; i < divs.length; i++)
+            addLinks(divs[i], linksVector);
     }
+
+
+    public IntroLink[] getLinks(IntroDiv div) {
+        return (IntroLink[]) div.getChildrenOfType(AbstractIntroElement.LINK);
+    }
+
 
 }
 
