@@ -20,5 +20,50 @@
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%Views.ResourceNavigator"
+            icon="icons/full/cview16/filenav_nav.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.navigator.ResourceNavigator"
+            id="org.eclipse.ui.views.ResourceNavigator">
+      </view>
+      <view
+            name="%Views.Bookmark"
+            icon="icons/full/cview16/bkmrk_nav.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.BookmarkView"
+            id="org.eclipse.ui.views.BookmarkView">
+      </view>
+      <view
+            name="%Views.PropertySheet"
+            icon="icons/full/cview16/prop_ps.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.properties.PropertySheet"
+            id="org.eclipse.ui.views.PropertySheet">
+      </view>
+      <view
+            name="%Views.ContentOutline"
+            icon="icons/full/cview16/outline_co.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.contentoutline.ContentOutline"
+            id="org.eclipse.ui.views.ContentOutline">
+      </view>
+      <view
+            name="%Views.Task"
+            icon="icons/full/cview16/tasks_tsk.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.TaskView"
+            id="org.eclipse.ui.views.TaskList">
+      </view>
+      <view
+            name="%Views.Problem"
+            icon="icons/full/obj16/problemview.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.ProblemView"
+            id="org.eclipse.ui.views.ProblemView">
+      </view>
+   </extension>
 
 </plugin>
