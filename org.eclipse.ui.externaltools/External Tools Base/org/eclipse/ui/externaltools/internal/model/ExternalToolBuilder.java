@@ -48,6 +48,8 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
+	private static IProject buildProject= null;
+	
 	private List projectsWithinScope;
 	
 	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
@@ -149,7 +151,17 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Stores the currently active build kind when a build begins
+	 * Returns the project that is being built and has triggered the current external
+	 * tool builder. <code>null</code> is returned if no build is currently occurring.
+	 * 
+	 * @return project being built or <code>null</code>.
+	 */
+	public static IProject getBuildProject() {
+		return buildProject;
+	}
+	
+	/**
+	 * Stores the currently active build kind and build project when a build begins
 	 * @param buildKind
 	 */
 	private void buildStarted(int buildKind) {
@@ -167,13 +179,15 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 				break;
 		}
+		buildProject= getProject();
 	}
 	
 	/**
-	 * Clears the current build kind when a build finishes.
+	 * Clears the current build kind and build project when a build finishes.
 	 */
 	private void buildEnded() {
 		buildType= IExternalToolConstants.BUILD_TYPE_NONE;
+		buildProject= null;
 	}
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
