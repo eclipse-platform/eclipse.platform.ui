@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -56,7 +57,8 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
 				try {
-					result[0] = root.members(tag, CVSUIPlugin.getPlugin().isModulesEnabled(), new NullProgressMonitor());
+					IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+					result[0] = root.members(tag, store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), new NullProgressMonitor());
 				} catch (TeamException e) {
 					handle(e);
 				}

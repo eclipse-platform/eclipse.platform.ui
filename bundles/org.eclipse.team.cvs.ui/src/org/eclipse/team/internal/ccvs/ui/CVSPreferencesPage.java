@@ -43,7 +43,7 @@ public class CVSPreferencesPage
 	private Button pruneEmptyDirectoriesField;
 	private Text timeoutValue;
 	private Combo quietnessCombo;
-	private Button showModulesField;
+	private Button showModulesButton;
 
 	/**
 	 * Utility method that creates a combo box
@@ -132,10 +132,7 @@ public class CVSPreferencesPage
 		createLabel(composite, Policy.bind("CVSPreferencePage.quietness"));
 		quietnessCombo = createCombo(composite);
 		
-		showModulesField =
-			createCheckBox(
-				composite,
-				Policy.bind("CVSPreferencePage.showModules"));
+		showModulesButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.showModules"));
 				
 		initializeValues();
 
@@ -182,8 +179,7 @@ public class CVSPreferencesPage
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.somewhatquiet"));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.reallyquiet"));
 		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
-		showModulesField.setSelection(
-			store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES));
+		showModulesButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES));
 	}
 
 	/**
@@ -204,10 +200,7 @@ public class CVSPreferencesPage
 		
 		IPreferenceStore store = getPreferenceStore();
 		
-		boolean refreshRequired = false;
-		if (store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES) != showModulesField.getSelection()) {
-			refreshRequired = true;
-		}
+		boolean refreshRequired = store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES) != showModulesButton.getSelection();
 		
 		store.setValue(
 			ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES,
@@ -220,7 +213,7 @@ public class CVSPreferencesPage
 			quietnessCombo.getSelectionIndex());
 		store.setValue(
 			ICVSUIConstants.PREF_SHOW_MODULES,
-			showModulesField.getSelection());
+			showModulesButton.getSelection());
 			
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
@@ -247,7 +240,7 @@ public class CVSPreferencesPage
 			store.getDefaultBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
-		showModulesField.setSelection(
+		showModulesButton.setSelection(
 			store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MODULES));
 	}
 

@@ -175,9 +175,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 	}
 
-	public boolean isModulesEnabled() {
-		return getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_MODULES);
-	}
 	/**
 	 * @see Plugin#startup()
 	 */

@@ -43,16 +43,18 @@ public class CheckoutAsAction extends TeamAction {
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ICVSRemoteFolder) {
-					if ( ! Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions()))
+					if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions())) {
 						resources.add(next);
+					}
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
 					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
 					if (adapter instanceof ICVSRemoteFolder) {
-						if ( ! Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions()))
+						if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions())) {
 							resources.add(adapter);
+						}
 						continue;
 					}
 				}

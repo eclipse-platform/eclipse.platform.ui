@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -51,7 +52,8 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
 				try {
-					ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT, CVSUIPlugin.getPlugin().isModulesEnabled(), new NullProgressMonitor());
+					IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+					ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT, store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), new NullProgressMonitor());
 					Object[] modules = new Object[resources.length];
 					for (int i = 0; i < resources.length; i++) {
 						modules[i] = new RemoteModule((ICVSRemoteFolder)resources[i], VersionCategory.this);
