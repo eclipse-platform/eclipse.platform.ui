@@ -40,21 +40,21 @@ BODY {
 }
 
 TABLE {
-	font: icon;
+	font: <%=prefs.getToolbarFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
-	margin:0;
-	padding:0;
+	margin: 0px;
+	padding: 0px;
 	height:100%;
 }
 
 FORM {
 	background:<%=prefs.getToolbarBackground()%>;
 	height:100%;
-	margin:0;
+	margin:0px;
 }
 
 INPUT {
-	font: icon;
+	font: <%=prefs.getToolbarFont()%>;
 	margin:0px;
 	padding:0px;
 }
@@ -71,7 +71,7 @@ INPUT {
 }
 
 #go {
-	background:WindowText;
+	background:ThreeDShadow;
 	color:Window;
 	font-weight:bold;
 	border:1px solid ThreeDShadow;
