@@ -347,7 +347,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection= event.getSelection();
-				if (selection instanceof IStructuredSelection) {
+				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 					IStructuredSelection ss= (IStructuredSelection)selection;
 					Object element= ss.getFirstElement();
 					boolean checked= !fTableViewer.getChecked(element);
