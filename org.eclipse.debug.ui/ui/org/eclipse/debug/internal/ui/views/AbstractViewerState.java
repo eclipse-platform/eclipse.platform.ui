@@ -26,10 +26,7 @@ public abstract class AbstractViewerState {
 
 	// paths to expanded elements
 	private List fSavedExpansion = null;
-	// paths currently expanded
-	private List fCurrentExpansion = new ArrayList();
-	// paths to selected elements
-	private IPath[] fSelection = null;
+	private IPath[] fSelection;
 	
 	/**
 	 * Constructs a memento for the given viewer.
@@ -45,7 +42,6 @@ public abstract class AbstractViewerState {
 	 * @param viewer viewer of which to save the state
 	 */
 	public void saveState(TreeViewer viewer) {
-		fCurrentExpansion.clear();
 		List expanded = new ArrayList();
 		fSavedExpansion = null;
 		TreeItem[] items = viewer.getTree().getItems();
@@ -99,6 +95,7 @@ public abstract class AbstractViewerState {
 	 * @param viewer viewer to which state is restored
 	 */
 	public void restoreState(TreeViewer viewer) {
+		List newExpansion = new ArrayList();
 	    boolean expansionComplete = true;
 	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {		
 	        for (int i = 0; i < fSavedExpansion.size(); i++) {
@@ -108,7 +105,7 @@ public abstract class AbstractViewerState {
 	                try {
 	                    obj = decodePath(path, viewer);
 	                    if (obj != null) {
-	                        fCurrentExpansion.add(obj);
+	                        newExpansion.add(obj);
 	                    } else {
 	                        expansionComplete = false;                  
 	                    }
@@ -116,7 +113,7 @@ public abstract class AbstractViewerState {
 	                }
 	            }
 	        }
-	        viewer.setExpandedElements(fCurrentExpansion.toArray());
+	        viewer.setExpandedElements(newExpansion.toArray());
 	        if (expansionComplete) {
 	            fSavedExpansion = null;
 	        }
