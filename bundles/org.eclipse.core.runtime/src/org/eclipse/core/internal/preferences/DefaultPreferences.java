@@ -303,7 +303,9 @@ public class DefaultPreferences extends EclipsePreferences {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("Preference customization file not found: " + filename); //$NON-NLS-1$
 		} catch (IOException e) {
-			// TODO
+			String message = Policy.bind("preferences.loadException", filename); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			InternalPlatform.getDefault().log(status);
 		} finally {
 			if (input != null)
 				try {
