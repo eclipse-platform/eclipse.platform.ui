@@ -308,7 +308,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			}
 			IContributionItem refItem = findAlphabeticalOrder(toolGroupId,contributingId,toolBarManager);
 			toolBarManager.insertAfter(refItem.getId(),actionContribution);
-			//toolBarManager.appendToGroup(toolGroupId, actionContribution);
 			toolBarManager.update(false);
 			
 		}
@@ -353,9 +352,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			if (groupMarker == null) {
 				toolBar.add(new Separator(toolGroupId));
 			}
-			IContributionItem refItem = findAlphabeticalOrder(toolGroupId,actionContribution.getId(),toolBar);
-			toolBar.insertAfter(refItem.getId(),actionContribution);
-			//toolBar.appendToGroup(toolGroupId, actionContribution);
+			toolBar.prependToGroup(toolGroupId, actionContribution);
 			toolBar.update(false);
 			
 		}
@@ -398,7 +395,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			menu.add(marker);
 		}
 		
-		public IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
+		private IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
 			IContributionItem[] items = mgr.getItems();
 			int insertIndex = 0;
 			
