@@ -10,13 +10,33 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
+/**
+ * The registry of context launch variables contributed via
+ * extension point. The singleton instance of the context
+ * variable registry can be accessed from
+ * <code>org.eclipse.debug.core.DebugPlugin</code>.
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
+ * @see org.eclipse.debug.core.variables.IContextLaunchVariable
+ * @since 3.0
+ */
 public interface IContextLaunchVariableRegistry {
 	/**
-	 * Returns the variable for the given tag or <code>null</code> if none.
+	 * Returns the variable with the given name or <code>null</code>
+	 * if no such variable exists. If multiple variables with the given name have
+	 * been added to this registry, returns the most recently added variable
+	 * with that name.
+	 * 
+	 * @param name the name of the variable
+	 * @return the launch configuration variable with the given name or
+	 * <code>null</code> if no such variable exists.
 	 */
-	public abstract IContextLaunchVariable getVariable(String tag);
+	public IContextLaunchVariable getVariable(String name);
 	/**
-	 * Returns the list of argument variables in the registry.
+	 * Returns all the context variables in the registry.
+	 * 
+	 * @return the variables in this registry
 	 */
-	public abstract IContextLaunchVariable[] getVariables();
+	public IContextLaunchVariable[] getVariables();
 }
