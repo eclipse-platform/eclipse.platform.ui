@@ -267,6 +267,11 @@ public class RepositoryManager {
 		root.addDateTag(tag);
 		broadcastRepositoryChange(root);
 	}
+	public void removeDateTag(ICVSRepositoryLocation location, CVSTag tag){
+		RepositoryRoot root = getRepositoryRootFor(location);
+		root.removeDateTag(tag);
+		broadcastRepositoryChange(root);
+	}
 	public void setAutoRefreshFiles(ICVSFolder project, String[] filePaths) throws CVSException {
 		RepositoryRoot root = getRepositoryRootFor(project);
 		String remotePath = RepositoryRoot.getRemotePathFor(project);

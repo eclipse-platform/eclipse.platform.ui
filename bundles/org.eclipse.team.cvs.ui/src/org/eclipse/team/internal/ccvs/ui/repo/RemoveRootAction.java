@@ -58,9 +58,9 @@ public class RemoveRootAction extends SelectionListenerAction {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
-				Object next = CVSAction.getAdapter(elements.next(), ICVSRepositoryLocation.class);
-				if (next instanceof ICVSRepositoryLocation) {
-					resources.add(next);
+				Object next = CVSAction.getAdapter(elements.next(), RepositoryRoot.class);
+				if (next instanceof RepositoryRoot) {
+					resources.add(((RepositoryRoot)next).getRoot());
 				}
 			}
 		}

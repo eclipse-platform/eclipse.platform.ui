@@ -197,7 +197,11 @@ public class RepositoryRoot extends PlatformObject {
 			dateTags.add(tag);
 		}
 	}
-	
+	public void removeDateTag(CVSTag tag) {
+		if (dateTags.contains(tag)) {
+			dateTags.remove(tag);
+		}
+	}
 	/**
 	 * Return the list of date tags assocaiated with the repository.
 	 * @return the list of date tags

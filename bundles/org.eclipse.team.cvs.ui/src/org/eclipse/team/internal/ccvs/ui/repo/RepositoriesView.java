@@ -14,22 +14,42 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -50,6 +70,7 @@ public class RepositoriesView extends RemoteViewPart {
 	private Action newAnonAction;
 	private PropertyDialogAction propertiesAction;
 	private RemoveRootAction removeRootAction;
+	private RemoveDateTagAction removeDateTagAction;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -137,6 +158,8 @@ public class RepositoriesView extends RemoteViewPart {
 		});
 		removeRootAction = new RemoveRootAction(viewer.getControl().getShell(), this);
 		removeRootAction.selectionChanged((IStructuredSelection)null);
+		removeDateTagAction = new RemoveDateTagAction();
+		removeDateTagAction.selectionChanged( (IStructuredSelection)null);
 		WorkbenchHelp.setHelp(removeRootAction, IHelpContextIds.REMOVE_REPOSITORY_LOCATION_ACTION);
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeRootAction);
@@ -162,10 +185,13 @@ public class RepositoriesView extends RemoteViewPart {
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
 
 		removeRootAction.selectionChanged(selection);
+		removeDateTagAction.selectionChanged(selection);
 		if(removeRootAction.isEnabled()) {
 			manager.add(removeRootAction);
 		}		
-
+		if(removeDateTagAction.isEnabled()){
+			manager.add(removeDateTagAction);
+		}
 		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
 			manager.add(new Separator());
 			manager.add(propertiesAction);
@@ -202,6 +228,7 @@ public class RepositoriesView extends RemoteViewPart {
 	protected void initializeListeners() {
 		super.initializeListeners();
 		viewer.addSelectionChangedListener(removeRootAction);
+		viewer.addSelectionChangedListener(removeDateTagAction);
 		viewer.getControl().addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent event) {
 				handleKeyPressed(event);
@@ -214,6 +241,7 @@ public class RepositoriesView extends RemoteViewPart {
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			removeRootAction.run();
+			removeDateTagAction.run();
 		}
 	}
 	protected void handleKeyReleased(KeyEvent event) {
@@ -288,5 +316,4 @@ public class RepositoriesView extends RemoteViewPart {
 			}
 		};
 	}
-
 }

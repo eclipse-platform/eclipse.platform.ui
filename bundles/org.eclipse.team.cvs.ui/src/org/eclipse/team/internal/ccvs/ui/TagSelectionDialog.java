@@ -11,7 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui;
 
  
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -19,6 +28,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,15 +40,21 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
+import org.eclipse.team.internal.ccvs.ui.merge.TagRootElement;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
-import org.eclipse.team.internal.ccvs.ui.repo.*;
+import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -45,11 +62,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Dialog to prompt the user to choose a tag for a selected resource
  */
-public class TagSelectionDialog extends Dialog {
+public class TagSelectionDialog extends Dialog{
 	private ICVSFolder[] folders;
 	private int includeFlags;
 	private CVSTag result;
 	private String helpContext;
+	private IStructuredSelection selection;
 	
 	public static final int INCLUDE_HEAD_TAG = ProjectElement.INCLUDE_HEAD_TAG;
 	public static final int INCLUDE_BASE_TAG = ProjectElement.INCLUDE_BASE_TAG;
@@ -202,7 +220,20 @@ public class TagSelectionDialog extends Dialog {
 				});
 			}
 		};
+		
+		// Create the popup menu
+		MenuManager menuMgr = new MenuManager();
+		Tree tree = tagTree.getTree();
+		Menu menu = menuMgr.createContextMenu(tree);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				addMenuItemActions(manager);
+			}
 
+		});
+		menuMgr.setRemoveAllWhenShown(true);
+		tree.setMenu(menu);
+		
 		if(showRecurse) {
 			final Button recurseCheck = new Button(top, SWT.CHECK);
 			recurseCheck.setText(Policy.bind("TagSelectionDialog.recurseOption")); //$NON-NLS-1$
@@ -224,7 +255,7 @@ public class TagSelectionDialog extends Dialog {
 		data = new GridData (GridData.FILL_BOTH);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
-
+		
 		updateEnablement();
         Dialog.applyDialogFont(parent);
         
@@ -251,13 +282,13 @@ public class TagSelectionDialog extends Dialog {
 	}
 	
 	protected TreeViewer createTree(Composite parent) {
-		Tree tree = new Tree(parent, SWT.SINGLE | SWT.BORDER);
+		Tree tree = new Tree(parent, SWT.MULTI | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));	
 		TreeViewer result = new TreeViewer(tree);
 		result.setContentProvider(new WorkbenchContentProvider());
 		result.setLabelProvider(new WorkbenchLabelProvider());
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
+			public void selectionChanged(SelectionChangedEvent event) {				
 				updateEnablement();
 			}
 		});
@@ -269,6 +300,14 @@ public class TagSelectionDialog extends Dialog {
 				if (!selection.isEmpty() && (selection.getFirstElement() instanceof TagElement)) {
 					okPressed();
 				}
+			}
+		});
+		result.getControl().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				handleKeyPressed(event);
+			}
+			public void keyReleased(KeyEvent event) {
+				handleKeyReleased(event);
 			}
 		});
 		result.setSorter(new RepositorySorter());
@@ -314,13 +353,94 @@ public class TagSelectionDialog extends Dialog {
 	 * Updates the dialog enablement.
 	 */
 	protected void updateEnablement() {
+		selection = (IStructuredSelection)tagTree.getSelection();		
 		if(okButton!=null) {
-			IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
-			if (selection.isEmpty() || !(selection.getFirstElement() instanceof TagElement)) {
+		
+			if (selection.isEmpty() || selection.size() != 1 || !(selection.getFirstElement() instanceof TagElement)) {
 				okButton.setEnabled(false);
 			} else {
 				okButton.setEnabled(true);
 			}
 		}
 	}
+
+	public void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {			
+			deleteDateTag();
+		}
+	}
+	private void deleteDateTag() {
+		TagElement[] selectedDateTagElements = getSelectedDateTagElement();
+		if (selectedDateTagElements.length == 0) return;
+		for(int i = 0; i < selectedDateTagElements.length; i++){
+			RepositoryManager mgr = CVSUIPlugin.getPlugin().getRepositoryManager();
+			CVSTag tag = selectedDateTagElements[i].getTag();
+			if(tag.getType() == CVSTag.DATE){
+				mgr.removeDateTag(getLocation(),tag);
+			}				
+		}
+		tagTree.refresh();
+		updateEnablement();
+	}
+
+	protected void handleKeyReleased(KeyEvent event) {
+	}
+	
+	private ICVSRepositoryLocation getLocation(){
+		RepositoryManager mgr = CVSUIPlugin.getPlugin().getRepositoryManager();
+		ICVSRepositoryLocation location = mgr.getRepositoryLocationFor( folders[0]);
+		return location;
+	}
+	
+	/**
+	 * Returns the selected date tag elements
+	 */
+	private TagElement[] getSelectedDateTagElement() {
+		ArrayList dateTagElements = null;
+		if (selection!=null && !selection.isEmpty()) {
+			dateTagElements = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = CVSAction.getAdapter(elements.next(), TagElement.class);
+				if (next instanceof TagElement) {
+					if(((TagElement)next).getTag().getType() == CVSTag.DATE){
+						dateTagElements.add(next);
+					}
+				}
+			}
+		}
+		if (dateTagElements != null && !dateTagElements.isEmpty()) {
+			TagElement[] result = new TagElement[dateTagElements.size()];
+			dateTagElements.toArray(result);
+			return result;
+		}
+		return new TagElement[0];
+	}
+	private void addDateTag(CVSTag tag){
+		if(tag == null) return;
+		List dateTags = new ArrayList();
+		dateTags.addAll(Arrays.asList(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(folders[0],CVSTag.DATE)));
+		if(!dateTags.contains( tag)){
+			CVSUIPlugin.getPlugin().getRepositoryManager().addDateTag(getLocation(),tag);
+		}
+		tagTree.refresh();
+		updateEnablement();
+	}
+	private void addMenuItemActions(IMenuManager manager) {
+		manager.add(new Action("Add Date...") {
+			public void run() {
+				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryLocationFor(folders[0]));
+				addDateTag(dateTag);
+			}
+		});
+		if(getSelectedDateTagElement().length > 0){
+			manager.add(new Action("Remove") {
+				public void run() {
+					deleteDateTag();
+				}
+			});			
+		}
+
+	}
+
 }
