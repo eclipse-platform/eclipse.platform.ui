@@ -707,35 +707,6 @@ public class Feature extends FeatureModel implements IFeature {
 		}
 	}
 
-	/**
-	 * Method filterFeatures.
-	 * @param list
-	 * @return List
-	 */
-	private IIncludedFeatureReference[] filterFeatures(IIncludedFeatureReference[] allIncluded) {
-		List list = new ArrayList();
-		if (allIncluded!=null){
-			for (int i = 0; i < allIncluded.length; i++) {
-				IIncludedFeatureReference included = allIncluded[i];
-				if (UpdateManagerUtils.isValidEnvironment(included))
-					list.add(included);
-				else{
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-						UpdateManagerPlugin.warn("Filtered out feature reference:"+included);
-					}
-				}
-			}
-		}
-		
-		IIncludedFeatureReference[] result = new IIncludedFeatureReference[list.size()];
-		if (!list.isEmpty()){
-			list.toArray(result);
-		}
-		
-		return result;	
-	}
-
-
 	/*
 	 * 
 	 */
@@ -905,11 +876,42 @@ public class Feature extends FeatureModel implements IFeature {
 			UpdateManagerPlugin.warn("", e);
 		}
 	}
+	
 	/**
 	 * @see org.eclipse.update.core.IFeature#getRawIncludedFeatureReferences()
 	 */
 	public IIncludedFeatureReference[] getIncludedFeatureReferences() throws CoreException {
 		return filterFeatures(getRawIncludedFeatureReferences());
+	}
+
+	/*
+	 * Method filterFeatures.
+	 * Also implemented in Site
+	 * 
+	 * @param list
+	 * @return List
+	 */
+	private IIncludedFeatureReference[] filterFeatures(IIncludedFeatureReference[] allIncluded) {
+		List list = new ArrayList();
+		if (allIncluded!=null){
+			for (int i = 0; i < allIncluded.length; i++) {
+				IIncludedFeatureReference included = allIncluded[i];
+				if (UpdateManagerUtils.isValidEnvironment(included))
+					list.add(included);
+				else{
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+						UpdateManagerPlugin.warn("Filtered out feature reference:"+included);
+					}
+				}
+			}
+		}
+		
+		IIncludedFeatureReference[] result = new IIncludedFeatureReference[list.size()];
+		if (!list.isEmpty()){
+			list.toArray(result);
+		}
+		
+		return result;	
 	}
 
 	/**

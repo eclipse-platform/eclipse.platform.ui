@@ -167,12 +167,49 @@ public class Site extends SiteModel implements ISite {
 	 * @see ISite#getFeatureReferences()
 	 * @since 2.0
 	 */
-	public ISiteFeatureReference[] getFeatureReferences() {
+	public ISiteFeatureReference[] getRawFeatureReferences() {
 		FeatureReferenceModel[] result = getFeatureReferenceModels();
 		if (result.length == 0)
 			return new ISiteFeatureReference[0];
 		else
 			return (ISiteFeatureReference[]) result;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.ISite#getRawIncludedFeatureReferences()
+	 */
+	public ISiteFeatureReference[] getFeatureReferences() {
+		return filterFeatures(getRawFeatureReferences());
+	}
+
+	/*
+	 * Method filterFeatures.
+	 * Also implemented in Feature
+	 *  
+	 * @param list
+	 * @return List
+	 */
+	private ISiteFeatureReference[] filterFeatures(ISiteFeatureReference[] allIncluded) {
+		List list = new ArrayList();
+		if (allIncluded!=null){
+			for (int i = 0; i < allIncluded.length; i++) {
+				ISiteFeatureReference included = allIncluded[i];
+				if (UpdateManagerUtils.isValidEnvironment(included))
+					list.add(included);
+				else{
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+						UpdateManagerPlugin.warn("Filtered out feature reference:"+included);
+					}
+				}
+			}
+		}
+		
+		ISiteFeatureReference[] result = new ISiteFeatureReference[list.size()];
+		if (!list.isEmpty()){
+			list.toArray(result);
+		}
+		
+		return result;	
 	}
 
 	/**

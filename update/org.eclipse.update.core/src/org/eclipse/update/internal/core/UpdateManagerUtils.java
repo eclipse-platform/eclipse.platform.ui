@@ -594,6 +594,7 @@ public class UpdateManagerUtils {
 	 * 
 	 */
 	public static boolean isValidEnvironment(IPlatformEnvironment candidate) {
+		if (candidate==null) return false;
 		String os = candidate.getOS();
 		String ws = candidate.getWS();
 		String arch = candidate.getOSArch();
@@ -608,6 +609,7 @@ public class UpdateManagerUtils {
 	 */	
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues==null) return false;
+		if ("*".equalsIgnoreCase(candidateValues)) return true;
 		siteValues = siteValues.toUpperCase();		
 		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
 		while (stok.hasMoreTokens()) {

@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.EnvironmentUtil;
 
 public class SearchObject extends NamedModelObject {
 	public static final String P_REFRESH = "p_refresh"; //$NON-NLS-1$
@@ -373,7 +373,7 @@ public class SearchObject extends NamedModelObject {
 	}
 
 	private boolean isValidEnvironment(IFeature candidate) {
-		return EnvironmentUtil.isValidEnvironment(candidate);
+		return UpdateManagerUtils.isValidEnvironment(candidate);
 	}
 
 	private void asyncFireObjectAdded(

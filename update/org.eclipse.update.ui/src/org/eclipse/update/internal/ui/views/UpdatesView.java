@@ -24,6 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -140,7 +141,7 @@ public class UpdatesView
 				child = getFeature((IFeatureAdapter) child);
 			}
 			if (child instanceof IPlatformEnvironment) {
-				return EnvironmentUtil.isValidEnvironment(
+				return UpdateManagerUtils.isValidEnvironment(
 					(IPlatformEnvironment) child);
 			}
 			return true;

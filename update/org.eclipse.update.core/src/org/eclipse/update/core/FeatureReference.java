@@ -188,7 +188,11 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOS() {
-		if (super.getOS()==null) return exactFeature.getOS();
+		if (super.getOS()==null) try {
+			return getFeature().getOS();
+		} catch (CoreException e) {
+			return null;
+		}
 		return super.getOS();
 	}
 
@@ -202,7 +206,11 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getWS() {
-		if (super.getWS()==null) return exactFeature.getWS();
+		if (super.getWS()==null) try {
+			return getFeature().getWS();
+		} catch (CoreException e) {
+			return null;
+		}
 		return super.getWS();
 	}
 
@@ -216,7 +224,11 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOSArch() {
-		if (super.getOSArch()==null) return exactFeature.getOSArch();
+		if (super.getOSArch()==null) try {
+			return getFeature().getOSArch();
+		} catch (CoreException e) {
+			return null;
+		}
 		return super.getOSArch();
 	}
 
@@ -229,7 +241,11 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getNL() {
-		if(super.getNL()==null) return exactFeature.getNL();
+		if(super.getNL()==null) try {
+			return getFeature().getNL();
+		} catch (CoreException e) {
+			return null;
+		}
 		return super.getNL(); 
 	}
 
@@ -239,7 +255,11 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @return boolean
 	 */
 	public boolean isPatch() {
-		if (super.getPatch()==null) return exactFeature.isPatch();
+		if (super.getPatch()==null) try {
+			return getFeature().isPatch();
+		} catch (CoreException e) {
+			return false;
+		}
 		return "true".equalsIgnoreCase(super.getPatch());
 	}
 

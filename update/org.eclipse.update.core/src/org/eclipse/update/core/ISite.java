@@ -105,8 +105,19 @@ public interface ISite extends IAdaptable {
 	public ISiteFeatureReference[] getFeatureReferences();
 
 	/**
+	 * Returns an array of references to features on this site.
+	 * No filtering occurs.
+	 * 
+	 * @return an array of feature references, or an empty array..
+	 * @since 2.1
+	 */
+	public ISiteFeatureReference[] getRawFeatureReferences();
+	
+	/**
 	 * Returns a reference to the specified feature if 
 	 * it is installed on this site.
+	 * filtered by the operating system, windowing system and architecture
+	 * system set in <code>Sitemanager</code>
 	 * 
 	 * @param feature feature
 	 * @return feature reference, or <code>null</code> if this feature

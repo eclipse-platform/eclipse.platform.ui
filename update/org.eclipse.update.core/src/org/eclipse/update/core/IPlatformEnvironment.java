@@ -29,9 +29,9 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * Returns optional operating system specification.
 	 * A comma-separated list of os designators defined by the platform.
 	 * Indicates this entry should only be installed on one of the specified
-	 * os systems. If this attribute is not specified, the entry can be
-	 * installed on all systems (portable implementation).
-	 * 
+	 * os systems. If this attribute is not specified, or is <code>*</code>, the
+	 * entry can be installed on all systems (portable implementation). If the
+
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 *
@@ -45,8 +45,8 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * Returns optional system architecture specification. 
 	 * A comma-separated list of arch designators defined by the platform.
 	 * Indicates this entry should only be installed on one of the specified
-	 * systems. If this attribute is not specified, the entry can be
-	 * installed on all systems (portable implementation).
+	 * systems. If this attribute is not specified, or is <code>*</code>, the
+	 * entry can be installed on all systems (portable implementation).
 	 * 
 	 * This information is used as a hint by the installation and update
 	 * support.
@@ -61,8 +61,8 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * Returns optional system architecture specification. 
 	 * A comma-separated list of arch designators defined by the platform.
 	 * Indicates this entry should only be installed on one of the specified
-	 * systems. If this attribute is not specified, the entry can be
-	 * installed on all systems (portable implementation).
+	 * systems. If this attribute is not specified, or is <code>*</code>, the
+	 * entry can be installed on all systems (portable implementation).
 	 * 
 	 * This information is used as a hint by the installation and update
 	 * support.
@@ -78,8 +78,8 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * A comma-separated list of locale designators defined by Java.
 	 * Indicates this entry should only be installed on a system running
 	 * with a compatible locale (using Java locale-matching rules).
-	 * If this attribute is not specified, the entry can be installed 
-	 * on all systems (language-neutral implementation). 
+	 * If this attribute is not specified, or is <code>*</code>, the entry can
+	 * be installed on all systems (language-neutral implementation).
 	 * 
 	 * This information is used as a hint by the installation and update
 	 *  support.
