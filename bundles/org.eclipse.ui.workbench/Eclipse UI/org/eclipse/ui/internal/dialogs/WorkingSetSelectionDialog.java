@@ -231,7 +231,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 			listViewer.setSelection(new StructuredSelection(selections), true);
 		}
 		updateButtonAvailability();
-
+		//don't allow ok dismissal until a change has been made. 
+		//Fixes bug 22735.
+		getOkButton().setEnabled(false);
 		return control;
 	}
 	/**
@@ -420,6 +422,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		detailsButton.setEnabled(hasSingleSelection);
 		if (multiSelect == false) {
 			getOkButton().setEnabled(hasSelection == false || hasSingleSelection);
+		}
+		else {
+			getOkButton().setEnabled(true);
 		}
 	}
 }
