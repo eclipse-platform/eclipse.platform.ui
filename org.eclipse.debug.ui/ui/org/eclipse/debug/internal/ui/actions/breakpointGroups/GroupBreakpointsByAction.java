@@ -14,8 +14,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -71,6 +74,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         IAction action = new GroupBreakpointsAction(null, fView);
         addAccel(accel, action, BreakpointGroupMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
         accel++;
+        action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_VIEW_BREAKPOINTS));
         ActionContributionItem item= new ActionContributionItem(action);
         item.fill(menu, -1);
 
@@ -86,6 +90,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         // advanced action
         AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
         addAccel(accel, advancedAction,BreakpointGroupMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
+        advancedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_HIERARCHICAL));
 		item= new ActionContributionItem(advancedAction);
 		item.fill(menu, -1);
 	}
@@ -98,6 +103,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
             IAction action = new GroupBreakpointsAction(organizer, fView);
             addAccel(accel, action, organizer.getLabel());
             accel++;
+            action.setImageDescriptor(organizer.getImageDescriptor());
             actions.add(action);
         }        
         return actions;
