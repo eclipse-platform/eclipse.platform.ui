@@ -50,7 +50,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 /**
- * Not yet for public use. API under construction.
+ * Dialog for selecting resources.
  * 
  * @since 3.1
  */

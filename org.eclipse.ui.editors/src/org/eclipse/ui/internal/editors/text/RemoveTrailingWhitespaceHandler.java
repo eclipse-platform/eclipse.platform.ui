@@ -24,7 +24,7 @@ import org.eclipse.ui.editors.text.FileBufferOperationHandler;
 
 
 /**
- * Not yet for public use. API under construction.
+ * A file buffer operation action that removes trailing whitespace.
  * 
  * @since 3.1
  */

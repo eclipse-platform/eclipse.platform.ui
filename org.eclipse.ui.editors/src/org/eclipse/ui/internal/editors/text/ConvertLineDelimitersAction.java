@@ -25,7 +25,8 @@ import org.eclipse.ui.editors.text.FileBufferOperationAction;
 
 
 /**
- * Not yet for public use. API under construction.
+ * A file buffer operation action that changes the line delimiters to a specified
+ * line delimiter.
  * 
  * @since 3.1
  */

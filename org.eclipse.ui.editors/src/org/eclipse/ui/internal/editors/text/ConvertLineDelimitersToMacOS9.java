@@ -11,7 +11,8 @@
 package org.eclipse.ui.internal.editors.text;
 
 /**
- * Not yet for public use. API under construction.
+ * A file buffer operation action that changes the line delimiters to a MacOS9
+ * line delimiter.
  * 
  * @since 3.1
  */
