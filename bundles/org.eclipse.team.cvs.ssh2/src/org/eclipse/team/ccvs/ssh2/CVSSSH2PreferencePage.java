@@ -685,6 +685,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  catch(IOException ee){
 	  }
 	  catch(JSchException ee){
+	  	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.111"));
 	  }
 
 	}});
