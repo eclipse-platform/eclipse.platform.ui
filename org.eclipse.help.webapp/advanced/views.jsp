@@ -101,37 +101,72 @@ var searchViewHref="<%="view.jsp?view="+views[i].getName()+(request.getQueryStri
 		}
 	}
 %>
+
+var re=/(\?|&)showAll=(on|off)/;
 function toggleShowAll(){
-	var re=/(\?|&)showAll=(on|off)/;
 	if(activityFiltering){
-		activityFiltering=false;
-		try{
-			window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
-		}catch(ex) {}
-		try{
-			window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
-		}catch(ex) {}
-		try{
-			window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on";
-		}catch(ex) {}
-		try{
-			window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on";
-		}catch(ex) {}
+		confirmShowAll();
 	} else {
-		activityFiltering=true;
-		try{
-			window.frames.toc.tocToolbarFrame.setButtonState("show_all", false);
-		}catch(ex) {}
-		try{
-			window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
-		}catch(ex) {}
-		try{
-			window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=off";
-		}catch(ex) {}
-		try{
-			window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=off";
-		}catch(ex) {}
+		dontShowAll();
 	}
+}
+
+function showAll(){
+	activityFiltering=false;
+	try{
+		window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
+	}catch(ex) {}
+	try{
+		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
+	}catch(ex) {}
+	try{
+		window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on";
+	}catch(ex) {}
+	try{
+		window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on";
+	}catch(ex) {}
+}
+
+function dontShowAll(){
+	activityFiltering=true;
+	try{
+		window.frames.toc.tocToolbarFrame.setButtonState("show_all", false);
+	}catch(ex) {}
+	try{
+		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
+	}catch(ex) {}
+	try{
+		window.frames.toc.tocViewFrame.location=window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=off";
+	}catch(ex) {}
+	try{
+		window.frames.search.searchViewFrame.location=window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=off";
+	}catch(ex) {}
+}
+
+var confirmShowAllDialog;
+var w = 350;
+var h = 200;
+
+function confirmShowAll()
+{
+<%
+if (data.isIE()){
+%>
+	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+<%
+} else {
+%>
+	var l = top.screenX + (top.innerWidth - w) / 2;
+	var t = top.screenY + (top.innerHeight - h) / 2;
+<%
+}
+%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+	
+	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	confirmShowAllDialog.focus(); 
 }
 
 </script>
