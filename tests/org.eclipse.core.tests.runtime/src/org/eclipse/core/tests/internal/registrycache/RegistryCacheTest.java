@@ -91,13 +91,13 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		assertTrue("registry.1", (reg1 == null && reg2 == null) || (reg1 != null && reg2 != null));
 		if (reg1 == null)
 			return;
-		String[] reg1elementIds = reg1.getElementIdentifiers();
-		String[] reg2elementIds = reg2.getElementIdentifiers();
+		String[] reg1elementIds = reg1.getNamespaces();
+		String[] reg2elementIds = reg2.getNamespaces();
 		assertEquals("registry.2", reg1elementIds.length, reg2elementIds.length);
 		for (int i = 0; i < reg2elementIds.length; i++)
 			assertEquals("registry.3" + i, reg1elementIds, reg2elementIds);
 		for (int i = 0; i < reg2elementIds.length; i++)
-			assertEquals(reg1.getElement(reg1elementIds[i]), reg2.getElement(reg2elementIds[i]));
+			assertEquals(reg1.getNamespace(reg1elementIds[i]), reg2.getNamespace(reg2elementIds[i]));
 	}
 
 	private void assertEquals(Namespace bundle1, Namespace bundle2) {
