@@ -38,6 +38,7 @@ public class WidgetHider {
 				if (toHide.isDisposed()) {
 					// Shouldn't happen -- indicates leaky code. 
 					dispose();
+					return;
 				}
 				
 				Point position = display.getCursorLocation();
