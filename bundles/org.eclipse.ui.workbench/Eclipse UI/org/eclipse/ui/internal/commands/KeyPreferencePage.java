@@ -83,8 +83,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
 	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
 	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
-	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 192, 192);
-	private final static RGB RGB_MINUS =	new RGB(192, 192, 192);
+	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 160, 160);
+	private final static RGB RGB_MINUS =	new RGB(160, 160, 160);
 	private final static char SPACE = ' ';
 
 	private final class CommandSetPair {
@@ -236,7 +236,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private Combo comboScope;
 	private Label labelConfiguration; 
 	private Combo comboConfiguration;
-	private Button buttonChange;
+	private Button buttonAdd;
+	private Button buttonRemove;
+	private Button buttonRestore;
 	private Label labelCommandsForSequence;
 	private Table tableCommandsForSequence;
 	//private TableViewer tableViewerCommandsForSequence;
@@ -751,16 +753,42 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		gridData.heightHint = 0;
 		gridData.widthHint = 0;
 		spacer.setLayoutData(gridData);
+
+		Composite compositeButton = new Composite(compositeAssignmentChange, SWT.NULL);
+		compositeButton.setFont(compositeAssignmentChange.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;		
+		gridLayout.numColumns = 3;
+		compositeButton.setLayout(gridLayout);
 				
-		buttonChange = new Button(compositeAssignmentChange, SWT.CENTER | SWT.PUSH);
-		buttonChange.setFont(compositeAssignmentChange.getFont());
+		buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
+		buttonAdd.setFont(compositeButton.getFont());
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonChange.setText(Util.getString(resourceBundle, "buttonChange")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonChange.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
-		buttonChange.setLayoutData(gridData);		
+		buttonAdd.setText(Util.getString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonAdd.setLayoutData(gridData);		
 
+		buttonRemove = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
+		buttonRemove.setFont(compositeButton.getFont());
+		gridData = new GridData();
+		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonRemove.setText(Util.getString(resourceBundle, "buttonRemove")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonRemove.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonRemove.setLayoutData(gridData);		
+
+		buttonRestore = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
+		buttonRestore.setFont(compositeButton.getFont());
+		gridData = new GridData();
+		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonRestore.setText(Util.getString(resourceBundle, "buttonRestore")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonRestore.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonRestore.setLayoutData(gridData);		
+		
 		spacer = new Composite(compositeAssignmentRight, SWT.NULL);	
 		gridData = new GridData();
 		gridData.heightHint = 0;
@@ -900,7 +928,19 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}	
 		});
 
-		buttonChange.addSelectionListener(new SelectionAdapter() {
+		buttonAdd.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedButtonChange();
+			}	
+		});
+
+		buttonRemove.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedButtonChange();
+			}	
+		});
+		
+		buttonRestore.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonChange();
 			}	
@@ -950,6 +990,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		buildTableCommand();
+		setKeySequence(null);
+		// TODO: add 'globalScope' element to commands extension point to remove this.
+		setScopeId("org.eclipse.ui.globalScope"); //$NON-NLS-1$
+		setKeyConfigurationId(getActiveKeyConfigurationId());				
 		Sequence keySequence = getKeySequence();
 		String scopeId = getScopeId();
 		String keyConfigurationId = getKeyConfigurationId();
@@ -1086,7 +1130,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		comboScope.setEnabled(commandSelected);
 		labelConfiguration.setEnabled(commandSelected);	
 		comboConfiguration.setEnabled(commandSelected);	
-		buttonChange.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
+		buttonAdd.setEnabled(false);
+		buttonRemove.setEnabled(false);
+		buttonRestore.setEnabled(false);
 		labelCommandsForSequence.setEnabled(validKeySequence);		
 		tableCommandsForSequence.setEnabled(validKeySequence);		
 
@@ -1096,12 +1142,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
 		if (commandRecord == null)
-			buttonChange.setText(Util.getString(resourceBundle, "buttonChange.add")); //$NON-NLS-1$			 
+			buttonAdd.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
 		else {
 			if (!commandRecord.customSet.isEmpty() && !commandRecord.defaultSet.isEmpty()) {
-				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.restore")); //$NON-NLS-1$
+				buttonRestore.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
 			} else
-				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.remove")); //$NON-NLS-1$			 
+				buttonRemove.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);
 		}
 
 		if (validKeySequence) {
