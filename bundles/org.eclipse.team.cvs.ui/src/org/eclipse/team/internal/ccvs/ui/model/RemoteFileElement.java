@@ -33,7 +33,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 		if (!(o instanceof IRemoteFile)) return null;
 		IRemoteFile file = (IRemoteFile)o;
 		try {
-			return file.getName() + " " + file.getRevision(new NullProgressMonitor());
+			return file.getName() + " " + file.getRevision();
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return null;

@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.model.Tag;
 
@@ -37,8 +37,8 @@ public class RepositoryManager {
 	/**
 	 * Answer an array of all known remote roots.
 	 */
-	public IRemoteRoot[] getKnownRoots() {
-		return (IRemoteRoot[])repositories.values().toArray(new IRemoteRoot[0]);
+	public ICVSRepositoryLocation[] getKnownRoots() {
+		return (ICVSRepositoryLocation[])repositories.values().toArray(new ICVSRepositoryLocation[0]);
 	}
 	/**
 	 * Answer the root corresponding with the given properties.
@@ -46,7 +46,7 @@ public class RepositoryManager {
 	 * If it is not in the list of known roots, it is created and
 	 * added.
 	 */
-	public IRemoteRoot getRoot(Properties properties) {
+	public ICVSRepositoryLocation getRoot(Properties properties) {
 		StringBuffer keyBuffer = new StringBuffer();
 		keyBuffer.append(":");
 		keyBuffer.append(properties.getProperty("connection"));
@@ -63,13 +63,13 @@ public class RepositoryManager {
 		keyBuffer.append(properties.getProperty("root"));
 		String key = keyBuffer.toString();
 		
-		IRemoteRoot result = (IRemoteRoot)repositories.get(key);
+		ICVSRepositoryLocation result = (ICVSRepositoryLocation)repositories.get(key);
 		if (result != null) {
 			return result;
 		}
 		try {
-			result = CVSTeamProvider.getRemoteRoot(properties);
-			repositories.put(result.getName(), result);
+			result = CVSProviderPlugin.getProvider().createRepository(properties);
+			repositories.put(result.getLocation(), result);
 			Tag tag = new Tag("HEAD", result);
 			addTag(result, tag);
 			Iterator it = listeners.iterator();
@@ -87,7 +87,7 @@ public class RepositoryManager {
 	/**
 	 * Get the list of known tags for a given remote root.
 	 */
-	public Tag[] getKnownTags(IRemoteRoot root) {
+	public Tag[] getKnownTags(ICVSRepositoryLocation root) {
 		Set set = (Set)tags.get(root);
 		if (set == null) return new Tag[0];
 		return (Tag[])set.toArray(new Tag[0]);
@@ -96,7 +96,7 @@ public class RepositoryManager {
 	 * Add the given tag to the list of known tags for the given
 	 * remote root.
 	 */
-	public void addTag(IRemoteRoot root, Tag tag) {
+	public void addTag(ICVSRepositoryLocation root, Tag tag) {
 		Set set = (Set)tags.get(root);
 		if (set == null) {
 			set = new HashSet();
@@ -113,7 +113,7 @@ public class RepositoryManager {
 	 * Remove the given tag from the list of known tags for the
 	 * given remote root.
 	 */
-	public void removeTag(IRemoteRoot root, Tag tag) {
+	public void removeTag(ICVSRepositoryLocation root, Tag tag) {
 		Set set = (Set)tags.get(root);
 		if (set == null) return;
 		set.remove(tag);
@@ -127,9 +127,9 @@ public class RepositoryManager {
 	 * Remove the given root from the list of known remote roots.
 	 * Also removed the tags defined for this root.
 	 */
-	public void removeRoot(IRemoteRoot root) {
+	public void removeRoot(ICVSRepositoryLocation root) {
 		Tag[] tags = getKnownTags(root);
-		Object o = repositories.remove(root.getName());
+		Object o = repositories.remove(root.getLocation());
 		if (o == null) return;
 		this.tags.remove(root);
 		Iterator it = listeners.iterator();
@@ -189,12 +189,12 @@ public class RepositoryManager {
 		dos.writeInt(repos.size());
 		Iterator it = repos.iterator();
 		while (it.hasNext()) {
-			IRemoteRoot root = (IRemoteRoot)it.next();
-			dos.writeUTF(root.getConnectionMethod());
-			dos.writeUTF(root.getUser());
+			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
+			dos.writeUTF(root.getMethod().getName());
+			dos.writeUTF(root.getUsername());
 			dos.writeUTF(root.getHost());
 			dos.writeUTF("" + root.getPort());
-			dos.writeUTF(root.getRepositoryPath());
+			dos.writeUTF(root.getRootDirectory());
 			// Don't store HEAD, as it is automatically created when reading.
 			Tag[] tags = getKnownTags(root);
 			dos.writeInt(tags.length - 1);
@@ -213,11 +213,11 @@ public class RepositoryManager {
 			properties.setProperty("user", dis.readUTF());
 			properties.setProperty("host", dis.readUTF());
 			String port = dis.readUTF();
-			if (!port.equals("" + IRemoteRoot.DEFAULT_PORT)) {
+			if (!port.equals("" + ICVSRepositoryLocation.USE_DEFAULT_PORT)) {
 				properties.setProperty("port", port);
 			}
 			properties.setProperty("root", dis.readUTF());
-			IRemoteRoot root = getRoot(properties);
+			ICVSRepositoryLocation root = getRoot(properties);
 			int tagsSize = dis.readInt();
 			for (int j = 0; j < tagsSize; j++) {
 				String tag = dis.readUTF();

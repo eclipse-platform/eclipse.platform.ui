@@ -2,8 +2,10 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.IRemoteFolder;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -11,9 +13,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class Tag extends CVSModelElement implements IAdaptable {
 	String tag;
-	IRemoteRoot root;
+	ICVSRepositoryLocation root;
 	
-	public Tag(String tag, IRemoteRoot root) {
+	public Tag(String tag, ICVSRepositoryLocation root) {
 		this.tag = tag;
 		this.root = root;
 	}
@@ -35,7 +37,8 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof Tag)) return null;
 		try {
-			return root.getMembers(tag, new NullProgressMonitor());
+			IRemoteFolder folder = root.getRemoteFolder(Path.EMPTY, tag);
+			return folder.getMembers(new NullProgressMonitor());
 		} catch (TeamException e) {
 			return null;
 		}

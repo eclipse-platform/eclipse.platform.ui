@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.ccvs.core.IRemoteResource;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -73,7 +73,7 @@ public class AutoDefineTagsAction extends TeamAction {
 				IRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
 					IRemoteFile file = files[i];
-					IRemoteRoot root = getRemoteRoot(file);
+					ICVSRepositoryLocation root = getRemoteRoot(file);
 					Set tagSet = new HashSet();
 					ILogEntry[] entries = null;
 					try {
@@ -104,11 +104,7 @@ public class AutoDefineTagsAction extends TeamAction {
 		if (resources.length == 0) return false;
 		return true;
 	}
-	protected IRemoteRoot getRemoteRoot(IRemoteFile file) {
-		IRemoteResource resource = file;
-		while (resource.getType() != IRemoteResource.ROOT) {
-			resource = resource.getParent();
-		}
-		return (IRemoteRoot)resource;
+	protected ICVSRepositoryLocation getRemoteRoot(IRemoteFile file) {
+		return file.getRepository();
 	}
 }

@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IRemoteFile;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
@@ -57,16 +57,16 @@ public class RepositoriesView extends ViewPart {
 	
 	// Listener
 	IRepositoryListener listener = new IRepositoryListener() {
-		public void repositoryAdded(IRemoteRoot root) {
+		public void repositoryAdded(ICVSRepositoryLocation root) {
 			viewer.refresh();
 		}
-		public void repositoryRemoved(IRemoteRoot root) {
+		public void repositoryRemoved(ICVSRepositoryLocation root) {
 			viewer.refresh();
 		}
-		public void tagAdded(Tag tag, IRemoteRoot root) {
+		public void tagAdded(Tag tag, ICVSRepositoryLocation root) {
 			viewer.refresh(root);
 		}
-		public void tagRemoved(Tag tag, IRemoteRoot root) {
+		public void tagRemoved(Tag tag, ICVSRepositoryLocation root) {
 			viewer.refresh(root);
 		}
 	};
@@ -75,7 +75,7 @@ public class RepositoriesView extends ViewPart {
 	 * Add a new repository based on the given properties to the viewer.
 	 */
 	private void addRepository(Properties properties) {
-		IRemoteRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
+		ICVSRepositoryLocation root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
 		viewer.refresh();
 	}
 	/**

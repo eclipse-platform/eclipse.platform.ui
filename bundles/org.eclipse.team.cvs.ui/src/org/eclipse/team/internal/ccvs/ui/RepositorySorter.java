@@ -2,7 +2,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.model.Tag;
 
 public class RepositorySorter extends ViewerSorter {
@@ -14,8 +14,8 @@ public class RepositorySorter extends ViewerSorter {
 			if (tag2.equals("HEAD")) return 1;
 			return tag1.compareTo(tag2);
 		}
-		if (o1 instanceof IRemoteRoot && o2 instanceof IRemoteRoot) {
-			return ((IRemoteRoot)o1).getName().compareTo(((IRemoteRoot)o2).getName());
+		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {
+			return ((ICVSRepositoryLocation)o1).getLocation().compareTo(((ICVSRepositoryLocation)o2).getLocation());
 		}
 		return super.compare(viewer, o1, o2);
 	}

@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.IRemoteFile;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -30,20 +30,20 @@ public class RemoveRootAction extends TeamAction {
 	/**
 	 * Returns the selected remote files
 	 */
-	protected IRemoteRoot[] getSelectedRemoteRoots() {
+	protected ICVSRepositoryLocation[] getSelectedRemoteRoots() {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if (next instanceof IRemoteRoot) {
+				if (next instanceof ICVSRepositoryLocation) {
 					resources.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IRemoteRoot.class);
+					Object adapter = a.getAdapter(ICVSRepositoryLocation.class);
 					if (adapter instanceof IRemoteFile) {
 						resources.add(adapter);
 						continue;
@@ -52,11 +52,11 @@ public class RemoveRootAction extends TeamAction {
 			}
 		}
 		if (resources != null && !resources.isEmpty()) {
-			IRemoteRoot[] result = new IRemoteRoot[resources.size()];
+			ICVSRepositoryLocation[] result = new ICVSRepositoryLocation[resources.size()];
 			resources.toArray(result);
 			return result;
 		}
-		return new IRemoteRoot[0];
+		return new ICVSRepositoryLocation[0];
 	}
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -64,7 +64,7 @@ public class RemoveRootAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IRemoteRoot[] roots = getSelectedRemoteRoots();
+				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length == 0) return;
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < roots.length; i++) {
@@ -78,7 +78,7 @@ public class RemoveRootAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		IRemoteRoot[] roots = getSelectedRemoteRoots();
+		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		return roots.length > 0;
 	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.ui.IWorkbenchPage;
@@ -157,7 +157,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, IRemoteFile.class);
 		Platform.getAdapterManager().registerAdapters(factory, IRemoteFolder.class);
-		Platform.getAdapterManager().registerAdapters(factory, IRemoteRoot.class);
+		Platform.getAdapterManager().registerAdapters(factory, ICVSRepositoryLocation.class);
 		
 		initializeImages();
 		initializePreferences();

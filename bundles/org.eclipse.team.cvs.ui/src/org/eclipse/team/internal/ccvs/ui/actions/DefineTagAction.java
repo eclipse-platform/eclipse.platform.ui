@@ -22,7 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -39,21 +39,21 @@ public class DefineTagAction extends TeamAction {
 	/**
 	 * Returns the selected remote roots
 	 */
-	protected IRemoteRoot[] getSelectedRemoteRoots() {
+	protected ICVSRepositoryLocation[] getSelectedRemoteRoots() {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if (next instanceof IRemoteRoot) {
+				if (next instanceof ICVSRepositoryLocation) {
 					resources.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IRemoteRoot.class);
-					if (adapter instanceof IRemoteRoot) {
+					Object adapter = a.getAdapter(ICVSRepositoryLocation.class);
+					if (adapter instanceof ICVSRepositoryLocation) {
 						resources.add(adapter);
 						continue;
 					}
@@ -61,11 +61,11 @@ public class DefineTagAction extends TeamAction {
 			}
 		}
 		if (resources != null && !resources.isEmpty()) {
-			IRemoteRoot[] result = new IRemoteRoot[resources.size()];
+			ICVSRepositoryLocation[] result = new ICVSRepositoryLocation[resources.size()];
 			resources.toArray(result);
 			return result;
 		}
-		return new IRemoteRoot[0];
+		return new ICVSRepositoryLocation[0];
 	}
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -73,9 +73,9 @@ public class DefineTagAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IRemoteRoot[] roots = getSelectedRemoteRoots();
+				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length != 1) return;
-				IRemoteRoot root = roots[0];
+				ICVSRepositoryLocation root = roots[0];
 				InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineTagAction.enterTag"), Policy.bind("DefineTagAction.enterTagLong"), null, null);
 				if (dialog.open() == InputDialog.OK) {
 					CVSUIPlugin.getPlugin().getRepositoryManager().addTag(root, new Tag(dialog.getValue(), root));
@@ -88,7 +88,7 @@ public class DefineTagAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		IRemoteRoot[] roots = getSelectedRemoteRoots();
+		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		if (roots.length != 1) return false;
 		return true;
 	}

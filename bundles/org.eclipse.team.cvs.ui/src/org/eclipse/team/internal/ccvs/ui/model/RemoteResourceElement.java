@@ -20,6 +20,6 @@ public abstract class RemoteResourceElement extends CVSModelElement {
 	 */
 	public Object getParent(Object o) {
 		if (!(o instanceof IRemoteResource)) return null;
-		return ((IRemoteResource)o).getParent();
+		return null;
 	}
 }

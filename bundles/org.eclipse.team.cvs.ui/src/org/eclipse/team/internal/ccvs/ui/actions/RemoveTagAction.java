@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -58,7 +58,7 @@ public class RemoveTagAction extends TeamAction {
 				if (tags.length == 0) return;
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < tags.length; i++) {
-					manager.removeTag((IRemoteRoot)tags[i].getParent(tags[i]), tags[i]);
+					manager.removeTag((ICVSRepositoryLocation)tags[i].getParent(tags[i]), tags[i]);
 				}
 			}
 		}, Policy.bind("RemoveTagAction.removeTag"), this.PROGRESS_DIALOG);

@@ -8,7 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class CVSAdapterFactory implements IAdapterFactory {
@@ -23,7 +23,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 		if (IWorkbenchAdapter.class == adapterType) {
 			if (adaptableObject instanceof IRemoteFile) {
 				return fileAdapter;
-			} else if (adaptableObject instanceof IRemoteRoot) {
+			} else if (adaptableObject instanceof ICVSRepositoryLocation) {
 				return rootAdapter;
 			} else if (adaptableObject instanceof IRemoteFolder) {
 				return folderAdapter;

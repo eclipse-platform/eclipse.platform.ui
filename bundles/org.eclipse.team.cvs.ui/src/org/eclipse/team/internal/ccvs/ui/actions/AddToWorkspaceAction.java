@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -91,7 +91,7 @@ public class AddToWorkspaceAction extends TeamAction {
 		IRemoteFolder[] resources = getSelectedRemoteFolders();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] instanceof IRemoteRoot) return false;
+			if (resources[i] instanceof ICVSRepositoryLocation) return false;
 		}
 		return true;
 	}
