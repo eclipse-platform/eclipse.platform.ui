@@ -82,7 +82,7 @@ private PreferenceConverter() {
  */
 private static RGB basicGetColor(String value) {
 
-	if (value == IPreferenceStore.STRING_DEFAULT_DEFAULT)
+	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
 		return COLOR_DEFAULT_DEFAULT;
 
 	RGB color = StringConverter.asRGB(value, null);
