@@ -278,8 +278,11 @@ public class DefaultPreferences extends EclipsePreferences {
 			synchronized (this) {
 				BundleContext context = InternalPlatform.getDefault().getBundleContext();
 				Bundle[] bundles = context.getBundles();
-				for (int i = 0; i < bundles.length; i++)
-					addChild(bundles[i].getSymbolicName(), null);
+				for (int i = 0; i < bundles.length; i++) {
+					String childName = bundles[i].getSymbolicName();
+					if (childName != null)
+						addChild(childName, null);
+				}
 			}
 		} finally {
 			initialized = true;
