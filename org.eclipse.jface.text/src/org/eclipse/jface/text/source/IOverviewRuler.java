@@ -83,15 +83,7 @@ public interface IOverviewRuler extends IVerticalRuler {
 	 * @param annotationType the annotation type to be removed
 	 */
 	void removeHeaderAnnotationType(Object annotationType);
-	
-	/**
-	 * Sets the color of the header. The header is drawn in this color if there
-	 * are annotations of any of the annotation types added to the header.
-	 * 
-	 * @param color
-	 */
-	void setHeaderColor(Color color);
-	
+		
 	/**
 	 * Returns this rulers header control. This is the little area between the
 	 * top of the text widget and the top of this overview ruler.

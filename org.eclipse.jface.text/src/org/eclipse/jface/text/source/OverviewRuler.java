@@ -194,12 +194,11 @@ public class OverviewRuler implements IOverviewRuler {
 	private IAnnotationAccess fAnnotationAccess;
 	
 	private Set fAnnotationTypes= new HashSet();
+	private Set fHeaderAnnotationTypes= new HashSet();
 	private Map fAnnotationTypes2Layers= new HashMap();
 	private Map fAnnotationTypes2Colors= new HashMap();
 	private ISharedTextColors fSharedTextColors;
 	
-	private Set fHeaderAnnotationTypes= new HashSet();
-	private Color fHeaderColor;
 	
 	
 	/**
@@ -312,6 +311,7 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 		
 		fAnnotationTypes.clear();
+		fHeaderAnnotationTypes.clear();
 		fAnnotationTypes2Layers.clear();
 		fAnnotationTypes2Colors.clear();
 	}
@@ -823,30 +823,35 @@ public class OverviewRuler implements IOverviewRuler {
 	public void removeHeaderAnnotationType(Object annotationType) {
 		fHeaderAnnotationTypes.remove(annotationType);
 	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IOverviewRuler#setHeaderColor(org.eclipse.swt.graphics.Color)
-	 */
-	public void setHeaderColor(Color color) {
-		fHeaderColor= color;
-	}
 	
 	private void updateHeader() {
 		
 		if (fHeader == null || fHeader.isDisposed())
 			return;
+	
+		List indices= new ArrayList(fAnnotationTypes2Layers.keySet());
+		Collections.sort(indices);
 		
-		boolean hasHeaderAnnotations= false;
-		outer: for (Iterator typeIterator= fHeaderAnnotationTypes.iterator(); typeIterator.hasNext();) {
-			for (Iterator annotationIterator= new FilterIterator(typeIterator.next()); annotationIterator.hasNext();) {
-				if (annotationIterator.next() != null) {
-					hasHeaderAnnotations= true;
+		Object colorType= null;
+		outer: for (int i= indices.size() -1; i >= 0; i--) {
+			
+			Object layer=indices.get(i);
+			Object annotationType= fAnnotationTypes2Layers.get(layer);
+			
+			if (!fHeaderAnnotationTypes.contains(annotationType))
+				continue;
+			
+			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
+				if (e.next() != null) {
+					colorType= annotationType;
 					break outer;
 				}
 			}
 		}
 		
-		Color c= hasHeaderAnnotations && fHeaderColor != null && !fHeaderColor.isDisposed() ? fHeaderColor : null;
-		fHeader.setBackground(c);
+		Color color= null;
+		if (colorType != null) 
+			color= (Color) fAnnotationTypes2Colors.get(colorType);
+		fHeader.setBackground(color);
 	}
 }
