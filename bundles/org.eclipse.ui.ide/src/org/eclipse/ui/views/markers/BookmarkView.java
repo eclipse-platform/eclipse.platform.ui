@@ -16,7 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.Dialog;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -26,8 +29,8 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -35,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.markers.internal.BookmarkFilter;
+import org.eclipse.ui.views.markers.internal.ConcreteMarker;
 import org.eclipse.ui.views.markers.internal.DialogBookmarkFilter;
 import org.eclipse.ui.views.markers.internal.FieldCreationTime;
 import org.eclipse.ui.views.markers.internal.FieldFolder;
@@ -42,8 +46,7 @@ import org.eclipse.ui.views.markers.internal.FieldLineNumber;
 import org.eclipse.ui.views.markers.internal.FieldMessage;
 import org.eclipse.ui.views.markers.internal.FieldResource;
 import org.eclipse.ui.views.markers.internal.IField;
-import org.eclipse.ui.views.markers.internal.IFilter;
-import org.eclipse.ui.views.markers.internal.MarkerRegistry;
+import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 import org.eclipse.ui.views.markers.internal.Messages;
 
@@ -82,8 +85,8 @@ public class BookmarkView extends MarkerView {
 
 	private ICellModifier cellModifier = new ICellModifier() {
 		public Object getValue(Object element, String property) {
-			if (element instanceof IMarker && IMarker.MESSAGE.equals(property))
-				return ((IMarker) element).getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+			if (element instanceof ConcreteMarker && IMarker.MESSAGE.equals(property))
+				return ((ConcreteMarker) element).getDescription();
 			else 
 				return null;
 		}
@@ -97,16 +100,13 @@ public class BookmarkView extends MarkerView {
 				Item item = (Item) element;
 				Object data = item.getData();
 				
-				if (data instanceof IMarker) {				
-					IMarker marker = (IMarker) data;
+				if (data instanceof ConcreteMarker) {				
+					IMarker marker = ((ConcreteMarker)data).getMarker();
 	
 					try {
 						if (!marker.getAttribute(property).equals(value)) {
 							if (IMarker.MESSAGE.equals(property))
 								marker.setAttribute(IMarker.MESSAGE, value);
-					
-							if (bookmarkFilter != null && !bookmarkFilter.select(marker))
-								filtersChanged();
 						}
 					} catch (CoreException e) {
 						ErrorDialog.openError(getSite().getShell(), Messages.getString("errorModifyingBookmark") , null, e.getStatus()); //$NON-NLS-1$
@@ -117,12 +117,12 @@ public class BookmarkView extends MarkerView {
 	};
 
 	private CellEditorActionHandler cellEditorActionHandler;
-	private BookmarkFilter bookmarkFilter;
-	private MarkerRegistry markerRegistry;
+	private BookmarkFilter bookmarkFilter = new BookmarkFilter();
 
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) {		
 		super.createPartControl(parent);
 		
+		// TODO: Check for possible reliance on IMarker
 		TableViewer tableViewer = getViewer();
 		CellEditor cellEditors[] = new CellEditor[tableViewer.getTable().getColumnCount()];
 		CellEditor descriptionCellEditor = new TextCellEditor(tableViewer.getTable());
@@ -148,23 +148,14 @@ public class BookmarkView extends MarkerView {
 
 	public void init(IViewSite viewSite, IMemento memento) throws PartInitException {
 		super.init(viewSite, memento);
-		bookmarkFilter = new BookmarkFilter();
 		IDialogSettings dialogSettings = getDialogSettings();
-		
-		if (bookmarkFilter != null)
-			bookmarkFilter.restoreState(dialogSettings);
-			
-		markerRegistry = new MarkerRegistry();
-		markerRegistry.setType(IMarker.BOOKMARK); 	
-		markerRegistry.setFilter(bookmarkFilter);
-		markerRegistry.setInput((IResource) getViewerInput());
+		bookmarkFilter.restoreState(dialogSettings);
 	}
 
 	public void saveState(IMemento memento) {
 		IDialogSettings dialogSettings = getDialogSettings();
 		
-		if (bookmarkFilter != null)
-			bookmarkFilter.saveState(dialogSettings);
+		bookmarkFilter.saveState(dialogSettings);
 		
 		super.saveState(memento);	
 	}
@@ -183,21 +174,9 @@ public class BookmarkView extends MarkerView {
 
 		return settings;
 	}
-	
-	protected IFilter getFilter() {
-		return bookmarkFilter;
-	}
-	
-	protected Dialog getFiltersDialog() {
-		return new DialogBookmarkFilter(getSite().getShell(), bookmarkFilter);
-	}
-	
+		
 	protected IField[] getHiddenFields() {
 		return HIDDEN_FIELDS;
-	}
-
-	protected MarkerRegistry getRegistry() {
-		return markerRegistry;
 	}
 
 	protected String[] getRootTypes() {
@@ -212,13 +191,44 @@ public class BookmarkView extends MarkerView {
 		return VISIBLE_FIELDS;
 	}
 
-	public IStructuredSelection getSelection() {
-		// TODO: added because nick doesn't like public API inherited from internal classes
-		return super.getSelection();
-	}
-
 	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
 		// TODO: added because nick doesn't like public API inherited from internal classes
 		super.setSelection(structuredSelection, reveal);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
+	 */
+	protected String[] getMarkerTypes() {
+		return new String[] {IMarker.BOOKMARK};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
+	 */
+	public void openFiltersDialog() {
+		DialogBookmarkFilter dialog = new DialogBookmarkFilter(getSite().getShell(), bookmarkFilter);
+		
+		if (dialog.open() == Window.OK) {
+			bookmarkFilter = (BookmarkFilter)dialog.getFilter();
+			bookmarkFilter.saveState(getDialogSettings());
+			refresh();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
+	 */
+	protected MarkerFilter getFilter() {
+		return bookmarkFilter;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
+	 */
+	protected void updateFilterSelection(IResource[] resources) {
+		bookmarkFilter.setFocusResource(resources);
+		refresh();
+	}
+
 }

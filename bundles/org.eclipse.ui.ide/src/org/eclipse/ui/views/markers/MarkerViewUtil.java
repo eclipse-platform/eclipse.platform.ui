@@ -67,7 +67,9 @@ public static boolean showMarker(IWorkbenchPage page, IMarker marker, boolean sh
 				StructuredSelection selection = new StructuredSelection(marker);
 				MarkerView markerView = (MarkerView) view;
 				markerView.setSelection(selection, true);
-				return markerView.getSelection().equals(selection); 
+				return true;
+				
+				//return markerView.getSelection().equals(selection); 
 			}
 		}
 	}

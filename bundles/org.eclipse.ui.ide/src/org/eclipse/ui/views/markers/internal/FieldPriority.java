@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.swt.graphics.Image;
 
 public class FieldPriority implements IField {
@@ -20,21 +21,12 @@ public class FieldPriority implements IField {
 	static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.gif";  //$NON-NLS-1$
 	static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.gif";  //$NON-NLS-1$
 	
-	private String name;
 	private String description;
 	private Image image;
 	
 	public FieldPriority() {
-		name = IMarker.PRIORITY;
-		description = Messages.getString(name + ".description"); //$NON-NLS-1$
+		description = Messages.getString("priority.description"); //$NON-NLS-1$
 		image = ImageFactory.getImage(DESCRIPTION_IMAGE_PATH);
-	}
-
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getName()
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -76,11 +68,11 @@ public class FieldPriority implements IField {
 	 * @see org.eclipse.ui.views.markerview.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		if (obj == null || !(obj instanceof IMarker)) {
+		if (obj == null || !(obj instanceof TaskMarker)) {
 			return null;
 		}
 		try {
-			int priority = Integer.parseInt(Util.getProperty(name, (IMarker) obj));
+			int priority = ((TaskMarker)obj).getPriority();
 			if (priority == IMarker.PRIORITY_HIGH) {
 				return ImageFactory.getImage(HIGH_PRIORITY_IMAGE_PATH);
 			}
@@ -88,41 +80,21 @@ public class FieldPriority implements IField {
 				return ImageFactory.getImage(LOW_PRIORITY_IMAGE_PATH);
 			}
 		}
-		catch (NumberFormatException e) {		
+		catch (NumberFormatException e) {	
+			return null;
 		}
 		return null;
-	}
-	
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if (!(other instanceof IField)) {
-			return false;
-		}
-		IField otherProperty = (IField) other;
-		return (this.name.equals(otherProperty.getName()));
 	}
 
 	/**
 	 * @see org.eclipse.ui.views.markerview.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		if (obj1 == null || obj2 == null || !(obj1 instanceof IMarker) || !(obj2 instanceof IMarker)) {
+		if (obj1 == null || obj2 == null || !(obj1 instanceof TaskMarker) || !(obj2 instanceof TaskMarker)) {
 			return 0;
 		}
-		int priority1 = -1;
-		try {
-			priority1 = Integer.parseInt(Util.getProperty(name, (IMarker) obj1));
-		}
-		catch (NumberFormatException e) {
-		}
-		int priority2 = -1;
-		try {
-			priority2 = Integer.parseInt(Util.getProperty(name, (IMarker) obj2));
-		}
-		catch (NumberFormatException e) {
-		}
+		int priority1 = ((TaskMarker)obj1).getPriority();
+		int priority2 = ((TaskMarker)obj2).getPriority();
 		return priority1 - priority2;
 	}
 

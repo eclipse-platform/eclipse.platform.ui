@@ -8,28 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.resources.IMarker;
 
+/**
+ * Represents a marker visible in the Bookmarks view. Currently, this adds no additional
+ * fields to the ConcreteMarker class. However, if additional fields were added to the
+ * bookmark view that are not general to all views, these fields would be added to this
+ * class.
+ */
+public class BookmarkMarker extends ConcreteMarker {
 
-public class TableSortAction extends Action {
-	
-	private TableView view;
-	private TableSortDialog dialog;
-	
-	public TableSortAction(TableView view, TableSortDialog dialog) {
-		super(Messages.getString("sortAction.title")); //$NON-NLS-1$
-		this.view = view;
-		this.dialog = dialog;
-		setEnabled(true);
+	/**
+	 * @param toCopy
+	 */
+	public BookmarkMarker(IMarker toCopy) {
+		super(toCopy);
 	}
 
-	public void run() {
-		if (dialog.open() == Window.OK && dialog.isDirty()) {
-			view.setSorter(dialog.getSorter());
-		}
-	}
 }

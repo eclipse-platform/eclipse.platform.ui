@@ -8,28 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-
-public class TableSortAction extends Action {
-	
-	private TableView view;
-	private TableSortDialog dialog;
-	
-	public TableSortAction(TableView view, TableSortDialog dialog) {
-		super(Messages.getString("sortAction.title")); //$NON-NLS-1$
-		this.view = view;
-		this.dialog = dialog;
-		setEnabled(true);
-	}
-
-	public void run() {
-		if (dialog.open() == Window.OK && dialog.isDirty()) {
-			view.setSorter(dialog.getSorter());
-		}
-	}
+/**
+ * 
+ */
+public interface IDeferredTableContentProvider {
+	public Object[] getElements(IProgressMonitor monitor);
 }

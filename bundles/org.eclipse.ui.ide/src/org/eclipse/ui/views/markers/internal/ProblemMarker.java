@@ -8,28 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.resources.IMarker;
 
+/**
+ * 
+ */
+public class ProblemMarker extends ConcreteMarker {
 
-public class TableSortAction extends Action {
-	
-	private TableView view;
-	private TableSortDialog dialog;
-	
-	public TableSortAction(TableView view, TableSortDialog dialog) {
-		super(Messages.getString("sortAction.title")); //$NON-NLS-1$
-		this.view = view;
-		this.dialog = dialog;
-		setEnabled(true);
+	private int severity;
+
+	public ProblemMarker(IMarker toCopy) {
+		super(toCopy);
+		severity = toCopy.getAttribute(IMarker.SEVERITY, -1);
 	}
-
-	public void run() {
-		if (dialog.open() == Window.OK && dialog.isDirty()) {
-			view.setSorter(dialog.getSorter());
-		}
+	
+	public int getSeverity() {
+		return severity;
 	}
 }

@@ -12,7 +12,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 
 /**
  * This action opens a Filters Dialog and notifies the Marker View if the user has
@@ -20,18 +19,16 @@ import org.eclipse.jface.dialogs.Dialog;
  */
 class FiltersAction extends Action {
 	
-	private TableView view;
-	private Dialog dialog;
-	
+	private MarkerView view;
+
 	/**
 	 * Creates the action
 	 */
-	public FiltersAction(TableView view, Dialog dialog) {
+	public FiltersAction(MarkerView view) {
 		super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
 		setImageDescriptor(ImageFactory.getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
 		setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
 		this.view = view;
-		this.dialog = dialog;
 		setEnabled(true);
 	}
 	
@@ -39,7 +36,6 @@ class FiltersAction extends Action {
 	 * Opens the dialog. Notifies the view if the filter has been modified.
 	 */
 	public void run() {
-		if (dialog != null && dialog.open() == Dialog.OK)
-			view.filtersChanged();
+		view.openFiltersDialog();
 	}
 }

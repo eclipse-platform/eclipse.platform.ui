@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class ProblemFilter extends MarkerFilter {
@@ -40,23 +41,28 @@ public class ProblemFilter extends MarkerFilter {
 		super(new String[] { IMarker.PROBLEM });
 	}
 	
-	public boolean select(Object item) {
-		return isEnabled() ? super.select(item) && selectByDescription(item) && selectBySeverity(item) : true;
+	public boolean selectMarker(ConcreteMarker marker) {
+		if (!(marker instanceof ProblemMarker)) {
+			return false;
+		}
+		
+		ProblemMarker problemMarker = (ProblemMarker)marker;
+		
+		return !isEnabled() || (super.selectMarker(problemMarker) && selectByDescription(problemMarker) && selectBySeverity(problemMarker));
 	}
 	
-	private boolean selectByDescription(Object item) {
-		if (!(item instanceof IMarker) || description == null || description.equals("")) //$NON-NLS-1$
+	private boolean selectByDescription(ConcreteMarker item) {
+		if (description == null || description.equals("")) //$NON-NLS-1$
 			return true;
 		
-		IMarker marker = (IMarker) item;
-		String markerDescription = marker.getAttribute(IMarker.MESSAGE, DEFAULT_DESCRIPTION); //$NON-NLS-1$
+		String markerDescription = item.getDescription();
 		int index = markerDescription.indexOf(description);
 		return contains ? (index >= 0) : (index < 0);		
 	}
 	
-	private boolean selectBySeverity(Object item) {
-		if (item instanceof IMarker && selectBySeverity) {
-			int markerSeverity = ((IMarker) item).getAttribute(IMarker.SEVERITY, -1);
+	private boolean selectBySeverity(ProblemMarker item) {
+		if (selectBySeverity) {
+			int markerSeverity = item.getSeverity(); 
 		
 			if (markerSeverity == IMarker.SEVERITY_ERROR)
 				return (severity & SEVERITY_ERROR) > 0;		

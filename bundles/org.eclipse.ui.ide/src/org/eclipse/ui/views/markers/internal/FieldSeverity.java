@@ -12,31 +12,21 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.swt.graphics.Image;
 
 public class FieldSeverity implements IField {
-	
-	final static String PROBLEM_SEVERITY = "problemSeverity"; //$NON-NLS-1$
 	
 	private static final String IMAGE_ERROR_PATH = "obj16/error_tsk.gif"; //$NON-NLS-1$
 	private static final String IMAGE_WARNING_PATH = "obj16/warn_tsk.gif"; //$NON-NLS-1$
 	private static final String IMAGE_INFO_PATH = "obj16/info_tsk.gif"; //$NON-NLS-1$
 	
-	private String name;
 	private String description;
 	private Image image;
 	
 	public FieldSeverity() {
-		name = PROBLEM_SEVERITY;
-		description = Messages.getString(name + ".description"); //$NON-NLS-1$
+		description = Messages.getString("problemSeverity.description"); //$NON-NLS-1$
 		image = null;
-	}
-
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getName()
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -78,11 +68,12 @@ public class FieldSeverity implements IField {
 	 * @see org.eclipse.ui.views.markerview.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		if (obj == null || !(obj instanceof IMarker)) {
+		if (obj == null || !(obj instanceof ProblemMarker)) {
 			return null;
 		}
-		IMarker marker = (IMarker) obj;
-		int severity = marker.getAttribute(IMarker.SEVERITY, -1);
+		
+		
+		int severity = ((ProblemMarker)obj).getSeverity();
 		if (severity == IMarker.SEVERITY_ERROR) {
 			return ImageFactory.getImage(IMAGE_ERROR_PATH);
 		}
@@ -96,27 +87,15 @@ public class FieldSeverity implements IField {
 	}
 
 	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if (!(other instanceof IField)) {
-			return false;
-		}
-		IField otherProperty = (IField) other;
-		return (this.name.equals(otherProperty.getName()));
-	}
-
-	/**
 	 * @see org.eclipse.ui.views.markerview.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		if (obj1 == null || obj2 == null || !(obj1 instanceof IMarker) || !(obj2 instanceof IMarker)) {
+		if (obj1 == null || obj2 == null || !(obj1 instanceof ProblemMarker) || !(obj2 instanceof ProblemMarker)) {
 			return 0;
 		}
-		IMarker marker1 = (IMarker) obj1;
-		IMarker marker2 = (IMarker) obj2;
-		int severity1 = marker1.getAttribute(IMarker.SEVERITY, -1);
-		int severity2 = marker2.getAttribute(IMarker.SEVERITY, -1);
+
+		int severity1 = ((ProblemMarker)obj1).getSeverity();
+		int severity2 = ((ProblemMarker)obj2).getSeverity();
 		return severity1 - severity2;
 	}
 

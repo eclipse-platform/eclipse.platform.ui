@@ -287,4 +287,7 @@ public class TableSortDialog extends Dialog {
 		}
 	}
 	
+	public TableSorter getSorter() {
+		return sorter;
+	}
 }

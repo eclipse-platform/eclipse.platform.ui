@@ -52,9 +52,13 @@ public final class Util {
 		}
 	}
 	
+	public static String getCreationTime(long timestamp) {
+		return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM).format(new Date(timestamp));
+	}
+	
 	public static String getCreationTime(IMarker marker) {
 		try {
-			return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM).format(new Date(marker.getCreationTime()));
+			return getCreationTime(marker.getCreationTime());
 		} catch (CoreException e) {
 			return ""; //$NON-NLS-1$
 		}

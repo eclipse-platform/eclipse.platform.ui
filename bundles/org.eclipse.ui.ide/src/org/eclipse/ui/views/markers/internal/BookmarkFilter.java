@@ -30,16 +30,18 @@ public class BookmarkFilter extends MarkerFilter {
 		super(new String[] { IMarker.BOOKMARK });
 	}
 	
-	public boolean select(Object item) {
-		return isEnabled() ? super.select(item) && selectByDescription(item) : true;
+	/**
+	 * Returns true iff the given marker is accepted by this filter
+	 */
+	public boolean selectMarker(ConcreteMarker marker) {
+		return !isEnabled() || (super.selectMarker(marker) && selectByDescription(marker));
 	}
 
-	private boolean selectByDescription(Object item) {
-		if (!(item instanceof IMarker) || description == null || description.equals("")) //$NON-NLS-1$
+	private boolean selectByDescription(ConcreteMarker marker) {
+		if (description == null || description.equals("")) //$NON-NLS-1$
 			return true;
 		
-		IMarker marker = (IMarker) item;
-		String markerDescription = marker.getAttribute(IMarker.MESSAGE, DEFAULT_DESCRIPTION); //$NON-NLS-1$
+		String markerDescription = marker.getDescription();
 		int index = markerDescription.indexOf(description);
 		return contains ? (index >= 0) : (index < 0); 
 	}

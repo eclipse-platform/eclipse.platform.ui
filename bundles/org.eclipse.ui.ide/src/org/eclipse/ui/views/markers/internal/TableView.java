@@ -12,35 +12,43 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -49,6 +57,8 @@ import org.eclipse.ui.part.ViewPart;
 
 public abstract class TableView extends ViewPart {
 	
+	private TableContentProvider content;
+
 	private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
@@ -62,6 +72,8 @@ public abstract class TableView extends ViewPart {
 	
 	private Map actions = new HashMap();
 
+	private ISelectionProvider selectionProvider = new SelectionProviderAdapter();
+	
 	private TableSorter sorter;
 
 	/* (non-Javadoc)
@@ -71,26 +83,62 @@ public abstract class TableView extends ViewPart {
 		super.init(site, memento);
 		this.memento = memento;
 	}
-
+	
+	/**
+	 * 
+	 */
+	void haltTableUpdates() {
+		content.cancelPendingChanges();
+	}	
+	
+	void change(Collection toRefresh) {
+		content.change(toRefresh);
+	}
+	
+	void setContents(Collection contents, IProgressMonitor mon) {
+		content.set(contents, mon);			
+	}
+	
+	protected ISelectionProvider getSelectionProvider() {
+		return selectionProvider;
+	}
+	
+	abstract protected void viewerSelectionChanged(IStructuredSelection selection);
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		parent.setLayout(new FillLayout());
+		
 		viewer = new TableViewer(createTable(parent));
 		restoreColumnWidths(memento);
 		createColumns(viewer.getTable());
-		getContentProvider().setFilter(getFilter());
-		viewer.setContentProvider(new TableContentProvider(getSite(), getContentProvider()));
+		content = new TableContentProvider(viewer, Messages.format("TableView.populating", //$NON-NLS-1$
+				new Object[] {getTitle()}));
+		
+		
+		viewer.setContentProvider(content);
+		
 		viewer.setLabelProvider(new TableViewLabelProvider(getVisibleFields()));
-
-		viewer.setSorter(getSorter());
+	
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+				viewerSelectionChanged(selection);
+			}});
+	
+		setSorter(getSorter());
 		
 		//create the actions before the input is set on the viewer but after the 
 		//sorter and filter are set so the actions will be enabled correctly.
 		createActions();
 
 		viewer.setInput(getViewerInput());
-		viewer.setSelection(restoreSelection(memento), true);
+		
+		viewer.setSelection(restoreSelection(memento));
+
 		Scrollable scrollable = (Scrollable) viewer.getControl();
 		ScrollBar bar = scrollable.getVerticalBar();
 		if (bar != null) {
@@ -103,6 +151,7 @@ public abstract class TableView extends ViewPart {
 		
 		MenuManager mgr = initContextMenu();
 		Menu menu = mgr.createContextMenu(viewer.getControl());
+		
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(mgr, viewer);
 		initActionBars(getViewSite().getActionBars());
@@ -120,10 +169,30 @@ public abstract class TableView extends ViewPart {
 		});
 	}
 	
+	/**
+	 * @param selection
+	 */
+	protected void setSelection(IStructuredSelection selection) {
+		getSelectionProvider().setSelection(selection);
+	}
+
+	/**
+	 * @param sorter2
+	 */
+	void setSorter(TableSorter sorter2) {
+		TableSorter newSorter = new TableSorter(sorter2);
+		
+		sorter = newSorter;
+		content.setSorter(newSorter);
+		newSorter.saveState(getDialogSettings());
+		sorterChanged();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		
 	}
 	
 	/**
@@ -164,9 +233,6 @@ public abstract class TableView extends ViewPart {
 		if (getSortDialog() != null) {
 			putAction(SORT_ACTION_ID, new TableSortAction(this, getSortDialog()));
 		}
-		if (getFiltersDialog() != null) {
-			putAction(FILTERS_ACTION_ID, new FiltersAction(this, getFiltersDialog()));
-		}
 	}
 	
 	protected IAction getAction(String id) {
@@ -182,6 +248,7 @@ public abstract class TableView extends ViewPart {
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
+				
 				getViewer().cancelEditing();
 				fillContextMenu(mgr);
 			}
@@ -214,12 +281,11 @@ public abstract class TableView extends ViewPart {
 	 */
 	public void setFocus() {
 		TableViewer viewer = getViewer();
-		if (viewer != null && !viewer.getControl().isDisposed()) { 
+		if (viewer != null && !viewer.getControl().isDisposed()) {
+			
 			viewer.getControl().setFocus();
 		}
 	}
-	
-	protected abstract IFilter getFilter();
 
 	protected TableSorter getSorter() {
 		if (sorter == null) {
@@ -235,7 +301,7 @@ public abstract class TableView extends ViewPart {
 		return sorter;
 	}
 	
-	protected abstract ITableViewContentProvider getContentProvider();
+	//protected abstract ITableViewContentProvider getContentProvider();
 	
 	protected IField[] getFields() {
 		IField[] vProps = getVisibleFields();
@@ -265,14 +331,14 @@ public abstract class TableView extends ViewPart {
 			 * header area.
 			 */
 			public void widgetSelected(SelectionEvent e) {
+				
 				int column = getViewer().getTable().indexOf((TableColumn) e.widget);
 				if (column == getSorter().getTopPriority())
 					getSorter().reverseTopPriority();
 				else {
 					getSorter().setTopPriority(column);
 				}
-				viewer.refresh(false);
-				getSorter().saveState(getDialogSettings());
+				setSorter(getSorter());
 			}
 		};
 	}
@@ -285,28 +351,16 @@ public abstract class TableView extends ViewPart {
 		}
 		return null;
 	}
-	
-	protected abstract Dialog getFiltersDialog();
-	
-	protected void filtersChanged() {
-		final TableViewer viewer = getViewer();
-		if (viewer == null) {
-			return;
-		}
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				viewer.getControl().setRedraw(false);
-				viewer.refresh(false);
-				viewer.getControl().setRedraw(true);
-			}
-		});
-	}
-	
+		
 	protected void sorterChanged() {
+		
+		viewer.setSorter(getSorter());
+		
 		final TableViewer viewer = getViewer();
 		if (viewer == null) {
 			return;
 		}
+		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				viewer.getControl().setRedraw(false);

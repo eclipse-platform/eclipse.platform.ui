@@ -16,10 +16,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -29,14 +35,12 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -47,6 +51,8 @@ import org.eclipse.ui.views.markers.internal.ActionAddGlobalTask;
 import org.eclipse.ui.views.markers.internal.ActionDeleteCompleted;
 import org.eclipse.ui.views.markers.internal.ActionMarkCompleted;
 import org.eclipse.ui.views.markers.internal.ActionTaskProperties;
+import org.eclipse.ui.views.markers.internal.ConcreteMarker;
+import org.eclipse.ui.views.markers.internal.DialogMarkerFilter;
 import org.eclipse.ui.views.markers.internal.DialogTaskFilter;
 import org.eclipse.ui.views.markers.internal.FieldCreationTime;
 import org.eclipse.ui.views.markers.internal.FieldDone;
@@ -56,8 +62,7 @@ import org.eclipse.ui.views.markers.internal.FieldMessage;
 import org.eclipse.ui.views.markers.internal.FieldPriority;
 import org.eclipse.ui.views.markers.internal.FieldResource;
 import org.eclipse.ui.views.markers.internal.IField;
-import org.eclipse.ui.views.markers.internal.IFilter;
-import org.eclipse.ui.views.markers.internal.MarkerRegistry;
+import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 import org.eclipse.ui.views.markers.internal.Messages;
 import org.eclipse.ui.views.markers.internal.TaskFilter;
@@ -65,6 +70,7 @@ import org.eclipse.ui.views.markers.internal.Util;
 
 public class TaskView extends MarkerView {
 
+	private static final String COMPLETION = "completion";
 	private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = { 
 		new ColumnPixelData(19, false),
 		new ColumnPixelData(19, false),
@@ -83,7 +89,7 @@ public class TaskView extends MarkerView {
 	};
 
 	private final static String[] TABLE_COLUMN_PROPERTIES = {
-		FieldDone.COMPLETION,
+		COMPLETION,
 		IMarker.PRIORITY,
 		IMarker.MESSAGE,
 		"", //$NON-NLS-1$
@@ -104,10 +110,10 @@ public class TaskView extends MarkerView {
 
 	private ICellModifier cellModifier = new ICellModifier() {
 		public Object getValue(Object element, String property) {							
-			if (element instanceof IMarker) {
-				IMarker marker = (IMarker) element;
+			if (element instanceof ConcreteMarker) {
+				IMarker marker = ((ConcreteMarker)element).getMarker();
 				
-				if (FieldDone.COMPLETION.equals(property))
+				if (COMPLETION.equals(property))
 					return new Boolean(marker.getAttribute(IMarker.DONE, false));
 
 				if (IMarker.PRIORITY.equals(property))
@@ -121,7 +127,7 @@ public class TaskView extends MarkerView {
 		}
 
 		public boolean canModify(Object element, String property) {
-			return Util.isEditable((IMarker) element);
+			return Util.isEditable(((ConcreteMarker) element).getMarker());
 		}
 
 		public void modify(Object element, String property, Object value) {
@@ -129,20 +135,18 @@ public class TaskView extends MarkerView {
 				Item item = (Item) element;
 				Object data = item.getData();
 				
-				if (data instanceof IMarker) {				
-					IMarker marker = (IMarker) data;
+				if (data instanceof ConcreteMarker) {				
+					IMarker marker = ((ConcreteMarker)data).getMarker();
 					
 					try {
-						if (!getValue(marker, property).equals(value)) {
-							if (FieldDone.COMPLETION.equals(property))
+						Object oldValue = getValue(data, property); 
+						if (oldValue != null && !oldValue.equals(value)) {
+							if (COMPLETION.equals(property))
 								marker.setAttribute(IMarker.DONE, value);
 							else if (IMarker.PRIORITY.equals(property))
 								marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH - ((Integer) value).intValue());
 							else if (IMarker.MESSAGE.equals(property))
 								marker.setAttribute(IMarker.MESSAGE, value);
-					
-							if (taskFilter != null && !taskFilter.select(marker))
-								filtersChanged();
 						}
 					} catch (CoreException e) {
 						ErrorDialog.openError(getSite().getShell(), Messages.getString("errorModifyingTask") , null, e.getStatus()); //$NON-NLS-1$
@@ -154,7 +158,6 @@ public class TaskView extends MarkerView {
 
 	private CellEditorActionHandler cellEditorActionHandler;	
 	private TaskFilter taskFilter;
-	private MarkerRegistry markerRegistry;
 	private ActionAddGlobalTask addGlobalTaskAction;
 	private ActionDeleteCompleted deleteCompletedAction;
 	private ActionMarkCompleted markCompletedAction;
@@ -204,11 +207,6 @@ public class TaskView extends MarkerView {
 		
 		if (taskFilter != null)
 			taskFilter.restoreState(dialogSettings);
-			
-		markerRegistry = new MarkerRegistry();
-		markerRegistry.setType(IMarker.TASK); 	
-		markerRegistry.setFilter(taskFilter);
-		markerRegistry.setInput((IResource) getViewerInput());
 	}
 
 	public void saveState(IMemento memento) {
@@ -237,10 +235,13 @@ public class TaskView extends MarkerView {
 
 	protected void createActions() {
 		super.createActions();
+		
+		ISelectionProvider selProvider = getSelectionProvider();
+		
 		addGlobalTaskAction = new ActionAddGlobalTask(this);
-		deleteCompletedAction = new ActionDeleteCompleted(this, getViewer(), getRegistry());
-		markCompletedAction = new ActionMarkCompleted(getViewer());
-		propertiesAction = new ActionTaskProperties(this, getViewer());
+		deleteCompletedAction = new ActionDeleteCompleted(this, selProvider);
+		markCompletedAction = new ActionMarkCompleted(selProvider);
+		propertiesAction = new ActionTaskProperties(this, selProvider);
 	}
 
 	protected void createColumns(Table table) {
@@ -266,21 +267,13 @@ public class TaskView extends MarkerView {
 		manager.add(markCompletedAction);
 		manager.add(deleteCompletedAction);
 	}
-
-	protected IFilter getFilter() {
-		return taskFilter;
-	}
 	
-	protected Dialog getFiltersDialog() {
+	protected DialogMarkerFilter getFiltersDialog() {
 		return new DialogTaskFilter(getSite().getShell(), taskFilter);
 	}
 	
 	protected IField[] getHiddenFields() {
 		return HIDDEN_FIELDS;
-	}
-
-	protected MarkerRegistry getRegistry() {
-		return markerRegistry;
 	}
 
 	protected String[] getRootTypes() {
@@ -299,14 +292,44 @@ public class TaskView extends MarkerView {
 		toolBarManager.add(addGlobalTaskAction);
 		super.initToolBar(toolBarManager);
 	}
-	
-	public IStructuredSelection getSelection() {
-		// TODO: added because nick doesn't like public API inherited from internal classes
-		return super.getSelection();
-	}
 
 	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
 		// TODO: added because nick doesn't like public API inherited from internal classes
 		super.setSelection(structuredSelection, reveal);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
+	 */
+	protected String[] getMarkerTypes() {
+		return new String[] {IMarker.TASK};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
+	 */
+	protected MarkerFilter getFilter() {
+		return taskFilter;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
+	 */
+	public void openFiltersDialog() {
+		DialogTaskFilter dialog = new DialogTaskFilter(getSite().getShell(), taskFilter);
+		
+		if (dialog.open() == Window.OK) {
+			taskFilter = (TaskFilter)dialog.getFilter();
+			taskFilter.saveState(getDialogSettings());
+			refresh();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
+	 */
+	protected void updateFilterSelection(IResource[] resources) {
+		taskFilter.setFocusResource(resources);
+		refresh();
 	}
 }

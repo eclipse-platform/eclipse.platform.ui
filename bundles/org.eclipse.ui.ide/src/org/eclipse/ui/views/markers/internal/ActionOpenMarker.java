@@ -70,35 +70,37 @@ public class ActionOpenMarker extends SelectionProviderAction {
 				}
 			}
 		}
-
-		try {
-			IDE.openEditor(part.getSite().getPage(), marker, OpenStrategy.activateOnOpen());
-		} catch (PartInitException e) {
-			// Open an error style dialog for PartInitException by
-			// including any extra information from the nested
-			// CoreException if present.
-
-			// Check for a nested CoreException
-			CoreException nestedException = null;
-			IStatus status = e.getStatus();
-			if (status != null && status.getException() instanceof CoreException)
-				nestedException = (CoreException)status.getException();
+		
+		if (marker.getResource() instanceof IFile) {
+			try {
+				IDE.openEditor(part.getSite().getPage(), marker, OpenStrategy.activateOnOpen());
+			} catch (PartInitException e) {
+				// Open an error style dialog for PartInitException by
+				// including any extra information from the nested
+				// CoreException if present.
 	
-			if (nestedException != null) {
-				// Open an error dialog and include the extra
-				// status information from the nested CoreException
-				ErrorDialog.openError(
-					part.getSite().getShell(),
-					Messages.getString("OpenMarker.errorTitle"), //$NON-NLS-1$
-					e.getMessage(),
-					nestedException.getStatus());
-			} else {
-				// Open a regular error dialog since there is no
-				// extra information to display
-				MessageDialog.openError(
-					part.getSite().getShell(),
-					Messages.getString("OpenMarker.errorTitle"), //$NON-NLS-1$
-					e.getMessage());
+				// Check for a nested CoreException
+				CoreException nestedException = null;
+				IStatus status = e.getStatus();
+				if (status != null && status.getException() instanceof CoreException)
+					nestedException = (CoreException)status.getException();
+		
+				if (nestedException != null) {
+					// Open an error dialog and include the extra
+					// status information from the nested CoreException
+					ErrorDialog.openError(
+						part.getSite().getShell(),
+						Messages.getString("OpenMarker.errorTitle"), //$NON-NLS-1$
+						e.getMessage(),
+						nestedException.getStatus());
+				} else {
+					// Open a regular error dialog since there is no
+					// extra information to display
+					MessageDialog.openError(
+						part.getSite().getShell(),
+						Messages.getString("OpenMarker.errorTitle"), //$NON-NLS-1$
+						e.getMessage());
+				}
 			}
 		}
 	}

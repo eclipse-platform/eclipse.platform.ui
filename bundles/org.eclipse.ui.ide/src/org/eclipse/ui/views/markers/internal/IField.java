@@ -14,11 +14,6 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.swt.graphics.Image;
 
 public interface IField {
-	
-	/**
-	 * @return the name of the field.
-	 */
-	String getName();
 
 	/**
 	 * @return the description of the field.

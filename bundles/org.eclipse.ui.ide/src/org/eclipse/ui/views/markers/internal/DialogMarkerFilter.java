@@ -55,8 +55,9 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * Dialog which allows user to modify all settings of an org.eclipse.ui.views.MarkerFilter object.
+ * Not intended to be subclassed or instantiated by clients.
  */
-class DialogMarkerFilter extends Dialog {
+public class DialogMarkerFilter extends Dialog {
 	/**
 	 * button IDs
 	 */
@@ -737,10 +738,15 @@ class DialogMarkerFilter extends Dialog {
 		dirty = true;
 	}
 
+	public void setFilter(MarkerFilter newFilter) {
+		filter = newFilter;
+		updateUIFromFilter();
+	}
+	
 	/**
 	 * @return the MarkerFilter associated with the dialog.
 	 */
-	protected MarkerFilter getFilter() {
+	public MarkerFilter getFilter() {
 		return filter;
 	}
 	

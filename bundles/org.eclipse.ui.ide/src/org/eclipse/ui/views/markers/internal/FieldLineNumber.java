@@ -11,25 +11,15 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.graphics.Image;
 
 public class FieldLineNumber implements IField {
 
-	private String name;
 	private String description;
 	private Image image;
 	
 	public FieldLineNumber() {
-		name = IMarker.LINE_NUMBER;
-		description = Messages.getString("description." + name); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getName()
-	 */
-	public String getName() {
-		return name;
+		description = Messages.getString("description.lineNumber"); //$NON-NLS-1$
 	}
 
 	/**
@@ -64,15 +54,16 @@ public class FieldLineNumber implements IField {
 	 * @see org.eclipse.ui.views.markerview.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
-		if (obj == null || !(obj instanceof IMarker)) {
+		if (obj == null || !(obj instanceof ConcreteMarker)) {
 			return ""; //$NON-NLS-1$
 		}
-		IMarker marker = (IMarker) obj;
-		String lineNumber = Util.getProperty(name, marker);
-		if (lineNumber.equals("")) { //$NON-NLS-1$
-			return lineNumber;
+		ConcreteMarker marker = (ConcreteMarker) obj;
+		
+		if (marker.getLine() < 0) {
+			return ""; //$NON-NLS-1$
 		}
-		return Messages.format("label." + name, new String[] {lineNumber}); //$NON-NLS-1$
+		
+		return Messages.format("label.lineNumber", new String[] {Integer.toString(marker.getLine())}); //$NON-NLS-1$
 	}
 
 	/**
@@ -83,28 +74,16 @@ public class FieldLineNumber implements IField {
 	}
 
 	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if (!(other instanceof IField)) {
-			return false;
-		}
-		IField otherProperty = (IField) other;
-		return (this.name.equals(otherProperty.getName()));
-	}
-
-	/**
 	 * @see org.eclipse.ui.views.markerview.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
-		if (obj1 == null || obj2 == null || !(obj1 instanceof IMarker) || !(obj2 instanceof IMarker)) {
+		if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker) || !(obj2 instanceof ConcreteMarker)) {
 			return 0;
 		}
-		IMarker marker1 = (IMarker) obj1;
-		IMarker marker2 = (IMarker) obj2;
-		int line1 = marker1.getAttribute(IMarker.LINE_NUMBER, -1);
-		int line2 = marker2.getAttribute(IMarker.LINE_NUMBER, -1);
-		return line1 - line2;
+		
+		ConcreteMarker marker1 = (ConcreteMarker) obj1;
+		ConcreteMarker marker2 = (ConcreteMarker) obj2;
+		return marker1.getLine() - marker2.getLine();
 	}
 
 }

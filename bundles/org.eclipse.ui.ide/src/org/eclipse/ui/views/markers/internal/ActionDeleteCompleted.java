@@ -19,26 +19,25 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
+
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.views.markers.TaskView;
 
 public class ActionDeleteCompleted extends SelectionProviderAction {
 	
-	private MarkerRegistry registry;
-	private IWorkbenchPart part;
-
+	private TaskView part;
+	
 	/**
 	 * @param provider
 	 * @param text
 	 */
-	public ActionDeleteCompleted(IWorkbenchPart part, ISelectionProvider provider, MarkerRegistry registry) {
+	public ActionDeleteCompleted(TaskView part, ISelectionProvider provider) {
 		super(provider, Messages.getString("deleteCompletedAction.title")); //$NON-NLS-1$
-		this.part = part;
-		this.registry = registry;
 		setEnabled(false);
 	}
 	
@@ -92,12 +91,21 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
 	
 	private List getCompletedTasks() {
 		List completed = new ArrayList();
-		Object[] markers = registry.getElements();
+		
+		ISelectionProvider sel = getSelectionProvider();
+		
+		MarkerList markerList = part.getVisibleMarkers();
+		
+		ConcreteMarker[] markers = markerList.toArray();
 		
 		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = (IMarker) markers[i];
-			if (Util.isEditable(marker) && marker.getAttribute(IMarker.DONE, false)) {
-				completed.add(marker);
+			ConcreteMarker marker = markers[i];
+			if (marker instanceof TaskMarker) {
+				TaskMarker taskMarker = (TaskMarker)marker;
+				
+				if (taskMarker.getDone() == 1) {
+					completed.add(taskMarker.getMarker());
+				}
 			}
 		}
 		

@@ -11,22 +11,22 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 public class ActionSelectAll extends SelectionProviderAction {
 	
-	protected MarkerRegistry registry;
-
+	
 	/**
 	 * @param provider
 	 * @param text
 	 */
-	public ActionSelectAll(ISelectionProvider provider, MarkerRegistry registry) {
+	public ActionSelectAll(TableViewer provider) {
 		super(provider, Messages.getString("selectAllAction.title")); //$NON-NLS-1$
-		this.registry = registry;
 		setEnabled(true);
 	}
 	
@@ -34,7 +34,12 @@ public class ActionSelectAll extends SelectionProviderAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		StructuredSelection newSelection = new StructuredSelection(registry.getElements());
+		TableViewer viewer = (TableViewer)getSelectionProvider();
+		
+		Object[] elements = ((IStructuredContentProvider)viewer.getContentProvider())
+			.getElements(viewer.getInput());
+		
+		StructuredSelection newSelection = new StructuredSelection(elements);
 		super.getSelectionProvider().setSelection(newSelection);
 	}
 

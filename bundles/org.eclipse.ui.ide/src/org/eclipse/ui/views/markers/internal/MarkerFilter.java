@@ -12,21 +12,28 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.ui.IContainmentAdapter;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
-class MarkerFilter implements IFilter {
+public class MarkerFilter {
 	
 	private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$
 	private static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
@@ -43,7 +50,7 @@ class MarkerFilter implements IFilter {
 	static final int ON_ANY_RESOURCE_OF_SAME_PROJECT = 3;
 	static final int ON_WORKING_SET = 4;
 
-	static final int DEFAULT_MARKER_LIMIT = 2000;
+	static final int DEFAULT_MARKER_LIMIT = 300;
 	static final boolean DEFAULT_FILTER_ON_MARKER_LIMIT = true;
 	static final int DEFAULT_ON_RESOURCE = ON_ANY_RESOURCE;
 	static final boolean DEFAULT_ACTIVATION_STATUS = true;
@@ -59,6 +66,7 @@ class MarkerFilter implements IFilter {
 	private MarkerTypesModel typesModel;
 	
 	private IResource[] focusResource;
+	private Set cachedWorkingSet;
 	
 	MarkerFilter(String[] rootTypes) {
 		typesModel = new MarkerTypesModel();
@@ -91,45 +99,287 @@ class MarkerFilter implements IFilter {
 			addAllSubTypes(subTypes[i]);
 	} 
 	
-	public Object[] filter(Object[] elements) {
-		if (elements == null)	
-			return new Object[0];
-			
-		List filteredElements = new ArrayList();
-		
-		for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
-			
-			if (select(element))
-				filteredElements.add(element); 
+	/**
+	 * Adds all markers in the given set of resources to the given list
+	 * 
+	 * @param resultList
+	 * @param resources
+	 * @param markerTypeId
+	 * @param depth
+	 * @throws CoreException
+	 */
+	private List findMarkers(IResource[] resources, int depth, int limit, IProgressMonitor mon, boolean ignoreExceptions) throws CoreException {		
+		if (resources == null) {
+			return Collections.EMPTY_LIST;
 		}
 		
-		return filteredElements.toArray();
-	}
+		List resultList = new ArrayList(resources.length * 2);
+		
+		// Optimization: if a type appears in the selectedTypes list along with all of its
+		// subtypes, then combine these in a single search.
+		
+		// List of types that haven't been replaced by one of their supertypes
+		HashSet typesToSearch = new HashSet(selectedTypes.size());
+		
+		// List of types that appeared in selectedTypes along with all of their subtypes
+		HashSet includeAllSubtypes = new HashSet(selectedTypes.size());
+		
+		typesToSearch.addAll(selectedTypes);
+		
+		Iterator iter = selectedTypes.iterator();
+		
+		while (iter.hasNext()) {
+			MarkerType type = (MarkerType)iter.next();
+			
+			Collection subtypes = Arrays.asList(type.getAllSubTypes());
+			
+			if (selectedTypes.containsAll(subtypes)) {
+				typesToSearch.removeAll(subtypes);
+				
+				includeAllSubtypes.add(type);
+			}
+		}
+		
+		mon.beginTask(Messages.getString("MarkerFilter.searching"), typesToSearch.size() * resources.length); //$NON-NLS-1$
+		
+		// Use this hash set to determine if there are any resources in the
+		// list that appear along with their parent.
+		HashSet resourcesToSearch = new HashSet();
+		
+		// Insert all the resources into the hashset
+		for (int idx = 0; idx < resources.length; idx++) {
+			IResource next = resources[idx];
+			
+			if (!next.exists()) {
+				continue;
+			}
+			
+			if (resourcesToSearch.contains(next)) {
+				mon.worked(typesToSearch.size());								
+			} else {
+				resourcesToSearch.add(next);
+			}
+		}
+		
+		// Iterate through all the selected resources
+		for (int resourceIdx = 0; resourceIdx < resources.length; resourceIdx++) {
+			iter = typesToSearch.iterator(); 
+			
+			IResource resource = resources[resourceIdx];
+			
+			// Skip resources that don't exist
+			if (!resource.exists()) {
+				continue;
+			}
+			
+			if (depth == IResource.DEPTH_INFINITE) {
+				// Determine if any parent of this resource is also in our filter 
+				IResource parent = resource.getParent();
+				boolean found = false;
+				while (parent != null) {
+					if (resourcesToSearch.contains(parent)) {
+						found = true;
+					}
+						
+					parent = parent.getParent();
+				}
+				
+				// If a parent of this resource is also in the filter, we can skip it
+				// because we'll pick up its markers when we search the parent.
+				if (found) {
+					continue;
+				}
+			}
+						
+			// Iterate through all the marker types
+			while (iter.hasNext()) {
+				MarkerType markerType = (MarkerType)iter.next();
+			
+				// Only search for subtypes of the marker if we found all of its
+				// subtypes in the filter criteria.
+				IMarker[] markers = resource.findMarkers(
+						markerType.getId(), includeAllSubtypes.contains(markerType), depth);
 
-	public boolean select(Object item) {
+				mon.worked(1);
+				
+				for (int idx = 0; idx < markers.length; idx++) {
+					ConcreteMarker marker;
+					try {
+						marker = MarkerList.createMarker(markers[idx]);
+					} catch (CoreException e) {
+						if (ignoreExceptions) {
+							continue;
+						} else {
+							throw e;
+						}
+					}
+					
+					if (limit != -1 && resultList.size() >= limit) {
+						return resultList;
+					}
+					
+					if (selectMarker(marker)) {
+						resultList.add(marker);
+					}
+				}
+			}
+		}
+		
+		mon.done();
+		
+		return resultList;
+	}
+	
+	/**
+	 * Subclasses should override to determine if the given marker passes the filter.
+	 * 
+	 * @param marker
+	 * @return
+	 */
+	protected boolean selectMarker(ConcreteMarker marker) {
+		return true;
+	}
+	
+	/**
+	 * Searches the workspace for markers that pass this filter.
+	 * 
+	 * @return
+	 */
+	ConcreteMarker[] findMarkers(IProgressMonitor mon, boolean ignoreExceptions) throws CoreException {
+
+		List unfiltered = Collections.EMPTY_LIST;
+		
+		if (!isEnabled()) {
+			unfiltered = findMarkers(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, 
+			IResource.DEPTH_INFINITE, -1, mon, ignoreExceptions);
+		} else {
+			//int limit = getFilterOnMarkerLimit() ? getMarkerLimit() + 1 : -1;
+			int limit = -1;
+			
+			switch (getOnResource()) {
+				case ON_ANY_RESOURCE: {
+						unfiltered = findMarkers(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, 
+						IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
+						break;
+					}
+				case ON_SELECTED_RESOURCE_ONLY: {
+						unfiltered = findMarkers(focusResource, IResource.DEPTH_ZERO, limit, mon, ignoreExceptions);					
+						break;
+					}
+				case ON_SELECTED_RESOURCE_AND_CHILDREN: {
+						unfiltered = findMarkers(focusResource, IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
+						break;					
+					}
+				case ON_ANY_RESOURCE_OF_SAME_PROJECT: {
+						unfiltered = findMarkers(getProjects(focusResource), IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);					
+						break;					
+					}
+				case ON_WORKING_SET: {
+						unfiltered = findMarkers(getResourcesInWorkingSet(), IResource.DEPTH_INFINITE, limit, mon, ignoreExceptions);
+					}
+			}
+		}
+		
+		if (unfiltered == null) {
+			unfiltered = Collections.EMPTY_LIST;
+		}
+		
+		return (ConcreteMarker[])unfiltered.toArray(new ConcreteMarker[unfiltered.size()]);		
+	}
+	
+	IResource[] getResourcesInWorkingSet() {
+		IAdaptable[] elements = workingSet.getElements();
+		List result = new ArrayList(elements.length);
+		
+		for (int idx = 0; idx < elements.length; idx++) {
+			IResource next = (IResource)elements[idx].getAdapter(IResource.class);
+			
+			if (next != null) {
+				result.add(next);
+			}
+		}
+		
+		return (IResource[])result.toArray(new IResource[result.size()]);
+	}
+	
+	/**
+	 * Returns a set of strings representing the full pathnames to every resource directly
+	 * or indirectly contained in the working set. A resource is in the working set iff its
+	 * path name can be found in this set.
+	 * 
+	 * @return
+	 */
+	private Set getWorkingSetAsSetOfPaths() {
+		if (cachedWorkingSet == null) {
+			HashSet result = new HashSet();
+			
+			addResourcesAndChildren(result, getResourcesInWorkingSet());
+			
+			cachedWorkingSet = result;
+		}
+		
+		return cachedWorkingSet;
+	}
+	
+	/***
+	 * Adds the paths of all resources in the given array to the given set. 
+	 */
+	private void addResourcesAndChildren(HashSet result, IResource[] resources) {
+		for (int idx = 0; idx < resources.length; idx++) {
+			
+			IResource currentResource = resources[idx];
+			
+			result.add(currentResource.getFullPath().toString());
+	
+			if (currentResource instanceof IContainer) {
+				IContainer cont = (IContainer)currentResource;
+				
+				try {
+					addResourcesAndChildren(result, cont.members());
+				} catch (CoreException e) {
+					// Ignore errors
+				}
+			}
+			
+		}
+	}
+		
+	/**
+	 * Returns the set of projects that contain the given set of resources.
+	 * 
+	 * @param resources
+	 * @return
+	 */
+	static IProject[] getProjects(IResource[] resources) {
+		if (resources == null) {
+			return new IProject[0];
+		}
+	
+		Collection projects = getProjectsAsCollection(resources);
+		
+		return (IProject[])projects.toArray(new IProject[projects.size()]);
+	}
+	
+	static Collection getProjectsAsCollection(IResource[] resources) {
+		HashSet projects = new HashSet();
+		
+		for (int idx = 0; idx < resources.length; idx++) {
+			projects.add(resources[idx].getProject());
+		}
+		
+		return projects;
+	}
+		
+	public boolean select(ConcreteMarker marker) {
 		if (!isEnabled()) {
 			return true;
 		}
 		
-		if (!(item instanceof IMarker))
-			return false;
-
-		IMarker marker = (IMarker) item;
-		return selectByType(marker) && selectBySelection(marker);
+		return selectByType(marker) && selectBySelection(marker) && selectMarker(marker);
 	}
 	
-	private boolean selectByType(IMarker marker) {
-		String type;
-
-		try {
-			type = marker.getType();
-		}
-		catch (CoreException e) {
-			return false;
-		}
-		
-		return selectedTypes.contains(typesModel.getType(type));
+	private boolean selectByType(ConcreteMarker marker) {
+		return selectedTypes.contains(typesModel.getType(marker.getType()));
 	}
 	
 	/**
@@ -140,7 +390,7 @@ class MarkerFilter implements IFilter {
 	 * 	true=the marker should not be filtered out
 	 * 	false=the marker should be filtered out
 	 */
-	private boolean selectBySelection(IMarker marker) {
+	private boolean selectBySelection(ConcreteMarker marker) {
 		if (onResource == ON_ANY_RESOURCE || marker == null)
 			return true;
 	
@@ -198,63 +448,12 @@ class MarkerFilter implements IFilter {
 	 * 	false otherwise. 
 	 */
 	private boolean isEnclosed(IResource element) {
-		IPath elementPath = element.getFullPath();
-		IAdaptable[] workingSetElements = workingSet.getElements();
-		
-		if (elementPath.isEmpty() || elementPath.isRoot())
-			return false;
-		
-		for (int i = 0; i < workingSetElements.length; i++) {
-			IAdaptable workingSetElement = workingSetElements[i];
-			IContainmentAdapter containmentAdapter = (IContainmentAdapter) workingSetElement.getAdapter(IContainmentAdapter.class);
-			
-			// if there is no IContainmentAdapter defined for the working  
-			// set element type fall back to using resource based  
-			// containment check 
-			if (containmentAdapter != null) {
-				if (containmentAdapter.contains(workingSetElement, element, IContainmentAdapter.CHECK_CONTEXT | IContainmentAdapter.CHECK_IF_CHILD | IContainmentAdapter.CHECK_IF_DESCENDANT))
-					return true;
-			} else if (isEnclosedResource(element, elementPath, workingSetElement)) {
-				return true;
-			}		
-		}
-		
-		return false;
-	}
-
-	/**
-	 * Returns if the given resource is enclosed by a working set element.
-	 * A resource is enclosed if it is either a parent of a working set 
-	 * element, a child of a working set element or a working set element
-	 * itself.
-	 * Simple path comparison is used. This is only guaranteed to return
-	 * correct results for resource working set elements. 
-	 * 
-	 * @param element resource to test for enclosure by a working set
-	 * 	element
-	 * @param elementPath full, absolute path of the element to test 
-	 * @return true if element is enclosed by a working set element and 
-	 * 	false otherwise. 
-	 */
-	private boolean isEnclosedResource(IResource element, IPath elementPath, IAdaptable workingSetElement) {
-		IResource workingSetResource = null;
-		
-		if (workingSetElement.equals(element))
+		if (workingSet == null) {
 			return true;
-			
-		if (workingSetElement instanceof IResource)
-			workingSetResource = (IResource) workingSetElement;
-		else
-			workingSetResource = (IResource) workingSetElement.getAdapter(IResource.class);
-	
-		if (workingSetResource != null) {
-			IPath resourcePath = workingSetResource.getFullPath();
-	
-			if (resourcePath.isPrefixOf(elementPath))
-				return true;
 		}
-	
-		return false;
+		Set workingSetPaths = getWorkingSetAsSetOfPaths();
+		
+		return workingSetPaths.contains(element.getFullPath().toString());
 	}
 
 	/**
@@ -316,7 +515,7 @@ class MarkerFilter implements IFilter {
 	/**
 	 * Sets the focused resources.
 	 */
-	void setFocusResource(IResource[] resources) {
+	public void setFocusResource(IResource[] resources) {
 		focusResource = resources;
 	}
 
@@ -390,6 +589,7 @@ class MarkerFilter implements IFilter {
 	 */
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
+		cachedWorkingSet = null;
 	}
 	
 	void resetState() {
@@ -399,7 +599,7 @@ class MarkerFilter implements IFilter {
 		onResource = DEFAULT_ON_RESOURCE;
 		selectedTypes.clear();
 		addAllSubTypes();
-		workingSet = null;
+		setWorkingSet( null );
 	}
 	
 	public void restoreState(IDialogSettings dialogSettings) {
@@ -452,7 +652,7 @@ class MarkerFilter implements IFilter {
 			setting = settings.get(TAG_WORKING_SET);
 
 			if (setting != null)
-				workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setting);					
+				setWorkingSet( WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSet(setting) );					
 		}		
 	}
 	

@@ -46,30 +46,35 @@ public class TaskFilter extends MarkerFilter {
 		super(new String[] { IMarker.TASK });
 	}
 	
-	public boolean select(Object item) {
-		return isEnabled() ? super.select(item) && selectByDescription(item) && selectByDone(item) && selectByPriority(item) : true;
+	public boolean selectMarker(ConcreteMarker marker) {
+		if (!(marker instanceof TaskMarker)) {
+			return false;
+		}
+		
+		TaskMarker taskMarker = (TaskMarker)marker;
+		
+		return !isEnabled() || (super.selectMarker(taskMarker) && selectByDescription(taskMarker) 
+				&& selectByDone(taskMarker) && selectByPriority(taskMarker));
 	}
 	
-	private boolean selectByDescription(Object item) {
-		if (!(item instanceof IMarker) || description == null || description.equals("")) //$NON-NLS-1$
+	private boolean selectByDescription(ConcreteMarker marker) {
+		if (description == null || description.equals("")) //$NON-NLS-1$
 			return true;
 		
-		IMarker marker = (IMarker) item;
-		String markerDescription = marker.getAttribute(IMarker.MESSAGE, DEFAULT_DESCRIPTION); //$NON-NLS-1$
-		int index = markerDescription.indexOf(description);
+		int index = marker.getDescription().indexOf(description);
 		return contains ? (index >= 0) : (index < 0);		
 	}
 
-	private boolean selectByDone(Object item) {
-		if (item instanceof IMarker && selectByDone)
-			return done == ((IMarker) item).getAttribute(IMarker.DONE, false);
+	private boolean selectByDone(TaskMarker item) {
+		if (selectByDone)
+			return done == (item.getDone() == 1);
 			
 		return true;
 	}
 
-	private boolean selectByPriority(Object item) {
-		if (item instanceof IMarker && priority != 0 && selectByPriority) {
-			int markerPriority = ((IMarker) item).getAttribute(IMarker.PRIORITY, -1);
+	private boolean selectByPriority(TaskMarker marker) {
+		if (priority != 0 && selectByPriority) {
+			int markerPriority = marker.getPriority();
 		
 			if (markerPriority == IMarker.PRIORITY_HIGH)
 				return (priority & PRIORITY_HIGH) > 0;		
