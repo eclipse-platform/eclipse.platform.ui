@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newIntro1"
+   name="newIntro1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+      <library name="newIntro1.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.tests"/>
+   </requires>
+   <extension
+         id="testDynamicIntroAddition"
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.tests.intro.MockIntroPart"
+            id="org.eclipse.newIntro1.newIntro1"/>
+      <introProductBinding
+            introId="org.eclipse.newIntro1.newIntro1"
+            productId="org.eclipse.ui.tests.someProduct"/>
+   </extension>
+ 
+
+</plugin>

@@ -83,4 +83,11 @@ public class InstanceTracker {
 	public IConfigurationElement getConfigurationElement() {
 		return configElt;
 	}
+
+	/**
+	 * 
+	 */
+	public void releaseExecutableExtension() {
+		instance = null;
+	}
 }

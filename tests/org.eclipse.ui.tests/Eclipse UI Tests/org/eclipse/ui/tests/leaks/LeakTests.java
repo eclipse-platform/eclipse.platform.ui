@@ -46,7 +46,7 @@ public class LeakTests extends UITestCase {
         super(testName);
     }
 
-    public void checkRef(ReferenceQueue queue, Reference ref)
+    public static void checkRef(ReferenceQueue queue, Reference ref)
             throws IllegalArgumentException, InterruptedException {
         boolean flag = false;
         for (int i = 0; i < 10; i++) {

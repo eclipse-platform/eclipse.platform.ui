@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -20,7 +21,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
+import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -31,6 +36,8 @@ import org.eclipse.ui.intro.IIntroPart;
  */
 public class WorkbenchIntroManager implements IIntroManager {
 
+	private final IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	
     private final Workbench workbench;
 
     /**
@@ -40,6 +47,11 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
+        tracker.registerRemovalHandler(new IConfigurationElementRemovalHandler(){
+
+			public void removeInstance(IConfigurationElement source, Object object) {
+				closeIntro((IIntroPart) object);				
+			}});
     }
 
     /**
@@ -63,7 +75,7 @@ public class WorkbenchIntroManager implements IIntroManager {
                     .findViewReference(IIntroConstants.INTRO_VIEW_ID);
             page.hideView(introView);
             if (reference == null || reference.getPart(false) == null) {
-                introPart = null;
+                introPart = null;                
                 return true;
             }
             return false;
@@ -222,8 +234,13 @@ public class WorkbenchIntroManager implements IIntroManager {
      * value.
      */
     /*package*/IIntroPart createNewIntroPart() throws CoreException {
-        return introPart = workbench.getIntroDescriptor() == null ? null
-                : workbench.getIntroDescriptor().createIntro();
+        IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
+		introPart = introDescriptor == null ? null
+                : introDescriptor.createIntro();
+        if (introPart != null) {
+        	tracker.registerObject(introDescriptor.getConfigurationElement(), introPart);
+        }
+    	return introPart;
     }
 
     /* (non-Javadoc)

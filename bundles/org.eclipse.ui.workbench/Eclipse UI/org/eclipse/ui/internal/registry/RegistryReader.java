@@ -102,7 +102,7 @@ public abstract class RegistryReader {
      * provided, such that the order will not change as
      * extensions are added or removed.
      */
-    protected IExtension[] orderExtensions(IExtension[] extensions) {
+    public static IExtension[] orderExtensions(IExtension[] extensions) {
         // By default, the order is based on plugin id sorted
         // in ascending order. The order for a plugin providing
         // more than one extension for an extension point is
