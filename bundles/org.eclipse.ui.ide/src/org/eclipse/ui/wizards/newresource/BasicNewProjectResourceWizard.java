@@ -488,7 +488,8 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 	IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 	String pspm = store.getString(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
 	if (!IDEInternalPreferences.PSPM_PROMPT.equals(pspm)) {
-		return true;
+		//Return whether or not we should always switch
+		return IDEInternalPreferences.PSPM_ALWAYS.equals(pspm);
 	}
 	MessageDialogWithToggle dialog = MessageDialogWithToggle.openQuestion(
 		window.getShell(),
