@@ -18,7 +18,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,23 +30,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
-import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil.VariableDefinition;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 
 public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
@@ -234,7 +228,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		variableButton.setLayoutData(gridData);
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
+				VariableSelectionDialog dialog= new VariableSelectionDialog(ExternalToolsMainTab.this, getShell());
 				if (dialog.open() == SelectionDialog.OK) {
 					argumentField.insert(dialog.getForm().getSelectedVariable());
 				}
@@ -571,45 +565,4 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		return selectionAdapter;
 	}
 	
-	private class VariableSelectionDialog extends SelectionDialog {
-		private ExternalToolVariableForm form;
-		private VariableSelectionDialog(Shell parent) {
-			super(parent);
-			setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_variable_10")); //$NON-NLS-1$
-		}
-		protected Control createDialogArea(Composite parent) {
-			// Create the dialog area
-			Composite composite= (Composite)super.createDialogArea(parent);
-			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getToolVariableRegistry().getVariables();
-			form= new ExternalToolVariableForm(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Choose_a_variable__11"), variables); //$NON-NLS-1$
-			form.createContents(composite, new IGroupDialogPage() {
-				
-				public void setErrorMessage(String errorMessage) {
-					VariableSelectionDialog.this.setMessage(errorMessage);
-				}
-
-				public void updateValidState() {
-				}
-
-				public String getMessage() {
-					if (!form.isValid()) {
-						return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Invalid_selection_12"); //$NON-NLS-1$
-					}
-					return null;
-				}
-
-				public int getMessageType() {
-					if (!form.isValid()) {
-						return IMessageProvider.ERROR;
-					}
-					return 0;
-				}
-			});
-			return composite;
-		}
-
-		private ExternalToolVariableForm getForm() {
-			return form;
-		}
-	}
 }
