@@ -309,7 +309,11 @@ public void restoreState(IMemento memento) {
 		if(item.getString(IWorkbenchConstants.TAG_ACTIVE) != null)
 			activeEntry = i;
 	}
-	gotoEntry(getEntry(activeEntry));
+	HistoryEntry entry = getEntry(activeEntry);
+	if(entry != null && entry.editorInput != null) {
+		if(page.getActiveEditor() == page.findEditor(entry.editorInput))
+			gotoEntry(entry);
+	}
 }
 /*
  * Wraps the INavigationLocation and keeps the info
