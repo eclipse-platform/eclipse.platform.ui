@@ -1,9 +1,13 @@
-/*
- * Created on Jun 25, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.scheduler;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,12 +25,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	// Preferences
-	public static final String P_MASTER = "enabled";
+	public static final String P_ENABLED = "enabled";
+	public static final String P_SCHEDULE = "schedule";
+	public static final String VALUE_ON_STARTUP = "on-startup";
+	public static final String VALUE_ON_SCHEDULE = "on-schedule";
 	//The shared instance.
 	private static UpdateScheduler plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -34,31 +41,30 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
 	}
-	
+
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
-	
+
 	/**
 	 * Returns the shared instance.
 	 */
 	public static UpdateScheduler getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
 	 */
 	public static String getString(String key) {
-		ResourceBundle bundle = UpdateScheduler.getDefault().getResourceBundle();
+		ResourceBundle bundle =
+			UpdateScheduler.getDefault().getResourceBundle();
 		try {
 			return bundle.getString(key);
 		} catch (MissingResourceException e) {
@@ -75,11 +81,11 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		String text = getString(key);
 		return java.text.MessageFormat.format(text, new String[] { arg });
 	}
-	
+
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
-	
+
 	public static void logException(Throwable e) {
 		logException(e, true);
 	}
@@ -123,10 +129,11 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 				status.getMessage());
 		}
 	}
-	
+
 	public static IWorkbenchPage getActivePage() {
 		UpdateScheduler plugin = getDefault();
-		IWorkbenchWindow window = plugin.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window =
+			plugin.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null)
 			return window.getActivePage();
 		return null;
@@ -140,17 +147,18 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	public void startup() throws CoreException {
 		super.startup();
 		initializeDefaultPreferences();
 	}
-	
+
 	private void initializeDefaultPreferences() {
 		Preferences pref = getPluginPreferences();
-		pref.setDefault(P_MASTER, false);
+		pref.setDefault(P_ENABLED, false);
+		pref.setDefault(P_SCHEDULE, VALUE_ON_STARTUP);
 	}
-	
+
 	public void shutdown() throws CoreException {
 		super.shutdown();
 	}
