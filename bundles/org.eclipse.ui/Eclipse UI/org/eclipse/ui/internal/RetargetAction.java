@@ -120,10 +120,19 @@ protected void propogateChange(PropertyChangeEvent event) {
 		setActionHandler(((IActionBars) event.getSource()).getGlobalActionHandler(getId()));
 	}
 }
+
 /**
  * Invoked when an action occurs. 
  */
-public void run(Event event) {
+public void run() {
+	if (handler != null)
+		handler.run();
+}
+
+/**
+ * Invoked when an action occurs. 
+ */
+public void runWithEvent(Event event) {
 	if (handler != null)
 		handler.runWithEvent(event);
 }
