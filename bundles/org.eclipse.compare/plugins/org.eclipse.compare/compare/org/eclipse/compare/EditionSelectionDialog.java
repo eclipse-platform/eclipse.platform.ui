@@ -26,11 +26,16 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Button;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -76,10 +81,11 @@ public class EditionSelectionDialog extends Dialog {
 		private ITypedElement fEdition;
 		private ITypedElement fItem;
 		private String fContent;
-		
-		Pair(ITypedElement edition, ITypedElement item) {
+				
+		Pair(ITypedElement edition, ITypedElement item, String content) {
 			fEdition= edition;
 			fItem= item;
+			fContent= content;
 		}
 		
 		ITypedElement getEdition() {
@@ -89,40 +95,48 @@ public class EditionSelectionDialog extends Dialog {
 		ITypedElement getItem() {
 			return fItem;
 		}
-		
-		void setContent(String content) {
-			fContent= content;
-		}
-		
-		String getContent() {
-			return fContent;
+						
+		public boolean equals(Object other) {
+			if (other != null && other.getClass() == getClass()) {
+				String otherContent= ((Pair)other).fContent;
+				if (otherContent != null && fContent != null && fContent.equals(otherContent))
+					return true;
+			}
+			return super.equals(other);
 		}
 	}
 	
 	private static final int ONE_DAY_MS= 86400 * 1000; // one day in milli seconds
+	private static final boolean HIDE_IDENTICAL= true;
 	
-	private boolean fAddMode= false;
+	private Button fCommitButton;
+	private boolean fReplaceMode= true;
 	
 	private ResourceBundle fBundle;
 	private boolean fTargetIsRight;
 	
+	/**
+	 * Maps from members to their corresponding editions.
+	 * Has only a single entry if dialog is used in "Replace" (and not "Add") mode.
+	 */
 	private HashMap fMemberEditions;
+	/** The editions of the current selected member */
+	private List fCurrentEditions;
+	private Thread fThread;
 
 	private ITypedElement fTargetItem;
+	/** The selected edition in the edition viewer */
 	private ITypedElement fSelectedItem;
 	
-	private Tree fMemberTree;
+	private Table fMemberTable;
 	private Pane fMemberPane;
 	
 	private Tree fEditionTree;
 	private Pane fEditionPane;
-	
-	private CompareViewerSwitchingPane fContentPane;
-	private Thread fThread;
-	
 	private Image fDateImage;
 	private Image fTimeImage;
 	
+	private CompareViewerSwitchingPane fContentPane;
 	private CompareConfiguration fCompareConfiguration;
 	
 	/**
@@ -134,10 +148,11 @@ public class EditionSelectionDialog extends Dialog {
 	 *	title       String        dialog title
 	 *	width       Integer       initial width of dialog
 	 *	height      Integer       initial height of dialog
+	 *	mode        String        "replace" or "add"; default is "replace"
 	 * 	targetSide  String	      whether target is on "right" or "left" side; default is "right"
 	 *	treeTitleFormat   MessageFormat pane title for edition tree; arg 0 is the target
-	 *	dateIcon    String        icon for node in edition tree; path relative to class
-	 *	timeIcon    String        icon for leaf in edition tree; path relative to class
+	 *	dateIcon    String        icon for node in edition tree; path relative to plugin
+	 *	timeIcon    String        icon for leaf in edition tree; path relative to plugin
 	 *	todayFormat MessageFormat format string if date is todays date; arg 0 is date
 	 *	yesterdayFormat MessageFormat format string if date is yesterdays date; arg 0 is date
 	 *	dayFormat   MessageFormat format string if date is any other date; arg 0 is date
@@ -155,6 +170,7 @@ public class EditionSelectionDialog extends Dialog {
 		fBundle= bundle;
 	
 		fTargetIsRight= "right".equals(Utilities.getString(fBundle, "targetSide", "right"));
+		fReplaceMode= "replace".equals(Utilities.getString(fBundle, "mode", "replace"));
 									    
 		fCompareConfiguration= new CompareConfiguration();
 		fCompareConfiguration.setLeftEditable(false);
@@ -169,11 +185,7 @@ public class EditionSelectionDialog extends Dialog {
 		if (id != null)
 			fTimeImage= id.createImage();
 	}
-	
-	public void setAddMode(boolean mode) {
-		fAddMode= mode;
-	}
-	
+		
 	/**
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
@@ -197,47 +209,41 @@ public class EditionSelectionDialog extends Dialog {
 			editions[i]= (IModificationDate) inputEditions[i];
 		if (count > 1)
 			internalSort(editions, 0, count-1);
-
-		if (fAddMode)
-			return selectEdition2(target, count, editions, ppath);
-				
+			
+		// find StructureCreator if ppath is not null
 		IStructureCreator structureCreator= null;
-		if (ppath != null) {	// try to extract subelement 
+		if (ppath != null) {
 			String type= target.getType();
 			IStructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
-			if (scd != null) {
+			if (scd != null)
 				structureCreator= scd.createStructureCreator();
-				if (structureCreator != null) {
-					Object item= structureCreator.locate(ppath, target);
-					if (item instanceof ITypedElement)
-						fTargetItem= (ITypedElement) item;
-					else
-						ppath= null;	// couldn't extract item
-				}
-			}
 		}
+
+		if (!fReplaceMode) {
+			final Object container= ppath;
+			Assert.isNotNull(container);
+								
+			if (structureCreator == null)
+				return null;	// error
 		
-		// set the left and right labels for the compare viewer
-		String targetLabel= getTargetLabel(target, fTargetItem);
-		if (fTargetIsRight)
-			fCompareConfiguration.setRightLabel(targetLabel);
-		else
-			fCompareConfiguration.setLeftLabel(targetLabel);
-		
-		if (structureCreator != null && ppath != null) {	// extract sub element
+			// extract all elements of container
+			final HashSet current= new HashSet();
+			IStructureComparator sco= structureCreator.locate(container, target);
+			if (sco != null) {
+				Object[] children= sco.getChildren();
+				if (children != null)
+					for (int i= 0; i < children.length; i++)
+						current.add(children[i]);
+			} else
+				return null; 	// error
 			
 			final IStructureCreator sc= structureCreator;
-			final Object path= ppath;
 			
 			// construct the comparer thread
 			// and perform the background extract
 			fThread= new Thread() {
 				public void run() {
-										
-					// we only show an edition if its contents is different than
-					// the preceding one.
-					//String lastContents= sc.getContents(fTargetItem, false);
-									
+					
 					// from front (newest) to back (oldest)
 					for (int i= 0; i < count; i++) {
 							
@@ -245,49 +251,73 @@ public class EditionSelectionDialog extends Dialog {
 							break;
 						ITypedElement edition= (ITypedElement) editions[i];
 						
-						// extract sub element from edition
-						Object r= sc.locate(path, edition);
-						if (r instanceof ITypedElement) {	// if not empty
-							ITypedElement item= (ITypedElement) r;
-							final Pair pair= new Pair(edition, item);
-							pair.setContent(sc.getContents(item, false));
-							/*
-							if (lastContents != null) {
-								String contents2= sc.getContents(item, false);
-								if (lastContents.equals(contents2))
-									continue;
-								lastContents= contents2;
-							}
-							*/
-							Display display= fEditionTree.getDisplay();
-							display.asyncExec(
-								new Runnable() {
-									public void run() {
-										addEdition(pair);
-									}
+						IStructureComparator sco2= sc.locate(container, edition);
+						if (sco2 != null) {
+							Object[] children= sco2.getChildren();
+							if (children != null) {
+								for (int i2= 0; i2 < children.length; i2++) {
+									ITypedElement child= (ITypedElement) children[i2];
+									if (!current.contains(child))
+										sendPair(new Pair(edition, child, sc.getContents(child, false)));
 								}
-							);
+							}
 						}
 					}
-					if (fEditionTree != null && !fEditionTree.isDisposed()) {
-						Display display= fEditionTree.getDisplay();
-						display.asyncExec(
-							new Runnable() {
-								public void run() {
-									end();
-								}
-							}
-						);
-					}
+					sendPair(null);
 				}
 			};
-		} else {
-			// create tree widget
-			create();
 			
-			// from front (newest) to back (oldest)
-			for (int i= 0; i < count; i++)
-				addEdition(new Pair((ITypedElement) editions[i], (ITypedElement) editions[i]));
+		} else {
+			if (structureCreator != null) {
+				Object item= structureCreator.locate(ppath, target);
+				if (item instanceof ITypedElement)
+					fTargetItem= (ITypedElement) item;
+				else
+					ppath= null;	// couldn't extract item
+			}
+			
+			// set the left and right labels for the compare viewer
+			String targetLabel= getTargetLabel(target, fTargetItem);
+			if (fTargetIsRight)
+				fCompareConfiguration.setRightLabel(targetLabel);
+			else
+				fCompareConfiguration.setLeftLabel(targetLabel);
+			
+			if (structureCreator != null && ppath != null) {	// extract sub element
+				
+				final IStructureCreator sc= structureCreator;
+				final Object path= ppath;
+				
+				// construct the comparer thread
+				// and perform the background extract
+				fThread= new Thread() {
+					public void run() {
+																				
+						// from front (newest) to back (oldest)
+						for (int i= 0; i < count; i++) {
+								
+							if (fEditionTree == null || fEditionTree.isDisposed())
+								break;
+							ITypedElement edition= (ITypedElement) editions[i];
+							
+							// extract sub element from edition
+							Object r= sc.locate(path, edition);
+							if (r instanceof ITypedElement) {	// if not empty
+								ITypedElement item= (ITypedElement) r;
+								sendPair(new Pair(edition, item, sc.getContents(item, false)));
+							}
+						}
+						sendPair(null);
+					}
+				};
+			} else {
+				// create tree widget
+				create();
+				
+				// from front (newest) to back (oldest)
+				for (int i= 0; i < count; i++)
+					addMemberEdition(new Pair((ITypedElement) editions[i], (ITypedElement) editions[i], null));
+			}
 		}
 		
 		open();
@@ -296,88 +326,7 @@ public class EditionSelectionDialog extends Dialog {
 			return fSelectedItem;
 		return null;
 	}
-	
-	private ITypedElement selectEdition2(final ITypedElement target, final int count, final IModificationDate[] editions, final Object container) {
 		
-		Assert.isNotNull(container);
-							
-		// find StructureCreator
-		IStructureCreator structureCreator= null;
-		String type= target.getType();
-		IStructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
-		if (scd != null)
-			structureCreator= scd.createStructureCreator();
-		if (structureCreator == null)
-			return null;	// error
-	
-		// extract all elements of container
-		final HashSet current= new HashSet();
-		IStructureComparator sco= structureCreator.locate(container, target);
-		if (sco != null) {
-			Object[] children= sco.getChildren();
-			if (children != null)
-				for (int i= 0; i < children.length; i++)
-					current.add(children[i]);
-		} else
-			return null; 	// error
-		
-
-		final IStructureCreator sc= structureCreator;
-		
-		// construct the comparer thread
-		// and perform the background extract
-		fThread= new Thread() {
-			public void run() {
-				
-				// from front (newest) to back (oldest)
-				for (int i= 0; i < count; i++) {
-						
-					if (fEditionTree == null || fEditionTree.isDisposed())
-						break;
-					ITypedElement edition= (ITypedElement) editions[i];
-					
-					IStructureComparator sco2= sc.locate(container, edition);
-					if (sco2 != null) {
-						Object[] children= sco2.getChildren();
-						if (children != null) {
-							for (int i2= 0; i2 < children.length; i2++) {
-								ITypedElement child= (ITypedElement) children[i2];
-								if (!current.contains(child)) {
-									final Pair pair= new Pair(edition, child);
-									pair.setContent(sc.getContents(child, false));
-									Display display= fEditionTree.getDisplay();
-									display.asyncExec(
-										new Runnable() {
-											public void run() {
-												addMemberEdition(pair);
-											}
-										}
-									);
-								}
-							}
-						}
-					}
-				}
-				if (fEditionTree != null && !fEditionTree.isDisposed()) {
-					Display display= fEditionTree.getDisplay();
-					display.asyncExec(
-						new Runnable() {
-							public void run() {
-								end();
-							}
-						}
-					);
-				}
-			}
-		};
-		
-		open();
-		
-		if (getReturnCode() == OK)
-			return fSelectedItem;
-		return null;
-	}
-
 	/**
 	 * Returns the input target that has been specified with the most recent call
 	 * to <code>selectEdition</code>. If a not <code>null</code> path was specified this method
@@ -481,16 +430,15 @@ public class EditionSelectionDialog extends Dialog {
 				}
 			}
 		);
-
 		
-		if (fAddMode) {
+		if (!fReplaceMode) {
 	
 			Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 			
 			fMemberPane= new Pane(hsplitter, SWT.NONE);
 			fMemberPane.setText("Available Members");
-			fMemberTree= new Tree(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
-			fMemberTree.addSelectionListener(
+			fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
+			fMemberTable.addSelectionListener(
 				new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						handleMemberSelect(e.item);
@@ -498,12 +446,13 @@ public class EditionSelectionDialog extends Dialog {
 				}
 			);
 			
-			fMemberPane.setContent(fMemberTree);
+			fMemberPane.setContent(fMemberTable);
 			
 			fEditionPane= new Pane(hsplitter, SWT.NONE);
 		} else {
 			fEditionPane= new Pane(vsplitter, SWT.NONE);
 		}
+		
 		String titleFormat= Utilities.getString(fBundle, "treeTitleFormat", "treeTitleFormat");
 		String title= MessageFormat.format(titleFormat, new Object[] { fTargetItem.getName() });
 		fEditionPane.setText(title);
@@ -537,8 +486,34 @@ public class EditionSelectionDialog extends Dialog {
 		return vsplitter;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		String buttonLabel= Utilities.getString(fBundle, "buttonLabel", "buttonLabel");
+		fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
+		fCommitButton.setEnabled(false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	}
+
 	//---- private stuff ----------------------------------------------------------------------------------------
 				
+	/**
+	 * Asynchroneously sends a Pair (or null) to the UI thread.
+	 */
+	private void sendPair(final Pair pair) {		
+		if (fEditionTree != null && !fEditionTree.isDisposed()) {
+			Display display= fEditionTree.getDisplay();
+			display.asyncExec(
+				new Runnable() {
+					public void run() {
+						addMemberEdition(pair);
+					}
+				}
+			);
+		}
+	}
+
 	private void handleDefaultSelected() {
 		if (fSelectedItem != null)
 			okPressed();
@@ -573,9 +548,79 @@ public class EditionSelectionDialog extends Dialog {
 			internalSort(keys, left, original_right); 
 		 
 	}
+	
+	/**
+	 * Adds the given Pair to 
+	 * If HIDE_IDENTICAL is true the new Pair is only added if its contents
+	 * is different from the preceeding Pair.
+	 * If the argument is <code>null</code> the message "No Editions found" is shown
+	 * in the member or edition viewer.
+	 */
+	private void addMemberEdition(Pair pair) {
 		
+		if (pair == null) {
+			if (fMemberTable != null) {
+				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
+					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
+					ti.setText("No Editions found");
+				}
+				return;
+			}			
+			if (fEditionTree != null && !fEditionTree.isDisposed() && fEditionTree.getItemCount() == 0) {
+				TreeItem ti= new TreeItem(fEditionTree, SWT.NONE);
+				ti.setText("No Editions found");
+			}
+			return;
+		}
+		
+		if (fMemberEditions == null)
+			fMemberEditions= new HashMap();
+		
+		ITypedElement item= pair.getItem();
+		List editions= (List) fMemberEditions.get(item);
+		if (editions == null) {
+			editions= new ArrayList();
+			fMemberEditions.put(item, editions);
+			if (fMemberTable != null && !fMemberTable.isDisposed()) {
+				ITypedElement te= (ITypedElement)item;
+				String name= te.getName();
+				
+				// find position
+				TableItem[] items= fMemberTable.getItems();
+				int where= items.length;
+				for (int i= 0; i < where; i++) {
+					String n= items[i].getText();
+					if (n.compareTo(name) > 0) {
+						where= i;
+						break;
+					}
+				}
+				
+				TableItem ti= new TableItem(fMemberTable, where, SWT.NULL);
+				ti.setImage(te.getImage());
+				ti.setText(name);
+				ti.setData(editions);
+			}
+		}
+		if (HIDE_IDENTICAL) {
+			int size= editions.size();
+			if (size > 0) {
+				Pair last= (Pair) editions.get(size-1);
+				if (last != null && last.equals(pair))
+					return;	// don't add since the new one is equal to old
+			}
+		}
+		editions.add(pair);
+		
+		if (fReplaceMode || editions == fCurrentEditions)
+			addEdition(pair);
+	}
+	
+	/**
+	 * Adds the given Pair to the edition tree.
+	 * It takes care of creating tree nodes for different dates.
+	 */
 	private void addEdition(Pair pair) {
-		
 		if (fEditionTree == null || fEditionTree.isDisposed())
 			return;
 		
@@ -615,46 +660,41 @@ public class EditionSelectionDialog extends Dialog {
 		TreeItem ti= new TreeItem(lastDay, SWT.NONE);
 		ti.setImage(fTimeImage);
 		ti.setText(DateFormat.getTimeInstance().format(date));
-		ti.setData(new Pair(edition, item));
+		ti.setData(new Pair(edition, item, null));
 		if (first) {
 			fEditionTree.setSelection(new TreeItem[] {ti});
-			fEditionTree.setFocus();
+			if (fReplaceMode)
+				fEditionTree.setFocus();
 			feedInput(ti);
 		}
-		//if (first) // expand first node
+		if (first) // expand first node
 			lastDay.setExpanded(true);
 	}
-		
-	private void addMemberEdition(Pair pair) {
-		
-		if (fMemberEditions == null)
-			fMemberEditions= new HashMap();
-		
-		ITypedElement item= pair.getItem();
-		List editions= (List) fMemberEditions.get(item);
-		if (editions == null) {
-			editions= new ArrayList();
-			fMemberEditions.put(item, editions);
-			if (fMemberTree != null && !fMemberTree.isDisposed()) {
-				TreeItem ti= new TreeItem(fMemberTree, SWT.NULL);
-				String name= ((ITypedElement)item).getName();
-				ti.setText(name);
-				ti.setData(editions);
+					
+	/**
+	 * Feeds selection from member viewer to edition viewer.
+	 */
+	private void handleMemberSelect(Widget w) {
+		Object data= w.getData();
+		if (data instanceof List) {
+			List editions= (List) data;
+			if (editions != fCurrentEditions) {
+				fCurrentEditions= editions;
+				fEditionTree.removeAll();
+				fEditionPane.setText("Editions of " + ((Item)w).getText());
+				Iterator iter= editions.iterator();
+				while (iter.hasNext()) {
+					Object item= iter.next();
+					if (item instanceof Pair)
+						addEdition((Pair) item);
+				}
 			}
 		}
-		editions.add(pair);
 	}
 	
-	private void end() {
-		Tree tree= fMemberTree;
-		if (tree == null)
-			tree= fEditionTree;
-		if (tree != null && !tree.isDisposed() && tree.getItemCount() == 0) {
-			TreeItem ti= new TreeItem(tree, SWT.NONE);
-			ti.setText("No Editions found");
-		}
-	}	
-		
+	/*
+	 * Feeds selection from edition viewer to content viewer.
+	 */
 	private void feedInput(Widget w) {
 		Object input= w.getData();
 		if (input instanceof Pair) {
@@ -663,7 +703,7 @@ public class EditionSelectionDialog extends Dialog {
 			
 			String editionLabel= getEditionLabel(pair.getEdition(), fSelectedItem);
 			
-			if (fAddMode) {
+			if (!fReplaceMode) {
 				fContentPane.setInput(fSelectedItem);
 				fContentPane.setText(editionLabel);
 			} else {
@@ -679,21 +719,7 @@ public class EditionSelectionDialog extends Dialog {
 			fSelectedItem= null;
 			fContentPane.setInput(null);
 		}
-	}
-	
-	private void handleMemberSelect(Widget w) {
-		Object data= w.getData();
-		if (w instanceof TreeItem && data instanceof List) {
-			List list= (List) data;
-			fEditionTree.removeAll();
-			fEditionPane.setText("Editions of " + ((TreeItem)w).getText());
-			Iterator iter= list.iterator();
-			while (iter.hasNext()) {
-				Object item= iter.next();
-				if (item instanceof Pair)
-					addEdition((Pair) item);
-			}
-		}
+		fCommitButton.setEnabled(fSelectedItem != null);
 	}
 }
 
