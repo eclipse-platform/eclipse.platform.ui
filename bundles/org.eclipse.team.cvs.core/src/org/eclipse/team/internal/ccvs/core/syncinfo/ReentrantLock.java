@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,14 +46,23 @@ public class ReentrantLock {
 
 	private final static boolean DEBUG = Policy.DEBUG_THREADING;
 	
+	// This is a placeholder rule used to indicate that no scheduling rule is needed
+	private static final ISchedulingRule NULL_SCHEDULING_RULE= new ISchedulingRule() {
+		public boolean contains(ISchedulingRule rule) {
+			return false;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return false;
+		}
+	};
+	
 	public class ThreadInfo {
 		private int nestingCount = 0;
 		private Set changedResources = new HashSet();
 		private Set changedFolders = new HashSet();
 		private IFlushOperation operation;
-		private ISchedulingRule schedulingRule;
-		public ThreadInfo(ISchedulingRule schedulingRule, IFlushOperation operation) {
-			this.schedulingRule = schedulingRule;
+		private List rules = new ArrayList();
+		public ThreadInfo(IFlushOperation operation) {
 			this.operation = operation;
 		}
 		public void increment() {
@@ -97,8 +108,11 @@ public class ReentrantLock {
 		private void handleAbortedFlush(Throwable t) {
 			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("ReentrantLock.9"), t)); //$NON-NLS-1$
 		}
-		public ISchedulingRule getSchedulingRule() {
-			return schedulingRule;
+		public void addRule(ISchedulingRule rule) {
+			rules.add(rule);
+		}
+		public ISchedulingRule removeRule() {
+			return (ISchedulingRule)rules.remove(rules.size() - 1);
 		}
 	}
 	
@@ -126,11 +140,12 @@ public class ReentrantLock {
 	private void incrementNestingCount(IResource resource, ISchedulingRule rule, IFlushOperation operation) {
 		ThreadInfo info = getThreadInfo();
 		if (info == null) {
-			info = new ThreadInfo(rule, operation);
+			info = new ThreadInfo(operation);
 			Thread thisThread = Thread.currentThread();
 			infos.put(thisThread, info);
 			if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		info.addRule(rule);
 		info.increment();
 	}
 	
@@ -139,20 +154,20 @@ public class ReentrantLock {
 		ISchedulingRule rule;
 		if (resource.getType() == IResource.ROOT) {
 			// Never lock the whole workspace
-			rule = null;
+			rule = NULL_SCHEDULING_RULE;
 		} else  if (resource.getType() == IResource.PROJECT) {
 			rule = resource;
 		} else {
 			rule = resource.getParent();
 		}
-		if (rule != null) {
+		if (rule != NULL_SCHEDULING_RULE) {
 			Platform.getJobManager().beginRule(rule);
 		}
 		return rule;
 	}
 
 	private void unlock(ISchedulingRule rule) {
-		if (rule != null) {
+		if (rule != NULL_SCHEDULING_RULE) {
 			Platform.getJobManager().endRule(rule);
 		}
 	}
@@ -172,8 +187,8 @@ public class ReentrantLock {
 			if(DEBUG) System.out.println("[" + thisThread.getName() + "] released CVS lock"); //$NON-NLS-1$ //$NON-NLS-2$
 			infos.remove(thisThread);
 			info.flush(monitor);
-			unlock(info.getSchedulingRule());
 		}
+		unlock(info.removeRule());
 	}
 
 	public void folderChanged(IContainer folder) {
