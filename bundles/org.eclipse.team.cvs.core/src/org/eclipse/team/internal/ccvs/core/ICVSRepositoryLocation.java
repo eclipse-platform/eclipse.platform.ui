@@ -82,6 +82,11 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag);
 	
 	/**
+	 * encoding for commit comments. 
+	 */
+	public String getEncoding();
+	
+	/**
 	 * Return the conection timeout value in milliseconds.
 	 * A value of 0 means there is no timeout value.
 	 */
@@ -122,4 +127,10 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * @since 3.0
 	 */
 	public void setUserAuthenticator(IUserAuthenticator authenticator);	
+
+	/**
+	 * Sets encoding for commit messages.
+	 * @since 3.0
+	 */
+	public void setEncoding(String encoding);
 }

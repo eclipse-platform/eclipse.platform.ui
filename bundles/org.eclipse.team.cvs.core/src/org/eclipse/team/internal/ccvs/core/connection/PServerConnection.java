@@ -162,7 +162,7 @@ public class PServerConnection implements IServerConnection {
 		request.append(NEWLINE);
 		out.write(request.toString().getBytes());
 		out.flush();
-		String line = Connection.readLine(getInputStream());
+		String line = Connection.readLine(cvsroot, getInputStream());
 		
 		// Return if we succeeded
 		if (LOGIN_OK.equals(line))
@@ -177,7 +177,7 @@ public class PServerConnection implements IServerConnection {
 		// Skip any E messages for now
 		while (line.charAt(0) == ERROR_CHAR) {
 			// message += line.substring(1) + " ";
-			line = Connection.readLine(getInputStream());
+			line = Connection.readLine(cvsroot, getInputStream());
 		}
 		// Remove leading "error 0"
 		if (line.startsWith(ERROR_MESSAGE))

@@ -11,16 +11,10 @@
 package org.eclipse.team.internal.ccvs.core.connection;
 
  
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IServerConnection;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 
 /**
  * A connection to talk to a cvs server. The life cycle of a connection is
@@ -44,7 +38,6 @@ public class Connection {
 	
 	private IServerConnection serverConnection;
 	private ICVSRepositoryLocation fCVSRoot;
-	private String fCVSRootDirectory;
 	private boolean fIsEstablished;
 	private InputStream fResponseStream;
 	private byte[] readLineBuffer = new byte[256];
@@ -66,7 +59,7 @@ public class Connection {
 	/**
 	 * Closes the connection.
 	 */
-	public void close() throws CVSException {
+	public void close() {
 		if (!isEstablished())
 			return;
 		try {
@@ -99,7 +92,7 @@ public class Connection {
 	 * Returns the <code>OutputStream</code> used to send requests
 	 * to the server.
 	 */
-	public OutputStream getOutputStream() throws CVSException {
+	public OutputStream getOutputStream() {
 		if (!isEstablished())
 			return null;
 		return serverConnection.getOutputStream();
@@ -108,7 +101,7 @@ public class Connection {
 	 * Returns the <code>InputStream</code> used to read responses from
 	 * the server.
 	 */
-	public InputStream getInputStream() throws CVSException {
+	public InputStream getInputStream() {
 		if (!isEstablished())
 			return null;
 		if (fResponseStream == null)
@@ -151,7 +144,8 @@ public class Connection {
 				if (r == NEWLINE) break;
 				readLineBuffer = append(readLineBuffer, index++, (byte) r);
 			}
-			String result = new String(readLineBuffer, 0, index);
+
+			String result = new String(readLineBuffer, 0, index, getEncoding(fCVSRoot));
 			if (Policy.DEBUG_CVS_PROTOCOL) System.out.println(result);
 			return result;
 		} catch (IOException e) {
@@ -159,7 +153,7 @@ public class Connection {
 		}
 	}
 	
-	static String readLine(InputStream in) throws IOException {
+	static String readLine(ICVSRepositoryLocation location, InputStream in) throws IOException {
 		byte[] buffer = new byte[256];
 		int index = 0;
 		int r;
@@ -168,7 +162,8 @@ public class Connection {
 				break;
 			buffer = append(buffer, index++, (byte) r);
 		}
-		String result = new String(buffer, 0, index);
+
+		String result = new String(buffer, 0, index, getEncoding(location));
 		if (Policy.DEBUG_CVS_PROTOCOL)
 			System.out.println(result);
 		return result;
@@ -180,21 +175,39 @@ public class Connection {
 	 * Sends the given string to the server.
 	 */
 	public void write(String s) throws CVSException {
-		write(s.getBytes(), false);
+        try {
+			write(s.getBytes(getEncoding(fCVSRoot)), false);
+		} catch (UnsupportedEncodingException e) {
+			throw new CVSException (e.getMessage());
+		}
 	}
 	
+	/**
+	 * Return the encoding for the given repository location
+	 * @return the encoding for the given repository location
+	 */
+	public static String getEncoding(ICVSRepositoryLocation location) {
+		return location.getEncoding();
+	}
+
 	/**
 	 * Sends the given bytes to the server.
 	 */
 	public void write(byte[] b, int off, int len) throws CVSException {
 		write(b, off, len, false);
 	}
+
 	/**
 	 * Sends the given string and a newline to the server. 
 	 */
 	public void writeLine(String s) throws CVSException {
-		write(s.getBytes(), true);
+		try {
+			write(s.getBytes(getEncoding(fCVSRoot)), true);
+		} catch (UnsupportedEncodingException e) {
+			throw new CVSException (e.getMessage());
 	}
+	}
+
 	/**
 	 * Sends the given bytes and a newline to the server.
 	 */

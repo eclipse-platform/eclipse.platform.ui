@@ -60,6 +60,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String PREF_LOCATION = "location"; //$NON-NLS-1$
 	public static final String PREF_WRITE_LOCATION = "write"; //$NON-NLS-1$
 	public static final String PREF_READ_LOCATION = "read"; //$NON-NLS-1$
+	public static final String PREF_SERVER_ENCODING = "encoding"; //$NON-NLS-1$
 	
 	// server platform constants
 	public static final int UNDETERMINED_PLATFORM = 0;
@@ -148,6 +149,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 *   host The host where the repository resides
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
+	 *   encoding The file system encoding of the server
 	 */
 	public static CVSRepositoryLocation fromProperties(Properties configuration) throws CVSException {
 		// We build a string to allow validation of the components that are provided to us
@@ -177,7 +179,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));//$NON-NLS-1$ 
 		root = root.replace('\\', '/');
 
-		return new CVSRepositoryLocation(method, user, password, host, port, root, user != null, false);
+		String encoding = configuration.getProperty("encoding"); //$NON-NLS-1$
+		
+		return new CVSRepositoryLocation(method, user, password, host, port, root, encoding, user != null, false);
 	}
 	
 	/**
@@ -299,9 +303,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			String root = location.substring(start).replace('\\', '/');
 			
 			if (validateOnly)
-				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 
-				
-			return new CVSRepositoryLocation(method, user, password, host, port, root, (user != null), (password != null));
+				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 		
+			return new CVSRepositoryLocation(method, user, password, host, port, root, null /* encoding */, (user != null), (password != null));
 		}
 		catch (IndexOutOfBoundsException e) {
 			// We'll get here if anything funny happened while extracting substrings
@@ -464,7 +467,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * Create a CVSRepositoryLocation from its composite parts.
 	 */
-	private CVSRepositoryLocation(IConnectionMethod method, String user, String password, String host, int port, String root, boolean userFixed, boolean passwordFixed) {
+	private CVSRepositoryLocation(IConnectionMethod method, String user, String password, String host, int port, String root, String encoding, boolean userFixed, boolean passwordFixed) {
 		this.method = method;
 		this.user = user;
 		this.password = password;
@@ -477,6 +480,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// The password can only be fixed if the username is and a password is provided
 		if (userFixed && passwordFixed && (password != null))
 			this.passwordFixed = true;
+		setEncoding(encoding);
 	}
 	
 	/*
@@ -571,6 +575,32 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		return port;
 	}
 	
+	/*
+	 * @see ICVSRepositoryLocation#getEncoding()
+	 */
+	public String getEncoding() {
+		if (hasPreferences()) {
+			return getPreferences().get(PREF_SERVER_ENCODING, getDefaultEncoding());
+		} else {
+			return getDefaultEncoding();
+		}
+	}
+
+	/*
+	 * @see ICVSRepositoryLocation#setEncoding()
+	 */
+	public void setEncoding(String encoding) {
+		if (encoding == null || encoding == getDefaultEncoding()) {
+			if (hasPreferences()) {
+				getPreferences().remove(PREF_SERVER_ENCODING);
+			}
+		} else {
+			ensurePreferencesStored();
+			getPreferences().put(PREF_SERVER_ENCODING, encoding);
+			flushPreferences();
+		}
+	}	
+
 	/*
 	 * @see ICVSRepositoryLocation#members(CVSTag, boolean, IProgressMonitor)
 	 */
@@ -1141,5 +1171,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (!hasPreferences()) {
 			storePreferences();
 		}
+	}
+	
+	private String getDefaultEncoding() {
+		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 }
