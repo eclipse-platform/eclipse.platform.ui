@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -309,8 +315,10 @@ protected void handleMouseMove(MouseEvent e) {
 }
 /**
  * Called when a drag operation has been requested.
- *  * @param position mouse cursor location relative to the control 
- * 	underneath the cursor */
+ * 
+ * @param position mouse cursor location relative to the control 
+ * 	underneath the cursor
+ */
 protected void isDragAllowed(Point position) {
 	if (getSourceBounds().width == 0 || getSourceBounds().height == 0)
 		return;

@@ -1,13 +1,13 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui;
 /**
  * Represents the context marked for the user in the navigation history.
@@ -27,12 +27,15 @@ public interface INavigationLocation {
 	/**
 	 * Release any state kept by this location. Any relevant state should be
 	 * saved by the previous call of saveState(IMemento). This object will
-	 * not be used until restoreState is called again. 	 */
+	 * not be used until restoreState is called again. 
+	 */
 	public void releaseState();
 	
 	/**
 	 * Persists the state of this location into the <code>memento</code>
-	 * 	 * @param memento the storage were the state should be saved into.	 */
+	 * 
+	 * @param memento the storage were the state should be saved into.
+	 */
 	public void saveState(IMemento memento);
 	
 	/**
@@ -43,7 +46,8 @@ public interface INavigationLocation {
 	public void restoreState(IMemento memento);
 	
 	/**
-	 * Restore the context saved by this location.	 */
+	 * Restore the context saved by this location.
+	 */
 	public void restoreLocation();
 	
 	/**
@@ -54,13 +58,18 @@ public interface INavigationLocation {
 	 * given the change to the new location to merge itself into the current
 	 * location minimizing the number of entries in the navigation history.
 	 * </p>
-	 *  	 * @param currentLocation where the receiver should be merged into	 * @return boolean true if the merge was possible	 */
+	 *  
+	 * @param currentLocation where the receiver should be merged into
+	 * @return boolean true if the merge was possible
+	 */
 	public boolean mergeInto(INavigationLocation currentLocation);
 	
 	/**
 	 * Returns the input used for this location. Returns <code>null</code> if the
 	 * receiver's state has been released.
-	 * 	 * @return the input for this location	 */
+	 * 
+	 * @return the input for this location
+	 */
 	public Object getInput();
 	
 	/**

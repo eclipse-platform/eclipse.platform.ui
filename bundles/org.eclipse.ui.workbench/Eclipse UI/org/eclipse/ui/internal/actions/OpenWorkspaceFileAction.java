@@ -1,13 +1,13 @@
-/************************************************************************
-Copyright (c) 2002 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-	IBM - Initial implementation
-************************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.ui.internal.actions;
 
@@ -61,8 +61,10 @@ public void init(IWorkbenchWindow window) {
 }
 /**
  * Query the user for the resource that should be opened
- *  * @return the resource that should be opened or null if the 
- * 	resource selection dialog was cancelled. */
+ * 
+ * @return the resource that should be opened or null if the 
+ * 	resource selection dialog was cancelled.
+ */
 IFile queryFileResource() {
 	Shell parent = workbenchWindow.getShell();
 	IContainer input = ResourcesPlugin.getWorkspace().getRoot();

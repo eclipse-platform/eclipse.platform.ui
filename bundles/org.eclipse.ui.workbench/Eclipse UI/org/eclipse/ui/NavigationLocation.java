@@ -1,19 +1,20 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.ui;
 /**
  * Default implementation of INavigationLocation.
  * 
- * @since 2.1 */
+ * @since 2.1
+ */
 public abstract class NavigationLocation implements INavigationLocation {
 	
 	private IWorkbenchPage page;
@@ -21,14 +22,18 @@ public abstract class NavigationLocation implements INavigationLocation {
 	
 	/**
 	 * Constructs a NavigationLocation with its editor part.
-	 * 	 * @param editorPart	 */
+	 * 
+	 * @param editorPart
+	 */
 	protected NavigationLocation(IEditorPart editorPart) {
 		this.page = editorPart.getSite().getPage();
 		this.input = editorPart.getEditorInput();
 	}
 	/** 
 	 * Returns the part that the receiver holds the location for.
-	 * 	 * @return IEditorPart	 */
+	 * 
+	 * @return IEditorPart
+	 */
 	protected IEditorPart getEditorPart() {
 		if (input == null)
 			return null;
@@ -67,7 +72,9 @@ public abstract class NavigationLocation implements INavigationLocation {
 	}
 	/**
 	 * May be extended by clients.
-	 * 	 * @see org.eclipse.ui.INavigationLocation#releaseState()	 */
+	 * 
+	 * @see org.eclipse.ui.INavigationLocation#releaseState()
+	 */
 	public void releaseState() {
 		input = null;
 	}	

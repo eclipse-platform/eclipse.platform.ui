@@ -1,13 +1,13 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.ui.internal;
 
@@ -44,7 +44,8 @@ public class NavigationHistory implements INavigationHistory {
 	private int activeEntry = 0;
 /**
  * Creates a new NavigationHistory to keep the NavigationLocation
- * entries of the specified page. */
+ * entries of the specified page.
+ */
 public NavigationHistory(WorkbenchPage page) {
 	this.page= page;
 	page.addPartListener(new IPartListener() {
@@ -178,7 +179,8 @@ public INavigationLocation getCurrentLocation() {
 	return entry == null ? null : entry.location;
 }
 /**
- * Disposes this NavigationHistory and all entries. */
+ * Disposes this NavigationHistory and all entries.
+ */
 public void dispose() {
 	Iterator e= history.iterator();
 	while (e.hasNext()) {
@@ -188,7 +190,8 @@ public void dispose() {
 }
 /**
  * Keeps a reference to the forward action to update its state
- * whenever needed. */
+ * whenever needed.
+ */
 public void setForwardAction(NavigationHistoryAction action) {
 	forwardAction= action;
 	updateActions();
@@ -210,7 +213,8 @@ private NavigationHistoryEntry getEntry(int index) {
 	return null;
 }
 /*
- * Adds the specified entry to the history. */
+ * Adds the specified entry to the history.
+ */
 private void add(NavigationHistoryEntry entry) {
 	removeForwardEntries();
 	if(history.size() == CAPACITY) {
@@ -221,7 +225,8 @@ private void add(NavigationHistoryEntry entry) {
 	activeEntry = history.size() - 1;
 }
 /*
- * Remove all entries after the active entry. */
+ * Remove all entries after the active entry.
+ */
 private void removeForwardEntries() {
 	int length= history.size();
 	for (int i= activeEntry + 1; i < length; i++) {
@@ -230,7 +235,8 @@ private void removeForwardEntries() {
 	}
 }
 /*
- * Adds a location to the history. */
+ * Adds a location to the history.
+ */
 private void addEntry(IEditorPart part, boolean markLocation) {
 	if (ignoreEntries > 0 || part == null)
 		return;
@@ -259,7 +265,8 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 	updateActions();
 }
 /*
- * Prints all the entries in the console. For debug only. */
+ * Prints all the entries in the console. For debug only.
+ */
 private void printEntries(String label) {
 	if (false) {
 		System.out.println("+++++ " + label + "+++++ "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -271,7 +278,8 @@ private void printEntries(String label) {
 	}
 }
 /*
- * Returns true if the forward action can be performed otherwise returns false. */
+ * Returns true if the forward action can be performed otherwise returns false.
+ */
 /* package */ boolean canForward() {
 	return (0 <= activeEntry + 1) && (activeEntry + 1 < history.size());
 }
@@ -282,13 +290,15 @@ private void printEntries(String label) {
 	return (0 <= activeEntry - 1) && (activeEntry - 1 < history.size());
 }
 /*
- * Update the actions enable/disable and tooltip state. */
+ * Update the actions enable/disable and tooltip state.
+ */
 private void updateActions() {
 	if (backwardAction != null) backwardAction.update();
 	if (forwardAction != null) forwardAction.update();
 }
 /*
- * Restore the specified entry */
+ * Restore the specified entry
+ */
 private void gotoEntry(NavigationHistoryEntry entry) {
 	if(entry == null)
 		return;
@@ -306,7 +316,8 @@ private void gotoEntry(NavigationHistoryEntry entry) {
 	}
 }
 /*
- * update the active entry */
+ * update the active entry
+ */
 private void updateEntry(NavigationHistoryEntry activeEntry) {
 	if(activeEntry == null || activeEntry.location == null)
 		return;
@@ -316,7 +327,8 @@ private void updateEntry(NavigationHistoryEntry activeEntry) {
 	
 /*
  * Perform the forward action by getting the next location and restoring
- * its context. */
+ * its context.
+ */
 public void forward() {
 	if (canForward())
 		shiftEntry(true);
@@ -330,7 +342,8 @@ public void backward() {
 		shiftEntry(false);
 }
 /*
- * Shift the history back or forward */
+ * Shift the history back or forward
+ */
 private void shiftEntry(boolean forward) {
 	updateEntry(getEntry(activeEntry));
 	if(forward)
@@ -350,7 +363,8 @@ protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
 	gotoEntry(entry);
 }
 /**
- * Save the state of this history into the memento. */
+ * Save the state of this history into the memento.
+ */
 void saveState(IMemento memento) {
 	NavigationHistoryEntry cEntry = (NavigationHistoryEntry)getEntry(activeEntry);
 	if(cEntry == null || !cEntry.editorInfo.isPersistable())
@@ -386,7 +400,8 @@ void saveState(IMemento memento) {
 	}
 }
 /**
- * Restore the state of this history from the memento. */
+ * Restore the state of this history from the memento.
+ */
 void restoreState(IMemento memento) {
 	IMemento editorsMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);	
 	IMemento items[] = memento.getChildren(IWorkbenchConstants.TAG_ITEM);

@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -300,6 +306,9 @@ public IDecoratorManager getDecoratorManager();
  * a dialog to prompt the user if <code>confirm</code> is 
  * true. Return true if successful. Return false if the
  * user has cancelled the command.
- *  * @param confirm prompt the user if true * @return boolean false if the operation was cancelled. */
+ * 
+ * @param confirm prompt the user if true
+ * @return boolean false if the operation was cancelled.
+ */
 public boolean saveAllEditors(boolean confirm);
 }

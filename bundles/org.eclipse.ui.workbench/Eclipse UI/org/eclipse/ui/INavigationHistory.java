@@ -1,13 +1,13 @@
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui;
 /**
  * Manages a list of entries to keep history of locations on editors
@@ -38,14 +38,19 @@ public interface INavigationHistory {
 	 * should be sent by clients whenever significant changes
 	 * in location are detected.
 	 * 
-	 * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>	 */
+	 * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>
+	 */
 	public void markLocation(IEditorPart part);
 	/**
 	 * Return the current location;
-	 * 	 * @return INavigationLocation the current location	 */
+	 * 
+	 * @return INavigationLocation the current location
+	 */
 	public INavigationLocation getCurrentLocation();
 	/**
 	 * Return all entries in the history.
-	 * 	 * @return INavigationLocation[]	 */
+	 * 
+	 * @return INavigationLocation[]
+	 */
 	public INavigationLocation[] getLocations();
 }
