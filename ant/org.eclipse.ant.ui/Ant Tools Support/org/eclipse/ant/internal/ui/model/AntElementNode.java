@@ -586,4 +586,8 @@ public class AntElementNode implements IAdaptable {
 	public boolean collapseProjection() {
 		return false;
 	}
+	
+	public String getReferencedElement(int offset) {
+		return null;
+	}
 }

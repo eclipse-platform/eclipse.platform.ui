@@ -1061,10 +1061,17 @@ public class AntModel {
 	}
 
 	
-	public String getEntityPath(String entityName) {
+	public String getPath(String text, int offset) {
 		if (fEntityNameToPath != null) {
-			return (String)fEntityNameToPath.get(entityName);
+			String path= (String)fEntityNameToPath.get(text);
+			if (path != null) {
+				return path;
+			}
 		} 
+		AntElementNode node= getNode(offset, true);
+		if (node != null) {
+			return node.getReferencedElement(offset);
+		}
 		return null;
 	}
 	
@@ -1278,6 +1285,14 @@ public class AntModel {
 					return found;
 				}
 			}
+		}
+		return null;
+	}
+
+	public String getText(int offset, int length) {
+		try {
+			return fDocument.get(offset, length);
+		} catch (BadLocationException e) {
 		}
 		return null;
 	}

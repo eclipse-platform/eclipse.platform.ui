@@ -18,6 +18,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.xml.sax.Attributes;
@@ -25,6 +26,7 @@ import org.xml.sax.Attributes;
 public class AntPropertyNode extends AntTaskNode {
 	
 	private String fValue= null;
+	private String fReferencedName;
 	
 	/*
 	 * The set of properties defined by this node
@@ -38,10 +40,12 @@ public class AntPropertyNode extends AntTaskNode {
          if(label == null) {
 			label = attributes.getValue(IAntModelConstants.ATTR_FILE);
          	if(label != null) {
+         		fReferencedName= label;
          		label=  "file="+label; //$NON-NLS-1$
          	} else {	
          		label =  attributes.getValue(IAntModelConstants.ATTR_RESOURCE);
          		if (label != null) {
+         			fReferencedName= label;
          			label= "resource="+label; //$NON-NLS-1$
          		} else {
          			label = attributes.getValue(IAntModelConstants.ATTR_ENVIRONMENT);
@@ -61,7 +65,10 @@ public class AntPropertyNode extends AntTaskNode {
 	}
 	
 	public String getProperty(String propertyName) {
-		return (String)fProperties.get(propertyName);
+		if (fProperties != null) {
+			return (String)fProperties.get(propertyName);
+		} 
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -101,5 +108,19 @@ public class AntPropertyNode extends AntTaskNode {
 			fProperties= new HashMap(1);
 		}
 		fProperties.put(propertyName, value);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
+	 */
+	public String getReferencedElement(int offset) {
+		if (fReferencedName != null) {
+			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
+			String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
+			if ("file".equals(attributeString) || "resource".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
+				return fReferencedName;
+			}
+        }
+        return null;
 	}
 }

@@ -15,6 +15,7 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import java.io.File;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -611,7 +612,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			ISourceViewer viewer= getSourceViewer();
-			IRegion region= XMLTextHover.getRegion(viewer, textSelection.getOffset());
+			int textOffset= textSelection.getOffset();
+			IRegion region= XMLTextHover.getRegion(viewer, textOffset);
 			if (region != null) {
 				IDocument document= viewer.getDocument();
 				String text= null;
@@ -627,9 +629,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 						if (node == null) {
 							node= model.getPropertyNode(text);
 							if (node == null) {
-								String path= model.getEntityPath(text);
+								String path= model.getPath(text, region.getOffset());
 								if (path != null) {
-									errorMessage= openInEditor(path);
+									errorMessage= openInEditor(path, model.getEditedFile());
 									if (errorMessage == null) {
 										return;
 									}
@@ -657,14 +659,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		String errorMessage= null;
 		if (node.isExternal()) {
 			String path= node.getFilePath();
-			errorMessage= openInEditor(path);
+			errorMessage= openInEditor(path, null);
 		} else {
 			setSelection(node, true);
 		}
 		return errorMessage;
 	}
-	private String openInEditor(String path) {
-		IFile file= AntUtil.getFileForLocation(path, null);
+	
+	private String openInEditor(String path, File buildFile) {
+		IFile file= AntUtil.getFileForLocation(path, buildFile.getParentFile());
 		if (file != null && file.exists()) {
 			try {
 				IWorkbenchPage p= getEditorSite().getPage();

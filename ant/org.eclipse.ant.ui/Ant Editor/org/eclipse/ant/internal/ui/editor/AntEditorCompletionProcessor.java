@@ -1282,7 +1282,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Calling this method is only safe if the current proposal mode is really
      * <code>PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL</code>.
      */
-    private String getAttributeStringFromDocumentStringToPrefix(String docStringToPrefix) {
+    public static String getAttributeStringFromDocumentStringToPrefix(String docStringToPrefix) {
         int index = docStringToPrefix.lastIndexOf('=');
         String subString = docStringToPrefix.substring(0, index);
         subString = subString.trim();
@@ -1302,7 +1302,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return trimBeginning(subString);
     }
     
-    private String trimBeginning(String toBeTrimmed) {
+    private static String trimBeginning(String toBeTrimmed) {
 		int i= 0;
 		while ((i != toBeTrimmed.length()) && Character.isWhitespace(toBeTrimmed.charAt(i))) {
 			i++;
