@@ -11,6 +11,8 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.*;
@@ -83,6 +85,7 @@ public class ResourceNavigator
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
+	private static final String TAG_IS_ENABLED = "isEnabled"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
@@ -708,14 +711,43 @@ public class ResourceNavigator
 	 */
 	private void restoreFilters() {
 		IMemento filtersMem = memento.getChild(TAG_FILTERS);
-		if (filtersMem != null) {
+		
+		if (filtersMem != null) {  //filters have been defined
 			IMemento children[] = filtersMem.getChildren(TAG_FILTER);
-			String filters[] = new String[children.length];
-			for (int i = 0; i < children.length; i++) {
-				filters[i] = children[i].getString(TAG_ELEMENT);
-			}
-			getPatternFilter().setPatterns(filters);
-		} else {
+
+			// check if first element has new tag defined, indicates new version
+			if (children[0].getString(TAG_IS_ENABLED) != null) { 
+				ArrayList selectedFilters = new ArrayList();
+				ArrayList unSelectedFilters = new ArrayList();
+				for (int i = 0; i < children.length; i++) {
+					if (children[i].getString(TAG_IS_ENABLED).equals(String.valueOf(true)))
+						selectedFilters.add(children[i].getString(TAG_ELEMENT));
+					else //enabled == false
+						unSelectedFilters.add(children[i].getString(TAG_ELEMENT));
+				}
+
+				/* merge filters from Memento with selected = true filters from plugins
+				 * ensure there are no duplicates & don't override user preferences	 */
+				List pluginFilters = FiltersContentProvider.getDefaultFilters();				
+				for (Iterator iter = pluginFilters.iterator(); iter.hasNext();) {
+					String element = (String) iter.next();
+					if (!selectedFilters.contains(element) && !unSelectedFilters.contains(element))
+						selectedFilters.add(element);
+				}
+				
+				//Convert to an array of Strings
+				String[] patternArray = new String[selectedFilters.size()];
+				selectedFilters.toArray(patternArray);
+				getPatternFilter().setPatterns(patternArray);
+				
+			} else {  //filters defined, old version: ignore filters from plugins
+				String filters[] = new String[children.length];
+				for (int i = 0; i < children.length; i++) {
+					filters[i] = children[i].getString(TAG_ELEMENT);
+				}
+				getPatternFilter().setPatterns(filters);	
+			}			
+		} else {  //no filters defined, old version: ignore filters from plugins
 			getPatternFilter().setPatterns(new String[0]);
 		}
 	}
@@ -787,15 +819,19 @@ public class ResourceNavigator
 
 		//save sorter
 		memento.putInteger(TAG_SORTER, getSorter().getCriteria());
+		
 		//save filters
 		String filters[] = getPatternFilter().getPatterns();
-		if (filters.length > 0) {
-			IMemento filtersMem = memento.createChild(TAG_FILTERS);
-			for (int i = 0; i < filters.length; i++) {
-				IMemento child = filtersMem.createChild(TAG_FILTER);
-				child.putString(TAG_ELEMENT, filters[i]);
-			}
-		}
+		List selectedFilters = Arrays.asList(filters);
+		List allFilters = FiltersContentProvider.getDefinedFilters();
+		IMemento filtersMem = memento.createChild(TAG_FILTERS);
+		for (Iterator iter = allFilters.iterator(); iter.hasNext();) {
+			String element = (String) iter.next();
+			IMemento child = filtersMem.createChild(TAG_FILTER);
+			child.putString(TAG_ELEMENT, element);
+			child.putString(TAG_IS_ENABLED, String.valueOf(selectedFilters.contains(element)));
+		}		
+			
 		//save visible expanded elements
 		Object expandedElements[] = viewer.getVisibleExpandedElements();
 		if (expandedElements.length > 0) {
