@@ -42,7 +42,7 @@ public class CommitAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CommitAction.commitFailed"), PROGRESS_DIALOG);
+		}, Policy.bind("CommitAction.commitFailed"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*

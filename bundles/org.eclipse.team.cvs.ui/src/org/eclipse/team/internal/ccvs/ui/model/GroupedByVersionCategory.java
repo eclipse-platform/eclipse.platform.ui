@@ -18,6 +18,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class GroupedByVersionCategory extends CVSModelElement implements IAdaptable {
@@ -86,7 +87,7 @@ public class GroupedByVersionCategory extends CVSModelElement implements IAdapta
 	 * @param object The object to get a label for.
 	 */
 	public String getLabel(Object o) {
-		return "Versions";
+		return Policy.bind("GroupedByVersionCategory.Versions_1"); //$NON-NLS-1$
 	}
 
 	/**

@@ -28,15 +28,15 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 		} else if (t instanceof TeamException) {
 			error = ((TeamException)t).getStatus();
 		} else {
-			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal"), t);
+			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal"), t); //$NON-NLS-1$
 		}
 	
 		Shell shell = new Shell(Display.getDefault());
 	
 		if (error.getSeverity() == IStatus.INFO) {
-			MessageDialog.openInformation(shell, Policy.bind("information"), error.getMessage());
+			MessageDialog.openInformation(shell, Policy.bind("information"), error.getMessage()); //$NON-NLS-1$
 		} else {
-			ErrorDialog.openError(shell, Policy.bind("exception"), null, error);
+			ErrorDialog.openError(shell, Policy.bind("exception"), null, error); //$NON-NLS-1$
 		}
 		shell.dispose();
 		// Let's log non-team exceptions

@@ -23,7 +23,7 @@ public class SharingWizardFinishPage extends CVSWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 1);
 		Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
-		label.setText(Policy.bind("SharingWizardFinishPage.message"));
+		label.setText(Policy.bind("SharingWizardFinishPage.message")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.widthHint = 350;
 		label.setLayoutData(data);

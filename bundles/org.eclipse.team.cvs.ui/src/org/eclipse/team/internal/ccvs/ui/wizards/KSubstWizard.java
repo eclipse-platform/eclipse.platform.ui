@@ -115,7 +115,7 @@ public class KSubstWizard extends Wizard {
 		this.defaultKSubst = defaultOption;
 		this.resources = resources;
 		this.depth = depth;
-		setWindowTitle(Policy.bind("KSubstWizard.title"));
+		setWindowTitle(Policy.bind("KSubstWizard.title")); //$NON-NLS-1$
 	}
 
 	/**
@@ -210,8 +210,8 @@ public class KSubstWizard extends Wizard {
 			getContainer().run(false /*fork*/, true /*cancelable*/, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask("", 10000);
-						monitor.setTaskName(Policy.bind("KSubstWizard.working"));
+						monitor.beginTask("", 10000); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("KSubstWizard.working")); //$NON-NLS-1$
 						computeChangeList(mainPage.getKSubstOption());
 						Map table = getProviderMapping();
 						
@@ -239,7 +239,7 @@ public class KSubstWizard extends Wizard {
 			if ( ! messages.isEmpty()) {
 				boolean error = false;
 				MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0,
-					Policy.bind("KSubstWizard.problemsMessage"), null);
+					Policy.bind("KSubstWizard.problemsMessage"), null); //$NON-NLS-1$
 				for (int i = 0; i < messages.size(); i++) {
 					IStatus status = (IStatus)messages.get(i);
 					if (status.getSeverity() == IStatus.ERROR || status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -257,9 +257,9 @@ public class KSubstWizard extends Wizard {
 				}
 				String title;
 				if (error) {
-					title = Policy.bind("KSubstWizard.errorTitle");
+					title = Policy.bind("KSubstWizard.errorTitle"); //$NON-NLS-1$
 				} else {
-					title = Policy.bind("KSubstWizard.warningTitle");
+					title = Policy.bind("KSubstWizard.warningTitle"); //$NON-NLS-1$
 				}
 				ErrorDialog.openError(getShell(), title, message, statusToDisplay);
 			}

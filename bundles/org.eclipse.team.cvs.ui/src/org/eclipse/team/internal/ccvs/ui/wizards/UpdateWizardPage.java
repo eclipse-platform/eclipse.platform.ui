@@ -61,7 +61,7 @@ public class UpdateWizardPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText(Policy.bind("UpdateWizardPage.description"));
+		description.setText(Policy.bind("UpdateWizardPage.description")); //$NON-NLS-1$
 		
 		tree = createTree(composite);
 		tree.setContentProvider(new WorkbenchContentProvider());
@@ -88,15 +88,15 @@ public class UpdateWizardPage extends CVSWizardPage {
 			}
 		});
 		
-		createLabel(composite, "");
-		createLabel(composite, "");
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, ""); //$NON-NLS-1$
 		
 		doOverwrite = false;
 		final Button overwrite = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		overwrite.setLayoutData(data);
-		overwrite.setText(Policy.bind("UpdateWizardPage.overwrite"));
+		overwrite.setText(Policy.bind("UpdateWizardPage.overwrite")); //$NON-NLS-1$
 		overwrite.setSelection(doOverwrite);
 		overwrite.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {

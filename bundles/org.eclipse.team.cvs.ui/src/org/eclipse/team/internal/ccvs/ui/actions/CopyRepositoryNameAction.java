@@ -27,7 +27,7 @@ public class CopyRepositoryNameAction extends TeamAction {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.length; i++) {
 			buffer.append(locations[i].getLocation());
-			if (i < locations.length - 1) buffer.append("\n");
+			if (i < locations.length - 1) buffer.append("\n"); //$NON-NLS-1$
 		}
 		copyToClipbard(Display.getDefault(), buffer.toString());
 	}

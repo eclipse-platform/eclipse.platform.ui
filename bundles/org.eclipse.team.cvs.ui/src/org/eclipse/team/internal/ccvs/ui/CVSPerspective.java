@@ -22,9 +22,9 @@ public class CVSPerspective implements IPerspectiveFactory {
 	 */
 	public void defineActions(IPageLayout layout) {
 		// Add "new wizards".
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.project");
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
-		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.project"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file"); //$NON-NLS-1$
 	
 		// Add "show views".
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
@@ -40,7 +40,7 @@ public class CVSPerspective implements IPerspectiveFactory {
 	public void defineLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 	
-		IFolderLayout top = layout.createFolder("top", IPageLayout.TOP, 0.60f, editorArea);
+		IFolderLayout top = layout.createFolder("top", IPageLayout.TOP, 0.60f, editorArea); //$NON-NLS-1$
 		top.addView(RepositoriesView.VIEW_ID);
 		layout.addView(HistoryView.VIEW_ID, IPageLayout.BOTTOM, 1.0f, editorArea);
 	

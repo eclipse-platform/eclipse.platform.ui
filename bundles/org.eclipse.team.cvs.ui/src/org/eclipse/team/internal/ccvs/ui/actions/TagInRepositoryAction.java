@@ -90,7 +90,7 @@ public class TagInRepositoryAction extends TagAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG);
+		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*

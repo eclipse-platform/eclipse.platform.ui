@@ -31,7 +31,7 @@ public class CompareRemoteResourcesAction extends TeamAction {
 	public void run(IAction action) {
 		ICVSRemoteResource[] editions = getSelectedRemoteResources();
 		if (editions == null || editions.length != 2) {
-			MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources"));
+			MessageDialog.openError(getShell(), Policy.bind("CompareRemoteResourcesAction.unableToCompare"), Policy.bind("CompareRemoteResourcesAction.selectTwoResources")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		ResourceEditionNode left = new ResourceEditionNode(editions[0]);

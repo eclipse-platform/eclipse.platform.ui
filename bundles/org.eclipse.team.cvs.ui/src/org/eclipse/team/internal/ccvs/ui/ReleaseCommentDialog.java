@@ -24,7 +24,7 @@ public class ReleaseCommentDialog extends Dialog {
 	private static final int WIDTH_HINT = 350;
 	private static final int HEIGHT_HINT = 50;
 	
-	private String comment = "";
+	private String comment = ""; //$NON-NLS-1$
 	
 	private Text text;
 	
@@ -40,14 +40,14 @@ public class ReleaseCommentDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText(Policy.bind("ReleaseCommentDialog.title"));
+		getShell().setText(Policy.bind("ReleaseCommentDialog.title")); //$NON-NLS-1$
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(composite, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(Policy.bind("ReleaseCommentDialog.enterComment"));
+		label.setText(Policy.bind("ReleaseCommentDialog.enterComment")); //$NON-NLS-1$
 		
 		text = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);

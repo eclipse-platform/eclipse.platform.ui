@@ -86,7 +86,7 @@ public class DefineVersionAction extends TeamAction {
 				Shell shell = getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineVersionAction.enterTag"), Policy.bind("DefineVersionAction.enterTagLong"), null, validator);
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineVersionAction.enterTag"), Policy.bind("DefineVersionAction.enterTagLong"), null, validator); //$NON-NLS-1$ //$NON-NLS-2$
 						if (dialog.open() == InputDialog.OK) {
 							ICVSRemoteResource resource = projects[0].getCVSResource();
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.VERSION);
@@ -95,7 +95,7 @@ public class DefineVersionAction extends TeamAction {
 					}
 				});
 			}
-		}, Policy.bind("DefineVersionAction.tag"), this.PROGRESS_DIALOG);
+		}, Policy.bind("DefineVersionAction.tag"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

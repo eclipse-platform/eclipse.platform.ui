@@ -45,8 +45,8 @@ public class UpdateAction extends TeamAction {
 				try {					
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("UpdateAction.updating"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("UpdateAction.updating")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -61,7 +61,7 @@ public class UpdateAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("UpdateAction.update"), this.PROGRESS_DIALOG);
+		}, Policy.bind("UpdateAction.update"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 
 	}
 	/*

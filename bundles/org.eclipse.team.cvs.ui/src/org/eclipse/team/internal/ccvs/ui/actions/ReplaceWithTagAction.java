@@ -58,7 +58,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					final boolean[] result = new boolean[] { false };
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges"));
+							result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("localChanges")); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					});
 					if (!result[0]) return;
@@ -76,7 +76,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				}
 				tag[0] = dialog.getResult();
 			}
-		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			
+		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
 		
 		if (tag[0] == null) return;
 		
@@ -86,8 +86,8 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName()));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName())); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -102,7 +102,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG);
+		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	protected boolean isEnabled() {

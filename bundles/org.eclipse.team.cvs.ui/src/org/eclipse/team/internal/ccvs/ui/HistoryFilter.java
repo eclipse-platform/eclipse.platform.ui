@@ -53,10 +53,10 @@ public class HistoryFilter extends ViewerFilter {
 			&& (toDate.after(entry.getDate()));
 	}
 	protected boolean hasAuthor() {
-		return !author.equals("");
+		return !author.equals(""); //$NON-NLS-1$
 	}
 	protected boolean hasComment() {
-		return !comment.equals("");
+		return !comment.equals(""); //$NON-NLS-1$
 	}
 	protected boolean hasDate() {
 		return fromDate != null && toDate != null;

@@ -96,7 +96,7 @@ public class RemoveRootAction extends TeamAction {
 							final String location = roots[i].getLocation();
 							shell.getDisplay().syncExec(new Runnable() {
 								public void run() {
-									MessageDialog.openInformation(getShell(), "Unable to Discard Location", "Projects in the local workspace are shared with " + location);
+									MessageDialog.openInformation(getShell(), Policy.bind("RemoteRootAction.Unable_to_Discard_Location_1"), Policy.bind("RemoteRootAction.Projects_in_the_local_workspace_are_shared_with__2") + location); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							});
 						} else {
@@ -107,7 +107,7 @@ public class RemoveRootAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind("RemoveRootAction.removeRoot"), this.PROGRESS_DIALOG);
+		}, Policy.bind(Policy.bind("RemoteRootAction.RemoveRootAction.removeRoot_3")), this.PROGRESS_DIALOG); //$NON-NLS-1$
 
 	}
 	/*

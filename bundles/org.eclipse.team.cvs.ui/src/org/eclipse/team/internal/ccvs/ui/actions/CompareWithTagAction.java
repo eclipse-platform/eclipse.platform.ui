@@ -58,7 +58,7 @@ public class CompareWithTagAction extends TeamAction {
 				}
 				tag[0] = dialog.getResult();
 			}
-		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		
 		if (tag[0] == null) return;
 		
@@ -69,18 +69,18 @@ public class CompareWithTagAction extends TeamAction {
 			run(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 					try {
-						monitor.beginTask(Policy.bind("CompareWithTagAction.fetching", tag[0].getName()), 100);
+						monitor.beginTask(Policy.bind("CompareWithTagAction.fetching", tag[0].getName()), 100); //$NON-NLS-1$
 						remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource, tag[0], Policy.subMonitorFor(monitor, 100));
 						monitor.done();
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
-			}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_DIALOG);
+			}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_DIALOG); //$NON-NLS-1$
 			
 			// Just to be safe...
 			if (remoteResource[0] == null) {
-				MessageDialog.openInformation(getShell(), Policy.bind("CompareWithTagAction.noRemote"), Policy.bind("CompareWithTagAction.noRemoteLong"));
+				MessageDialog.openInformation(getShell(), Policy.bind("CompareWithTagAction.noRemote"), Policy.bind("CompareWithTagAction.noRemoteLong")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			
@@ -89,7 +89,7 @@ public class CompareWithTagAction extends TeamAction {
 				public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 					CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource), new ResourceEditionNode(remoteResource[0])));
 				}
-			}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR);
+			}, Policy.bind("CompareWithTagAction.compare"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		}
 	}
 	

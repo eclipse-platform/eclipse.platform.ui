@@ -79,9 +79,9 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText(Policy.bind("RepositorySelectionPage.description"));
+		description.setText(Policy.bind("RepositorySelectionPage.description")); //$NON-NLS-1$
 
-		useExistingRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useExisting"), 2);
+		useExistingRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useExisting"), 2); //$NON-NLS-1$
 		table = createTable(composite);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
@@ -91,7 +91,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 				setPageComplete(true);
 			}
 		});
-		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 2);
+		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 2); //$NON-NLS-1$
 
 		useExistingRepo.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {

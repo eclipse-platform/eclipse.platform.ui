@@ -31,7 +31,7 @@ public class UpdateWizard extends Wizard {
 	
 	public UpdateWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("UpdateWizard.title"));
+		setWindowTitle(Policy.bind("UpdateWizard.title")); //$NON-NLS-1$
 	}
 	
 	public void addPages() {
@@ -40,14 +40,14 @@ public class UpdateWizard extends Wizard {
 			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask(null, 100);
-					updatePage = new UpdateWizardPage("updatePage", Policy.bind("UpdateWizard.updatePage"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE));
+					updatePage = new UpdateWizardPage("updatePage", Policy.bind("UpdateWizard.updatePage"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
 					updatePage.setProject(project);
 					addPage(updatePage);
 					monitor.done();
 				}
 			});
 		} catch (InvocationTargetException e) {
-			CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), e.getTargetException()));
+			CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Ignore
 		}

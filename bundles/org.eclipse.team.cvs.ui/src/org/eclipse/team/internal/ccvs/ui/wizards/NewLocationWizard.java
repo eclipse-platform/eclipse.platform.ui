@@ -37,19 +37,19 @@ public class NewLocationWizard extends Wizard {
 			section = workbenchSettings.addNewSection("NewLocationWizard");//$NON-NLS-1$
 		}
 		setDialogSettings(section);
-		setWindowTitle(Policy.bind("NewLocationWizard.title"));
+		setWindowTitle(Policy.bind("NewLocationWizard.title")); //$NON-NLS-1$
 	}
 
 	/**
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.heading"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE));
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.heading"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
 		mainPage.setShowValidate(true);
-		mainPage.setDescription(Policy.bind("NewLocationWizard.description"));
+		mainPage.setDescription(Policy.bind("NewLocationWizard.description")); //$NON-NLS-1$
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
@@ -88,13 +88,13 @@ public class NewLocationWizard extends Wizard {
 			IStatus error = e.getStatus();
 			if (root[0] == null) {
 				// Exception creating the root, we cannot continue
-				ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, error);
+				ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, error); //$NON-NLS-1$
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.
 				boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
-					Policy.bind("NewLocationWizard.validationFailedTitle"),
-					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
+					Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
+					Policy.bind("NewLocationWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
 				try {
 					if (keep) {
 						provider.addRepository(root[0]);
@@ -102,7 +102,7 @@ public class NewLocationWizard extends Wizard {
 						provider.disposeRepository(root[0]);
 					}
 				} catch (TeamException e1) {
-					ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
+					ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus()); //$NON-NLS-1$
 					return false;
 				}
 				return keep;

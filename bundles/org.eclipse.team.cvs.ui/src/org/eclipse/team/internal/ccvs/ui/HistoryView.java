@@ -135,7 +135,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					String revision = entry.getRevision();
 					if (file == null) return revision;
 					if (currentRevision != null && currentRevision.equals(revision)) {
-						return "*" + revision;
+						Policy.bind("currentRevision", revision); //$NON-NLS-1$
 					}
 					return revision;
 				case COL_TAGS:
@@ -144,40 +144,40 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					for (int i = 0; i < tags.length; i++) {
 						result.append(tags[i].getName());
 						if (i < tags.length - 1) {
-							result.append(", ");
+							result.append(", "); //$NON-NLS-1$
 						}
 					}
 					return result.toString();
 				case COL_DATE:
 					Date date = entry.getDate();
-					if (date == null) return Policy.bind("notAvailable");
+					if (date == null) return Policy.bind("notAvailable"); //$NON-NLS-1$
 					return DateFormat.getInstance().format(date);
 				case COL_AUTHOR:
 					return entry.getAuthor();
 				case COL_COMMENT:
 					String comment = entry.getComment();
-					int index = comment.indexOf("\n");
+					int index = comment.indexOf("\n"); //$NON-NLS-1$
 					switch (index) {
 						case -1:
 							return comment;
 						case 0:
-							return "[...]";
+							return Policy.bind("HistoryView.[...]_4"); //$NON-NLS-1$
 						default:
-							return comment.substring(0, index) + "[...]";
+							return Policy.bind("CVSCompareRevisionsInput.truncate", comment.substring(0, index)); //$NON-NLS-1$
 					}
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	
-	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView";
+	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
 	/**
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
 		// Refresh (toolbar)
-		final Action refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) {
+		final Action refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 					public void run() {
@@ -186,7 +186,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				});
 			}
 		};
-		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh"));
+		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
 		
 		// Double click open action
 		openAction = new OpenLogEntryAction();
@@ -197,7 +197,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			}
 		});
 
-		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() {
+		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
 				monitor.beginTask(null, 100);
@@ -238,7 +238,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) {
+		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) { //$NON-NLS-1$
 			public void run() {
 				setViewerVisibility();
 				store.setValue(ICVSUIConstants.PREF_SHOW_COMMENTS, toggleTextAction.isChecked());
@@ -246,7 +246,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
 		// Toggle list visible action
-		toggleListAction = new Action(Policy.bind("HistoryView.showTags")) {
+		toggleListAction = new Action(Policy.bind("HistoryView.showTags")) { //$NON-NLS-1$
 			public void run() {
 				setViewerVisibility();
 				store.setValue(ICVSUIConstants.PREF_SHOW_TAGS, toggleListAction.isChecked());
@@ -279,11 +279,11 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	
 		// Create actions for the text editor
 		copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
-		copyAction.setText(Policy.bind("HistoryView.copy"));
+		copyAction.setText(Policy.bind("HistoryView.copy")); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
 		
 		selectAllAction = new TextViewerAction(textViewer, ITextOperationTarget.SELECT_ALL);
-		selectAllAction.setText(Policy.bind("HistoryView.selectAll"));
+		selectAllAction.setText(Policy.bind("HistoryView.selectAll")); //$NON-NLS-1$
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 
 		actionBars.updateActionBars();
@@ -323,35 +323,35 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.revision"));
+		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// tags
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.tags"));
+		col.setText(Policy.bind("HistoryView.tags")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.date"));
+		col.setText(Policy.bind("HistoryView.date")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.author"));
+		col.setText(Policy.bind("HistoryView.author")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		//comment
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.comment"));
+		col.setText(Policy.bind("HistoryView.comment")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
@@ -437,13 +437,13 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
-					textViewer.setDocument(new Document(""));
+					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
-					textViewer.setDocument(new Document(""));
+					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
 					return;
 				}
@@ -589,8 +589,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				}
 			}
 		}
-		manager.add(new Separator("additions"));
-		manager.add(new Separator("additions-end"));
+		manager.add(new Separator("additions")); //$NON-NLS-1$
+		manager.add(new Separator("additions-end")); //$NON-NLS-1$
 	}
 	private void fillTextMenu(IMenuManager manager) {
 		manager.add(copyAction);
@@ -653,7 +653,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
 					currentRevision = remoteFile.getRevision();
 					tableViewer.setInput(remoteFile);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
+					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 				} catch (TeamException e) {
 					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 				}				
@@ -662,7 +662,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		}
 		this.file = null;
 		tableViewer.setInput(null);
-		setTitle(Policy.bind("HistoryView.title"));
+		setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -671,12 +671,12 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	public void showHistory(ICVSRemoteFile file) {
 		if (file == null) {
 			tableViewer.setInput(null);
-			setTitle(Policy.bind("HistoryView.title"));
+			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			return;
 		}
 		this.file = null;
 		tableViewer.setInput(file);
-		setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName()));
+		setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName())); //$NON-NLS-1$
 	}
 	
 	private Action getContextMenuAction(String title, final IWorkspaceRunnable action) {

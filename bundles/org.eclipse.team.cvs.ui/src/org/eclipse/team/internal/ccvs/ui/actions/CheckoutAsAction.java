@@ -81,7 +81,7 @@ public class CheckoutAsAction extends TeamAction {
 					String name = folders[0].getName();
 					// Prompt for name
 					final int[] result = new int[] { InputDialog.OK };
-					final InputDialog dialog = new InputDialog(shell, Policy.bind("CheckoutAsAction.enterProjectTitle"), Policy.bind("CheckoutAsAction.enterProject"), name, 
+					final InputDialog dialog = new InputDialog(shell, Policy.bind("CheckoutAsAction.enterProjectTitle"), Policy.bind("CheckoutAsAction.enterProject"), name,  //$NON-NLS-1$ //$NON-NLS-2$
 						new IInputValidator() {
 							public String isValid(String newText) {
 								IStatus status = ResourcesPlugin.getWorkspace().validateName(newText, IResource.PROJECT);
@@ -107,19 +107,19 @@ public class CheckoutAsAction extends TeamAction {
 						final boolean[] confirm = new boolean[] { false };
 						shell.getDisplay().syncExec(new Runnable() {
 							public void run() {
-								confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite"));
+								confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite")); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						});
 						if (!confirm[0]) return;
 					}
 					monitor.beginTask(null, 100);
-					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, project.getName()));
+					monitor.setTaskName(Policy.bind("CheckoutAsAction.taskname", name, project.getName())); //$NON-NLS-1$
 					CVSProviderPlugin.getProvider().checkout(folders, new IProject[] { project }, Policy.subMonitorFor(monitor, 100));
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG);
+		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*

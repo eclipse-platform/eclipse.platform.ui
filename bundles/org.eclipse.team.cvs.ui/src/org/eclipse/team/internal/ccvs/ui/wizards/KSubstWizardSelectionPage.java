@@ -69,28 +69,28 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 		};
 		
 		// Automatic
-		automaticRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.automaticButton"), 1);
+		automaticRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.automaticButton"), 1); //$NON-NLS-1$
 		automaticRadioButton.addListener(SWT.Selection, selectionListener);
 		automaticRadioButton.setSelection(ksubst == null);
-		createWrappingLabel(top, Policy.bind("KSubstWizardSelectionPage.automaticLabel"), LABEL_INDENT_WIDTH, LABEL_WIDTH_HINT);
+		createWrappingLabel(top, Policy.bind("KSubstWizardSelectionPage.automaticLabel"), LABEL_INDENT_WIDTH, LABEL_WIDTH_HINT); //$NON-NLS-1$
 
 		// Binary
-		binaryRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.binaryButton"), 1);
+		binaryRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.binaryButton"), 1); //$NON-NLS-1$
 		binaryRadioButton.addListener(SWT.Selection, selectionListener);
 		binaryRadioButton.setSelection(Command.KSUBST_BINARY.equals(ksubst));
-		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.binaryLabel"), LABEL_INDENT_WIDTH);
+		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.binaryLabel"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
 		
 		// Text without keyword substitution
-		textRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.textButton"), 1);
+		textRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.textButton"), 1); //$NON-NLS-1$
 		textRadioButton.addListener(SWT.Selection, selectionListener);
 		textRadioButton.setSelection(Command.KSUBST_TEXT.equals(ksubst));
-		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.textLabel"), LABEL_INDENT_WIDTH);
+		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.textLabel"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
 		
 		// Text with keyword substitution
-		ksubstRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.textWithSubstitutionsButton"), 1);
+		ksubstRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.textWithSubstitutionsButton"), 1); //$NON-NLS-1$
 		ksubstRadioButton.addListener(SWT.Selection, selectionListener);
 		ksubstRadioButton.setSelection(false);
-		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.textWithSubstitutionsLabel"), LABEL_INDENT_WIDTH);
+		createIndentedLabel(top, Policy.bind("KSubstWizardSelectionPage.textWithSubstitutionsLabel"), LABEL_INDENT_WIDTH); //$NON-NLS-1$
 		
 		ksubstOptionCombo = new Combo(top, SWT.READ_ONLY);
 		ksubstOptionCombo.addListener(SWT.Selection, selectionListener);

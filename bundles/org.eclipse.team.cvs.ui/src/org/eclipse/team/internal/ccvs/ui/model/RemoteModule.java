@@ -113,7 +113,7 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "RemoteModule(" + folder.getName() + ")";
+		return "RemoteModule(" + folder.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public ICVSRemoteResource getCVSResource() {

@@ -185,7 +185,7 @@ public class CommitSyncAction extends MergeAction {
 		} catch (final CoreException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus());
+					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 					CVSUIPlugin.log(e.getStatus());
 				}
 			});
@@ -229,12 +229,12 @@ public class CommitSyncAction extends MergeAction {
 	 */
 	protected int promptForConflicts(SyncSet syncSet) {
 		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-		String question = Policy.bind("CommitSyncAction.questionRelease");
-		String title = Policy.bind("CommitSyncAction.titleRelease");
+		String question = Policy.bind("CommitSyncAction.questionRelease"); //$NON-NLS-1$
+		String title = Policy.bind("CommitSyncAction.titleRelease"); //$NON-NLS-1$
 		String[] tips = new String[] {
-			Policy.bind("CommitSyncAction.releaseAll"),
-			Policy.bind("CommitSyncAction.releasePart"),
-			Policy.bind("CommitSyncAction.cancelRelease")
+			Policy.bind("CommitSyncAction.releaseAll"), //$NON-NLS-1$
+			Policy.bind("CommitSyncAction.releasePart"), //$NON-NLS-1$
+			Policy.bind("CommitSyncAction.cancelRelease") //$NON-NLS-1$
 		};
 		Shell shell = getShell();
 		final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);

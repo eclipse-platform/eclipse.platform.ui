@@ -123,14 +123,14 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	private String getLabel(ITypedElement element) {
 		if (element instanceof ResourceNode) {
-			return Policy.bind("CVSCompareEditorInput.workspace", element.getName());
+			return Policy.bind("CVSCompareEditorInput.workspace", element.getName()); //$NON-NLS-1$
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
 			if (edition instanceof ICVSRemoteFile) {
 				try {
-					return resource.getName() + " " + ((ICVSRemoteFile)edition).getRevision();
+					return Policy.bind("nameAndRevision", resource.getName(), ((ICVSRemoteFile)edition).getRevision()); //$NON-NLS-1$
 				} catch (TeamException e) {
 					// fall through
 				}
@@ -139,14 +139,14 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)edition).getTag();
 					if (tag == null) {
-						return Policy.bind("CVSCompareEditorInput.inHead", edition.getName());
+						return Policy.bind("CVSCompareEditorInput.inHead", edition.getName()); //$NON-NLS-1$
 					} else if (tag.getType() == CVSTag.BRANCH) {
-						return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()});
+						return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()}); //$NON-NLS-1$
 					} else {
-						return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()});
+						return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()}); //$NON-NLS-1$
 					}
 				} else {
-					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), resource.getSyncInfo().getRevision()});
+					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), resource.getSyncInfo().getRevision()}); //$NON-NLS-1$
 				}
 			} catch (TeamException e) {
 				handle(e);
@@ -161,7 +161,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 */
 	private String getVersionLabel(ITypedElement element) {
 		if (element instanceof ResourceNode) {
-			return Policy.bind("CVSCompareEditorInput.workspaceLabel");
+			return Policy.bind("CVSCompareEditorInput.workspaceLabel"); //$NON-NLS-1$
 		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
@@ -170,9 +170,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)resource).getTag();
 					if (tag == null) {
-						return Policy.bind("CVSCompareEditorInput.headLabel");
+						return Policy.bind("CVSCompareEditorInput.headLabel"); //$NON-NLS-1$
 					} else if (tag.getType() == CVSTag.BRANCH) {
-						return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName());
+						return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName()); //$NON-NLS-1$
 					} else {
 						return tag.getName();
 					}
@@ -201,7 +201,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		if (ancestor != null) {
 			return ancestor.getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -221,7 +221,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		} else if (t instanceof TeamException) {
 			error = ((TeamException)t).getStatus();
 		} else {
-			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t);
+			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
 		}
 		setMessage(error.getMessage());
 		if (!(t instanceof TeamException)) {
@@ -238,7 +238,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		String title;
 		if (ancestor != null) {
-			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} );
+			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
 		} else {
 			String leftName = null;
 			if (left != null) leftName = left.getName();
@@ -246,9 +246,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			if (right != null) rightName = right.getName();
 			boolean differentNames = false;
 			if (leftName != null && !leftName.equals(rightName)) {
-				title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} ); 
+				title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
 			} else {
-				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} );
+				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
 			}
 		}
 		setTitle(title);
@@ -267,11 +267,11 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				right = node.getRight();
 				ancestor = node.getAncestor();
 				if (left == null) {
-					cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.noWorkspaceFile"));
+					cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.noWorkspaceFile")); //$NON-NLS-1$
 					cc.setLeftImage(right.getImage());
 				}
 				if (right == null) {
-					cc.setRightLabel(Policy.bind("CVSCompareEditorInput.noRepositoryFile"));
+					cc.setRightLabel(Policy.bind("CVSCompareEditorInput.noRepositoryFile")); //$NON-NLS-1$
 					cc.setRightImage(left.getImage());
 				}
 				if (ancestor == null) ancestor = this.ancestor;
@@ -307,7 +307,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		boolean threeWay = ancestor != null;
 		if (right == null || left == null) {
-			setMessage(Policy.bind("CVSCompareEditorInput.different"));
+			setMessage(Policy.bind("CVSCompareEditorInput.different")); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -328,7 +328,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			protected void updateProgress(IProgressMonitor progressMonitor, Object node) {
 				if (node instanceof ITypedElement) {
 					ITypedElement element = (ITypedElement)node;
-					progressMonitor.subTask(Policy.bind("CompareEditorInput.fileProgress", new String[] {element.getName()}));
+					progressMonitor.subTask(Policy.bind("CompareEditorInput.fileProgress", new String[] {element.getName()})); //$NON-NLS-1$
 					progressMonitor.worked(1);
 				}
 			}
@@ -350,12 +350,12 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		};
 		
 		try {
-			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30);
+			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
 			
 			// do the diff	
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
 			try {
-				sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100);
+				sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
 				return d.findDifferences(threeWay, sub, null, ancestor, left, right);
 			} finally {
 				sub.done();

@@ -37,10 +37,10 @@ public class KSubstWizardSharedFilesPage extends CVSWizardPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		setControl(top);
-		createWrappingLabel(top, Policy.bind("KSubstWizardSharedFilesPage.contents"), 0, LABEL_WIDTH_HINT);
+		createWrappingLabel(top, Policy.bind("KSubstWizardSharedFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
 		
 		includeSharedFilesButton = new Button(top, SWT.CHECK);
-		includeSharedFilesButton.setText(Policy.bind("KSubstWizardSharedFilesPage.includeSharedFiles"));
+		includeSharedFilesButton.setText(Policy.bind("KSubstWizardSharedFilesPage.includeSharedFiles")); //$NON-NLS-1$
 		includeSharedFilesButton.setSelection(includeSharedFiles);
 		includeSharedFilesButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -50,7 +50,7 @@ public class KSubstWizardSharedFilesPage extends CVSWizardPage {
 
 		createSeparator(top, SPACER_HEIGHT);
 		listViewer = createFileListViewer(top,
-			Policy.bind("KSubstWizardSharedFilesPage.sharedFilesViewer.title"), LIST_HEIGHT_HINT);
+			Policy.bind("KSubstWizardSharedFilesPage.sharedFilesViewer.title"), LIST_HEIGHT_HINT); //$NON-NLS-1$
 	}
 	
 	public boolean includeSharedFiles() {

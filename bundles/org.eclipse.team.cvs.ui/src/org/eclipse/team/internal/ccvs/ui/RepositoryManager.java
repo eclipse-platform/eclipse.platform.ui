@@ -55,7 +55,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
  * It also provides a number of useful methods for assisting in repository operations.
  */
 public class RepositoryManager {
-	private static final String STATE_FILE = ".repositoryManagerState";
+	private static final String STATE_FILE = ".repositoryManagerState"; //$NON-NLS-1$
 	private static final int STATE_FILE_VERSION_1 = -1;
 	
 	// Map ICVSRepositoryLocation -> List of CVSTag
@@ -68,7 +68,7 @@ public class RepositoryManager {
 	List listeners = new ArrayList();
 
 	// The previously remembered comment
-	private static String previousComment = "";
+	private static String previousComment = ""; //$NON-NLS-1$
 	
 	public static boolean notifyRepoView = true;
 	
@@ -124,8 +124,8 @@ public class RepositoryManager {
 			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(project.getFolderSyncInfo().getRoot());
 			List tags = new ArrayList();
 			List filesToRefresh = new ArrayList(Arrays.asList(getAutoRefreshFiles(project)));
-			filesToRefresh.add(".project");
-			filesToRefresh.add(".vcm_meta");
+			filesToRefresh.add(".project"); //$NON-NLS-1$
+			filesToRefresh.add(".vcm_meta"); //$NON-NLS-1$
 			for (Iterator it = filesToRefresh.iterator(); it.hasNext();) {
 				String relativePath = (String)it.next();
 				ICVSFile file = null;
@@ -373,7 +373,7 @@ public class RepositoryManager {
 					dis.close();
 				}
 			} catch (IOException e) {
-				CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e));
+				CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e)); //$NON-NLS-1$
 			} catch (TeamException e) {
 				CVSUIPlugin.log(e.getStatus());
 			}
@@ -382,7 +382,7 @@ public class RepositoryManager {
 	
 	private void saveState() throws TeamException {
 		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile();
+		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile(); //$NON-NLS-1$
 		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
@@ -396,10 +396,10 @@ public class RepositoryManager {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null));
+				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e));
+			throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e)); //$NON-NLS-1$
 		}
 	}
 	private void writeState(DataOutputStream dos) throws IOException {
@@ -541,8 +541,8 @@ public class RepositoryManager {
 	public void add(IResource[] resources, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("RepositoryManager.adding"));
+		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+		monitor.setTaskName(Policy.bind("RepositoryManager.adding")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -561,8 +561,8 @@ public class RepositoryManager {
 	public void delete(IResource[] resources, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("RepositoryManager.deleting"));
+		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+		monitor.setTaskName(Policy.bind("RepositoryManager.deleting")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -577,8 +577,8 @@ public class RepositoryManager {
 	public void update(IResource[] resources, Command.LocalOption[] options, boolean createBackups, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("RepositoryManager.updating"));
+		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+		monitor.setTaskName(Policy.bind("RepositoryManager.updating")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -633,8 +633,8 @@ public class RepositoryManager {
 	public void commit(IResource[] resources, String comment, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
-		monitor.setTaskName(Policy.bind("RepositoryManager.committing"));
+		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+		monitor.setTaskName(Policy.bind("RepositoryManager.committing")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);

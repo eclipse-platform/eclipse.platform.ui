@@ -51,7 +51,7 @@ public class Policy {
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class Policy {
 		} catch (MissingResourceException e) {
 			return key;
 		} catch (NullPointerException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

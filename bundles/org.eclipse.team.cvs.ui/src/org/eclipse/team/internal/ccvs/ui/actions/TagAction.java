@@ -39,7 +39,7 @@ import org.eclipse.team.ui.actions.TeamAction;
  */
 public class TagAction extends TeamAction {
 	// The previously remembered tag
-	private static String previousTag = "";
+	private static String previousTag = ""; //$NON-NLS-1$
 	
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -58,7 +58,7 @@ public class TagAction extends TeamAction {
 					if (result[0] == null) return;
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					
 					while (iterator.hasNext()) {
@@ -82,12 +82,12 @@ public class TagAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG);
+		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 		
 		// Check for any status messages and display them
 		if ( ! messages.isEmpty()) {
 			boolean error = false;
-			MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null);
+			MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
 			for (int i = 0; i < messages.size(); i++) {
 				IStatus status = (IStatus)messages.get(i);
 				if (status.getSeverity() == IStatus.ERROR || status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -105,9 +105,9 @@ public class TagAction extends TeamAction {
 			}
 			String title;
 			if (error) {
-				title = Policy.bind("TagAction.tagErrorTitle");
+				title = Policy.bind("TagAction.tagErrorTitle"); //$NON-NLS-1$
 			} else {
-				title = Policy.bind("TagAction.tagWarningTitle");
+				title = Policy.bind("TagAction.tagWarningTitle"); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(getShell(), title, message, statusToDisplay);
 		}		
@@ -146,7 +146,7 @@ public class TagAction extends TeamAction {
 			}
 		};
 		InputDialog dialog = new InputDialog(getShell(),
-			Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator);
+			Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != InputDialog.OK) return null;
 		return dialog.getValue();
 	}

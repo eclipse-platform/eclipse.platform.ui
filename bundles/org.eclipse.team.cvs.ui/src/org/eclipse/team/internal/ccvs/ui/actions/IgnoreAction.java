@@ -51,6 +51,6 @@ public class IgnoreAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind("IgnoreAction.ignore"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("IgnoreAction.ignore"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 }

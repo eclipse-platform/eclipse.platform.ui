@@ -70,16 +70,16 @@ public class OpenLogEntryAction extends TeamAction {
 				for (int i = 0; i < entries.length; i++) {
 					try {
 						if (entries[i].isDeletion()) {
-							MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted"));
+							MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted")); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
-							page.openEditor(new RemoteFileEditorInput(entries[i].getRemoteFile()), "org.eclipse.ui.DefaultTextEditor");
+							page.openEditor(new RemoteFileEditorInput(entries[i].getRemoteFile()), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 						}
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
 			}
-		}, Policy.bind("OpenLogEntryAction.open"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("OpenLogEntryAction.open"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

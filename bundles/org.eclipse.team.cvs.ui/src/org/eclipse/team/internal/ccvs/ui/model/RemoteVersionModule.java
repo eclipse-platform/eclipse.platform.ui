@@ -92,6 +92,6 @@ public class RemoteVersionModule extends CVSModelElement implements IAdaptable {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "RemoteVersionModule(" + tag.getName() + ")";
+		return "RemoteVersionModule(" + tag.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

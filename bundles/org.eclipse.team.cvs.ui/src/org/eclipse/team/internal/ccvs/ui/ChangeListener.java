@@ -41,11 +41,11 @@ public class ChangeListener extends ResourceDeltaVisitor {
 		}
 		
 		static String getTitle() {
-			return "Deleting CVS folders";
+			return Policy.bind("ChangeListener.Deleting_CVS_folders_1"); //$NON-NLS-1$
 		}
 		
 		static String getMessage() {
-			return "Folders cannot be deleted from a CVS server from the client. To delete the folder...";	
+			return Policy.bind("ChangeListener.Folders_cannot_be_deleted_from_a_CVS_server_from_the_client._To_delete_the_folder_2");	 //$NON-NLS-1$
 		}
 		
 		protected Control createCustomArea(Composite parent) {
@@ -54,7 +54,7 @@ public class ChangeListener extends ResourceDeltaVisitor {
 			doNotShowOption = new Button(composite, SWT.CHECK);
 			doNotShowOption.addSelectionListener(selectionListener);
 			
-			doNotShowOption.setText("Do not ask me about this again");
+			doNotShowOption.setText(Policy.bind("ChangeListener.Do_not_ask_me_about_this_again_3")); //$NON-NLS-1$
 
 			// set initial state
 			doNotShowOption.setSelection(false);

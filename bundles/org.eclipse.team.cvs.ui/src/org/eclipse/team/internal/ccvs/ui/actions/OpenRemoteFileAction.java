@@ -71,7 +71,7 @@ public class OpenRemoteFileAction extends TeamAction {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
 					try {
-						page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor");
+						page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -98,7 +98,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					}
 				}*/
 			}
-		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

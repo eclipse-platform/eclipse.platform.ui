@@ -34,7 +34,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					for (int i = 0; i < candidateResources.length; i++) {
 						IResource resource = candidateResources[i];
 						if (isDirty(resource) && getConfirmOverwrite()) {
-							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) {
+							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) { //$NON-NLS-1$
 								targetResources.add(resource);
 							}
 						} else {
@@ -44,8 +44,8 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					// Do the replace
 					Hashtable table = getProviderMapping((IResource[])targetResources.toArray(new IResource[targetResources.size()]));
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("ReplaceWithRemoteAction.replacing"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("ReplaceWithRemoteAction.replacing")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -60,7 +60,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("ReplaceWithRemoteAction.problemMessage"), PROGRESS_DIALOG);
+		}, Policy.bind("ReplaceWithRemoteAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();

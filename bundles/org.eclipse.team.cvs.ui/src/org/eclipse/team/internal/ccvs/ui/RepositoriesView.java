@@ -45,7 +45,7 @@ import org.eclipse.ui.part.ViewPart;
  * the performing of CVS-specific operations on the repository contents.
  */
 public class RepositoriesView extends ViewPart {
-	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.RepositoriesView";
+	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.RepositoriesView"; //$NON-NLS-1$
 
 	// The tree viewer
 	private TreeViewer viewer;
@@ -103,15 +103,15 @@ public class RepositoriesView extends ViewPart {
 		// Create actions
 		
 		// Refresh (toolbar)
-		refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) {
+		refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) { //$NON-NLS-1$
 			public void run() {
 				viewer.refresh();
 			}
 		};
-		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refresh"));
+		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refresh")); //$NON-NLS-1$
 
 		// New Repository (popup)
-		final Action newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) {
+		final Action newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
 				WizardDialog dialog = new WizardDialog(viewer.getTree().getShell(), wizard);
@@ -129,7 +129,7 @@ public class RepositoriesView extends ViewPart {
 				manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 				
 				// New actions go next
-				MenuManager sub = new MenuManager(Policy.bind("RepositoriesView.newSubmenu"), IWorkbenchActionConstants.GROUP_ADD);
+				MenuManager sub = new MenuManager(Policy.bind("RepositoriesView.newSubmenu"), IWorkbenchActionConstants.GROUP_ADD); //$NON-NLS-1$
 				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				manager.add(sub);
 				
@@ -161,14 +161,14 @@ public class RepositoriesView extends ViewPart {
 		
 		// Add module toggling to the local pull-down menu
 		IMenuManager mgr = bars.getMenuManager();
-		showFoldersAction = new Action("Show Folders") {
+		showFoldersAction = new Action(Policy.bind("RepositoriesView.Show_Folders_6")) { //$NON-NLS-1$
 			public void run() {
 				CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_SHOW_MODULES, false);
 				showModulesAction.setChecked(false);
 				viewer.refresh();
 			}
 		};
-		showModulesAction = new Action("Show Modules") {
+		showModulesAction = new Action(Policy.bind("RepositoriesView.Show_Modules_7")) { //$NON-NLS-1$
 			public void run() {
 				CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_SHOW_MODULES, true);
 				showFoldersAction.setChecked(false);

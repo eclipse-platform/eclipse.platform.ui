@@ -36,10 +36,10 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		setControl(top);
-		createWrappingLabel(top, Policy.bind("KSubstWizardDirtyFilesPage.contents"), 0, LABEL_WIDTH_HINT);
+		createWrappingLabel(top, Policy.bind("KSubstWizardDirtyFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
 		
 		includeDirtyFilesButton = new Button(top, SWT.CHECK);
-		includeDirtyFilesButton.setText(Policy.bind("KSubstWizardDirtyFilesPage.includeDirtyFiles"));
+		includeDirtyFilesButton.setText(Policy.bind("KSubstWizardDirtyFilesPage.includeDirtyFiles")); //$NON-NLS-1$
 		includeDirtyFilesButton.setSelection(includeDirtyFiles);
 		includeDirtyFilesButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -49,7 +49,7 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		
 		createSeparator(top, SPACER_HEIGHT);
 		listViewer = createFileListViewer(top,
-			Policy.bind("KSubstWizardDirtyFilesPage.dirtyFilesViewer.title"), LIST_HEIGHT_HINT);
+			Policy.bind("KSubstWizardDirtyFilesPage.dirtyFilesViewer.title"), LIST_HEIGHT_HINT); //$NON-NLS-1$
 	}
 	
 	public boolean includeDirtyFiles() {

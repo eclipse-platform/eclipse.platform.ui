@@ -69,27 +69,27 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		}
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("SharingWizard.title"));
+		setWindowTitle(Policy.bind("SharingWizard.title")); //$NON-NLS-1$
 	}	
 		
 	public void addPages() {
 		ImageDescriptor sharingImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE);
 		if (doesCVSDirectoryExist()) {
-			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), sharingImage);
+			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			autoconnectPage.setProject(project);
 			addPage(autoconnectPage);
 		} else {
 			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
 			if (locations.length > 0) {
-				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage);
+				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 				addPage(locationPage);
 			}
-			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage);
+			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			addPage(createLocationPage);
 			createLocationPage.setDialogSettings(getDialogSettings());
-			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage);
+			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			addPage(modulePage);
-			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("Ready to Share Project"), sharingImage);
+			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$
 			addPage(finishPage);
 		}
 	}
@@ -109,10 +109,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		return super.canFinish();
 	}
 	protected String getMainPageDescription() {
-		return Policy.bind("SharingWizard.description");
+		return Policy.bind("SharingWizard.description"); //$NON-NLS-1$
 	}
 	protected String getMainPageTitle() {
-		return Policy.bind("SharingWizard.heading");
+		return Policy.bind("SharingWizard.heading"); //$NON-NLS-1$
 	}
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == autoconnectPage) return null;
@@ -141,7 +141,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						monitor.beginTask("", 100);
+						monitor.beginTask("", 100); //$NON-NLS-1$
 						if (autoconnectPage != null) {
 							// Autoconnect to the repository using CVS/ directories
 							
@@ -164,8 +164,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								} catch (TeamException e) {
 									// Exception validating. We can continue if the user wishes.
 									boolean keep = MessageDialog.openQuestion(getContainer().getShell(),
-										Policy.bind("SharingWizard.validationFailedTitle"),
-										Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()}));
+										Policy.bind("SharingWizard.validationFailedTitle"), //$NON-NLS-1$
+										Policy.bind("SharingWizard.validationFailedText", new Object[] {e.getStatus().getMessage()})); //$NON-NLS-1$
 									if (!keep) {
 										// Remove the root
 										try {
@@ -173,7 +173,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 												CVSProviderPlugin.getProvider().disposeRepository(location);
 											}
 										} catch (TeamException e1) {
-											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus());
+											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus()); //$NON-NLS-1$
 										}
 										result[0] = false;
 										return;
@@ -198,7 +198,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
-									MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
+									MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong")); //$NON-NLS-1$ //$NON-NLS-2$
 									result[0] = false;
 									doSync[0] = false;
 									return;

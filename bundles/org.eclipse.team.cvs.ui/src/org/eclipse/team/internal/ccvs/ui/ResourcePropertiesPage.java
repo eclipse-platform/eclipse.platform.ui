@@ -44,7 +44,7 @@ public class ResourcePropertiesPage extends PropertyPage {
 			if (resource != null) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 				if (!cvsResource.isManaged()) {
-					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), Policy.bind("ResourcePropertiesPage.notManaged"));
+					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), Policy.bind("ResourcePropertiesPage.notManaged")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					boolean hasRemote = false;
 					if(cvsResource.isFolder()) {
@@ -55,11 +55,11 @@ public class ResourcePropertiesPage extends PropertyPage {
 							hasRemote = true;
 						}
 					}
-					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), hasRemote ? Policy.bind("ResourcePropertiesPage.versioned") : Policy.bind("ResourcePropertiesPage.notVersioned"));
+					createPair(composite, Policy.bind("ResourcePropertiesPage.status"), hasRemote ? Policy.bind("ResourcePropertiesPage.versioned") : Policy.bind("ResourcePropertiesPage.notVersioned")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		} catch (TeamException e) {
-			createPair(composite, Policy.bind("ResourcePropertiesPage.error"), e.getMessage());
+			createPair(composite, Policy.bind("ResourcePropertiesPage.error"), e.getMessage()); //$NON-NLS-1$
 		}
 		return composite;
 	}

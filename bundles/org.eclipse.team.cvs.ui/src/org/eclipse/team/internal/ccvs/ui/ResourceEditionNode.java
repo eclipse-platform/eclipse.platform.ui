@@ -128,7 +128,7 @@ public class ResourceEditionNode extends BufferedContent implements IStructureCo
 	 * Returns the name of this node.
 	 */
 	public String getName() {
-		return resource == null ? "" : resource.getName();
+		return resource == null ? "" : resource.getName(); //$NON-NLS-1$
 	}
 	
 	public ICVSRemoteResource getRemoteResource() {

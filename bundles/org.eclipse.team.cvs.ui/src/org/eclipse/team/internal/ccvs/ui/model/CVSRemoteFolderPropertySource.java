@@ -20,15 +20,15 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 	static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[2];
 	{
 		PropertyDescriptor descriptor;
-		String category = Policy.bind("cvs");
+		String category = Policy.bind("cvs"); //$NON-NLS-1$
 		
 		// resource name
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, Policy.bind("CVSRemoteFolderPropertySource.name"));
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_NAME, Policy.bind("CVSRemoteFolderPropertySource.name")); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[0] = descriptor;
 		// tag
-		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, Policy.bind("CVSRemoteFolderPropertySource.tag"));
+		descriptor = new PropertyDescriptor(ICVSUIConstants.PROP_TAG, Policy.bind("CVSRemoteFolderPropertySource.tag")); //$NON-NLS-1$
 		descriptor.setAlwaysIncompatible(true);
 		descriptor.setCategory(category);
 		propertyDescriptors[1] = descriptor;
@@ -65,11 +65,11 @@ public class CVSRemoteFolderPropertySource implements IPropertySource {
 		if (id.equals(ICVSUIConstants.PROP_TAG)) {
 			CVSTag tag = folder.getTag();
 			if (tag == null) {
-				return Policy.bind("CVSRemoteFolderPropertySource.none");
+				return Policy.bind("CVSRemoteFolderPropertySource.none"); //$NON-NLS-1$
 			}
 			return tag.getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

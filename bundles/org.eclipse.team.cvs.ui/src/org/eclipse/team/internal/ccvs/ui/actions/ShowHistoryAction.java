@@ -69,7 +69,7 @@ public class ShowHistoryAction extends TeamAction {
 					view.showHistory(files[0]);
 				}
 			}
-		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

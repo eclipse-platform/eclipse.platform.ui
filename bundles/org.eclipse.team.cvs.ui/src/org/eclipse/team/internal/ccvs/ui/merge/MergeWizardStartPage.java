@@ -48,7 +48,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	 */
 	public MergeWizardStartPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(Policy.bind("MergeWizardStartPage.description"));
+		setDescription(Policy.bind("MergeWizardStartPage.description")); //$NON-NLS-1$
 	}
 	protected TableViewer createTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);

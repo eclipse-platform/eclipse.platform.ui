@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -41,7 +41,7 @@ public class RemoteFolderElement extends RemoteResourceElement {
 		CVSTag tag = folder.getTag();
 		if (tag != null && tag.getType() == CVSTag.VERSION) {
 			if (folder.getRemoteParent() == null) {
-				return folder.getName() + " " + tag.getName();
+				return Policy.bind("RemoteFolderElement.nameAndTag", folder.getName(), tag.getName()); //$NON-NLS-1$
 			}
 		}
 		return folder.getName();

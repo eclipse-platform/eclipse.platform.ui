@@ -45,11 +45,11 @@ public class BranchWizard extends Wizard {
 	
 	public BranchWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("BranchWizard.title"));
+		setWindowTitle(Policy.bind("BranchWizard.title")); //$NON-NLS-1$
 	}
 	
 	public void addPages() {
-		mainPage = new BranchWizardPage("versionPage", Policy.bind("BranchWizard.createABranch"), areAllResourcesSticky(resources), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
+		mainPage = new BranchWizardPage("versionPage", Policy.bind("BranchWizard.createABranch"), areAllResourcesSticky(resources), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH)); //$NON-NLS-1$ //$NON-NLS-2$
 		addPage(mainPage);
 	}
 	public boolean performFinish() {
@@ -72,8 +72,8 @@ public class BranchWizard extends Wizard {
 						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 						Hashtable table = getProviderMapping(resources);
 						Set keySet = table.keySet();
-						monitor.beginTask("", keySet.size() * 1000);
-						MultiStatus status = new MultiStatus(CVSUIPlugin.ID, IStatus.INFO, Policy.bind("BranchWizard.errorTagging"), null);
+						monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+						MultiStatus status = new MultiStatus(CVSUIPlugin.ID, IStatus.INFO, Policy.bind("BranchWizard.errorTagging"), null); //$NON-NLS-1$
 						Iterator iterator = keySet.iterator();
 						while (iterator.hasNext()) {
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);

@@ -52,7 +52,7 @@ public interface ICVSUIConstants {
 	public final String PREF_PROMPT_ON_FOLDER_DELETE = "pref_prompt_on_folder_delete"; //$NON-NLS-1$
 	public final String PREF_SHOW_MARKERS = "pref_show_markers"; //$NON-NLS-1$
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
-	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level";
+	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

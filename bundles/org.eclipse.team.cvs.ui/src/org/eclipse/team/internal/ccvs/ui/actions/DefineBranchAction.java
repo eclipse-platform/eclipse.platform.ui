@@ -85,7 +85,7 @@ public class DefineBranchAction extends TeamAction {
 				Shell shell = getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, validator);
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, validator); //$NON-NLS-1$ //$NON-NLS-2$
 						if (dialog.open() == InputDialog.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
 							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTags(roots[0], new CVSTag[] {tag});
@@ -93,7 +93,7 @@ public class DefineBranchAction extends TeamAction {
 					}
 				});
 			}
-		}, Policy.bind("DefineBranchAction.tag"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("DefineBranchAction.tag"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 
 	}
 	/*

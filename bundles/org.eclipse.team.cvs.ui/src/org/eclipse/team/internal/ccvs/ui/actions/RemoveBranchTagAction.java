@@ -62,7 +62,7 @@ public class RemoveBranchTagAction extends TeamAction {
 					manager.removeBranchTag(tag.getRoot(), new CVSTag[] {tag.getTag()});
 				}
 			}
-		}, Policy.bind("RemoveBranchTagAction.removeTag"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("RemoveBranchTagAction.removeTag"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 
 	}
 	/*
@@ -72,7 +72,7 @@ public class RemoveBranchTagAction extends TeamAction {
 		BranchTag[] tags = getSelectedBranchTags();
 		if (tags.length == 0) return false;
 		for (int i = 0; i < tags.length; i++) {
-			if (tags[i].getTag().getName().equals("HEAD")) return false;
+			if (tags[i].getTag().getName().equals("HEAD")) return false; //$NON-NLS-1$
 		}
 		return true;
 	}

@@ -43,7 +43,7 @@ public class GenerateDiffFileAction extends TeamAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
-		final String title = Policy.bind("GenerateCVSDiff.title");
+		final String title = Policy.bind("GenerateCVSDiff.title"); //$NON-NLS-1$
 		try {
 			final IResource[] resources = getSelectedResources();
 			if (!checkSharing(resources)) {

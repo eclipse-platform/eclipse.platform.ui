@@ -97,12 +97,12 @@ public class ConfigureTagsFromRepoView extends TeamAction {
 							TagConfigurationDialog d = new TagConfigurationDialog(shell, cvsFolders);
 							d.open();
 						} catch(CVSException e) {
-							ErrorDialog.openError(shell, "Configure Tag Error", "Error retreiving root folders from repository", e.getStatus());
+							ErrorDialog.openError(shell, Policy.bind("ConfigureTagsFromRepoViewConfigure_Tag_Error_1"), Policy.bind("ConfigureTagsFromRepoViewError_retreiving_root_folders_from_repository_2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				});
 			}
-		}, "Configuring branch tags", this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("ConfigureTagsFromRepoViewConfiguring_branch_tags_3"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 
 	/*

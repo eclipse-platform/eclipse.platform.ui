@@ -73,17 +73,17 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		setControl(top);
-		createWrappingLabel(top, Policy.bind("KSubstWizardSummaryPage.contents"), 0, LABEL_WIDTH_HINT);		
+		createWrappingLabel(top, Policy.bind("KSubstWizardSummaryPage.contents"), 0, LABEL_WIDTH_HINT);		 //$NON-NLS-1$
 
 		createSeparator(top, 0);
 		tableViewer = createFileTableViewer(top,
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.title"),
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.fileHeader"),
-			Policy.bind("KSubstWizardSummaryPage.summaryViewer.ksubstHeader"),
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.title"), //$NON-NLS-1$
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.fileHeader"), //$NON-NLS-1$
+			Policy.bind("KSubstWizardSummaryPage.summaryViewer.ksubstHeader"), //$NON-NLS-1$
 			LIST_HEIGHT_HINT);
 
 		showUnaffectedFilesButton = new Button(top, SWT.CHECK);
-		showUnaffectedFilesButton.setText(Policy.bind("KSubstWizardSummaryPage.showUnaffectedFiles"));
+		showUnaffectedFilesButton.setText(Policy.bind("KSubstWizardSummaryPage.showUnaffectedFiles")); //$NON-NLS-1$
 		showUnaffectedFilesButton.setSelection(showUnaffectedFiles);
 		showUnaffectedFilesButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -198,7 +198,7 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 		TableEditor tableEditor = new TableEditor(table);
 		CellEditor cellEditor = new ComboBoxCellEditor(table, ksubstOptionsDisplayText);
 		tableViewer.setCellEditors(new CellEditor[] { null, cellEditor });
-		tableViewer.setColumnProperties(new String[] { "file", "mode" });
+		tableViewer.setColumnProperties(new String[] { "file", "mode" }); //$NON-NLS-1$ //$NON-NLS-2$
 		tableViewer.setCellModifier(new ICellModifier() {
 			public Object getValue(Object element, String property) {
 				KSubstChangeElement change = (KSubstChangeElement) element;

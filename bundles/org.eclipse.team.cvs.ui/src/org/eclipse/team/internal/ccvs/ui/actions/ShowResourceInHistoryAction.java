@@ -35,7 +35,7 @@ public class ShowResourceInHistoryAction extends TeamAction {
 					view.showHistory(resources[0]);
 				}
 			}
-		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

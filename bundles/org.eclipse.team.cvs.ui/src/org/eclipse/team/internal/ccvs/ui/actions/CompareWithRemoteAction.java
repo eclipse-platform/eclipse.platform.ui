@@ -72,7 +72,7 @@ public class CompareWithRemoteAction extends TeamAction {
 						}
 					}
 					
-					monitor.beginTask(Policy.bind("CompareWithRemoteAction.fetching"), 100);
+					monitor.beginTask(Policy.bind("CompareWithRemoteAction.fetching"), 100); //$NON-NLS-1$
 					remoteResource[0] = CVSWorkspaceRoot.getRemoteTree(resource[0], tag[0], Policy.subMonitorFor(monitor, 100));
 					monitor.done();
 					
@@ -80,11 +80,11 @@ public class CompareWithRemoteAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_DIALOG);
+		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_DIALOG); //$NON-NLS-1$
 		
 		// Just to be safe...
 		if (remoteResource[0] == null) {
-			MessageDialog.openInformation(getShell(), Policy.bind("CompareWithRemoteAction.noRemote"), Policy.bind("CompareWithRemoteAction.noRemoteLong"));
+			MessageDialog.openInformation(getShell(), Policy.bind("CompareWithRemoteAction.noRemote"), Policy.bind("CompareWithRemoteAction.noRemoteLong")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 					
@@ -93,7 +93,7 @@ public class CompareWithRemoteAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				CompareUI.openCompareEditor(new CVSCompareEditorInput(new CVSResourceNode(resource[0]), new ResourceEditionNode(remoteResource[0])));
 			}
-		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("CompareWithRemoteAction.compare"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		
 	}
 	

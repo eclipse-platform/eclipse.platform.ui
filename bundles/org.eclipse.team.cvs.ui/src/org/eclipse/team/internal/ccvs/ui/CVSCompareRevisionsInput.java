@@ -90,7 +90,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				try {
 					ICVSRemoteFile currentEdition = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(resource);
 					if (currentEdition != null && currentEdition.getRevision().equals(revisionName)) {
-						return "*" + revisionName;
+						Policy.bind("currentRevision", revisionName); //$NON-NLS-1$
 					} else {
 						return revisionName;
 					}
@@ -157,19 +157,18 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			return null;
 		}
 		public String getColumnText(Object element, int columnIndex) {
-			if (!(element instanceof DiffNode)) return "";
+			if (!(element instanceof DiffNode)) return ""; //$NON-NLS-1$
 			ITypedElement right = ((DiffNode)element).getRight();
-			if (!(right instanceof ResourceRevisionNode)) return "";
+			if (!(right instanceof ResourceRevisionNode)) return ""; //$NON-NLS-1$
 			ILogEntry entry = ((ResourceRevisionNode)right).getLogEntry();
 			switch (columnIndex) {
 				case COL_REVISION:
 					try {
-						StringBuffer revisionName = new StringBuffer();
 						if (currentEdition != null && currentEdition.getRevision().equals(entry.getRevision())) {
-							revisionName.append("*");
+							return Policy.bind("currentRevision", entry.getRevision()); //$NON-NLS-1$
+						} else {
+							return entry.getRevision();
 						}
-						revisionName.append(entry.getRevision());
-						return revisionName.toString();
 					} catch (TeamException e) {
 						handle(e);
 					}
@@ -180,23 +179,23 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 					for (int i = 0; i < tags.length; i++) {
 						result.append(tags[i].getName());
 						if (i < tags.length - 1) {
-							result.append(", ");
+							result.append(", "); //$NON-NLS-1$
 						}
 					}
 					return result.toString();
 				case COL_DATE:
 					Date date = entry.getDate();
-					if (date == null) return Policy.bind("notAvailable");
+					if (date == null) return Policy.bind("notAvailable"); //$NON-NLS-1$
 					return DateFormat.getInstance().format(date);
 				case COL_AUTHOR:
 					return entry.getAuthor();
 				case COL_COMMENT:
 					String comment = entry.getComment();
-					int index = comment.indexOf("\n");
+					int index = comment.indexOf("\n"); //$NON-NLS-1$
 					if (index == -1) return comment;
-					return comment.substring(0, index) + "[...]";
+					return Policy.bind("CVSCompareRevisionsInput.truncate", comment.substring(0, index)); //$NON-NLS-1$
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	
@@ -216,35 +215,35 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.revision"));
+		col.setText(Policy.bind("HistoryView.revision")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// tags
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.tags"));
+		col.setText(Policy.bind("HistoryView.tags")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// creation date
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.date"));
+		col.setText(Policy.bind("HistoryView.date")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		// author
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.author"));
+		col.setText(Policy.bind("HistoryView.author")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
 		//comment
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(Policy.bind("HistoryView.comment"));
+		col.setText(Policy.bind("HistoryView.comment")); //$NON-NLS-1$
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
@@ -255,7 +254,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		table.setLinesVisible(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(data);
-		table.setData(CompareUI.COMPARE_VIEWER_TITLE, Policy.bind("CVSCompareRevisionsInput.structureCompare"));
+		table.setData(CompareUI.COMPARE_VIEWER_TITLE, Policy.bind("CVSCompareRevisionsInput.structureCompare")); //$NON-NLS-1$
 	
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
@@ -331,17 +330,17 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 //		} else {
 //			setTitle(Policy.bind("CompareResourceEditorInput.compareResourceAndVersions", new Object[] {resourceName}));
 //		}
-		setTitle(Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName}));
+		setTitle(Policy.bind("CVSCompareRevisionsInput.compareResourceAndVersions", new Object[] {resourceName})); //$NON-NLS-1$
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
 		
-		String leftLabel = Policy.bind("CVSCompareRevisionsInput.workspace", new Object[] {resourceName});
+		String leftLabel = Policy.bind("CVSCompareRevisionsInput.workspace", new Object[] {resourceName}); //$NON-NLS-1$
 		cc.setLeftLabel(leftLabel);
-		String rightLabel = Policy.bind("CVSCompareRevisionsInput.repository", new Object[] {resourceName});
+		String rightLabel = Policy.bind("CVSCompareRevisionsInput.repository", new Object[] {resourceName}); //$NON-NLS-1$
 		cc.setRightLabel(rightLabel);
 	}
 	private void initializeActions() {
-		loadAction = new Action(Policy.bind("CVSCompareRevisionsInput.addToWorkspace"), null) {
+		loadAction = new Action(Policy.bind("CVSCompareRevisionsInput.addToWorkspace"), null) { //$NON-NLS-1$
 			public void run() {
 				try {
 					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
@@ -413,7 +412,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		} else if (t instanceof TeamException) {
 			error = ((TeamException)t).getStatus();
 		} else {
-			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t);
+			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
 		}
 		setMessage(error.getMessage());
 		ErrorDialog.openError(shell, null, null, error);

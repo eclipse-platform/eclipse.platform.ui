@@ -185,7 +185,6 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				return image;
 			}
 			public String getText(Object element) {
-				StringBuffer postfix = new StringBuffer();
 				if (element instanceof ITeamNode) {					
 					ITeamNode node = (ITeamNode)element;
 					IResource resource = node.getResource();
@@ -197,24 +196,24 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 								KSubstOption option = info != null && info.getKeywordMode() != null ?
 									info.getKeywordMode() :
 									KSubstOption.fromFile((IFile)resource);
-								postfix.append("(" + option.getShortDisplayText() + ")");
+								return Policy.bind("CVSCatchupReleaseViewer.fileDecoration", oldProvider.getText(element), option.getShortDisplayText()); //$NON-NLS-1$
 							} else if (resource instanceof IContainer) {
 								ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 								FolderSyncInfo info = cvsFolder.getFolderSyncInfo();
 								if (info != null) {
 									CVSTag tag = info.getTag();
 									if (tag != null) {
-										postfix.append(" ");
-										postfix.append(tag.getName());
+										return Policy.bind("CVSCatchupReleaseViewer.folderDecoration", oldProvider.getText(element), tag.getName()); //$NON-NLS-1$
 									}
 								}
 							}
+							
 						} catch (CVSException e) {
 							ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 						}
 					}
 				}								
-				return oldProvider.getText(element) + " " + postfix.toString() ;
+				return oldProvider.getText(element);
 			}
 		});
 	}
@@ -267,17 +266,17 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	 */
 	private void initializeActions(final CVSSyncCompareInput diffModel) {
 		Shell shell = getControl().getShell();
-		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell);
-		forceCommitAction = new ForceCommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceCommit"), shell);
-		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
-		forceUpdateAction = new ForceUpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell);
-		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
-		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell);
-		updateWithJoinAction = new UpdateWithForcedJoinAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.mergeUpdate"), shell);
-		forceUpdateMergeAction = new OverrideUpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell);
+		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell); //$NON-NLS-1$
+		forceCommitAction = new ForceCommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceCommit"), shell); //$NON-NLS-1$
+		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell); //$NON-NLS-1$
+		forceUpdateAction = new ForceUpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell); //$NON-NLS-1$
+		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell); //$NON-NLS-1$
+		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell); //$NON-NLS-1$
+		updateWithJoinAction = new UpdateWithForcedJoinAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.mergeUpdate"), shell); //$NON-NLS-1$
+		forceUpdateMergeAction = new OverrideUpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell); //$NON-NLS-1$
 		
 		// Show in history view
-		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory"));
+		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory")); //$NON-NLS-1$
 		addSelectionChangedListener(showInHistory);	
 	}
 	
@@ -287,7 +286,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	protected void updateLabels(MergeResource resource) {
 		CompareConfiguration config = getCompareConfiguration();
 		String name = resource.getName();
-		config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.workspaceFile", name));
+		config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.workspaceFile", name)); //$NON-NLS-1$
 	
 		IRemoteSyncElement syncTree = resource.getSyncElement();
 		IRemoteResource remote = syncTree.getRemote();
@@ -298,26 +297,26 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				// XXX Should have real progress
 				ILogEntry logEntry = remoteFile.getLogEntry(new NullProgressMonitor());
 				String author = logEntry.getAuthor();
-				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author}));
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author})); //$NON-NLS-1$
 			} catch (TeamException e) {
 				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
-				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name));
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name)); //$NON-NLS-1$
 			}
 		} else {
-			config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.noRepositoryFile"));
+			config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.noRepositoryFile")); //$NON-NLS-1$
 		}
 	
 		IRemoteResource base = syncTree.getBase();
 		if (base != null) {
 			try {
 				String revision = ((ICVSRemoteFile)base).getRevision();
-				config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", new Object[] {name, revision} ));
+				config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", new Object[] {name, revision} )); //$NON-NLS-1$
 			} catch (TeamException e) {
 				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
-				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name));
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
 			}
 		} else {
-			config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.noCommonFile"));
+			config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.noCommonFile")); //$NON-NLS-1$
 		}
 	}
 }

@@ -55,9 +55,9 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			monitor.beginTask("", resources.length * 500);
+			monitor.beginTask("", resources.length * 500); //$NON-NLS-1$
 			monitor.setTaskName(
-			Policy.bind("GenerateCVSDiff.working"));
+			Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
 			
 			OutputStream os;
 			if(toClipboard) {
@@ -99,8 +99,8 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			if (emptyDiff) {
 				MessageDialog.openInformation(
 					shell,
-					Policy.bind("GenerateCVSDiff.noDiffsFoundTitle"),
-					Policy.bind("GenerateCVSDiff.noDiffsFoundMsg"));
+					Policy.bind("GenerateCVSDiff.noDiffsFoundTitle"), //$NON-NLS-1$
+					Policy.bind("GenerateCVSDiff.noDiffsFoundMsg")); //$NON-NLS-1$
 			}
 		} catch (TeamException e) {
 			throw new InvocationTargetException(e);

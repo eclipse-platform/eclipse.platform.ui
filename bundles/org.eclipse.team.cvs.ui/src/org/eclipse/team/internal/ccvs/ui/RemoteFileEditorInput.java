@@ -140,7 +140,7 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	public String getName() {
 		String name = file.getName();
 		try {
-			return name + " " + file.getRevision();
+			return Policy.bind("nameAndRevision", name, file.getRevision()); //$NON-NLS-1$
 		} catch (TeamException e) {
 			return name;
 		}

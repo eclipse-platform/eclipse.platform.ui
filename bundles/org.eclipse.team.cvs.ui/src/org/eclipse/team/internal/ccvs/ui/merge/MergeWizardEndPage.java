@@ -43,7 +43,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	 */
 	public MergeWizardEndPage(String pageName, String title, ImageDescriptor titleImage, MergeWizardStartPage startPage) {
 		super(pageName, title, titleImage);
-		setDescription(Policy.bind("MergeWizardEndPage.description"));
+		setDescription(Policy.bind("MergeWizardEndPage.description")); //$NON-NLS-1$
 		this.startPage = startPage;
 	}
 	/*
@@ -75,7 +75,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 						setPageComplete(true);
 						setMessage(null);
 					} else {
-						setMessage(Policy.bind("MergeWizardEndPage.duplicateTagSelected", result.getName()), WARNING_MESSAGE);
+						setMessage(Policy.bind("MergeWizardEndPage.duplicateTagSelected", result.getName()), WARNING_MESSAGE); //$NON-NLS-1$
 						setPageComplete(false);
 					}
 				} else {

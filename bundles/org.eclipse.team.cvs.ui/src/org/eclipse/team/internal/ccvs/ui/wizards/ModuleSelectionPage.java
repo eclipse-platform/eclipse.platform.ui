@@ -32,8 +32,8 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		// set F1 help
 		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer (this, ITeamHelpContextIds.REPO_CONNECTION_MAIN_PAGE));
 		
-		useProjectNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.moduleIsProject"), 2);
-		useSpecifiedNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.specifyModule"), 1);
+		useProjectNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.moduleIsProject"), 2); //$NON-NLS-1$
+		useSpecifiedNameButton = createRadioButton(composite, Policy.bind("ModuleSelectionPage.specifyModule"), 1); //$NON-NLS-1$
 		useProjectNameButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				useProjectName = useProjectNameButton.getSelection();

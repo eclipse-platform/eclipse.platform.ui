@@ -43,7 +43,7 @@ public class HistoryFilterDialog extends Dialog {
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("HistoryFilterDialog.title"));
+		newShell.setText(Policy.bind("HistoryFilterDialog.title")); //$NON-NLS-1$
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -57,36 +57,36 @@ public class HistoryFilterDialog extends Dialog {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(Policy.bind("HistoryFilterDialog.showMatching"));
+		label.setText(Policy.bind("HistoryFilterDialog.showMatching")); //$NON-NLS-1$
 		
 		andRadio = new Button(topLevel, SWT.RADIO);
-		andRadio.setText(Policy.bind("HistoryFilterDialog.matchingAll"));
+		andRadio.setText(Policy.bind("HistoryFilterDialog.matchingAll")); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		andRadio.setLayoutData(data);
 		andRadio.setSelection(true);
 		
 		orRadio = new Button(topLevel, SWT.RADIO);
-		orRadio.setText(Policy.bind("HistoryFilterDialog.matchingAny"));
+		orRadio.setText(Policy.bind("HistoryFilterDialog.matchingAny")); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		orRadio.setLayoutData(data);
 		
 		//author
 		label = new Label(topLevel, SWT.NONE);
-		label.setText(Policy.bind("HistoryFilterDialog.author"));
+		label.setText(Policy.bind("HistoryFilterDialog.author")); //$NON-NLS-1$
 		author = new Text(topLevel, SWT.BORDER);
 		author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		//comment
 		label = new Label(topLevel, SWT.NONE);
-		label.setText(Policy.bind("HistoryFilterDialog.comment"));
+		label.setText(Policy.bind("HistoryFilterDialog.comment")); //$NON-NLS-1$
 		comment = new Text(topLevel, SWT.BORDER);
 		comment.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		//"from" date
 		label = new Label(topLevel, SWT.NONE);
-		label.setText(Policy.bind("HistoryFilterDialog.fromDate"));
+		label.setText(Policy.bind("HistoryFilterDialog.fromDate")); //$NON-NLS-1$
 		Composite fdComposite = new Composite(topLevel, SWT.NONE);
 		GridLayout fdLayout = new GridLayout();
 		fdLayout.numColumns = 3;
@@ -98,7 +98,7 @@ public class HistoryFilterDialog extends Dialog {
 
 		//"to" date	
 		label = new Label(topLevel, SWT.NONE);
-		label.setText(Policy.bind("HistoryFilterDialog.toDate"));
+		label.setText(Policy.bind("HistoryFilterDialog.toDate")); //$NON-NLS-1$
 		Composite tdComposite = new Composite(topLevel, SWT.NONE);
 		GridLayout tdLayout = new GridLayout();
 		tdLayout.numColumns = 3;
@@ -117,7 +117,7 @@ public class HistoryFilterDialog extends Dialog {
 		}
 
 		String months[] = new String[12];
-		SimpleDateFormat format = new SimpleDateFormat("MMMM");
+		SimpleDateFormat format = new SimpleDateFormat("MMMM"); //$NON-NLS-1$
 		Calendar calendar = Calendar.getInstance();
 		for (int i = 0; i < 12; i++) {
 			calendar.set(Calendar.MONTH, i);

@@ -104,7 +104,7 @@ abstract class MergeAction extends Action {
 			}
 		};
 		try {
-			run(op, Policy.bind("MergeAction.problemsDuringSync"));
+			run(op, Policy.bind("MergeAction.problemsDuringSync")); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 		}
 		if (result[0] != null) {
@@ -178,7 +178,7 @@ abstract class MergeAction extends Action {
 			if (throwable instanceof CoreException) {
 				error = ((CoreException)throwable).getStatus();
 			} else {
-				error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable);
+				error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
 			CVSUIPlugin.log(error);
@@ -197,7 +197,7 @@ abstract class MergeAction extends Action {
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				try {
-					boolean r = MessageDialog.openConfirm(getShell(), Policy.bind("MergeAction.saveChangesTitle"), Policy.bind("MergeAction.saveChanges"));
+					boolean r = MessageDialog.openConfirm(getShell(), Policy.bind("MergeAction.saveChangesTitle"), Policy.bind("MergeAction.saveChanges")); //$NON-NLS-1$ //$NON-NLS-2$
 					if (!r) {
 						result[0] = false;
 						return;

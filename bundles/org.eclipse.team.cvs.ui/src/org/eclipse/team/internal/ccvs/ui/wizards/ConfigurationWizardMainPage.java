@@ -135,30 +135,30 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			}
 		};
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.connection"));
+		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.connection")); //$NON-NLS-1$
 		connectionMethodCombo = createCombo(composite);
 
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.userName"));
+		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.userName")); //$NON-NLS-1$
 		userCombo = createEditableCombo(composite);
 		userCombo.addListener(SWT.Selection, listener);
 		userCombo.addListener(SWT.Modify, listener);
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.password"));
+		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
 		passwordText = createTextField(composite);
 		passwordText.setEchoChar('*');
 
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.host"));
+		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.host")); //$NON-NLS-1$
 		hostCombo = createEditableCombo(composite);
 		hostCombo.addListener(SWT.Selection, listener);
 		hostCombo.addListener(SWT.Modify, listener);
 		
-		useDefaultPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2);
-		useCustomPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.usePort"), 1);
+		useDefaultPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 2); //$NON-NLS-1$
+		useCustomPort = createRadioButton(composite, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
 		useCustomPort.addListener(SWT.Selection, listener);
 		portText = createTextField(composite);
 		portText.addListener(SWT.Selection, listener);
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.repositoryPath"));
+		createLabel(composite, Policy.bind("ConfigurationWizardMainPage.repositoryPath")); //$NON-NLS-1$
 		repositoryPathCombo = createEditableCombo(composite);
 		repositoryPathCombo.addListener(SWT.Selection, listener);
 		repositoryPathCombo.addListener(SWT.Modify, listener);
@@ -168,7 +168,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			GridData data = new GridData();
 			data.horizontalSpan = 2;
 			validateButton.setLayoutData(data);
-			validateButton.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate"));
+			validateButton.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate")); //$NON-NLS-1$
 			validateButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
 					validate = validateButton.getSelection();
@@ -203,14 +203,14 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	public boolean finish(IProgressMonitor monitor) {
 		// Set the result to be the current values
 		Properties result = new Properties();
-		result.setProperty("connection", connectionMethodCombo.getText());
-		result.setProperty("user", userCombo.getText());
-		result.setProperty("password", passwordText.getText());
-		result.setProperty("host", hostCombo.getText());
+		result.setProperty("connection", connectionMethodCombo.getText()); //$NON-NLS-1$
+		result.setProperty("user", userCombo.getText()); //$NON-NLS-1$
+		result.setProperty("password", passwordText.getText()); //$NON-NLS-1$
+		result.setProperty("host", hostCombo.getText()); //$NON-NLS-1$
 		if (useCustomPort.getSelection()) {
-			result.setProperty("port", portText.getText());
+			result.setProperty("port", portText.getText()); //$NON-NLS-1$
 		}
-		result.setProperty("root", repositoryPathCombo.getText());
+		result.setProperty("root", repositoryPathCombo.getText()); //$NON-NLS-1$
 		this.properties = result;
 		
 		saveWidgetValues();
@@ -261,29 +261,29 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		for (int i = 0; i < methods.length; i++) {
 			connectionMethodCombo.add(methods[i]);
 		}
-		String method = (String)properties.getProperty("connection");
+		String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
 		if (method == null) {
 			connectionMethodCombo.select(0);
 		} else {
 			connectionMethodCombo.select(connectionMethodCombo.indexOf(method));
 		}
 
-		String user = (String)properties.getProperty("user");
+		String user = (String)properties.getProperty("user"); //$NON-NLS-1$
 		if (user != null) {
 			userCombo.setText(user);
 		}
 
-		String password = (String)properties.getProperty("password");
+		String password = (String)properties.getProperty("password"); //$NON-NLS-1$
 		if (password != null) {
 			passwordText.setText(password);
 		}
 
-		String host = (String)properties.getProperty("host");
+		String host = (String)properties.getProperty("host"); //$NON-NLS-1$
 		if (host != null) {
 			hostCombo.setText(host);
 		}
 
-		String port = (String)properties.getProperty("port");
+		String port = (String)properties.getProperty("port"); //$NON-NLS-1$
 		if (port == null) {
 			useDefaultPort.setSelection(true);
 		} else {
@@ -291,7 +291,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			portText.setText(port);
 		}
 
-		String repositoryPath = (String)properties.getProperty("root");
+		String repositoryPath = (String)properties.getProperty("root"); //$NON-NLS-1$
 		if (repositoryPath != null) {
 			repositoryPathCombo.setText(repositoryPath);
 		}
@@ -360,7 +360,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			return;
 		}
 		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
-			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidUserName"));
+			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidUserName")); //$NON-NLS-1$
 			setPageComplete(false);
 			return;
 		}
@@ -372,7 +372,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			return;
 		}
 		if (host.indexOf(':') != -1) {
-			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidHostName"));
+			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidHostName")); //$NON-NLS-1$
 			setPageComplete(false);
 			return;
 		}
@@ -386,7 +386,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			try {
 				Integer.parseInt(portText.getText());
 			} catch (NumberFormatException e) {
-				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPort"));
+				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPort")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
 			}
@@ -402,7 +402,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			for (int i = 0; i < segments.length; i++) {
 				String string = segments[i];
 				if (string.charAt(0) == ' ' || string.charAt(string.length() -1) == ' ') {
-					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces"));
+					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces")); //$NON-NLS-1$
 					setPageComplete(false);
 					return;
 				}

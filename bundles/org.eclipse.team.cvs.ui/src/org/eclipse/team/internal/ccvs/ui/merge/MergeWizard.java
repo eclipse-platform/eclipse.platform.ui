@@ -28,12 +28,12 @@ public class MergeWizard extends Wizard {
 
 	public void addPages() {
 		// Provide a progress monitor to indicate what is going on
-		setWindowTitle(Policy.bind("MergeWizard.title"));
+		setWindowTitle(Policy.bind("MergeWizard.title")); //$NON-NLS-1$
 		ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
-		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
+		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage); //$NON-NLS-1$ //$NON-NLS-2$
 		startPage.setProject(project);
 		addPage(startPage);
-		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage, startPage);
+		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage, startPage); //$NON-NLS-1$ //$NON-NLS-2$
 		endPage.setProject(project);
 		addPage(endPage);
 	}

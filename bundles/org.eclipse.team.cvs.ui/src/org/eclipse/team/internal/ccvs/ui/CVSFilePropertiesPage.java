@@ -42,11 +42,11 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			ICVSFile cvsResource = CVSWorkspaceRoot.getCVSFileFor(file);
 			if (!cvsResource.isManaged()) {
 				if (cvsResource.isIgnored()) {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.ignored"));
+					createLabel(composite, Policy.bind("CVSFilePropertiesPage.ignored")); //$NON-NLS-1$
 				} else {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.notManaged"));
+					createLabel(composite, Policy.bind("CVSFilePropertiesPage.notManaged")); //$NON-NLS-1$
 				}
-				createLabel(composite, "");
+				createLabel(composite, ""); //$NON-NLS-1$
 				return composite;
 			}
 			ResourceSyncInfo syncInfo = cvsResource.getSyncInfo();
@@ -54,60 +54,60 @@ public class CVSFilePropertiesPage extends PropertyPage {
 
 			
 			if (syncInfo.isAdded()) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.isAdded"), 2);
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.isAdded"), 2); //$NON-NLS-1$
 			} else {
 				// Base
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision"));
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision")); //$NON-NLS-1$
 				createLabel(composite, syncInfo.getRevision());
 				Date baseTime = syncInfo.getTimeStamp();
 				if (baseTime != null) {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp"));
+					createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp")); //$NON-NLS-1$
 					createLabel(composite, CVSDateFormatter.dateToEntryLine(syncInfo.getTimeStamp()));
 				}
 				
 				// Modified
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified"));
-				createLabel(composite, cvsResource.isModified() ? Policy.bind("yes") : Policy.bind("no"));
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified")); //$NON-NLS-1$
+				createLabel(composite, cvsResource.isModified() ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			// Keyword Mode
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode"));
+			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode")); //$NON-NLS-1$
 			createLabel(composite, syncInfo.getKeywordMode().getLongDisplayText());
 			
 			// Tag
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag"));
+			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
 			CVSTag tag = syncInfo.getTag();
 			if (tag == null) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.none"));
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
 			} else {
 				switch (tag.getType()) {
 					case CVSTag.HEAD:
 						createLabel(composite, tag.getName());
 						break;
 					case CVSTag.VERSION:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.version", tag.getName()));
+						createLabel(composite, Policy.bind("CVSFilePropertiesPage.version", tag.getName())); //$NON-NLS-1$
 						break;
 					case CVSTag.BRANCH:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.branch", tag.getName()));
+						createLabel(composite, Policy.bind("CVSFilePropertiesPage.branch", tag.getName())); //$NON-NLS-1$
 						break;
 					case CVSTag.DATE:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName()));
+						createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName())); //$NON-NLS-1$
 						break;
 				}
 			}
 			
 			// Permissions
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.permissions"));
+			createLabel(composite, Policy.bind("CVSFilePropertiesPage.permissions")); //$NON-NLS-1$
 			String permissions = syncInfo.getPermissions();
 			if (permissions == null) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.notAvailable"));
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.notAvailable")); //$NON-NLS-1$
 			} else {
 				createLabel(composite, syncInfo.getPermissions());
 			}
 		} catch (TeamException e) {
 			// Display error text
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error"));
-			createLabel(composite, "");
+			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error")); //$NON-NLS-1$
+			createLabel(composite, ""); //$NON-NLS-1$
 		}
 		return composite;
 	}

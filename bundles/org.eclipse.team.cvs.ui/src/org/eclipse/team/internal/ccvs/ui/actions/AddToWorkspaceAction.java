@@ -122,7 +122,7 @@ public class AddToWorkspaceAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG);
+		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	private static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
@@ -139,7 +139,7 @@ public class AddToWorkspaceAction extends TeamAction {
 		if (yesToAll) return 2;
 		if ( ! project.exists()) return 0;
 		final MessageDialog dialog = 
-			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisResourceExists", project.getName()), MessageDialog.QUESTION, 
+			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisResourceExists", project.getName()), MessageDialog.QUESTION,  //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL,
@@ -159,7 +159,7 @@ public class AddToWorkspaceAction extends TeamAction {
 		if (yesToAll) return 2;
 		if ( ! location.exists()) return 0;
 		final MessageDialog dialog = 
-			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisExternalFileExists", location.getName()), MessageDialog.QUESTION, 
+			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisExternalFileExists", location.getName()), MessageDialog.QUESTION,  //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL,

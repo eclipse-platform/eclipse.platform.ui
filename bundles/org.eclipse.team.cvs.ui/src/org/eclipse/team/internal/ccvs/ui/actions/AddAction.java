@@ -40,8 +40,8 @@ public class AddAction extends TeamAction {
 				try {					
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("AddAction.adding"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("AddAction.adding")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -56,7 +56,7 @@ public class AddAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("AddAction.add"), this.PROGRESS_DIALOG);
+		}, Policy.bind("AddAction.add"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 
 	}
 	/*

@@ -90,12 +90,12 @@ public class UnmanageAction extends TeamAction {
 			radio1 = new Button(composite, SWT.RADIO);
 			radio1.addSelectionListener(selectionListener);
 			
-			radio1.setText(Policy.bind("Unmanage.option2"));
+			radio1.setText(Policy.bind("Unmanage.option2")); //$NON-NLS-1$
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);
 
-			radio2.setText(Policy.bind("Unmanage.option1"));
+			radio2.setText(Policy.bind("Unmanage.option1")); //$NON-NLS-1$
 			
 			// set initial state
 			radio1.setSelection(deleteContent);
@@ -135,7 +135,7 @@ public class UnmanageAction extends TeamAction {
 			}
 		}
 		if (exceptions[0] != null) {
-			handle(exceptions[0], null, Policy.bind("Unmanage.unmanagingError"));
+			handle(exceptions[0], null, Policy.bind("Unmanage.unmanagingError")); //$NON-NLS-1$
 		}
 	}
 
@@ -145,8 +145,8 @@ public class UnmanageAction extends TeamAction {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("Unmanage.unmanaging"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("Unmanage.unmanaging")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1000);

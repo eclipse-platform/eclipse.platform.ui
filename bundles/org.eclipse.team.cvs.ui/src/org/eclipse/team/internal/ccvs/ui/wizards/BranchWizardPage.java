@@ -32,9 +32,9 @@ public class BranchWizardPage extends CVSWizardPage {
 	public BranchWizardPage(String pageName,String title,  boolean allStickyResources, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 		if(allStickyResources) {
-			setDescription(Policy.bind("BranchWizardPage.pageDescriptionVersion"));
+			setDescription(Policy.bind("BranchWizardPage.pageDescriptionVersion")); //$NON-NLS-1$
 		} else {
-			setDescription(Policy.bind("BranchWizardPage.pageDescription"));
+			setDescription(Policy.bind("BranchWizardPage.pageDescription")); //$NON-NLS-1$
 		}
 		this.allStickyResources = allStickyResources;
 	}
@@ -47,7 +47,7 @@ public class BranchWizardPage extends CVSWizardPage {
 		Label label;
 		GridData data;
 		
-		createLabel(composite, Policy.bind("BranchWizardPage.branchName"));
+		createLabel(composite, Policy.bind("BranchWizardPage.branchName")); //$NON-NLS-1$
 		branchText = createTextField(composite);
 		branchText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
@@ -57,14 +57,14 @@ public class BranchWizardPage extends CVSWizardPage {
 			}
 		});
 
-		createLabel(composite, "");
-		createLabel(composite, "");
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, ""); //$NON-NLS-1$
 
 		final Button check = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		check.setLayoutData(data);
-		check.setText(Policy.bind("BranchWizardPage.startWorking"));
+		check.setText(Policy.bind("BranchWizardPage.startWorking")); //$NON-NLS-1$
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				update = check.getSelection();
@@ -74,17 +74,17 @@ public class BranchWizardPage extends CVSWizardPage {
 		update = true;
 		
 		if(!allStickyResources) {			
-			createLabel(composite, "");
-			createLabel(composite, "");
+			createLabel(composite, ""); //$NON-NLS-1$
+			createLabel(composite, ""); //$NON-NLS-1$
 			
 			label = new Label(composite, SWT.WRAP);
-			label.setText(Policy.bind("BranchWizardPage.specifyVersion"));
+			label.setText(Policy.bind("BranchWizardPage.specifyVersion")); //$NON-NLS-1$
 			data = new GridData();
 			data.horizontalSpan = 2;
 			data.widthHint = 350;
 			label.setLayoutData(data);
 			
-			createLabel(composite, Policy.bind("BranchWizardPage.versionName"));
+			createLabel(composite, Policy.bind("BranchWizardPage.versionName")); //$NON-NLS-1$
 			versionText = createTextField(composite);
 			versionText.addListener(SWT.Modify, new Listener() {
 				public void handleEvent(Event event) {
@@ -113,7 +113,7 @@ public class BranchWizardPage extends CVSWizardPage {
 	
 	private void updateVersionName(String branchName) {
 		if(versionText!=null) {
-			versionText.setText(Policy.bind("BranchWizardPage.versionPrefix") + branchName);
+			versionText.setText(Policy.bind("BranchWizardPage.versionPrefix") + branchName); //$NON-NLS-1$
 		}
 	}
 	

@@ -52,40 +52,40 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
 		description.setLayoutData(data);
-		description.setText(Policy.bind("ConfigurationWizardAutoconnectPage.description"));
+		description.setText(Policy.bind("ConfigurationWizardAutoconnectPage.description")); //$NON-NLS-1$
 		
 		if (location == null) return;
 
 		// Spacer
-		createLabel(composite, "");
-		createLabel(composite, "");
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, ""); //$NON-NLS-1$
 		
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.user"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.user")); //$NON-NLS-1$
 		createLabel(composite, location.getUsername());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.host"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.host")); //$NON-NLS-1$
 		createLabel(composite, location.getHost());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port")); //$NON-NLS-1$
 		int port = location.getPort();
 		if (port == location.USE_DEFAULT_PORT) {
-			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default"));
+			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default")); //$NON-NLS-1$
 		} else {
-			createLabel(composite, "" + port);
+			createLabel(composite, "" + port); //$NON-NLS-1$
 		}
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.connectionType"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.connectionType")); //$NON-NLS-1$
 		createLabel(composite, location.getMethod().getName());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.repositoryPath"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.repositoryPath")); //$NON-NLS-1$
 		createLabel(composite, location.getRootDirectory());
-		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.module"));
+		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.module")); //$NON-NLS-1$
 		createLabel(composite, info.getRepository());
 		
 		// Spacer
-		createLabel(composite, "");
-		createLabel(composite, "");
+		createLabel(composite, ""); //$NON-NLS-1$
+		createLabel(composite, ""); //$NON-NLS-1$
 		
 		final Button check = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		data.horizontalSpan = 2;
-		check.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate"));
+		check.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate")); //$NON-NLS-1$
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				validate = check.getSelection();
@@ -106,7 +106,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
-				ErrorDialog.openError(getContainer().getShell(), Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null);
+				ErrorDialog.openError(getContainer().getShell(), Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			location = CVSRepositoryLocation.fromString(info.getRoot());

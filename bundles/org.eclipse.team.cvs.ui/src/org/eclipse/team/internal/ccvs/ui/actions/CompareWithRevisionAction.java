@@ -53,11 +53,11 @@ public class CompareWithRevisionAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				file[0] = getSelectedRemoteFile();
 			}
-		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 		
 		if (file[0] == null) {
 			// No revisions for selected file
-			MessageDialog.openWarning(getShell(), Policy.bind("CompareWithRevisionAction.noRevisions"), Policy.bind("CompareWithRevisionAction.noRevisionsLong"));
+			MessageDialog.openWarning(getShell(), Policy.bind("CompareWithRevisionAction.noRevisions"), Policy.bind("CompareWithRevisionAction.noRevisionsLong")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		
@@ -65,14 +65,14 @@ public class CompareWithRevisionAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					monitor.beginTask(Policy.bind("CompareWithRevisionAction.fetching"), 100);
+					monitor.beginTask(Policy.bind("CompareWithRevisionAction.fetching"), 100); //$NON-NLS-1$
 					entries[0] = file[0].getLogEntries(Policy.subMonitorFor(monitor, 100));
 					monitor.done();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_DIALOG);
+		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 		
 		if (entries[0] == null) return;
 		
@@ -81,7 +81,7 @@ public class CompareWithRevisionAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				CompareUI.openCompareEditor(new CVSCompareRevisionsInput((IFile)getSelectedResources()[0], entries[0]));
 			}
-		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("CompareWithRevisionAction.compare"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()

@@ -53,7 +53,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("UserValidationDialog.required"));
+		newShell.setText(Policy.bind("UserValidationDialog.required")); //$NON-NLS-1$
 		// set F1 help
 		//WorkbenchHelp.setHelp(newShell, new Object[] {ICVSHelpContextIds.USER_VALIDATION_DIALOG});	
 	}
@@ -95,9 +95,9 @@ public class UserValidationDialog extends Dialog {
 		
 		Label label = new Label(main, SWT.WRAP);
 		if (isUsernameMutable) {
-			label.setText(Policy.bind("UserValidationDialog.labelUser", domain));
+			label.setText(Policy.bind("UserValidationDialog.labelUser", domain)); //$NON-NLS-1$
 		} else {
-			label.setText(Policy.bind("UserValidationDialog.labelPassword", new Object[] {defaultUsername, domain}));
+			label.setText(Policy.bind("UserValidationDialog.labelPassword", new Object[] {defaultUsername, domain})); //$NON-NLS-1$
 		}
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
@@ -114,7 +114,7 @@ public class UserValidationDialog extends Dialog {
 	 * @param parent  the parent of the widgets
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(Policy.bind("UserValidationDialog.password"));
+		new Label(parent, SWT.NONE).setText(Policy.bind("UserValidationDialog.password")); //$NON-NLS-1$
 		
 		passwordField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -131,7 +131,7 @@ public class UserValidationDialog extends Dialog {
 	 * @param parent  the parent of the widgets
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(Policy.bind("UserValidationDialog.user"));
+		new Label(parent, SWT.NONE).setText(Policy.bind("UserValidationDialog.user")); //$NON-NLS-1$
 		
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
