@@ -246,6 +246,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(considerContentsInCompare, IHelpContextIds.PREF_CONSIDER_CONTENT);
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
 		WorkbenchHelp.setHelp(showMarkers, IHelpContextIds.PREF_MARKERS_ENABLED);
+		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 						
 		return composite;
 	}
@@ -403,6 +404,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		auto = new Button(group, SWT.RADIO | SWT.LEFT);
 		auto.setLayoutData(new GridData());
 		auto.setText(Policy.bind("CVSPreferencePage.Auto-&save_4")); //$NON-NLS-1$
+		
+		WorkbenchHelp.setHelp(group, IHelpContextIds.PREF_SAVE_DIRTY_EDITORS);
    }
    
    /**

@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -46,6 +45,7 @@ import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSRepositoryPropertiesPage extends PropertyPage {
 	ICVSRepositoryLocation location;
@@ -110,6 +110,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				connectionInfoChanged = true;
 			}
 		});
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
 		return composite;
 	}
 	/**

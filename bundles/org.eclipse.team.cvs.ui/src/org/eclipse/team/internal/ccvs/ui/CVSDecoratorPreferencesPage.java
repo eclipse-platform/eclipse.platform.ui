@@ -34,11 +34,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSDecoratorPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -207,6 +207,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		showDirty = createCheckBox(composite, Policy.bind("&Compute_deep_outgoing_state_for_folders_(disabling_this_will_improve_decorator_performance)_28")); //$NON-NLS-1$
 				
 		initializeValues();
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 		return composite;
 	}
 	

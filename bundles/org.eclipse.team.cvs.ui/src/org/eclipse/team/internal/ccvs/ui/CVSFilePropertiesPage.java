@@ -21,8 +21,8 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSFilePropertiesPage extends PropertyPage {
 	IFile file;
@@ -99,6 +99,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error")); //$NON-NLS-1$
 			createLabel(composite, ""); //$NON-NLS-1$
 		}
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.FILE_PROPERTY_PAGE);
 		return composite;
 	}
 	/**

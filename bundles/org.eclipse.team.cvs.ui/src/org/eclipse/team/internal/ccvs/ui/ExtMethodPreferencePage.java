@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -107,7 +108,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 
 		
 		initializeDefaults();
-				
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);		
 		return composite;
 	}
 	

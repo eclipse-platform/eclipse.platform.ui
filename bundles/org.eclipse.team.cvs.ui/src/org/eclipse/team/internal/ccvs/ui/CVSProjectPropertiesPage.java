@@ -53,6 +53,7 @@ import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -219,6 +220,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		});
 		
 		initializeValues(oldLocation);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.PROJECT_PROPERTY_PAGE);
 		return composite;
 	}
 	/**

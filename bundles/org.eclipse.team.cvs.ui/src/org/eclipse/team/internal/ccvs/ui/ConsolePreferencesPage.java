@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 public class ConsolePreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -79,6 +80,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		autoOpenCheckBox = createCheckBox(composite, Policy.bind("ConsolePreferencePage.autoOpen")); //$NON-NLS-1$
 		
 		initializeValues();
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 		return composite;
 	}
 	/**

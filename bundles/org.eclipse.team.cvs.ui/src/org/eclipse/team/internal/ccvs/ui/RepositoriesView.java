@@ -132,6 +132,7 @@ public class RepositoriesView extends ViewPart {
 				dialog.open();
 			}
 		};
+		WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
 		final Action newAnonAction = new Action(Policy.bind("RepositoriesView.newAnonCVS"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 			public void run() {
@@ -145,6 +146,7 @@ public class RepositoriesView extends ViewPart {
 				dialog.open();
 			}
 		};
+		WorkbenchHelp.setHelp(newAnonAction, IHelpContextIds.NEW_DEV_ECLIPSE_REPOSITORY_LOCATION_ACTION);
 
 		// Properties
 		propertiesAction = new PropertyDialogAction(shell, viewer);
@@ -221,6 +223,7 @@ public class RepositoriesView extends ViewPart {
 				viewer.refresh();
 			}
 		};
+		WorkbenchHelp.setHelp(showFoldersAction, IHelpContextIds.SHOW_REMOTE_FOLDERS_ACTION);
 		showModulesAction = new Action(Policy.bind("RepositoriesView.Show_Modules_7")) { //$NON-NLS-1$
 			public void run() {
 				CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_SHOW_MODULES, true);
@@ -228,6 +231,7 @@ public class RepositoriesView extends ViewPart {
 				viewer.refresh();
 			}
 		};
+		WorkbenchHelp.setHelp(showModulesAction, IHelpContextIds.SHOW_REMOTE_MODULES_ACTION);
 		boolean showModules = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_MODULES);
 		showFoldersAction.setChecked(!showModules);
 		showModulesAction.setChecked(showModules);
