@@ -246,6 +246,34 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		}
 	}
 
+	public void testBug59899() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		IFile file = project.getFile("file.txt");
+		IFolder folder = project.getFolder("folder");
+		ensureExistsInWorkspace(new IResource[] {file, folder}, true);
+		try {
+			file.setCharset("FOO", getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		try {
+			folder.setDefaultCharset("BAR", getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		try {
+			project.setDefaultCharset("PROJECT_CHARSET", getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		try {
+			getWorkspace().getRoot().setDefaultCharset("ROOT_CHARSET", getMonitor());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+	}
+
 	public void testFileCreation() throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject("MyProject");
@@ -368,13 +396,14 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			ensureDoesNotExistInWorkspace(project);
 		}
 	}
+
 	public void testBug64503() throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject("MyProject");
 		try {
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");			
-			IFile file = project.getFile("file.txt");			
+			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+			IFile file = project.getFile("file.txt");
 			ensureExistsInWorkspace(file, true);
 			IContentDescription description = file.getContentDescription();
 			assertNotNull("1.0", description);
@@ -388,7 +417,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			}
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
-		}		
-	}	
-	
+		}
+	}
+
 }

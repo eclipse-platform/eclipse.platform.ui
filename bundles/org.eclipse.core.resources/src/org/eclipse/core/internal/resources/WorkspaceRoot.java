@@ -12,8 +12,10 @@ package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	/**
@@ -216,6 +218,8 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	/**
 	 * @see IContainer#setDefaultCharset(String)
+	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
+	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
 	public void setDefaultCharset(String charset) throws CoreException {
 		// directly change the Resource plugin's preference for encoding
@@ -224,6 +228,42 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, charset);
 		else
 			resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
+	}
+
+	/**
+	 * @see IContainer#setDefaultCharset(String, IProgressMonitor)
+	 */
+	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = Policy.bind("resources.settingDefaultCharsetWorkspace"); //$NON-NLS-1$
+			monitor.beginTask(message, Policy.totalWork);
+			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				checkAccessible(getFlags(info));
+				workspace.beginOperation(true);
+
+				// TODO: https://bugs.eclipse.org/bugs/show_bug.cgi?id=59899
+				// Changing the encoding needs to notify clients.
+				// directly change the Resource plugin's preference for encoding
+				Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+				if (charset != null)
+					resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, charset);
+				else
+					resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
+
+				monitor.worked(Policy.opWork);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**

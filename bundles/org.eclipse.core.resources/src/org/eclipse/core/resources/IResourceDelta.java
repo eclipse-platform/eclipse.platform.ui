@@ -166,6 +166,14 @@ public interface IResourceDelta extends IAdaptable {
 	public static final int DESCRIPTION = 0x80000;
 
 	/**
+	 * Change constant (bit mask) indicating that the encoding of the resource has changed.
+	 * 
+	 * @see IResourceDelta#getFlags() 
+	 * @since 3.0
+	 */
+	public static final int ENCODING = 0x100000;
+
+	/**
 	 * Accepts the given visitor.
 	 * The only kinds of resource deltas visited 
 	 * are <code>ADDED</code>, <code>REMOVED</code>, 
@@ -360,6 +368,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
 	 * 		been altered, or <code>IResource.touch</code> has been called on 
 	 * 		the resource.</li>
+	 * <li><code>ENCODING</code> - The encoding of the resource has been altered.</li>
 	 * <li><code>DESCRIPTION</code> - The description of the project has been altered,
 	 * 		or <code>IResource.touch</code> has been called on the project.
 	 * 		This flag is only valid for project resources.</li>
@@ -410,6 +419,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @return the flags
 	 * @see IResourceDelta#CONTENT
 	 * @see IResourceDelta#DESCRIPTION
+	 * @see IResourceDelta#ENCODING
 	 * @see IResourceDelta#OPEN
 	 * @see IResourceDelta#MOVED_TO
 	 * @see IResourceDelta#MOVED_FROM

@@ -373,11 +373,44 @@ public class File extends Resource implements IFile {
 
 	/* (non-Javadoc)
 	 * @see IFile#setCharset(String)
+	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which 
+	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
 	public void setCharset(String newCharset) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
+	}
+
+	/* (non-Javadoc)
+	 * @see IFile#setCharset(String, IProgressMonitor)
+	 */
+	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = Policy.bind("resources.settingCharset", getFullPath().toString()); //$NON-NLS-1$
+			monitor.beginTask(message, Policy.totalWork);
+			// need to get the project as a scheduling rule because we might be creating a new folder/file to
+			// hold the project settings
+			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(getProject());
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				checkAccessible(getFlags(info));
+				workspace.beginOperation(true);
+				// TODO: https://bugs.eclipse.org/bugs/show_bug.cgi?id=59899
+				// Changing the encoding needs to notify clients.
+				workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
+				monitor.worked(Policy.opWork);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)
