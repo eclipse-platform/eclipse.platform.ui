@@ -163,19 +163,21 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			Bundle[] cachedBundles = context.getBundles();		
 			URL[] plugins = configuration.getPluginPath();
 				
+			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
+			List toRefresh = getUnresolvedBundles();
+
 			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
 			for (int i=0; i<bundlesToUninstall.length; i++) {
 				try {
 					if (DEBUG)
 						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation()); //$NON-NLS-1$
+					// include every bundle being uninstalled in the list of bundles to refresh (see bug 82393)					
+					toRefresh.add(bundlesToUninstall[i]);					
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
 					Utils.log(Messages.getString("ConfigurationActivator.uninstallBundle", bundlesToUninstall[i].getLocation())); //$NON-NLS-1$
 				}
 			}
-			
-			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
-			List toRefresh = getUnresolvedBundles();
 			
 			// Get the urls to install
 			String[] bundlesToInstall = getBundlesToInstall(cachedBundles, plugins);
