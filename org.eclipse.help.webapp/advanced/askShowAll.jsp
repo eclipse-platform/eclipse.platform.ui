@@ -11,10 +11,10 @@
 <%@ include file="header.jsp"%>
 
 <jsp:include page="confirm.jsp">
-	<jsp:param name="title"		value="<%=ServletResources.getString("confirmShowAllTitle", request)%>"/>
-	<jsp:param name="header"	value="<%=ServletResources.getString("askShowAllQuestion", request)%>"/>
-	<jsp:param name="message"	value="<%=ServletResources.getString("askShowAllExplanation", request)%>"/>
-	<jsp:param name="confirmCallback"	value="<%="yesShowAll()"%>"/>
+	<jsp:param name="title"		value="<%=ServletResources.getString(\"confirmShowAllTitle\", request)%>"/>
+	<jsp:param name="header"	value="<%=ServletResources.getString(\"askShowAllQuestion\", request)%>"/>
+	<jsp:param name="message"	value="<%=ServletResources.getString(\"askShowAllExplanation\", request)%>"/>
+	<jsp:param name="confirmCallback"	value="<%=\"yesShowAll()\"%>"/>
 	<jsp:param name="initialFocus"	value="cancel"/>
 	<jsp:param name="buttons"	value="yesno"/>
 </jsp:include>
