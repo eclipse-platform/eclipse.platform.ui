@@ -26,14 +26,13 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Tag source that gets its tags from the projects exist in the workspace
- * and are mapped to the same repository as the seed project
  */
 public class LocalProjectTagSource extends TagSource {
     
     public static TagSource create(IProject seedProject) {
         try {
             ICVSRemoteFolder seedFolder = ((ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(seedProject));
-            ICVSRemoteFolder[] remoteFolders = getProjectRemoteFolders(seedFolder.getRepository());
+            ICVSRemoteFolder[] remoteFolders = getProjectRemoteFolders();
             if (remoteFolders.length == 1) {
                 // There are no other projects to get tags from so return null
                 return null;
@@ -57,7 +56,7 @@ public class LocalProjectTagSource extends TagSource {
     /*
      * Return the list of remote folders for the projects in the workspace mapped to the given repository
      */
-    private static ICVSRemoteFolder[] getProjectRemoteFolders(ICVSRepositoryLocation repository) {
+    private static ICVSRemoteFolder[] getProjectRemoteFolders() {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         List result = new ArrayList();
         for (int i = 0; i < projects.length; i++) {
@@ -65,7 +64,7 @@ public class LocalProjectTagSource extends TagSource {
             try {
                 if (project.isAccessible() && RepositoryProvider.isShared(project)) {
                     ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
-                    if (remote != null && remote.getRepository().equals(repository)) {
+                    if (remote != null) {
                         result.add(remote);
                     }
                 }
