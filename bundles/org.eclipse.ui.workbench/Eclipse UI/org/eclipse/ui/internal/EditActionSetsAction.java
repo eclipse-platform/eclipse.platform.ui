@@ -24,8 +24,8 @@ public EditActionSetsAction() {
  * 
  */
 public EditActionSetsAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("EditorActionSetsAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("EditorActionSetsAction.toolTip")); //$NON-NLS-1$
+	super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	this.window = window;
 	WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);

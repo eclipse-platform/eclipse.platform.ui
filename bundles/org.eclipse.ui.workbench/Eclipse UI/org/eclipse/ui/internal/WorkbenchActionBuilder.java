@@ -1,46 +1,66 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ExportResourcesAction;
+import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.actions.ImportResourcesAction;
+import org.eclipse.ui.actions.LabelRetargetAction;
+import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.actions.OpenInNewWindowAction;
+import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * This is used to add actions to the workbench.
+ * Adds actions to a workbench window.
  */
-public class WorkbenchActionBuilder implements IPropertyChangeListener {
+public class WorkbenchActionBuilder {
 	
 	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
 	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
-	private static final String printActionDefId = "org.eclipse.ui.file.print"; //$NON-NLS-1$
 	private static final String closeActionDefId = "org.eclipse.ui.file.close"; //$NON-NLS-1$
 	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll"; //$NON-NLS-1$
 	private static final String closeAllSavedActionDefId = "org.eclipse.ui.file.closeAllSaved"; //$NON-NLS-1$
-	private static final String undoActionDefId = "org.eclipse.ui.edit.undo"; //$NON-NLS-1$
-	private static final String redoActionDefId = "org.eclipse.ui.edit.redo"; //$NON-NLS-1$
-	private static final String cutActionDefId = "org.eclipse.ui.edit.cut"; //$NON-NLS-1$
-	private static final String copyActionDefId = "org.eclipse.ui.edit.copy"; //$NON-NLS-1$
-	private static final String pasteActionDefId = "org.eclipse.ui.edit.paste"; //$NON-NLS-1$
 	private static final String deleteActionDefId = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
-	private static final String selectAllActionDefId = "org.eclipse.ui.edit.selectAll"; //$NON-NLS-1$
-	private static final String findActionDefId = "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
-	private static final String addBookmarkActionDefId = "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
 	private static final String showViewMenuActionDefId = "org.eclipse.ui.window.showViewMenu"; //$NON-NLS-1$
 	private static final String showPartPaneMenuActionDefId = "org.eclipse.ui.window.showSystemMenu"; //$NON-NLS-1$
 	private static final String nextEditorActionDefId = "org.eclipse.ui.window.nextEditor"; //$NON-NLS-1$
@@ -64,9 +84,17 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 	//history group in the toolbar
 	private static final String historyGroup = "historyGroup"; //$NON-NLS-1$
-	
-	// target
-	private WorkbenchWindow window;
+
+	/**
+	 * The window to which this is contributing.
+	 */	
+	private final WorkbenchWindow window;
+
+	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			handlePropertyChange(event);
+		}
+	};
 
 	// actions
 	private NewWizardAction newWizardAction;
@@ -141,56 +169,51 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private NavigationHistoryAction forwardHistoryAction;
 
 	/**
-	 * WorkbenchActionBuilder constructor comment.
+	 * Constructs a new action builder which contributes actions
+	 * to the given window.
+	 * 
+	 * @window the window
 	 */
-	public WorkbenchActionBuilder() {
+	public WorkbenchActionBuilder(WorkbenchWindow window) {
+		this.window = window;
 	}
 	
 	/**
-	 * Add the manual incremental build action
-	 * to both the menu bar and the tool bar.
+	 * Returns the window to which this action builder is contributing.
 	 */
-	protected void addManualIncrementalBuildAction() {
-		MenuManager menubar = window.getMenuBarManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
-		if (manager != null) {
-			try {
-				manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
-				manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
-			} catch (IllegalArgumentException e) {
-				// action not found!
-			}
-		}
-		IContributionManager cBarMgr =  window.getCoolBarManager();
-		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
-		IContributionManager tBarMgr = groupItem.getToolBarManager();
-		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
-		tBarMgr.update(true);
+	protected WorkbenchWindow getWindow() {
+		return window;
 	}
 	
 	/**
-	 * Build the workbench actions.
+	 * Builds the actions and contributes them to the given window.
 	 */
-	public void buildActions(WorkbenchWindow win) {
-		window = win;
+	public void buildActions() {
 		makeActions();
-		createMenuBar();
-		createToolBar();
-		createShortcutBar();
+		fillMenuBar();
+		fillToolBar();
+		fillShortcutBar();
+		hookListeners();
+	}
+
+	/**
+	 * Hooks listeners on the preference store and the window's page, perspective and selection services.
+	 */
+	private void hookListeners() {
 
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		store.addPropertyChangeListener(this);
-
+		store.addPropertyChangeListener(propertyChangeListener);
+		
 		// Listen to workbench page lifecycle methods to enable
 		// and disable the perspective menu items as needed.
-		window.addPageListener(new IPageListener() {
+		getWindow().addPageListener(new IPageListener() {
 			public void pageActivated(IWorkbenchPage page) {
 				enableActions(page.getPerspective() != null);
 			}
 			public void pageClosed(IWorkbenchPage page) {
-				IWorkbenchPage pg = window.getActivePage();
+				IWorkbenchPage pg = getWindow().getActivePage();
 				enableActions(pg != null && pg.getPerspective() != null);
 			}
 			public void pageOpened(IWorkbenchPage page) {
@@ -199,7 +222,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 							
 		// Listen to workbench perspective lifecycle methods to enable
 		// and disable the perspective menu items as needed.
-		window.getPerspectiveService().addPerspectiveListener(new IInternalPerspectiveListener() {
+		getWindow().getPerspectiveService().addPerspectiveListener(new IInternalPerspectiveListener() {
 			public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(page.getPerspective() != null);
 			}
@@ -214,10 +237,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		
 		//Listen for the selection changing and update the
 		//actions that are interested
-		window.getSelectionService().addSelectionListener(new ISelectionListener(){
-			/*
-			 * @see ISelectionListener.selectionChanges
-			 */
+		getWindow().getSelectionService().addSelectionListener(new ISelectionListener(){
 			public void selectionChanged(IWorkbenchPart part, ISelection selection){
 				if(selection instanceof IStructuredSelection){
 					IStructuredSelection structured = (IStructuredSelection) selection;
@@ -249,11 +269,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	}
 	
 	/**
-	 * Creates the menu bar.
+	 * Fills the menu bar with the workbench actions.
 	 */
-	private void createMenuBar() {
-		// Get main menu.
-		MenuManager menubar = window.getMenuBarManager();
+	private void fillMenuBar() {
+		MenuManager menubar = getWindow().getMenuBarManager();
 		menubar.add(createFileMenu());
 		menubar.add(createEditMenu());
 		menubar.add(createNavigateMenu());
@@ -307,10 +326,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new Separator());
 		menu.add(propertiesAction);
 
-		menu.add(new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), true));
+		menu.add(new ReopenEditorMenu(window, ((Workbench) getWindow().getWorkbench()).getEditorHistory(), true));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));  		
 		menu.add(new Separator());
-		menu.add(new QuitAction(window.getWorkbench()));
+		menu.add(new QuitAction(getWindow().getWorkbench()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;
 	}
@@ -349,8 +368,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		return menu;
 	}
-
-// menu reorg
 
 	/**
 	 * Creates and returns the Navigate menu.
@@ -416,10 +433,29 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.PROJ_END));
 		return menu;
-	}
+	}	
 
-// end menu reorg
-	
+	/**
+	 * Creates and returns the Window menu.
+	 */
+	private MenuManager createWindowMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
+		
+		OpenInNewWindowAction action = new OpenInNewWindowAction(window);
+		action.setText(WorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
+		menu.add(action);
+		menu.add(new Separator());
+		addPerspectiveActions(menu);
+		menu.add(new Separator());
+		addKeyboardShortcuts(menu);
+		menu.add(new Separator());
+		menu.add(workbenchEditorsAction);
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
+		menu.add(openPreferencesAction);
+		menu.add(new SwitchToWindowMenu(window, true));
+		return menu;
+	}	
 
 	/**
 	 * Adds the perspective actions to the specified menu.
@@ -449,35 +485,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	}
 	
 	/**
-	 * Creates and returns the Perspective menu.
-	 */
-	private MenuManager createPerspectiveMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
-		addPerspectiveActions(menu);
-		return menu;
-	}
-
-	/**
-	 * Creates and returns the Workbench menu.
-	 */
-	private MenuManager createWorkbenchMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.workbench"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
-		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
-		// Only add the manual incremental build if auto build off
-		if (!ResourcesPlugin.getWorkspace().isAutoBuilding())
-			menu.add(buildAllAction);
-		menu.add(rebuildAllAction);
-		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
-		menu.add(new Separator());
-		menu.add(openPreferencesAction);
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		return menu;
-	}
-
-	/**
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
-	/*
 	private void addKeyboardShortcuts(MenuManager menu) {
 		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
 		menu.add(subMenu);
@@ -494,30 +503,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(nextPerspectiveAction);
 		subMenu.add(prevPerspectiveAction);
 	}
-	*/
 	
-	/**
-	 * Creates and returns the Window menu.
-	 */
-	private MenuManager createWindowMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
-		
-		OpenInNewWindowAction action = new OpenInNewWindowAction(window);
-		action.setText(WorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
-		menu.add(action);
-		menu.add(new Separator());
-		addPerspectiveActions(menu);
-		menu.add(new Separator());
-		//addKeyboardShortcuts(menu);
-		//menu.add(new Separator());
-		menu.add(workbenchEditorsAction);
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
-		menu.add(openPreferencesAction);
-		menu.add(new SwitchToWindowMenu(window, true));
-		return menu;
-	}	
-
 	/**
 	 * Creates and returns the Help menu.
 	 */
@@ -536,23 +522,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	}
 	
 	/**
-	 * Fills the shortcut bar
-	 */
-	private void createShortcutBar() {
-		ToolBarManager shortcutBar = window.getShortcutBar();
-		shortcutBar.add(new PerspectiveContributionItem(window));
-		shortcutBar.add(new Separator(window.GRP_PAGES));
-		shortcutBar.add(new Separator(window.GRP_PERSPECTIVES));
-		shortcutBar.add(new Separator(window.GRP_FAST_VIEWS));
-		shortcutBar.add(new ShowFastViewContribution(window));
-	}
-	/**
-	 * Fills the menu bar by merging all the individual viewers' contributions
+	 * Fills the tool bar by merging all the individual viewers' contributions
 	 * and invariant (static) menus and menu items, as defined in MenuConstants interface.
 	 */
-	private void createToolBar() {
+	private void fillToolBar() {
 		// Create a CoolBar item for the workbench
-		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarManager cBarMgr =  getWindow().getCoolBarManager();
 		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
 		cBarMgr.add(coolBarItem);
 		coolBarItem.setVisible(true);
@@ -580,21 +555,36 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			addPinEditorAction();
 		}
 	}
+	
 	/**
-	 * Remove the property change listener
+	 * Fills the shortcut bar
+	 */
+	private void fillShortcutBar() {
+		ToolBarManager shortcutBar = getWindow().getShortcutBar();
+		shortcutBar.add(new PerspectiveContributionItem(window));
+		shortcutBar.add(new Separator(WorkbenchWindow.GRP_PAGES));
+		shortcutBar.add(new Separator(WorkbenchWindow.GRP_PERSPECTIVES));
+		shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
+		shortcutBar.add(new ShowFastViewContribution(window));
+	}
+	
+	/**
+	 * Disposes any resources and unhooks any listeners that are no longer needed.
+	 * Called when the window is closed.
 	 */
 	public void dispose() {
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		store.removePropertyChangeListener(this);
+		store.removePropertyChangeListener(propertyChangeListener);
 	}
+	
 	/**
 	 * Returns true if the menu with the given ID should
-	 * be considered OLE container menu. Container menus
+	 * be considered as an OLE container menu. Container menus
 	 * are preserved in OLE menu merging.
 	 */
-	public static boolean isContainerMenu(String menuId) {
+	public boolean isContainerMenu(String menuId) {
 		if (menuId.equals(IWorkbenchActionConstants.M_FILE))
 			return true;
 		if (menuId.equals(IWorkbenchActionConstants.M_VIEW))
@@ -605,6 +595,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			return true;
 		return false;
 	}
+	
 	/**
 	 * Create actions for the menu bar and toolbar
 	 */
@@ -614,11 +605,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// There are actions in here being passed the workbench - problem 
 
 		// Get services for notification.
-		IPartService partService = window.getPartService();
-		WWinKeyBindingService keyBindingService = window.getKeyBindingService();
+		IPartService partService = getWindow().getPartService();
+		WWinKeyBindingService keyBindingService = getWindow().getKeyBindingService();
 
 		// Many actions need the workbench.
-		IWorkbench workbench = window.getWorkbench();
+		IWorkbench workbench = getWindow().getWorkbench();
 
 		newWizardAction = new NewWizardAction();
 		// images for this action are set in its constructor
@@ -640,17 +631,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		exportResourcesAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 
 		rebuildAllAction = new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
-		// 1G82IWC - a new icon is needed for Rebuild All or Build
-		//	rebuildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
-		//	rebuildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
-		//	rebuildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
 		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
+		keyBindingService.registerGlobalAction(rebuildAllAction);
 
 		buildAllAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		buildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
 		buildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
 		buildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
 		buildAllAction.setActionDefinitionId(buildAllActionDefId);
+		keyBindingService.registerGlobalAction(buildAllAction);
 		
 		saveAction = new SaveAction(window);
 		saveAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
@@ -674,76 +663,44 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		saveAllAction.setActionDefinitionId(saveAllActionDefId);
 		keyBindingService.registerGlobalAction(saveAllAction);
 
-		undoAction = new LabelRetargetAction(IWorkbenchActionConstants.UNDO, WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
-		undoAction.setToolTipText(WorkbenchMessages.getString("Workbench.undoToolTip")); //$NON-NLS-1$
+		undoAction = createGlobalAction(IWorkbenchActionConstants.UNDO, "edit", true); //$NON-NLS-1$
 		undoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT));
 		undoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER));
 		undoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED));
-		partService.addPartListener(undoAction);
-		undoAction.setActionDefinitionId(undoActionDefId);
-		keyBindingService.registerGlobalAction(undoAction);
 
-		redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
-		redoAction.setToolTipText(WorkbenchMessages.getString("Workbench.redoToolTip")); //$NON-NLS-1$
+		redoAction = createGlobalAction(IWorkbenchActionConstants.REDO, "edit", true); //$NON-NLS-1$
 		redoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT));
 		redoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER));
 		redoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED));
-		partService.addPartListener(redoAction);
-		redoAction.setActionDefinitionId(redoActionDefId);
-		keyBindingService.registerGlobalAction(redoAction);
 
-		cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, WorkbenchMessages.getString("Workbench.cut")); //$NON-NLS-1$
-		cutAction.setToolTipText(WorkbenchMessages.getString("Workbench.cutToolTip")); //$NON-NLS-1$
+		cutAction = createGlobalAction(IWorkbenchActionConstants.CUT, "edit", false); //$NON-NLS-1$
 		cutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT));
 		cutAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER));
 		cutAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
-		partService.addPartListener(cutAction);
-		cutAction.setActionDefinitionId(cutActionDefId);
-		keyBindingService.registerGlobalAction(cutAction);
 
-		copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$
-		copyAction.setToolTipText(WorkbenchMessages.getString("Workbench.copyToolTip")); //$NON-NLS-1$
+		copyAction = createGlobalAction(IWorkbenchActionConstants.COPY, "edit", false); //$NON-NLS-1$
 		copyAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT));
 		copyAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER));
 		copyAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
-		partService.addPartListener(copyAction);
-		copyAction.setActionDefinitionId(copyActionDefId);
-		keyBindingService.registerGlobalAction(copyAction);
 		
-		pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$
-		pasteAction.setToolTipText(WorkbenchMessages.getString("Workbench.pasteToolTip")); //$NON-NLS-1$
+		pasteAction = createGlobalAction(IWorkbenchActionConstants.PASTE, "edit", false); //$NON-NLS-1$
 		pasteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT));
 		pasteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER));
 		pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
-		partService.addPartListener(pasteAction);
-		pasteAction.setActionDefinitionId(pasteActionDefId);
-		keyBindingService.registerGlobalAction(pasteAction);
 		
-		printAction = new RetargetAction(IWorkbenchActionConstants.PRINT, WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
-		printAction.setToolTipText(WorkbenchMessages.getString("Workbench.printToolTip")); //$NON-NLS-1$
+		printAction = createGlobalAction(IWorkbenchActionConstants.PRINT, "file", false); //$NON-NLS-1$
 		printAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
 		printAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
 		printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
-		partService.addPartListener(printAction);
-		printAction.setActionDefinitionId(printActionDefId);
-		keyBindingService.registerGlobalAction(printAction);
 
-		selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
-		selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
-		partService.addPartListener(selectAllAction);
-		selectAllAction.setActionDefinitionId(selectAllActionDefId);
-		keyBindingService.registerGlobalAction(selectAllAction);
+		selectAllAction = createGlobalAction(IWorkbenchActionConstants.SELECT_ALL, "edit", false); //$NON-NLS-1$
 
-		findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
-		findAction.setToolTipText(WorkbenchMessages.getString("Workbench.findReplaceToolTip")); //$NON-NLS-1$
-// Find's images commented out due to conflict with Search.
+		findAction = createGlobalAction(IWorkbenchActionConstants.FIND, "findReplace", "edit", "findReplace", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+// Find's images are commented out due to a conflict with Search.
 // See bug 16412.
 //		findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 //		findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 //		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
-		partService.addPartListener(findAction);
-		findAction.setActionDefinitionId(findActionDefId);
-		keyBindingService.registerGlobalAction(findAction);
 
 		closeAction = new CloseEditorAction(window);
 		partService.addPartListener(closeAction);
@@ -771,12 +728,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		openPreferencesAction = new OpenPreferencesAction(window);
 
-		addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, WorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$
-		partService.addPartListener(addBookmarkAction);
-		addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
-		addBookmarkAction.setActionDefinitionId(addBookmarkActionDefId);
-		keyBindingService.registerGlobalAction(addBookmarkAction);
-
+		addBookmarkAction = createGlobalAction(IWorkbenchActionConstants.BOOKMARK, "addBookMark", "edit", "addBookmark", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
 
 		showInAction = new WorkbenchShowInAction(window);
@@ -784,6 +736,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		showInAction.setActionDefinitionId(showInActionDefId);
 		keyBindingService.registerGlobalAction(showInAction);					
 		
+		// can't use createGlobalAction convenience since deleteAction is not registered with the key binding service
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT));
@@ -884,43 +837,52 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
 		openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
 		closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
-
-		// override the text and tooltip for certain actions,
-		// either to get the new text or a different mnemonic
-		savePerspectiveAction.setText(WorkbenchMessages.getString("Workbench.savePerspectiveAs")); //$NON-NLS-1$
-		editActionSetAction.setText(WorkbenchMessages.getString("Workbench.customizePerspective")); //$NON-NLS-1$
-		lockToolBarAction.setText(WorkbenchMessages.getString("Workbench.lockPerspectiveToolBar")); //$NON-NLS-1$
-		resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
-		closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
-		closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
-		buildAllAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
-		buildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
-		keyBindingService.registerGlobalAction(buildAllAction);
-		rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
-		rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
-		keyBindingService.registerGlobalAction(rebuildAllAction);
 	}
 	
+	/**
+	 * Creates a global (retargetable) action.
+	 * 
+	 * @param id the global action id (also used as the id to use when looking up messages, and the suffix to use
+	 *   in the action definition id)
+	 * @param actionDefPrefix the prefix to use in the action definition id
+	 * @param labelRetarget <code>true</code> if the action's label is retargetable, <code>false</code> if not
+	 * @return the action
+	 */
 	private RetargetAction createGlobalAction(String id, String actionDefPrefix, boolean labelRetarget) {
+		return createGlobalAction(id, id, actionDefPrefix, id, labelRetarget);
+	}
+	
+	/**
+	 * Creates a global (retargetable) action.
+	 * 
+	 * @param id the global action id
+	 * @param messageId the id to use when looking up messages
+	 * @param actionDefPrefix the prefix to use in the action definition id
+	 * @param actionDefSuffix the suffix to use in the action definition id
+	 * @param labelRetarget <code>true</code> if the action's label is retargetable, <code>false</code> if not
+	 * @return the action
+	 */
+	private RetargetAction createGlobalAction(String id, String messageId, String actionDefPrefix, String actionDefSuffix, boolean labelRetarget) {
+		String text = WorkbenchMessages.getString("Workbench." + messageId); //$NON-NLS-1$
+		String toolTipText = WorkbenchMessages.getString("Workbench." + messageId + "ToolTip"); //$NON-NLS-1$ //$NON-NLS-2$
 		RetargetAction action;
 		if (labelRetarget) {
-			action = new LabelRetargetAction(id, WorkbenchMessages.getString("Workbench." + id)); //$NON-NLS-1$
+			action = new LabelRetargetAction(id, text);
 		}
 		else {
-			action = new RetargetAction(id, WorkbenchMessages.getString("Workbench." + id)); //$NON-NLS-1$
+			action = new RetargetAction(id, text);
 		}
-		action.setToolTipText(WorkbenchMessages.getString("Workbench." + id + "ToolTip")); //$NON-NLS-1$   //$NON-NLS-2$
-		window.getPartService().addPartListener(action);
-		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + id); //$NON-NLS-1$   //$NON-NLS-2$
-		window.getKeyBindingService().registerGlobalAction(action);
+		action.setToolTipText(toolTipText);
+		getWindow().getPartService().addPartListener(action);
+		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + actionDefSuffix); //$NON-NLS-1$ //$NON-NLS-2$
+		getWindow().getKeyBindingService().registerGlobalAction(action);
 		return action;
 	}
 	
 	/**
-	 * Update the menubar and toolbar when
-	 * changes to the preferences are done.
+	 * Updates the menubar and toolbar when changes are made to the preferences.
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
+	private void handlePropertyChange(PropertyChangeEvent event) {
 		// Allow manual incremental build only if the
 		// auto build setting is off.
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -961,20 +923,21 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
-			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
+			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);
 			if (newValue == 0) {
 				// the open recent menu item can go from enabled to disabled
-				window.updateActionBars();
+				getWindow().updateActionBars();
 			}
 		}
 	}
-	/*
-	 * Adds the pin action to the toolbar.
+	
+	/**
+	 * Adds the editor history navigation actions to the toolbar.
 	 */
 	private void addHistoryActions() {
-		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarManager cBarMgr =  getWindow().getCoolBarManager();
 		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, historyGroup); //$NON-NLS-1$
 		// we want to add the history cool item before the editor cool item (if it exists)
 		IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
@@ -989,15 +952,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		tBarMgr.insertAfter(historyGroup,forwardHistoryAction);
 		tBarMgr.insertAfter(historyGroup,backwardHistoryAction);			
 		cBarMgr.update(true);
-	}	
-	/*
+	}
+		
+	/**
 	 * Adds the pin action to the toolbar.
 	 */
 	private void addPinEditorAction() {
-		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarManager cBarMgr =  getWindow().getCoolBarManager();
 		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
-		// we want to add the pin editor cool item before the editor cool item (if
-		// it exists)
+		// we want to add the pin editor cool item before the editor cool item (if it exists)
 		IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
 		if (refItem == null) {
 			cBarMgr.add(coolBarItem);
@@ -1011,22 +974,46 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		tBarMgr.insertAfter(pinEditorGroup,pinEditorAction);
 		cBarMgr.update(true);
 	}
-	/*
+	
+	/**
 	 * Removes the pin action from the toolbar.
 	 */	
 	private void removePinEditorAction() {
-		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
 		if (coolBarItem != null) 
 			coolBarItem.dispose();
 		cBarMgr.update(true);
 	}		
+
+	/**
+	 * Add the manual incremental build action
+	 * to both the menu bar and the tool bar.
+	 */
+	private void addManualIncrementalBuildAction() {
+		MenuManager menubar = getWindow().getMenuBarManager();
+		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		if (manager != null) {
+			try {
+				manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
+				manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
+			} catch (IllegalArgumentException e) {
+				// action not found!
+			}
+		}
+		IContributionManager cBarMgr =  getWindow().getCoolBarManager();
+		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
+		IContributionManager tBarMgr = groupItem.getToolBarManager();
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
+		tBarMgr.update(true);
+	}
+	
 	/**
 	 * Remove the manual incremental build action
 	 * from both the menu bar and the tool bar.
 	 */
 	protected void removeManualIncrementalBuildAction() {
-		MenuManager menubar = window.getMenuBarManager();
+		MenuManager menubar = getWindow().getMenuBarManager();
 		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
 			try {
@@ -1036,7 +1023,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				// action was not in menu
 			}
 		}
-		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarManager cBarMgr = getWindow().getCoolBarManager();
 		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
 		if (groupItem != null) {
 			IContributionManager tBarMgr = groupItem.getToolBarManager();

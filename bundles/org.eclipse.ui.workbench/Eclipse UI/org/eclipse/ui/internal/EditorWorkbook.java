@@ -245,7 +245,7 @@ public void createControl(Composite parent) {
 	Image pullDownButtonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 	pullDownButton.setDisabledImage(pullDownButtonImage);
 	pullDownButton.setImage(pullDownButtonImage);
-	pullDownButton.setToolTipText(WorkbenchMessages.getString("Editors")); //$NON-NLS-1$
+	pullDownButton.setToolTipText(WorkbenchMessages.getString("EditorList.button.toolTip")); //$NON-NLS-1$
 	
 	pullDownButton.addSelectionListener(new SelectionListener() {
 		public void widgetSelected(SelectionEvent e) {

@@ -103,7 +103,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private ToolBarManager shortcutBar;
 	private ShortcutBarPart shortcutBarPart;
 	private ShortcutBarPartDragDrop shortcutDND;
-	private WorkbenchActionBuilder builder;
+	private WorkbenchActionBuilder actionBuilder;
 	private boolean updateDisabled = true;
 	private boolean closing = false;
 	private boolean shellActivated = false;
@@ -114,13 +114,10 @@ public class WorkbenchWindow extends ApplicationWindow
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
 	
-	final private String TAG_INPUT = "input";//$NON-NLS-1$
-	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
-	final private String TAG_FOCUS = "focus";//$NON-NLS-1$
-	final private String TAG_FACTORY_ID = "factoryID";//$NON-NLS-1$
-	final protected String GRP_PAGES = "pages";//$NON-NLS-1$
-	final protected String GRP_PERSPECTIVES = "perspectives";//$NON-NLS-1$
-	final protected String GRP_FAST_VIEWS = "fastViews";//$NON-NLS-1$
+	// constants for shortcut bar group ids 
+	static final String GRP_PAGES = "pages";//$NON-NLS-1$
+	static final String GRP_PERSPECTIVES = "perspectives";//$NON-NLS-1$
+	static final String GRP_FAST_VIEWS = "fastViews";//$NON-NLS-1$
 
 	// static fields for inner classes.
 	static final int VGAP= 0;
@@ -251,8 +248,8 @@ public WorkbenchWindow(Workbench workbench, int number) {
 
 	// Add actions.
 	actionPresentation = new ActionPresentation(this);
-	builder = new WorkbenchActionBuilder();
-	builder.buildActions(this);
+	actionBuilder = createActionBuilder();
+	actionBuilder.buildActions();
 	
 	// include the workspace location in the title 
 	// if the command line option -showlocation is specified
@@ -559,6 +556,16 @@ protected Control createToolBarControl(Shell shell) {
 protected ToolBarManager createToolBarManager(int style) {
 	return null;
 }
+
+/**
+ * Creates the action builder for this window.
+ * 
+ * @return the action builder
+ */
+protected WorkbenchActionBuilder createActionBuilder() {
+	return new WorkbenchActionBuilder(this);
+}
+
 /* (non-Javadoc)
  * Method declared on ApplicationWindow.
  */
@@ -941,7 +948,7 @@ private boolean hardClose() {
 		updateDisabled = true;
 		actionPresentation.clearActionSets(); // fix for bug 27416
 		closeAllPages();
-		builder.dispose();
+		actionBuilder.dispose();
 		if(keyBindingService != null)
 			keyBindingService.dispose();
 		workbench.fireWindowClosed(this);
@@ -953,7 +960,7 @@ private boolean hardClose() {
  * @see IWorkbenchWindow
  */
 public boolean isApplicationMenu(String menuID) {
-	return WorkbenchActionBuilder.isContainerMenu(menuID);
+	return actionBuilder.isContainerMenu(menuID);
 }
 /**
  * Locks/unlocks the CoolBar for the workbench.
@@ -1264,7 +1271,7 @@ public IStatus saveState(IMemento memento) {
 		
 		// Save input.
 		IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
-		inputMem.putString(TAG_FACTORY_ID, persistable.getFactoryId());
+		inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
 		persistable.saveState(inputMem);
 	}
 	return result;
