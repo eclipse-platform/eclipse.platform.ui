@@ -30,8 +30,8 @@ for certain launch configuration types.</p>
 <ul>
  <li><code>id</code> specifies a unique identifier for this launch configuration
   tab.</li>
- <li><code>type</code> specifies a comma separated list of the fully qualified IDs of the
-  launch configuration types this tab will be shown for.  Defaults to all launch configuration
+ <li><code>type</code> specifies the fully qualified identifier of the
+  launch configuration type this tab will be shown for.  Defaults to all launch configuration
    types if not specified.</li>
  <li><code>class</code> specifies the fully qualified name of the Java class that implements
   <code>ILaunchConfigurationTab</code>.</li>
@@ -46,15 +46,15 @@ for certain launch configuration types.</p>
 &lt;extension point="org.eclipse.debug.core.launchConfigurationTabs"&gt;
    &lt;launchConfigurationTab 
       id="com.example.ExampleTabIdentifier"
-      type="com.example.FirstLaunchConfigurationType,com.example.SecondLaunchConfigurationType"
+      type="com.example.SomeLaunchConfigurationType"
       class="com.example.ExampleLaunchConfigurationTab"
       name="Example Tab"&gt;
    &lt;/launchConfigurationTab&gt;
 &lt;/extension&gt;
 </pre>
 
-<p>In the above example, the contributed tab will be shown for the two launch configuration types
-with IDs <code>com.example.FirstLaunchConfigurationTab</code> and <code>com.example.SecondLaunchConfigurationTab</code>.
+<p>In the above example, the contributed tab will be shown for the launch configuration type
+with identifier <code>com.example.SomeLaunchConfigurationType</code>.
 </p>
 
 <p><b><i>API Information: </i></b>Value of the attribute <b>class</b> must be a fully
