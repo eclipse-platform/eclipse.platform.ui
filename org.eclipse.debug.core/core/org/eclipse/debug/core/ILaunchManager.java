@@ -317,6 +317,19 @@ public interface ILaunchManager {
 	public ILaunchConfigurationType[] getAllLaunchConfigurationTypesFor(String fileExtension);
 
 	/**
+	 * Set the specified launch configuration type as the default for the specified resource.
+	 * When looking for a default launch configuration type, the usual method is to start at
+	 * the resource and work up the containment chain until some resource specifies a default
+	 * launch configuration type, or until the containment chain is exhausted.
+	 * 
+	 * @param resource the workbench resource whose default launch configuration type is being set
+	 * @param configType the launch configuration type that is being set as the default for 
+	 *  the specified resource
+	 * @since 2.0
+	 */
+	public void setDefaultLaunchConfigurationType(IResource resource, ILaunchConfigurationType configType);
+
+	/**
 	 * Set the specified launch configuration type as the default for resources with the specified
 	 * file extension.
 	 * 

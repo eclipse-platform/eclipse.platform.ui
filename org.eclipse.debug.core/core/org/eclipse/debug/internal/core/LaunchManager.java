@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -108,6 +109,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * for persisting the default launcher.
 	 */
 	private static final String DEFAULT_LAUNCHER= "launcher"; //$NON-NLS-1$
+	
+	/**
+	 * Constant for use as local name part of <code>QualifiedName</code>
+	 * for persisting the default launch configuration type.
+	 */
+	private static final String DEFAULT_CONFIG_TYPE = "defaultLaunchConfigurationType"; //$NON-NLS-1$
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
@@ -274,7 +281,30 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IResource)
 	 */
 	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource) {
+		
+		// First, work up the resource's containment chain looking for a resource that
+		// specifies a default config type
+		IResource candidateResource = resource;
+		try {
+			while (!(candidateResource instanceof IWorkspaceRoot)) {
+				String defaultConfigTypeID = candidateResource.getPersistentProperty(getDefaultConfigTypeQualifiedName());
+				if (defaultConfigTypeID != null) {
+					return getLaunchConfigurationType(defaultConfigTypeID);
+				}
+				candidateResource = candidateResource.getParent();
+			}
+		} catch (CoreException ce) {
+		}
+			
+		// Otherwise, return the default associated with the resource's file extension
 		return getDefaultLaunchConfigurationType(resource.getFileExtension());
+	}
+	
+	/**
+	 * Return the QualifiedName used as a key when persisting a default config type on an IResource
+	 */
+	protected QualifiedName getDefaultConfigTypeQualifiedName() {
+		return new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_CONFIG_TYPE);
 	}
 	
 	/**
@@ -407,6 +437,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE), id);
 	}	
+	
+	/**
+	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, ILaunchConfigurationType)
+	 */
+	public void setDefaultLaunchConfigurationType(IResource resource, ILaunchConfigurationType configType) {		
+		try {
+			resource.setPersistentProperty(getDefaultConfigTypeQualifiedName(), configType.getIdentifier());
+		} catch (CoreException ce) {
+		}
+	}
 	
 	/**
 	 * @see ILaunchManager#setDefaultLaunchConfigurationType(String, ILaunchConfigurationType)

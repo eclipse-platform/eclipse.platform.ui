@@ -485,4 +485,13 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ATTR_TARGET_DEBUG_PERSPECTIVE = PLUGIN_ID + ".target_debug_perspective";		 //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute - the container where the configuration file
+	 * is stored.  The container is set via the 'setContainer()' call on ILaunchConfigurationWorkingCopy.
+	 * This constant is only needed for persisting and reading the default value of the
+	 * container value for individual resources.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_CONTAINER = PLUGIN_ID + ".container"; //$NON-NLS-1$
 }
