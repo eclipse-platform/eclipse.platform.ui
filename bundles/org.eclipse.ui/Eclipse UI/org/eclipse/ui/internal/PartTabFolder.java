@@ -370,10 +370,7 @@ public int getMinimumHeight() {
 	
 	if (getItemCount() > 1) {
 		Rectangle trim = tabFolder.computeTrim(0, 0, 0, current.getMinimumHeight());
-		/* +1 as a workaround for bug# 11515 until CTabFolder.computeTrim is fixed;
-		 * this accounts for the divider between tabs and folder content.
-		 */
-		return trim.height + 1;
+		return trim.height;
 	}
 	else
 		return current.getMinimumHeight();

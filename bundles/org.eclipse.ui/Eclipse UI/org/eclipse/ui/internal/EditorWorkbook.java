@@ -369,11 +369,10 @@ public Rectangle getBounds() {
  */
 public int getMinimumHeight() {
 	if (tabFolder != null && !tabFolder.isDisposed() && getItemCount() > 0)
-		/* Don't add +1 for divider line, bottom border is enough
-		 * for editor tabs. This needs to be updated to *subtract* 
-		 * one row of pixels once 11515 is fixed.
+		/* Subtract 1 for divider line, bottom border is enough
+		 * for editor tabs. 
 		 */
-		return tabFolder.computeTrim(0, 0, 0, 0).height;
+		return tabFolder.computeTrim(0, 0, 0, 0).height - 1;
  	else
  		return super.getMinimumHeight();
 }
