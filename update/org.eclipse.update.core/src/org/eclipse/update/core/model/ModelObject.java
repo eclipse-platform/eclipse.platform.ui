@@ -1,46 +1,39 @@
 package org.eclipse.update.core.model;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * An object which has the general characteristics of all elements
- * in the install/ update support.
+ * Root model object. Extended by all model objects.
  * <p>
  * This class cannot be instantiated and must be subclassed.
  * </p>
  */
-
 public abstract class ModelObject extends PlatformObject {
-	
+
 	private boolean readOnly = false;
-	
+
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
-	private static final String KEY_DOUBLE_PREFIX = KEY_PREFIX+KEY_PREFIX;
-		
+	private static final String KEY_DOUBLE_PREFIX = KEY_PREFIX + KEY_PREFIX;
+
 	/**
-	 * Creates a a base model object.
+	 * Creates a base model object.
 	 * 
 	 * @since 2.0
 	 */
 	protected ModelObject() {
 	}
-	
+
 	/**
 	 * Checks that this model object is writeable.  A runtime exception
 	 * is thrown if it is not.
@@ -48,60 +41,61 @@ public abstract class ModelObject extends PlatformObject {
 	 * @since 2.0
 	 */
 	protected final void assertIsWriteable() {
-		Assert.isTrue(!isReadOnly(), Policy.bind("ModelObject.ModelReadOnly")); //$NON-NLS-1$
+		Assert.isTrue(!isReadOnly(), Policy.bind("ModelObject.ModelReadOnly"));
+		//$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 * 
-	 * @since 2.0
 	 * @see #isReadOnly
+	 * @since 2.0
 	 */
 	public void markReadOnly() {
 		readOnly = true;
 	}
-	
+
 	/**
 	 * Returns whether or not this model object is read-only.
 	 * 
-	 * @since 2.0
 	 * @return <code>true</code> if this model object is read-only,
 	 *		<code>false</code> otherwise
 	 * @see #markReadOnly
+	 * @since 2.0
 	 */
 	public boolean isReadOnly() {
 		return readOnly;
 	}
-		
+
 	/**
 	 * Delegate setting of read-only
 	 *
-	 * @since 2.0
 	 * @param o object to delegate to. Must be of type ModelObject.
 	 * @see #isReadOnly
+	 * @since 2.0
 	 */
 	protected void markReferenceReadOnly(ModelObject o) {
-		if (o==null)
+		if (o == null)
 			return;
-		o.markReadOnly();	
+		o.markReadOnly();
 	}
-		
+
 	/**
 	 * Delegate setting of read-only
 	 *
-	 * @since 2.0
 	 * @param o object array to delegate to. Each element must be of type ModelObject.
 	 * @see #isReadOnly
+	 * @since 2.0
 	 */
 	protected void markListReferenceReadOnly(ModelObject[] o) {
-		if (o==null)
+		if (o == null)
 			return;
-		for (int i=0; i<o.length; i++) {
+		for (int i = 0; i < o.length; i++) {
 			o[i].markReadOnly();
 		}
 	}
-	
+
 	/**
 	 * Resolve the model element. This method allows any relative URL strings
 	 * to be resolved to actual URL. It also allows any translatable strings
@@ -110,69 +104,79 @@ public abstract class ModelObject extends PlatformObject {
 	 * Subclasses need to override this method to perform the actual resolution.
 	 * @param base base URL.
 	 * @param bundle resource bundle.
-	 * 
+	 * @exception MalformedURLException
 	 * @since 2.0
 	 */
-	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
+	public void resolve(URL base, ResourceBundle bundle)
+		throws MalformedURLException {
 		return;
 	}
-		
+
 	/**
 	 * Delegate resolution to referenced model
 	 *
-	 * @since 2.0
 	 * @param o object to delegate to. Must be of type ModelObject.
 	 * @param base base URL.
 	 * @param bundle resource bundle.
+	 * @exception MalformedURLException
+	 * @since 2.0
 	 */
-	protected void resolveReference(ModelObject o, URL url, ResourceBundle bundle) throws MalformedURLException {
-		if (o==null)
+	protected void resolveReference(ModelObject o, URL url, ResourceBundle bundle)
+		throws MalformedURLException {
+		if (o == null)
 			return;
-		o.resolve(url,bundle);	
+		o.resolve(url, bundle);
 	}
-		
+
 	/**
 	 * Delegate resolution to list of referenced models
 	 *
-	 * @since 2.0
 	 * @param o object array to delegate to. Each element must be of type ModelObject.
 	 * @param base base URL.
 	 * @param bundle resource bundle.
+	 * @exception MalformedURLException
+	 * @since 2.0
 	 */
-	protected void resolveListReference(ModelObject[] o, URL url, ResourceBundle bundle) throws MalformedURLException {
-		if (o==null)
+	protected void resolveListReference(
+		ModelObject[] o,
+		URL url,
+		ResourceBundle bundle)
+		throws MalformedURLException {
+		if (o == null)
 			return;
-		for (int i=0; i<o.length; i++) {
+		for (int i = 0; i < o.length; i++) {
 			o[i].resolve(url, bundle);
 		}
 	}
-			
+
 	/**
 	 * Resolve a URL based on context
 	 *
-	 * @since 2.0
 	 * @param base base URL.
 	 * @param bundle resource bundle.
 	 * @param urlString url string from model.
 	 * @return URL, or <code>null</code>.
+	 * @exception MalformedURLException
+	 * @since 2.0
 	 */
-	protected URL resolveURL(URL context, ResourceBundle bundle, String urlString) throws MalformedURLException {
-		
+	protected URL resolveURL(URL context, ResourceBundle bundle, String urlString)
+		throws MalformedURLException {
+
 		// URL string was not specified
 		if (urlString == null || urlString.trim().equals("")) //$NON-NLS-1$
 			return null;
-		
+
 		// check to see if we have NL-sensitive URL
 		String resolvedUrlString = resolveNLString(bundle, urlString);
-		
+
 		// if we don't have a base url, use only the supplied string
 		if (context == null)
 			return new URL(resolvedUrlString);
-			
+
 		// otherwise return new URL in context of base URL
 		return new URL(context, resolvedUrlString);
 	}
-			
+
 	/**
 	 * Returns a resource string corresponding to the given argument 
 	 * value and bundle.
@@ -200,57 +204,71 @@ public abstract class ModelObject extends PlatformObject {
 	 * </pre>
 	 * </p>
 	 * 
-	 * @since 2.0
 	 * @param bundle resource bundle.
 	 * @param s translatable string from model
 	 * @return string, or <code>null</code>
+	 * @since 2.0
 	 */
-	protected String resolveNLString(ResourceBundle b, String string) {		
+	protected String resolveNLString(ResourceBundle b, String string) {
 
 		if (string == null)
 			return null;
 
 		String s = string.trim();
-		
+
 		if (s.equals("")) //$NON-NLS-1$
 			return string;
-	
-		if (!s.startsWith(KEY_PREFIX)) 
+
+		if (!s.startsWith(KEY_PREFIX))
 			return string;
 
-		if (s.startsWith(KEY_DOUBLE_PREFIX)) 
+		if (s.startsWith(KEY_DOUBLE_PREFIX))
 			return s.substring(1);
 
 		int ix = s.indexOf(" "); //$NON-NLS-1$
-		String key = ix == -1 ? s : s.substring(0,ix);
-		String dflt = ix == -1 ? s : s.substring(ix+1);
-	
-		if (b==null) 
+		String key = ix == -1 ? s : s.substring(0, ix);
+		String dflt = ix == -1 ? s : s.substring(ix + 1);
+
+		if (b == null)
 			return dflt;
-	
-		try { 
+
+		try {
 			return b.getString(key.substring(1));
-		} catch(MissingResourceException e) { 
-			return dflt; 
+		} catch (MissingResourceException e) {
+			return dflt;
 		}
 	}
-	
+
 	/**
+	 * Returns a concrete array type for the elements of the specified
+	 * list. The method assumes all the elements of the list are the same
+	 * concrete type as the first element in the list.
+	 * 
+	 * @param l list
+	 * @return concrete array type, or <code>null</code> if the array type
+	 * could not be determined (the list is <code>null</code> or empty)
 	 * @since 2.0
 	 */
 	protected Object[] arrayTypeFor(List l) {
-		if (l == null || l.size()==0)
+		if (l == null || l.size() == 0)
 			return null;
-		return (Object[])Array.newInstance(l.get(0).getClass(),0);
+		return (Object[]) Array.newInstance(l.get(0).getClass(), 0);
 	}
-	
+
 	/**
+	 * Returns a concrete array type for the elements of the specified
+	 * set. The method assumes all the elements of the set are the same
+	 * concrete type as the first element in the set.
+	 * 
+	 * @param s set
+	 * @return concrete array type, or <code>null</code> if the array type
+	 * could not be determined (the set is <code>null</code> or empty)
 	 * @since 2.0
 	 */
 	protected Object[] arrayTypeFor(Set s) {
-		if (s == null || s.size()==0)
+		if (s == null || s.size() == 0)
 			return null;
 		Iterator i = s.iterator();
-		return (Object[])Array.newInstance(i.next().getClass(),0);
+		return (Object[]) Array.newInstance(i.next().getClass(), 0);
 	}
 }
