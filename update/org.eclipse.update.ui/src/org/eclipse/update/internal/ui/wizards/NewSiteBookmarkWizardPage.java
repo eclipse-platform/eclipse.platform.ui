@@ -21,10 +21,19 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	private static final String KEY_DESC = "NewSiteBookmarkWizardPage.desc";
 	private static final String KEY_URL = "NewSiteBookmarkWizardPage.url";
 	private static final String KEY_HTTP = "NewSiteBookmarkWizardPage.http";
-	private static final String KEY_INVALID = "NewSiteBookmarkWizardPage.invalid";
+	private static final String KEY_INVALID =
+		"NewSiteBookmarkWizardPage.invalid";
+	private static final String KEY_TYPE = "NewSiteBookmarkWizardPage.type";
+	private static final String KEY_UPDATE_TYPE =
+		"NewSiteBookmarkWizardPage.updateType";
+	private static final String KEY_WEB_TYPE =
+		"NewSiteBookmarkWizardPage.webType";
 	private Text urlText;
 	private URL url;
 	private SiteBookmark localBookmark;
+	private Button updateButton;
+	private Button webButton;
+
 	/**
 	 * Constructor for NewFolderWizardPage.
 	 * @param folder
@@ -62,7 +71,40 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 				validatePage();
 			}
 		});
-		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.NewSiteBookmarkWizardPage");
+		if (localBookmark == null) {
+			label = new Label(parent, SWT.NULL);
+			label.setText(UpdateUIPlugin.getResourceString(KEY_TYPE));
+			gd = new GridData();
+			gd.horizontalSpan = span;
+			label.setLayoutData(gd);
+			updateButton = new Button(parent, SWT.RADIO);
+			updateButton.setText(
+				UpdateUIPlugin.getResourceString(KEY_UPDATE_TYPE));
+			gd = new GridData();
+			gd.horizontalSpan = span;
+			gd.horizontalIndent = 10;
+			updateButton.setLayoutData(gd);
+			updateButton.setSelection(true);
+
+			webButton = new Button(parent, SWT.RADIO);
+			webButton.setText(UpdateUIPlugin.getResourceString(KEY_WEB_TYPE));
+			gd = new GridData();
+			gd.horizontalSpan = span;
+			gd.horizontalIndent = 10;
+			webButton.setLayoutData(gd);
+
+//			SelectionListener listener = new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					validatePage();
+//				}
+//			};
+//			updateButton.addSelectionListener(listener);
+//			//webButton.addSelectionListener(listener);
+		}
+
+		WorkbenchHelp.setHelp(
+			parent,
+			"org.eclipse.update.ui.NewSiteBookmarkWizardPage");
 	}
 
 	protected void validatePage() {
@@ -81,7 +123,10 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	public boolean finish() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		BookmarkFolder parentFolder = getFolder();
-		SiteBookmark newBookmark = new SiteBookmark(getName(), url);
+		boolean webBookmark = false;
+		if (localBookmark==null)
+			webBookmark = webButton.getSelection();
+		SiteBookmark newBookmark = new SiteBookmark(getName(), url, webBookmark);
 		addToModel(newBookmark);
 		return true;
 	}

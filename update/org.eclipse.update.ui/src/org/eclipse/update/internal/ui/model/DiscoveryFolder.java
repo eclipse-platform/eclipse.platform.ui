@@ -65,7 +65,7 @@ public class DiscoveryFolder extends BookmarkFolder {
 		for (int i = 0; i < entries.length; i++) {
 			IURLEntry entry = entries[i];
 			SiteBookmark bookmark =
-				new SiteBookmark(entry.getAnnotation(), entry.getURL());
+				new SiteBookmark(entry.getAnnotation(), entry.getURL(), false);
 			if (!contains(bookmark))
 				internalAdd(bookmark);
 		}

@@ -21,15 +21,17 @@ public class SiteBookmark extends NamedModelObject
 	private Vector catalog;
 	private SiteCategory otherCategory;
 	private int type;
+	private boolean webBookmark;
 
 	public static final String P_URL="p_url";
 	
 	public SiteBookmark() {
 	}
 	
-	public SiteBookmark(String name, URL url) {
+	public SiteBookmark(String name, URL url, boolean webBookmark) {
 		super(name);
 		this.url = url;
+		this.webBookmark = webBookmark;
 	}
 	
 	public void setType(int type) {
@@ -38,6 +40,15 @@ public class SiteBookmark extends NamedModelObject
 	
 	public int getType() {
 		return type;
+	}
+	
+	public void setWebBookmark(boolean value) {
+		if (type==LOCAL_BOOKMARK) return;
+		this.webBookmark = webBookmark;
+	}
+	
+	public boolean isWebBookmark() {
+		return webBookmark;
 	}
 	
 	public URL getURL() {

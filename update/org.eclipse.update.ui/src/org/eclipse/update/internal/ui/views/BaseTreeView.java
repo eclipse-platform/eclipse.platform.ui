@@ -30,9 +30,13 @@ public abstract class BaseTreeView extends ViewPart {
 	}
 
 	public abstract void initProviders();
+	
+	protected TreeViewer createTree(Composite parent, int styles) {
+		return new TreeViewer(parent, styles);
+	}
 
 	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = createTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		initProviders();
 		//viewer.setInput(getInitialInput());

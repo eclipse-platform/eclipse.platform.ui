@@ -126,7 +126,7 @@ public class MyComputerDirectory
 				return null;
 			URL url =
 				new URL("file:" + file.getAbsolutePath() + File.separator);
-			SiteBookmark site = new SiteBookmark(file.getName(), url);
+			SiteBookmark site = new SiteBookmark(file.getName(), url, false);
 			site.setType(SiteBookmark.LOCAL);
 			return site;
 		} catch (Exception e) {

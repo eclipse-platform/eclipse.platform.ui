@@ -11,6 +11,7 @@ import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
@@ -48,7 +49,8 @@ public class DetailsView extends MultiPageView {
 	public static final String DETAILS_PAGE = "Details";
 	public static final String BROWSER_PAGE = "Browser";
 	public static final String CONFIG_PAGE = "Config";
-	public static final String INSTALL_CONFIGURATION_PAGE = "InstallConfiguration";
+	public static final String INSTALL_CONFIGURATION_PAGE =
+		"InstallConfiguration";
 	public static final String INSTALL_SITE_PAGE = "InstallSite";
 	public static final String MY_COMPUTER_PAGE = "MyComputer";
 	public static final String EXTENSION_ROOT_PAGE = "ExtensionRoot";
@@ -88,16 +90,23 @@ public class DetailsView extends MultiPageView {
 		addPage(
 			INSTALL_CONFIGURATION_PAGE,
 			new InstallConfigurationPage(this, "Snapshot"));
-		addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
+		addPage(
+			INSTALL_SITE_PAGE,
+			new InstallableSitePage(this, "Install Location"));
 		addPage(MY_COMPUTER_PAGE, new MyComputerPage(this, "MyComputer"));
-		addPage(EXTENSION_ROOT_PAGE, new ExtensionRootPage(this, "ExtensionRoot"));
+		addPage(
+			EXTENSION_ROOT_PAGE,
+			new ExtensionRootPage(this, "ExtensionRoot"));
 		addPage(SEARCH_PAGE, new SearchPage(this, "Search"));
-		addPage(DISCOVERY_PAGE, new DiscoveryFolderPage(this, "Discovery Sites"));
+		addPage(
+			DISCOVERY_PAGE,
+			new DiscoveryFolderPage(this, "Discovery Sites"));
 		addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	}
 
-	public void showURL(String url) {
+	public boolean showURL(String url) {
 		boolean useEmbedded = false;
+		boolean focusGrabbed = false;
 		boolean win32 = SWT.getPlatform().equals("win32");
 		if (win32) {
 			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
@@ -105,7 +114,12 @@ public class DetailsView extends MultiPageView {
 		if (useEmbedded) {
 			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
 			try {
-				IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
+				IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
+				if (part == null) {
+					part = page.showView(UpdatePerspective.ID_BROWSER);
+					focusGrabbed = true;
+				} else
+					page.bringToTop(part);
 				((IEmbeddedWebBrowser) part).openTo(url);
 			} catch (PartInitException e) {
 				UpdateUIPlugin.logException(e);
@@ -113,13 +127,13 @@ public class DetailsView extends MultiPageView {
 		} else {
 			if (win32) {
 				Program.launch(url);
-			}
-			else {
+			} else {
 				// defect 11483
 				IBrowser browser = BrowserManager.getInstance().createBrowser();
 				browser.displayURL(url);
 			}
 		}
+		return focusGrabbed;
 	}
 
 	public void showText(String text) {
@@ -155,12 +169,15 @@ public class DetailsView extends MultiPageView {
 		history.add(HOME_PAGE, null);
 		makeActions();
 		fillActionBars();
-		WorkbenchHelp.setHelp(formWorkbook.getControl(), "org.eclipse.update.ui.DetailsView");
+		WorkbenchHelp.setHelp(
+			formWorkbook.getControl(),
+			"org.eclipse.update.ui.DetailsView");
 	}
 
 	public void showPageWithInput(String pageId, Object input) {
 		if (pageId.equals(HOME_PAGE) == false) {
-			if (!(input instanceof UIModelObject || input instanceof ModelObject))
+			if (!(input instanceof UIModelObject
+				|| input instanceof ModelObject))
 				return;
 		}
 		showPage(pageId, input);
@@ -169,16 +186,28 @@ public class DetailsView extends MultiPageView {
 		backAction.update();
 		forwardAction.update();
 		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
-		if (page==null) return;
+		if (page == null)
+			return;
 		IPerspectiveDescriptor desc = page.getPerspective();
-		if (desc==null) return;
+		if (desc == null)
+			return;
 		String pid = desc.getId();
 		if (pid.equals("org.eclipse.update.ui.UpdatePerspective")) {
 			IViewPart view = page.findView(UpdatePerspective.ID_DETAILS);
-			if (view != null) {
+			if (view != null)
 				page.bringToTop(view);
-			}
 		}
+	}
+
+	private void showWebBookmark(final IWorkbenchPart part, final SiteBookmark bookmark) {
+		BusyIndicator
+			.showWhile(formWorkbook.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				boolean focusGrabbed = showURL(bookmark.getURL().toString());
+				if (focusGrabbed)
+					part.setFocus();
+			}
+		});
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
@@ -194,7 +223,11 @@ public class DetailsView extends MultiPageView {
 					return;
 				}
 				if (el instanceof SiteBookmark) {
-					showPageWithInput(SITE_PAGE, el);
+					SiteBookmark bookmark = (SiteBookmark) el;
+					if (!bookmark.isWebBookmark())
+						showPageWithInput(SITE_PAGE, el);
+					else
+						showWebBookmark(part, bookmark);
 					return;
 				}
 				if (el instanceof SiteCategory) {
@@ -238,7 +271,9 @@ public class DetailsView extends MultiPageView {
 				showPageWithInput(UNKNOWN_PAGE, el);
 			} else
 				// defect 14692
-				showPageWithInput((homeAction != null) ? HOME_PAGE : UNKNOWN_PAGE, null);
+				showPageWithInput(
+					(homeAction != null) ? HOME_PAGE : UNKNOWN_PAGE,
+					null);
 		}
 	}
 
@@ -251,10 +286,14 @@ public class DetailsView extends MultiPageView {
 		homeAction.setText(UpdateUIPlugin.getResourceString(KEY_HOME));
 		homeAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_HOME));
 		homeAction.setImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV);
-		homeAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_H);
-		homeAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_D);
-		WorkbenchHelp.setHelp(homeAction, "org.eclipse.update.ui.DetailsView_homeAction");
-		
+		homeAction.setHoverImageDescriptor(
+			UpdateUIPluginImages.DESC_HOME_NAV_H);
+		homeAction.setDisabledImageDescriptor(
+			UpdateUIPluginImages.DESC_HOME_NAV_D);
+		WorkbenchHelp.setHelp(
+			homeAction,
+			"org.eclipse.update.ui.DetailsView_homeAction");
+
 		backAction = new UpdateAction() {
 			public void run() {
 				performBackward();
@@ -264,12 +303,17 @@ public class DetailsView extends MultiPageView {
 			}
 		};
 		backAction.setText(UpdateUIPlugin.getResourceString(KEY_BACKWARD));
-		backAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_BACKWARD));
+		backAction.setToolTipText(
+			UpdateUIPlugin.getResourceString(KEY_T_BACKWARD));
 		backAction.setImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV);
-		backAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
-		backAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
+		backAction.setHoverImageDescriptor(
+			UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
+		backAction.setDisabledImageDescriptor(
+			UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
 		backAction.setEnabled(false);
-		WorkbenchHelp.setHelp(backAction, "org.eclipse.update.ui.DetailsView_backAction");
+		WorkbenchHelp.setHelp(
+			backAction,
+			"org.eclipse.update.ui.DetailsView_backAction");
 
 		forwardAction = new UpdateAction() {
 			public void run() {
@@ -280,13 +324,17 @@ public class DetailsView extends MultiPageView {
 			}
 		};
 		forwardAction.setText(UpdateUIPlugin.getResourceString(KEY_FORWARD));
-		forwardAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_T_FORWARD));
+		forwardAction.setToolTipText(
+			UpdateUIPlugin.getResourceString(KEY_T_FORWARD));
 		forwardAction.setImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV);
-		forwardAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_H);
+		forwardAction.setHoverImageDescriptor(
+			UpdateUIPluginImages.DESC_FORWARD_NAV_H);
 		forwardAction.setDisabledImageDescriptor(
 			UpdateUIPluginImages.DESC_FORWARD_NAV_D);
 		forwardAction.setEnabled(false);
-		WorkbenchHelp.setHelp(forwardAction, "org.eclipse.update.ui.DetailsView_forwardAction");
+		WorkbenchHelp.setHelp(
+			forwardAction,
+			"org.eclipse.update.ui.DetailsView_forwardAction");
 	}
 
 	private void fillActionBars() {
@@ -298,11 +346,12 @@ public class DetailsView extends MultiPageView {
 	}
 
 	public void contextMenuAboutToShow(IMenuManager menu) {
-		Control control = formWorkbook.getControl().getDisplay().getFocusControl();
+		Control control =
+			formWorkbook.getControl().getDisplay().getFocusControl();
 		if (control instanceof FormEngine) {
-			((FormEngine)control).contextMenuAboutToShow(menu);
+			((FormEngine) control).contextMenuAboutToShow(menu);
 		}
-		
+
 		menu.add(backAction);
 		menu.add(forwardAction);
 		menu.add(homeAction);

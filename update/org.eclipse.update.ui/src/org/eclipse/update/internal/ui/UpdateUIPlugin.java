@@ -12,6 +12,7 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.AppServer;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
@@ -40,6 +41,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	private UpdateModel model;
 	private UpdateManagerAuthenticator authenticator;
 	private AboutInfo aboutInfo;
+	private String appServerHost;
+	private int appServerPort;
 
 	/**
 	 * The constructor.
@@ -141,6 +144,28 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		if(historyPref>0){
 			SiteLocalModel.DEFAULT_HISTORY= historyPref;
 		}
+		//startupWebApp();
+	}
+	
+	private void startupWebApp() throws CoreException {
+		
+		// configure web install handler
+		if (!AppServer.add("org.eclipse.update", "org.eclipse.update.ui", "webapp")) {
+			return;
+		}
+
+		appServerHost = AppServer.getHost();
+		appServerPort = AppServer.getPort();
+		System.out.println("Web app host: "+appServerHost);
+		System.out.println("Web app port: "+appServerPort);
+	}
+	
+	public String getAppServerHost() {
+		return appServerHost;
+	}
+	
+	public int getAppServerPort() {
+		return appServerPort;
 	}
 
 	public void shutdown() throws CoreException {

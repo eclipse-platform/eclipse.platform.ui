@@ -9,11 +9,13 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -21,7 +23,6 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -100,6 +101,7 @@ public class UpdatesView
 	private Hashtable fileImages = new Hashtable();
 	private FileFilter fileFilter = new FileFilter();
 	private EnvironmentFilter environmentFilter = new EnvironmentFilter();
+	private Cursor handCursor;
 
 	class DeleteAction extends Action implements IUpdate {
 		public DeleteAction() {
@@ -219,8 +221,10 @@ public class UpdatesView
 		}
 
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof SiteBookmark)
-				return true;
+			if (parent instanceof SiteBookmark) {
+				SiteBookmark bookmark = (SiteBookmark)parent;
+				return bookmark.isWebBookmark() == false;
+			}
 			if (parent instanceof MyComputer) {
 				return true;
 			}
@@ -348,6 +352,30 @@ public class UpdatesView
 			return null;
 		}
 	}
+	
+	class UpdateTreeViewer extends TreeViewer {
+		public UpdateTreeViewer(Composite parent, int styles) {
+			super(parent, styles);
+			getTree().addMouseMoveListener(new MouseMoveListener() {
+				public void mouseMove(MouseEvent e) {
+					processItem(getTree().getItem(new Point(e.x, e.y)));
+				}
+			});
+			handCursor = new Cursor(getTree().getDisplay(), SWT.CURSOR_HAND);
+		}
+		private void processItem(Item item) {
+			Object element = item!=null ? item.getData():null;
+			Cursor cursor = null;
+
+			if (element instanceof SiteBookmark) {
+				SiteBookmark bookmark = (SiteBookmark)element;
+				if (bookmark.isWebBookmark())
+					cursor = handCursor;
+			}
+			getTree().setCursor(cursor);
+		}
+	}
+		
 
 	/**
 	 * The constructor.
@@ -359,11 +387,16 @@ public class UpdatesView
 		updateSearchObject = new DefaultUpdatesSearchObject();
 		initializeImages();
 	}
+	
+	protected TreeViewer createTree(Composite parent, int styles) {
+		return new UpdateTreeViewer(parent, styles);
+	}
 
 	public void dispose() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.removeUpdateModelChangedListener(this);
 		disposeImages();
+		if (handCursor!=null) handCursor.dispose();
 		super.dispose();
 	}
 
@@ -798,6 +831,8 @@ public class UpdatesView
 	}
 
 	private Object[] getSiteCatalog(final SiteBookmark bookmark) {
+		if (bookmark.isWebBookmark())
+			return new Object[0];
 		Object[] result =
 			getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
 		if (result != null)

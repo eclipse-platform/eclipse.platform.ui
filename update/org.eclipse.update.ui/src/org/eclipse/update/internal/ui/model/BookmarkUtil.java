@@ -110,7 +110,11 @@ public class BookmarkUtil {
 			url = new URL(getAttribute(child, "url"));
 		} catch (MalformedURLException e) {
 		}
-		return new SiteBookmark(name, url);
+		boolean webBookmark = false;
+		String web = getAttribute(child, "web");
+		if (web!=null && web.equals("true"))
+			webBookmark = true;
+		return new SiteBookmark(name, url, webBookmark);
 	}
 
 	private static BookmarkFolder createFolder(Node child) {
@@ -173,7 +177,8 @@ public class BookmarkUtil {
 			SiteBookmark bookmark = (SiteBookmark) obj;
 			String name = bookmark.getName();
 			String url = bookmark.getURL().toString();
-			writer.println(indent + "<site name=\"" + name + "\" url=\"" + url + "\"/>");
+			String web = bookmark.isWebBookmark()?"true":"false";
+			writer.println(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\"/>");
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();

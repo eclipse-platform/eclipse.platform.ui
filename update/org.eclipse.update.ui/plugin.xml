@@ -19,6 +19,8 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.tomcat"/>
    </requires>
 
 

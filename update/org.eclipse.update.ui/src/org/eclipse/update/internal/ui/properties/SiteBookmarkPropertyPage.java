@@ -22,10 +22,15 @@ public class SiteBookmarkPropertyPage
 	implements IWorkbenchPropertyPage {
 	private static final String KEY_NAME = "SiteBookmarkPropertyPage.name";
 	private static final String KEY_ADDRESS = "SiteBookmarkPropertyPage.address";
+	private static final String KEY_UPDATE_SITE = "SiteBookmarkPropertyPage.updateSite";
+	private static final String KEY_WEB_SITE = "SiteBookmarkPropertyPage.webSite";
 	private Text siteName;
 	private Text siteURL;
+	private Button updateButton;
+	private Button webButton;
 	private boolean changed;
 	private boolean urlChanged;
+	private boolean typeChanged;
 	/**
 	 * The constructor.
 	 */
@@ -52,6 +57,13 @@ public class SiteBookmarkPropertyPage
 		siteURL = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteURL.setLayoutData(gd);
+		
+		updateButton = new Button(container, SWT.RADIO);
+		updateButton.setText(UpdateUIPlugin.getResourceString(KEY_UPDATE_SITE));
+		
+		webButton = new Button(container, SWT.RADIO);
+		webButton.setText(UpdateUIPlugin.getResourceString(KEY_WEB_SITE));
+		
 		initializeFields();
 		return container;
 	}
@@ -68,6 +80,9 @@ public class SiteBookmarkPropertyPage
 					site.setURL(url);
 				} catch (MalformedURLException e) {
 				}
+			}
+			if (typeChanged) {
+				site.setWebBookmark(webButton.getSelection());
 			}
 		}
 		return true;
@@ -90,6 +105,23 @@ public class SiteBookmarkPropertyPage
 		});
 		siteName.setEnabled(site.getType() != SiteBookmark.LOCAL);
 		siteURL.setEnabled(site.getType() == SiteBookmark.USER);
+		updateButton.setSelection(site.isWebBookmark()==false);
+		updateButton.setEnabled(siteURL.isEnabled());
+		webButton.setSelection(site.isWebBookmark());
+		webButton.setEnabled(updateButton.isEnabled());
+		
+		updateButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				typeChanged = true;
+				checkFields();
+			}
+		});
+		webButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				typeChanged = true;
+				checkFields();
+			}
+		});
 	}
 	private void checkFields() {
 		boolean valid = true;
