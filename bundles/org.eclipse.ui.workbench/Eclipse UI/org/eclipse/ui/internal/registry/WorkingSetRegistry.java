@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.util.Assert;
+
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 
 /**
@@ -24,7 +30,7 @@ public class WorkingSetRegistry {
     // @issue this is an IDE specific working set page!
     private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
 
-    private HashMap workingSetDescriptors = new HashMap();
+    private HashMap/*<String, WorkingSetDescriptor>*/ workingSetDescriptors = new HashMap();
 
     /**
      * Adds a working set descriptor.
@@ -72,6 +78,54 @@ public class WorkingSetRegistry {
     public WorkingSetDescriptor[] getWorkingSetDescriptors() {
         return (WorkingSetDescriptor[]) workingSetDescriptors.values().toArray(
                 new WorkingSetDescriptor[workingSetDescriptors.size()]);
+    }
+    
+    /**
+     * Returns an array of all working set descriptors having
+     * a page class attribute
+     * 
+     * @return an array of all working set descriptors having a 
+     * page class attribute
+     */
+    public WorkingSetDescriptor[] getNewPageWorkingSetDescriptors() {
+    	Collection descriptors= workingSetDescriptors.values();
+        List result= new ArrayList(descriptors.size());
+        for (Iterator iter= descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor= (WorkingSetDescriptor)iter.next();
+			if (descriptor.getPageClassName() != null) {
+				result.add(descriptor);
+			}
+		}
+        return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
+    }
+    
+    /**
+     * Returns <code>true</code> if there is a working set descriptor with
+     * a page class attribute. Otherwise <code>false</code> is returned.
+     * 
+     * @return whether a descriptor with a page class attribute exists
+     */
+    public boolean hasNewPageWorkingSetDescriptor() {
+    	Collection descriptors= workingSetDescriptors.values();
+        for (Iterator iter= descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor= (WorkingSetDescriptor)iter.next();
+			if (descriptor.getPageClassName() != null) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    public WorkingSetDescriptor[] getDescriptorsForNamespace(String namespace) {
+    	Collection descriptors= workingSetDescriptors.values();
+    	List result= new ArrayList();
+    	for (Iterator iter= descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor= (WorkingSetDescriptor)iter.next();
+			if (namespace.equals(descriptor.getDeclaringNamespace())) {
+				result.add(descriptor);
+			}
+		}
+    	return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
     }
 
     /**

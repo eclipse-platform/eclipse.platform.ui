@@ -14,11 +14,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.osgi.framework.Bundle;
 
 /**
  * A working set descriptor stores the plugin registry data for 
@@ -34,6 +39,8 @@ public class WorkingSetDescriptor {
     private String icon;
 
     private String pageClassName;
+    
+    private String updaterClassName;
 
     private IConfigurationElement configElement;
 
@@ -43,7 +50,9 @@ public class WorkingSetDescriptor {
 
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
 
-    private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$	
+    private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$
+    
+    private static final String ATT_UPDATER_CLASS = "updaterClass";  //$NON-NLS-1$
 
     /**
      * Creates a descriptor from a configuration element.
@@ -58,6 +67,7 @@ public class WorkingSetDescriptor {
         name = configElement.getAttribute(ATT_NAME);
         icon = configElement.getAttribute(ATT_ICON);
         pageClassName = configElement.getAttribute(ATT_PAGE_CLASS);
+        updaterClassName = configElement.getAttribute(ATT_UPDATER_CLASS);
 
         if (name == null) {
             throw new CoreException(new Status(IStatus.ERROR,
@@ -65,12 +75,15 @@ public class WorkingSetDescriptor {
                     "Invalid extension (missing class name): " + id, //$NON-NLS-1$
                     null));
         }
-        if (pageClassName == null) {
-            throw new CoreException(new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, 0,
-                    "Invalid extension (missing page class name): " + id, //$NON-NLS-1$
-                    null));
-        }
+    }
+    
+    /**
+     * Returns the name space that declares this working set.
+     * 
+     * @return the name space declaring this working set
+     */
+    public String getDeclaringNamespace() {
+    	return configElement.getDeclaringExtension().getNamespace();
     }
 
     /**
@@ -121,7 +134,8 @@ public class WorkingSetDescriptor {
     /**
      * Returns the working set page class name
      * 
-     * @return the working set page class name
+     * @return the working set page class name or <code>null</code> if
+     *  no page class name has been provided by the extension
      */
     public String getPageClassName() {
         return pageClassName;
@@ -135,5 +149,39 @@ public class WorkingSetDescriptor {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * Returns the working set updater class name
+     * 
+     * @return the working set updater class name or <code>null</code> if
+     *  no updater class name has been provided by the extension
+     */
+    public String getUpdaterClassName() {
+    	return updaterClassName;
+    }
+    
+    /**
+     * Creates a working set updater.
+     * 
+     * @return the working set updater or <code>null</code> if no
+     *  updater has been declared
+     */
+    public IWorkingSetUpdater createWorkingSetUpdater() {
+    	if (updaterClassName == null)
+    		return null;
+    	IWorkingSetUpdater result = null;
+        try {
+            result = (IWorkingSetUpdater)WorkbenchPlugin.createExtension(configElement, ATT_UPDATER_CLASS);
+        } catch (CoreException exception) {
+            WorkbenchPlugin.log("Unable to create working set updater: " + //$NON-NLS-1$
+            	updaterClassName, exception.getStatus());
+        }
+        return result;   	
+    }
+    
+    public boolean isDeclaringPluginActive() {
+    	Bundle bundle= Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+    	return bundle.getState() == Bundle.ACTIVE;
     }
 }

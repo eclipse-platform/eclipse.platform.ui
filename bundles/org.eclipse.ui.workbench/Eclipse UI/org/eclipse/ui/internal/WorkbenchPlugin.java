@@ -418,7 +418,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public IWorkingSetManager getWorkingSetManager() {
         if (workingSetManager == null) {
-            workingSetManager = new WorkingSetManager();
+            workingSetManager = new WorkingSetManager(bundleContext);
             workingSetManager.restoreState();
         }
         return workingSetManager;
@@ -670,6 +670,16 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         return bundleContext == null ? new Bundle[0] : bundleContext
                 .getBundles();
     }
+    
+    /**
+     * Returns the bundle context associated with the workbench plug-in.
+     * 
+     * @return the bundle context
+     * @since 3.1
+     */
+    public BundleContext getBundleContext() {
+    	return bundleContext;
+    }
 
     /**
      * Returns the application name.
@@ -725,6 +735,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
     public void stop(BundleContext context) throws Exception {
         super.stop(context);
+        if (workingSetManager != null) {
+        	workingSetManager.dispose();
+        	workingSetManager= null;
+        }
         SWTResourceUtil.shutdown();
     }
 }

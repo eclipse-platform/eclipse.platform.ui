@@ -57,6 +57,8 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSet;
+import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -506,17 +508,33 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         ISelection selection = listViewer.getSelection();
         boolean hasSelection = selection != null && !selection.isEmpty();
         boolean hasSingleSelection = hasSelection;
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 
+        newButton.setEnabled(registry.hasNewPageWorkingSetDescriptor());
+        
         removeButton.setEnabled(hasSelection);
+        
+        IWorkingSet selectedWorkingSet= null;
         if (hasSelection && selection instanceof IStructuredSelection) {
-            hasSingleSelection = ((IStructuredSelection) selection).size() == 1;
+            IStructuredSelection structuredSelection= (IStructuredSelection) selection;
+			hasSingleSelection = structuredSelection.size() == 1;
+			if (hasSingleSelection)
+				selectedWorkingSet= (IWorkingSet)structuredSelection.getFirstElement();
         }
-        detailsButton.setEnabled(hasSingleSelection);
+        detailsButton.setEnabled(hasSingleSelection && hasEditPage(selectedWorkingSet));
+        
         if (multiSelect == false) {
             getOkButton().setEnabled(
                     hasSelection == false || hasSingleSelection);
         } else {
             getOkButton().setEnabled(true);
         }
+    }
+    
+    private boolean hasEditPage(IWorkingSet workingSet) {
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+
+        WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(workingSet.getId());
+        return descriptor.getPageClassName() != null;
     }
 }

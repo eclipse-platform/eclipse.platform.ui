@@ -45,6 +45,8 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
     private String editPageId;
 
     private IMemento workingSetMemento;
+    
+    private IWorkingSetManager manager;
 
     /**
      * Creates a new working set.
@@ -272,10 +274,7 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
      */
     public void setElements(IAdaptable[] newElements) {
         internalSetElements(newElements);
-        WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin
-                .getDefault().getWorkingSetManager();
-        workingSetManager.workingSetChanged(this,
-                IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);
+        fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
     }
 
     /**
@@ -305,12 +304,25 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
      * @see org.eclipse.ui.IWorkingSet
      */
     public void setName(String newName) {
-
         Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
+        
         name = newName;
-        WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin
-                .getDefault().getWorkingSetManager();
-        workingSetManager.workingSetChanged(this,
-                IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE);
+        fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null);
+    }
+    
+    public void connect(IWorkingSetManager manager) {
+    	Assert.isTrue(this.manager == null, "A working set can only be connected to one manager"); //$NON-NLS-1$
+    	this.manager= manager;
+    }
+    
+    public void disconnect() {
+    	this.manager= null;
+    }
+    
+    private void fireWorkingSetChanged(String property, Object oldValue) {
+    	AbstractWorkingSetManager receiver= manager != null
+			? (AbstractWorkingSetManager)manager
+			: (AbstractWorkingSetManager)WorkbenchPlugin.getDefault().getWorkingSetManager();
+		receiver.workingSetChanged(this, property, oldValue);
     }
 }

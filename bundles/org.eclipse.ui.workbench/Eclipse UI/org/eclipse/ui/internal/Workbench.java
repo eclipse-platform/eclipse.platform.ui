@@ -62,6 +62,7 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -774,6 +775,13 @@ public final class Workbench implements IWorkbench {
     public IWorkingSetManager getWorkingSetManager() {
         return WorkbenchPlugin.getDefault().getWorkingSetManager();
     }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+	public ILocalWorkingSetManager createLocalWorkingSetManager() {
+		return new LocalWorkingSetManager(WorkbenchPlugin.getDefault().getBundleContext());
+	}
 
     /**
      * Initializes the workbench now that the display is created.

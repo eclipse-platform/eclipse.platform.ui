@@ -86,7 +86,7 @@ public class WorkingSetTypePage extends WizardPage {
         WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
                 .getWorkingSetRegistry();
         WorkingSetDescriptor[] descriptors = registry
-                .getWorkingSetDescriptors();
+                .getNewPageWorkingSetDescriptors();
         Table table = (Table) typesListViewer.getControl();
 
         for (int i = 0; i < descriptors.length; i++) {

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -57,8 +58,7 @@ public class WorkingSetNewWizard extends Wizard {
         IWizardPage page;
         WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
                 .getWorkingSetRegistry();
-        WorkingSetDescriptor[] descriptors = registry
-                .getWorkingSetDescriptors();
+        WorkingSetDescriptor[] descriptors = registry.getNewPageWorkingSetDescriptors();
         if (descriptors.length > 1) {
             page = workingSetTypePage = new WorkingSetTypePage();
         } else {
@@ -128,5 +128,5 @@ public class WorkingSetNewWizard extends Wizard {
         workingSet = workingSetEditPage.getSelection();
         workingSet.setId(editPageId);
         return true;
-    }
+    }    
 }

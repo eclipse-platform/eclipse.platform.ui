@@ -11,8 +11,11 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
@@ -68,6 +71,13 @@ public interface IWorkingSetManager {
      * @see IPropertyChangeListener
      */
     public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$	
+    
+    /**
+     * Change event id when a working set updater got installed.
+     * NewValue of the PropertyChangeEvent will be the installed updater.
+     * OldValue will be <code>null</code>
+     */
+    public static final String CHANGE_WORKING_SET_UPDATER_INSTALLED = "workingSetUpdaterInstalled"; //$NON-NLS-1$
 
     /**
      * Adds a property change listener.
@@ -125,20 +135,24 @@ public interface IWorkingSetManager {
      * Example:
      * <code>
      *  IWorkingSetEditWizard wizard = workingSetManager.createWorkingSetEditWizard(workingSet);
-     *	WizardDialog dialog = new WizardDialog(shell, wizard);
+     *  if (wizard != null) {
+     *	  WizardDialog dialog = new WizardDialog(shell, wizard);
      *
-     *	dialog.create();		
-     *	if (dialog.open() == Window.OK) {		
-     *		workingSet = wizard.getSelection();
+     *	  dialog.create();		
+     *	  if (dialog.open() == Window.OK) {		
+     *		  workingSet = wizard.getSelection();
+     *    }
      *	}
      * </code>
      * 
      * @param workingSet working set to create a working set edit wizard 
      * 	for.
-     * @return a working set edit wizard to edit the specified working set. 
-     * 	If the specific edit wizard for the working set could not be loaded 
-     * 	a default IResource based wizard will be returned. 
-     * 	If the default edit wizard can not be loaded null is returned.
+     * @return a working set edit wizard to edit the specified working set
+     *  or <code>null</code> if no edit wizard has been defined for the
+     *  working set. If the defined edit wizard for the working set could 
+     *  not be loaded a default IResource based wizard will be returned. 
+     * 	If the default edit wizard can not be loaded <code>null</code> is 
+     *  returned.
      * @since 2.1
      */
     public IWorkingSetEditWizard createWorkingSetEditWizard(
@@ -205,4 +219,13 @@ public interface IWorkingSetManager {
      * @param workingSet the working set to remove
      */
     public void removeWorkingSet(IWorkingSet workingSet);
+    
+    /**
+     * Disposes the working set manager.
+     * <p>
+     * API under construction and subject to change at any time.
+     * </p>
+     * @since 3.1
+     */
+    public void dispose();
 }

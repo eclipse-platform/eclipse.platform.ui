@@ -179,6 +179,19 @@ public interface IWorkbench {
     public IWorkingSetManager getWorkingSetManager();
 
     /**
+     * Creates a new local working set manager. Clients of local
+     * working set managers are responsible for calling
+     * {@link IWorkingSetManager#dispose()} when the working set
+     * is no longer needed.
+     * <p>
+     * API under construction and subject to change at any time.
+     * </p>
+     *
+     * @since 3.1
+     */
+    public ILocalWorkingSetManager createLocalWorkingSetManager();
+    
+    /**
      * Creates and opens a new workbench window with one page. The perspective
      * of the new page is defined by the specified perspective ID. The new
      * window and new page become active.

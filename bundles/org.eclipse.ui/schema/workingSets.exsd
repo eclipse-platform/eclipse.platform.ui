@@ -73,13 +73,23 @@ The resource navigator uses a working set to filter elements from the navigator 
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="pageClass" type="string" use="required">
+         <attribute name="pageClass" type="string">
             <annotation>
                <documentation>
                   the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.dialogs.IWorkingSetPage&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.WizardPage:org.eclipse.ui.dialogs.IWorkingSetPage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="updaterClass" type="string">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetUpdater&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetUpdater"/>
                </appInfo>
             </annotation>
          </attribute>
