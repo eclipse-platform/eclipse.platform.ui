@@ -29,6 +29,7 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -56,8 +57,8 @@ public class AntEditor extends TextEditor {
 
 		
 	class StatusLineSourceViewer extends SourceViewer{
-		public StatusLineSourceViewer(Composite composite, IVerticalRuler verticalRuler, int styles) {
-			super(composite, verticalRuler, styles);
+		public StatusLineSourceViewer(Composite composite, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, int styles) {
+			super(composite, verticalRuler, overviewRuler, isOverviewRulerVisible(), styles);
 		}
 
 		/* (non-Javadoc)
@@ -310,7 +311,8 @@ public class AntEditor extends TextEditor {
 	 * @return the source viewer
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer= new StatusLineSourceViewer(parent, ruler, styles);
+		fOverviewRuler= createOverviewRuler(getSharedColors());
+		ISourceViewer viewer= new StatusLineSourceViewer(parent, ruler, getOverviewRuler(), styles);
 		//ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
