@@ -5,15 +5,14 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
  
-import org.eclipse.jface.util.*;
+import java.util.List;
+
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List; // Otherwise ambiguous
-
 /**
  * A concrete viewer based on a SWT <code>TableTree</code> control.
  * <p>

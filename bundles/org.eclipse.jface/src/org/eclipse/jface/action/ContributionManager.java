@@ -241,7 +241,16 @@ public void insertBefore(String ID, IContributionItem item) {
  * Method declared on IContributionManager.
  */
 public boolean isDirty() {
-	return isDirty || hasDynamicItems();
+	if(isDirty)
+		return true;
+	if(hasDynamicItems()) {
+		for (Iterator iter = contributions.iterator(); iter.hasNext();) {
+			IContributionItem item = (IContributionItem)iter.next();
+			if(item.isDirty())
+				return true;
+		}
+	}
+	return false;
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.

@@ -4,7 +4,6 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
 
 /**
  * A contribution manager organizes contributions to such UI components

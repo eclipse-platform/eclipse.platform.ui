@@ -4,10 +4,8 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * An interface for a preference page. This interface

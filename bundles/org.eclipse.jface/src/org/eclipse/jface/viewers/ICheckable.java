@@ -4,7 +4,6 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.EventObject;
 
 /**
  * Interface for objects that support elements with a checked state.

@@ -4,12 +4,10 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.*;
 
 /**
  * This adapter class provides generic drag-and-drop support for a viewer.

@@ -4,11 +4,11 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
-import java.util.*;
 
 /**
  * A tool bar manager is a contribution manager which realizes itself and its items

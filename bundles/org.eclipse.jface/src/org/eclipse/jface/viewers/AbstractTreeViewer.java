@@ -7,7 +7,6 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // Otherwise ambiguous
@@ -1197,6 +1196,18 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		oldCnt= getItemCount(tree);
 
 	Item[] items = getChildren(widget);
+	
+	// save the expanded elements
+	HashSet expanded = new HashSet(); // assume num expanded is small
+	for (int i = 0; i < items.length; ++i) {
+		if (getExpanded(items[i])) {
+			Object element = items[i].getData();
+			if (element != null) {
+				expanded.add(element);
+			}
+		}
+	}
+	
 	int min = Math.min(elementChildren.length, items.length);
 
 	// Note: In the code below, doing disassociate calls before associate calls is important,
@@ -1241,6 +1252,10 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 			associate(newElement, item);
 			updatePlus(item, newElement);
 			updateItem(item, newElement);
+			// Restore expanded state for items that changed position.
+			// Make sure setExpanded is called after updatePlus, since
+			// setExpanded(false) fails if item has no children.
+			setExpanded(item, expanded.contains(newElement));
 		}
 	}
 	

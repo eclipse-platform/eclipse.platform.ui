@@ -5,7 +5,8 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import java.text.Collator;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * A viewer sorter is used by a structured viewer to

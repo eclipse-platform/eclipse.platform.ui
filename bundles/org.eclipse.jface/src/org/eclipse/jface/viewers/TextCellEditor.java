@@ -5,13 +5,12 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import java.text.MessageFormat;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A cell editor that manages a text entry field.
@@ -43,7 +42,21 @@ public class TextCellEditor extends CellEditor {
  * @param parent the parent control
  */
 public TextCellEditor(Composite parent) {
-	super(parent);
+	// specify no borders on text widget as cell outline in
+	// table already provides the look of a border.
+	this(parent, SWT.SINGLE);
+}
+/**
+ * Creates a new text string cell editor parented under the given control.
+ * The cell editor value is the string itself, which is initially the empty string. 
+ * Initially, the cell editor has no cell validator.
+ *
+ * @param parent the parent control
+ * @param style the style bits
+ * @since 2.1
+ */
+public TextCellEditor(Composite parent, int style) {
+	super(parent, style);
 }
 /**
  * Checks to see if the "deleteable" state (can delete/
@@ -85,9 +98,7 @@ private void checkSelection() {
  * Method declared on CellEditor.
  */
 protected Control createControl(Composite parent) {
-	// specify no borders on text widget as cell outline in
-	// table already provides the look of a border.
-	text = new Text(parent, SWT.SINGLE);
+	text = new Text(parent, getStyle());
 	text.addKeyListener(new KeyAdapter() {
 		// hook key pressed - see PR 14201  
 		public void keyPressed(KeyEvent e) {

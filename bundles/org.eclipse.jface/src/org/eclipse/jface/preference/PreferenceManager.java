@@ -4,8 +4,9 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 import java.util.*;
+
+import org.eclipse.jface.util.Assert;
 /**
  * A preference manager maintains a hierarchy of preference nodes and
  * associated preference pages.

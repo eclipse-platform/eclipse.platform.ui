@@ -5,9 +5,8 @@ package org.eclipse.jface.preference;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*; 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
  
 /**
  * A field editor for an integer type preference.

@@ -6,9 +6,7 @@ package org.eclipse.jface.viewers;
  */
 import java.text.MessageFormat;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -100,7 +98,19 @@ public abstract class DialogCellEditor extends CellEditor {
  * @param parent the parent control
  */
 protected DialogCellEditor(Composite parent) {
-	super(parent);
+	this(parent, SWT.NONE);
+}
+/**
+ * Creates a new dialog cell editor parented under the given control.
+ * The cell editor value is <code>null</code> initially, and has no 
+ * validator.
+ *
+ * @param parent the parent control
+ * @param style the style bits
+ * @since 2.1
+ */
+protected DialogCellEditor(Composite parent, int style) {
+	super(parent, style);
 }
 /**
  * Creates the button for this cell editor under the given parent control.
@@ -145,7 +155,7 @@ protected Control createControl(Composite parent) {
 	Font font = parent.getFont();
 	Color bg = parent.getBackground();
 
-	editor = new Composite(parent, SWT.NONE);
+	editor = new Composite(parent, getStyle());
 	editor.setFont(font);
 	editor.setBackground(bg);
 	editor.setLayout(new DialogCellLayout());

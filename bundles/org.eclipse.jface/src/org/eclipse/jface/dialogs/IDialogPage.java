@@ -5,9 +5,9 @@ package org.eclipse.jface.dialogs;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * Interface for a page in a multi-page dialog.

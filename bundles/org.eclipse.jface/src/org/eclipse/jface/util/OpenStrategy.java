@@ -3,14 +3,13 @@ package org.eclipse.jface.util;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
 /**
  * Implementation of single-click and double-click strategies.
  * <p>
@@ -215,7 +214,7 @@ public class OpenStrategy {
 			boolean enterKeyDown = false;
 			SelectionEvent defaultSelectionPendent = null;
 
-			boolean keyDown = true;
+			boolean arrowKeyDown = false;
 			final int[] count = new int[1];
 			
 			long startTime = System.currentTimeMillis();
@@ -273,7 +272,7 @@ public class OpenStrategy {
 						}
 						break;
 					case SWT.MouseDown :
-						keyDown = false;
+						arrowKeyDown = false;
 						break;						
 					case SWT.MouseUp:
 						mouseMoveEvent = null;
@@ -287,7 +286,7 @@ public class OpenStrategy {
 					case SWT.KeyDown:
 						mouseMoveEvent = null;
 						mouseUpEvent = null;
-						keyDown = true;
+						arrowKeyDown = ((e.keyCode == SWT.ARROW_UP) || (e.keyCode == SWT.ARROW_DOWN)) && e.stateMask == 0;
 						if(e.character == SWT.CR) {
 							if(defaultSelectionPendent != null) {
 								fireOpenEvent(new SelectionEvent(e));
@@ -307,9 +306,13 @@ public class OpenStrategy {
 						else
 							selectionPendent = event;
 						count[0]++;
+						// In the case of arrowUp/arrowDown when in the arrowKeysOpen mode, we
+						// want to delay any selection until the last arrowDown/Up occurs.  This
+						// handles the case where the user presses arrowDown/Up successively.
+						// We only want to open an editor for the last selected item.
 						display.asyncExec(new Runnable() {
 							public void run() {
-								if (keyDown) {
+								if (arrowKeyDown) {
 									display.timerExec(TIME, new Runnable() {
 										int id = count[0];
 										public void run() {

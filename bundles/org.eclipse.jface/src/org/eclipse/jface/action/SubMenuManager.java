@@ -7,8 +7,6 @@ package org.eclipse.jface.action;
 import java.util.*;
 
 import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.*;
 
 /**

@@ -6,7 +6,6 @@ package org.eclipse.jface.action;
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.util.Assert;
 
 /**
  * A separator is a special kind of contribution item which acts

@@ -4,17 +4,17 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.window.Window;
+import java.util.HashMap;
+
 import org.eclipse.jface.resource.*;
-
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
-import java.util.*;
 
 /**
  * A dialog is a specialized window used for narrow-focused communication
@@ -97,7 +97,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Font metrics to use for determining pixel sizes.
 	 */
-	protected FontMetrics fontMetrics;
+	private FontMetrics fontMetrics;
 	
 	/**
 	 * Number of horizontal dialog units per character, value <code>4</code>. 
@@ -479,6 +479,37 @@ protected void configureShell(Shell newShell) {
 	newShell.setFont(JFaceResources.getDialogFont());
 }
 
+/*
+ * @see Window.initializeBounds()
+ */
+protected void initializeBounds() {
+	String platform= SWT.getPlatform();
+	if ("carbon".equals(platform)) {	//$NON-NLS-1$
+		// On Mac OS X the default button must be the right-most button
+		Shell shell= getShell();
+		if (shell != null) {
+			Button defaultButton= shell.getDefaultButton();
+			if (defaultButton != null && isContained(buttonBar, defaultButton))
+				defaultButton.moveBelow(null);
+		}
+	}
+	super.initializeBounds();
+}
+
+/**
+ * Returns true if the given Control c is a direct or indirect child of
+ * container.
+ */
+private boolean isContained(Control container, Control c) {
+	Composite parent;
+	while ((parent= c.getParent()) != null) {
+		if (parent == container)
+			return true;
+		c= parent;
+	}
+	return false;
+}
+
 /**
  * The <code>Dialog</code> implementation of this <code>Window</code> method 
  * creates and lays out the top level composite for the dialog, and
@@ -667,4 +698,17 @@ protected void setButtonLayoutData(Button button) {
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
+}
+
+/**
+ * @see org.eclipse.jface.window.Window#close()
+ */
+public boolean close() {
+	boolean returnValue = super.close();
+	if(returnValue){
+		buttons = new HashMap();
+		buttonBar = null;
+		dialogArea = null;
+	}
+	return returnValue;
 }}

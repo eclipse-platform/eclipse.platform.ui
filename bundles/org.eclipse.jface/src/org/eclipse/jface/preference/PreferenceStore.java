@@ -7,7 +7,6 @@ package org.eclipse.jface.preference;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 
 /**

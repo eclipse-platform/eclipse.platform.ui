@@ -4,7 +4,6 @@ package org.eclipse.jface.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 
 /**
  * This class is used to maintain a list of listeners, and

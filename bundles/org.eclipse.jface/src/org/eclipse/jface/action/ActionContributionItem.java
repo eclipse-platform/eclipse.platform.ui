@@ -4,13 +4,14 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
 import java.util.*;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A contribution item which delegates to an action.
@@ -342,6 +343,9 @@ private void handleWidgetArm(Event e) {
 private void handleWidgetDispose(Event e) {
 	if (e.widget == widget) {
 		// the item is being disposed
+		if (action.getStyle() == IAction.AS_DROP_DOWN_MENU)  {
+			action.getMenuCreator().dispose(); 
+		}
 		action.removePropertyChangeListener(listener);
 		widget = null;
 	}
@@ -414,14 +418,25 @@ private void handleWidgetSelection(Event e) {
 public int hashCode() {
 	return action.hashCode();
 }
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ */
+public boolean isEnabled() {
+	return action != null && action.isEnabled();
+}
 /**
  * The action item implementation of this <code>IContributionItem</code>
  * method returns <code>true</code> for menu items and <code>false</code>
  * for everything else.
  */
 public boolean isDynamic() {
-	//actions in menus are always dynamic
-	return widget instanceof MenuItem;
+	if(widget instanceof MenuItem) {
+		//Optimization. Only recreate the item is the check style has changed. 
+		boolean itemIsCheck = (widget.getStyle() & SWT.CHECK) != 0;
+		boolean actionIsCheck = getAction() != null && getAction().getStyle() == IAction.AS_CHECK_BOX;
+		return itemIsCheck != actionIsCheck;
+	}
+	return false;
 }
 /**
  * Returns <code>true</code> if this item is allowed to enable,
@@ -490,39 +505,41 @@ public void update(String propertyName) {
 			
 			// We only install an accelerator if the menu item doesn't
 			// belong to a context menu (right mouse button menu).
-			if (textChanged && isContextMenu) {
-				String text = action.getText();
-				if (text != null) {
-					text = Action.removeAcceleratorText(text);
-					mi.setText(text);
-				}
-			} else {
-				String text = null;
-				IContributionManagerOverrides overrides = null;
-				if(getParent() != null)
-					overrides = getParent().getOverrides();
-				if(overrides != null)
-					text = getParent().getOverrides().getText(this);
-				if(text == null)
-					text = action.getText();
-				if (text != null) {
-					String label = Action.removeAcceleratorText(text);
-					String accText = null;
-					Integer acc = null;
-					if(overrides != null) {
-					 	accText = overrides.getAcceleratorText(this);
-					 	acc = overrides.getAccelerator(this);
+			if (textChanged) {
+				if(isContextMenu) {
+					String text = action.getText();
+					if (text != null) {
+						text = Action.removeAcceleratorText(text);
+						mi.setText(text);
 					}
-					if((accText == null) && (label.length() + 1 < text.length()))
-						accText = text.substring(label.length() + 1);
-					if(acc == null)
-						acc = new Integer(action.getAccelerator());
-					if (acc.intValue() >= 0)
-						mi.setAccelerator(acc.intValue());
-					if(accText == null)
-						mi.setText(label);
-					else
-						mi.setText(label + '\t' + accText);
+				} else {
+					String text = null;
+					IContributionManagerOverrides overrides = null;
+					if(getParent() != null)
+						overrides = getParent().getOverrides();
+					if(overrides != null)
+						text = getParent().getOverrides().getText(this);
+					if(text == null)
+						text = action.getText();
+					if (text != null) {
+						String label = Action.removeAcceleratorText(text);
+						String accText = null;
+						Integer acc = null;
+						if(overrides != null) {
+						 	accText = overrides.getAcceleratorText(this);
+						 	acc = overrides.getAccelerator(this);
+						}
+						if((accText == null) && (label.length() + 1 < text.length()))
+							accText = text.substring(label.length() + 1);
+						if(acc == null)
+							acc = new Integer(action.getAccelerator());
+						if (acc.intValue() >= 0)
+							mi.setAccelerator(acc.intValue());
+						if(accText == null)
+							mi.setText(label);
+						else
+							mi.setText(label + '\t' + accText);
+					}
 				}
 			}
 			if (imageChanged) {

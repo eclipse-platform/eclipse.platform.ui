@@ -4,11 +4,12 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
 import java.io.File;
-import java.util.*;
-import java.util.List; // disambiguate from SWT.List
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 /**
  * A field editor to edit directory paths.
  */

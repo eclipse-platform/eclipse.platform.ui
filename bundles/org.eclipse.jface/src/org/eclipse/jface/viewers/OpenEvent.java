@@ -4,8 +4,9 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 import java.util.EventObject;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * Event object describing an open which may be generated from a 

@@ -61,6 +61,18 @@ public void fill(ToolBar parent, int index);
  */
 public String getId();
 /**
+ * Returns whether this contribution item is enabled.
+ * 
+ * @return <code>true</code> if this item is enabled
+ */
+public boolean isEnabled();
+/**
+ * Returns whether this contribution item is dirty. A dirty item will be
+ * recreated when the action bar is updated.
+ * 
+ * @return <code>true</code> if this item is dirty */
+public boolean isDirty();
+/**
  * Returns whether this contribution item is dynamic. A dynamic contribution
  * item contributes items conditionally, dependent on some internal state.
  *

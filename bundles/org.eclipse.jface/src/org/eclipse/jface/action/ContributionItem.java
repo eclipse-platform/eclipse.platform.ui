@@ -4,7 +4,6 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -76,6 +75,20 @@ public String getId() {
  */
 public IContributionManager getParent() {
 	return parent;
+}
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method returns <code>false</code>. Subclasses may override.
+ */
+public boolean isDirty() {
+	return isDynamic();
+}
+/**
+ * The default implementation of this <code>IContributionItem</code>
+ * method returns <code>true</code>. Subclasses may override.
+ */
+public boolean isEnabled() {
+	return true;
 }
 /**
  * The default implementation of this <code>IContributionItem</code>

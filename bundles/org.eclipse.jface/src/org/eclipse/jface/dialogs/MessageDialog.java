@@ -4,12 +4,12 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.resource.*;
 
 /**
  * A dialog for showing messages to the user.
@@ -150,31 +150,7 @@ protected void configureShell(Shell shell) {
 		shell.setImage(titleImage);
 }
 
-/*
- * @see Dialog.createContents(Composite)
- */
-protected Control createContents(Composite parent) {
-	
-	// initialize the dialog units
-	initializeDialogUnits(parent);
-	
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.makeColumnsEqualWidth = false;
-	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-	// create the dialog area and button bar
-	dialogArea = createDialogArea(parent);
-	buttonBar = createButtonBar(parent);
-	
-	
-	return parent;
-}/* (non-Javadoc)
+/* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
@@ -367,9 +343,24 @@ protected Button createButton(Composite parent,int id,String label,boolean defau
 	Button button = super.createButton(parent, id, label, defaultButton);
 	//Be sure to set the focus if the custom area cannot so as not
 	//to lose the defaultButton.
-	if(defaultButton && !customArea.isFocusControl())
+	if(defaultButton && !customShouldTakeFocus())
 		button.setFocus();
 	return button;
+}
+/**
+ * Return whether or not we should apply the workaround where
+ * we take focus for the default button or if that should be 
+ * determined by the dialog.
+ * By default only return true if the custom area is a label
+ * or CLabel that cannot take focus. * @return boolean */
+protected boolean customShouldTakeFocus() {
+	if(customArea instanceof Label) 
+		return false;
+	
+	if(customArea instanceof CLabel)
+		return (customArea.getStyle() & SWT.NO_FOCUS) > 0;
+	
+	return true;	
 }
 
 	/*

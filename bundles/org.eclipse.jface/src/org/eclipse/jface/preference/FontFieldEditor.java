@@ -5,14 +5,15 @@ package org.eclipse.jface.preference;
  * All Rights Reserved.
  */
  
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -35,7 +36,7 @@ public class FontFieldEditor extends FieldEditor {
 	/**
 	 * Font data for the chosen font button, or <code>null</code> if none.
 	 */
-	private FontData chosenFont;
+	private FontData[] chosenFont;
 	
 	/**
 	 * The label that displays the selected font, or <code>null</code> if none.
@@ -71,7 +72,7 @@ public class FontFieldEditor extends FieldEditor {
 			return text;
 		}
 
-		public void setFont(FontData fontData) {
+		public void setFont(FontData[] fontData) {
 			if (font != null)
 				font.dispose();
 			font= new Font(text.getDisplay(), fontData);
@@ -192,15 +193,15 @@ protected Button getChangeControl(Composite parent) {
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				FontDialog fontDialog= new FontDialog(changeFontButton.getShell());
-				fontDialog.setFontData(chosenFont);
+				fontDialog.setFontData(chosenFont[0]);
 				FontData font= fontDialog.open();
 				if (font != null) {
-					FontData oldFont= chosenFont;
+					FontData[] oldFont= chosenFont;
 					setPresentsDefaultValue(false);
 					FontData[] newData = new FontData[1];
 					newData[0] = font;
 					updateFont(newData);
-					fireValueChanged(VALUE, oldFont, font);
+					fireValueChanged(VALUE, oldFont[0], font);
 				}
 				
 			}
@@ -281,9 +282,9 @@ public void setChangeButtonText(String text) {
  * newly selected font.
  */
 private void updateFont(FontData font[]) {
-	FontData bestFont = 
+	FontData[] bestFont = 
 		JFaceResources.getFontRegistry().
-			bestData(font,valueControl.getDisplay());
+			bestDataArray(font,valueControl.getDisplay());
 
 	//if we have nothing valid do as best we can
 	if(bestFont == null)
@@ -293,10 +294,10 @@ private void updateFont(FontData font[]) {
 	this.chosenFont = bestFont;
 	
 	if (valueControl != null) {
-		valueControl.setText(StringConverter.asString(chosenFont));
+		valueControl.setText(StringConverter.asString(chosenFont[0]));
 	}
 	if (previewer != null) {
-		previewer.setFont(chosenFont);
+		previewer.setFont(bestFont);
 	}
 }
 /**
@@ -315,8 +316,8 @@ protected void setToDefault(){
 /**
  * Get the system default font data.
  */
-private FontData getDefaultFontData(){
-	return valueControl.getDisplay().getSystemFont().getFontData()[0];
+private FontData[] getDefaultFontData(){
+	return valueControl.getDisplay().getSystemFont().getFontData();
 }
 
 /*

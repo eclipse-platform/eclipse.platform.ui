@@ -4,7 +4,6 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -70,10 +69,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 * The overrides for items of this manager
 	 */
 	private IContributionManagerOverrides overrides;
-
-	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator"; //$NON-NLS-1$
-	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel"; //$NON-NLS-1$
-	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed"; //$NON-NLS-1$
 
 	
 /**
@@ -312,7 +307,7 @@ private void handleAboutToShow() {
 	if (removeAllWhenShown)
 		removeAll();
 	fireAboutToShow(this);
-	update(false);
+	update(false,true);
 }
 /**
  * Returns whether this menu manager contains an <code>ActionContributionItem</code>
@@ -502,12 +497,16 @@ protected void update(boolean force, boolean recursive) {
 			}
 			
 			// remove obsolete (removed or non active)
-			Item[] mi= menu.getItems();
+			MenuItem[] mi= menu.getItems();
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
-				if (data == null || !clean.contains(data) ||
-							(data instanceof IContributionItem && ((IContributionItem)data).isDynamic()))
+				if (data == null || !clean.contains(data)) {
 					mi[i].dispose();
+				} else if(data instanceof IContributionItem && 
+					((IContributionItem)data).isDynamic() && 
+					((IContributionItem)data).isDirty()) {
+						mi[i].dispose();
+				}
 			}
 
 			// add new
@@ -558,8 +557,6 @@ protected void update(boolean force, boolean recursive) {
 			}
 
 			setDirty(false);
-					
-			updateMenuItem();
 		}
 	} else {
 		// I am not dirty. Check if I must recursivly walk down the hierarchy.
@@ -576,7 +573,7 @@ protected void update(boolean force, boolean recursive) {
 			}
 		}
 	}
-//	updateAccelerators();
+	updateMenuItem();
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
@@ -591,7 +588,13 @@ public void updateAll(boolean force) {
  */
 private void updateMenuItem() {
 	if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
-		boolean enabled = menu.getItemCount() > 0;
+		IContributionItem items[] = getItems();
+		boolean enabled = false;
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			enabled = item.isEnabled();
+			if(enabled) break;
+		}
 		// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
 		if (menuItem.getEnabled() != enabled)
 			menuItem.setEnabled(enabled);

@@ -1,13 +1,10 @@
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IconAndMessageDialog is the abstract superclass of dialogs that
@@ -21,6 +18,11 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * Message (a localized string).
 	 */
 	protected String message;
+
+	/**
+	 * Message label is the label the message is shown on.
+	 */
+	protected Label messageLabel;
 
 	/**
 	 * Constructor for IconAndMessageDialog.
@@ -39,7 +41,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 		// create image
 		Image image = getImage();
 		if (image != null) {
-			Label label = new Label(composite, 0);
+			Label label = new Label(composite, SWT.NULL);
 			image.setBackground(label.getBackground());
 			label.setImage(image);
 			label.setLayoutData(
@@ -50,17 +52,18 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 		// create message
 		if (message != null) {
-			Label label = new Label(composite, SWT.WRAP);
-			label.setText(message);
-			GridData data = new GridData(GridData.GRAB_HORIZONTAL |
-				//GridData.GRAB_VERTICAL |
-	GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
+			messageLabel = new Label(composite, SWT.WRAP);
+			messageLabel.setText(message);
+			GridData data =
+				new GridData(
+					GridData.GRAB_HORIZONTAL
+						| GridData.HORIZONTAL_ALIGN_FILL
+						| GridData.VERTICAL_ALIGN_BEGINNING);
 			data.widthHint =
 				convertHorizontalDLUsToPixels(
 					IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-			;
-			label.setLayoutData(data);
-			label.setFont(composite.getFont());
+			messageLabel.setLayoutData(data);
+			messageLabel.setFont(composite.getFont());
 		}
 		return composite;
 	}
@@ -110,4 +113,42 @@ public abstract class IconAndMessageDialog extends Dialog {
 	* @since 2.0
 	*/
 	protected abstract Image getImage();
+
+	/*
+	 * @see Dialog.createContents(Composite)
+	 */
+	protected Control createContents(Composite parent) {
+
+		// initialize the dialog units
+		initializeDialogUnits(parent);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN) * 3/2;
+		layout.marginWidth =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING)
+				* 2;
+		layout.makeColumnsEqualWidth = false;
+		parent.setLayout(layout);
+		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		createDialogAndButtonArea(parent);
+
+		return parent;
+	}
+
+	/**
+	 * Create the dialog area and button bar for the receiver.	 * @param parent	 */
+
+	protected void createDialogAndButtonArea(Composite parent) {
+		// create the dialog area and button bar
+		dialogArea = createDialogArea(parent);
+		buttonBar = createButtonBar(parent);
+	}
+
 }

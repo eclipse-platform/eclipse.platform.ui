@@ -4,15 +4,11 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List; // disambiguate from SWT List
-
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 /**
  * Abstract base class for cell editors. Implements property change listener handling,
  * and SWT window management.
@@ -66,6 +62,11 @@ public abstract class CellEditor {
 	 * if not created yet.
 	 */
 	private Control control = null;
+
+	/**
+	 * This cell editor's style
+	 */
+	private int style = SWT.NONE;
 
 	/** 
 	 * Struct-like layout data for cell editors, with reasonable defaults
@@ -134,6 +135,18 @@ public abstract class CellEditor {
  * @param parent the parent control
  */
 protected CellEditor(Composite parent) {
+	this(parent, SWT.NONE);
+}
+/**
+ * Creates a new cell editor under the given parent control.
+ * The cell editor has no cell validator.
+ *
+ * @param parent the parent control
+ * @param style the style bits
+ * @since 2.1
+ */
+protected CellEditor(Composite parent, int style) {
+	this.style = style;
 	control = createControl(parent);
 
 	// See 1GD5CA6: ITPUI:ALL - TaskView.setSelection does not work
@@ -277,6 +290,15 @@ protected void fireEnablementChanged(String actionId) {
 	for (int i = 0; i < listeners.length; ++i) {
 		((IPropertyChangeListener) listeners[i]).propertyChange(new PropertyChangeEvent(this, actionId, null, null));
 	}
+}
+/**
+ * Returns the style bits for this this cell editor.
+ *
+ * @return the style for this cell editor
+ * @since 2.1
+ */
+public int getStyle() {
+	return style;
 }
 /**
  * Returns the control used to implement this cell editor.

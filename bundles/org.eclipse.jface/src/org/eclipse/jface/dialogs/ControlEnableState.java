@@ -4,10 +4,11 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * Helper class to save the enable/disable state of a control
