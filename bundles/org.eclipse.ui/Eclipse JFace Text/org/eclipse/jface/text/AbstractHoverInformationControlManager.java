@@ -191,14 +191,19 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	class MouseTracker extends ShellAdapter implements MouseTrackListener, MouseMoveListener {
 		
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18393
+		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19686
+		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19719
 		
 		private final static int EPSILON= 3;
 		
+		private Rectangle fHoverArea;
 		private Rectangle fSubjectArea;
 		private Control fSubjectControl;
+		
 		private boolean fIsActive= false;
 		private boolean fMouseLost= false;
 		private boolean fShellDeactivated= false;
+		
 		
 		public MouseTracker() {
 		}
@@ -212,29 +217,40 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fSubjectControl= subjectControl;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed())
 				fSubjectControl.addMouseTrackListener(this);
+				
+			fIsActive= false;
+			fMouseLost= false;
+			fShellDeactivated= false;
 		}
 		
 		public void stop() {
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseTrackListener(this);
 				fSubjectControl.removeMouseMoveListener(this);
+				fSubjectControl.getShell().removeShellListener(this);
 			}
+			
+			fIsActive= false;
+			fMouseLost= false;
+			fShellDeactivated= false;
 		}
 		
 		/*
 		 * @see MouseTrackAdapter#mouseHover
 		 */
 		public void mouseHover(MouseEvent event) {
+			
 			fIsActive= true;
 			fMouseLost= false;
+			fShellDeactivated= false;
+			
 			setEnabled(false);
 			
 			fHoverEventLocation= new Point(event.x, event.y);
-			
-			Rectangle r= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
-			if (r.x < 0) r.x= 0;
-			if (r.y < 0) r.y= 0;
-			setSubjectArea(r);
+			fHoverArea= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
+			if (fHoverArea.x < 0) fHoverArea.x= 0;
+			if (fHoverArea.y < 0) fHoverArea.y= 0;
+			setSubjectArea(fHoverArea);
 			
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseMoveListener(this);
@@ -242,6 +258,18 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 			
 			doShowInformation();
+		}
+		
+		protected void deactivate() {
+			if (fIsActive)
+				return;
+			
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
+				fSubjectControl.removeMouseMoveListener(this);
+				fSubjectControl.getShell().removeShellListener(this);
+			}
+			
+			setEnabled(true);
 		}
 		
 		/*
@@ -255,16 +283,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void mouseExit(MouseEvent e) {
 			fMouseLost= true;
+			deactivate();
 		}
 		
 		/*
 		 * @see MouseMoveListener#mouseMove(MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			if (!fSubjectArea.contains(event.x, event.y) && !fIsActive)  {
-				fSubjectControl.removeMouseMoveListener(this);
-				setEnabled(true);
-			}
+			if (!fSubjectArea.contains(event.x, event.y))
+				deactivate();
 		}
 		
 		/*
@@ -272,6 +299,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void shellDeactivated(ShellEvent e) {
 			fShellDeactivated= true;
+			deactivate();
 		}
 		
 		/*
@@ -279,9 +307,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void shellIconified(ShellEvent e) {
 			fShellDeactivated= true;
+			deactivate();
 		}
 		
-		public void deactivate() {
+		public void computationCompleted() {
 			fIsActive= false;
 			fMouseLost= false;
 			fShellDeactivated= false;
@@ -291,12 +320,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			
 			if (fMouseLost || fShellDeactivated)
 				return true;
-				
+								
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				Display display= fSubjectControl.getDisplay();
 				Point p= display.getCursorLocation();
 				p= fSubjectControl.toControl(p);
-				if (!fSubjectArea.contains(p.x, p.y))
+				if (!fSubjectArea.contains(p) && !fHoverArea.contains(p))
 					return true;
 			}
 			
@@ -330,9 +359,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fMouseTracker.setSubjectArea(area);
 		
 		if (fMouseTracker.isMouseLost()) {
-			hideInformationControl();
-		} else {
+			fMouseTracker.computationCompleted();
 			fMouseTracker.deactivate();
+		} else {
+			fMouseTracker.computationCompleted();
 			super.presentInformation();
 		}
 	}
