@@ -76,21 +76,27 @@
 		</actionSet>
 	</extension>
 
-	<extension point="org.eclipse.ui.actionDefinitions">
-		<actionDefinition
+	<extension point="org.eclipse.ui.commands">
+		<command
+			category="org.eclipse.debug.ui.category.run"
 			id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 			name= "%ActionDefinition.externalToolMenuDelegateToolbar.name"
 			description="%ActionDefinition.externalToolMenuDelegateToolbar.description"/>
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+		/>	
 	</extension>
-
-	<extension point="org.eclipse.ui.acceleratorSets">	
-		<acceleratorSet
-			scopeId="org.eclipse.ui.globalScope"
-			configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-			<accelerator key="" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"/>
-		</acceleratorSet>
-	</extension>
-
+	
 	<extension point="org.eclipse.ui.views">
 		<category 
 			id="org.eclipse.ui.externaltools.ant.views"
