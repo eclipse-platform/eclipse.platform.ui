@@ -102,6 +102,20 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	}
 	
 	/**
+	 * Remove the cached parent for the given children
+	 * 
+	 * @param children for which to remove cached parents
+	 */
+	protected void removeCache(Object[] children) {
+		if (fParentCache == null) {
+			return;
+		}
+		for (int i= 0; i < children.length; i++) {
+			fParentCache.remove(children[i]);
+		}
+	}
+	
+	/**
 	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object element) {

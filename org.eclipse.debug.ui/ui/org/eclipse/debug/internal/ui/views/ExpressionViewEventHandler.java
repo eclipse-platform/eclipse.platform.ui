@@ -5,11 +5,15 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
  
 /**
@@ -82,6 +86,16 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		Runnable r = new Runnable() {
 			public void run() {
 				remove(expression);
+				IContentProvider provider= getTreeViewer().getContentProvider();
+				if (provider instanceof ExpressionViewContentProvider) {
+					ExpressionViewContentProvider expressionProvider= (ExpressionViewContentProvider) provider;
+					List children= new ArrayList();
+					expressionProvider.getDecendants(expression, children);
+					// Remove the parent cache for the expression's children
+					expressionProvider.removeCache(children.toArray());
+					// Remove the parent cache for the expression itself
+					expressionProvider.removeCache(new Object[] {expression});
+				}
 			}
 		};
 		getView().asyncExec(r);		
