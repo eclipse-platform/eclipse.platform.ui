@@ -987,7 +987,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @since 2.1
 	 */
-	static class TextHoverKey {
+	protected static class TextHoverKey {
 
 		/** The content type this key belongs to */
 		private String fContentType;
@@ -5067,20 +5067,16 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask) {
+		boolean enable= hyperlinkDetectors != null && hyperlinkDetectors.length > 0;
 		fHyperlinkStateMask= eventStateMask;
-		if (hyperlinkDetectors != null && hyperlinkDetectors.length > 0) {
-			
-			fHyperlinkDetectors= new IHyperlinkDetector[hyperlinkDetectors.length];
-			System.arraycopy(hyperlinkDetectors, 0, fHyperlinkDetectors, 0, hyperlinkDetectors.length);
-			
+		fHyperlinkDetectors= hyperlinkDetectors;
+		if (enable) {
 			if (fHyperlinkManager != null) {
 				fHyperlinkManager.setHyperlinkDetectors(fHyperlinkDetectors);
 				fHyperlinkManager.setHyperlinkStateMask(fHyperlinkStateMask);
 			}
 			ensureHyperlinkManagerInstalled();
-			
 		} else {
-			fHyperlinkDetectors= null;
 			if (fHyperlinkManager != null)
 				fHyperlinkManager.uninstall();
 			fHyperlinkManager= null;
