@@ -262,7 +262,6 @@ public class AntElementNode implements IAdaptable {
 	public int getOffset() {
 		return offset;
 	}
-
 	
 	/**
 	 * Sets the offset.
@@ -548,15 +547,28 @@ public class AntElementNode implements IAdaptable {
 		return new int[] {fLine, fColumn};
 	}
 	
+	/**
+     * Return the resource that contains the definition of this
+     * Ant node.
+     * @return The resource that contains the definition of this ant node or <code>null</code>
+     * if that resource could not be determined (a buildfile that is external to the workspace).
+     */
 	public IFile getIFile() {
-		IFile file;
 		if (isExternal()) {
-			file= AntUtil.getFileForLocation(filePath, null);
-		} else {
-			LocationProvider locationProvider= getAntModel().getLocationProvider();
-			file= locationProvider.getFile();
-		}
-		return file;
+			return AntUtil.getFileForLocation(filePath, null);
+		} 
+		return getBuildFileResource();
+	}
+	
+	/**
+     * Return the resource that is the main build file for this
+     * Ant node.
+     * @return The resource that is the main buildfile for this ant node or <code>null</code>
+     * if that resource could not be determined (a buildfile that is external to the workspace).
+     */
+	public IFile getBuildFileResource() {
+		LocationProvider locationProvider= getAntModel().getLocationProvider();
+		return locationProvider.getFile();
 	}
 
 	/* (non-Javadoc)

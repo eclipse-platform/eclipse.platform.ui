@@ -113,7 +113,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		if (selectedTarget == null) {
 			return;
 		}
-		IFile file= node.getIFile();
+		IFile file= node.getBuildFileResource();
 		if (file != null) {
 			launch(file, ILaunchManager.RUN_MODE, selectedTarget);
 			return;
