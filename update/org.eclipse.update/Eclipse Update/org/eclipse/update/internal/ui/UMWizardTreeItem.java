@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  *
@@ -44,8 +48,6 @@ public void addChildItem(UMWizardTreeItem item) {
 	_vectorChildren.add( item );
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/20 11:27:15)
  * @return org.eclipse.update.internal.ui.UpdateManagerTreeItem
  */
 public Object clone() {

@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Abstract base class for new and updatable products and component wizards.
@@ -26,8 +30,6 @@ public abstract class UMWizard extends Wizard implements INewWizard {
 
 	protected final static String _strEmpty = new String();
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/19 09:06:29)
  */
 public UMWizard() {
 
@@ -50,8 +52,6 @@ public UMWizard() {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/19 09:06:29)
  */
 public UMWizard( UMDialog dialog, IManifestDescriptor[] manifestDescriptors ) {
 

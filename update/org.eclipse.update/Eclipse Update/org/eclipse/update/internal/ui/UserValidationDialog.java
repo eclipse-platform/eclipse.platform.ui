@@ -1,6 +1,11 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import java.net.URL;import org.eclipse.core.runtime.*;
+import java.net.URL;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;

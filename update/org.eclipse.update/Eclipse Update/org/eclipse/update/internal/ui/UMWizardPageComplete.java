@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Presents status of just completed product and component installations

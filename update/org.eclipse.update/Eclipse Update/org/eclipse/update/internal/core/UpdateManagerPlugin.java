@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,8 +59,6 @@ public static ImageDescriptor getImageDescriptor(String strImage) {
 	return null;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/06 10:34:52)
  * @return org.eclipse.update.internal.core.UpdateManagerPlugin
  */
 public static UpdateManagerPlugin getPluginInstance() {

@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.boot.update.*;
@@ -113,8 +117,6 @@ public void buildTreeFromLog(ILogEntry logEntry) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 13:58:59)
  * @return org.eclipse.update.internal.core.UMSessionManagerOperation
  * @param actionType java.lang.String
  */
@@ -232,8 +234,6 @@ public boolean executeUndo(org.eclipse.core.runtime.IProgressMonitor progressMon
 	return bSuccess;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 14:21:48)
  * @return java.lang.String
  */
 public String getAction() {
@@ -241,8 +241,6 @@ public String getAction() {
 	return _propertyAction.getValue();
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 14:21:48)
  * @return java.lang.String
  */
 public String getId() {
@@ -302,8 +300,6 @@ public void getStatusString(java.lang.StringBuffer strb, int iIndentation) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 14:21:48)
  * @return java.lang.String
  */
 public String getType() {

@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.boot.update.*;
@@ -87,8 +91,6 @@ public abstract boolean execute( IProgressMonitor progressMonitor );
  */
 public abstract boolean executeUndo( IProgressMonitor progressMonitor );
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/14 08:11:12)
  * @return java.lang.Object
  */
 public java.lang.Object getData() {

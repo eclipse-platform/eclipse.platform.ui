@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Persistent properties stored in plugin directory.
@@ -36,8 +40,6 @@ public void addUpdateBookmark(URLNamePair pair) {
 	save();
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/09 10:56:53)
  * @return java.lang.String[]
  */
 public URLNamePair[] getDiscoveryBookmarks() {
@@ -50,8 +52,6 @@ public URLNamePair[] getDiscoveryBookmarks() {
 	return pairs;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/09 10:56:53)
  * @return java.lang.String[]
  */
 public URLNamePair[] getUpdateBookmarks() {

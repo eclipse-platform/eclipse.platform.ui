@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.internal.boot.update.*;
 import java.util.Date;
@@ -60,8 +64,6 @@ public void buildTreeFromLog(ILogEntry logEntry) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 14:21:48)
  * @return java.lang.String
  */
 public String getText() {

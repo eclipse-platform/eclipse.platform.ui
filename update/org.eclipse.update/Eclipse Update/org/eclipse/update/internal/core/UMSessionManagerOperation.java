@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.webdav.http.client.Response;
@@ -760,8 +764,6 @@ private FileOutputStream getFileOutputStream(URL url) throws IOException {
 	return new FileOutputStream(file);
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/02/15 14:21:48)
  * @return java.lang.String
  */
 public String getId() {

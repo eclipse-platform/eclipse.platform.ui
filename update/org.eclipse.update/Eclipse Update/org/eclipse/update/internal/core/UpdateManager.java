@@ -1,6 +1,31 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import java.io.File;import java.net.MalformedURLException;import java.net.URL;import java.util.TreeSet;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;import org.eclipse.core.internal.boot.update.IComponentDescriptor;import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;import org.eclipse.core.internal.boot.update.IFragmentEntryDescriptor;import org.eclipse.core.internal.boot.update.IInstallable;import org.eclipse.core.internal.boot.update.IPluginEntryDescriptor;import org.eclipse.core.internal.boot.update.IProductDescriptor;import org.eclipse.core.internal.boot.update.IUMRegistry;import org.eclipse.core.internal.boot.update.IURLNamePair;import org.eclipse.core.internal.boot.update.LogStoreException;import org.eclipse.core.internal.boot.update.UMEclipseTree;import org.eclipse.core.internal.boot.update.UMRegistryManager;import org.eclipse.core.internal.boot.update.UpdateManagerConstants;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.swt.widgets.Shell;import org.eclipse.update.internal.ui.JarVerificationService;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.TreeSet;
+
+import org.eclipse.core.internal.boot.LaunchInfo;
+import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
+import org.eclipse.core.internal.boot.update.IComponentDescriptor;
+import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;
+import org.eclipse.core.internal.boot.update.IFragmentEntryDescriptor;
+import org.eclipse.core.internal.boot.update.IInstallable;
+import org.eclipse.core.internal.boot.update.IPluginEntryDescriptor;
+import org.eclipse.core.internal.boot.update.IProductDescriptor;
+import org.eclipse.core.internal.boot.update.IUMRegistry;
+import org.eclipse.core.internal.boot.update.IURLNamePair;
+import org.eclipse.core.internal.boot.update.LogStoreException;
+import org.eclipse.core.internal.boot.update.UMEclipseTree;
+import org.eclipse.core.internal.boot.update.UMRegistryManager;
+import org.eclipse.core.internal.boot.update.UpdateManagerConstants;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.internal.ui.JarVerificationService;
 
 /**
  * Update Manager updates a workstation in one of three modes:

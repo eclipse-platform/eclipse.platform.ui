@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * The new product and component updates wizard
@@ -65,8 +69,6 @@ public boolean performFinish()
 	return true;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001-04-08 11:34:09 AM)
  * @param strManifestID java.lang.String
  */
 public void setInstallID(String strInstallId) {

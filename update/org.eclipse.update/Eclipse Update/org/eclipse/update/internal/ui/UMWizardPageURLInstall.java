@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Presents update URL locations for selection.
@@ -45,8 +49,6 @@ public UMWizardPageURLInstall( UMWizard wizard, String strName )
 	this.setDescription(UpdateManagerStrings.getString("S_The_following_items_will_be_installed"));
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/06 11:22:34)
  * @param tree org.eclipse.swt.widgets.Tree
  */
 public void connectToTree() {
@@ -234,8 +236,6 @@ public void createControl( Composite compositeParent )
 	setPageComplete(false);
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001-04-07 09:59:45 AM)
  * @return org.eclipse.update.internal.core.IManifestDescriptor
  */
 public IManifestDescriptor getDescriptor() {

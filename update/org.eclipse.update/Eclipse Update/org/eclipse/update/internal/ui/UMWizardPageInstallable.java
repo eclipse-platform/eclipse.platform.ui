@@ -1,6 +1,52 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import java.io.InputStream;import java.lang.reflect.InvocationTargetException;import java.net.MalformedURLException;import java.net.URL;import java.util.Hashtable;import java.util.Iterator;import java.util.TreeSet;import java.util.Vector;import org.eclipse.core.internal.boot.update.IComponentDescriptor;import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;import org.eclipse.core.internal.boot.update.IManifestDescriptor;import org.eclipse.core.internal.boot.update.IProductDescriptor;import org.eclipse.core.internal.boot.update.IUMRegistry;import org.eclipse.core.internal.boot.update.URLNamePair;import org.eclipse.core.internal.boot.update.UpdateManagerConstants;import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.viewers.ColumnLayoutData;import org.eclipse.jface.viewers.ColumnWeightData;import org.eclipse.jface.viewers.TableLayout;import org.eclipse.jface.wizard.WizardPage;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.SashForm;import org.eclipse.swt.custom.TableTree;import org.eclipse.swt.custom.TableTreeItem;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseMoveListener;import org.eclipse.swt.events.MouseTrackListener;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.TableColumn;import org.eclipse.swt.widgets.TableItem;import org.eclipse.swt.widgets.Text;import org.eclipse.update.internal.core.URLHandler;import org.eclipse.update.internal.core.UpdateManagerStrings;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Vector;
+
+import org.eclipse.core.internal.boot.update.IComponentDescriptor;
+import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;
+import org.eclipse.core.internal.boot.update.IManifestDescriptor;
+import org.eclipse.core.internal.boot.update.IProductDescriptor;
+import org.eclipse.core.internal.boot.update.IUMRegistry;
+import org.eclipse.core.internal.boot.update.URLNamePair;
+import org.eclipse.core.internal.boot.update.UpdateManagerConstants;
+import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeItem;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.update.internal.core.URLHandler;
+import org.eclipse.update.internal.core.UpdateManagerStrings;
 import org.eclipse.webdav.http.client.IStatusCodes;
 
 /**
@@ -846,8 +892,6 @@ protected void initializeContent() {
 	return;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001-04-11 06:28:08 PM)
  * @return int
  * @param treeItemComponent org.eclipse.swt.custom.TableTreeItem
  */
@@ -1043,8 +1087,6 @@ public void mouseMove(MouseEvent e) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001-04-13 07:43:00 AM)
  * @return boolean
  */
 public boolean performCancel() {
@@ -1193,8 +1235,6 @@ protected void setTreeItemChecked(TableTreeItem treeItem, boolean bChecked) {
  */
 public void setTreeItemChecked(boolean bChecked) {}
 /**
- * Insert the method's description here.
- * Creation date: (2001/04/06 14:27:28)
  * @param treeItem org.eclipse.swt.custom.TableTreeItem
  */
 public void setTreeItemUncheckedRecursiveBackward(TableTreeItem treeItem) {

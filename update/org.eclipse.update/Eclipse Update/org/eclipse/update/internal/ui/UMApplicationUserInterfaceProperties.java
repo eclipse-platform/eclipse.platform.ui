@@ -1,10 +1,13 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.io.*;
 import org.eclipse.core.runtime.*;
 /**
  * Persistent properties stored in plugin directory.
- * @author: Brian Farn
  */
 import java.util.*;
 import org.eclipse.update.internal.core.*;
@@ -25,8 +28,6 @@ public void addBookmarkURL(String strURL) {
 	_vectorBookmarkURLStrings.addElement(strURL);
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/09 10:56:53)
  * @return java.lang.String[]
  */
 public String[] getBookmarkStrings() {

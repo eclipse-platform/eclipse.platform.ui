@@ -1,13 +1,15 @@
 package org.eclipse.update.internal.ui;
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
  
-import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;import org.eclipse.webdav.http.client.IAuthenticator;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.webdav.http.client.IAuthenticator;
 import java.net.*;
 import java.util.*;
 

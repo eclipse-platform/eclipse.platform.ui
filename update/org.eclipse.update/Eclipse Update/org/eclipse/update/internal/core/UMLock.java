@@ -1,9 +1,10 @@
 package org.eclipse.update.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
- * Insert the type's description here.
- * Creation date: (4/20/01 12:38:26 PM)
- * @author: Linda Chui
  */
 import org.eclipse.core.internal.boot.update.*;
 import java.io.*;
@@ -35,8 +36,6 @@ public boolean exists() {
 	return false;
 }
 /**
- * Insert the method's description here.
- * Creation date: (4/20/01 2:23:48 PM)
  */
 public static File getFile(URL url) {
 	File file = null;
@@ -51,8 +50,6 @@ public static File getFile(URL url) {
 	return file;
 }
 /**
- * Insert the method's description here.
- * Creation date: (4/20/01 12:46:54 PM)
  */
 public void remove() {
 	if (exists())
@@ -60,15 +57,11 @@ public void remove() {
 		
 }
 /**
- * Insert the method's description here.
- * Creation date: (4/20/01 12:40:28 PM)
  */
 public void set() {
 	set("");
 }
 /**
- * Insert the method's description here.
- * Creation date: (4/20/01 12:40:28 PM)
  */
 public void set(String msg) {
 	URL lockfileURL = null;

@@ -1,4 +1,8 @@
 package org.eclipse.update.internal.ui;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -421,8 +425,6 @@ protected void finish() {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/04/16 15:40:36)
  * @return org.eclipse.update.internal.core.UpdateManager
  */
 public UpdateManager getUpdateManager() {
