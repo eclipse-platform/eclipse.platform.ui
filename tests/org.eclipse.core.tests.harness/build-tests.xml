@@ -51,7 +51,7 @@
     />
 
     <delete dir="${temp}"/>
-    <refreshLocal resource="org.eclipse.core.tests.harness"/>
+    <eclipse.refreshLocal resource="org.eclipse.core.tests.harness"/>
   </target>
 
   <target name="buildPlugin">
