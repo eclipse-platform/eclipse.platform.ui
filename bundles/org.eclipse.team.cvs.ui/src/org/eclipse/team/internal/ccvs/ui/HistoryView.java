@@ -54,6 +54,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -65,7 +66,6 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -193,7 +193,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		addAction = new Action(Policy.bind("HistoryView.addToWorkspace")) {
 			public void run() {
 				try {
-					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new WorkspaceModifyOperation() {
+					// Do not fork the progress monitor to allow access to window widgets
+					new ProgressMonitorDialog(getViewSite().getShell()).run(false /*fork*/, true, new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							if (file == null) return;
 							ISelection selection = tableViewer.getSelection();
