@@ -63,7 +63,6 @@ public final class InternalBootLoader {
 	private static final String PLUGIN_PATH = ".plugin-path";
 	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/";
 	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/";
-	private static final String CONFIG = "platform.properties";
 	private static final String OPTIONS = ".options";
 
 	/** 
@@ -140,31 +139,10 @@ private static void assertRunning() {
 		throw new RuntimeException("The Platform is not running");
 }
 /**
- * Configure the loader.
- * Semantically, the configuration properties are similar to plugin.xml
- * They contains the equivalent to <runtime> specification.
- * The exact format of the properties is as follows ([a] is optional, 
- * a* is repeating 0 or more times, {a|b} is a choice)
- * <ul>
- * <li>library.n= name[,name]*
- * <li>export.n=mask[,mask]*
- * <eul>
- *
- *
- * index <b>.n</b> is an integer, starting from 1. If multiple <b>library</b>
- * entries are present, they must be numbered consecutively. <b>export</b>
- * entries are matched to their corresponding <b>library</b> entries.
- *
- * <b>library</b> defines a list of .jar(s), .zip(s) or directory roots to
- * search. These are specified relative to the platform install location.
- *
- * <b>export</b> optionally specifies exported classes. The mask follows
- * Java import conventions. The value indicates which classes are
- * visible to other plug-ins. Export mask value of "*" indicates a fully-exported
- * runtime. Absent export mask indicates a private runtime.
+ * Configure the class loader for the runtime plug-in.  
  */
-private static PlatformClassLoader configurePlatformLoader(Properties config) {
-	Object[] loadPath = getPlatformClassLoaderPath(config);
+private static PlatformClassLoader configurePlatformLoader() {
+	Object[] loadPath = getPlatformClassLoaderPath();
 	URL base = null;
 	try {
 		base = new URL(PlatformURLBaseConnection.PLATFORM_URL_STRING+RUNTIMEDIR);
@@ -244,22 +222,33 @@ public static URL getInstallURL() {
 	String path = url.getFile();
 	if (path.endsWith("/"))
 		path = path.substring(0, path.length() - 1);
-	int ix = path.lastIndexOf("/");
-	path = path.substring(0, ix + 1);
-	if (!(inVAJ || inVAME)) {
-		// in jdk ... strip off BOOTDIR
-		path = path.substring(0, path.length() - BOOTDIR.length());
+	int ix = path.lastIndexOf('/');
+	if ((inVAJ || inVAME))
+		// in VAJ or VAME strip off one segment (the boot project).  Be sure to leave a trailing /
+		path = path.substring(0, ix + 1);
+	else {
+		// in jdk ... strip off boot jar/bin, boot plugin and plugins dir.  Be sure to leave a trailing /
+		path = path.substring(0, ix);
+		ix = path.lastIndexOf('/');
+		path = path.substring(0, ix);
+		ix = path.lastIndexOf('/');
+		path = path.substring(0, ix + 1);
 	}
 
 	try {
-		if (url.getProtocol().equals("jar")) installURL = new URL(path);
-		else installURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
-		if (debugRequested) System.out.println("Install URL: "+installURL.toExternalForm());
+		if (url.getProtocol().equals("jar"))
+			installURL = new URL(path);
+		else 
+			installURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+		if (debugRequested) 
+			System.out.println("Install URL: "+installURL.toExternalForm());
 	} catch (MalformedURLException e) {
 		throw new RuntimeException("Fatal Error: Unable to determine platform installation URL "+e);
 	}
 	return installURL;
 }
+
+
 private static String[] getListOption(String option) {
 	String filter = options.getProperty(option);
 	if (filter == null)
@@ -282,68 +271,49 @@ public static String getNL() {
 public static String getOS() {
 	return os;
 }
-private static Object[] getPlatformClassLoaderPath(Properties config) {
-	// If running in va, check for va properties file. 
-	// The property file has entries corresponding to <library>
-	// elements from the plugin.xml. Each defined property is of form
-	//
-	//    projects[.libname]=proj1,proj2,proj3
-	//
-	// The optional ".libname" suffix allows a project mapping to be specified
-	// for the corresponding <library>. The default "projects=" (w/o suffix)
-	// applies to the first/ only <library> element in plugin.xml. Example:
-	//
-	// plugin.xml
-	//   <runtime>
-	//     <library name=baseapi.jar>
-	//       <export name="*"/>
-	//     </library>
-	//     <library name=another.jar/>
-	//     <library name=base.jar/>
-	//   </runtime>
-	//
-	// .va.properties
-	//    projects=Base API Project
-	//    projects.base.jar=Base Project 1, Base Project 2
-	//    ** OR **
-	//    projects.baseapi.jar=Base API Project
-	//    projects.base.jar=Base Project 1, Base Project 2
-	//
-	// The above results in a loader search path consisting of
-	//    Base API Project
-	//    another.jar
-	//    Base Project 1, Base Project 2
-	//
-	// Any library access filters specified in the plugin.xml are
-	// applied to the corresponding loader search path entries
-	//
-	Properties jarDefinitions = loadJarDefinitions();
-	ArrayList urls = new ArrayList(5);
-	ArrayList cfs = new ArrayList(5);
-	String execBase = getInstallURL() + RUNTIMEDIR;
-	String devBase = null;
-	if (InternalBootLoader.inVAJ || InternalBootLoader.inVAME)
-		devBase = getInstallURL().toExternalForm();
-	else
-		devBase = execBase;
-	ArrayList list = new ArrayList(5);
 
-	// process the config and create a list of alternating library and the library's export filter
-	for (int i = 1; true; i++) {
-		// get library specification, if we have run out of library specs, break and return
-		String key = KEY_LIBRARY + "." + Integer.toString(i);
-		String value = config.getProperty(key);
-		if (value == null)
-			break;
-		String[] libList = getArrayFromList(value);
-		// get the corresponding exports if any
-		key = KEY_EXPORT + "." + Integer.toString(i);
-		String[] filterList = getArrayFromList(config.getProperty(key));
-		for (int j = 0; j < libList.length; j++) {
-			list.add(libList[j]);
-			list.add(filterList);
+private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String name, String version) {
+	LaunchInfo.VersionedIdentifier result = null;
+	for (int i = 0; i < list.length; i++) {
+		if (list[i].getIdentifier().equals(name)) {
+			if (version != null) {
+				// we are looking for a particular version, compare.  If the current element 
+				// has no version, save it for later in case we don't fine what we are looking for.
+				if (list[i].getVersion().equals(version))
+					return list[i].toString();
+				if (result == null && list[i].getVersion().length() == 0)
+					result = list[i];
+			} else {
+				// remember the element with the latest version number.
+				if (result == null)
+					result = list[i];
+				else 
+					if (result.getVersion().compareTo(list[i].getVersion()) == -1)
+						result = list[i];
+			}
 		}
 	}
+	return result == null ? null : result.toString();
+}	
+
+private static Object[] getPlatformClassLoaderPath() {
+
+	LaunchInfo launch = LaunchInfo.getCurrent();
+	String plugin = findPlugin(launch.getPlugins(), RUNTIMENAME, null);
+		
+	String execBase = null;
+	if (plugin == null)
+		execBase = getInstallURL() + RUNTIMEDIR;
+	else
+		execBase = launch.getBaseURL() + PLUGINSDIR + plugin + "/";
+
+	String devBase = null;
+	Properties jarDefinitions = null;
+	if (InternalBootLoader.inVAJ || InternalBootLoader.inVAME) {
+		devBase = getInstallURL().toExternalForm();
+		jarDefinitions = loadJarDefinitions();
+	} else
+		devBase = execBase;
 
 	// build a list alternating lib spec and export spec
 	ArrayList libSpecs = new ArrayList(5);
@@ -358,6 +328,9 @@ private static Object[] getPlatformClassLoaderPath(Properties config) {
 			libSpecs.add(exportAll);
 		}
 	}
+	ArrayList list = new ArrayList(5);
+	list.add("runtime.jar");
+	list.add(exportAll);
 
 	// add in the class path entries spec'd in the config.  If in development mode, 
 	// add the entries from the plugin.jars first.
@@ -389,6 +362,8 @@ private static Object[] getPlatformClassLoaderPath(Properties config) {
 	}
 
 	// create path entries for libraries
+	ArrayList urls = new ArrayList(5);
+	ArrayList cfs = new ArrayList(5);
 	for (Iterator it = libSpecs.iterator(); it.hasNext();) {
 		try {
 			urls.add(new URL((String) it.next()));
@@ -570,10 +545,7 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 	PlatformURLComponentConnection.startup(getInstallURL()); // past this point we can use eclipse:/component/ URLs
 
 	// create and configure platform class loader
-	Properties config = loadConfiguration();
-	if (config == null)
-		throw new RuntimeException("Fatal Error: The platform was unable to locate/read platform.properties");
-	loader = configurePlatformLoader(config);
+	loader = configurePlatformLoader();
 
 	return appArgs;
 }
@@ -603,25 +575,7 @@ public static boolean isRunning() {
 public static boolean isStarting() {
 	return starting;
 }
-/**
- * Load platform configuration. Implemented as property file
- * because at this point we do not have access to xml support.
- */
-private static Properties loadConfiguration() {
-	Properties config = new Properties();
-	try {
-		URL url = BootLoader.class.getResource(CONFIG);
-		InputStream input = url.openStream();
-		try {
-			config.load(input);
-			return config;
-		} finally {
-			input.close();
-		}
-	} catch (IOException e) {
-	}
-	return null;
-}
+
 private static Properties loadJarDefinitions() {
 	if (!inDevelopmentMode())
 		return null;

@@ -459,6 +459,10 @@ public String getApplicationConfigurationIdentifier() {
 	else
 		return appCfig;
 }
+
+public URL getBaseURL() {
+	return baseUrl;
+}
 /**
  * @see ILaunchInfo#getComponentInstallURLFor
  */
