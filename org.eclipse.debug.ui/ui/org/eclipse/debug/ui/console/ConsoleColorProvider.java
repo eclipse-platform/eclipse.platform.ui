@@ -12,6 +12,7 @@ package org.eclipse.debug.ui.console;
 
 
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -36,7 +37,10 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	public void connect(IProcess process, IConsole 	console) {
 		fProcess = process;
 		fConsole = console;
-		fConsole.connect(fProcess.getStreamsProxy());
+		IStreamsProxy streamsProxy = fProcess.getStreamsProxy();
+		if (streamsProxy != null) { 
+			fConsole.connect(streamsProxy);
+		}
 	}
 
 	/**
