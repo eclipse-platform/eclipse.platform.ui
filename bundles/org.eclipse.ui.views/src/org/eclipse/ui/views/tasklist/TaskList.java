@@ -401,7 +401,8 @@ public class TaskList extends ViewPart {
 			}
 		}
 
-		boolean gtk = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
+		String platform = SWT.getPlatform();
+		boolean text = "gtk".equals(platform) || "carbon".equals(platform); //$NON-NLS-1$
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
@@ -409,14 +410,14 @@ public class TaskList extends ViewPart {
 		for (int i = 0; i < columnHeaders.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.NONE, i);
 
-			if (!gtk && i == 1)
+			if (!text && i == 1)
 				tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
-			else if (!gtk && i == 2)
+			else if (!text && i == 2)
 				tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
 			else 
 				tc.setText(columnHeaders[i]);
 
-			if (gtk && (i == 1 || i == 2)) {
+			if (text && (i == 1 || i == 2)) {
 				tc.pack();
 				columnLayouts[i] = new ColumnPixelData(Math.max(19, tc.getWidth()), false);		
 			}
