@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -39,8 +38,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * group.
  */
 class SelectBreakpointGroupDialog extends InputDialog {
-    
-    private BreakpointsView fView;
 
     /**
      * Creates a new SelectBreakpointGroupDialog.
@@ -56,7 +53,6 @@ class SelectBreakpointGroupDialog extends InputDialog {
      */
     public SelectBreakpointGroupDialog(BreakpointsView view, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
         super(view.getViewSite().getShell(), dialogTitle, dialogMessage, initialValue, validator);
-        fView= view;
     }
   
 	/* (non-Javadoc)
