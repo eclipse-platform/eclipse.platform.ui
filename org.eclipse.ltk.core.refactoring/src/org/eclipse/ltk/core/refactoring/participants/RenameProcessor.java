@@ -28,28 +28,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class RenameProcessor extends RefactoringProcessor {
 
-	private int fStyle;
-	
-	/**
-	 * Create a new rename processor with the style bit set to
-	 * <code>RefactoringStyles.NEEDS_PREVIEW</code> and <code>
-	 * </code>
-	 */
-	protected RenameProcessor() {
-		fStyle= RefactoringStyles.NEEDS_PREVIEW;	
-	}
-	
-	protected RenameProcessor(int style) {
-		fStyle= style;	
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getStyle() {
-		return fStyle;
-	}
-	
 	/**
 	 * Returns the participants that participate in the rename of the element. The
 	 * method is called after {@link #checkInitialConditions} has been called on the 

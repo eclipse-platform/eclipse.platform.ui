@@ -10,16 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-
-import org.eclipse.core.resources.IFile;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -31,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -40,29 +30,24 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
-public abstract class TextContextViewer  implements IStatusContextViewer {
+/**
+ * An abstract base implementation of a status context viewer that presents
+ * textual context information.
+ * <p>
+ * Subclasses need to implement {@link #createSourceViewer(Composite)} to create
+ * the correct source viewer. They should use the method {@link #updateTitle(IAdaptable)}
+ * and {@link #setInput(IDocument, IRegion)} to set the title text and image and to
+ * populate the source viewer.
+ * </p>
+ * 
+ * @since 3.0
+ */
+public abstract class TextStatusContextViewer implements IStatusContextViewer {
 
 	private SourceViewer fSourceViewer;
 	private ViewForm fForm;
 	private CLabel fLabel;
 	private Image fPaneImage;
-
-	/**
-	 * Sets the title text of the pane surrounding the source viewer.
-	 * @param text the pane's title text
-	 */
-	public void setTitleText(String text) {
-		fLabel.setText(text);
-	}
-	
-	/**
-	 * Sets the title image of the pane surrounding the source viewer.
-	 * 
-	 * @param image the pane's image 
-	 */
-	public void setTitleImage(Image image) {
-		fLabel.setImage(image);
-	}
 
 	/**
 	 * Returns the internal source viewer.
@@ -107,7 +92,7 @@ public abstract class TextContextViewer  implements IStatusContextViewer {
 		}
 		if (title == null || title.length() == 0)
 			title= RefactoringUIMessages.getString("RefactoringStatusViewer.Problem_context"); //$NON-NLS-1$
-		setTitleText(title);
+		fLabel.setText(title);
 		if (fPaneImage != null) {
 			fPaneImage.dispose();
 			fPaneImage= null;
@@ -115,29 +100,16 @@ public abstract class TextContextViewer  implements IStatusContextViewer {
 		if (imageDescriptor != null) {
 			fPaneImage= imageDescriptor.createImage(getControl().getDisplay());
 		}
-		setTitleImage(fPaneImage);
+		fLabel.setImage(fPaneImage);
 	}
 	
-	// this should be pushed down and not be API.
-	protected IDocument getDocument(IFile file) {
-		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		IPath path= file.getFullPath();
-		try {
-			try {
-				manager.connect(path, new NullProgressMonitor());
-				ITextFileBuffer buffer = manager.getTextFileBuffer(path);
-				if (buffer != null) {
-					return buffer.getDocument();
-				}
-			} finally {
-				manager.disconnect(path, new NullProgressMonitor());
-			}
-		} catch (CoreException e) {
-			// fall through
-		}
-		return new Document("Couldn't read content of file");
-	}
-
+	/**
+	 * Sets the input of the source viewer to the given document and reveals the
+	 * region determined by the given parameter region.
+	 * 
+	 * @param document the document to present
+	 * @param region the region to reveal.
+	 */
 	protected void setInput(IDocument document, IRegion region) {
 		Control ctrl= getControl();
 		if (ctrl != null && ctrl.isDisposed())

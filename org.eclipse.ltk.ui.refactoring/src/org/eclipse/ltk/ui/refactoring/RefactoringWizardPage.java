@@ -19,14 +19,19 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 
 /**
- * An abstract superclass for all wizard pages added to a refactoring wizard. The
- * class provides access to the refactoring and the refactoring wizard.
+ * An abstract base implementation of a refactoring wizard page. The class
+ * provides access to the refactoring wizard and to the refactoring itself.
+ * Refactoring wizard pages can only be added to a
+ * {@link org.eclipse.ltk.ui.refactoring.RefactoringWizard RefactoringWizard}.
+ * Adding them to a normal {@linkplain org.eclipse.jface.wizard.Wizard wizard}
+ * result in an exception.
  * 
  * @see RefactoringWizard
+ * @see org.eclipse.ltk.core.refactoring.Refactoring
  */
 public abstract class RefactoringWizardPage extends WizardPage {
 
-	public static final String REFACTORING_SETTINGS= "org.eclipse.jdt.ui.refactoring"; //$NON-NLS-1$
+	public static final String REFACTORING_SETTINGS= "org.eclipse.ltk.ui.refactoring.settings"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new refactoring wizard page.
@@ -47,8 +52,9 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Returns the refactoring used by the wizard to which this page belongs.
-	 * Returns <code>null</code> if the page isn't added to any wizard yet.
+	 * Returns the refactoring associated with this wizard page. Returns
+	 * <code>null</code> if the page isn't been added to any refactoring
+	 * wizard yet.
 	 * 
 	 * @return the refactoring associated with this refactoring wizard page
 	 */
@@ -69,20 +75,23 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * The user has pressed the finish button. Perform the page specific finish
-	 * action. 
+	 * Performs any actions appropriate in response to the user having pressed
+	 * the Finish button, or refuse if finishing now is not permitted. This
+	 * method is called by the refactoring wizard on the currently active
+	 * refactoring wizard page.
 	 * 
-	 * @return <code>true</code> if finish operation ended without errors.
-	 * 	Otherwise <code>false</code> is returned.
+	 * @return <code>true</code> to indicate the finish request was accepted,
+	 *         and <code>false</code> to indicate that the finish request was
+	 *         refused
 	 */
 	protected boolean performFinish() {
 		return true;
 	}
 	
 	/**
-	 * Returns the refactoring dialog settings.
+	 * Returns the refactoring wizard's dialog settings.
 	 * 
-	 * @return the refactoring dialog settings.
+	 * @return the refactoring wizard's dialog settings.
 	 */
 	protected IDialogSettings getRefactoringSettings() {
 		IDialogSettings settings= getDialogSettings();

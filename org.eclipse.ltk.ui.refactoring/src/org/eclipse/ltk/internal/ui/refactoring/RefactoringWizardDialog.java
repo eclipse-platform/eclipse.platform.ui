@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ltk.ui.refactoring;
+package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -24,11 +24,12 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
  * A dialog to host refactoring wizards.
  */
-public class RefactoringWizardDialog extends WizardDialog implements IRefactoringWizardDialog {
+public class RefactoringWizardDialog extends WizardDialog {
 
 	private static final String DIALOG_SETTINGS= "RefactoringWizard"; //$NON-NLS-1$
 	private static final String WIDTH= "width"; //$NON-NLS-1$

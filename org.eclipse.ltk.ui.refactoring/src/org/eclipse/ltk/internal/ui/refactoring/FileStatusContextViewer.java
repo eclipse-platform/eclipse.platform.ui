@@ -10,11 +10,20 @@
  ******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.core.resources.IFile;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -23,10 +32,10 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import org.eclipse.ltk.core.refactoring.FileStatusContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
-import org.eclipse.ltk.ui.refactoring.TextContextViewer;
+import org.eclipse.ltk.ui.refactoring.TextStatusContextViewer;
 
 
-public class FileStatusContextViewer extends TextContextViewer {
+public class FileStatusContextViewer extends TextStatusContextViewer {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.IStatusContextViewer#createControl(org.eclipse.swt.widgets.Composite)
@@ -54,5 +63,24 @@ public class FileStatusContextViewer extends TextContextViewer {
 	
 	protected SourceViewer createSourceViewer(Composite parent) {
 	    return new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+	}
+	
+	private IDocument getDocument(IFile file) {
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		IPath path= file.getFullPath();
+		try {
+			try {
+				manager.connect(path, new NullProgressMonitor());
+				ITextFileBuffer buffer = manager.getTextFileBuffer(path);
+				if (buffer != null) {
+					return buffer.getDocument();
+				}
+			} finally {
+				manager.disconnect(path, new NullProgressMonitor());
+			}
+		} catch (CoreException e) {
+			// fall through
+		}
+		return new Document("Couldn't read content of file");
 	}	
 }

@@ -20,30 +20,55 @@ import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
+import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
 
 /**
- * An abstract wizard page that can be used to implement user input pages for 
- * refactoring wizards. Usually user input pages are pages shown at the beginning 
- * of a wizard. As soon as the "last" user input page is left a corresponding 
- * precondition check is executed.
+ * An abstract wizard page that is to be used to implement user input pages presented 
+ * inside a {@link org.eclipse.ltk.ui.refactoring.RefactoringWizard refactoring wizard}.
+ * User input pages are shown at the beginning of a wizard. As soon as the last input
+ * page is left the refactoring's condition checking is performed. Depending on the 
+ * outcome a error page or the preview page is shown. 
+ * 
+ * @since 3.0
  */
 public abstract class UserInputWizardPage extends RefactoringWizardPage {
 
-	private final boolean fIsLastUserPage;
+	private boolean fIsLastUserInputPage;
 	
 	/**
 	 * Creates a new user input page.
 	 * @param name the page's name.
-	 * @param isLastUserPage <code>true</code> if this page is the wizard's last
-	 *  user input page. Otherwise <code>false</code>.
 	 */
-	public UserInputWizardPage(String name, boolean isLastUserPage) {
+	public UserInputWizardPage(String name) {
 		super(name);
-		fIsLastUserPage= isLastUserPage;
 	}
 	
+	/**
+	 * Returns <code>true</code> if this is the last user input page; returns <code>
+	 * false</code> otherwise.
+	 * 
+	 * @return whether this is the last user input page or not.
+	 */
+	public boolean isLastUserInputPage() {
+		return fIsLastUserInputPage;
+	}
+	
+	/**
+	 * Computes the wizard page that should follow this user input page. The method
+	 * requires that this page is the last user input page. The successor page is
+	 * either the error page or the preview page, depending on the result of the 
+	 * condition checking of the refactoring.
+	 * 
+	 * @return the wizard page that should be shown after the last user input page
+	 */
+	protected final IWizardPage computeSuccessorPage() {
+		Assert.isTrue(isLastUserInputPage());
+		return getRefactoringWizard().computeUserInputSuccessorPage(this, getContainer());
+	}
+
 	/**
 	 * Sets the page's complete status depending on the given <tt>
 	 * ReactoringStatus</tt>.
@@ -51,7 +76,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	 * @param status the <tt>RefactoringStatus</tt>
 	 */
 	public void setPageComplete(RefactoringStatus status) {
-		getRefactoringWizard().setStatus(status);
+		getRefactoringWizard().setConditionCheckingStatus(status);
 
 		int severity= status.getSeverity();
 		if (severity == RefactoringStatus.FATAL){
@@ -67,30 +92,30 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared in WizardPage
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setVisible(boolean visible) {
 		if (visible)
-			getRefactoringWizard().setChange(null);
+			getRefactoringWizard().setChange(InternalAPI.INSTANCE, null);
 		super.setVisible(visible);
 	}
 	
-	/* (non-JavaDoc)
-	 * Method declared in IWizardPage.
+	/**
+	 * {@inheritDoc}
 	 */
 	public IWizardPage getNextPage() {
-		if (fIsLastUserPage) 
-			return getRefactoringWizard().computeUserInputSuccessorPage(this);
+		if (fIsLastUserInputPage) 
+			return computeSuccessorPage();
 		else
 			return super.getNextPage();
 	}
 	
-	/* (non-JavaDoc)
-	 * Method declared in IWizardPage.
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean canFlipToNextPage() {
-		if (fIsLastUserPage) {
+		if (fIsLastUserInputPage) {
 			// we can't call getNextPage to determine if flipping is allowed since computing
 			// the next page is quite expensive (checking preconditions and creating a
 			// change). So we say yes if the page is complete.
@@ -99,29 +124,29 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 			return super.canFlipToNextPage();
 		}
 	}
-	
-	/* (non-JavaDoc)
-	 * Method defined in RefactoringWizardPage
+
+	/**
+	 * {@inheritDoc}
 	 */
 	protected boolean performFinish() {
 		RefactoringWizard wizard= getRefactoringWizard();
 		int threshold= RefactoringPreferences.getCheckPassedSeverity();
-		RefactoringStatus activationStatus= wizard.getActivationStatus();
+		RefactoringStatus activationStatus= wizard.getInitialConditionCheckingStatus();
 		RefactoringStatus inputStatus= null;
 		RefactoringStatus status= new RefactoringStatus();
 		Refactoring refactoring= getRefactoring();
 		boolean result= false;
 		
 		if (activationStatus != null && activationStatus.getSeverity() > threshold) {
-			inputStatus= wizard.checkInput();
+			inputStatus= wizard.checkFinalConditions();
 		} else {
 			CreateChangeOperation create= new CreateChangeOperation(
 				new CheckConditionsOperation(refactoring, CheckConditionsOperation.FINAL_CONDITIONS),
 				threshold);
 			PerformChangeOperation perform= new PerformChangeOperation(create);
 			
-			result= wizard.performFinish(perform);
-			wizard.setChange(create.getChange());
+			result= wizard.performFinish(InternalAPI.INSTANCE, perform);
+			wizard.setChange(InternalAPI.INSTANCE, create.getChange());
 			if (!result)
 				return false;
 			inputStatus= new RefactoringStatus();
@@ -133,13 +158,17 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		status.merge(inputStatus);
 		
 		if (status.getSeverity() > threshold) {
-			wizard.setStatus(status);
+			wizard.setConditionCheckingStatus(status);
 			IWizardPage nextPage= wizard.getPage(ErrorWizardPage.PAGE_NAME);
 			wizard.getContainer().showPage(nextPage);
 			return false;
 		}
 		
 		return result;	
+	}
+	
+	/* package */ void markAsLastUserInputPage() {
+		fIsLastUserInputPage= true;
 	}
 	
 	private static int getCorrespondingIStatusSeverity(int severity) {

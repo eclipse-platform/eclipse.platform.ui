@@ -107,8 +107,8 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		RefactoringWizard wizard= getRefactoringWizard();
 		Change change= wizard.getChange();
 		if (change == null) {
-			change= wizard.createChange(new CreateChangeOperation(getRefactoring()), false);
-			wizard.setChange(change);
+			change= wizard.createChange(InternalAPI.INSTANCE, new CreateChangeOperation(getRefactoring()), false);
+			wizard.setChange(InternalAPI.INSTANCE, change);
 		}
 		if (change == null)
 			return this;
@@ -129,7 +129,7 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 			CreateChangeOperation ccop= new CreateChangeOperation(getRefactoring());
 			op= new UIPerformChangeOperation(ccop);
 		}
-		return wizard.performFinish(op);
+		return wizard.performFinish(InternalAPI.INSTANCE, op);
 	} 
 	
 	//---- Helpers ----------------------------------------------------------------------------------------

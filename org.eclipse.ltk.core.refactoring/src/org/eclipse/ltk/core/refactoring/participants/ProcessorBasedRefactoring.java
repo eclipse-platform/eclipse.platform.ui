@@ -46,10 +46,6 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		return getProcessor().isApplicable();
 	}
 		
-	public int getStyle() {
-		return getProcessor().getStyle();
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

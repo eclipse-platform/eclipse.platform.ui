@@ -35,8 +35,6 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	
 	public abstract String getProcessorName();
 	
-	public abstract int getStyle();
-	
 	public abstract boolean isApplicable() throws CoreException;
 	
 	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException;

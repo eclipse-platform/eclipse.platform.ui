@@ -26,17 +26,5 @@ package org.eclipse.ltk.core.refactoring.participants;
  */
 public abstract class MoveProcessor extends RefactoringProcessor {
 
-	private int fStyle;
 	
-	protected MoveProcessor() {
-		fStyle= RefactoringStyles.NEEDS_PREVIEW;	
-	}
-	
-	protected MoveProcessor(int style) {
-		fStyle= style;	
-	}
-
-	public int getStyle() {
-		return fStyle;
-	}	
 }

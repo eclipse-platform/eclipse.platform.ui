@@ -8,19 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.ui.refactoring;
+package org.eclipse.ltk.internal.ui.refactoring;
 
-/**
- * Interface to access special methods provided by refactoring wizard
- * dialogs.
- * 
- * @since 3.0 
- */
-public interface IRefactoringWizardDialog {
-
-	/**
-	 * Changes the wizard dialogs default button to be the 
-	 * next button.
-	 */
-	public void makeNextButtonDefault();
+public class InternalAPI {
+	public static final InternalAPI INSTANCE= new InternalAPI();
+	
+	private InternalAPI() {
+		// no instances outside this class.
+	}
 }

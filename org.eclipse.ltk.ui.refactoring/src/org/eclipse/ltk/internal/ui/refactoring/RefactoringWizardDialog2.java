@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.ui.refactoring;
+package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -46,15 +46,9 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 
-import org.eclipse.ltk.internal.ui.refactoring.*;
-import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
-public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer, IRefactoringWizardDialog {
+public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer {
 
 	private RefactoringWizard fWizard;
 	private IWizardPage fCurrentPage;
@@ -553,7 +547,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.hasPreviewPage()) {
+		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.hasPreviewPage(InternalAPI.INSTANCE)) {
 			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.getString("RefactoringWizardDialog2.buttons.preview.label"), false); //$NON-NLS-1$
 			if (fMakeNextButtonDefault) {
 				preview.getShell().setDefaultButton(preview);
@@ -567,7 +561,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		
 		String OK_LABEL= IDialogConstants.OK_LABEL;
 		String CANCEL_LABEL= IDialogConstants.CANCEL_LABEL;
-		if (fWizard.yesNoStyle()) {
+		if (fWizard.yesNoStyle(InternalAPI.INSTANCE)) {
 			OK_LABEL= IDialogConstants.YES_LABEL;
 			CANCEL_LABEL= IDialogConstants.NO_LABEL;
 		}
