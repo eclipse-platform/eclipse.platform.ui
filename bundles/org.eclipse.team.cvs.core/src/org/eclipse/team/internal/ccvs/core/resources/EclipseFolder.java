@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -37,7 +36,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 
 /**
  * Implements the ICVSFolder interface on top of an 
@@ -308,14 +306,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		final CVSException[] error = new CVSException[1];
-		// Remove the registered Move/Delete hook, assuming that the cvs runnable will keep sync info up-to-date
-		final MoveDeleteHook hook = CVSTeamProvider.getRegisteredMoveDeleteHook();
-		boolean oldSetting = hook.isWithinCVSOperation();
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						hook.setWithinCVSOperation(true);
 						EclipseSynchronizer.getInstance().run(job, monitor);
 					} catch(CVSException e) {
 						error[0] = e; 
@@ -324,8 +318,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			}, monitor);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
-		} finally {
-			hook.setWithinCVSOperation(oldSetting);
 		}
 		if(error[0]!=null) {
 			throw error[0];
