@@ -597,7 +597,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			openFirstTimeWindow();
 		
 		forceOpenPerspective();
-		openWelcomeEditor();
+		openWelcomeEditors();
 		refreshFromLocal();
 		isStarting = false;
 		return true;
@@ -856,7 +856,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Open the Welcome editor for the primary feature or for a new feature
 	 */
-	private void openWelcomeEditor() {
+	private void openWelcomeEditors() {
 		AboutInfo info = getAboutInfo();
 		AboutInfo[] newFeatures = getNewFeaturesInfo();
 		
@@ -877,21 +877,27 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 			// Get the infos with welcome pages
 			ArrayList welcomeFeatures = new ArrayList();
+			IPluginRegistry registry = Platform.getPluginRegistry();
 			for (int i = 0; i < newFeatures.length; i++) {
-				if (newFeatures[i].getWelcomePageURL() != null) 
+				if (newFeatures[i].getWelcomePageURL() != null) {
+					if(newFeatures[i].getFeatureId() != null && newFeatures[i].getWelcomePerspective() != null) {
+						IPluginDescriptor desc = registry.getPluginDescriptor(newFeatures[i].getFeatureId());
+						//activates the feature plugin so it can run some install code.
+						try {
+							desc.getPlugin();
+						} catch (CoreException e) {
+						}
+					}
 					welcomeFeatures.add(newFeatures[i]);
+				}
 			}
-
+			
+			int wCount = getWorkbenchWindowCount();
 			for (int i = 0; i < welcomeFeatures.size(); i++) {
 				AboutInfo newInfo = (AboutInfo)welcomeFeatures.get(i);
-	
-				String perspectiveId = null;
-				// Switch perspectives if the last page specified a perspective
-				if (i == welcomeFeatures.size() - 1)
-					perspectiveId = newInfo.getWelcomePerspective();
-
-				// Open the editor
-				openEditor(new WelcomeEditorInput(newInfo), WELCOME_EDITOR_ID, perspectiveId);
+				String id = newInfo.getWelcomePerspective();
+				if(id == null || i >= wCount) //Other editors were already opened in restoreState(..)
+					openEditor(new WelcomeEditorInput(newInfo), WELCOME_EDITOR_ID, id);
 			}
 		}
 	}
@@ -907,7 +913,20 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return;
 		}
 		
-		IWorkbenchWindow win = getActiveWorkbenchWindow();
+		IWorkbenchWindow win = null;
+		if(perspectiveId == null) {
+			win = getActiveWorkbenchWindow();
+		} else {
+			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+			try {
+				win = openWorkbenchWindow(perspectiveId,root);
+			} catch (WorkbenchException e) {
+				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+					WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)");
+				return;
+			}
+		}
+		
 		if (win == null)
 			win = getWorkbenchWindows()[0];
 		
@@ -933,7 +952,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (page == null)
 			return;
 		
-		if (page.getActivePerspective() == null || perspectiveId != null) {
+		if (page.getActivePerspective() == null) {
 			try {
 				page = (WorkbenchPage)showPerspective(id, win);
 			} catch (WorkbenchException e) {
@@ -1164,18 +1183,65 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
+		IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 
+		AboutInfo newFeaturesWithPerspectives[] = collectNewFeaturesWithPerspectives();
 		// Read the workbench windows.
 		for (int x = 0; x < children.length; x++) {
 			childMem = children[x];
 			WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 			newWindow.create();
-			result.merge(newWindow.restoreState(childMem));
+			IPerspectiveDescriptor desc = null;
+			if(x < newFeaturesWithPerspectives.length)
+				desc = reg.findPerspectiveWithId(newFeaturesWithPerspectives[x].getWelcomePerspective());
+
+			result.merge(newWindow.restoreState(childMem,desc));
+			if(desc != null) {
+				IWorkbenchPage page = newWindow.getActivePage();
+				if(page == null) {
+					IWorkbenchPage pages[] = newWindow.getPages();
+					if(pages != null && pages.length > 0)
+						page = pages[0];
+				}
+				if(page == null) {
+					IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+					try {
+						page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);				
+					} catch (WorkbenchException e) {
+						result.add(e.getStatus());
+					}
+				} else {
+					page.setPerspective(desc);
+				}
+				newWindow.setActivePage(page);
+				try {				
+					page.openEditor(new WelcomeEditorInput(newFeaturesWithPerspectives[x]),WELCOME_EDITOR_ID,true);
+				} catch (PartInitException e) {
+					result.add(e.getStatus());
+				}
+			}
 			windowManager.add(newWindow);
 			newWindow.open();
 		}
 		return result;
 	}
+	/**
+	 * Return an array with all new welcome perspectives declared in the
+	 * new installed features.
+	 */
+	private AboutInfo[] collectNewFeaturesWithPerspectives() {
+		ArrayList result = new ArrayList();
+		AboutInfo newFeatures[] = getNewFeaturesInfo();
+		for (int i = 0; i < newFeatures.length; i++) {
+			AboutInfo info = newFeatures[i];
+			if(info.getWelcomePerspective() != null && info.getWelcomePageURL() != null)
+				result.add(info);
+		}
+		return (AboutInfo[])result.toArray(new AboutInfo[result.size()]);
+	}
+	/**
+	 * Returns an array of all plugins that extend org.eclipse.ui.startup.
+	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		String pluginId = "org.eclipse.ui"; 

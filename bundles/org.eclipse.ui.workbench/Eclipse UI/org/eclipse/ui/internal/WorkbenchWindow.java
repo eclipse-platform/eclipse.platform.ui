@@ -998,7 +998,7 @@ private IStatus unableToRestorePage(IMemento pageMem) {
 /**
  * @see IPersistable.
  */
-public IStatus restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescriptor) {
 	Assert.isNotNull(getShell());
 
 	MultiStatus result = new MultiStatus(
@@ -1060,7 +1060,7 @@ public IStatus restoreState(IMemento memento) {
 		WorkbenchPage newPage = null;
 		try {
 			newPage = new WorkbenchPage(this, input);
-			result.add(newPage.restoreState(pageMem));
+			result.add(newPage.restoreState(pageMem,activeDescriptor));
 			pageList.add(newPage);
 			firePageOpened(newPage);
 		} catch (WorkbenchException e) {
@@ -1097,7 +1097,9 @@ public IStatus restoreState(IMemento memento) {
 	// Set active page.
 	if (newActivePage == null)
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
+		
 	setActivePage(newActivePage);
+		
 	return result;
 }
 /* (non-Javadoc)
