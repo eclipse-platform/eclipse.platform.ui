@@ -352,6 +352,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		}
 		
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
+		
+		// do not support close box on unselected tabs.
+		tabFolder.setUnselectedCloseVisible(false);
+		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
 		ColorSchemeService.setTabColors(tabFolder);
