@@ -207,11 +207,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private static final String FOCUS_CONTROL = "focusControl";//$NON-NLS-1$
 
 	/**
-	 * The height in pixels of this dialog's progress indicator
-	 */
-	private static int PROGRESS_INDICATOR_HEIGHT = 18;
-
-	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
@@ -701,6 +696,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Control createButtonBar(Composite parent) {
 		Font font = parent.getFont();
 		Composite composite= new Composite(parent, SWT.NULL);
+		
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
@@ -708,11 +704,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
+		
+		Composite monitorComposite = new Composite(composite, SWT.NULL);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		monitorComposite.setLayout(layout);
+		monitorComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		GridLayout pmLayout = new GridLayout();
-		pmLayout.numColumns = 3;
-		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
-		Button cancelButton = createButton(getProgressMonitorPart(), ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
+		setProgressMonitorPart(new ProgressMonitorPart(monitorComposite, pmLayout));
+		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
 		getProgressMonitorCancelButton().setFont(font);
 		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
@@ -722,7 +725,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		});
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getProgressMonitorPart().setFont(font);
-		getProgressMonitorPart().setVisible(false);
+		monitorComposite.setVisible(false);
 
 		return super.createButtonBar(composite);
 	}
@@ -1331,7 +1334,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			getProgressMonitorCancelButton().setEnabled(true);
 			setCancelButtonPressed(false);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
-			getProgressMonitorPart().setVisible(true);
+			getProgressMonitorPart().getParent().setVisible(true);
 			getProgressMonitorCancelButton().setFocus();
 		}
 		return savedState;
@@ -1348,7 +1351,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void stopped(Object savedState) {
 		if (getShell() != null) {
-			getProgressMonitorPart().setVisible(false);
+			getProgressMonitorPart().getParent().setVisible(false);
 			getProgressMonitorPart().removeFromCancelComponent(getProgressMonitorCancelButton());
 			Map state = (Map)savedState;
 			restoreUIState(state);
