@@ -285,7 +285,7 @@ public final class BootLoader implements Constants {
 	 * @see #startup
 	 * @see #shutdown
 	 * 
-	 * @deprecated Either look for the IPlatform service.
+	 * @deprecated Look for the IPlatform service. If it is here then the platform is up and running.
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();

@@ -35,6 +35,7 @@ public interface IExtension {
 	 * Returns the descriptor of the plug-in that declares this extension.
 	 *
 	 * @return the plug-in that declares this extension
+	 * @deprecated {@link org.eclipse.core.runtime.registry.IExtension#getParentIdentifier() org.eclipse.core.runtime.registry.IExtension#getParentIdentifier()}
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 	/**
@@ -42,6 +43,7 @@ public interface IExtension {
 	 * that this extension gets plugged into.
 	 *
 	 * @return the unique identifier of the relevant extension point
+	 * @deprecated {@link org.eclipse.core.runtime.registry.IExtension#getExtensionPointIdentifier() org.eclipse.core.runtime.registry.IExtension#getExtensionPointIdentifier()}
 	 */
 	public String getExtensionPointUniqueIdentifier();
 

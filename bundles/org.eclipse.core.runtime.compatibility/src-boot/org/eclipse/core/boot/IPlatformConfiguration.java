@@ -21,7 +21,8 @@ import java.net.URL;
  * 
  * @since 2.0
  * @deprecated: Because of the refactoring operated around the concept of configuration
- * the class now moved into the update component. See {@link org.eclipse.update.configurator.IPlatformConfiguration org.eclipse.update.configurator.IPlatformConfiguration}
+ * the class now moved into the update component. See {@link org.eclipse.update.configurator.IPlatformConfiguration org.eclipse.update.configurator.IPlatformConfiguration}.
+ * Note that now the platform exposes a concept of configuration area and also makes available the last modification time.
  */
 public interface IPlatformConfiguration {
 
@@ -437,7 +438,7 @@ public interface IPlatformConfiguration {
 	 * @return configuration location URL, or <code>null</code> if the
 	 * configuration location could not be determined.
 	 * @since 2.0
-	 * @deprecated Test the value of the "osgi.configuration.area" system property
+	 * @deprecated Use {@link org.eclipse.core.runtime.IPlatform#getConfigurationMetadataLocation() IPlatform#getConfigurationMetadataLocation()}
 	 */
 	public URL getConfigurationLocation();
 
