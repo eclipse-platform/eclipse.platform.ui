@@ -215,7 +215,7 @@ public class ContentFormatter3 implements IContentFormatter, IContentFormatterEx
 	class UpdateAffectedPositions implements IPositionUpdater {
 		
 		/** The affected positions */
-		private int[] fPositions;
+		private int[] fAffectedPositions;
 		/** The offset */
 		private int fOffset;
 		
@@ -226,7 +226,7 @@ public class ContentFormatter3 implements IContentFormatter, IContentFormatterEx
 		 * @param offset the offset
 		 */
 		public UpdateAffectedPositions(int[] positions, int offset) {
-			fPositions= positions;
+			fAffectedPositions= positions;
 			fOffset= offset;
 		}
 		
@@ -234,7 +234,7 @@ public class ContentFormatter3 implements IContentFormatter, IContentFormatterEx
 		 * @see IPositionUpdater#update(DocumentEvent)
 		 */
 		public void update(DocumentEvent event) {
-			updateAffectedPositions(event.getDocument(), fPositions, fOffset);
+			updateAffectedPositions(event.getDocument(), fAffectedPositions, fOffset);
 		}	
 	}
 	
