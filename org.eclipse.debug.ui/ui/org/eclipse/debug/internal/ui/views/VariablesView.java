@@ -163,6 +163,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private SourceViewerConfiguration fSourceViewerConfiguration;
 	
 	/**
+	 * Value currently computing details for
+	 * (workaround for bug 12938)
+	 */
+	private IValue fValueBeingComputed = null;
+	
+	/**
 	 * Various listeners used to update the enabled state of actions and also to
 	 * populate the detail pane.
 	 */
@@ -622,7 +628,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				} else if (obj instanceof IExpression) {
 					val = ((IExpression)obj).getValue();
 				}
+				
+				// workaroud for bug 12938
+				if (fValueBeingComputed != null && fValueBeingComputed.equals(val)) {
+					return;
+				}
+				
 				setDebugModel(val.getModelIdentifier());
+				fValueBeingComputed = val;
 				getModelPresentation().computeDetail(val, this);
 			} else {
 				getDetailDocument().set(""); //$NON-NLS-1$
@@ -641,6 +654,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void run() {
 				if (isAvailable()) {
 					getDetailDocument().set(result);
+					// workaround for bug 12938
+					fValueBeingComputed = null;
 				}
 			}
 		};
