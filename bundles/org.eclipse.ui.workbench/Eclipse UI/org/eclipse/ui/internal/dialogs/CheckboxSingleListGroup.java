@@ -11,7 +11,7 @@ package org.eclipse.ui.internal.dialogs;
  *      IBM Corporation - initial API and implementation 
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 			font should be activated and used by other components.
- */
+******************************************************************************/ 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;

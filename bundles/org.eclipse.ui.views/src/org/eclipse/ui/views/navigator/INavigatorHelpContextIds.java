@@ -10,7 +10,7 @@ package org.eclipse.ui.views.navigator;
  * Contributors: 
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Collapse all action
- */
+******************************************************************************/ 
 import org.eclipse.ui.PlatformUI;
 
 /**

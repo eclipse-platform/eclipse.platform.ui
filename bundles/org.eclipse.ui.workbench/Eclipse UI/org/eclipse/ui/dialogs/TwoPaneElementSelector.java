@@ -9,7 +9,7 @@
  *   IBM Corporation - initial API and implementation 
  * 	 Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *    font should be activated and used by other components.
- */
+******************************************************************************/ 
 package org.eclipse.ui.dialogs;
 
 import java.util.Arrays;

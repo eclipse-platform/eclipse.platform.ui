@@ -1,10 +1,18 @@
+/******************************************************************************* 
+ * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * All rights reserved. This program and the accompanying materials! 
+ * are made available under the terms of the Common Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html 
+ * 
+ * Contributors: 
+ *   IBM Corporation - initial API and implementation 
+ *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ *      font should be activated and used by other components.
+******************************************************************************/ 
+
 package org.eclipse.ui.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
- * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
- * font should be activated and used by other components.
- */
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
