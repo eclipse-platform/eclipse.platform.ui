@@ -132,6 +132,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
+     * Test the code completion for "system" properties
+     */
+    public void testSystemPropertyProposals() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
+    	
+    	int lineNumber= 18;
+    	int columnNumber= 25;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber);
+    	assertTrue(proposals.length >= 1);
+    	assertContains("java.home", proposals);
+    }
+    
+    /**
      * Test the code completion for the depend attribute of a target.
      */
     public void testTargetDependProposals() throws BadLocationException {
@@ -572,7 +589,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "c");
-    	assertTrue(proposals.length == 2);
+    	assertEquals("Incorrect number of proposals", 2, proposals.length);
     	assertContains("cool", proposals);
     	assertContains("chillin", proposals);
     	assertDoesNotContain("awesome", proposals);
@@ -590,7 +607,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "e");
-    	assertTrue(proposals.length == 1);
+    	assertEquals("Incorrect number of proposals", 1, proposals.length);
     	//the reference to the project by name
     	assertContains("Extension Point Task", proposals);
     }
