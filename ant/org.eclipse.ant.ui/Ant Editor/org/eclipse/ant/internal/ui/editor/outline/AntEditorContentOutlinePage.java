@@ -14,15 +14,19 @@
 
 package org.eclipse.ant.internal.ui.editor.outline;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.xml.XmlAttribute;
 import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -33,6 +37,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -76,6 +81,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private XMLCore fCore;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
+	private boolean fFilterSubtargets;
 
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -87,7 +93,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public void dispose() {
 		}
-
         
 		/**
 		 * do nothing
@@ -95,14 +100,24 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-        
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object parentNode) {
 			XmlElement tempParentElement = (XmlElement)parentNode;
-			List tempChilds = tempParentElement.getChildNodes();
+			List tempChilds = new ArrayList();
+			tempChilds.addAll(tempParentElement.getChildNodes());
+			if (isFilterSubtargets()) {
+				// Filter out private targets
+				ListIterator iter= tempChilds.listIterator();
+				while (iter.hasNext()) {
+					XmlElement element = (XmlElement) iter.next();
+					if ("target".equals(element.getName()) && element.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) { //$NON-NLS-1$
+						iter.remove();
+					}
+				}
+			}
 			Object[] tempChildObjects = new Object[tempChilds.size()];
 			for(int i=0; i<tempChilds.size(); i++) {
 				tempChildObjects[i] = tempChilds.get(i);
@@ -248,6 +263,26 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 	
+	/**
+	 * Sets whether subtargets should be filtered out of the outline. Must
+	 * be called in the UI thread.
+	 * @param filter
+	 */
+	protected void setFilterSubtargets(boolean filter) {
+		fFilterSubtargets= filter;
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_SUBTARGETS, filter);
+		getTreeViewer().refresh();
+	}
+	
+	/**
+	 * Returns whether subtargets are currently being filtered out of
+	 * the outline.
+	 * @return
+	 */
+	protected boolean isFilterSubtargets() {
+		return fFilterSubtargets;
+	}
+	
 	private boolean isDefaultTargetNode(XmlElement node) {
 		XmlAttribute type= node.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
 		if (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_TARGET)) {
@@ -278,6 +313,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	public AntEditorContentOutlinePage(XMLCore core) {
 		super();
 		fCore= core;
+		fFilterSubtargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_SUBTARGETS);
 	}
 
 	/* (non-Javadoc)
@@ -331,6 +367,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 		IPageSite site= getSite();
 		site.registerContextMenu(IAntUIConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
+		
+		IToolBarManager tbm= site.getActionBars().getToolBarManager();
+		tbm.add(new FilterSubtargetsAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
