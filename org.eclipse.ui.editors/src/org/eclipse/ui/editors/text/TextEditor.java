@@ -109,27 +109,7 @@ public class TextEditor extends ExtendedTextEditor {
 
 		super.dispose();
 	}
-
-	/*
-	 * @see AbstractTextEditor#doSaveAs()
-	 * @since 2.1
-	 */
-	public void doSaveAs() {
-		if (askIfNonWorkbenchEncodingIsOk())
-			super.doSaveAs();
-	}
 	
-	/*
-	 * @see AbstractTextEditor#doSave(IProgressMonitor)
-	 * @since 2.1
-	 */
-	public void doSave(IProgressMonitor monitor){
-		if (askIfNonWorkbenchEncodingIsOk())
-			super.doSave(monitor);
-		else
-			monitor.setCanceled(true);
-	}
-
 	/**
 	 * Installs the encoding support on the given text editor.
 	 * <p> 
@@ -141,37 +121,6 @@ public class TextEditor extends ExtendedTextEditor {
 	protected void installEncodingSupport() {
 		fEncodingSupport= new DefaultEncodingSupport();
 		fEncodingSupport.initialize(this);
-	}
-
-	/**
-	 * Asks the user if it is ok to store in non-workbench encoding.
-	 * 
-	 * @return <true> if the user wants to continue or if no encoding support has been installed
-	 * @since 2.1
-	 */
-	private boolean askIfNonWorkbenchEncodingIsOk() {
-		
-		if (fEncodingSupport == null)
-			return true;
-		
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider instanceof IStorageDocumentProvider) {
-			IEditorInput input= getEditorInput();
-			IStorageDocumentProvider storageProvider= (IStorageDocumentProvider)provider;
-			String encoding= storageProvider.getEncoding(input);
-			String defaultEncoding= storageProvider.getDefaultEncoding();
-			if (encoding != null && !encoding.equals(defaultEncoding)) {
-				Shell shell= getSite().getShell();
-				String title= TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.title"); //$NON-NLS-1$
-				String msg;
-				if (input != null)
-					msg= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.message1"), new String[] {input.getName(), encoding});//$NON-NLS-1$
-				else
-					msg= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.message2"), new String[] {encoding});//$NON-NLS-1$
-				return MessageDialog.openQuestion(shell, title, msg);
-			}
-		}
-		return true;
 	}
 
 	/**
