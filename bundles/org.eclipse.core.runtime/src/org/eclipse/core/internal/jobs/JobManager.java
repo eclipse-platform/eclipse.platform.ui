@@ -459,12 +459,9 @@ public class JobManager implements IJobManager {
 			if (job.getState() == Job.NONE)
 				return;
 			//the semaphore will be released when the job is done
-			barrier.acquire(Long.MAX_VALUE);
 			listener = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
-					synchronized (barrier) {
-						barrier.release();
-					}
+					barrier.release();
 				}
 			};
 			job.addJobChangeListener(listener);
