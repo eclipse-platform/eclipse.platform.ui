@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
@@ -30,6 +33,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.progress.UIJob;
 
 public class AnimationItem {
 
@@ -38,6 +42,8 @@ public class AnimationItem {
 	private boolean showingDetails = false;
 	Canvas imageCanvas;
 	GC imageCanvasGC;
+	//An object used to preven concurrent modification issues
+	private Object windowLock = new Object();
 
 	/**
 	 * Create a new instance of the receiver.
@@ -103,6 +109,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDown(MouseEvent arg0) {
+				//Do nothing
 			}
 			/*
 			 * (non-Javadoc)
@@ -110,6 +117,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseUp(MouseEvent arg0) {
+				//Do nothing
 
 			}
 		});
@@ -198,9 +206,31 @@ public class AnimationItem {
 	 * @param event
 	 */
 	void openFloatingWindow() {
+
 		floatingWindow =
 			new ProgressFloatingWindow(window.getShell(), imageCanvas);
-		floatingWindow.open();
+
+		UIJob floatingJob = new UIJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				synchronized (windowLock) {
+					if (floatingWindow == null)
+						return Status.CANCEL_STATUS;
+					else {
+						floatingWindow.open();
+						return Status.OK_STATUS;
+					}
+				}
+
+			}
+		};
+		floatingJob.setSystem(true);
+		floatingJob.schedule(500);
+
 	}
 
 	/**
@@ -222,9 +252,11 @@ public class AnimationItem {
 	 * Close the floating window.
 	 */
 	private void closeFloatingWindow() {
-		if (floatingWindow != null) {
-			floatingWindow.close();
-			floatingWindow = null;
+		synchronized (windowLock) {
+			if (floatingWindow != null) {
+				floatingWindow.close();
+				floatingWindow = null;
+			}
 		}
 
 	}

@@ -10,15 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +19,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.internal.AssociatedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
@@ -123,17 +122,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	}
 
 	/**
-	 * Dispose the region in the shell if any.
-	 */
-	private void disposeRegion() {
-		Region oldRegion = getShell().getRegion();
-		if(oldRegion != null){
-			getShell().setRegion(null);
-			oldRegion.dispose();
-		}
-	}
-
-	/**
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
@@ -162,18 +150,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		newShell.setBackground(
 			JFaceColors.getSchemeBackground(newShell.getDisplay()));
 		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		Region oldRegion = getShell().getRegion();
-		boolean result = super.close();
-		if(result && oldRegion != null){
-			oldRegion.dispose();
-		}
-		return result;
 	}
 	
 
