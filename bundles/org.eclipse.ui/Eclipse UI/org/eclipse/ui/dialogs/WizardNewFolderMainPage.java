@@ -224,6 +224,17 @@ protected void initializePage() {
  */
 protected boolean validatePage() {
 	boolean valid = true;
+	
+	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+
+	String folderName = resourceGroup.getResource();
+	
+	IStatus nameStatus =
+		workspace.validateName(folderName, IResource.FOLDER);
+	if (!nameStatus.isOK()) {
+		setErrorMessage(nameStatus.getMessage());
+		return false;
+	}
 
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently

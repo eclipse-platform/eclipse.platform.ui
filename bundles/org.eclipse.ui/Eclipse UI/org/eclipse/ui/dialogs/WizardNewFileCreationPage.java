@@ -4,27 +4,40 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.text.MessageFormat;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a file resource.
  * <p>
@@ -324,6 +337,18 @@ public void setFileName(String value) {
  */
 protected boolean validatePage() {
 	boolean valid = true;
+	
+	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+
+	String fileName = getFileName();	
+	
+	IStatus nameStatus =
+		workspace.validateName(fileName, IResource.FILE);
+	if (!nameStatus.isOK()) {
+		setErrorMessage(nameStatus.getMessage());
+		return false;
+	}
+	
 	if (!resourceGroup.areAllValuesValid()) {
 		// if blank name then fail silently
 		if (resourceGroup.getProblemType() == resourceGroup.PROBLEM_RESOURCE_EMPTY
