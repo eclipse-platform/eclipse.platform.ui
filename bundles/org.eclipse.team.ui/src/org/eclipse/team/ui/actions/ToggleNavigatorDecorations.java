@@ -26,15 +26,6 @@ public class ToggleNavigatorDecorations implements IViewActionDelegate {
 	 */
 	public void init(IViewPart part) {
 		this.part = part;
-		if (part instanceof ResourceNavigator) {
-			final ResourceNavigator navigator = (ResourceNavigator)part;
-			final Shell shell = part.getSite().getShell();
-			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-				public void run() {
-					navigator.setLabelDecorator(new TeamResourceDecorator(shell));
-				}
-			});
-		}
 	}
 	/*
 	 * Method declared on IActionDelegate.
