@@ -164,7 +164,7 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			
 			// modify the command
 			if (!origChange.equals(temp.get())) {
-				fAccumulatedChange+=  temp.getLength() - command.text.length();
+				fAccumulatedChange+=  temp.getLength();
 				command.text= temp.get();
 			}
 			
