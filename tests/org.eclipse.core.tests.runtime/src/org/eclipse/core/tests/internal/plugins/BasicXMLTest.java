@@ -1314,7 +1314,7 @@ public String[] registrySetup() {
 		fs = new ByteArrayOutputStream();
 		PrintWriter w = new PrintWriter(fs);
 		RegistryWriter regWriter = new RegistryWriter();
-		regWriter.writePluginDescriptor(plugin, w, 0);
+		regWriter.writePluginDescriptor(pluginList[i], w, 0);
 		w.flush();
 		w.close();
 

@@ -5,6 +5,11 @@ import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;import org.eclipse.core.tests.harness.*;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.xml.sax.*;
 
 public class CacheHelpers extends EclipseWorkspaceTest {
@@ -295,10 +300,24 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, S
 	} catch (IOException ioe) {
 		assertTrue("2.0 IOException encountered", true);
 	}
+	
+	// Cobble together a plugin path that isn't really relevant
+	Map regIndex = InternalPlatform.getRegIndex();
+	int entrySize = regIndex.keySet().size();
+	URL[] pluginPath = new URL[entrySize];
+	int i = 0;
+	for (Iterator list = regIndex.keySet().iterator(); list.hasNext();) {
+		String fileName = (String)list.next();
+		fileName = "file:" + fileName;
+		try {
+			pluginPath[i++] = new URL(fileName);
+		} catch (MalformedURLException badURL) {
+			assertTrue("2.1 Bad url found for " + fileName + ".", true);
+		}
+	}
 	RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-	//PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input);
-	//return newRegistry;
-	return null;
+	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input, pluginPath, false);
+	return newRegistry;
 }
 /* doInitialParsing
  * This method will parse a series of XML files.  The input array should be
