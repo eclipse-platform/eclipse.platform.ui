@@ -89,13 +89,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 	private Button fReversePatchButton;
 	private Text fFuzzField;
 	
-	private Image fNullImage;
-	private Image fAddImage;
-	private Image fDelImage;
-	private Image fErrorImage;
-	private Image fErrorAddImage;
-	private Image fErrorDelImage;
-	
+	private Image[] fImages= new Image[6];	
 	private CompareConfiguration fCompareConfiguration;
 	
 	
@@ -116,13 +110,13 @@ import org.eclipse.compare.structuremergeviewer.*;
 		ImageDescriptor errId= CompareUIPlugin.getImageDescriptor("ovr16/error_ov.gif");	//$NON-NLS-1$
 		Image errIm= errId.createImage();
 		
-		fNullImage= new DiffImage(null, null, w).createImage();
-		fAddImage= new DiffImage(null, addId, w).createImage();
-		fDelImage= new DiffImage(null, delId, w).createImage();
+		fImages[0]= new DiffImage(null, null, w).createImage();
+		fImages[1]= new DiffImage(null, addId, w).createImage();
+		fImages[2]= new DiffImage(null, delId, w).createImage();
 
-		fErrorImage= new DiffImage(errIm, null, w).createImage();
-		fErrorAddImage= new DiffImage(errIm, addId, w).createImage();
-		fErrorDelImage= new DiffImage(errIm, delId, w).createImage();
+		fImages[3]= new DiffImage(errIm, null, w).createImage();
+		fImages[4]= new DiffImage(errIm, addId, w).createImage();
+		fImages[5]= new DiffImage(errIm, delId, w).createImage();
 		
 		fCompareConfiguration= new CompareConfiguration();
 		
@@ -146,25 +140,25 @@ import org.eclipse.compare.structuremergeviewer.*;
 		if (diff.fMatches) {
 			switch (diff.getType()) {
 			case Differencer.ADDITION:
-				return fAddImage;
+				return fImages[1];
 			case Differencer.DELETION:
-				return fDelImage;
+				return fImages[2];
 			}
-			return fNullImage;
+			return fImages[0];
 		}
 		switch (diff.getType()) {
 		case Differencer.ADDITION:
-			return fErrorAddImage;
+			return fImages[4];
 		case Differencer.DELETION:
-			return fErrorDelImage;
+			return fImages[5];
 		}
-		return fErrorImage;
+		return fImages[3];
 	}
 	
 	Image getImage(Hunk hunk) {
 		if (hunk.fMatches)
-			return fNullImage;
-		return fErrorImage;
+			return fImages[0];
+		return fImages[3];
 	}
 	
 	public void createControl(Composite parent) {
@@ -233,7 +227,17 @@ import org.eclipse.compare.structuremergeviewer.*;
 				}
 			}
 		);
-		
+		fTree.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (fImages != null) {
+					for (int i= 0; i < fImages.length; i++) {
+						if (fImages[i] == null)
+							fImages[i].dispose();
+					}
+					fImages= null;
+				}
+			}
+		});
 		// creating tree's content
 		buildTree();
 		Dialog.applyDialogFont(composite);		
