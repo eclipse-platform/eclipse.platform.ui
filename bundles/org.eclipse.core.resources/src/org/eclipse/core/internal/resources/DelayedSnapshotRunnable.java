@@ -34,6 +34,8 @@ public class DelayedSnapshotRunnable implements Runnable {
 	 */
 	public void run() {
 		synchronized (this) {
+			if (canceled)
+				return;
 			try {
 				wait(delay);
 			} catch (InterruptedException e) {
