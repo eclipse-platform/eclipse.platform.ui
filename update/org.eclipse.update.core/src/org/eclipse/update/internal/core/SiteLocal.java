@@ -27,6 +27,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
+	
+	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
 	/**
 	 * initialize the configurations from the persistent model.
@@ -40,10 +42,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// obtain read/write location
 		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration platformConfig = currentPlatformConfiguration;
 		try {
-			URL platformConfigurationLocation = platformConfig.getConfigurationLocation();
-			URL location = Platform.resolve(platformConfigurationLocation);
+			URL location = getUpdateStateLocation(currentPlatformConfiguration);
 			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 
 			// set it into the ILocalSite
@@ -700,5 +700,41 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 
 	}
+	
+	/*
+	 * Get update state location relative to platform configuration
+	 */
+	 private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
+	 	// Create a directory location for update state files. This
+	 	// directory name is constructed by adding a well-known suffix
+		// to the name of the corresponding platform  configuration. This
+		// way, we can have multiple platform configuration files in
+		// the same directory without ending up with update state conflicts.
+		// For example: platform configuration file:C:/platform.cfg results
+		// in update state location file:C:/platform.cfg.update/
+	 	URL configLocation = Platform.resolve(config.getConfigurationLocation());
+		String temp = configLocation.toExternalForm();
+		temp += UPDATE_STATE_SUFFIX + "/";
+		URL updateLocation = new URL(temp);
+		if (updateLocation.getProtocol().equals("file")) {
+			// ensure path exists. Handle transient configurations
+			ArrayList list = new ArrayList();
+			File path = new File(updateLocation.getFile());
+			while (path != null) { // walk up to first dir that exists
+				if (!path.exists()) {
+					list.add(path);
+					path = path.getParentFile();
+				} else
+					path = null;
+			}
+			for (int i=list.size()-1; i>=0; i--) { // walk down to create missing dirs
+				path = (File) list.get(i);
+				path.mkdir();
+				if (config.isTransient())
+					path.deleteOnExit();
+			}	
+		}
+		return updateLocation;
+	 }
 
-	}
+}
