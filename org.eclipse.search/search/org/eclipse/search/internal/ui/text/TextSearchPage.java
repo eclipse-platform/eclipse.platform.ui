@@ -288,13 +288,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					getExtensions(),
 					getContainer().getSelectedScope(),
 					getContainer().getSelectedWorkingSets());
-		fPreviousSearchPatterns.add(match);
+		fPreviousSearchPatterns.add(0, match);
 		return match;
 	}
 
 	private String[] getPreviousExtensions() {
 		List extensions= new ArrayList(fPreviousSearchPatterns.size());
-		for (int i= fPreviousSearchPatterns.size() -1 ; i >= 0; i--) {
+		int size= fPreviousSearchPatterns.size();
+		for (int i= 0; i < size; i++) {
 			SearchPatternData data= (SearchPatternData) fPreviousSearchPatterns.get(i);
 			String text= FileTypeEditor.typesToString(data.fileNamePatterns);
 			if (!extensions.contains(text))
@@ -307,7 +308,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		int size= fPreviousSearchPatterns.size();
 		String [] patterns= new String[size];
 		for (int i= 0; i < size; i++)
-			patterns[i]= ((SearchPatternData) fPreviousSearchPatterns.get(size - 1 - i)).textPattern;
+			patterns[i]= ((SearchPatternData) fPreviousSearchPatterns.get(i)).textPattern;
 		return patterns;
 	}
 	
@@ -477,11 +478,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private void handleWidgetSelected() {
-		if (fPattern.getSelectionIndex() < 0)
+		int selectionIndex= fPattern.getSelectionIndex();
+		if (selectionIndex < 0 || selectionIndex >= fPreviousSearchPatterns.size())
 			return;
-		int index= fPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
-		SearchPatternData patternData= (SearchPatternData) fPreviousSearchPatterns.get(index);
-		if (patternData == null  || !fPattern.getText().equals(patternData.textPattern))
+		
+		SearchPatternData patternData= (SearchPatternData) fPreviousSearchPatterns.get(selectionIndex);
+		if (!fPattern.getText().equals(patternData.textPattern))
 			return;
 		fIgnoreCase.setSelection(patternData.ignoreCase);
 		fIsRegExCheckbox.setSelection(patternData.isRegExSearch);
