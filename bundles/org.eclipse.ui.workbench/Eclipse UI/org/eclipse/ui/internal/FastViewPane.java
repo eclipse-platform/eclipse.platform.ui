@@ -112,7 +112,8 @@ class FastViewPane {
 				Rectangle newBounds = Rectangles.getExtrudedEdge(bounds, distanceFromEdge, side);
 				
 				pane.setBounds(newBounds);
-				 				
+				pane.moveAbove(null); 
+				
 				updateFastViewSashBounds(newBounds);
 			}
 		}
