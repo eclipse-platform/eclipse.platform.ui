@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -39,15 +40,19 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 */
 	public void init(IViewPart view) {
 		super.init(view);
-		setViewer((ContentViewer)view.getViewSite().getSelectionProvider());
-
+		IDebugViewAdapter adapter= (IDebugViewAdapter)view.getAdapter(IDebugViewAdapter.class);
+		if (adapter != null) {
+			if (adapter.getViewer() instanceof ContentViewer) {
+				setViewer((ContentViewer) adapter.getViewer());
+			}
+		}
 	}
 	
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
-		return element instanceof IDebugElement;
+		return getViewer() != null && element instanceof IDebugElement;
 	}
 
 	/**
