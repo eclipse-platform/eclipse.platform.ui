@@ -49,7 +49,7 @@ import org.eclipse.jface.text.TextPresentation;
  * link and colors the line and the text with
  * the given color.
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * Note: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  * 
  * @since 3.1

@@ -16,7 +16,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. 
  * Introduces the concept of text hyperlinks.
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  *
  * @see org.eclipse.jface.text.hyperlink.IHyperlink

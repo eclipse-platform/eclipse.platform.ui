@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.hyperlink;
 
 import java.util.ArrayList;
@@ -35,10 +34,11 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 
+
 /**
  * Default implementation of a hyperlink manager.
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  * 
  * @since 3.1

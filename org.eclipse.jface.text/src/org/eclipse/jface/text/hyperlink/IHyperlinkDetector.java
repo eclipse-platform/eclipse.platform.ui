@@ -18,14 +18,10 @@ import org.eclipse.jface.text.ITextViewer;
  * A hyperlink detector tries to find a hyperlink at
  * a given location in a given text viewer.
  * <p>
- * Hyperlink detectors can be contributed via the
- * <code>hyperlinkDetectors</code> extension point.
- * </p>
- * <p>
  * Clients may implement this interface.
  * </p>
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  * 
  * @since 3.1

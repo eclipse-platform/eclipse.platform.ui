@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.hyperlink;
 
 import org.eclipse.jface.text.ITextViewer;
+
 
 /**
  * A hyperlink manager for a text viewer detects
@@ -19,7 +19,11 @@ import org.eclipse.jface.text.ITextViewer;
  * {@link org.eclipse.jface.text.hyperlink.IHyperlinkDetector hyperlink detectors}
  * and displays the links using a {@link org.eclipse.jface.text.hyperlink.IHyperlinkController hyperlink controller}.
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * Clients may implement this interface. A default implementation is provided
+ * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkManager}.
+ * </p>
+ * <p>
+ * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  * 
  * @since 3.1

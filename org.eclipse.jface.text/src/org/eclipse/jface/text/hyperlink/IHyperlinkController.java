@@ -18,7 +18,11 @@ import org.eclipse.jface.text.ITextViewer;
  * the installed text viewer and allows to select one
  * on of the hyperlinks.
  * <p>
- * NOTE: This API is work in progress and may change before the final API freeze.
+ * Clients may implement this interface. A default implementation is provided
+ * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkController}.
+ * </p>
+ * <p>
+ * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
  * </p>
  * 
  * @since 3.1
