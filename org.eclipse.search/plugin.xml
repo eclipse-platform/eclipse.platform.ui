@@ -35,7 +35,7 @@
 	
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
-  	<extension-point id="searchResultViewPages" name="Search Result View Pages" schema="schema/searchResultViewPages.exsd"/>
+  	<extension-point name="%searchResultViewPages" id="searchResultViewPages" schema="schema/searchResultViewPages.exsd"/>
 	
 	
 	<!-- Extensions -->
@@ -151,7 +151,6 @@
 <!-- Default search results view -->
    	<extension
     	id="DefaultSearchResultsViewPage"
-        name="Default Search Results View page"
         point="org.eclipse.search.searchResultViewPages">
 		<viewPage
 			targetClass="org.eclipse.search.ui.text.ITextSearchResult"
