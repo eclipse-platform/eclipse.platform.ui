@@ -152,4 +152,16 @@ public class ObjectMapTest extends EclipseWorkspaceTest {
 		assertEquals("#populateMap", max, map.size());
 		return map;
 	}
+
+	/*
+	 * Bug 62231 - empty ObjectMap.toHashMap() causes NullPointerException
+	 */
+	public void testBug_62231() {
+		ObjectMap map = new ObjectMap();
+		try {
+			map.entrySet();
+		} catch (NullPointerException e) {
+			fail("1.0");
+		}
+	}
 }
