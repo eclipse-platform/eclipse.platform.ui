@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
  * defined on this class are called from within the implementations of
  * workspace API methods. They are not intended to be called from anywhere else.
  * </p>
+ * @since 2.1
  */
 public class TeamHook {
 	

@@ -1152,7 +1152,7 @@ public boolean isDerived();
 public boolean isLocal(int depth);
 /**
  * Returns <code>true</code> if this resource has been linked to 
- * a location outside of the project's content area.  Returns <code>false</code>. 
+ * a location outside of the project's content area.  Returns <code>false</code>
  * in all other cases, including the case where this resource does not exist.
  * The workspace root and projects are never linked.
  * <p>
@@ -1166,6 +1166,7 @@ public boolean isLocal(int depth);
  *
  * @see IFile#createLink
  * @see IFolder#createLink
+ * @since 2.1
  */
 public boolean isLinked();
 /**

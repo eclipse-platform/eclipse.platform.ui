@@ -343,8 +343,12 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  *    by a directory (as opposed to a file).</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See IResourceChangeEvent for more details.</li>
+ * <li>The team provider for the project which contains this folder does not permit
+ *       linked resources.</li>
+ * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
  * @see IResource#isLink
+ * @see IResource.ALLOW_MISSING_LINK
  * @since 2.1
  */
 public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;

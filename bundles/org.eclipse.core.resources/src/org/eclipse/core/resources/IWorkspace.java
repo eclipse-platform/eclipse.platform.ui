@@ -1040,9 +1040,8 @@ public IStatus validateEdit(IFile[] files, Object context);
  *		the given location is valid as the linked resource location, otherwise a 
  * 	status object with severity <code>IStatus.WARNING</code> or 
  * 	<code>IStatus.ERROR</code> indicating what is wrong with the string
- * @see IProjectDescription#getLocation
- * @see IProjectDescription#setLocation
  * @see IStatus#OK
+ * @since 2.1
  */
 public IStatus validateLinkLocation(IResource resource, IPath location);
 /**

@@ -73,22 +73,36 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 /**
- * Returns a handle to the  workspace root, project or folder which is mapped 
- * to the given path in the local file system, or <code>null</code> if none.
- * If the path maps to the platform working location, the returned object
- * will be of type <code>ROOT</code>.  If the path maps to a  project, the 
- * resulting object will be of type <code>PROJECT</code>; otherwise 
- * the resulting object will be a folder (type <code>FOLDER</code>).
- * The path must be absolute; its segments need not be valid names;
- * a trailing separator is ignored.
- * The resulting resource need not exist in the workspace.
+ * Returns the handles to all the resources (workspace root, project, folder) in
+ * the workspace which are mapped to the given path in the local file system.
+ * Returns an empty array if there are none.
+ * <p>
+ * If the path maps to the platform working location, the returned object will
+ * be a single element array consisting of an object of type <code>ROOT</code>.
+ * <p>
+ *  If     the path maps to a project, the resulting object will be a single
+ * element array consisting of an object of type <code>PROJECT</code>; 
+ * otherwise the resulting array will contain folders (type
+ * <code>FOLDER</code>). 
+ * <p>
+ * The path must be absolute; its segments need not be valid names; a
+ * trailing separator is ignored. The resulting resource(s) need not exist inthe
+ * workspace.
+ * <p>
+ * @param location a path in the local file system
+ * @return the corresponding containers in the workspace, or an empty array if none
+ * @since 2.1
  */
 public IContainer[] findContainersForLocation(IPath location);
 /**
  * Returns the handles of all files that are mapped to the given path 
  * in the local file system.  Returns an empty array if there are none.
  * The path must be absolute; its segments need not be valid names.
- * The resulting file need not exist in the workspace.
+ * The resulting file(s) need not exist in the workspace.
+ * <p>
+ * @param location a path in the local file system
+ * @return the corresponding files in the workspace, or an empty array if none
+ * @since 2.1
  */
 public IFile[] findFilesForLocation(IPath location);
 /**
