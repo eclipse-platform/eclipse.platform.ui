@@ -28,7 +28,12 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 	private IResource resource;
 	private List errorTable = new ArrayList(1);
 
-	private boolean overwriteFiles = false;
+	//The constants for the overwrite 3 state
+	private static final int OVERWRITE_NOT_SET = 0;
+	private static final int OVERWRITE_NONE = 1;
+	private static final int OVERWRITE_ALL = 2;
+	private int overwriteState = OVERWRITE_NOT_SET;
+
 	private boolean createLeadupStructure = true;
 	private boolean createContainerDirectories = true;
 	/**
@@ -204,7 +209,10 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 				return;
 			}
 
-			if (!overwriteFiles) {
+			if(overwriteState == OVERWRITE_NONE)
+				return;
+				
+			if (overwriteState != OVERWRITE_ALL) {
 				String overwriteAnswer =
 					overwriteCallback.queryOverwrite(properPathString);
 
@@ -216,8 +224,14 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 					return;
 				}
 
+				if (overwriteAnswer.equals(IOverwriteQuery.NO_ALL)) {
+					monitor.worked(1);
+					overwriteState = OVERWRITE_NONE;
+					return;
+				}
+
 				if (overwriteAnswer.equals(IOverwriteQuery.ALL))
-					overwriteFiles = true;
+					overwriteState = OVERWRITE_ALL;
 			}
 		}
 
@@ -384,11 +398,13 @@ class FileSystemExportOperation implements IRunnableWithProgress {
 	}
 	/**
 	 *	Set this boolean indicating whether exported resources should automatically
-	 *	overwrite existing files when a conflict occurs
+	 *	overwrite existing files when a conflict occurs. If not
+	 *	query the user.
 	 *
 	 *	@param value boolean
 	 */
 	public void setOverwriteFiles(boolean value) {
-		overwriteFiles = value;
+		if(value)	
+			overwriteState = OVERWRITE_ALL;
 	}
 }
