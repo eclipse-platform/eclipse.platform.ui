@@ -412,8 +412,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					
 				right.addDocumentListener(DocumentLineDiffer.this);
 				left.addDocumentListener(DocumentLineDiffer.this);
-					
+				
+				int i= 0;
 				do {
+					if (i++ == 100) // TODO this is an arbitrary emergency exit in case a referenced document goes nuts
+						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getFormattedString("quickdiff.error.getting_document_content", new Object[] {left.getClass(), right.getClass()}), null); //$NON-NLS-1$
+					
 					// clear events
 					synchronized (DocumentLineDiffer.this) {
 						if (isCanceled(monitor))
@@ -431,7 +435,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						if (fStoredEvents.size() == 0 && reference != null && actual != null)
 							break;
 					}
-					
 					
 				} while (true);
 				
