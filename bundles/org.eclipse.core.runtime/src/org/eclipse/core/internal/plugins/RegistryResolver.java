@@ -1083,49 +1083,46 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 	 * latest version will be discarded.
 	 */
 	PluginFragmentModel[] fragmentList = plugin.getFragments();
-	while (fragmentList != null) {
-		ArrayList fragmentsWithId = new ArrayList();
-		ArrayList fragmentsToProcessLater = new ArrayList();
-		String currentFragmentId = fragmentList[0].getId();
-		for (int i = 0; i < fragmentList.length; i++) {
-			// Find all the fragments with a given id.
-			if (currentFragmentId.equals(fragmentList[i].getId())) {
-				fragmentsWithId.add(fragmentList[i]);
-			} else {
-				fragmentsToProcessLater.add(fragmentList[i]);
-			}
-		}
-		
-		PluginFragmentModel[] fragments;
-		if (fragmentsWithId.isEmpty())
-			fragments = null;
-		else
-			fragments = (PluginFragmentModel[]) fragmentsWithId.toArray(new PluginFragmentModel[fragmentsWithId.size()]);
-		
-		if (fragmentsToProcessLater.isEmpty())
-			fragmentList = null;
-		else
-			fragmentList = (PluginFragmentModel[]) fragmentsToProcessLater.toArray(new PluginFragmentModel[fragmentsToProcessLater.size()]);
-			
-		if (fragments != null) {
-			// Now find the latest version of the fragment with the chosen id
-			PluginFragmentModel latestFragment = null;
-			PluginVersionIdentifier latestVersion = null;
-			for (int i = 0; i < fragments.length; i++) {
-				PluginFragmentModel fragment = fragments[i];
-				PluginVersionIdentifier thisVersion = getVersionIdentifier(fragment);
-				if ((latestVersion == null) || (thisVersion.isGreaterThan(latestVersion))) {
-					latestFragment = fragment;
-					latestVersion = thisVersion;
+	HashMap sortedFragments = new HashMap(30);
+	for (int i = 0; i < fragmentList.length; i++) {
+		String fragmentId = fragmentList[i].getId();
+		LinkedList versions = (LinkedList)sortedFragments.get(fragmentId);
+		if (versions == null) {
+			// We don't have any fragments with this id yet
+			LinkedList versionList = new LinkedList();
+			versionList.add(fragmentList[i]);
+			sortedFragments.put(fragmentId, versionList);
+		} else {
+			boolean placed = false;
+			int j;
+			for (j = 0; j < versions.size() && !placed; j++) {
+				PluginFragmentModel fragment = (PluginFragmentModel) versions.get(j);
+				if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(fragment)))
+					// ignore duplicates
+					error (Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion()));
+				if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(fragment))) {
+					versions.add(j, fragmentList[i]);
+					placed = true;
 				}
 			}
-			if (latestFragment != null) {
-				// For the latest version of this fragment id only, apply
-				// all the fragment bits to the plugin.  
-				resolvePluginFragment(latestFragment, plugin);
+			if (!placed) {
+				// just add this one to the end
+				versions.add(fragmentList[i]);
 			}
 		}
 	}
+	
+	// sortedFragments now contains linked lists of fragments with
+	// the same id sorted in descending order (the biggest version
+	// number is the first element in the linked list
+	
+	// Now add the latest version of each fragment to the plugin
+	for (Iterator list = sortedFragments.keySet().iterator(); list.hasNext();) {
+		String fragmentId = (String)list.next();
+		PluginFragmentModel latestFragment = (PluginFragmentModel)((LinkedList)sortedFragments.get(fragmentId)).getFirst();
+		resolvePluginFragment(latestFragment, plugin);
+	}
+	
 }
 private void resolvePluginRegistry() {
 	// filter out disabled plugins from "live" registry
