@@ -25,7 +25,6 @@ import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.keys.KeySequence;
 
 final class Command implements ICommand {
 
