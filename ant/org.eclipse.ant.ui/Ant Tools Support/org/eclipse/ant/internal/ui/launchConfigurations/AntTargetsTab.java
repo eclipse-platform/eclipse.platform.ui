@@ -62,6 +62,11 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsU
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
+/**
+ * Launch configuration tab which allows the user to choose the targets
+ * from an Ant buildfile that will be executed when the configuration is
+ * launched.
+ */
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private TargetInfo fDefaultTarget = null;
@@ -79,10 +84,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private ILaunchConfiguration fLaunchConfiguration;
 	private AntTargetContentProvider fTargetContentProvider;
-	private int fSortColumn= 0;
+	private int fSortDirection= 0;
 	
 	/**
-	 * Sort constants.
+	 * Sort direction constants.
 	 */
 	public static int SORT_NONE= 0;
 	public static int SORT_NAME= 1;
@@ -90,6 +95,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public static int SORT_DESCRIPTION= 2;
 	public static int SORT_DESCRIPTION_REVERSE= -2;
 	
+	/**
+	 * A sorter which can sort targets by name or description, in
+	 * forward or reverse order.
+	 */
 	private class AntTargetsSorter extends ViewerSorter {
 		/**
 		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -98,12 +107,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			if (!(e1 instanceof TargetInfo && e2 instanceof TargetInfo)) {
 				return super.compare(viewer, e1, e2);
 			}
-			if (fSortColumn == SORT_NONE) {
+			if (fSortDirection == SORT_NONE) {
 				return 0;
 			}
 			String string1, string2;
 			int result= 0;
-			if (fSortColumn == SORT_NAME || fSortColumn == SORT_NAME_REVERSE) {
+			if (fSortDirection == SORT_NAME || fSortDirection == SORT_NAME_REVERSE) {
 				string1= ((TargetInfo) e1).getName();
 				string2= ((TargetInfo) e2).getName();
 			} else {
@@ -117,7 +126,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			} else if (string2 == null) {
 				result= -1;
 			}
-			if (fSortColumn < 0) { // reverse sort
+			if (fSortDirection < 0) { // reverse sort
 				if (result == 0) {
 					result= -1;
 				} else {
@@ -202,6 +211,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 
+	/**
+	 * Creates the toggle to filter internal targets from the table
+	 * @param parent the parent composite
+	 */
 	private void createFilterInternalTargets(Composite parent) {
 		fFilterInternalTargets= new Button(parent, SWT.CHECK);
 		fFilterInternalTargets.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
@@ -213,6 +226,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/**
+	 * Creates the toggle to sort targets in the table
+	 * @param parent the parent composite
+	 */
 	private void createSortTargets(Composite parent) {
 		fSortButton= new Button(parent, SWT.CHECK);
 		fSortButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.14")); //$NON-NLS-1$
@@ -224,6 +241,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/**
+	 * The filter targets button has been toggled. If it's been
+	 * turned on, filter out internal targets. Else, restore internal
+	 * targets to the table.
+	 */
 	private void handleFilterTargetsSelected() {
 		boolean filter= fFilterInternalTargets.getSelection();
 		fTargetContentProvider.setFilterInternalTargets(filter);
@@ -259,11 +281,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param column the column which should be sorted on
 	 */
 	private void setSort(int column) {
-		fSortColumn= column;
+		fSortDirection= column;
 		fTableViewer.refresh();
 		updateLaunchConfigurationDialog();
 	}
 
+	/**
+	 * The target order button has been pressed. Prompt the
+	 * user to reorder the selected targets. 
+	 */
 	private void handleOrderPressed() {
 		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray());
 		int ok = dialog.open();
@@ -278,6 +304,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
+	/**
+	 * Creates the table which displays the available targets
+	 * @param parent the parent composite
+	 */
 	private void createTargetsTable(Composite parent) {
 		Font font= parent.getFont();
 		Label label = new Label(parent, SWT.NONE);
@@ -342,7 +372,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 						// index 0 => sort_name (1)
 						// index 1 => sort_description (2)
 						int column= index + 1;
-						if (column == fSortColumn) {
+						if (column == fSortDirection) {
 							column= -column; // invert the sort when the same column is selected twice in a row
 						}
 						setSort(column);
@@ -401,6 +431,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTargetOrderText.setText(buffer.toString());
 	}
 	
+	/**
+	 * Returns all targets in the buildfile.
+	 * @return all targets in the buildfile
+	 */
 	private TargetInfo[] getTargets() {
 		if (fAllTargets == null || isDirty()) {
 			fAllTargets= null;
@@ -564,7 +598,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
 		}
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortColumn);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortDirection);
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
