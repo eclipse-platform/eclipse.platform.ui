@@ -135,7 +135,7 @@ protected boolean updateSelection(IStructuredSelection s) {
  */
 public void handleKeyReleased(KeyEvent event) {
 
-	if (event.keyCode == SWT.F5) {
+	if (event.keyCode == SWT.F5 && event.stateMask == 0) {
 		refreshAll();
 	}
 }

@@ -116,7 +116,7 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
  	 * Handles a key pressed event by invoking the appropriate action.
  	 */
 	public void handleKeyPressed(KeyEvent event) {
-		if (event.keyCode == SWT.F5) {
+		if (event.keyCode == SWT.F5 && event.stateMask == 0) {
 			refreshAction.refreshAll();
 		}
 	}
