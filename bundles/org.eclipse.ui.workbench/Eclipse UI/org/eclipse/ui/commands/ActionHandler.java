@@ -170,8 +170,9 @@ public final class ActionHandler extends AbstractHandler {
         }
     }
 
-    /**
-     * @see IHandler#execute(Map)
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
      */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
@@ -196,8 +197,8 @@ public final class ActionHandler extends AbstractHandler {
         return action;
     }
 
-    /**
-     * @see IHandler#getAttributeValuesByName()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.commands.IHandler#getAttributeValuesByName()
      */
     public Map getAttributeValuesByName() {
         if (attributeValuesByName == null) {
@@ -244,6 +245,9 @@ public final class ActionHandler extends AbstractHandler {
         }
     }
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 
