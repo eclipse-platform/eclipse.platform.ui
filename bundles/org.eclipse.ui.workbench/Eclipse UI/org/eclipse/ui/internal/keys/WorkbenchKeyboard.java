@@ -514,10 +514,11 @@ public class WorkbenchKeyboard {
 			ICommand command = commandManager.getCommand(commandId);
 			try {
 				// TODO The enabled property of ICommand is broken.
-				if (command.isDefined() && command.isActive() /*
-															   * &&
-															   * command.isEnabled()
-															   */
+				if (command.isDefined()
+					&& command.isActive()
+					/*
+					 * && command.isEnabled()
+					 */
 					) {
 					items[i++] = partialMatch.format() + "   " + command.getName(); //$NON-NLS-1$
 				}
@@ -544,7 +545,7 @@ public class WorkbenchKeyboard {
 				new org.eclipse.swt.widgets.List(composite, SWT.SINGLE);
 			completionsList.setLayoutData(new GridData(GridData.FILL_BOTH));
 			completionsList.setItems(items);
-			multiKeyAssistShell.setSize(300, 400);
+			multiKeyAssistShell.setSize(300, 200);
 		}
 
 		// Position the shell, and then open it.
