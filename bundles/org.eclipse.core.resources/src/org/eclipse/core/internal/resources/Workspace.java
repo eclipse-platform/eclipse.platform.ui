@@ -865,8 +865,11 @@ public PropertyManager getPropertyManager() {
  */
 public ResourceInfo getResourceInfo(IPath path, boolean phantom, boolean mutable) {
 	try {
-		if (path.isRoot())
-			return (ResourceInfo)tree.getTreeData();
+		if (path.isRoot()) {
+			ResourceInfo info = (ResourceInfo)tree.getTreeData();
+			Assert.isNotNull(info, "Tree root info must never be null");
+			return info;
+		}
 		ResourceInfo result = null;
 		if (!tree.includes(path))
 			return null;
