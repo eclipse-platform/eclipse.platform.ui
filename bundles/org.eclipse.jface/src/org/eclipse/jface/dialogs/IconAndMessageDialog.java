@@ -84,8 +84,10 @@ public abstract class IconAndMessageDialog extends Dialog {
 	}
 
 	/**
-	 * Get the style for the message label.
-	 * @return
+	 * Returns the style for the message label.
+	 * @return the style for the message label
+	 * 
+	 * @since 3.0
 	 */
 	protected int getMessageLabelStyle() {
 		return SWT.WRAP;
