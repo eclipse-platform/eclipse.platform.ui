@@ -151,5 +151,15 @@
             library="ant_tasks/resources-ant.jar">
       </extraClasspathEntry>
    </extension>
+<!-- IResource to ResourceMapping adapter -->
+      <extension
+         id="org.eclipse.core.resources.resourceMappingAdapters"
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            class="org.eclipse.core.internal.resources.mapping.ResourceAdapterFactory"
+            adaptableType="org.eclipse.core.resources.IResource">
+            <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+       </factory>
+   </extension>
 
 </plugin>
