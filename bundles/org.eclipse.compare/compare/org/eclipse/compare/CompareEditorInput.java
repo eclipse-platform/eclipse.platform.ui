@@ -88,6 +88,7 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
+	private static final boolean STRUCTURE_COMPARE_ON_SINGLE_CLICK= true;
 	/**
 	 * The name of the "dirty" property.
 	 */
@@ -394,6 +395,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 		
+		/*
 		fStructureInputPane.addDoubleClickListener(
 			new IDoubleClickListener() {
 				public void doubleClick(DoubleClickEvent e) {
@@ -401,6 +403,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		);
+		*/
 
 		// setup the wiring for second pane
 		fStructurePane1.addSelectionChangedListener(
@@ -462,7 +465,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
-						fContentInputPane.setInput(input);
+						if (STRUCTURE_COMPARE_ON_SINGLE_CLICK) {
+							fStructurePane1.setInput(input);
+							//if (fStructurePane1.isEmpty())
+								fContentInputPane.setInput(input);
+						} else {
+							fContentInputPane.setInput(input);
+						}
 						fStructurePane2.setInput(null); // clear downstream pane
 						if (fStructurePane1.getInput() != input)
 							fStructurePane1.setInput(null);
@@ -472,6 +481,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		);
 	}
 	
+	/*
 	private void feedDefault1(final ISelection selection) {
 		BusyIndicator.showWhile(fComposite.getDisplay(),
 			new Runnable() {
@@ -482,6 +492,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 	}
+	*/
 	
 	private void feed2(final ISelection selection) {
 		BusyIndicator.showWhile(fComposite.getDisplay(),

@@ -6,16 +6,12 @@ package org.eclipse.compare.internal;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.*;
 
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.*;
 
 
 public class CompareEditorContributor extends EditorActionBarContributor {
@@ -25,22 +21,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private NavigationAction fNext;
 	private NavigationAction fPrevious;
-//	private StatusLineContributionItem fStatusLineContributionItem;
-	private IStatusLine fStatusLine=
-		new IStatusLine() {
-			public void setStatus(String key, String message) {
-				
-				if ("Main".equals(key)) {
-					IStatusLineManager slm= getActionBars().getStatusLineManager();
-					if (slm != null)
-						slm.setMessage(message);
-//				} else {
-//					if (fStatusLineContributionItem != null)
-//						fStatusLineContributionItem.setText(message);
-				}
-			}
-		};
-
 
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
@@ -59,16 +39,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		tbm.add(fPrevious);
 	}
 	
-	/*
-	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)
-	 */
-	public void contributeToStatusLine(IStatusLineManager slm) {
-		super.contributeToStatusLine(slm);
-//		if (fStatusLineContributionItem == null)
-//			fStatusLineContributionItem= new StatusLineContributionItem("ID");
-//		slm.add(fStatusLineContributionItem);
-	}
-
 	public void setActiveEditor(IEditorPart targetEditor) {
 				
 		if (fActiveEditorPart == targetEditor)
@@ -88,7 +58,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		if (targetEditor instanceof CompareEditor) {
 			CompareEditor editor= (CompareEditor) targetEditor;
 			editor.setActionBars(getActionBars());
-			editor.setStatusLine(fStatusLine);
 		
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);

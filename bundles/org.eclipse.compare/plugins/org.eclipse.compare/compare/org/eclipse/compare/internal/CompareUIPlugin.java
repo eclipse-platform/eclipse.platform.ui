@@ -63,7 +63,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private static final String COMPARE_EDITOR= PLUGIN_ID + ".CompareEditor"; //$NON-NLS-1$
 	
-	private static final String STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME= "StructureViewerAliases";
+	private static final String STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME= "StructureViewerAliases";	//$NON-NLS-1$
 	
 	/** Maps type to icons */
 	private static Map fgImages= new Hashtable(10);
@@ -747,7 +747,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			String aliases= ps.getString(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME);
 			//System.out.println("  <" + aliases + ">");
 			if (aliases != null && aliases.length() > 0) {
-				StringTokenizer st= new StringTokenizer(aliases, " ");
+				StringTokenizer st= new StringTokenizer(aliases, " ");	//$NON-NLS-1$
 				while (st.hasMoreTokens()) {
 					String pair= st.nextToken();
 					int pos= pair.indexOf('.');

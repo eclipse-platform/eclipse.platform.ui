@@ -30,7 +30,6 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
-	private IStatusLine fStatusLine;
 	
 	
 	public CompareEditor() {
@@ -68,14 +67,6 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		fActionBars= actionBars;
 	}
 	
-	public IStatusLine getStatusLine() {
-		return fStatusLine;
-	}
-	
-	public void setStatusLine(IStatusLine statusLine) {
-		fStatusLine= statusLine;
-	}
-
 	/*
 	 * @see IDesktopPart#createPartControl(Composite)
 	 */

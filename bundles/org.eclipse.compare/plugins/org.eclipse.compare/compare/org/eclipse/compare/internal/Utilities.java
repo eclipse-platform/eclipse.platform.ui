@@ -36,22 +36,8 @@ import org.eclipse.compare.CompareConfiguration;
  */
 public class Utilities {
 
-	public static IStatusLine findStatusLine(Control c) {
-		while (c != null) {
-			Object data= c.getData();
-			if (data instanceof CompareEditor)
-				return ((CompareEditor)data).getStatusLine();
-				
-			//if (data instanceof IViewPart)
-			//	return ((IViewPart)data).getViewSite().getStatusLine();
-			
-			c= c.getParent();
-		}
-		return null;
-	}
-
 	public static IActionBars findActionBars(Control c) {
-		while (c != null) {
+		while (c != null && !c.isDisposed()) {
 			Object data= c.getData();
 			if (data instanceof CompareEditor)
 				return ((CompareEditor)data).getActionBars();
