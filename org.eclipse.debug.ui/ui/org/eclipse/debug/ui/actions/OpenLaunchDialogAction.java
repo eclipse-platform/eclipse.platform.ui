@@ -45,7 +45,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 		fIdentifier = identifier;
 		LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(identifier);
 		if (extension != null) {
-			setText(extension.getLabel() + "...");
+			setText(extension.getLabel() + "..."); //$NON-NLS-1$
 			setImageDescriptor(extension.getImageDescriptor());
 		}
 		// TODO: help context
