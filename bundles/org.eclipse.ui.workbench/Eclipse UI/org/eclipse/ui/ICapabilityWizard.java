@@ -9,9 +9,6 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 
 /**
  * Interface for project capability configuration wizards.

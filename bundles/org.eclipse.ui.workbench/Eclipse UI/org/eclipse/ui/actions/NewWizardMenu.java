@@ -4,14 +4,14 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.window.*;
 import java.util.*;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
  * A <code>NewWizardMenu</code> is used to populate a menu manager with

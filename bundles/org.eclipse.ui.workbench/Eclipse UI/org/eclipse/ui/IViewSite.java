@@ -1,7 +1,5 @@
 package org.eclipse.ui;
 
-import org.eclipse.jface.viewers.ILabelDecorator;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

@@ -11,7 +11,6 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 

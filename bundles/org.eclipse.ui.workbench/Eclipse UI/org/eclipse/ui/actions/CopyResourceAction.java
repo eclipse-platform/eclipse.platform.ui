@@ -4,24 +4,19 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionValidator;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Standard action for copying the currently selected resources elsewhere

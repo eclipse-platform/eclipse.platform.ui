@@ -4,7 +4,6 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.*;
 
 /**

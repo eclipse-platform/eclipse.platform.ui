@@ -7,8 +7,6 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.ui.internal.DecoratorManager;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.

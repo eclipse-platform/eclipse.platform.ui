@@ -5,7 +5,6 @@ package org.eclipse.ui;
  */
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * A working set holds a number of IAdaptable elements. 

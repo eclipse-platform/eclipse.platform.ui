@@ -11,26 +11,16 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.MultiStepWizardDialog;
 import org.eclipse.ui.internal.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.registry.Capability;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.ICategory;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * Standard action for launching the new project creation
