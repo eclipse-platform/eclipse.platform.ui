@@ -13,6 +13,9 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import java.util.Iterator;
 
+import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
@@ -21,11 +24,17 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
 
 
 public class XMLTextHover implements ITextHover {
 
+	//private AntEditor fEditor;
+	
+//	public XMLTextHover(AntEditor editor) {
+//		super();
+//		fEditor = editor;
+//	}
+	
 	/*
 	 * Formats a message as HTML text.
 	 */
@@ -37,13 +46,14 @@ public class XMLTextHover implements ITextHover {
 		return buffer.toString();
 	}
 	
-	/*
-	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		
-		if (!(textViewer instanceof ISourceViewer))
+		if (!(textViewer instanceof ISourceViewer)) {
 			return null;
+		}
 		
 		ISourceViewer sourceViewer= (ISourceViewer) textViewer;
 		IAnnotationModel model= sourceViewer.getAnnotationModel();
@@ -60,18 +70,68 @@ public class XMLTextHover implements ITextHover {
 				}
 			}
 		}
-		
+//		try {
+//			IDocument document= textViewer.getDocument();
+//			int offset= hoverRegion.getOffset();
+//			int length= hoverRegion.getLength();
+//			String propertyName= document.get(offset, length);
+			//AntModel model fEditor.getModel();
+			//String value= model.getPropertyValue(propertyName);
+			//if (value != null) {
+			//	return value;
+			//}
+//		} catch (BadLocationException e) {
+//			
+//		}
 		return null;
 	}
 	
-	/*
-	 * @see ITextHover#getHoverRegion(ITextViewer, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-		int startOffset= offset > 0 ? offset - 1 : offset;
-		int documentLength= textViewer.getDocument() != null ? textViewer.getDocument().getLength() : 0;
-		int endOffset= offset < documentLength - 1 ? offset + 1 : offset;
-		return new Region(startOffset, endOffset - startOffset);
+		IDocument document= textViewer.getDocument();
+			
+		int start= -1;
+		int end= -1;
+		
+		try {	
+			int pos= offset;
+			char c;
+			
+			while (pos >= 0) {
+				c= document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
+					break;
+				--pos;
+			}
+			
+			start= pos;
+			
+			pos= offset;
+			int length= document.getLength();
+			
+			while (pos < length) {
+				c= document.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
+					break;
+				++pos;
+			}
+			
+			end= pos;
+			
+		} catch (BadLocationException x) {
+		}
+		
+		if (start > -1 && end > -1) {
+			if (start == offset && end == offset)
+				return new Region(offset, 0);
+			else if (start == offset)
+				return new Region(start, end - start);
+			else
+				return new Region(start + 1, end - start - 1);
+		}
+		
+		return null;
 	}
-
 }
