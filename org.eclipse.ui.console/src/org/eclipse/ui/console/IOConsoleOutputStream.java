@@ -134,7 +134,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	 *  (non-Javadoc)
 	 * @see java.io.OutputStream#close()
 	 */
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
@@ -181,7 +181,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @param str The string to write to the attached console.
      * @throws IOException if the stream is closed.
      */
-    public void write(String str) throws IOException {
+    public synchronized void write(String str) throws IOException {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
