@@ -109,7 +109,7 @@ public interface IResourceTree {
 	 * given file does not exist in the workspace resource tree.
 	 * <p>
 	 * The given timestamp should be that of the corresponding file in the local
-	 * file system (as computed by <code>computeTimestamp</code>). A discrepency
+	 * file system (as computed by <code>computeTimestamp</code>). A discrepancy
 	 * between the timestamp of the file in the local file system and the
 	 * timestamp recorded in the workspace resource tree means that the file is
 	 * out of sync (<code>isSynchronized</code> returns <code>false</code>).

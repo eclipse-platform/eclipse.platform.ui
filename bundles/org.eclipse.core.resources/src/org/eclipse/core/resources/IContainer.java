@@ -180,8 +180,8 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * The supplied path may be absolute or relative; in either case, it is
  * interpreted as relative to this resource and is appended
  * to this container's full path to form the full path of the resultant resource.
- * A trailing separator is ignored. The path resulting resource will 
- * have at least 3 segments.
+ * A trailing separator is ignored. The path of the resulting resource will 
+ * have at least two segments.
  * </p>
  *
  * @param path the path of the member file
@@ -203,7 +203,7 @@ public IFile getFile(IPath path);
  * interpreted as relative to this resource and is appended
  * to this container's full path to form the full path of the resultant resource.
  * A trailing separator is ignored. The path of the resulting resource will 
- * have at least 2 segments.
+ * have at least two segments.
  * </p>
  *
  * @param path the path of the member folder
@@ -301,7 +301,7 @@ public IResource[] members(boolean includePhantoms) throws CoreException;
 public IResource[] members(int memberFlags) throws CoreException;
 
 /**
- * Returns a list of recently deleted files inside this container that are 
+ * Returns a list of recently deleted files inside this container that
  * have one or more saved states in the local history. The depth parameter
  * determines how deep inside the container to look. This resource may or
  * may not exist in the workspace.
@@ -323,7 +323,7 @@ public IResource[] members(int memberFlags) throws CoreException;
  * <p>
  * When applied to a folder resource (depth zero),
  * this method returns an empty list unless there was a recently deleted file
- * with saved states with at same path as the folder.
+ * with saved states at the same path as the folder.
  * </p>
  * <p>
  * This method is long-running; progress and cancellation are provided

@@ -62,7 +62,7 @@ public interface IPathVariableManager {
 	 * this method, notification will be sent to all registered listeners.</p>
 	 * 
 	 * @param name the name of the variable 
-	 * @param value the value for the variable (may be null)
+	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>The variable name is not valid</li>
@@ -92,7 +92,7 @@ public interface IPathVariableManager {
 	 * Registers the given listener to receive notification of changes to path
 	 * variables. The listener will be notified whenever a variable has been
 	 * added, removed or had its value changed. Has no effect if an identical
-	 * path variable changes listener is already registered.
+	 * path variable change listener is already registered.
 	 * 
 	 * @param listener the listener
 	 * @see IPathVariableChangeListener
@@ -100,7 +100,7 @@ public interface IPathVariableManager {
 	public void addChangeListener(IPathVariableChangeListener listener);
 
 	/**
-	 * Removes  the given path variable change listener from the listeners list.
+	 * Removes the given path variable change listener from the listeners list.
 	 * Has no effect if an identical listener is not registered.
 	 * 
 	 * @param listener the listener 
