@@ -259,6 +259,28 @@ public class DetachedWindow extends Window {
         return false;
     }
 
+    /*  
+     * Fixes a problem with Linux GTK when KDE is used as window manager. 
+     * It repositions the detached window to center on top of the parent  
+     * application window. 
+     *  
+	 * @see org.eclipse.jface.window.Window#open() 
+	 */ 
+	public int open() { 
+		 
+		if (getShell() == null) 
+			create(); 
+		 
+		Rectangle bounds = getShell().getBounds(); 
+		int ret = super.open(); 
+		 
+		if (!bounds.equals(getShell().getBounds())) { 
+			getShell().setBounds(bounds); 
+		} 
+		 
+		return ret; 
+	} 
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#getConstrainedShellSize(org.eclipse.swt.graphics.Rectangle)
      */
