@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.commands.registry;
 
 /**
  * <p>
@@ -24,14 +24,7 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean getActive();
+public interface IKeyConfigurationDefinition {
 
 	/**
 	 * JAVADOC
@@ -60,7 +53,7 @@ public interface IContext {
 	 * @return
 	 */	
 	String getParentId();
-	
+
 	/**
 	 * JAVADOC
 	 * 

@@ -11,27 +11,28 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandDefinition;
 import org.eclipse.ui.commands.ICommandDelegate;
 import org.eclipse.ui.commands.ICommandHandle;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.ICommandRegistry;
-import org.eclipse.ui.commands.ICommandRegistryEvent;
-import org.eclipse.ui.commands.ICommandRegistryListener;
-import org.eclipse.ui.internal.commands.registry.CommandRegistry;
+import org.eclipse.ui.commands.registry.ICommandDefinition;
+import org.eclipse.ui.commands.registry.ICommandRegistry;
+import org.eclipse.ui.commands.registry.ICommandRegistryEvent;
+import org.eclipse.ui.commands.registry.ICommandRegistryListener;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {
@@ -46,17 +47,37 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private SortedSet activeCommandIds = new TreeSet();
+	private SortedSet activeContextIds = new TreeSet();
+	private String activeKeyConfigurationId = Util.ZERO_LENGTH_STRING;
+	private String activeLocale = Util.ZERO_LENGTH_STRING;
+	private String activePlatform = Util.ZERO_LENGTH_STRING;	
 	private ICommandManagerEvent commandManagerEvent;
 	private SortedMap commandDelegatesById = new TreeMap();	
 	private List commandManagerListeners;
 	private SortedMap commandHandlesById = new TreeMap();
-	private ICommandRegistry commandRegistry;
 	private SortedMap commandsById = new TreeMap();
+	private PluginCommandRegistry pluginCommandRegistry;
+	private PreferenceCommandRegistry preferenceCommandRegistry;
 
 	private CommandManager() {
 		super();
-		commandRegistry = CommandRegistry.getInstance();		
-		commandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
+		if (pluginCommandRegistry == null)
+			pluginCommandRegistry = new PluginCommandRegistry(Platform.getPluginRegistry());
+			
+		loadPluginCommandRegistry();		
+
+		pluginCommandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
+			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
+				update();
+			}
+		});
+
+		if (preferenceCommandRegistry == null)
+			preferenceCommandRegistry = new PreferenceCommandRegistry(WorkbenchPlugin.getDefault().getPreferenceStore());	
+
+		loadPreferenceCommandRegistry();
+
+		preferenceCommandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
 			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
 				update();
 			}
@@ -80,6 +101,22 @@ public final class CommandManager implements ICommandManager {
 		return Collections.unmodifiableSortedSet(activeCommandIds);
 	}
 
+	public SortedSet getActiveContextIds() {
+		return Collections.unmodifiableSortedSet(activeContextIds);
+	}
+
+	public String getActiveKeyConfigurationId() {		
+		return activeKeyConfigurationId;
+	}
+	
+	public String getActiveLocale() {
+		return activeLocale;
+	}
+	
+	public String getActivePlatform() {
+		return activePlatform;
+	}
+
 	public SortedMap getCommandDelegatesById() {
 		return Collections.unmodifiableSortedMap(commandDelegatesById);
 	}
@@ -98,14 +135,18 @@ public final class CommandManager implements ICommandManager {
 		return commandHandle;
 	}
 
-	public ICommandRegistry getCommandRegistry() {
-		return commandRegistry;
-	}
-
 	public SortedMap getCommandsById() {
 		return Collections.unmodifiableSortedMap(commandsById);
 	}
+	
+	public ICommandRegistry getPluginCommandRegistry() {
+		return pluginCommandRegistry;
+	}
 
+	public ICommandRegistry getPreferenceCommandRegistry() {
+		return preferenceCommandRegistry;
+	}
+	
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
 		if (commandManagerListener == null)
 			throw new NullPointerException();
@@ -123,6 +164,15 @@ public final class CommandManager implements ICommandManager {
 		
 		if (!activeCommandIds.equals(this.activeCommandIds)) {
 			this.activeCommandIds = activeCommandIds;	
+			update();
+		}
+	}
+
+	public void setActiveContextIds(SortedSet activeContextIds) {
+		activeContextIds = Util.safeCopy(activeContextIds, String.class);
+		
+		if (!activeContextIds.equals(this.activeContextIds)) {
+			this.activeContextIds = activeContextIds;	
 			update();
 		}
 	}
@@ -152,17 +202,33 @@ public final class CommandManager implements ICommandManager {
 		}			
 	}
 
+	private void loadPluginCommandRegistry() {
+		try {
+			pluginCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
+	
+	private void loadPreferenceCommandRegistry() {
+		try {
+			preferenceCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}		
+	}
+
 	private void update() {
-		SortedMap commandDefinitionsById = commandRegistry.getCommandDefinitionsById();
+		List commandDefinitions = new ArrayList();
+		commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
+		commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
 		SortedMap commandsById = new TreeMap();
-		Iterator iterator = commandDefinitionsById.entrySet().iterator();
+		Iterator iterator = commandDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			Object key = entry.getKey();
-			ICommandDefinition commandDefinition = (ICommandDefinition) entry.getValue();
-			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition.getCategoryId(), commandDefinition.getDescription(), commandDefinition.getId(), commandDefinition.getName(), commandDefinition.getPluginId());		
-			commandsById.put(key, command);
+			ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
+			ICommand command = new Command(activeCommandIds.contains(commandDefinition.getId()), commandDefinition.getCategoryId(), Collections.EMPTY_LIST, commandDefinition.getDescription(), commandDefinition.getId(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, commandDefinition.getName(), commandDefinition.getPluginId());		
+			commandsById.put(command.getId(), command);
 		}
 
 		SortedSet commandChanges = new TreeSet();

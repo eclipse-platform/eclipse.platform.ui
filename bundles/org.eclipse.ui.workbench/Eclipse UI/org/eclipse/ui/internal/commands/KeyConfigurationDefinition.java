@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.contexts;
+package org.eclipse.ui.internal.commands;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.commands.registry.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class Context implements Comparable, IContext {
+final class KeyConfigurationDefinition implements Comparable, IKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Context.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeyConfigurationDefinition.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
@@ -32,48 +32,47 @@ final class Context implements Comparable, IContext {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((IContext) left).getName(), ((IContext) right).getName());
+					return Collator.getInstance().compare(((IKeyConfigurationDefinition) left).getName(), ((IKeyConfigurationDefinition) right).getName());
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	static SortedMap sortedMapById(List contexts) {
-		if (contexts == null)
+	static SortedMap sortedMapById(List keyConfigurations) {
+		if (keyConfigurations == null)
 			throw new NullPointerException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contexts.iterator();
+		Iterator iterator = keyConfigurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IContext.class);
-			IContext context = (IContext) object;
-			sortedMap.put(context.getId(), context);									
+			Util.assertInstance(object, IKeyConfigurationDefinition.class);
+			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) object;
+			sortedMap.put(keyConfigurationDefinition.getId(), keyConfigurationDefinition);									
 		}			
 		
 		return sortedMap;
 	}
 
-	static SortedMap sortedMapByName(List contexts) {
-		if (contexts == null)
+	static SortedMap sortedMapByName(List keyConfigurations) {
+		if (keyConfigurations == null)
 			throw new NullPointerException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contexts.iterator();
+		Iterator iterator = keyConfigurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IContext.class);			
-			IContext context = (IContext) object;
-			sortedMap.put(context.getName(), context);									
+			Util.assertInstance(object, IKeyConfigurationDefinition.class);			
+			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) object;
+			sortedMap.put(keyConfigurationDefinition.getName(), keyConfigurationDefinition);									
 		}			
 		
 		return sortedMap;
 	}
 
-	private boolean active;
 	private String description;
 	private String id;
 	private String name;
@@ -82,15 +81,14 @@ final class Context implements Comparable, IContext {
 	
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	private transient String string;
-
-	Context(boolean active, String description, String id, String name, String parentId, String pluginId) {
+	private transient String string;	
+	
+	KeyConfigurationDefinition(String description, String id, String name, String parentId, String pluginId) {
 		super();
 		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		
-		this.active = active;
 		this.description = description;
 		this.id = id;
 		this.name = name;
@@ -99,25 +97,21 @@ final class Context implements Comparable, IContext {
 	}
 	
 	public int compareTo(Object object) {
-		Context context = (Context) object;
-		int compareTo = active == false ? (context.active == true ? -1 : 0) : 1;
+		KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;
+		int compareTo = id.compareTo(keyConfigurationDefinition.id);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(description, context.description);
-			
-			if (compareTo == 0) {		
-				compareTo = id.compareTo(context.id);
-			
+			compareTo = name.compareTo(keyConfigurationDefinition.name);			
+		
+			if (compareTo == 0) {
+				compareTo = Util.compare(description, keyConfigurationDefinition.description);
+				
 				if (compareTo == 0) {
-					compareTo = name.compareTo(context.name);			
-					
-					if (compareTo == 0) {
-						compareTo = Util.compare(parentId, context.parentId);
-	
-						if (compareTo == 0)
-							compareTo = Util.compare(pluginId, context.pluginId);								
-					}							
-				}
+					compareTo = Util.compare(parentId, keyConfigurationDefinition.parentId);
+
+					if (compareTo == 0)
+						compareTo = Util.compare(pluginId, keyConfigurationDefinition.pluginId);								
+				}							
 			}
 		}
 		
@@ -125,22 +119,11 @@ final class Context implements Comparable, IContext {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Context))
+		if (!(object instanceof KeyConfigurationDefinition))
 			return false;
 
-		Context context = (Context) object;
-		boolean equals = true;
-		equals &= active == context.active;
-		equals &= Util.equals(description, context.description);
-		equals &= id.equals(context.id);
-		equals &= name.equals(context.name);
-		equals &= Util.equals(parentId, context.parentId);
-		equals &= Util.equals(pluginId, context.pluginId);
-		return equals;
-	}
-
-	public boolean getActive() {
-		return active;
+		KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;	
+		return Util.equals(description, keyConfigurationDefinition.description) && id.equals(keyConfigurationDefinition.id) && name.equals(keyConfigurationDefinition.name) && Util.equals(parentId, keyConfigurationDefinition.parentId) && Util.equals(pluginId, keyConfigurationDefinition.pluginId);
 	}
 
 	public String getDescription() {
@@ -162,11 +145,10 @@ final class Context implements Comparable, IContext {
 	public String getPluginId() {
 		return pluginId;
 	}
-	
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + name.hashCode();
@@ -175,15 +157,13 @@ final class Context implements Comparable, IContext {
 			hashCodeComputed = true;
 		}
 			
-		return hashCode;		
+		return hashCode;
 	}
 
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(active);
-			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
@@ -197,6 +177,6 @@ final class Context implements Comparable, IContext {
 			string = stringBuffer.toString();
 		}
 	
-		return string;		
+		return string;
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.commands.registry;
 
 /**
  * <p>
@@ -24,47 +24,47 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface IImageBindingDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getActive();
+	String getCommandId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription();
-		
+	String getImageStyle();
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getId();
+	String getImageUri();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getLocale();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPlatform();
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	String getPluginId();	
 }

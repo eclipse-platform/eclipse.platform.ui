@@ -14,6 +14,8 @@ package org.eclipse.ui.commands;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
+import org.eclipse.ui.commands.registry.ICommandRegistry;
+
 /**
  * <p>
  * JAVADOC
@@ -28,45 +30,6 @@ import java.util.SortedSet;
  * @since 3.0
  */
 public interface ICommandManager {
-
-	/*
-	ICommandManager
-		
-		get/setActiveContextIds();
-		get/setActiveCommandIds();		
-		get/setActiveKeyConfigurationId();
-		get/setLocale();
-		get/setPlatform();
-
-	ICommand
-
-		getCommandDefinition();
-
-		getContextBindings(); 
-			// IContextBinding 1:1 with IContextBindingDefinition
-		
-		getImageBindings();
-			// IImageBinding for those IImageBindingDefinitions matching platform and locale
-			// just image style, image uri, match value (for ordering)		
-		
-		getKeyBindings(); 
-			// IKeyBinding for those IKeyBindingDefinitions matching active context, active command, active key configuration, platform, and locale
-			// just key sequence and match value (for ordering)
-
-		isActive();		
-		isContext();
-
-		// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
-		List getKeySequences();
-		Map getImageUrisByStyle();
-		SortedSet getContextIds();
-	
-	ICommandRegistry
-		
-		SortedSet getContextBindingDefinitions();
-		SortedSet getImageBindingsDefinitions();
-		SortedSet getKeyBindingDefinitions();
-	*/	
 
 	/**
 	 * Registers an ICommandManagerListener instance with this command manager.
@@ -86,6 +49,34 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
+	 * @return
+	 */
+	SortedSet getActiveContextIds();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	String getActiveKeyConfigurationId();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	String getActiveLocale();
+	
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	String getActivePlatform();
+
+	/**
+	 * JAVADOC
+	 *
 	 * @param commandId
 	 * @return
 	 * @throws NullPointerException
@@ -97,14 +88,21 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
-	ICommandRegistry getCommandRegistry();
-
+	SortedMap getCommandsById();
+	
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedMap getCommandsById();
+	ICommandRegistry getPluginCommandRegistry();
+	
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	ICommandRegistry getPreferenceCommandRegistry();		
 		
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.List;
+
 /**
  * <p>
  * JAVADOC
@@ -26,12 +28,46 @@ package org.eclipse.ui.commands;
  */
 public interface ICommand {
 
+	/* TODO
+	getContextBindings(); 
+		// IContextBinding 1:1 with IContextBindingDefinition
+		
+	getImageBindings();
+		// IImageBinding for those IImageBindingDefinitions matching platform and locale
+		// just image style, image uri, match value (for ordering)		
+		
+	getKeyBindings(); 
+		// IKeyBinding for those IKeyBindingDefinitions matching active context, active command, active key configuration, platform, and locale
+		// just key sequence and match value (for ordering)
+
+	isContext();
+
+	// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
+	List getKeySequences();
+	Map getImageUrisByStyle();
+	SortedSet getContextIds();
+	*/
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean getActive();
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getCategoryId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	List getContextBindings();
 
 	/**
 	 * JAVADOC
@@ -46,6 +82,20 @@ public interface ICommand {
 	 * @return
 	 */	
 	String getId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	List getImageBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	List getKeyBindings();
 	
 	/**
 	 * JAVADOC
@@ -60,11 +110,4 @@ public interface ICommand {
 	 * @return
 	 */	
 	String getPluginId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
 }

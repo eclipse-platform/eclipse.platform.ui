@@ -9,13 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.commands.registry;
 
-import java.util.SortedMap;
-import java.util.SortedSet;
-
-import org.eclipse.ui.contexts.registry.IContextRegistry;
-
+import java.util.List;
 
 /**
  * <p>
@@ -30,58 +26,70 @@ import org.eclipse.ui.contexts.registry.IContextRegistry;
  * 
  * @since 3.0
  */
-public interface IContextManager {
+public interface ICommandRegistry {
 
 	/**
-	 * Registers an IContextManagerListener instance with this context manager.
+	 * Registers an ICommandRegistryListener instance with this command registry.
 	 *
-	 * @param contextManagerListener the IContextManagerListener instance to register.
+	 * @param commandRegistryListener the ICommandRegistryListener instance to register.
 	 * @throws NullPointerException
 	 */	
-	void addContextManagerListener(IContextManagerListener contextManagerListener);
+	void addCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
 
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedSet getActiveContextIds();
+	List getActiveKeyConfigurationDefinitions();
 
 	/**
 	 * JAVADOC
 	 *
-	 * @param contextId
 	 * @return
+	 */
+	List getCategoryDefinitions();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	List getCommandDefinitions();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	List getContextBindingDefinitions();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	List getImageBindingDefinitions();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	List getKeyBindingDefinitions();
+
+	/**
+	 * JAVADOC
+	 *
+	 * @return
+	 */
+	List getKeyConfigurationDefinitions();
+		
+	/**
+	 * Unregisters an ICommandRegistryListener instance with this command registry.
+	 *
+	 * @param commandRegistryListener the ICommandRegistryListener instance to unregister.
 	 * @throws NullPointerException
-	 */	
-	IContextHandle getContextHandle(String contextId);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
 	 */
-	SortedMap getContextsById();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	IContextRegistry getPluginContextRegistry();
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	IContextRegistry getPreferenceContextRegistry();	
-	
-	/**
-	 * Unregisters an IContextManagerListener instance with this context manager.
-	 *
-	 * @param contextManagerListener the IContextManagerListener instance to unregister.
-	 * @throws NullPointerException
-	 */
-	void removeContextManagerListener(IContextManagerListener contextManagerListener);
+	void removeCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
 }

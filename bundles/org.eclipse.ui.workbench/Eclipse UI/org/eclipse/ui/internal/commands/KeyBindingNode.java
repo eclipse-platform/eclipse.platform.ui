@@ -23,7 +23,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.ui.commands.IKeyBindingDefinition;
+import org.eclipse.ui.commands.registry.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -47,8 +47,10 @@ final class KeyBindingNode {
 			root = node.childMap;
 		}
 
+		// TODO: key binding rank?
+
 		if (node != null)
-			add(node.contextConfigurationMap, contextConfiguration, new Integer(keyBinding.getRank()), platformLocale, keyBinding.getCommandId());
+			add(node.contextConfigurationMap, contextConfiguration, new Integer(0), platformLocale, keyBinding.getCommandId());
 	}
 
 	static void add(SortedMap contextConfigurationMap, State contextConfiguration, Integer rank, State platformLocale, String command) {			
@@ -106,8 +108,9 @@ final class KeyBindingNode {
 			root = node.childMap;
 		}
 
+		// TODO high prio. rank
 		if (node != null)
-			remove(node.contextConfigurationMap, contextConfiguration, new Integer(keyBinding.getRank()), platformLocale, keyBinding.getCommandId());
+			remove(node.contextConfigurationMap, contextConfiguration, new Integer(0), platformLocale, keyBinding.getCommandId());
 	}
 
 	static void remove(SortedMap contextConfigurationMap, State contextConfiguration, Integer rank, State platformLocale, String command) {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.commands.registry;
 
 /**
  * <p>
@@ -24,14 +24,35 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContext {
+public interface ICommandDefinition {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	boolean getActive();
+	boolean getAllowsContextBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean getAllowsImageBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	boolean getAllowsKeyBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getCategoryId();
 
 	/**
 	 * JAVADOC
@@ -54,13 +75,6 @@ public interface IContext {
 	 */	
 	String getName();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
 	/**
 	 * JAVADOC
 	 * 
