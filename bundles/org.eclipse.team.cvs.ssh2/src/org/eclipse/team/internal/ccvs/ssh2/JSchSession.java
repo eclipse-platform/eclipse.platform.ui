@@ -108,10 +108,22 @@ class JSchSession {
 		private String password;
 		private String passphrase;
 		private ICVSRepositoryLocation location;
+		private IUserAuthenticator authenticator;
 		
 		MyUserInfo(String username, ICVSRepositoryLocation location) {
 			this.location = location;
 			this.username = username;
+			ICVSRepositoryLocation _location=location;
+			if(_location==null){
+				String dummy=":extssh:dummy@dummy:/"; //$NON-NLS-1$
+				try{
+					_location=CVSRepositoryLocation.fromString(dummy);
+				}
+				catch(CVSException e){
+				}
+			}
+			authenticator = _location.getUserAuthenticator();
+			
 		}
 		public String getPassword() {
 			return password;
@@ -120,7 +132,6 @@ class JSchSession {
 			return passphrase;
 		}
 		public boolean promptYesNo(String str) {
-			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			int prompt = authenticator.prompt(
 					location, 
 					IUserAuthenticator.QUESTION, 
@@ -132,7 +143,6 @@ class JSchSession {
 			return prompt == 0;
 		}
 		private String promptSecret(String message, boolean includeLocation) throws CVSException{
-			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			final String[] _password = new String[1];
 			IUserInfo info = new IUserInfo() {
 				public String getUsername() {
@@ -177,7 +187,6 @@ class JSchSession {
 			}
 		}
 		public void showMessage(String message) {
-			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			authenticator.prompt(
 					location,
 					IUserAuthenticator.INFORMATION,
@@ -192,7 +201,6 @@ class JSchSession {
 				String instruction,   
 				String[] prompt,   
 				boolean[] echo){   
-			IUserAuthenticator authenticator = location.getUserAuthenticator();
 			try{
 				String[] result=
 					authenticator.promptForKeyboradInteractive(location,

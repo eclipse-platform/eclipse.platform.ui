@@ -26,8 +26,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import com.jcraft.jsch.*;
@@ -830,10 +828,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
       }
       */
 
-      String location=":extssh:dummy@dummy:/"; //$NON-NLS-1$
-      CVSRepositoryLocation crl=CVSRepositoryLocation.fromString(location);
       IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
-      Session session=JSchSession.getSession(crl, user, "", host, port, new JSchSession.ResponsiveSocketFacory(pm)); //$NON-NLS-1$
+      Session session=JSchSession.getSession(null, user, "", host, port, new JSchSession.ResponsiveSocketFacory(pm)); //$NON-NLS-1$
       if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
       	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.110")); //$NON-NLS-1$
     	return;
@@ -880,8 +876,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
       c.disconnect();
       //session.disconnect();
-    }
-    catch(CVSException eee){
     }
     catch(IOException eee){
       setErrorMessage(eee.toString());
