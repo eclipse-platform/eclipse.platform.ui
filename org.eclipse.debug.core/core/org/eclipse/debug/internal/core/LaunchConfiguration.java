@@ -5,9 +5,20 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
  
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -15,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -25,6 +37,10 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Launch configuration handle.
@@ -47,6 +63,71 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	protected LaunchConfiguration(IPath location) {
 		setLocation(location);
+	}
+	
+	/**
+	 * Constructs a launch configuration from the given
+	 * memento.
+	 * 
+	 * @param memento launch configuration memento
+	 * @exception CoreException if the memento is invalid or
+	 * 	an exception occurrs reading the memento
+	 */
+	protected LaunchConfiguration(String memento) throws CoreException {
+		Exception ex = null;
+		try {
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+			
+			String localString = root.getAttribute("local");
+			String path = root.getAttribute("path");
+
+			String message = null;				
+			if (path == null) {
+				message = "Invalid launch configuration memento: missing path attribute.";
+			} else if (localString == null) {
+				message = "Invalid launch configuration memento: missing local attribute.";
+			}
+			if (message != null) {
+				IStatus s = newStatus(message, DebugException.INTERNAL_ERROR, null);
+				throw new CoreException(s);
+			}
+			
+			IPath location = null;
+			boolean local = (Boolean.valueOf(localString)).booleanValue();
+			if (local) {
+				location = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(path);
+			} else {
+				location = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(path);
+			}
+			setLocation(location);
+			return;
+		} catch (ParserConfigurationException e) {
+			ex = e;			
+		} catch (SAXException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		IStatus s = newStatus("Exception occurred parsing memento.", DebugException.INTERNAL_ERROR, ex);
+		throw new CoreException(s);
+	}
+	
+	/**
+	 * Creates and returns a new error status based on 
+	 * the given mesasge, code, and exception.
+	 * 
+	 * @param message error message
+	 * @param code error code
+	 * @param e exception or <code>null</code>
+	 * @return status
+	 */
+	protected IStatus newStatus(String message, int code, Throwable e) {
+		return new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, code, message, e);
 	}
 	
 	/**
@@ -271,8 +352,38 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * @see ILaunchConfiguration#getMemento()
 	 */
-	public String getMemento() {
-		return getLocation().toOSString();
+	public String getMemento() throws CoreException {
+		IPath relativePath = null;
+		if (isLocal()) {
+			IPath rootPath = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
+			IPath configPath = getLocation();
+			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
+		} else {
+			relativePath = getFile().getFullPath();
+		}
+		relativePath = relativePath.setDevice(null);
+		
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("launchConfiguration");
+		node.setAttribute("local", (new Boolean(isLocal())).toString());
+		node.setAttribute("path", relativePath.toString());
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			IStatus status = newStatus("Exception occurred creating launch configuration memento.", DebugException.INTERNAL_ERROR,  e);
+			throw new CoreException(status);
+		}
+		return writer.toString();
 	}
 
 	/**

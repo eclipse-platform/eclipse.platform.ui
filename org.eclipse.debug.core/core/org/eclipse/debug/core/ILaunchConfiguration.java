@@ -335,8 +335,10 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @return a memento for this configuration
 	 * @see ILaunchManager#getLaunchConfiguration(String)
+	 * @exception CoreException if an exception occurrs generating this
+	 *  launch configuration's memento 
 	 */
-	public String getMemento();
+	public String getMemento() throws CoreException;
 	
 	/**
 	 * Because an <code>ILaunchConfiguration</code> is a handle, the equals() method

@@ -116,7 +116,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param type the type of this working copy
 	 */
 	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type) {
-		super(null);
+		super((IPath)null);
 		setName(name);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);

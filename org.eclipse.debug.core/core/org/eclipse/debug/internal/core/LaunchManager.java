@@ -549,8 +549,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		restoreDefaultConfigTypeMap(defaultConfigMapPath);
 		
 		// restore launch configuration indices
-		restoreNonLocalIndex();
-		restoreLocalIndex();
+		// restoreNonLocalIndex();
+		// restoreLocalIndex();
+		
+		// while launch config index format is unstable - rebuild
+		rebuildLaunchConfigIndex();
 		
 		// delete invalid configurations - temp code while configurations
 		// are unstable
@@ -907,9 +910,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * @see ILaunchManager#getLaunchConfiguration(String)
 	 */
-	public ILaunchConfiguration getLaunchConfiguration(String memento) {
-		Path path = new Path(memento);
-		return new LaunchConfiguration(path);
+	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
+		return new LaunchConfiguration(memento);
 	}
 	
 	/**
@@ -1359,7 +1361,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @return XML
 	 * @exception IOException if an exception occurs creating the XML
 	 */
-	protected String getConfigsAsXML(List configs) throws IOException {
+	protected String getConfigsAsXML(List configs) throws IOException, CoreException {
 
 		Document doc = new DocumentImpl();
 		Element configRootElement = doc.createElement("launchConfigurations"); //$NON-NLS-1$

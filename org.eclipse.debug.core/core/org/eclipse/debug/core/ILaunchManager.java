@@ -203,10 +203,12 @@ public interface ILaunchManager {
 	 * 
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
+	 * @exception CoreException if the given memento is invalid or
+	 *  an exception occurrs parsing the memento
 	 * @see ILaunchConfiguration#getMemento()
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getLaunchConfiguration(String memento);
+	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException;
 	
 	/**
 	 * Returns all defined launch configuration type extensions
