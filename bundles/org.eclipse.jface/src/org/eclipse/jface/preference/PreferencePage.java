@@ -113,6 +113,8 @@ public abstract class PreferencePage extends DialogPage implements
 
 			messageText = new Text(messageComposite, SWT.NONE);
 			messageText.setEditable(false);
+			messageText.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND));
 
 			GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
 					| GridData.VERTICAL_ALIGN_CENTER);

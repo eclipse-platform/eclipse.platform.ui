@@ -96,4 +96,11 @@ public class PreferenceContentProvider implements ITreeContentProvider {
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         manager = (PreferenceManager) newInput;
     }
+	/**
+	 * Set the manager for the preferences.
+	 * @param manager The manager to set.
+	 */
+	protected void setManager(PreferenceManager manager) {
+		this.manager = manager;
+	}
 }
