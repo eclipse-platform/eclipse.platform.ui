@@ -514,15 +514,17 @@ public class RepositoryManager {
 	 * @param monitor  the progress monitor
 	 */
 	public void commit(IResource[] resources, final Shell shell, IProgressMonitor monitor) throws TeamException {
+		final int[] result = new int[1];
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell);
 				dialog.setComment(previousComment);
-				int result = dialog.open();
-				if (result != ReleaseCommentDialog.OK) return;
+				result[0] = dialog.open();
+				if (result[0] != ReleaseCommentDialog.OK) return;
 				previousComment = dialog.getComment();
 			}
 		});
+		if (result[0] != ReleaseCommentDialog.OK) return;
 		
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
