@@ -5,7 +5,7 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -113,27 +113,26 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void rename(String name);	
 	
 	/**
-	 * Sets whether this launch configuration will be stored
-	 * locally in a project's working location, or as a resource
-	 * in the workspace. Has no effect if the specified value reflects
-	 * this launch configuration's current storage location.
+	 * Sets the container this launch configuration will be stored
+	 * in when saved. When set to <code>null</code>, this configuration
+	 * will be stored locally with the workspace. The specified
+	 * container must exist, if specified.
 	 * <p>
 	 * If this configuration is changed from local to non-local,
-	 * a file will be created in this launch configuration's project's
-	 * '.launches' folder, with the contents of this launch configuration.
-	 * The original file associated with this configuration in the project's
-	 * working location will be deleted.
+	 * a file will be created in the specified container when
+	 * saved. The local file associated with this configuration
+	 * will be deleted.
 	 * </p>
 	 * <p>
 	 * If this configuration is changed from non-local to local,
-	 * a file will be created in this launch configuration's project's
-	 * working location, with the contents of this launch configuration.
-	 * The original file associated with this configuration in the project's
-	 * resource structure will be deleted.
+	 * a file will be created locally when saved.
+	 * The original file associated with this configuration in
+	 * the workspace will be deleted.
 	 * </p>
 	 * 
-	 * @param local whether this launch configuration is to be stored
-	 *  locally in a project's working location
+	 * @param container the container in which to store this
+	 *  launch configuration, or <code>null</code> if this
+	 *  configuration is to be stored locally
 	 */
-	public void setLocal(boolean local) throws CoreException;	
+	public void setContainer(IContainer container);	
 }

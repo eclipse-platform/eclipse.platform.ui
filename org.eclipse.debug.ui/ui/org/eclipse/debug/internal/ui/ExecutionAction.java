@@ -318,18 +318,7 @@ public abstract class ExecutionAction extends Action {
 	 * @return whether to cancel
 	 */
 	private boolean runLaunchConfiguration() {
-		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell());
-		
-		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
-		IStructuredSelection selection= resolveSelection(dwindow);
-		IProject[] projects = resolveProjects(selection);
-// only allow workspace context		
-//		if (projects != null && projects.length == 1) {
-//			lcd.setContext(projects[0]);
-//		} else {
-			lcd.setContext(ResourcesPlugin.getWorkspace().getRoot());
-//		}
-		
+		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell());		
 		if (lcd.open() == Window.CANCEL) {
 			return true;
 		}		

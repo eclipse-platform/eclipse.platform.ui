@@ -11,9 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -55,20 +55,15 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private String fName;
 	
 	/**
-	 * The new project for this launch configuration, or <code>null</code>
-	 * if this configuration is based on an existing configuration.
-	 */
-	private IProject fProject;
-	
-	/**
-	 * Whether this configuration is to be local or shared.
-	 */
-	private boolean fLocal;
-	
-	/**
 	 * Suppress change notification until created
 	 */
 	private boolean fSuppressChange = true;
+	
+	/**
+	 * The container this working copy will be
+	 * stored in when saved.
+	 */
+	private IContainer fContainer;
 
 	/**
 	 * Constructs a working for the specified lanuch 
@@ -82,28 +77,26 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	protected LaunchConfigurationWorkingCopy(LaunchConfiguration original) throws CoreException {
 		super(original.getLocation());
 		setOriginal(original);
-		setLocal(original.isLocal());
 		fSuppressChange = false;
 	}
 	
 	/**
-	 * Constructs a new working to be created in the specified
+	 * Constructs a new working copy to be created in the specified
 	 * location.
 	 * 
-	 * @param project the project that will own this launch configuration
+	 * @param container the container that the configuration will be created in
+	 *  or <code>null</code> if to be local
 	 * @param name the name of the new launch configuration
-	 * @param local whether this configuration will be local or shared
 	 * @param type the type of this working copy
 	 */
-	protected LaunchConfigurationWorkingCopy(IProject project, String name, boolean local, ILaunchConfigurationType type) {
+	protected LaunchConfigurationWorkingCopy(IContainer container, String name, ILaunchConfigurationType type) {
 		super(null);
-		setNewProject(project);
 		setNewName(name);
-		setLocal(local);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);
+		setContainer(container);
 		fSuppressChange = false;
-	}	
+	}
 
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#isDirty()
@@ -124,8 +117,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					// delete the old file if this is not a new configuration
 					// or the file was renamed/moved
 					if (!LaunchConfigurationWorkingCopy.this.isNew()) {
-						if (LaunchConfigurationWorkingCopy.this.isMoved() ||
-						LaunchConfigurationWorkingCopy.this.isRenamed()) {
+						if (LaunchConfigurationWorkingCopy.this.isMoved()) {
 							LaunchConfigurationWorkingCopy.this.getOriginal().delete();
 						}
 					}
@@ -186,9 +178,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		} else {
 			// use resource API to update configuration file
 			IFile file = getFile();
-			IFolder dir = (IFolder)file.getParent();
+			IContainer dir = file.getParent();
 			if (!dir.exists()) {
-				dir.create(false, true, null);
+				throw new DebugException(
+					new Status(
+					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					 DebugException.REQUEST_FAILED, "Specified container for launch configuration does not exist.", null
+					)
+				);				
 			}
 			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
 			if (!file.exists()) {
@@ -253,6 +250,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		fOriginal = original;
 		LaunchConfigurationInfo info = original.getInfo();
 		setInfo(info.getCopy());
+		setContainer(original.getContainer());
+		resetDirty();
 	}
 	
 	/**
@@ -293,6 +292,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			getLaunchManager().notifyChanged(this);
 		}	
 	}
+	
+	/**
+	 * Sets this working copy's state to not dirty.
+	 */
+	private void resetDirty() {
+		fDirty = false;
+	}	
 		
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#rename(String)
@@ -327,40 +333,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	}
 	
 	/**
-	 * Returns the new project for this configuration, or
-	 * <code>null</code> if this configuration is based
-	 * on an existing configuration.
-	 * 
-	 * @return the new project for this configuration, or
-	 *  <code>null</code> if this configuration is based
-	 *  on an existing configuration
-	 */
-	private IProject getNewProject() {
-		return fProject;
-	}	
-	
-	/**
-	 * Sets the new project for this configuration.
-	 * 
-	 * @param project the new project for this configuration
-	 */
-	private void setNewProject(IProject project) {
-		fProject = project;
-		setDirty();
-	}
-	
-	/**
-	 * @see ILaunchConfiguration#getProject()
-	 */
-	public IProject getProject() {
-		if (getNewProject() == null) {
-			return getOriginal().getProject();
-		} else {
-			return getNewProject();
-		}
-	}
-	
-	/**
 	 * @see ILaunchConfiguration#getName()
 	 */
 	public String getName() {
@@ -370,23 +342,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			return getNewName();
 		}
 	}
-
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setLocal(boolean)
-	 */
-	public void setLocal(boolean local) {
-		fLocal = local;
-		if (!isNew() && (local != getOriginal().isLocal())) {
-			setDirty();
-		}
-	}
-	
 	
 	/**
 	 * @see ILaunchConfiguration#isLocal()
 	 */
 	public boolean isLocal() {
-		return fLocal;
+		return getContainer() == null;
 	}	
 	
 	/**
@@ -396,14 +357,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfiguration#getLocation()
 	 */
 	public IPath getLocation() {
-		if (isRenamed() || isMoved()) {
+		if (isMoved()) {
 			IPath path = null;
 			if (isLocal()) {
-				path = getProject().getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
+				path = DebugPlugin.getDefault().getStateLocation();
+				path = path.append(".launches"); //$NON-NLS-1$
 			} else {
-				path = getProject().getLocation();
+				path = getContainer().getLocation();
 			}
-			path = path.append(".launches"); //$NON-NLS-1$
 			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION); //$NON-NLS-1$
 			return path;
 		} else {
@@ -423,27 +384,26 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	}
 	
 	/**
-	 * Returns whether this working copy is new or has
-	 * been renamed.
-	 * 
-	 * @return whether this working copy is new or has
-	 *  been renamed
-	 */
-	protected boolean isRenamed() {
-		return getNewName() != null;
-	}
-	
-	/**
 	 * Returns whether this working copy is new or if its
-	 * local property is being changed from its original
-	 * configuration.
+	 * location has changed from that of its original.
 	 * 
 	 * @return whether this working copy is new or if its
-	 *  local property is being changed from its original
-	 *  configuration
+	 * location has changed from that of its original
 	 */
 	protected boolean isMoved() {
-		return isNew() || (isLocal() != getOriginal().isLocal());
+		if (isNew() || getNewName() != null) {
+			return true;
+		}
+		IContainer newContainer = getContainer();
+		IContainer originalContainer = ((LaunchConfiguration)getOriginal()).getContainer();
+		if (newContainer == originalContainer) {
+			return false;
+		}
+		if (newContainer == null) {
+			return !originalContainer.equals(newContainer);
+		} else {
+			return !newContainer.equals(originalContainer);
+		}
 	}		
 	
 	/**
@@ -462,5 +422,38 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	protected boolean suppressChangeNotification() {
 		return fSuppressChange;
 	}
+	
+	/**
+	 * @see ILaunchConfigurationWorkingCopy#setContainer(IContainer)
+	 */
+	public void setContainer(IContainer container) {
+		if (container == fContainer) {
+			return;
+		}
+		if (container != null) {
+			if (container.equals(fContainer)) {
+				return;
+			}
+		} else {
+			if (fContainer.equals(container)) {
+				return;
+			}
+		}
+		fContainer = container;
+		setDirty();
+	}
+	
+	/**
+	 * Returns the container this working copy will be
+	 * stored in when saved, or <code>null</code> if
+	 * this working copy is local.
+	 * 
+	 * @return the container this working copy will be
+	 *  stored in when saved, or <code>null</code> if
+	 *  this working copy is local
+	 */
+	protected IContainer getContainer() {
+		return fContainer;
+	}	
 }
 

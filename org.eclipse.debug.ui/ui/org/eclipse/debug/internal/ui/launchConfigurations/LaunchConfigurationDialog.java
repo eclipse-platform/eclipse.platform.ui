@@ -59,37 +59,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class LaunchConfigurationDialog extends Dialog implements ISelectionChangedListener, ILaunchConfigurationListener {
 	
 	/**
-	 * Context in which to display/select
-	 * launch configurations from. Can be
-	 * a project, workspace root, or <code>null</code>
-	 * (empty)
-	 */
-	private IResource fResource;
-	
-	/**
 	 * The tree of launch configurations
 	 */
 	private TreeViewer fConfigTree;
-	
-	/**
-	 * The text widget displaying the selected project
-	 */
-	private Text fProjectText;
-	
-	/**
-	 * The button used to select a project from a list
-	 */
-	private Button fProjectBrowseButton;
-	
-	/**
-	 * The (radio) button used to select a project
-	 */
-	private Button fProjectButton;		
-	
-	/**
-	 * The (radio) button used to select the workspace
-	 */
-	private Button fWorkspaceButton;	
 	
 	/**
 	 * The (initial) selection for the launch configuration
@@ -251,123 +223,9 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Initialize the dialog settings
 	 */
 	protected void initializeSettings() {
-		// set the default project setting, if any
-		setContext(getContext());
+		// set the default selection, if any
+		getTreeViewer().setInput(ResourcesPlugin.getWorkspace().getRoot());
 		getTreeViewer().setSelection(getSelection());
-	}
-	
-	/**
-	 * Creates the project selection area of the dialog. This
-	 * allows the user to display launch configurations in a
-	 * specific project or all configurations in the workspace.
-	 * 
-	 * @return the composite used for project selection
-	 */ 
-	protected Composite createProjectSelectionArea(Composite parent) {
-		Composite c = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		c.setLayout(layout);
-		
-		GridData gd;
-		
-		Label scopeLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		scopeLabel.setText("Show Launch Configurations from:");
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 3;
-		scopeLabel.setLayoutData(gd);
-
-		Button projectButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		projectButton.setText("&Project:");
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 1;
-		projectButton.setLayoutData(gd);
-		setProjectButton(projectButton);				
-		
-		Text projectText = new Text(c, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		projectText.setLayoutData(gd);
-		setProjectTextWidget(projectText);
-		
-		projectButton.addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					getProjectTextWidget().setEnabled(true);
-					getProjectBrowseButton().setEnabled(true);
-					if (((Button)(event.getSource())).getSelection()) {
-						setContext(getProjectFromText());
-					}
-				}
-			}
-		);			
-		
-		projectText.addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					IProject project = getProjectFromText();
-					IResource context = getContext();
-					if (context == project) {
-						// no update
-						return;
-					}
-					if (context == null || project == null) {
-						setContext(project);
-						return;
-					}
-					if (context.equals(project)) {
-						return;
-					} else {
-						setContext(project);
-					}
-				}
-			}
-		);
-		
-		Button browseProjectsButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		browseProjectsButton.setText("&Browse...");
-		gd = new GridData(GridData.END);
-		gd.horizontalSpan = 1;
-		browseProjectsButton.setLayoutData(gd);
-		setProjectBrowseButton(browseProjectsButton);
-		
-		browseProjectsButton.addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					ListSelectionDialog dialog = new ListSelectionDialog(
-						getShell(),
-						ResourcesPlugin.getWorkspace().getRoot(),
-						new WorkbenchContentProvider(),
-						new WorkbenchLabelProvider(),
-						"Choose a project"
-					);
-					dialog.open();
-					Object[] result = dialog.getResult();
-					if (result != null && result.length == 1) {
-						setContext((IProject)result[0]);
-					}
-				}
-			}
-		);
-				
-		Button workspaceButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		workspaceButton.setText("&Workspace");
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 3;
-		workspaceButton.setLayoutData(gd);	
-		setWorkspaceButton(workspaceButton);
-		
-		workspaceButton.addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					if (((Button)(event.getSource())).getSelection()) {
-						setContext(ResourcesPlugin.getWorkspace().getRoot());
-					}
-				}
-			}
-		);			
-		
-		return c;
 	}
 	
 	/**
@@ -508,60 +366,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}
 	
 	/**
-	 * Sets the context for the launch cofigurations that
-	 * are to be displayed in the launch configuration selection
-	 * area. The context can be set to a specific project
-	 * (i.e. display only those configurations in a specific
-	 * project), the workspace, or <code>null</code> (no/empty context).
-	 * 
-	 * @param context a project or <code>null</code>
-	 */
-	public void setContext(IResource context) {
-		fResource = context;
-		if (isVisible()) {			
-			getTreeViewer().setInput(context);
-// currently, only allow workspace context			
-//			if (context instanceof IProject) {
-//				getProjectButton().setSelection(true);
-//				getProjectTextWidget().setEnabled(true);
-//				getProjectBrowseButton().setEnabled(true);
-//				if (!context.getName().equals(getProjectTextWidget().getText())) {
-//					getProjectTextWidget().setText(context.getName());
-//				}
-//			} else if (context instanceof IWorkspaceRoot) {
-//				getWorkspaceButton().setSelection(true);
-//				getProjectBrowseButton().setSelection(false);
-//				getProjectTextWidget().setEnabled(false);
-//				getProjectBrowseButton().setEnabled(false);
-//			}
-		}
-	}
-	
-	/**
-	 * Returns the context from which launch cofigurations
-	 * are displayed. Returns <code>null</code> no configurations
-	 * are displayed (empty conetxt).
-	 * 
-	 * @return project, workspace root, or <code>null</code> if none
-	 */
-	public IResource getContext() {
-		return fResource;
-	}
-	
-	/**
-	 * Returns the current project context or <code>null</code>
-	 * if the current context is not a project.
-	 * 
-	 * @return the current project context or <code>null</code>
-	 */
-	public IProject getProject() {
-		if (getContext() instanceof IProject) {
-			return (IProject)getContext();
-		}
-		return null;
-	}	
-	
-	/**
 	 * Sets the tree viewer used to display launch configurations.
 	 * 
 	 * @param viewer the tree viewer used to display launch
@@ -579,78 +383,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	protected TreeViewer getTreeViewer() {
 		return fConfigTree;
 	}
-	
-	/**
-	 * Sets the text widget used to display the selected project name
-	 * 
-	 * @param widget the text widget used to display the selected project name
-	 */
-	private void setProjectTextWidget(Text widget) {
-		fProjectText = widget;
-	}
-	
-	/**
-	 * Returns the text widget used to display the selected project name
-	 * 
-	 * @return the text widget used to display the selected project name
-	 */
-	protected Text getProjectTextWidget() {
-		return fProjectText;
-	}
-	
-	/**
-	 * Sets the button used to select a project from a list
-	 * 
-	 * @param widget the button used to select a project from a list
-	 */
-	private void setProjectBrowseButton(Button widget) {
-		fProjectBrowseButton = widget;
-	}
-	
-	/**
-	 * Retruns the button used to select a project from a list
-	 * 
-	 * @return the button used to select a project from a list
-	 */
-	protected Button getProjectBrowseButton() {
-		return fProjectBrowseButton;
-	}
-	
-	/**
-	 * Sets the (radio) button used to select a project
-	 * 
-	 * @param widget the button used to select a project
-	 */
-	private void setProjectButton(Button widget) {
-		fProjectButton = widget;
-	}
-	
-	/**
-	 * Retruns the (raido) button used to select a project
-	 * 
-	 * @return the button used to select a project
-	 */
-	protected Button getProjectButton() {
-		return fProjectButton;
-	}	
-	
-	/**
-	 * Sets the (radio) button used to select the workspace
-	 * 
-	 * @param widget the button used to select the workspace
-	 */
-	private void setWorkspaceButton(Button widget) {
-		fWorkspaceButton = widget;
-	}
-	
-	/**
-	 * Retruns the (raido) button used to select the workspace
-	 * 
-	 * @return the button used to select the workspace
-	 */
-	protected Button getWorkspaceButton() {
-		return fWorkspaceButton;
-	}	
 		
 	/**
 	 * Content prodiver for launch configuration tree
@@ -666,13 +398,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			} else if (parentElement instanceof ILaunchConfigurationType) {
 				try {
 					ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
-					if (getProject() == null) {
-						// all configs in workspace of a specific type
-						return getLaunchManager().getLaunchConfigurations(type);
-					} else {
-						// configs in a project of a specifc type
-						return getLaunchManager().getLaunchConfigurations(getProject(), type);
-					}
+					// all configs in workspace of a specific type
+					return getLaunchManager().getLaunchConfigurations(type);
 				} catch (CoreException e) {
 					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
 				}
@@ -693,7 +420,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
-				return getContext();
+				return ResourcesPlugin.getWorkspace().getRoot();
 			}
 			return null;
 		}
@@ -745,26 +472,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	protected boolean isVisible() {
 		return getTreeViewer() != null;
 	}	
-	
-	/**
-	 * Returns the project currently specified based on the
-	 * text in the project text widget, possibly <code>null</code>.
-	 * 
-	 * @return the project currently specified based on the
-	 *  text in the project text widget, possibly <code>null</code>
-	 */
-	protected IProject getProjectFromText() {
-		String text = getProjectTextWidget().getText();
-		if (text == null || text.length() == 0) {
-			return null;
-		}
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(text);
-		if (project.exists() && project.isOpen()) {
-			return project;
-		}
-		return null;
-	}
-	
+		
 	/**
 	 * Sets the specified selection in the launch configuration
 	 * selection tree.
@@ -1120,7 +828,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		} else {
 			ILaunchConfigurationType type = (ILaunchConfigurationType)obj;
 			try {
-				ILaunchConfigurationWorkingCopy wc = type.newInstance(getProject(), "name", true);
+				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, "name");
 				setLaunchConfiguration(wc);
 			} catch (CoreException e) {
 				 DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating new launch configuration.",e.getStatus());

@@ -5,7 +5,7 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.IPath;
  * standard VCM mechanisms, or may be stored locally, essentially
  * making the launch configuration private for a single user.
  * Thus, a launch configuration may stored as a file as a resource in the
- * workspace (shared), or as a file in a project's working location
- * (private).
+ * workspace (shared), or as a file the debug plug-in's state
+ * location.
  * </p>
  * A launch configuration is a handle to its underlying storage.
  * </p>
@@ -124,7 +124,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @return the location of this launch configuration as a
 	 *  path
-	 * @see ILaunchManager.createLaunchConfiugration(IPath)
 	 */
 	public IPath getLocation();
 	
@@ -187,13 +186,15 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException;
 		
 	/**
-	 * Returns the project this launch configuration is stored
-	 * with
+	 * Returns the file this launch configuration is stored
+	 * in, or <code>null</code> if this configuration is stored
+	 * locally with the workspace.
 	 * 
-	 * @return the project this launch configuration is stored
-	 *  with
+	 * @return the file this launch configuration is stored
+	 *  in, or <code>null</code> if this configuration is stored
+	 *  locally with the workspace
 	 */
-	public IProject getProject();
+	public IFile getFile();
 	
 	/**
 	 * Returns the type of this launch configuration.
@@ -210,10 +211,10 @@ public interface ILaunchConfiguration extends IAdaptable {
 		
 	/**
 	 * Returns whether this launch configuration is stored
-	 * locally in a project's working location.
+	 * locally with the workspace.
 	 * 
 	 * @return whether this launch configuration is stored
-	 *  locally in a project's working location
+	 *  locally with the workspace
 	 */
 	public boolean isLocal();
 	

@@ -146,29 +146,6 @@ public interface ILaunchManager {
 	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
 	
 	/**
-	 * Returns all launch configurations defined by the specified
-	 * project.
-	 * 
-	 * @param project a project
-	 * @return all launch configurations defined by the specified
-	 *  project
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(IProject project);
-	
-	/**
-	 * Returns all launch configurations defined by the specified
-	 * project of the specfied type.
-	 * 
-	 * @param project a project
-	 * @param type a launch configuration type
-	 * @return all launch configurations defined by the specified
-	 *  project of the specified type
-	 * @exception CoreException if an error occurrs while retreiving
-	 *  a launch configuration
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(IProject project, ILaunchConfigurationType type) throws CoreException;
-	
-	/**
 	 * Returns all launch configurations defined in the workspace.
 	 * 
 	 * @return all launch configurations defined in the workspace

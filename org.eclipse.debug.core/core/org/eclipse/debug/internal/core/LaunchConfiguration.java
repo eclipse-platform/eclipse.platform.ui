@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -134,26 +135,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * @see ILaunchConfiguration#getProject()
-	 */
-	public IProject getProject() {
-		IFile file = getFile();
-		if (file == null) {
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				if (projects[i].getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor()).isPrefixOf(getLocation())) {
-					return projects[i];
-				}
-			}
-			// XXX: this method not spec'd to return null.
-			// May have to cache project name at creation
-			return null;
-		} else {
-			return file.getProject();
-		}
-	}
-
-	/**
 	 * @see ILaunchConfiguration#getType()
 	 */
 	public ILaunchConfigurationType getType() throws CoreException {
@@ -250,12 +231,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * Returns the file in the workspace for this configuration or,
-	 * <code>null</code> if none (i.e. if local).
-	 * 
-	 * @return file or <code>null</code> if local
+	 * @see ILaunchConfiguratin#getFile()
 	 */	
-	protected IFile getFile() {
+	public IFile getFile() {
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
 	}
 
@@ -285,6 +263,23 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public int hashCode() {
 		return getLocation().hashCode();
+	}
+	
+	/**
+	 * Returns the container this launch configuration is 
+	 * stored in, or <code>null</code> if this launch configuration
+	 * is stored locally.
+	 * 
+	 * @return the container this launch configuration is 
+	 * stored in, or <code>null</code> if this launch configuration
+	 * is stored locally
+	 */
+	protected IContainer getContainer() {
+		IFile file = getFile();
+		if (file != null) {
+			return file.getParent();
+		}
+		return null;
 	}
 }
 

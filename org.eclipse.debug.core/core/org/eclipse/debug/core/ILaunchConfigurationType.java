@@ -5,7 +5,7 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -86,22 +86,20 @@ public interface ILaunchConfigurationType {
 	
 	/**
 	 * Returns a new launch configuration working copy of this type,
-	 * that resides in the specified project, with the given name.
-	 * When <code>local</code> is </code>true</code>, the configuration
-	 * will reside locally in the metadata area, otherwise the configuration
-	 * will be created in the ".launches" folder of the specified project.
+	 * that resides in the specified container, with the given name.
+	 * When <code>container</code> is </code>null</code>, the configuration
+	 * will reside locally in the metadata area.
 	 * Note: a working copy is not actually created until saved.
 	 * 
-	 * @param project the project in which the new configuration will
-	 *  reside
+	 * @param container the container in which the new configuration will
+	 *  reside, or <code>null</code> if the configuration should reside
+	 *  locally with the metadata.
 	 * @param name name for the launch configuration
-	 * @param local whether the configuration should be stored locally
-	 *  with metadata or as a resource
 	 * @return a new launch configuration instance of this type
 	 * @exception CoreException if an instance of this type
 	 *  of lanuch configuration could not be created for any
 	 *  reason
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IProject project, String name, boolean local) throws CoreException;
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
 		
 }

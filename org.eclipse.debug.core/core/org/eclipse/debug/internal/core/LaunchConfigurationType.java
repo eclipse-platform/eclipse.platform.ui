@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -110,14 +110,13 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	}
 
 	/*
-	 * @see ILaunchConfigurationType#newInstance(IProject, String, boolean)
+	 * @see ILaunchConfigurationType#newInstance(IContainer, String)
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(
-		IProject project,
-		String name,
-		boolean local)
+		IContainer container,
+		String name)
 		throws CoreException {
-			return new LaunchConfigurationWorkingCopy(project, name, local, this);
+			return new LaunchConfigurationWorkingCopy(container, name, this);
 	}
 	
 	/**
