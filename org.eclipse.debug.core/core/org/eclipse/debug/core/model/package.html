@@ -64,7 +64,7 @@ set of breakpoint via the breakpoints extension point.</p>
 
 <p>The debug platform provides a breakpoint manager that maintains the collection 
   of all registered breakpoints. Clients add and remove breakpoints via this manager. 
-  Breakpoints are implemented by instances of <font face="Courier New, Courier, mono">IBreakpoint</font>. 
+  Breakpoints are implemented by instances of <b>IBreakpoint</b>. 
   Each breakpoint object has an associated marker, which provides persistence 
   and presentation in editors. The debug platform defines a generic breakpoint 
   and line breakpoint, as well as their corresponding marker definitions. Breakpoint 
@@ -78,7 +78,7 @@ set of breakpoint via the breakpoints extension point.</p>
   are restored at workspace startup time by the breakpoint manager - that is, 
   breakpoint objects are created for all persisted markers which are a subtype 
   of the root breakpoint marker and are added to the breakpoint manager. To allow 
-  for selective persistence of breakpoints (of the same kind), the <font face="Courier New, Courier, mono">IBreakpoint</font> 
+  for selective persistence of breakpoints (of the same kind), the <b>IBreakpoint</b> 
   interface and root breakpoint implementation defines a &quot;persisted&quot; 
   attribute. If this value is set to false, the breakpoint will not be persisted 
   across workspace invocations.</p>
