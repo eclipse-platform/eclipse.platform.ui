@@ -741,7 +741,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			if (hadSavedDescription && !status.isOK())
 				throw new CoreException(status);
 			//write the new description to the .project file
-			writeDescription(description, updateFlags);
+			writeDescription(internalGetDescription(), updateFlags);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
 			workspace.updateModificationStamp(info);
