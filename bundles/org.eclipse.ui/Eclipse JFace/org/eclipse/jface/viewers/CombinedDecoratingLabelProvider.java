@@ -1,6 +1,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDecoratorManager;
 
 /**
  * The CombinedDecoratingLabelProvider is a Labelprovider that
@@ -21,6 +22,19 @@ public class CombinedDecoratingLabelProvider
 		ILabelDecorator decorator) {
 		super(provider, decorator);
 	}
+	
+	/**
+	 * Construct a CombinedDecoratingLabelProvider using 
+	 * the decorator of the supplied DecoratorManager
+	 * @param provider
+	 * @param decoratorManager
+	 */
+	public CombinedDecoratingLabelProvider(
+		ILabelProvider provider,
+		IDecoratorManager manager) {
+		super(provider, manager.getLabelDecorator());
+	}
+	
 	/**
 	 * @see ICombinedLabelProvider#getCombinedLabel(Object)
 	 */
