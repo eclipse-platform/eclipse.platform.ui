@@ -173,10 +173,7 @@ public class UpdateListener extends CommandOutputListener {
 				} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 					if (updateMessageListener != null) {
 						String filename = message.substring(0, message.length() - 31);
-						// CVS version 12 fix - filenames are returned inside quotes
-						// Fixes bug 49056
-						if (filename.startsWith("`") && filename.endsWith("'")) //$NON-NLS-1$ //$NON-NLS-2$
-							filename = filename.substring(1,filename.length()-1);
+						filename = stripQuotes(filename);
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 					return OK;
@@ -193,6 +190,7 @@ public class UpdateListener extends CommandOutputListener {
 						if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
 							// The "C foler/file.ext" will come after this so if whould be ignored!
 							String filename = message.substring(10, message.length() - 44);
+							filename = stripQuotes(filename);
 							updateMessageListener.fileDoesNotExist(commandRoot, filename);
 						}
 					}
@@ -279,6 +277,14 @@ public class UpdateListener extends CommandOutputListener {
 			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, line);
 		}
 		return super.errorLine(line, location, commandRoot, monitor);
+	}
+
+	private String stripQuotes(String filename) {
+		// CVS version 12 fix - filenames are returned inside quotes
+		// Fixes bug 49056
+		if (filename.startsWith("`") && filename.endsWith("'")) //$NON-NLS-1$ //$NON-NLS-2$
+			filename = filename.substring(1,filename.length()-1);
+		return filename;
 	}
 
 }
