@@ -75,6 +75,40 @@
 		</page>	
 	</extension>
 
+	<extension point="org.eclipse.ui.actionDefinitions">
+		<actionDefinition
+			id="org.eclipse.compare.compareWithEachOther"
+			name= "%ActionDefinition.compareWithEachOther.name"
+			description="%ActionDefinition.compareWithEachOther.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.compareWithPatch"
+			name= "%ActionDefinition.compareWithPatch.name"
+			description="%ActionDefinition.compareWithPatch.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.replaceFromHistory"
+			name= "%ActionDefinition.replaceFromHistory.name"
+			description="%ActionDefinition.replaceFromHistory.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.replaceWithPreviousFromHistory"
+			name= "%ActionDefinition.replaceWithPreviousFromHistory.name"
+			description="%ActionDefinition.replaceWithPreviousFromHistory.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.compareWithHistory"
+			name= "%ActionDefinition.compareWithHistory.name"
+			description="%ActionDefinition.compareWithHistory.description"
+		/>
+		<actionDefinition
+			id="org.eclipse.compare.addFromHistory"
+			name= "%ActionDefinition.addFromHistory.name"
+			description="%ActionDefinition.addFromHistory.description"
+		/>
+	</extension>
+
+
 	<extension point="org.eclipse.ui.popupMenus">
 	
 		<objectContribution
@@ -100,6 +134,7 @@
 			</menu>
 			<action
 				id="compareWithEachOther"
+				definitionId="org.eclipse.compare.compareWithEachOther"
 				label="%CompareWithEachOtherAction.label"
 				tooltip="%CompareWithEachOtherAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
@@ -108,6 +143,7 @@
 			</action>
 			<action
 				id="compareWithPatch"
+				definitionId="org.eclipse.compare.compareWithPatch"
 				label="%CompareWithPatchAction.label"
 				tooltip="%CompareWithPatchAction.tooltip"
 				menubarPath="team.main/group1"
@@ -128,6 +164,7 @@
 			</menu>
 			<action
 				id="replaceFromHistory"
+				definitionId="org.eclipse.compare.replaceFromHistory"
 				label="%ReplaceFromHistoryAction.label"
 				tooltip="%ReplaceFromHistoryAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
@@ -136,6 +173,7 @@
 			</action>
 			<action
 				id="replaceWithPreviousFromHistory"
+				definitionId="org.eclipse.compare.replaceWithPreviousFromHistory"
 				label="%ReplaceWithPreviousFromHistoryAction.label"
 				tooltip="%ReplaceWithPreviousFromHistoryAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
@@ -155,6 +193,7 @@
 			</menu>
 			<action
 				id="compareWithHistory"
+				definitionId="org.eclipse.compare.compareWithHistory"
 				label="%CompareWithHistoryAction.label"
 				tooltip="%CompareWithHistoryAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
@@ -168,6 +207,7 @@
 			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
 			<action
 				id="addFromHistoryAction"
+				definitionId="org.eclipse.compare.addFromHistory"
 				label="%addFromHistoryAction.label"
 				tooltip="%addFromHistoryAction.tooltip"
 				menubarPath="replaceWithMenu"

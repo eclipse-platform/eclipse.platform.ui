@@ -577,9 +577,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		if (input.getLeft() == null || input.getRight() == null)	// we don't show the structure of additions or deletions
 			return null;
 			
-		String type= getType(input);
-		if (type == null)
+		String[] types= getTypes(input);
+		if (!isHomogenous(types))
 			return null;
+		String type= types[0];
 			
 		type= normalizeCase(type);
 			
@@ -645,12 +646,26 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return null;
 			
 		ICompareInput input= (ICompareInput) in;
-		String type= getType(input);
-		type= normalizeCase(type);
+		String[] types= getTypes(input);
+		String type= null;
+		if (isHomogenous(types))
+			type= types[0];
 		
 		if (ITypedElement.FOLDER_TYPE.equals(type))
 			return null;
 			
+		if (type == null) {
+			int n= 0;
+			for (int i= 0; i < types.length; i++)
+				if (!ITypedElement.UNKNOWN_TYPE.equals(types[i])) {
+					n++;
+					if (type == null)
+						type= types[i];	// remember the first known type
+				}
+			if (n > 1)	// don't use the type if there were more than one
+				type= null;
+		}
+		
 		if (type != null) {
 			IViewerDescriptor vd= (IViewerDescriptor) fgContentMergeViewerDescriptors.get(type);
 			Viewer viewer= null;
@@ -660,7 +675,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					return viewer;
 			}
 		}
-		
+
 		// fallback
 		String leftType= guessType(input.getLeft());
 		String rightType= guessType(input.getRight());
@@ -679,13 +694,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
-		
-	/**
-	 * Determines the type of the given threeway input by analyzing
-	 * the types (file extension) of the individual parts.
-	 * Returns null if no type can be determined.
-	 */
-	private static String getType(ICompareInput input) {
+	
+	private static String[] getTypes(ICompareInput input) {
 		ITypedElement ancestor= input.getAncestor();
 		ITypedElement left= input.getLeft();
 		ITypedElement right= input.getRight();
@@ -708,21 +718,28 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			if (type != null)
 				types[cnt++]= normalizeCase(type);
 		}
-		boolean homogenous= false;
-		switch (cnt) {
+		
+		String[] result= new String[cnt];
+		for (int i= 0; i < cnt; i++)
+			result[i]= types[i];
+		return result;
+	}
+		
+	/**
+	 * Determines the type of the given threeway input by analyzing
+	 * the types (file extension) of the individual parts.
+	 * Returns null if no type can be determined.
+	 */
+	private static boolean isHomogenous(String[] types) {
+		switch (types.length) {
 		case 1:
-			homogenous= true;
-			break;
+			return true;
 		case 2:
-			homogenous= types[0].equals(types[1]);
-			break;
+			return types[0].equals(types[1]);
 		case 3:
-			homogenous= types[0].equals(types[1]) && types[1].equals(types[2]);
-			break;
+			return types[0].equals(types[1]) && types[1].equals(types[2]);
 		}
-		if (homogenous)
-			return types[0];
-		return null;
+		return false;
 	}
 	
 	/**
