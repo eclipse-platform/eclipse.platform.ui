@@ -276,7 +276,7 @@ public class DocumentCommand {
 	 */
 	boolean fillEvent(VerifyEvent event, IRegion modelRange) {
 		event.text= text;
-		event.doit= (offset == modelRange.getOffset() && length == modelRange.getLength());
+		event.doit= (offset == modelRange.getOffset() && length == modelRange.getLength() && doit);
 		return event.doit;
 	}
 
