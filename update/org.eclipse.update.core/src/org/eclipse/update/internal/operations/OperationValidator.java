@@ -467,6 +467,9 @@ public class OperationValidator implements IOperationValidator {
 	}
 	
 	private static void checkSiteReadOnly(IFeature feature, ArrayList status) {
+		if(feature == null){
+			return;
+		}
 		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
 		if (csite != null && !csite.isUpdatable())
 			status.add(createStatus(feature, FeatureStatus.CODE_OTHER,
