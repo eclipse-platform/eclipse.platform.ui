@@ -997,6 +997,1003 @@
             description="%keyConfiguration.emacs.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
+      
+      <!-- New 3.0 key binding work -->
+      <!-- Delete -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.delete"
+            keySequence="Delete"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to end of line -->
+      <keyBinding
+      		commandId="org.eclipse.ui.edit.text.goto.lineEnd"
+      		keySequence="End"
+      		keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to beginning of line -->
+      <keyBinding
+      		commandId="org.eclipse.ui.edit.text.goto.lineStart"
+      		keySequence="Home"
+      		keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Toggle overwrite -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.toggleOverwrite"
+            keySequence="Insert"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Rename -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.rename"
+            keySequence="F2"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find/Replace -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findReplace"
+            keySequence="F3"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find Next -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findNext"
+            keySequence="F3"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find Next -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findNext"
+            keySequence="F3"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Refresh/Reload -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.refresh"
+            keySequence="F5"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Cut -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            keySequence="Shift+Delete"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Smart enter -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.smartEnter"
+            keySequence="Shift+Enter"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- What's this? -->
+      <keyBinding
+            commandId="org.eclipse.ui.help.tipsAndTricksAction"
+            keySequence="Shift+F1"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Paste -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            keySequence="Shift+Insert"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select all -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.selectAll"
+            keySequence="Ctrl+A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            keySequence="Ctrl+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: Debug, run, projects -->
+      <!-- Build all -->
+      <keyBinding
+            commandId="org.eclipse.ui.project.buildAll"
+            keySequence="Ctrl+D Ctrl+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Debug last launched -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+            keySequence="Ctrl+D Ctrl+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Execute -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.Execute"
+            keySequence="Ctrl+D Ctrl+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step with filters -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            keySequence="Ctrl+D Ctrl+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step into -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            keySequence="Ctrl+D Ctrl+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Toggle breakpoint -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+            keySequence="Ctrl+D Ctrl+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Run to line -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.RunToLineAction"
+            keySequence="Ctrl+D Ctrl+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Resume -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+            keySequence="Ctrl+D Ctrl+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step over -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            keySequence="Ctrl+D Ctrl+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Display -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.Display"
+            keySequence="Ctrl+D Ctrl+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Run last launched -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            keySequence="Ctrl+D Ctrl+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step into selection -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+            keySequence="Ctrl+D Ctrl+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: editing text, text editor control -->
+      <!-- Remove annotations -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.remove.occurrence.annotations"
+            keySequence="Ctrl+E Ctrl+A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Delete line -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.delete.line"
+            keySequence="Ctrl+E Ctrl+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Delete line to end -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.delete.line.to.end"
+            keySequence="Ctrl+E Ctrl+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordPrevious"
+            keySequence="Ctrl+E Ctrl+J"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordNext"
+            keySequence="Ctrl+E Ctrl+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Lower case -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.lowerCase"
+            keySequence="Ctrl+E Ctrl+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to next member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.next.member"
+            keySequence="Ctrl+E Ctrl+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to previous member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.previous.member"
+            keySequence="Ctrl+E Ctrl+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Quick fix -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
+            keySequence="Ctrl+E Ctrl+Q"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show ruler context menu -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
+            keySequence="Ctrl+E Ctrl+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Quick diff toggle -->
+      <keyBinding
+            commandId="org.eclipse.quickdiff.toggle"
+            keySequence="Ctrl+E Ctrl+T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Upper case -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.upperCase"
+            keySequence="Ctrl+E Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Restore last selection -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.last"
+            keySequence="Ctrl+E Ctrl+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select previous element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.previous"
+            keySequence="Ctrl+E Ctrl+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select next element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.next"
+            keySequence="Ctrl+E Ctrl+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select enclosing element -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.select.enclosing"
+            keySequence="Ctrl+E Ctrl+Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find/Replace -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findReplace"
+            keySequence="Ctrl+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find Next -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findNext"
+            keySequence="Ctrl+G"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: Navigation, searching, opening -->
+      <!-- Go to matching bracket -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.matching.bracket"
+            keySequence="Ctrl+J Ctrl+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open call hierarchy -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy"
+            keySequence="Ctrl+J Ctrl+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open declaration -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.editor"
+            keySequence="Ctrl+J Ctrl+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open type hierarchy -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy"
+            keySequence="Ctrl+J Ctrl+H"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find incremental -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findIncremental"
+            keySequence="Ctrl+J Ctrl+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open external javadoc -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.external.javadoc"
+            keySequence="Ctrl+J Ctrl+J"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to line -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.line"
+            keySequence="Ctrl+J Ctrl+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to next member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.next.member"
+            keySequence="Ctrl+J Ctrl+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Next -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.next"
+            keySequence="Ctrl+J Ctrl+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show outline -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.show.outline"
+            keySequence="Ctrl+J Ctrl+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Previous -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.previous"
+            keySequence="Ctrl+J Ctrl+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to last edit location -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
+            keySequence="Ctrl+J Ctrl+Q"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open resource -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.openResource"
+            keySequence="Ctrl+J Ctrl+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Search -->
+      <keyBinding
+            commandId="org.eclipse.search.ui.openSearchDialog"
+            keySequence="Ctrl+J Ctrl+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open type -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.navigate.open.type"
+            keySequence="Ctrl+J Ctrl+T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Occurrences in file -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.search.occurrences.in.file"
+            keySequence="Ctrl+J Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Declarations in workspace -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.search.declarations.in.workspace"
+            keySequence="Ctrl+J Ctrl+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Back -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.back"
+            keySequence="Ctrl+J Ctrl+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Forward -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.forward"
+            keySequence="Ctrl+J Ctrl+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open type in hierarchy -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.navigate.open.type.in.hierarchy"
+            keySequence="Ctrl+J Ctrl+Shift+H"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find incremental reverse -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findIncrementalReverse"
+            keySequence="Ctrl+J Ctrl+Shift+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to previous member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.previous.member"
+            keySequence="Ctrl+J Ctrl+Shift+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open hierarchy -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy"
+            keySequence="Ctrl+J Ctrl+Shift+T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- References in workspace -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.search.references.in.workspace"
+            keySequence="Ctrl+J Ctrl+Shift+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: Source editing -->
+      <!-- Comment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.comment"
+            keySequence="Ctrl+K Ctrl+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Format -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.format"
+            keySequence="Ctrl+K Ctrl+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Correct indentation -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.indent"
+            keySequence="Ctrl+K Ctrl+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Add import -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.add.import"
+            keySequence="Ctrl+K Ctrl+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Organize imports -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.organize.imports"
+            keySequence="Ctrl+K Ctrl+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Sort members -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.sort.members"
+            keySequence="Ctrl+K Ctrl+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Uncomment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.uncomment"
+            keySequence="Ctrl+K Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Block comment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.add.block.comment"
+            keySequence="Ctrl+K Ctrl+Shift+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Block uncomment -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.remove.block.comment"
+            keySequence="Ctrl+K Ctrl+Shift+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: Window management -->
+      <!-- Activate editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.activateEditor"
+            keySequence="Ctrl+L Ctrl+A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Switch to editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.switchToEditor"
+            keySequence="Ctrl+L Ctrl+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Next editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.nextEditor"
+            keySequence="Ctrl+L Ctrl+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Maximize view/editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.maximizePart"
+            keySequence="Ctrl+L Ctrl+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Next perspective -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.nextPerspective"
+            keySequence="Ctrl+L Ctrl+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show pop-up menu -->
+      <!-- TODO: Implement this command -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.showPopup"
+            keySequence="Ctrl+L Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Next view -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.nextView"
+            keySequence="Ctrl+L Ctrl+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show view menu -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.showViewMenu"
+            keySequence="Ctrl+L Ctrl+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show system menu -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.showSystemMenu"
+            keySequence="Ctrl+L Ctrl+Y"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show previous editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.previousEditor"
+            keySequence="Ctrl+L Ctrl+Shift+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show previous perspective -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.previousPerspective"
+            keySequence="Ctrl+L Ctrl+Shift+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Show previous view -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.previousView"
+            keySequence="Ctrl+L Ctrl+Shift+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- New -->
+      <keyBinding
+            commandId="org.eclipse.ui.newWizard"
+            keySequence="Ctrl+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.openExternalFile"
+            keySequence="Ctrl+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Print -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.print"
+            keySequence="Ctrl+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Quit -->
+      <!-- TODO: Where is this command actually defined? -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.exit"
+            keySequence="Ctrl+Q"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Quit -->
+      <!-- TODO: Where is this command actually defined? -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.exit"
+            keySequence="Ctrl+Q"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- PREFIX: Refactoring -->
+      <!-- Extract constant -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.constant"
+            keySequence="Ctrl+R Ctrl+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Inline -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.inline"
+            keySequence="Ctrl+R Ctrl+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Extract local variable -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.local.variable"
+            keySequence="Ctrl+R Ctrl+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Extract method -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.extract.method"
+            keySequence="Ctrl+R Ctrl+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two rename commands -->
+      <!-- Rename -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.rename.element"
+            keySequence="Ctrl+R Ctrl+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Rename -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.rename"
+            keySequence="Ctrl+R Ctrl+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two redo commands -->
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+R Ctrl+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.redo"
+            keySequence="Ctrl+R Ctrl+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two undo commands -->
+      <!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.undo"
+            keySequence="Ctrl+R Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.undo"
+            keySequence="Ctrl+R Ctrl+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two move commands -->
+      <!-- Move -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.move"
+            keySequence="Ctrl+R Ctrl+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Move -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.move.element"
+            keySequence="Ctrl+R Ctrl+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Save -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.save"
+            keySequence="Ctrl+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Paste -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            keySequence="Ctrl+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.close"
+            keySequence="Ctrl+W"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.close"
+            keySequence="Ctrl+W"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Cut -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            keySequence="Ctrl+X"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two redo commands -->
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+Y"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.redo"
+            keySequence="Ctrl+Y"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge the two undo commands -->
+      <!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.undo"
+            keySequence="Ctrl+Z"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.undo"
+            keySequence="Ctrl+Z"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Delete previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deletePreviousWord"
+            keySequence="Ctrl+Backspace"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Delete next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deleteNextWord"
+            keySequence="Ctrl+Delete"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to next member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.next.member"
+            keySequence="Ctrl+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.close"
+            keySequence="Ctrl+F4"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            keySequence="Ctrl+Insert"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Move one word previous -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
+            keySequence="Ctrl+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Move one word following -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordNext"
+            keySequence="Ctrl+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Content Assist -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            keySequence="Ctrl+Space"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Go to previous member -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.goto.previous.member"
+            keySequence="Ctrl+Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Find previous -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findPrevious"
+            keySequence="Ctrl+Shift+G"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open hierarchy -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy"
+            keySequence="Ctrl+Shift+H"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step into -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+            keySequence="Ctrl+Shift+I"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step into selection -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+            keySequence="Ctrl+Shift+J"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step with filters -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
+            keySequence="Ctrl+Shift+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Run to line -->
+      <keyBinding
+            commandId="org.eclipse.jdt.debug.ui.RunToLineAction"
+            keySequence="Ctrl+Shift+L"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Resume -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+            keySequence="Ctrl+Shift+M"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Next -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.next"
+            keySequence="Ctrl+Shift+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step over -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+            keySequence="Ctrl+Shift+O"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Previous -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.previous"
+            keySequence="Ctrl+Shift+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Save all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.saveAll"
+            keySequence="Ctrl+Shift+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Open type -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.navigate.open.type"
+            keySequence="Ctrl+Shift+T"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Step return -->
+      <keyBinding
+            commandId="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+            keySequence="Ctrl+Shift+U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Context Assist -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            keySequence="Ctrl+Shift+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.closeAll"
+            keySequence="Ctrl+Shift+W"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.closeAll"
+            keySequence="Ctrl+Shift+W"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Content Assist -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            keySequence="Ctrl+Shift+X"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Merge these four commands into 2. -->
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+Shift+Z"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.redo"
+            keySequence="Ctrl+Shift+Z"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.redo"
+            keySequence="Ctrl+Shift+Z"
+            platform="gtk"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.refactor.redo"
+            keySequence="Ctrl+Shift+Z"
+            platform="motif"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Smart enter inverse -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.smartEnterInverse"
+            keySequence="Ctrl+Shift+Enter"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.closeAll"
+            keySequence="Ctrl+Shift+F4"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Context Assist -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            keySequence="Ctrl+Shift+Space"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Move line down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.moveLineDown"
+            keySequence="Alt+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Properties, show tool tip -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.properties"
+            keySequence="Alt+Enter"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Properties, show tool tip -->
+      <keyBinding
+            commandId="org.eclipse.ui.project.properties"
+            keySequence="Alt+Enter"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Properties, show tool tip -->
+      <keyBinding
+            commandId="org.eclipse.jdt.ui.edit.text.java.show.javadoc"
+            keySequence="Alt+Enter"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- TODO: Where is the exit command defined? -->
+      <!-- Exit -->
+      <keyBinding
+            commandId="org.eclipse.file.exit"
+            keySequence="Alt+F4"
+            platform="windows"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Back -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.back"
+            keySequence="Alt+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Forward -->
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.forward"
+            keySequence="Alt+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Move line up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.moveLineUp"
+            keySequence="Alt+Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy line down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.copyLineDown"
+            keySequence="Ctrl+Alt+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy line up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.copyLineUp"
+            keySequence="Ctrl+Alt+Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <keyConfiguration
+            name="%keyConfiguration-3.0-name"
+            description="%keyConfiguration-3.0-description"
+            id="org.eclipse.ui.keys.configuration-3.0">
+      </keyConfiguration>
    </extension>
    <extension
          point="org.eclipse.ui.views">
