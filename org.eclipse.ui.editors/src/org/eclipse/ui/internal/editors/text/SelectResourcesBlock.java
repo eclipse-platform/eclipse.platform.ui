@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
  * CheckboxListViewer. All viewer selection-driven interactions are handled
  * within this object
  */
-class ConvertLineDelimitersResourceSelectorBlock implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
+class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
 	
 	private Object root;
 
@@ -101,7 +101,7 @@ class ConvertLineDelimitersResourceSelectorBlock implements ICheckStateListener,
 	 *            big enough
 	 *  
 	 */
-	public ConvertLineDelimitersResourceSelectorBlock(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, boolean useHeightHint) {
+	public SelectResourcesBlock(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, boolean useHeightHint) {
 
 		root= rootObject;
 		this.treeContentProvider= treeContentProvider;

@@ -52,22 +52,24 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * @since 3.0
  */
-class ConvertLineDelimitersDialog extends Dialog {
+class SelectResourcesDialog extends Dialog {
 	
 	static interface IFilter {
 		boolean accept(IResource resource);
 	}
 
-	private ConvertLineDelimitersResourceSelectorBlock fResourceGroup;
+	private SelectResourcesBlock fResourceGroup;
     private List fAcceptedFileTypes = new ArrayList();
     private IResource[] fInput;
     private String fTitle;
+    private String fInstruction;
     private Label fCountIndication;
 
 
-	public ConvertLineDelimitersDialog(Shell parentShell, String title) {
+	public SelectResourcesDialog(Shell parentShell, String title, String instruction) {
 		super(parentShell);
 		fTitle= title;
+		fInstruction= instruction;
 	}
 	
 	public void setInput(IResource[] input) {
@@ -94,10 +96,10 @@ class ConvertLineDelimitersDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite composite= (Composite) super.createDialogArea(parent);
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText("Select files to convert:");
+		label.setText(fInstruction);
 		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fResourceGroup= new ConvertLineDelimitersResourceSelectorBlock(composite, ResourcesPlugin.getWorkspace().getRoot(), getResourceProvider(IResource.FOLDER | IResource.PROJECT), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), getResourceProvider(IResource.FILE), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE, useHeightHint(parent));
+		fResourceGroup= new SelectResourcesBlock(composite, ResourcesPlugin.getWorkspace().getRoot(), getResourceProvider(IResource.FOLDER | IResource.PROJECT), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), getResourceProvider(IResource.FILE), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE, useHeightHint(parent));
 		fResourceGroup.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateSelectionCount();
@@ -210,8 +212,6 @@ class ConvertLineDelimitersDialog extends Dialog {
 		selectTypesButton.addSelectionListener(listener);
 		selectTypesButton.setFont(font);
 		setButtonLayoutData(selectTypesButton);
-
-
 	}
     
     protected void handleSelectFileTypes() {

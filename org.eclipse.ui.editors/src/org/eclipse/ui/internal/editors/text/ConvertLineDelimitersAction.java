@@ -62,7 +62,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
 		
-		ConvertLineDelimitersDialog dialog= new ConvertLineDelimitersDialog(getShell(), "Convert Line Delimiters to " + fLabel);
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), "Convert Line Delimiters to " + fLabel, "Select files to convert:");
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {
