@@ -387,7 +387,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 			IURLEntry info = element.getDescription();
 			if (info != null) {
-				w.print(gap + increment + "<description");
+				w.print(gap + increment + "<description ");
 				URLInfoString = null;
 				if (info.getURL() != null) {
 					URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), info.getURL());

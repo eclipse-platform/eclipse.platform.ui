@@ -328,18 +328,19 @@ public class SiteLocal implements ILocalSite, IWritable {
 			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile();
 
 		InstallConfiguration result = null;
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
+		Date currentDate = new Date();		
+		
+		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE,currentDate);
 		try {
 			if (newFile == null)
 				newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
-			Date currentDate = new Date();
 			// pass the date onto teh name
 			if (name == null)
 				name = DEFAULT_CONFIG_LABEL + currentDate.getTime();
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
-
+			System.out.println("Clone URL:"+newFile.toExternalForm()+" name:"+name+" date:"+currentDate.getTime());
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:" + newFileName, e);
@@ -409,15 +410,17 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 			// create new configuration based on the one to preserve
 			InstallConfiguration newConfiguration = null;
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE);
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE,new Date());
 			try {
 				URL newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
-				Date currentDate = configuration.getCreationDate();
 				// pass the date onto teh name
+				Date currentDate = configuration.getCreationDate();							
 				String name = DEFAULT_PRESERVED_CONFIG_LABEL + currentDate.getTime();
 				newConfiguration = new InstallConfiguration(configuration, newFile, name);
 				// set teh same date in the installConfig
 				newConfiguration.setCreationDate(currentDate);
+				
+				System.out.println("addToPreserved URL:"+newFile.toExternalForm()+" name:"+name+" date:"+currentDate.getTime());
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new preserved configuration in:" + newFileName, e);

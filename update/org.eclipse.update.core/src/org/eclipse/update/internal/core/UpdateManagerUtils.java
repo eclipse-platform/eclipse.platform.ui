@@ -138,7 +138,7 @@ public class UpdateManagerUtils {
 	 * c.txt -> c3854763.txt
 	 * c	-> c953867549
 	 */
-	public static String getLocalRandomIdentifier(String remotePath) {
+	public static String getLocalRandomIdentifier(String remotePath, Date date) {
 		int dotIndex = remotePath.lastIndexOf(".");
 		int fileIndex = remotePath.lastIndexOf(File.separator);
 		
@@ -157,7 +157,6 @@ public class UpdateManagerUtils {
 		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return teh default temp name
 		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
 
-		Date date = new Date();
 		String result = name + date.getTime() + ext;
 		
 		return result;

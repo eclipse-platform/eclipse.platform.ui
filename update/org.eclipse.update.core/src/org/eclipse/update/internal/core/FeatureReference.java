@@ -106,7 +106,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	String increment = "";
 	for (int i = 0; i < IWritable.INDENT; i++) increment += " ";
 		
-		w.print(gap+"<feature");
+		w.print(gap+"<feature ");
 		// FIXME: feature type to implement
 		// 
 		// feature URL

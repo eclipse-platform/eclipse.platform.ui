@@ -47,6 +47,8 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 				}
 			}
 		}
+		// set dummy date as caller can call set date if the
+		// date on the URL string has to be the same 
 		date = new Date();
 		this.isCurrent = false;
 	}
@@ -279,6 +281,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			// the location points to a file
 			File file = new File(location.getFile());
 			export(file);
+			System.out.println("Export :"+file+" date:"+date.getTime());
 		}
 	}
 	/*

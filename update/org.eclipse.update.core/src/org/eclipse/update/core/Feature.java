@@ -279,48 +279,49 @@ public class Feature extends FeatureModel implements IFeature {
 			int taskCount = 1 // one task for all feature files (already downloaded)
 							+ pluginsToInstall.length // one task for each plugin to install
 							+ getNonPluginEntries().length;  // one task for each non-plugin file to install
-			monitor.beginTask("",taskCount); 
+							
+			if (monitor!=null) monitor.beginTask("",taskCount); 
 			
 			//finds the contentReferences for this IFeature
-			monitor.setTaskName("Installing feature files: ");
+			if (monitor!=null) monitor.setTaskName("Installing feature files: ");
 			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
-				monitor.subTask(references[i].getIdentifier());
+				if (monitor!=null) monitor.subTask(references[i].getIdentifier());
 				consumer.store(references[i], monitor);
 			}
-			monitor.worked(1);
+			if (monitor!=null) monitor.worked(1);
 
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getIdentifier().getIdentifier() + "]: ");
+				if (monitor!=null) monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getIdentifier().getIdentifier() + "]: ");
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
-					monitor.subTask(references[j].getIdentifier());
+					if (monitor!=null) monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
 				pluginConsumer.close();
-				monitor.worked(1);
+				if (monitor!=null) monitor.worked(1);
 			}
 
 			// download and install non plugins bundles
 			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
 			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
-				monitor.setTaskName("Installing non-plug-in files: ");
+				if (monitor!=null) monitor.setTaskName("Installing non-plug-in files: ");
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
-					monitor.subTask(references[j].getIdentifier());
+					if (monitor!=null) monitor.subTask(references[j].getIdentifier());
 					nonPluginConsumer.store(references[j], monitor);
 				}
 				nonPluginConsumer.close();
-				monitor.worked(1);
+				if (monitor!=null) monitor.worked(1);
 			}
 		} finally {
 			// an error occured, abort
 			// VK: this is wrong .... would end up ALWAYS backing out !!!!!!!!!!
 			consumer.abort();
-			monitor.done();
+			if (monitor!=null)	monitor.done();
 		}
 		return consumer.close();
 
