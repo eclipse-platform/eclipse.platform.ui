@@ -559,7 +559,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public boolean isSynchronized(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return !info.fTextFileBuffer.isDirty() || !info.fTextFileBuffer.hasUnderlyingFileChanged();
+			return !info.fTextFileBuffer.hasUnderlyingFileChanged();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
 

@@ -287,6 +287,7 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 			removeFileBufferContentListeners();
 			fDocument.set(newContent);
 			fCanBeSaved= false;
+			fModificationStamp= fFile.getModificationStamp();
 			fStatus= status;
 			addFileBufferContentListeners();
 			
