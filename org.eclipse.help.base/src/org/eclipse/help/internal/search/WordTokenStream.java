@@ -45,7 +45,7 @@ public final class WordTokenStream extends TokenStream {
 	 * @see TokenStream#next()
 	 */
 	public final Token next() throws IOException {
-		if (token >= noTokens) {
+		while (token >= noTokens) {
 			// read BUF_LEN of chars
 			int l;
 			while ((l = reader.read(cbuf)) <= 0) {
