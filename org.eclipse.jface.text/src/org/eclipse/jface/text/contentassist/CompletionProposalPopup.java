@@ -142,8 +142,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * 
 	 * @param contentAssistant the content assistant feeding this popup
 	 * @param viewer the viewer on top of which this popup appears
-	 * @param infoController the info control collaborating with this popup
+	 * @param infoController the information control collaborating with this popup
 	 * @since 2.0
+	 * @deprecated, as of 3.0 use {@link #CompletionProposalPopup(ContentAssistant, IContentAssistSubject, AdditionalInfoController)
 	 */
 	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoController infoController) {
 		fContentAssistant= contentAssistant;
@@ -154,12 +155,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 	/**
 	 * Creates a new completion proposal popup for the given elements.
-	 * <p>
-	 * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
-	 * </p>
+	 *
 	 * @param contentAssistant the content assistant feeding this popup
 	 * @param contentAssistSubject the content assist subject on top of which this popup appears
-	 * @param infoController the info control collaborating with this popup
+	 * @param infoController the information control collaborating with this popup
 	 * @since 3.0
 	 */
 	public CompletionProposalPopup(ContentAssistant contentAssistant, IContentAssistSubject contentAssistSubject, AdditionalInfoController infoController) {
@@ -364,6 +363,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * 
 	 * @param p the completion proposal
 	 * @param trigger the trigger character
+	 * @param stateMask the state mask
 	 * @param offset the offset
 	 * @since 2.1
 	 */

@@ -63,9 +63,6 @@ import org.eclipse.jface.text.IEventConsumer;
  * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
  * {@link org.eclipse.jface.text.contentassist.IContentAssistantExtension content assistant}
  * to a <code>Control</code>.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
  * 
  * @since 3.0
  */
@@ -329,7 +326,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 	
 	/**
-	 * Controls visibilty of the visual cue for content assist.
+	 * Controls visibility of the visual cue for content assist.
 	 *
 	 * @param enable iff <code>true</code>, show cue
 	 */
@@ -337,7 +334,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	}
 
 	/**
-	 * Controls visibilty of the visual cue for content assist.
+	 * Controls visibility of the visual cue for content assist.
 	 *
 	 * @param control the <code>Control</code>
 	 * @param enable iff <code>true</code>, show cue
@@ -608,6 +605,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			
 			/**
 			 * Shows or clears a message for the given control.
+			 * 
+			 * @param control the control
+			 * @param message the error message
 			 */
 			public static void setErrorMessage(Control control, String message) {
 				getSmartFieldController(control).setInfo(control, message);

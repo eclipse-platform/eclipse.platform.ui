@@ -21,9 +21,7 @@ import java.io.IOException;
  * - back-translate relative line offsets.
  * <p>
  * Tag handlers are used by translators via tag handler factories.</p>
- * <p>
- * XXX: This is work in progress and can change any time until API for 3.0 is frozen.
- * </p>
+ * 
  * @see org.eclipse.jface.text.source.ITranslator
  * @see org.eclipse.jface.text.source.ITagHandlerFactory
  * @since 3.0
@@ -43,7 +41,7 @@ public interface ITagHandler {
 	 * likely the handler will check if the text contains a tag
 	 * that he can handle.
 	 * 
-	 * @param tag the text to check
+	 * @param text the text to check
 	 * @return <code>true</code> if this handler handles the given text
 	 */
 	boolean canHandleText(String text);
@@ -64,7 +62,6 @@ public interface ITagHandler {
 	 * Resetting the handler clears the attributes.</p>
 	 * 
 	 * @param tag the tag to check
-	 * @return <code>true</code> if this handler handles the given tag
 	 */
 	void reset(String tag);
 	
@@ -82,7 +79,7 @@ public interface ITagHandler {
 	 * Computes the offset in the source line that corresponds
 	 * to the given offset in the translated line. 
 	 * 
-	 * @param sourceLineLine			the source line
+	 * @param sourceLine				the source line
 	 * @param translatedLine			the translated line
 	 * @param offsetInTranslatedLine	the offset in the translated line
 	 * @return the offset in the source line or <code>-1</code> if

@@ -46,6 +46,7 @@ public interface ICompletionProposalExtension {
 	 * 
 	 * @param document the document for which the proposal is tested
 	 * @param offset the offset for which the proposal is tested
+	 * @return <code>true</code> iff valid
 	 */
 	boolean isValidFor(IDocument document, int offset);
 	

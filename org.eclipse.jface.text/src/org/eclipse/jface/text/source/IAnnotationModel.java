@@ -62,7 +62,7 @@ public interface IAnnotationModel {
 	 * @param document the document the model gets connected to,
 	 *		may not be <code>null</code>
 	 *
-	 * @see #disconnect
+	 * @see #disconnect(IDocument)
 	 */
 	void connect(IDocument document);
 	 
@@ -76,7 +76,7 @@ public interface IAnnotationModel {
 	 * @param document the document the model gets disconnected from,
 	 *		may not be <code>null</code>
 	 *
-	 * @see #connect for further specification details
+	 * @see #connect(IDocument) for further specification details
 	 */
 	void disconnect(IDocument document);
 	

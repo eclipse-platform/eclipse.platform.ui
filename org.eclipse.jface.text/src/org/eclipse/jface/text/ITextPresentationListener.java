@@ -15,9 +15,7 @@ package org.eclipse.jface.text;
  * Text presentation listeners registered with a text viewer are informed 
  * when a text region is about to be drawn in order to get the text
  * presentation information.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
+ * 
  * @since 3.0
  */
 public interface ITextPresentationListener {

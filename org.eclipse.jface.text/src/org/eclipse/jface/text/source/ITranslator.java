@@ -20,9 +20,7 @@ import java.io.Reader;
  * information for the translation and to compute which offset
  * in an original line corresponds to a given offset in a
  * target line.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
+ * 
  * @since 3.0
  */
 public interface ITranslator {
@@ -64,7 +62,7 @@ public interface ITranslator {
 	 * Computes the offset in the source line that corresponds
 	 * to the given offset in the translated line. 
 	 * 
-	 * @param sourceLineLine			the source line
+	 * @param sourceLine				the source line
 	 * @param translatedLine			the translated line
 	 * @param offsetInTranslatedLine	the offset in the translated line
 	 * @param tag						the tag to which the source line belongs or

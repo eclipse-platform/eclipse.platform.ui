@@ -23,9 +23,6 @@ import org.eclipse.jface.text.IEventConsumer;
 /**
  * A content assist subject can request assistance provided by a
  * {@link org.eclipse.jface.text.contentassist.IContentAssistant content assistant}.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
  * 
  * @since 3.0
  */
@@ -42,7 +39,7 @@ public interface IContentAssistSubject {
 	 * Returns the line height.
 	 * 
 	 * @return line height in pixel
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -58,7 +55,7 @@ public interface IContentAssistSubject {
 	 * 
 	 * @return the caret position relative to the start of the text in widget
 	 *         coordinates
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -77,7 +74,7 @@ public interface IContentAssistSubject {
 	 *           <= offset <= getCharCount()
 	 * @return x, y location of the upper left corner of the character bounding
 	 *         box at the specified offset in the text
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -98,7 +95,7 @@ public interface IContentAssistSubject {
 	 * 
 	 * @return line delimiter used for entering new lines by key down or paste
 	 *         operation
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -112,7 +109,7 @@ public interface IContentAssistSubject {
 	 * Returns the selected range in the subject's widget.
 	 * 
 	 * @return start and length of the selection, x is the offset of the
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -220,7 +217,7 @@ public interface IContentAssistSubject {
 	 *               <ul>
 	 *               <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
 	 *               </ul>
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -229,7 +226,7 @@ public interface IContentAssistSubject {
 	 *               </ul>
 	 * 
 	 * @see KeyListener
-	 * @see #removeKeyListener
+	 * @see #removeKeyListener(KeyListener)
 	 */
 	void addKeyListener(KeyListener keyListener);
 
@@ -243,7 +240,7 @@ public interface IContentAssistSubject {
 	 *               <ul>
 	 *               <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
 	 *               </ul>
-	 * @exception SWTException
+	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *               disposed</li>
@@ -252,7 +249,7 @@ public interface IContentAssistSubject {
 	 *               </ul>
 	 * 
 	 * @see KeyListener
-	 * @see #addKeyListener
+	 * @see #addKeyListener(KeyListener)
 	 */
 	void removeKeyListener(KeyListener keyListener);
 
@@ -260,7 +257,7 @@ public interface IContentAssistSubject {
 	 * If supported, registers an event consumer with this content assist
 	 * subject.
 	 * 
-	 * @param consumer the content assist subject's event consumer. <code>null</code>
+	 * @param eventConsumer the content assist subject's event consumer. <code>null</code>
 	 *           is a valid argument.
 	 */
 	void setEventConsumer(IEventConsumer eventConsumer);
@@ -270,7 +267,7 @@ public interface IContentAssistSubject {
 	 * <p>
 	 *
 	 * @param selectionListener the listener
-	 * @exception SWTException <ul>
+	 * @exception org.eclipse.swt.SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
@@ -287,7 +284,7 @@ public interface IContentAssistSubject {
 	 *
 	 * @param selectionListener the listener
 	 * @return <code>true</code> if adding a selection listener is supported
-	 * @exception SWTException <ul>
+	 * @exception org.eclipse.swt.SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>

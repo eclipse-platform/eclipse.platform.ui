@@ -15,9 +15,6 @@ package org.eclipse.jface.text.contentassist;
  * Extends <code>IContentAssit</code> with the concept of a
  * content assist subject which provides the context for
  * the content assistant.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
  * 
  * @since 3.0
  */

@@ -15,9 +15,7 @@ package org.eclipse.jface.text.contentassist;
  * Extends <code>IContentAssit</code> with the concept of a
  * content assist subject which provides the context for
  * the content assistant.
- * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
- * </p>
+ * 
  * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
  * @since 3.0
  */
@@ -29,7 +27,7 @@ public interface IContentAssistProcessorExtension {
 	 * 
 	 * @param contentAssistSubject the content assist subject whose
 	 *           document is used to compute the proposals
-	 * @param documentPosition an offset within the document for which
+	 * @param documentOffset an offset within the document for which
 	 *           completions should be computed
 	 * @return an array of completion proposals or <code>null</code> if no
 	 *         proposals are possible
@@ -43,7 +41,7 @@ public interface IContentAssistProcessorExtension {
 	 * 
 	 * @param contentAssistSubject the content assist subject whose
 	 *           document is used to compute the possible contexts
-	 * @param documentPosition an offset within the document for which context
+	 * @param documentOffset an offset within the document for which context
 	 *           information should be computed
 	 * @return an array of context information objects or <code>null</code>
 	 *         if no context could be found

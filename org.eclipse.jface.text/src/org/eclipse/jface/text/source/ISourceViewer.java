@@ -147,8 +147,6 @@ public interface ISourceViewer extends ITextViewer {
 	/**
 	 * Removes the viewer's range indication. There is no visible range indication
 	 * after this method completed.
-	 *
-	 * @return the viewer's range indication
 	 */
 	void removeRangeIndication();
 	
