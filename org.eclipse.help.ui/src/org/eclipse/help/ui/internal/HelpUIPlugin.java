@@ -16,6 +16,7 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.*;
+import org.osgi.framework.*;
 
 /**
  * This class is Help UI plugin.
@@ -27,6 +28,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static boolean DEBUG_INFOPOP = false;
 
 	private static HelpUIPlugin plugin;
+	private static BundleContext bundleContext;
 	/**
 	 * Logs an Error message with an exception. Note that the message should
 	 * already be localized to proper locale. ie: Resources.getString() should
@@ -60,13 +62,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Plugin constructor. It is called as part of plugin activation.
-	 */
-	public HelpUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
-	/**
 	 * Provides access to singleton
 	 * 
 	 * @return HelpUIPlugin
@@ -74,19 +69,23 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static HelpUIPlugin getDefault() {
 		return plugin;
 	}
-	/**
-	 * Shuts down this plug-in and discards all plug-in state.
-	 * 
-	 * @exception CoreException
-	 *                if this method fails to shut down this plug-in
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		bundleContext = null;
+		super.stop(context);
 	}
-	/**
-	 * Called by Platform after loading the plugin
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		bundleContext = context;
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {

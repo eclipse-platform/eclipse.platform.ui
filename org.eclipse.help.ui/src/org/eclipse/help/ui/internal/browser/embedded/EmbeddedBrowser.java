@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;
@@ -212,40 +211,41 @@ public class EmbeddedBrowser {
 	 * @return URL as String or null
 	 */
 	private String getProductImageURL() {
-		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
-		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
-		if (primaryFeatureId == null)
-			return null; // no primary feature installed
-		IPluginDescriptor pfd =
-			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
-		if (pfd == null)
-			return null; // no primary feature installed
-
-		URL aboutURL = pfd.find(new Path("about.ini"));
-		if (aboutURL == null)
-			return null;
-		try {
-			aboutURL = Platform.asLocalURL(Platform.resolve(aboutURL));
-			Properties aboutProps = new Properties();
-			aboutProps.load(aboutURL.openStream());
-			String windowIconPathStr = (String) aboutProps.get("windowImage");
-			if (windowIconPathStr == null)
-				return null;
-			IPath windowIconPath = new Path(windowIconPathStr);
-			URL windowIconURL;
-			// find icon under pluginID/nl/ directory
-			Map override = new HashMap(1);
-			override.put("$nl$", Platform.getNL());
-			windowIconURL = pfd.find(windowIconPath, override);
-			if (windowIconURL == null)
-				return null;
-			windowIconURL = Platform.asLocalURL(Platform.resolve(windowIconURL));
-			return windowIconURL.toString();
-		} catch (IOException ioe) {
-			HelpUIPlugin.logError(
-				HelpUIResources.getString("WE029"),
-				ioe);
-		}
+		// TODO implement getProductImageURL
+//		IPlatformConfiguration c = BootLoader.getCurrentPlatformConfiguration();
+//		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
+//		if (primaryFeatureId == null)
+//			return null; // no primary feature installed
+//		IPluginDescriptor pfd =
+//			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+//		if (pfd == null)
+//			return null; // no primary feature installed
+//
+//		URL aboutURL = pfd.find(new Path("about.ini"));
+//		if (aboutURL == null)
+//			return null;
+//		try {
+//			aboutURL = Platform.asLocalURL(Platform.resolve(aboutURL));
+//			Properties aboutProps = new Properties();
+//			aboutProps.load(aboutURL.openStream());
+//			String windowIconPathStr = (String) aboutProps.get("windowImage");
+//			if (windowIconPathStr == null)
+//				return null;
+//			IPath windowIconPath = new Path(windowIconPathStr);
+//			URL windowIconURL;
+//			// find icon under pluginID/nl/ directory
+//			Map override = new HashMap(1);
+//			override.put("$nl$", Platform.getNL());
+//			windowIconURL = pfd.find(windowIconPath, override);
+//			if (windowIconURL == null)
+//				return null;
+//			windowIconURL = Platform.asLocalURL(Platform.resolve(windowIconURL));
+//			return windowIconURL.toString();
+//		} catch (IOException ioe) {
+//			HelpUIPlugin.logError(
+//				HelpUIResources.getString("WE029"),
+//				ioe);
+//		}
 		return null;
 	}
 
