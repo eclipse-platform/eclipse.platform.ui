@@ -357,15 +357,15 @@ public interface IExternalToolConstants {
 	
 	/**
 	 * String attribute indicating the custom Ant home to use for an Ant build.
-	 * Default value is <code>null</code> which indicates that no Ant homeis to
+	 * Default value is <code>null</code> which indicates that no Ant home is to
 	 * be set 
 	 */
 	public static final String ATTR_ANT_HOME = PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for ant processes (value <code>org.eclipse.ui.externaltools.ant</code>). This identifier is
+	 * Identifier for Ant processes (value <code>org.eclipse.ui.externaltools.ant</code>). This identifier is
 	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
-	 * attribute in processes create by the ant launch delegate.
+	 * attribute in processes create by the Ant launch delegate.
 	 */
 	public static final String ID_ANT_PROCESS_TYPE = "org.eclipse.ui.externaltools.ant"; //$NON-NLS-1$	
 	
