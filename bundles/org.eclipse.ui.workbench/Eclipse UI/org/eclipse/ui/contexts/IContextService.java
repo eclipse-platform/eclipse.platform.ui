@@ -34,11 +34,11 @@ public interface IContextService {
 	void addContextServiceListener(IContextServiceListener contextServiceListener);
 
 	/**
-	 * Returns the context ids.
+	 * Returns the active context ids.
 	 *
-	 * @return the context ids.
+	 * @return the active context ids.
 	 */
-	String[] getContextIds();
+	String[] getActiveContextIds();
 
 	/**
 	 * Unregisters an IContextServiceListener instance with this context service.
@@ -48,11 +48,11 @@ public interface IContextService {
 	void removeContextServiceListener(IContextServiceListener contextServiceListener);
 	
 	/**
-	 * Sets the context ids.
+	 * Sets the active context ids.
 	 *
-	 * @param contextIds the context ids.
+	 * @param activeContextIds the active context ids.
 	 * @throws IllegalArgumentException
 	 */	
-	void setContextIds(String[] contextIds)
+	void setActiveContextIds(String[] activeContextIds)
 		throws IllegalArgumentException;
 }

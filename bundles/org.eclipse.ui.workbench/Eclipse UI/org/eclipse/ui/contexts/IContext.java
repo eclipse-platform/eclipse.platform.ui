@@ -40,7 +40,7 @@ public interface IContext {
 	 * @throws Exception
 	 */	
 	String getDescription()
-		throws Exception;
+		throws NotDefinedException;
 		
 	/**
 	 * TODO javadoc
@@ -56,7 +56,7 @@ public interface IContext {
 	 * @throws Exception
 	 */	
 	String getName()
-		throws Exception;	
+		throws NotDefinedException;	
 
 	/**
 	 * TODO javadoc
@@ -65,7 +65,7 @@ public interface IContext {
 	 * @throws Exception
 	 */	
 	String getParentId()
-		throws Exception;
+		throws NotDefinedException;
 	
 	/**
 	 * TODO javadoc
@@ -74,7 +74,7 @@ public interface IContext {
 	 * @throws Exception
 	 */	
 	String getPluginId()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * TODO javadoc
@@ -82,7 +82,7 @@ public interface IContext {
 	 * @return
 	 */	
 	boolean isActive()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * TODO javadoc

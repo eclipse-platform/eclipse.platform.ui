@@ -35,47 +35,58 @@ public interface ICommand {
 
 	/**
 	 * TODO javadoc
+	 * 
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
 	 */	
 	void execute()
-		throws Exception;
+		throws NotDefinedException, NotHandledException;
 
 	/**
 	 * TODO temporary method
+	 * 
+	 * @param event
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
 	 */	
 	void execute(Event event)
-		throws Exception;
+		throws NotDefinedException, NotHandledException;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	String getCategoryId()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	String[] getContextIds()
-		throws Exception;
+		throws NotDefinedException;
 		
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	String getDescription()
-		throws Exception;
+		throws NotDefinedException;
 		
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	Sequence[] getGestureSequences()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * TODO javadoc
@@ -88,42 +99,49 @@ public interface ICommand {
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	Sequence[] getKeySequences()
-		throws Exception;	
+		throws NotDefinedException;	
 	
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	String getName()
-		throws Exception;	
+		throws NotDefinedException;	
 	
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	String getPluginId()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @param propertyName
 	 * @return
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
 	 */	
 	Object getProperty(String propertyName)
-		throws Exception;
+		throws NotDefinedException, NotHandledException;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
 	 */	
 	String[] getPropertyNames()
-		throws Exception;
+		throws NotDefinedException, NotHandledException;
 
 	/**
 	 * TODO javadoc
@@ -134,17 +152,21 @@ public interface ICommand {
 
 	/**
 	 * TODO temporary method
+	 *
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
 	 */	
 	boolean isEnabled()
-		throws Exception;
+		throws NotDefinedException, NotHandledException;
 	
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
+	 * @throws NotDefinedException
 	 */	
 	boolean isHandled()
-		throws Exception;
+		throws NotDefinedException;
 
 	/**
 	 * Unregisters an ICommandListener instance with this command.

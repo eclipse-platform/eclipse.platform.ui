@@ -23,43 +23,43 @@ package org.eclipse.ui.internal.contexts;
  */
 public final class SimpleContextService extends AbstractContextService {
 	
-	private String[] contextIds;
+	private String[] activeContextIds;
 
 	/**
 	 * TODO javadoc
 	 */	
 	public SimpleContextService() {
 		super();
-		this.contextIds = new String[0];
+		this.activeContextIds = new String[0];
 	}
 
 	/**
-	 * Returns the context ids.
+	 * Returns the active context ids.
 	 *
-	 * @return the context ids.
+	 * @return the active context ids.
 	 */
-	public String[] getContextIds() {
-		return (String[]) contextIds.clone();
+	public String[] getActiveContextIds() {
+		return (String[]) activeContextIds.clone();
 	}
 
 	/**
-	 * Sets the context ids.
+	 * Sets the active context ids.
 	 *
-	 * @param contextIds the context ids.
+	 * @param activeContextIds the active context ids.
 	 * @throws IllegalArgumentException
 	 */	
-	public void setContextIds(String[] contextIds)
+	public void setActiveContextIds(String[] activeContextIds)
 		throws IllegalArgumentException {
-		if (contextIds == null)
+		if (activeContextIds == null)
 			throw new IllegalArgumentException();
 		
-		contextIds = (String[]) contextIds.clone();
+		activeContextIds = (String[]) activeContextIds.clone();
 
-		for (int i = 0; i < contextIds.length; i++)
-			if (contextIds[i] == null)
+		for (int i = 0; i < activeContextIds.length; i++)
+			if (activeContextIds[i] == null)
 				throw new IllegalArgumentException();
 	
-		this.contextIds = contextIds;
+		this.activeContextIds = activeContextIds;
 		fireContextServiceChanged(); 
 	}
 }

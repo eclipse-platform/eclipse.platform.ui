@@ -33,11 +33,11 @@ final class KeyBindingService implements IKeyBindingService {
 	}
 
 	public String[] getScopes() {
-    	return contextService.getContextIds();
+    	return contextService.getActiveContextIds();
     }
 
 	public void setScopes(String[] scopes) {
-		contextService.setContextIds(scopes);		 	
+		contextService.setActiveContextIds(scopes);		 	
     }
 
 	public void registerAction(IAction action) {

@@ -286,10 +286,10 @@ public class ContextAndHandlerManager implements IContextResolver {
 		List contexts = new ArrayList();
 		
 		if (workbenchWindowContextService != null)
-			contexts.addAll(Arrays.asList(workbenchWindowContextService.getContextIds()));
+			contexts.addAll(Arrays.asList(workbenchWindowContextService.getActiveContextIds()));
 
 		if (activeWorkbenchPartContextService != null)
-			contexts.addAll(Arrays.asList(activeWorkbenchPartContextService.getContextIds()));
+			contexts.addAll(Arrays.asList(activeWorkbenchPartContextService.getActiveContextIds()));
 
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
@@ -389,7 +389,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 		
 			if (set != null) {
 				if (activeWorkbenchPartContextService != null) {
-					List contexts = Arrays.asList(activeWorkbenchPartContextService.getContextIds());
+					List contexts = Arrays.asList(activeWorkbenchPartContextService.getActiveContextIds());
 
 					if (contexts != null) {
 						// TODO: get rid of this
@@ -409,7 +409,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 				}
 
 				if (workbenchWindowContextService != null) {
-					List contexts = Arrays.asList(workbenchWindowContextService.getContextIds());
+					List contexts = Arrays.asList(workbenchWindowContextService.getActiveContextIds());
 		
 					if (contexts != null) {
 						// TODO: get rid of this

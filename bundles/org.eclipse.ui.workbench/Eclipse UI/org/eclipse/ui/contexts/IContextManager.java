@@ -36,6 +36,13 @@ public interface IContextManager {
 	/**
 	 * TODO javadoc
 	 *
+	 * @return
+	 */
+	String[] getActiveContextIds();
+
+	/**
+	 * TODO javadoc
+	 *
 	 * @param contextId
 	 * @return
 	 */	
