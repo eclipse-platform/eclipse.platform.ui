@@ -51,17 +51,19 @@ public class CompositeChange extends Change {
 	/**
 	 * Creates a new composite change with the given name.
 	 * 
-	 * @param name the human readable name of the change 
+	 * @param name the human readable name of the change. Will
+	 *  be used to display the change in the user interface 
 	 */
 	public CompositeChange(String name) {
-		this(name, new ArrayList(5));
+		this(name, new ArrayList(2));
 	}
 	
 	/**
 	 * Creates a new composite change with the given name and array
 	 * of children.
 	 * 
-	 * @param name the human readable name of the change
+	 * @param name the human readable name of the change. Will
+	 *  be used to display the change in the user interface
 	 * @param children the initial array of children
 	 */
 	public CompositeChange(String name, Change[] children) {
