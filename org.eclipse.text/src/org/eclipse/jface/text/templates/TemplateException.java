@@ -14,6 +14,9 @@ package org.eclipse.jface.text.templates;
 
 /**
  * Thrown when a template cannot be validated.
+ * <p>
+ * Clients may instantiate this class.
+ * </p>
  * 
  * @since 3.0
  */

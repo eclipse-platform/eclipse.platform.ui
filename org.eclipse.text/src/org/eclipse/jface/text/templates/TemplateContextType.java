@@ -35,6 +35,9 @@ import org.eclipse.jface.text.IDocument;
  * <code>TemplateBuffer</code> can be resolved in a
  * <code>TemplateContext</code> using the
  * {@link #resolve(TemplateBuffer, TemplateContext)} method.
+ * <p>
+ * Clients may extend this class.
+ * </p>
  * 
  * @since 3.0
  */
@@ -97,7 +100,7 @@ public class TemplateContextType {
 	 * This is a framework-only constructor that exists only so that context
 	 * types can be contributed via an extension point and that should not be
 	 * called in client code except for subclass constructors; use
-	 * {@link #ContextType(String)} instead.
+	 * {@link #TemplateContextType(String)} instead.
 	 * </p>
 	 */
 	public TemplateContextType() {
@@ -108,7 +111,7 @@ public class TemplateContextType {
 	 * <p>
 	 * This is a framework-only method that exists solely so that context types
 	 * can be contributed via an extension point and that should not be called
-	 * in client code; use {@link #ContextType(String)} instead.
+	 * in client code; use {@link #TemplateContextType(String)} instead.
 	 * </p>
 	 * 
 	 * @param id the identifier of this context
@@ -127,7 +130,7 @@ public class TemplateContextType {
 	 * <p>
 	 * This is a framework-only method that exists solely so that context types
 	 * can be contributed via an extension point and that should not be called
-	 * in client code; use {@link #ContextType(String, String)} instead.
+	 * in client code; use {@link #TemplateContextType(String, String)} instead.
 	 * </p>
 	 * 
 	 * @param name the name of the context type
@@ -151,7 +154,7 @@ public class TemplateContextType {
 	/**
 	 * Removes a template variable from the context type.
 	 * 
-	 * @param resolver the varibable to be removed
+	 * @param resolver the variable to be removed
 	 */
 	public void removeResolver(TemplateVariableResolver resolver) {
 		Assert.isNotNull(resolver);
@@ -185,8 +188,8 @@ public class TemplateContextType {
 	}	
 
 	/**
-	 * Validates a pattern and returnes <code>null</code> if the validation was
-	 * a success or an error message if not.
+	 * Validates a pattern, a <code>TemplateException</code> is thrown if 
+	 * validation fails.
 	 * 
 	 * @param pattern the template pattern to validate
 	 * @throws TemplateException if the pattern is invalid
@@ -198,17 +201,22 @@ public class TemplateContextType {
 	}
 	
 	/**
-	 * Validates the variables in this context type. If a variable is not valid, e.g. if its type is not known
-	 * in this context type, a <code>TemplateException</code> is thrown.
+	 * Validates the variables in this context type. If a variable is not valid,
+	 * e.g. if its type is not known in this context type, a
+	 * <code>TemplateException</code> is thrown.
+	 * <p>
+	 * The default implementation does nothing.
+	 * </p>
 	 * 
 	 * @param variables the variables to validate
-	 * @throws TemplateException if one of the variables is not valid in this context type
+	 * @throws TemplateException if one of the variables is not valid in this
+	 *         context type
 	 */
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
 	}
 
 	/**
-	 * Resolves the variables in <code>buffer</code> withing <code>context</code>
+	 * Resolves the variables in <code>buffer</code> within <code>context</code>
 	 * and edits the template buffer to reflect the resolved variables.
 	 * 
 	 * @param buffer the template buffer

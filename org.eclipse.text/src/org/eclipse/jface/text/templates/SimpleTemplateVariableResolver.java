@@ -13,6 +13,9 @@ package org.eclipse.jface.text.templates;
 
 /**
  * A simple template variable resolver, which always evaluates to a defined string.
+ * <p>
+ * Clients may instantiate and extend this class.
+ * </p>
  * 
  * @since 3.0
  */
@@ -44,15 +47,14 @@ public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 		return fEvaluationString;
 	}
 	
-	
 	/**
 	 * Returns always <code>true</code>, since simple variables are normally
 	 * unambiguous.
 	 * 
 	 * @param context {@inheritDoc}
+	 * @return <code>true</code>
 	 */
 	protected boolean isUnambiguous(TemplateContext context) {
 		return true;
 	}
-
 }

@@ -14,6 +14,9 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * A template buffer is a container for a string and variables.
+ * <p>
+ * Clients may instantiate this class.
+ * </p>
  * 
  * @since 3.0
  */

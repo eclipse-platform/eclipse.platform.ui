@@ -18,6 +18,9 @@ import org.eclipse.jface.text.BadLocationException;
 /**
  * Provides the context for a <code>Template</code> being resolved. Keeps track
  * of resolved variables.
+ * <p>
+ * Clients may extend this class.
+ * </p>
  * 
  * @since 3.0
  */

@@ -14,10 +14,13 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * A template consisting of a name and a pattern.
- * 
+ * <p>
+ * Clients may instantiate this class. May become final in the future.
+ * </p>
  * @since 3.0
  */
 public class Template {
+	/* XXX this class should be final or implement Cloneable, or both. */
 
 	/** The name of this template */
 	private String fName;

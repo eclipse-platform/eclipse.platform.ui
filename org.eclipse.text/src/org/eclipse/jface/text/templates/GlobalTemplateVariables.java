@@ -17,6 +17,9 @@ import java.util.Calendar;
 
 /**
  * Global variables which are available in any context.
+ * <p>
+ * Clients may instantiate the classes contained within this class.
+ * </p>
  * 
  * @since 3.0
  */

@@ -15,6 +15,9 @@ import org.eclipse.jface.text.Assert;
 /**
  * A <code>TemplateVariableResolver</code> resolves <code>TemplateVariables</code>
  * of a certain type inside a <code>TemplateContext</code>.
+ * <p>
+ * Clients may instantiate and extend this class.
+ * </p>
  * 
  * @see TemplateVariable
  * @since 3.0
@@ -76,7 +79,7 @@ public class TemplateVariableResolver {
 	 * The default implementation looks up the type in the context.</p>
 	 * 
 	 * @param context the context in which to resolve the type
-	 * @return the name of the text object of this type, or <code>null</code> if not evaluatable
+	 * @return the name of the text object of this type, or <code>null</code> if it cannot be determined
 	 */
 	protected String resolve(TemplateContext context) {
 		return context.getVariable(getType());
@@ -128,7 +131,7 @@ public class TemplateVariableResolver {
 	 * 
 	 * @param context the context in which the resolved check should be
 	 *        evaluated
-	 * @return <code>true</code> if the receiver is unambiguously resolveable
+	 * @return <code>true</code> if the receiver is unambiguously resolvable
 	 *         in <code>context</code>, <code>false</code> otherwise
 	 */
 	protected boolean isUnambiguous(TemplateContext context) {

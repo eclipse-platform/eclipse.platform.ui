@@ -16,6 +16,9 @@ import org.eclipse.jface.text.IDocument;
 
 /**
  * A typical text based document template context.
+ * <p>
+ * Clients may instantiate and extend this class.
+ * </p>
  * 
  * @since 3.0
  */

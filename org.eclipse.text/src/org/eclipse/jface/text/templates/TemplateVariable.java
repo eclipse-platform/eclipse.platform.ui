@@ -17,6 +17,9 @@ import org.eclipse.jface.text.Assert;
  * <code>TemplateBuffer</code> with identical content each. <code>TemplateVariableResolver</code>s
  * can be used to resolve a template variable to a symbol available from the
  * <code>TemplateContext</code>.
+ * <p>
+ * Clients may instantiate and extend this class.
+ * </p>
  * 
  * @see TemplateVariableResolver
  * @see TemplateBuffer
@@ -30,7 +33,7 @@ public class TemplateVariable {
 	private final String fName;
 	/** The offsets of the variable. */
 	private int[] fOffsets;
-	/** Flag indicating if the variable has been resolved umambiguously. */
+	/** Flag indicating if the variable has been resolved unambiguously. */
 	private boolean fIsUnambiguous;
 	/**
 	 * The proposal strings available for this variable. The first string is
@@ -180,7 +183,7 @@ public class TemplateVariable {
 	/**
 	 * Sets the isUnambiguous flag of the variable.
 	 * 
-	 * @param unambiguous the new umambiguous state of the variable
+	 * @param unambiguous the new unambiguous state of the variable
 	 */
 	public void setUnambiguous(boolean unambiguous) {
 	    fIsUnambiguous= unambiguous;

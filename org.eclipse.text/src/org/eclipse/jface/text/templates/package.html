@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta content="text/html; charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]"
+ name="GENERATOR">
+  <title>Templates</title>
+  <meta content="Template Infrastructure package description"
+ name="description">
+</head>
+<body>
+Application programming interfaces for interaction
+with the Eclipse Java User Interface text support.
+<h2>Templates<br>
+</h2>
+<h3>packages</h3>
+<ul>
+  <li style="font-weight: bold;"><big><span
+ style="font-family: monospace;">org.eclipse.jface.text.templates</span></big></li>
+  <li style="font-weight: bold;"><big><span
+ style="font-family: monospace;">org.eclipse.ui.workbench.texteditor.templates</span><br>
+    <span style="font-family: monospace;"></span></big></li>
+  <li><big><span style="font-family: monospace; font-weight: bold;">org.eclipse.ui.editors.templates</span></big><br>
+    <span style="font-family: monospace;"></span></li>
+</ul>
+<h3><code></code></h3>
+Templates are shortcuts for frequently used fragments of text such as
+code patterns or complex text entities. They may contain variables
+which are only resolved at the time when the template is inserted
+within a context. Together with linked mode, inserting a template can
+create a on-the-fly edit mask within a text viewer.<br>
+<br>
+Templates are specified as text, variables are defined using the <span
+ style="font-family: monospace;">${variable}</span> notation known from
+Ant, for example. The following snippet shows an example template for
+an instance check in Java:<br>
+<pre>if (${name} instanceof ${type}) {<br>&nbsp;&nbsp;&nbsp; ${type} ${new_name} = (${type})${name};<br>&nbsp;&nbsp;&nbsp; ${cursor}<br>}<br></pre>
+In this template, the variables (<span style="font-family: monospace;">name,
+type, ...</span><span style="font-family: sans-serif;">) are resolved
+when inserted into java source and changing one variable instance will
+also change the other. When leaving linked mode, the caret is placed at
+the </span><span style="font-family: monospace;">cursor</span><span
+ style="font-family: sans-serif;"> variable.<br>
+<br>
+Template functionality can be added to a custom text editor by offering
+</span><span style="font-family: monospace;">TemplateProposal</span><span
+ style="font-family: sans-serif;">s as content assist choices, which is
+simplified by using a </span><span style="font-family: sans-serif;"><span
+ style="font-family: sans-serif;">subclass of </span></span><span
+ style="font-family: monospace;">TemplateCompletionProcessor</span><span
+ style="font-family: sans-serif;">. User template management can be
+offered by including a </span><span style="font-family: monospace;">TemplatePreferencePage</span><span
+ style="font-family: sans-serif;"> which uses a </span><span
+ style="font-family: monospace;">TemplateStore</span><span
+ style="font-family: sans-serif;"> and <span
+ style="font-family: monospace;">ContextTypeRegistry</span> as the
+underlying model to store templates. The <span
+ style="font-family: monospace;">org.eclipse.ui.editors.templates</span>
+extension point can be used to allow other plug-ins to contribute
+templates to an editor. This is accomplished by using the <span
+ style="font-family: monospace;">ContributionTemplateStore</span> and <span
+ style="font-family: monospace;">ContributionContextTypeRegistry</span>
+subclasses of the above types.<br>
+<br>
+Template variables are resolved by a <span
+ style="font-family: monospace;">TemplateVariableResolver.</span> <span
+ style="font-family: monospace;">GlobalTemplateVariables</span> offers
+some default variables such as date, user, and selection, but advanced
+features such as resolving to language constructs can be performed in
+subclasses.<br>
+</span>
+<h4>Classes</h4>
+<ul>
+  <li><span style="font-family: monospace;">Template</span><span
+ style="font-family: sans-serif;"> a template consists of name, context
+type identifier, and a pattern.</span></li>
+  <li><span style="font-family: sans-serif;"><span
+ style="font-family: monospace;">TemplateTranslator</span> and <span
+ style="font-family: monospace;">TemplateBuffer</span> are used to
+parse the template grammar and don't need to be used usually.</span></li>
+  <li><span style="font-family: sans-serif;">A <span
+ style="font-family: monospace;">TemplateProposal </span>can be
+offered in content assist, possibly created by a subclass of <span
+ style="font-family: monospace;">TemplateCompletionProcessor.</span></span></li>
+  <li><span style="font-family: sans-serif;"><span
+ style="font-family: monospace;">TemplateStore</span> and <span
+ style="font-family: monospace;">ContextTypeRegistry</span> manage a
+set of templates within a plug-in and offer ways to store them in the
+preferences or externally in XML streams via a <span
+ style="font-family: monospace;">TemplateReaderWriter</span>.<br>
+    </span></li>
+  <li><span style="font-family: sans-serif;"><span
+ style="font-family: monospace;">ContributionTemplateStore</span> and <span
+ style="font-family: monospace;">ContributionContextTypeRegistry</span>
+add awareness for the </span><span style="font-family: sans-serif;"><span
+ style="font-family: sans-serif;"> <span
+ style="font-family: monospace;">org.eclipse.ui.editors.templates</span>
+extension point.</span></span></li>
+  <li style="font-family: monospace;"><span
+ style="font-family: sans-serif;"><span style="font-family: sans-serif;"><span
+ style="font-family: monospace;">TemplatePreferencePage</span> allows
+the user to access the templates within a <span
+ style="font-family: monospace;">TemplateStore</span>.</span></span></li>
+</ul>
+<ul>
+</ul>
+<h4>Example</h4>
+<pre><span style="font-family: sans-serif;">See the Template Editor Example in the <span
+ style="font-weight: bold;">org.eclipse.ui.examples.javaeditor</span> project.<br></span></pre>
+</body>
+</html>

@@ -27,6 +27,9 @@ import java.util.Vector;
  * escape := dollar ('{' identifier '}' | dollar). <br />
  * dollar := '$'. <br />
  * </p>
+ * <p>
+ * Clients may extend the <code>createVariable</code> method of this class.
+ * </p>
  * 
  * @since 3.0
  */
@@ -168,6 +171,9 @@ public class TemplateTranslator {
 	/**
 	 * Hook method to create new variables. Subclasses may override to supply their
 	 * custom variable type.
+	 * <p>
+	 * Clients may replace this method.
+	 * </p>
 	 * 
 	 * @param type the type of the new variable.
 	 * @param name the name of the new variable.
