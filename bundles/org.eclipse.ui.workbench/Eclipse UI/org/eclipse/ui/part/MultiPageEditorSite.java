@@ -16,6 +16,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.PopupMenuExtender;
 
 /**
  * Site for a nested editor within a multi-page editor.
@@ -214,7 +215,7 @@ public class MultiPageEditorSite implements IEditorSite {
 	 * registration.
 	 */
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
-		getMultiPageEditor().getSite().registerContextMenu(menuID, menuMgr, selProvider);
+		new PopupMenuExtender(menuID, menuMgr, selProvider, editor);
 	}
 	/**
 	 * The <code>MultiPageEditorSite</code> implementation of this 

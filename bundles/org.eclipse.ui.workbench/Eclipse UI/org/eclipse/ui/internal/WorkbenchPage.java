@@ -2318,11 +2318,7 @@ public boolean saveAllEditors(boolean confirm) {
  * Saves the workbench part.
  */
 protected boolean savePart(ISaveablePart saveable, IWorkbenchPart part, boolean confirm) {
-	// Sanity check.
-	if (!certifyPart(part))
-		return false;
-
-	// Real work.
+	// Do not certify part do allow editors inside a multipageeditor to call this.
 	return getEditorManager().savePart(saveable, part, confirm);
 }
 /**
