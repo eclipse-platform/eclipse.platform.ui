@@ -4,23 +4,23 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT Dialog
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog; // otherwise ambiguous
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -133,7 +133,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			Rectangle rect = composite.getClientArea();
 			Control [] children = composite.getChildren();
 			for (int i= 0; i < children.length; i++) {
-				children[i].pack();
 				children[i].setSize(rect.width, rect.height);
 			}
 		}
