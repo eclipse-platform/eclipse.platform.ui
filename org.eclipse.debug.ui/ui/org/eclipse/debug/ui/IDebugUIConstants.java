@@ -378,9 +378,24 @@ public interface IDebugUIConstants {
 	public static final String EMPTY_STEP_GROUP = "emptyStepGroup"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for a step group in a menu (value <code>"stepGroup"</code>).
+	 * Identifier for a step group in a menu or toolbar (value <code>"stepGroup"</code>).
 	 */
 	public static final String STEP_GROUP = "stepGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a step into group in a menu or toolbar (value <code>"stepIntoGroup"</code>).
+	 */
+	public static final String STEP_INTO_GROUP = "stepIntoGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a step over group in a menu or toolbar (value <code>"stepOverGroup"</code>).
+	 */
+	public static final String STEP_OVER_GROUP = "stepOverGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a step return group in a menu or toolbar (value <code>"stepReturnGroup"</code>).
+	 */
+	public static final String STEP_RETURN_GROUP = "stepReturnGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
@@ -389,7 +404,7 @@ public interface IDebugUIConstants {
 	public static final String EMPTY_THREAD_GROUP = "emptyThreadGroup"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for a thread group in a menu (value <code>"threadGroup"</code>).
+	 * Identifier for a thread group in a menu or toolbar(value <code>"threadGroup"</code>).
 	 */
 	public static final String THREAD_GROUP = "threadGroup"; //$NON-NLS-1$
 	
@@ -455,7 +470,7 @@ public interface IDebugUIConstants {
 	public static final String EMPTY_RENDER_GROUP = "emptyRenderGroup"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for a render group in a menu (value <code>"renderGroup"</code>).
+	 * Identifier for a render group in a menu or toolbar(value <code>"renderGroup"</code>).
 	 */
 	public static final String RENDER_GROUP = "renderGroup"; //$NON-NLS-1$
 	

@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -207,6 +208,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
+		tbm.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));
+		tbm.add(new GroupMarker(IDebugUIConstants.STEP_OVER_GROUP));
+		tbm.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
+		tbm.add(new GroupMarker(IDebugUIConstants.EMPTY_STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}	
 

@@ -309,7 +309,7 @@
 <!-- Step Group -->
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepReturn"
-			toolbarPath = "stepGroup"
+			toolbarPath = "stepReturnGroup"
 			icon = "icons/full/clcl16/stepreturn_co.gif"
 			helpContextId = "step_return_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
@@ -318,7 +318,7 @@
 		</action>		
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepOver"
-			toolbarPath = "stepGroup"
+			toolbarPath = "stepOverGroup"
 			icon = "icons/full/clcl16/stepover_co.gif"
 			helpContextId = "step_over_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
@@ -327,7 +327,7 @@
 		</action>			
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.stepInto"
-			toolbarPath = "stepGroup"
+			toolbarPath = "stepIntoGroup"
 			icon = "icons/full/clcl16/stepinto_co.gif"
 			helpContextId = "step_into_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
