@@ -153,7 +153,6 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 
 	public void close() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-		extensionToObjects.clear();
 		extensionToObjects = null;
 		additionHandlers = null;
 		removalHandlers = null;
