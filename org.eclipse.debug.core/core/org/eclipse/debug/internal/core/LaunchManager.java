@@ -782,7 +782,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			IResource resource = delta.getResource();
 			if (resource instanceof IFile) {
 				IFile file = (IFile)resource;
-				if (file.getFileExtension().equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+				if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
 					ILaunchConfiguration handle = new LaunchConfiguration(file.getLocation());
 					switch (delta.getKind()) {						
 						case IResourceDelta.ADDED :
