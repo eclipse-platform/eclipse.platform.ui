@@ -30,10 +30,14 @@
                 <topic label="Annotate" href="html/00024.html">
                 </topic>
             </topic>
-            <topic label="Crash Recovery" href="html/00019.html">
-            </topic>
             <topic label="Concurrency" href="html/00020.html">
                 <topic label="Close and disconnect" href="html/00021.html">
+                </topic>
+            </topic>
+            <topic label="Restarting Workbench" href="html/00023.html">
+                <topic label="Crash Recovery" href="html/00019.html">
+                </topic>
+                <topic label="Synchronize View Settings" href="html/00025.html">
                 </topic>
             </topic>
         </topic>

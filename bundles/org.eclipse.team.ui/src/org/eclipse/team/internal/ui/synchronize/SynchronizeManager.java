@@ -335,6 +335,9 @@ public class SynchronizeManager implements ISynchronizeManager {
 				instance.dispose();
 			}
 		}	
+		
+		// save state and settings for existing participants.
+		saveState();
 	}
 	
 	private void initializeStaticParticipants() throws CoreException {
