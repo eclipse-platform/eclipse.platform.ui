@@ -80,6 +80,18 @@ class ContextInformationPopup implements IContentAssistListener {
 	private TextPresentation fTextPresentation;
 	
 	private Stack fContextFrameStack= new Stack();
+	/**
+	 * The content assist requestor.
+	 * 
+	 * @since 3.0
+	 */
+	private IContentAssistRequestor fContentAssistRequestor;
+	/**
+	 * The content assist requestor adapter.
+	 * 
+	 * @since 3.0
+	 */
+	private ContentAssistRequestorAdapter fContentAssistRequestorAdapter;
 	
 	/**
 	 * Selection listener on the text widget which is active
@@ -98,6 +110,20 @@ class ContextInformationPopup implements IContentAssistListener {
 	public ContextInformationPopup(ContentAssistant contentAssistant, ITextViewer viewer) {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fViewer);
+	}
+
+	/**
+	 * Creates a new context information popup.
+	 * 
+	 * @param contentAssistant the content assist for computing the context information
+	 * @param contentAssistRequestor the content assist requestor on top of which the context information is shown
+	 * @since 3.0
+	 */
+	public ContextInformationPopup(ContentAssistant contentAssistant, IContentAssistRequestor contentAssistRequestor) {
+		fContentAssistant= contentAssistant;
+		fContentAssistRequestor= contentAssistRequestor;
+		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fContentAssistRequestor);
 	}
 
 	/**
@@ -107,11 +133,11 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @return  a potential error message or <code>null</code> in case of no error
 	 */
 	public String showContextProposals(final boolean autoActivated) {
-		final StyledText styledText= fViewer.getTextWidget();
-		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
+		final Control control= fContentAssistRequestorAdapter.getControl();
+		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				
-				int position= fViewer.getSelectedRange().x;
+				int position= fContentAssistRequestorAdapter.getSelectedRange().x;
 				
 				IContextInformation[] contexts= computeContextInformation(position);
 				int count = (contexts == null ? 0 : contexts.length);
@@ -124,7 +150,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					// Precise context must be selected
 					
 					if (fLineDelimiter == null)
-						fLineDelimiter= styledText.getLineDelimiter();
+						fLineDelimiter= fContentAssistRequestorAdapter.getLineDelimiter();
 
 					createContextSelector();
 					setContexts(contexts);
@@ -132,7 +158,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					hideContextInfoPopup();
 					
 				} else if (!autoActivated) {
-					styledText.getDisplay().beep();
+					control.getDisplay().beep();
 				}
 			}
 		});
@@ -148,7 +174,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 2.0
 	 */
 	public void showContextInformation(final IContextInformation info, final int position) {
-		Control control= fViewer.getTextWidget();
+		Control control= fContentAssistRequestorAdapter.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				internalShowContextInfo(info, position);
@@ -167,7 +193,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	private void internalShowContextInfo(IContextInformation information, int offset) {
 				
-		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer, offset);
+		IContextInformationValidator validator= fContentAssistRequestorAdapter.getContextInformationValidator(fContentAssistant, offset);
 		
 		if (validator != null) {
 			ContextFrame current= new ContextFrame();
@@ -175,9 +201,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			current.fBeginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
 			if (current.fBeginOffset == -1) current.fBeginOffset= offset;
 			current.fOffset= offset;
-			current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);
+			current.fVisibleOffset= fContentAssistRequestorAdapter.getWidgetSelectionRange().x - (offset - current.fBeginOffset);
 			current.fValidator= validator;
-			current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer, offset);
+			current.fPresenter= fContentAssistRequestorAdapter.getContextInformationPresenter(fContentAssistant, offset);
 			
 			fContextFrameStack.push(current);
 			
@@ -194,12 +220,12 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	private void internalShowContextFrame(ContextFrame frame, boolean initial) {
 		
-		frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
+		fContentAssistRequestorAdapter.installValidator(frame);
 		
 		if (frame.fPresenter != null) {
 			if (fTextPresentation == null)
 				fTextPresentation= new TextPresentation();
-			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
+			fContentAssistRequestorAdapter.installContextInformationPresenter(frame);
 			frame.fPresenter.updatePresentation(frame.fOffset, fTextPresentation);
 		}
 		
@@ -212,7 +238,7 @@ class ContextInformationPopup implements IContentAssistListener {
 				
 		if (initial) {
 			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {
-				if (fViewer.getTextWidget() != null) {
+				if (fContentAssistRequestorAdapter.getControl() != null) {
 					fTextWidgetSelectionListener= new SelectionAdapter() {
 						/*
 						 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -220,7 +246,7 @@ class ContextInformationPopup implements IContentAssistListener {
 						public void widgetSelected(SelectionEvent e) {
 							validateContextInformation();
 						}};
-					fViewer.getTextWidget().addSelectionListener(fTextWidgetSelectionListener);
+					fContentAssistRequestorAdapter.addSelectionListener(fTextWidgetSelectionListener);
 				}
 				fContentAssistant.addToLayout(this, fContextInfoPopup, ContentAssistant.LayoutManager.LAYOUT_CONTEXT_INFO_POPUP, frame.fVisibleOffset);
 				fContextInfoPopup.setVisible(true);
@@ -238,7 +264,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 2.0
 	 */
 	private IContextInformation[] computeContextInformation(int position) {
-		return fContentAssistant.computeContextInformation(fViewer, position);
+		return fContentAssistRequestorAdapter.computeContextInformation(fContentAssistant, position);
 	}
 	
 	/**
@@ -257,7 +283,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (Helper.okToUse(fContextInfoPopup))
 			return;
 		
-		Control control= fViewer.getTextWidget();
+		Control control= fContentAssistRequestorAdapter.getControl();
 		Display display= control.getDisplay();
 		
 		fContextInfoPopup= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
@@ -310,8 +336,8 @@ class ContextInformationPopup implements IContentAssistListener {
 				
 				fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
 				
-				if (fViewer.getTextWidget() != null)
-					fViewer.getTextWidget().removeSelectionListener(fTextWidgetSelectionListener);
+				if (fContentAssistRequestorAdapter.getControl() != null)
+					fContentAssistRequestorAdapter.removeSelectionListener(fTextWidgetSelectionListener);
 				fTextWidgetSelectionListener= null;
 				
 				fContextInfoPopup.setVisible(false);
@@ -337,7 +363,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (Helper.okToUse(fContextSelectorShell))
 			return;
 		
-		Control control= fViewer.getTextWidget();
+		Control control= fContentAssistRequestorAdapter.getControl();
 		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -384,7 +410,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (i < 0 || i >= fContextSelectorInput.length)
 			return;
 		
-		int position= fViewer.getSelectedRange().x;
+		int position= fContentAssistRequestorAdapter.getSelectedRange().x;
 		internalShowContextInfo(fContextSelectorInput[i], position);
 	}
 	
@@ -634,7 +660,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			
 			public void run() {
 				if (Helper.okToUse(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
-					int offset= fViewer.getSelectedRange().x;
+					int offset= fContentAssistRequestorAdapter.getSelectedRange().x;
 					if (fFrame.fValidator == null || !fFrame.fValidator.isContextInformationValid(offset)) {
 						hideContextInfoPopup();
 					} else if (fFrame.fPresenter != null && fFrame.fPresenter.updatePresentation(offset, fTextPresentation)) {

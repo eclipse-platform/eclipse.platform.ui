@@ -24,6 +24,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -198,7 +201,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * detected, will wait the indicated delay interval before
 	 * activating the content assistant.
 	 */
-	class AutoAssistListener implements VerifyKeyListener, Runnable {
+	class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable {
 		
 		private Thread fThread;
 		private boolean fIsReset= false;
@@ -260,7 +263,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return false;
 		}
 		
-		public void verifyKey(VerifyEvent e) {
+		public void keyPressed(KeyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
@@ -269,18 +272,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			int pos= fContentAssistRequestorAdapter.getSelectedRange().x;
 			char[] activation;
 			
-			if (fContentAssistRequestor != null)
-				activation= getCompletionProposalAutoActivationCharacters(fContentAssistRequestor, pos);
-			else
-				activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);
+			activation= fContentAssistRequestorAdapter.getCompletionProposalAutoActivationCharacters(ContentAssistant.this, pos);
 			
 			if (contains(activation, e.character) && !fProposalPopup.isActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
-				if (fContentAssistRequestor != null)
-					activation= getContextInformationAutoActivationCharacters(fContentAssistRequestor, pos);
-				else
-					activation= getContextInformationAutoActivationCharacters(fViewer, pos);
+				activation= fContentAssistRequestorAdapter.getContextInformationAutoActivationCharacters(ContentAssistant.this, pos);
 				if (contains(activation, e.character) && fContextInfoPopup != null && !fContextInfoPopup.isActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
@@ -608,7 +605,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				}
 			}
 			if (fAutoAssistListener != null)
-				fAutoAssistListener.verifyKey(e);
+				fAutoAssistListener.keyPressed(e);
 		}
 				
 		/*
@@ -790,15 +787,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private void manageAutoActivation(boolean start) {			
 		if (start) {
 			
-			if ((fViewer != null || fContentAssistRequestor != null) && fAutoAssistListener == null) {
+			if ((fContentAssistRequestorAdapter != null) && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
-				if (!fContentAssistRequestorAdapter.appendVerifyKeyListener(fAutoAssistListener)) {
-					fAutoAssistListener= null;
-				}
+				fContentAssistRequestorAdapter.addKeyListener(fAutoAssistListener);
 			}
 			
 		} else if (fAutoAssistListener != null) {
-			fContentAssistRequestorAdapter.removeVerifyKeyListener(fAutoAssistListener);
+			fContentAssistRequestorAdapter.removeKeyListener(fAutoAssistListener);
 			fAutoAssistListener= null;
 		}
 	}
@@ -988,7 +983,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssistantExtension#install(IContentAssistRequestor)
 	 */
 	public void install(IContentAssistRequestor contentAssistRequestor) {
-		Assert.isNotNull(contentAssistRequestor);
 		fContentAssistRequestor= contentAssistRequestor;
 		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fContentAssistRequestor);
 		install();
@@ -998,9 +992,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#install
 	 */
 	public void install(ITextViewer textViewer) {
-		Assert.isNotNull(textViewer);
 		fViewer= textViewer;
-		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
 		fContentAssistRequestorAdapter= new ContentAssistRequestorAdapter(fViewer);
 		install();
 	}
@@ -1019,10 +1011,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			controller= new AdditionalInfoController(fInformationControlCreator, delay);
 		}
 		
-		if (fContentAssistRequestor != null)
-			fProposalPopup= new CompletionProposalPopup(this, fContentAssistRequestor, controller);
-		else
-			fProposalPopup= new CompletionProposalPopup(this, fViewer, controller);
+		fContextInfoPopup= fContentAssistRequestorAdapter.createContextInfoPopup(this);
+		fProposalPopup= fContentAssistRequestorAdapter.createCompletionProposalPopup(this, controller);
 		
 		manageAutoActivation(fIsAutoActivated);
 	}
@@ -1420,6 +1410,31 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		
 		return result;
 	}
+
+	/**
+	 * Returns an array of context information objects computed based
+	 * on the specified document position. The position is used to determine 
+	 * the appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistRequestor the content assit requestor
+	 * @param position a document position
+	 * @return an array of context information objects
+	 *
+	 * @see IContentAssistProcessor#computeContextInformation
+	 */
+	IContextInformation[] computeContextInformation(IContentAssistRequestor contentAssistRequestor, int position) {
+		fLastErrorMessage= null;
+		
+		IContextInformation[] result= null;
+		
+		IContentAssistProcessor p= getProcessor(contentAssistRequestor, position);
+		if (p instanceof IContentAssistProcessorExtension) {
+			result= ((IContentAssistProcessorExtension)p).computeContextInformation(contentAssistRequestor, position);
+			fLastErrorMessage= p.getErrorMessage();
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Returns the context information validator that should be used to 
@@ -1444,11 +1459,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * be dismissed. The position is used to determine the appropriate 
 	 * content assist processor to invoke.
 	 *
-	 * @param viewer the text viewer
+	 * @param contentAssistRequestor the content assist requestor
 	 * @param offset a document offset
 	 * @return an validator
-	 *
 	 * @see IContentAssistProcessor#getContextInformationValidator
+	 * @since 3.0
 	 */
 	IContextInformationValidator getContextInformationValidator(IContentAssistRequestor contentAssistRequestor, int offset) {
 		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
@@ -1473,6 +1488,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
+	 * Returns the context information presenter that should be used to 
+	 * display context information. The position is used to determine the appropriate 
+	 * content assist processor to invoke.
+	 *
+	 * @param contentAssistRequestor the content assist requestor
+	 * @param offset a document offset
+	 * @return a presenter
+	 * @since 3.0
+	 */
+	IContextInformationPresenter getContextInformationPresenter(IContentAssistRequestor contentAssistRequestor, int offset) {
+		IContextInformationValidator validator= getContextInformationValidator(contentAssistRequestor, offset);
+		if (validator instanceof IContextInformationPresenter)
+			return (IContextInformationPresenter) validator;
+		return null;
+	}
+	
+	/**
 	 * Returns the characters which when typed by the user should automatically
 	 * initiate proposing completions. The position is used to determine the 
 	 * appropriate content assist processor to invoke.
@@ -1483,7 +1515,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
 	 * @since 3.0
 	 */
-	private char[] getCompletionProposalAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
+	char[] getCompletionProposalAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
 		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
 		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
 	}
@@ -1499,7 +1531,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
 	 */
-	private char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
+	char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
 		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
 	}
@@ -1515,7 +1547,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
 	 */
-	private char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
+	char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
 		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
@@ -1531,7 +1563,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
 	 */
-	private char[] getContextInformationAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
+	char[] getContextInformationAutoActivationCharacters(IContentAssistRequestor contentAssistRequestor, int offset) {
 		IContentAssistProcessor p= getProcessor(contentAssistRequestor, offset);
 		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
