@@ -16,8 +16,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 /**
  * A lock used to control write access to an exclusive resource.
  * 
- * The lock avoids circular waiting deadlocks by ensuring that locks
- * are always acquired in a strict order.  This makes it impossible for n such 
+ * The lock avoids circular waiting deadlocks by detecting the deadlocks
+ * and resolving them through the suspension of all locks owned by one 
+ * of the threads involved in the deadlock. This makes it impossible for n such 
  * locks to deadlock while waiting for each other.  The downside is that this means
  * that during an interval when a process owns a lock, it can be forced
  * to give the lock up and wait until all locks it requires become
@@ -53,11 +54,11 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	private final LockManager manager;
 	private final int number;
 	/**
-	 * Queue of semaphores for operations currently waiting
+	 * Queue of semaphores for threads currently waiting
 	 * on the lock.
 	 */
 	private final Queue operations = new Queue();
-
+	
 	/**
 	 * Creates a new workspace lock.
 	 */
@@ -83,23 +84,23 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	public boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
-
+		
 		boolean success = false;
-		if (delay <= 0)
+		if(delay <= 0)
 			return attempt();
 		else {
 			Semaphore semaphore = createSemaphore();
-			if (semaphore == null)
+			if(semaphore == null)
 				return true;
 			else {
-				if (DEBUG)
+				if(DEBUG)
 					System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-
+				
 				success = doAcquire(semaphore, delay);
 				manager.resumeSuspendedLocks(Thread.currentThread());
-				if (DEBUG && success)
+				if(DEBUG&&success)
 					System.out.println("[" + Thread.currentThread() + "] Operation started... " + this); //$NON-NLS-1$ //$NON-NLS-2$
-				else if (DEBUG)
+				else if(DEBUG)
 					System.out.println("[" + Thread.currentThread() + "] Operation timed out... " + this); //$NON-NLS-1$ //$NON-NLS-2$	
 			}
 		}
@@ -112,7 +113,8 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	private synchronized boolean attempt() {
 		//return true if we already own the lock
 		//also, if nobody is waiting, grant the lock immediately
-		if ((currentOperationThread == Thread.currentThread()) || (currentOperationThread == null && operations.isEmpty())) {
+		if((currentOperationThread == Thread.currentThread()) ||			
+		(currentOperationThread == null && operations.isEmpty())) {
 			depth++;
 			setCurrentOperationThread(Thread.currentThread());
 			return true;
@@ -155,10 +157,11 @@ public class OrderedLock implements ILock, ISchedulingRule {
 				System.out.println("[" + Thread.currentThread() + "] Operation interrupted while waiting... :-|"); //$NON-NLS-1$ //$NON-NLS-2$
 			throw e;
 		}
-		if (success) {
+		if(success) {
 			depth++;
 			updateCurrentOperation();
-		} else {
+		}
+		else {
 			//operation timed out
 			//remove request semaphore from queue and update graph
 			operations.remove(semaphore);
@@ -230,17 +233,20 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * If newThread is not null, grant this lock to newThread.
 	 */
 	private void setCurrentOperationThread(Thread newThread) {
-		if ((currentOperationThread != null) && (newThread == null))
+		if((currentOperationThread != null) && (newThread == null))
 			manager.removeLockThread(currentOperationThread, this);
 		this.currentOperationThread = newThread;
 		if (currentOperationThread != null)
 			manager.addLockThread(currentOperationThread, this);
 	}
 	/**
-	 * Forces the lock to be at the given depth.  Used when re-acquiring a suspended
-	 * lock.
+	 * Forces the lock to be at the given depth.
+	 * Used when re-acquiring a suspended lock.
 	 */
 	protected void setDepth(int newDepth) {
+		for(int i = depth; i < newDepth; i++) {
+			manager.addLockThread(currentOperationThread, this);
+		}
 		this.depth = newDepth;
 	}
 	/**
