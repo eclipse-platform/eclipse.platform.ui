@@ -967,7 +967,7 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
-			workspace.endOperation(true, monitor);
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
