@@ -213,7 +213,12 @@ public class TextPresentation {
 	 * @return this presentation's default style range
 	 */
 	public StyleRange getDefaultStyleRange() {
-		return createWindowRelativeRange(fResultWindow, fDefaultRange);
+		StyleRange range= createWindowRelativeRange(fResultWindow, fDefaultRange);
+		if (range == null)
+			return null;
+		else
+			return (StyleRange)range.clone();
+		
 	}
 
 	/**
@@ -441,11 +446,8 @@ public class TextPresentation {
 	 * @return the window relative range based on the absolute range
 	 */
 	private StyleRange createWindowRelativeRange(IRegion window, StyleRange range) {
-		if (range == null)
-			return null;
-		
-		if (window == null) 
-			return (StyleRange)range.clone();
+		if (window == null || range == null)
+			return range;
 		
 		int start= range.start - window.getOffset();
 		if (start < 0)
