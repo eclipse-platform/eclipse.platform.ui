@@ -30,6 +30,7 @@ public class Policy {
 	public static boolean DEBUG_CVS_PROTOCOL = false;
 	public static boolean DEBUG_THREADING = false;
 	public static boolean DEBUG_DIRTY_CACHING = false;
+	public static boolean DEBUG_SYNC_CHANGE_EVENTS = false;
 
 	static {
 		//init debug options
@@ -38,6 +39,7 @@ public class Policy {
 			DEBUG_CVS_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/cvsprotocol"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_THREADING = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/threading"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_DIRTY_CACHING = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/dirtycaching"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_SYNC_CHANGE_EVENTS = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/syncchangeevents"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

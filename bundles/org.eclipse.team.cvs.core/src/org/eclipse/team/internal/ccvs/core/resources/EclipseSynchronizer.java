@@ -648,8 +648,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 				changed.add(file);
 			}
 		}
-		ResourceStateChangeListeners.getListener().externalSyncInfoChange(
-			(IResource[]) changed.toArray(new IResource[changed.size()]));
+		if (!changed.isEmpty()) {
+			ResourceStateChangeListeners.getListener().externalSyncInfoChange(
+					(IResource[]) changed.toArray(new IResource[changed.size()]));
+		}
 	}
 	
 	/*

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Class that manages the listeners of CVS sync change notification
@@ -88,6 +89,9 @@ public class ResourceStateChangeListeners {
 	}
 	
 	public void resourceSyncInfoChanged(final IResource[] resources) {
+		if (Policy.DEBUG_SYNC_CHANGE_EVENTS) {
+			printDebugInfo("Sync info change event ", resources); //$NON-NLS-1$
+		}
 		fireNotification(new Notification() {
 			public void notify(IResourceStateChangeListener listener) {
 				listener.resourceSyncInfoChanged(resources);
@@ -96,6 +100,9 @@ public class ResourceStateChangeListeners {
 	}
 	
 	public void externalSyncInfoChange(final IResource[] resources) {
+		if (Policy.DEBUG_SYNC_CHANGE_EVENTS) {
+			printDebugInfo("External sync info change event ", resources); //$NON-NLS-1$
+		}
 		fireNotification(new Notification() {
 			public void notify(IResourceStateChangeListener listener) {
 				listener.externalSyncInfoChange(resources);
@@ -104,6 +111,9 @@ public class ResourceStateChangeListeners {
 	}
 	
 	public void resourceModified(final IResource[] resources) {
+		if (Policy.DEBUG_SYNC_CHANGE_EVENTS) {
+			printDebugInfo("Resource modified change event ", resources); //$NON-NLS-1$
+		}
 		fireNotification(new Notification() {
 			public void notify(IResourceStateChangeListener listener) {
 				listener.resourceModified(resources);
@@ -111,6 +121,9 @@ public class ResourceStateChangeListeners {
 		});
 	}
 	public void projectConfigured(final IProject project) {
+		if (Policy.DEBUG_SYNC_CHANGE_EVENTS) {
+			printDebugInfo("Project configured change event ", new IResource[] { project }); //$NON-NLS-1$
+		}
 		fireNotification(new Notification() {
 			public void notify(IResourceStateChangeListener listener) {
 				listener.projectConfigured(project);
@@ -118,11 +131,25 @@ public class ResourceStateChangeListeners {
 		});
 	}
 	public void projectDeconfigured(final IProject project) {
+		if (Policy.DEBUG_SYNC_CHANGE_EVENTS) {
+			printDebugInfo("Project deconfigured change event ", new IResource[] { project }); //$NON-NLS-1$
+		}
 		fireNotification(new Notification() {
 			public void notify(IResourceStateChangeListener listener) {
 				listener.projectDeconfigured(project);
 			}
 		});
+	}
+	
+	private void printDebugInfo(String prefix, IResource[] resources) {
+		System.out.print(prefix);
+		System.out.print(" from thread  " + Thread.currentThread().getName()); //$NON-NLS-1$
+		System.out.print(" for the following " + resources.length + " resources"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println(":"); //$NON-NLS-1$
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			System.out.println(resource.getFullPath().toString());
+		}
 	}
 	
 }

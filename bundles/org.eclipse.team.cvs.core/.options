@@ -13,3 +13,6 @@ org.eclipse.team.cvs.core/threading=false
 
 # Shows dirty state caching debugging information
 org.eclipse.team.cvs.core/dirtycaching=false
+
+# Shows dirty state caching debugging information
+org.eclipse.team.cvs.core/syncchangeevents=false
