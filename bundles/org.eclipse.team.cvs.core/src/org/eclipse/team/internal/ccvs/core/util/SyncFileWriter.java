@@ -83,10 +83,6 @@ public class SyncFileWriter {
 	// key for saving the mod stamp for each writen meta file
 	public static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	public static void startup() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(new SyncFileChangeListener(), IResourceChangeEvent.PRE_AUTO_BUILD);
-	}
-			
 	/**
 	 * Reads the CVS/Entries, CVS/Entries.log and CVS/Permissions files from the
 	 * specified folder and returns ResourceSyncInfo instances for the data stored therein.

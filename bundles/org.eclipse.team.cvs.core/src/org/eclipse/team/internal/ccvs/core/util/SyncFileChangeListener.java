@@ -143,14 +143,14 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				IFile rootFile = cvsDir.getFile(new Path(SyncFileWriter.ROOT));
 				IFile repositoryFile = cvsDir.getFile(new Path(SyncFileWriter.REPOSITORY));
 				if(rootFile.exists() && repositoryFile.exists() && !cvsDir.isTeamPrivateMember()) {
-					try {
-						cvsDir.setTeamPrivateMember(true);			
-						if(Policy.DEBUG_METAFILE_CHANGES) {
-							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$
-						}
-					} catch(CoreException e) {
-						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, Policy.bind("SyncFileChangeListener.errorSettingTeamPrivateFlag"), e)); //$NON-NLS-1$
-					}
+//					try {
+//						cvsDir.setTeamPrivateMember(true);			
+//						if(Policy.DEBUG_METAFILE_CHANGES) {
+//							System.out.println("[cvs] found a new CVS meta folder, marking as team-private: " + cvsDir.getFullPath()); //$NON-NLS-1$
+//						}
+//					} catch(CoreException e) {
+//						CVSProviderPlugin.log(CVSException.wrapException(cvsDir, Policy.bind("SyncFileChangeListener.errorSettingTeamPrivateFlag"), e)); //$NON-NLS-1$
+//					}
 				}
 			}
 		}

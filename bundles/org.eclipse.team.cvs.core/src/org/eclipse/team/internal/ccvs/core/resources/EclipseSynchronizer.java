@@ -63,19 +63,13 @@ public class EclipseSynchronizer {
 	private EclipseSynchronizer() {		
 	}
 	
-	static public void startup() {
-		Assert.isTrue(instance==null);
-		instance = new EclipseSynchronizer();	
-		SyncFileWriter.startup();
-	}
-	
-	static public void shutdown() {
-	}
-	
 	/**
 	 * Returns the singleton instance of the synchronizer.
 	 */
 	public static EclipseSynchronizer getInstance() {		
+		if(instance==null) {
+			instance = new EclipseSynchronizer();
+		}
 		return instance;
 	}
 
