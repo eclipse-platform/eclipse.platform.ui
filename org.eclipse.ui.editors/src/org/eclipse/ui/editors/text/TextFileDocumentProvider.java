@@ -570,6 +570,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
 				}
@@ -577,9 +580,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					if (info.fElement instanceof IFileEditorInput)
-						return fResourceRuleFactory.modifyRule(((IFileEditorInput)info.fElement).getFile());
-					else
+					if (info.fElement instanceof IFileEditorInput) {
+						IFileEditorInput input= (IFileEditorInput) info.fElement;
+						return fResourceRuleFactory.modifyRule((input).getFile());
+					} else
 						return null;
 				}
 			};
@@ -614,6 +618,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			}
 			
 			return new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					commitFileBuffer(monitor, info, overwrite);					
 				}
@@ -621,9 +628,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					if (info.fElement instanceof IFileEditorInput)
-						return fResourceRuleFactory.modifyRule(((IFileEditorInput)info.fElement).getFile());
-					else
+					if (info.fElement instanceof IFileEditorInput) {
+						IFileEditorInput input= (IFileEditorInput) info.fElement;
+						return fResourceRuleFactory.modifyRule(input.getFile());
+					} else
 						return null;
 				}
 			};
@@ -632,6 +640,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			
 			final IFile file= ((IFileEditorInput) element).getFile();
 			return new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					createFileFromDocument(monitor, file, document);
 				}
@@ -798,6 +809,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.validateState(monitor, computationContext);
 				}
@@ -806,8 +820,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 */
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
-						IResource resource= ((IFileEditorInput)info.fElement).getFile().getParent(); 
-						return fResourceRuleFactory.validateEditRule(new IResource[] {resource});
+						IFileEditorInput input= (IFileEditorInput) info.fElement;
+						return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
 					} else
 						return null;
 				}
@@ -869,6 +883,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
 				}
@@ -876,9 +893,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
 				 */
 				public ISchedulingRule getSchedulingRule() {
-					if (info.fElement instanceof IFileEditorInput)
-						return fResourceRuleFactory.refreshRule(((IFileEditorInput)info.fElement).getFile());
-					else
+					if (info.fElement instanceof IFileEditorInput) {
+						IFileEditorInput input= (IFileEditorInput) info.fElement;
+						return fResourceRuleFactory.refreshRule(input.getFile());
+					} else
 						return null;
 				}
 			};
