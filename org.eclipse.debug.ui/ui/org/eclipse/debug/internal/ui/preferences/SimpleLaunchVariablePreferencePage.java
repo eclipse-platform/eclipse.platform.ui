@@ -194,16 +194,11 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		glayout.marginHeight = 0;
 		glayout.marginWidth = 0;
 		glayout.numColumns = 1;
-		GridData gdata = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
+		GridData gdata = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		buttonComposite.setLayout(glayout);
 		buttonComposite.setLayoutData(gdata);
 		buttonComposite.setFont(parent.getFont());
-
-		// Create a little vertical space
-		Label label= new Label(buttonComposite, SWT.NONE);
-		GridData gd= new GridData();
-		gd.horizontalSpan= 1;
-		label.setLayoutData(gd);
+		
 		// Create buttons
 		envAddButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.getString("SimpleVariablePreferencePage.7"), null); //$NON-NLS-1$
 		envAddButton.addSelectionListener(new SelectionAdapter()
