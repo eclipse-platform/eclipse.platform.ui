@@ -208,4 +208,8 @@ private void updateCurrentOperation(int newID) {
 	else
 		currentOperationThread = Thread.currentThread();
 }
+
+public boolean isTreeLocked() {
+	return workspace.isTreeLocked();
+}
 }

@@ -54,10 +54,12 @@ public boolean acquire() throws InterruptedException {
 		System.out.println("[" + Thread.currentThread() + "] Operation started... :-)");
 	return true;
 }
+/**
+ * Returns the thread that currently owns the workspace lock.
+ */
 protected Thread getCurrentOperationThread() {
 	return workManager.getCurrentOperationThread();
 }
-
 /**
  * Releases this lock allowing others to acquire it.
  * <p>
@@ -67,5 +69,15 @@ protected Thread getCurrentOperationThread() {
  */
 public void release() {
 	workManager.release();
+}
+/**
+ * Returns whether the workspace tree is locked
+ * for resource changes.
+ *
+ * @return <code>true</code> if the tree is locked, otherwise
+ *    <code>false</code>
+ */
+protected boolean isTreeLocked() {
+	return workManager.isTreeLocked();
 }
 }

@@ -9,7 +9,8 @@ public class Semaphore {
 	protected long notifications;
 	protected Runnable runnable;
 public Semaphore(Runnable runnable) {
-	reset(runnable);
+	this.runnable = runnable;
+	notifications = 0;
 }
 public synchronized void acquire() throws InterruptedException {
 	if (Thread.interrupted())
@@ -30,10 +31,6 @@ public int hashCode() {
 public synchronized void release() {
 	notifications++;
 	notifyAll();
-}
-public void reset(Runnable runnable) {
-	this.runnable = runnable;
-	notifications = 0;
 }
 // for debug only
 public String toString() {
