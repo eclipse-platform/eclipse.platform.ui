@@ -19,8 +19,11 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
@@ -28,6 +31,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.projection.ProjectionDocument;
+import org.eclipse.jface.text.projection.ProjectionDocumentEvent;
 import org.eclipse.jface.text.projection.ProjectionDocumentManager;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
@@ -65,14 +69,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
-			catchupWithProjectionAnnotationModel(null);
+			postCatchupRequest(null);
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
 		 */
 		public void modelChanged(AnnotationModelEvent event) {
-			catchupWithProjectionAnnotationModel(event);
+			postCatchupRequest(event);
 		}
 	}
 	
@@ -86,7 +90,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The projection annotation model listener */
 	private IAnnotationModelListener fProjectionAnnotationModelListener= new ProjectionAnnotationModelListener();
-	
+	/** The projection summary. */
+	private ProjectionSummary fProjectionSummary;
+	/** Indication that an annotation world change has not yet been processed. */
+	private boolean fPendingAnnotationWorldChange= false;
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -99,6 +106,25 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#createLayout()
+	 */
+	protected Layout createLayout() {
+		return new RulerLayout(1);
+	}
+	
+	/**
+	 * Sets the projection summary for this viewer.
+	 * 
+	 * @param projectionSummary the projection summary.
+	 */
+	public void setProjectionSummary(ProjectionSummary projectionSummary) {
+		fProjectionSummary= projectionSummary;
+		ProjectionAnnotationModel model= getProjectionAnnotationModel();
+		if (model != null)
+			model.setProjectionSummary(fProjectionSummary);
+	}
+		
 	/**
 	 * Adds the projection annotation model to the given annotation model.
 	 * 
@@ -130,7 +156,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected IAnnotationModel createVisualAnnotationModel(IAnnotationModel annotationModel) {
 		IAnnotationModel model= super.createVisualAnnotationModel(annotationModel);
-		fProjectionAnnotationModel= new ProjectionAnnotationModel();
+		fProjectionAnnotationModel= new ProjectionAnnotationModel(fProjectionSummary);
 		addProjectionAnnotationModel(model);
 		return model;
 	}
@@ -318,7 +344,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				// collapse contained regions
 				if (collapsed != null) {
 					for (int i= 0; i < collapsed.length; i++) {
-						IRegion p= adaptCollapsedRegion(collapsed[i]);
+						IRegion p= computeCollapsedRegion(collapsed[i]);
 						projection.removeMasterDocumentRange(p.getOffset(), p.getLength());
 					}
 				}
@@ -339,6 +365,27 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
+	
+	/**
+	 * Posts the request for catch up with the annotation model into the UI thread.
+	 * 
+	 * @param event the annotation model event
+	 */
+	protected final void postCatchupRequest(final AnnotationModelEvent event) {
+		StyledText widget= getTextWidget();
+		if (widget != null) {
+			Display display= widget.getDisplay();
+			if (display != null) {
+				// check for dead locks
+				display.syncExec(new Runnable() {
+					public void run() {
+						catchupWithProjectionAnnotationModel(event);
+					}
+				});
+			}	
+
+		}
+	}
 
 	/**
 	 * Adapts the slave visual document of this viewer to the changes described
@@ -347,24 +394,42 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @param event the annotation model event or <code>null</code>
 	 */
-	protected final void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) {
+	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) {
 		try {
-			if (event == null || event.isWorldChange()) {
+			if (event == null) {
 				
+				fPendingAnnotationWorldChange= false;
 				reinitializeProjection();
+				
+			} else if (event.isWorldChange()) {
+				
+				if (event.isValid()) {
+					fPendingAnnotationWorldChange= false;
+					reinitializeProjection();
+				} else
+					fPendingAnnotationWorldChange= true;
 				
 			} else {
 				
-				boolean fireRedraw= true;
-				
-				processDeletions(event, fireRedraw);
-				processAdditions(event, fireRedraw);
-				processModifications(event, fireRedraw);
-				
-				if (!fireRedraw) {
-					//TODO compute minimal scope for invalidation
-					invalidateTextPresentation();
+				if (fPendingAnnotationWorldChange) {
+					if (event.isValid()) {
+						fPendingAnnotationWorldChange= false;
+						reinitializeProjection();
+					}
+				} else {
+					
+					boolean fireRedraw= true;
+					
+					processDeletions(event, fireRedraw);
+					processAdditions(event, fireRedraw);
+					processModifications(event, fireRedraw);
+					
+					if (!fireRedraw) {
+						//TODO compute minimal scope for invalidation
+						invalidateTextPresentation();
+					}
 				}
+				
 			}
 		} catch (BadLocationException e) {
 			throw new IllegalArgumentException();
@@ -403,7 +468,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			if (annotation.isCollapsed()) {
-				Position expanded= fProjectionAnnotationModel.getPosition(annotation);
+				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
 				Position[] collapsed= computeCollapsedRanges(expanded);
 				expand(expanded, collapsed, false);
 				if (fireRedraw)
@@ -412,7 +477,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
-	private IRegion adaptCollapsedRegion(Position position) {
+	public IRegion computeCollapsedRegion(Position position) {
 		try {
 			IDocument document= getDocument();
 			int line= document.getLineOfOffset(position.getOffset());
@@ -427,13 +492,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 	
+	public Position computeCollapsedRegionAnchor(Position position) {
+		try {
+			IDocument document= getDocument();
+			IRegion lineInfo= document.getLineInformationOfOffset(position.getOffset());
+			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
+		} catch (BadLocationException x) {
+		}		
+		return null;
+	}
+	
 	private void processAdditions(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
 		Annotation[] annotations= event.getAddedAnnotations();
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			if (annotation.isCollapsed()) {
 				Position position= fProjectionAnnotationModel.getPosition(annotation);
-				IRegion region= adaptCollapsedRegion(position);
+				IRegion region= computeCollapsedRegion(position);
 				if (region != null)
 					collapse(region.getOffset(), region.getLength(), fireRedraw);
 			}
@@ -446,7 +521,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
 			if (annotation.isCollapsed()) {
-				IRegion region= adaptCollapsedRegion(position);
+				IRegion region= computeCollapsedRegion(position);
 				if (region != null)
 					collapse(region.getOffset(), region.getLength(), fireRedraw);
 			} else {
@@ -480,7 +555,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
-					projection.removeMasterDocumentRange(position.getOffset(), position.getLength());
+					IRegion region= computeCollapsedRegion(position);
+					if (region != null)
+						projection.removeMasterDocumentRange(region.getOffset(), region.getLength());
 				}
 			}
 			
@@ -496,6 +573,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		IRegion modelRange= event2ModelRange(e);
 		if (exposeModelRange(modelRange))
 			e.doit= false;
+		else
+			super.handleVerifyEvent(e);
 	}
 
 	/**
@@ -518,5 +597,26 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (isProjectionMode())
 			return fProjectionAnnotationModel.expandAll(modelRange.getOffset(), modelRange.getLength());
 		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#setRangeIndication(int, int, boolean)
+	 */
+	public void setRangeIndication(int start, int length, boolean moveCursor) {
+		// TODO experimental code
+		if (moveCursor)
+			exposeModelRange(new Region(start, length));
+		super.setRangeIndication(start, length, moveCursor);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#handleVisibleDocumentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
+	protected void handleVisibleDocumentChanged(DocumentEvent event) {
+		if (isProjectionMode() && event instanceof ProjectionDocumentEvent) {
+			ProjectionDocumentEvent e= (ProjectionDocumentEvent) event;
+			if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType() && e.getLength() == 0 && e.getText().length() != 0)
+				fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
+		}
 	}
 }
