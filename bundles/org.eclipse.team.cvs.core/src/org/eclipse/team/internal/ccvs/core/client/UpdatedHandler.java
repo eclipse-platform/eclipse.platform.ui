@@ -89,6 +89,8 @@ class UpdatedHandler extends ResponseHandler {
 		boolean binary = KSubstOption.fromMode(info.getKeywordMode()).isBinary();
 		boolean readOnly = info.getPermissions().indexOf(READ_ONLY_FLAG) == -1;
 		
+		// The file may have been set as read-only by a previous checkout/update
+		if (mFile.isReadOnly()) mFile.setReadOnly(false);
 		session.receiveFile(mFile, binary, handlerType, monitor);
 		if (readOnly) mFile.setReadOnly(true);
 		

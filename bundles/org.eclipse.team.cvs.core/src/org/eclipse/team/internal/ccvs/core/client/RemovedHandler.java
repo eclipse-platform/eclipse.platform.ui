@@ -50,6 +50,7 @@ class RemovedHandler extends ResponseHandler {
 		}
 		
 		// delete then unmanage the file
+		if (mFile.isReadOnly()) mFile.setReadOnly(false);
 		mFile.delete();
 		mFile.unmanage(null);
 	}
