@@ -46,7 +46,6 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	private MemoryViewPartListener fPartListener;
 	
 	private SashForm fSashForm;
-	private boolean fVisible;
 	private AbstractMemoryViewPane fMemoryViewPane;
 	private AbstractMemoryViewPane fRenderingPane;
 	
@@ -107,7 +106,6 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection viewPaneSelection = event.getSelection();
-			boolean selectionChanged = false;
 			
 			if (viewPaneSelection instanceof IStructuredSelection)
 			{
@@ -319,7 +317,6 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	
 	private void setVisible(boolean visible)
 	{
-		fVisible = visible;
 		fMemoryViewPane.setVisible(visible);
 		fRenderingPane.setVisible(visible);
 	}	
