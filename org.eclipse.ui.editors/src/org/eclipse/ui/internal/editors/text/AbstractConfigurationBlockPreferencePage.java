@@ -88,6 +88,9 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 	 */
 	public boolean performOk() {
 		
+		if (!fConfigurationBlock.canPerformOk())
+			return false;
+		
 		fConfigurationBlock.performOk();
 
 		fOverlayStore.propagate();

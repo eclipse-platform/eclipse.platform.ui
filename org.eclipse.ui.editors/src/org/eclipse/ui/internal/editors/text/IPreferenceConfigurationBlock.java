@@ -48,6 +48,17 @@ interface IPreferenceConfigurationBlock {
 	 * into their form of preference storage.
 	 */
 	void performOk();
+
+	/**
+	 * Called when the <code>OK</code> button is pressed on the preference
+	 * page. Implementations can abort the '<code>OK</code>' operation
+	 * by returning <code>false</code>.
+	 * 
+	 * @return <code>true</code> iff the '<code>OK</code>' operation
+	 *         can be performed
+	 * @since 3.1
+	 */
+	boolean canPerformOk();
 	
 	/**
 	 * Called when the <code>Defaults</code> button is pressed on the

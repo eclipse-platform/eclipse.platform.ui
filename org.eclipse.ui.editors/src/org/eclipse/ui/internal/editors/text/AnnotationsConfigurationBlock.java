@@ -433,6 +433,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 	
 	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#canPerformOk()
+	 */
+	public boolean canPerformOk() {
+		return true;
+	}
+	
+	/*
 	 * @see PreferencePage#performOk()
 	 */
 	public void performOk() {

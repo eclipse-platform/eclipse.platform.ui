@@ -331,6 +331,10 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		updateQuickDiffControls();
 	}
 
+	public boolean canPerformOk() {
+		return true;
+	}
+	
 	public void performOk() {
 	}
 

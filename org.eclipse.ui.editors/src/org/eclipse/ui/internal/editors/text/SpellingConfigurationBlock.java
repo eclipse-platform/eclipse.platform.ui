@@ -490,22 +490,26 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		restoreFromPreferences();
 	}
 
-	public void performOk() {
-		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
-			final Boolean[] result= new Boolean[] { Boolean.TRUE };
-			ISafeRunnable runnable= new ISafeRunnable() {
-				public void run() throws Exception {
-					result[0]= Boolean.valueOf(block.canPerformOk());
-				}
-				public void handleException(Throwable x) {
-				}
-			};
-			Platform.run(runnable);
-			if (!result[0].booleanValue())
-				return;
-		}
+	public boolean canPerformOk() {
+		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
+		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
+		final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
+		if (block == null)
+			return true;
 		
+		final Boolean[] result= new Boolean[] { Boolean.TRUE };
+		ISafeRunnable runnable= new ISafeRunnable() {
+			public void run() throws Exception {
+				result[0]= Boolean.valueOf(block.canPerformOk());
+			}
+			public void handleException(Throwable x) {
+			}
+		};
+		Platform.run(runnable);
+		return result[0].booleanValue();
+	}
+	
+	public void performOk() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
 			ISafeRunnable runnable= new ISafeRunnable() {
