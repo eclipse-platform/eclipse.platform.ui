@@ -34,29 +34,12 @@ public class QueryWordsToken {
 	public static QueryWordsToken word(String word) {
 		return new QueryWordsToken(QueryWordsToken.WORD, word);
 	}
-	public static SearchQueryPhrase phrase() {
-		return new SearchQueryPhrase();
+	public static QueryWordsPhrase phrase() {
+		return new QueryWordsPhrase();
 	}
-	public static SearchQueryPhrase phrase(String word) {
-		SearchQueryPhrase token = new SearchQueryPhrase();
+	public static QueryWordsPhrase phrase(String word) {
+		QueryWordsPhrase token = new QueryWordsPhrase();
 		token.addWord(word);
 		return token;
-	}
-	public static class SearchQueryPhrase extends QueryWordsToken {
-		private List words;
-		public SearchQueryPhrase() {
-			super(QueryWordsToken.PHRASE, "");
-			words = new ArrayList();
-		}
-		public void addWord(String word) {
-			words.add(word);
-			if (words.size() <= 1)
-				value = word;
-			else
-				value += " " + word;
-		}
-		public List getWords() {
-			return words;
-		}
 	}
 }

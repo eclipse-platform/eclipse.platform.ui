@@ -93,7 +93,7 @@ public class QueryBuilder {
 				token.type == QueryWordsToken.OR || token.type == QueryWordsToken.NOT)
 				newTokens.add(token);
 			else if (token.type == QueryWordsToken.PHRASE) {
-				QueryWordsToken.SearchQueryPhrase phrase = QueryWordsToken.phrase();
+				QueryWordsPhrase phrase = QueryWordsToken.phrase();
 				List wordList = analyzeText(analyzer, token.value);
 				for (Iterator it = wordList.iterator(); it.hasNext();) {
 					String word = (String) it.next();
@@ -195,8 +195,8 @@ public class QueryBuilder {
 			}
 			Query qs[] = new Query[fieldNames.length];
 			if (token.type == QueryWordsToken.PHRASE) {
-				QueryWordsToken.SearchQueryPhrase phraseToken =
-					(QueryWordsToken.SearchQueryPhrase) token;
+				QueryWordsPhrase phraseToken =
+					(QueryWordsPhrase) token;
 				for (int f = 0; f < fieldNames.length; f++)
 					qs[f] = new PhraseQuery();
 				for (Iterator it = phraseToken.getWords().iterator(); it.hasNext();) {
