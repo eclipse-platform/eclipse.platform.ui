@@ -870,7 +870,11 @@ public class DebugPlugin extends Plugin {
 			Iterator iter = v.iterator();
 			while (iter.hasNext() && !fShuttingDown && !monitor.isCanceled()) {
 				Runnable r = (Runnable)iter.next();
-				r.run();
+				try {
+					r.run();
+				} catch (Exception e) {
+					log(e);
+				}
 				monitor.worked(1);
 			}
 			monitor.done();
