@@ -29,6 +29,7 @@ public class KeysTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public KeysTestSuite() {
+		addTest(new TestSuite(Bug42024Test.class));
 		addTest(new TestSuite(Bug42627Test.class));
 		addTest(new TestSuite(Bug43168Test.class));
 		addTest(new TestSuite(Bug43321Test.class));
