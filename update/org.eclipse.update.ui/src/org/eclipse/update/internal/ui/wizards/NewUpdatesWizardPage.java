@@ -29,15 +29,27 @@ public class NewUpdatesWizardPage extends BannerPage {
 	// NL keys
 	private static final String KEY_TITLE = "NewUpdatesWizard.MainPage.title";
 	private static final String KEY_DESC = "NewUpdatesWizard.MainPage.desc";
-	private static final String KEY_SELECT_ALL = "NewUpdatesWizard.MainPage.selectAll";
-	private static final String KEY_DESELECT_ALL = "NewUpdatesWizard.MainPage.deselectAll";
-	private static final String KEY_C_FEATURE = "NewUpdatesWizard.MainPage.column.feature";
-	private static final String KEY_C_PROVIDER = "NewUpdatesWizard.MainPage.column.provider";
-	private static final String KEY_C_SIZE = "NewUpdatesWizard.MainPage.column.size";
+	private static final String KEY_SELECT_ALL =
+		"NewUpdatesWizard.MainPage.selectAll";
+	private static final String KEY_DESELECT_ALL =
+		"NewUpdatesWizard.MainPage.deselectAll";
+	private static final String KEY_COUNTER = 
+		"NewUpdatesWizard.MainPage.counter";
+	private static final String KEY_C_FEATURE =
+		"NewUpdatesWizard.MainPage.column.feature";
+	private static final String KEY_C_PROVIDER =
+		"NewUpdatesWizard.MainPage.column.provider";
+	private static final String KEY_C_VERSION =
+		"NewUpdatesWizard.MainPage.column.version";
+	private static final String KEY_C_SIZE =
+		"NewUpdatesWizard.MainPage.column.size";
+	private static final String KEY_UNKNOWN_SIZE =
+		"NewUpdatesWizard.MainPage.column.sizeUnknown";
 	private CheckboxTableViewer tableViewer;
 	private IInstallConfiguration config;
 	private Image featureImage;
-	private PendingChange [] pendingChanges;
+	private PendingChange[] pendingChanges;
+	private Label counterLabel;
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -47,7 +59,8 @@ public class NewUpdatesWizardPage extends BannerPage {
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object parent) {
-			return pendingChanges;		}
+			return pendingChanges;
+		}
 	}
 
 	class TableLabelProvider
@@ -57,7 +70,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
-			if (col==0)
+			if (col == 0)
 				return featureImage;
 			else
 				return null;
@@ -68,20 +81,29 @@ public class NewUpdatesWizardPage extends BannerPage {
 		 */
 		public String getColumnText(Object obj, int col) {
 			if (obj instanceof IFeatureAdapter) {
-				
+
 				try {
-				IFeature feature = ((IFeatureAdapter)obj).getFeature();
-				
-				switch (col) {
-					case 0:
-						return feature.getLabel();
-					case 1:
-						return feature.getProvider();
-					case 2:
-						return feature.getDownloadSize()+"KB";
-				}
-				}
-				catch (CoreException e) {
+					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+
+					switch (col) {
+						case 0 :
+							return feature.getLabel();
+						case 1 :
+							return feature
+								.getVersionedIdentifier()
+								.getVersion()
+								.toString();
+						case 2 :
+							return feature.getProvider();
+						case 3 :
+							long size = feature.getDownloadSize();
+							if (size == -1)
+								return UpdateUIPlugin.getResourceString(
+									KEY_UNKNOWN_SIZE);
+							else
+								return feature.getDownloadSize() + "KB";
+					}
+				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 					return "??";
 				}
@@ -94,7 +116,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 	 * Constructor for ReviewPage
 	 */
 	public NewUpdatesWizardPage(
-		PendingChange [] changes,
+		PendingChange[] changes,
 		IInstallConfiguration config) {
 		super("Target");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
@@ -102,6 +124,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		this.config = config;
 		this.pendingChanges = changes;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		setBannerVisible(false);
 	}
 
 	public void dispose() {
@@ -128,7 +151,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		buttonContainer.setLayout(blayout);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
-		
+
 		Button button = new Button(buttonContainer, SWT.PUSH);
 		button.setText(UpdateUIPlugin.getResourceString(KEY_SELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +162,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		button.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(button);
-		
+
 		button = new Button(buttonContainer, SWT.PUSH);
 		button.setText(UpdateUIPlugin.getResourceString(KEY_DESELECT_ALL));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -149,47 +172,68 @@ public class NewUpdatesWizardPage extends BannerPage {
 		});
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		button.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(button);		
-		
+		SWTUtil.setButtonDimensionHint(button);
+
 		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		tableViewer.setCheckedElements(pendingChanges);
+		counterLabel = new Label(client, SWT.NULL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		counterLabel.setLayoutData(gd);
 		pageChanged();
 		return client;
 	}
-	
+
 	private void selectAll(boolean state) {
 		tableViewer.setAllChecked(state);
 		pageChanged();
 	}
-	
+
 	private void pageChanged() {
-		Object [] checked = tableViewer.getCheckedElements();
-		setPageComplete(checked.length>0);
+		Object[] checked = tableViewer.getCheckedElements();
+		setPageComplete(checked.length > 0);
+		String total = ""+pendingChanges.length;
+		String selected = ""+checked.length;
+		counterLabel.setText(UpdateUIPlugin.getFormattedMessage(KEY_COUNTER, 
+					new String [] {selected, total}));
 	}
-	
+
 	private void createTableViewer(Composite parent) {
-		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		tableViewer =
+			CheckboxTableViewer.newCheckList(
+				parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		Table table = tableViewer.getTable();
-		
+		table.setHeaderVisible(true);
+
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUIPlugin.getResourceString(KEY_C_FEATURE));
-		
+
+		column = new TableColumn(table, SWT.NULL);
+		column.setText(UpdateUIPlugin.getResourceString(KEY_C_VERSION));
+
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUIPlugin.getResourceString(KEY_C_PROVIDER));
-		
+
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUIPlugin.getResourceString(KEY_C_SIZE));
-		
+
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(100));
-		layout.addColumnData(new ColumnWeightData(100));
-		layout.addColumnData(new ColumnWeightData(100));
+		layout.addColumnData(new ColumnWeightData(100, 200, true));
+		layout.addColumnData(new ColumnWeightData(100, 50, true));
+		layout.addColumnData(new ColumnWeightData(100, 100, true));
+		layout.addColumnData(new ColumnWeightData(100, true));
 		table.setLayout(layout);
-		
+
 		table.setLayoutData(gd);
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
+		tableViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				pageChanged();
+			}
+		});
 	}
 
 	public void setVisible(boolean visible) {
@@ -197,5 +241,12 @@ public class NewUpdatesWizardPage extends BannerPage {
 		if (visible) {
 			tableViewer.getTable().setFocus();
 		}
+	}
+
+	public PendingChange[] getSelectedJobs() {
+		Object[] selected = tableViewer.getCheckedElements();
+		PendingChange[] jobs = new PendingChange[selected.length];
+		System.arraycopy(selected, 0, jobs, 0, selected.length);
+		return jobs;
 	}
 }

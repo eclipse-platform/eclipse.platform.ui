@@ -17,10 +17,11 @@ import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class NewUpdatesWizard extends Wizard {
+	private static final String KEY_INSTALLING = "NewUpdatesWizard.installing";
 	private IInstallConfiguration config;
-	private boolean successfulInstall;
 	private NewUpdatesWizardPage mainPage;
 	private PendingChange[] jobs;
+	private int installCount = 0;
 
 	public NewUpdatesWizard(SearchObject searchObject) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
@@ -31,7 +32,7 @@ public class NewUpdatesWizard extends Wizard {
 	}
 
 	public boolean isSuccessfulInstall() {
-		return successfulInstall;
+		return installCount>0;
 	}
 
 	private void createPendingChanges(SearchObject searchObject) {
@@ -82,19 +83,15 @@ public class NewUpdatesWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		/*
-		final IConfiguredSite targetSite =
-			(targetPage == null) ? null : targetPage.getTargetSite();
-		*/
+		final PendingChange [] selectedJobs = mainPage.getSelectedJobs();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					successfulInstall = false;
-					makeConfigurationCurrent(config);
-					execute(monitor);
-					saveLocalSite();
-					successfulInstall = true;
+					installCount = 0;
+					InstallWizard.makeConfigurationCurrent(config);
+					execute(selectedJobs, monitor);
+					InstallWizard.saveLocalSite();
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -121,17 +118,6 @@ public class NewUpdatesWizard extends Wizard {
 		}
 	}
 
-	public static void makeConfigurationCurrent(IInstallConfiguration config)
-		throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		localSite.addConfiguration(config);
-	}
-
-	public static void saveLocalSite() throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		localSite.save();
-	}
-
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return page.getNextPage() == null && super.canFinish();
@@ -140,40 +126,24 @@ public class NewUpdatesWizard extends Wizard {
 	/*
 	 * When we are uninstalling, there is not targetSite
 	 */
-	private void execute(IProgressMonitor monitor) throws CoreException {
-		/*
-		IFeature feature = job.getFeature();
-		if (job.getJobType() == PendingChange.UNINSTALL) {
-			//find the  config site of this feature
-			IConfiguredSite site = findConfigSite(feature, config);
-			if (site != null) {
-				site.remove(feature, monitor);
-			} else {
-				// we should do something here
-				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
-			}
-		} else if (job.getJobType() == PendingChange.INSTALL) {
-			IFeature oldFeature = job.getOldFeature();
-			boolean success = true;
-			if (oldFeature != null) {
-				success = unconfigure(oldFeature);
-			}
-			if (success)
-				targetSite.install(feature, getVerificationListener(), monitor);
-			else {
-				throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
-			}
-		} else if (job.getJobType() == PendingChange.CONFIGURE) {
-			configure(job.getFeature());
-		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
-			unconfigure(job.getFeature());
-		} else {
-			// should not be here
-			return;
+	private void execute(PendingChange [] selectedJobs, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(UpdateUIPlugin.getResourceString(KEY_INSTALLING), jobs.length);
+		for (int i=0; i<selectedJobs.length; i++) {
+			PendingChange job = selectedJobs[i];
+			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+			executeOneJob(job, subMonitor);
+			installCount++;
 		}
+	}
+	
+	private void executeOneJob(PendingChange job, SubProgressMonitor monitor) throws CoreException {
+		IFeature feature = job.getFeature();
+		IFeature oldFeature = job.getOldFeature();
+		IConfiguredSite targetSite = TargetPage.getDefaultTargetSite(config, job);
+		targetSite.install(feature, getVerificationListener(), monitor);
+		unconfigure(oldFeature);
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
-		*/
 	}
 
 	private void throwError(String message) throws CoreException {

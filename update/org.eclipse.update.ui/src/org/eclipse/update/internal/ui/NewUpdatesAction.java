@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.update.internal.ui.search.DefaultUpdatesSearchObject;
@@ -33,7 +34,6 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	 * The constructor.
 	 */
 	public NewUpdatesAction() {
-		initialize();
 	}
 
 	private void initialize() {
@@ -49,6 +49,16 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
+		BusyIndicator
+			.showWhile(window.getShell().getDisplay(), new Runnable() {
+			public void run() {
+				doRun();
+			}
+		});
+	}
+
+	private void doRun() {
+		initialize();
 		ProgressMonitorDialog pmd =
 			new ProgressMonitorDialog(window.getShell());
 		try {
@@ -75,8 +85,10 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 		NewUpdatesWizard wizard = new NewUpdatesWizard(searchObject);
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
-		dialog.getShell().setSize(500, 500);
+		dialog.getShell().setSize(600, 450);
 		dialog.open();
+		if (wizard.isSuccessfulInstall())
+			UpdateUIPlugin.informRestartNeeded();
 	}
 
 	private IRunnableWithProgress getOperation() {

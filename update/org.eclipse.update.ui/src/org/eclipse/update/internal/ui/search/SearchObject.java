@@ -251,18 +251,19 @@ public class SearchObject extends NamedModelObject {
 			ISearchQuery query = queries[i];
 			ISiteAdapter site = query.getSearchSite();
 			if (site != null) {
-				searchOneSite(display, site, query, monitor);
+				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				UpdateUIPlugin.getResourceString(KEY_CHECKING);
+				searchOneSite(display, site, query, subMonitor);
 				if (monitor.isCanceled())
 					break;
 			}
-			monitor.worked(1);
-
 			for (int j = 0; j < candidates.size(); j++) {
 				if (monitor.isCanceled()) {
 					break;
 				}
 				Object source = candidates.get(j);
-				searchOneSite(display, (ISiteAdapter) source, query, monitor);
+				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				searchOneSite(display, (ISiteAdapter) source, query, subMonitor);
 				monitor.worked(1);
 			}
 			if (monitor.isCanceled())
@@ -282,24 +283,27 @@ public class SearchObject extends NamedModelObject {
 		Display display,
 		ISiteAdapter siteAdapter,
 		ISearchQuery query,
-		IProgressMonitor monitor)
+		SubProgressMonitor monitor)
 		throws CoreException {
 		String pattern = UpdateUIPlugin.getResourceString(KEY_CONTACTING);
 		String text =
 			UpdateUIPlugin.getFormattedMessage(pattern, siteAdapter.getLabel());
 		monitor.subTask(text);
 		URL siteURL = siteAdapter.getURL();
+
 		ISite site = SiteManager.getSite(siteURL);
+		monitor.getWrappedProgressMonitor().subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 
-		monitor.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 		IFeatureReference[] refs = site.getFeatureReferences();
-
+		monitor.beginTask("", refs.length+1);
+	
 		ArrayList candidates = new ArrayList();
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
 			// filter out the feature for environment
-			if (getFilterEnvironment() && isValidEnvironment(candidate)==false) continue;
-			candidates.add(candidate);
+			if (!getFilterEnvironment() || isValidEnvironment(candidate))
+				candidates.add(candidate);
+			monitor.worked(1);		
 		}
 		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
 		IFeature [] matches = query.getMatchingFeatures(array);
@@ -315,6 +319,7 @@ public class SearchObject extends NamedModelObject {
 			searchSite.addCandidate(featureAdapter);
 			asyncFireObjectAdded(display, searchSite, featureAdapter);
 		}
+		monitor.worked(1);
 	}
 	
 	private SearchResultSite findResultSite(ISite site) {
