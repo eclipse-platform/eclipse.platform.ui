@@ -167,7 +167,17 @@
                menubarPath="org.eclipse.ui.run/emptyStepGroup"
                style="toggle"
                state="false">
-         </action>         
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.RunToLine"
+               class="org.eclipse.debug.internal.ui.actions.RunToLineAction"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               disabledIcon="icons/full/dlcl16/runtoline_co.gif"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               label="%RunToLine.label"
+               menubarPath="org.eclipse.ui.run/emptyStepGroup">
+         </action>                  
          <action
                id="org.eclipse.debug.ui.actions.StepReturn"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
@@ -1327,8 +1337,35 @@
             scope="org.eclipse.debug.ui.debugging.popups"
             command="org.eclipse.debug.ui.commands.defaultDebugPopupClose"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </keyBinding>  
+      <command
+            name="%ActionDefinition.runToLine.name"
+            description="%ActionDefinition.runToLine.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.debug.ui.commands.RunToLine">
+      </command>
+      <keyBinding
+            string="Ctrl+R"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.RunToLine"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>          
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+         name="org.eclipse.debug.core.breakpoint"
+         markerType="org.eclipse.debug.core.breakpointMarker">
+      </type>
+      <type
+         name="org.eclipse.debug.ui.currentIP"
+         markerType="org.eclipse.debug.ui.instructionPointer.current">
+      </type>
+      <type
+         name="org.eclipse.debug.ui.secondaryIP"
+         markerType="org.eclipse.debug.ui.instructionPointer.secondary">
+      </type>
+   </extension>   
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
