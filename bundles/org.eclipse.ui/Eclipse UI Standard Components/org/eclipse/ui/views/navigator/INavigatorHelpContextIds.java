@@ -15,19 +15,19 @@ import org.eclipse.ui.PlatformUI;
  * 
  */
 /*package*/ interface INavigatorHelpContextIds {
-	public static final String PREFIX = PlatformUI.PLUGIN_ID + ".";
+	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	// Actions
-	public static final String FILTER_SELECTION_ACTION = PREFIX + "filter_selection_action_context";
-	public static final String GOTO_RESOURCE_ACTION = PREFIX + "goto_resource_action_context";
-	public static final String RESOURCE_NAVIGATOR_MOVE_ACTION = PREFIX + "resource_navigator_move_action_context";
-	public static final String RESOURCE_NAVIGATOR_RENAME_ACTION = PREFIX + "resource_navigator_rename_action_context";
-	public static final String SHOW_IN_NAVIGATOR_ACTION = PREFIX + "show_in_navigator_action_context";
-	public static final String SORT_VIEW_ACTION = PREFIX + "sort_view_action_context";
+	public static final String FILTER_SELECTION_ACTION = PREFIX + "filter_selection_action_context"; //$NON-NLS-1$
+	public static final String GOTO_RESOURCE_ACTION = PREFIX + "goto_resource_action_context"; //$NON-NLS-1$
+	public static final String RESOURCE_NAVIGATOR_MOVE_ACTION = PREFIX + "resource_navigator_move_action_context"; //$NON-NLS-1$
+	public static final String RESOURCE_NAVIGATOR_RENAME_ACTION = PREFIX + "resource_navigator_rename_action_context"; //$NON-NLS-1$
+	public static final String SHOW_IN_NAVIGATOR_ACTION = PREFIX + "show_in_navigator_action_context"; //$NON-NLS-1$
+	public static final String SORT_VIEW_ACTION = PREFIX + "sort_view_action_context"; //$NON-NLS-1$
 
 	// Dialogs
-	public static final String GOTO_RESOURCE_DIALOG = PREFIX + "goto_resource_dialog_context";
+	public static final String GOTO_RESOURCE_DIALOG = PREFIX + "goto_resource_dialog_context"; //$NON-NLS-1$
 	
 	// Views
-	public static final String RESOURCE_VIEW = PREFIX + "resource_view_context";
+	public static final String RESOURCE_VIEW = PREFIX + "resource_view_context"; //$NON-NLS-1$
 }

@@ -19,7 +19,7 @@ public interface IPropertySheetEntry {
 	/**
 	 * The filter id for expert properties
 	 */
-	public String FILTER_ID_EXPERT = "org.eclipse.ui.views.properties.expert";
+	public String FILTER_ID_EXPERT = "org.eclipse.ui.views.properties.expert"; //$NON-NLS-1$
 /**
  * Adds the given listener to this entry's collection
  * of listeners.
