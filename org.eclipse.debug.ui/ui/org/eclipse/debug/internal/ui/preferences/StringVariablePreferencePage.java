@@ -16,9 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
-import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.IValueVariable;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -379,7 +379,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	 * @return the singleton instance of the simple variable registry.
 	 */
 	private IStringVariableManager getVariableManager() {
-		return DebugPlugin.getDefault().getStringVariableManager();
+		return VariablesPlugin.getDefault().getStringVariableManager();
 	}
 	
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
