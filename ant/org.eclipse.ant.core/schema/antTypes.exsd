@@ -95,6 +95,14 @@ for the library containing the type.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="eclipseRuntime" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this type requires the context of the Eclipse runtime to be successfully defined.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
