@@ -233,11 +233,11 @@ public void createControl(Composite parent) {
 	editorList = new EditorList(getEditorArea().getWorkbenchWindow(), this);
 	pullDownBar = new ToolBar(tabFolder, SWT.FLAT);
 	pullDownButton = new ToolItem(pullDownBar, SWT.PUSH);
-	Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+//	Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 	Image hotImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
-	pullDownButton.setDisabledImage(image);
-	pullDownButton.setImage(image);
-	pullDownButton.setHotImage(hotImage);
+	pullDownButton.setDisabledImage(hotImage);
+	pullDownButton.setImage(hotImage);
+//	pullDownButton.setHotImage(hotImage);
 	pullDownButton.setToolTipText(WorkbenchMessages.getString("EditorList.button.toolTip")); //$NON-NLS-1$
 	
 	pullDownButton.addSelectionListener(new SelectionListener() {

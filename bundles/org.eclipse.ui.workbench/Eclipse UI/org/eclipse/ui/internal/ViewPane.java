@@ -107,11 +107,11 @@ public class ViewPane extends PartPane
 			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
 			if (showMenuButton) {
 				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 				Image hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
-				pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				pullDownButton.setImage(img);
-				pullDownButton.setHotImage(hoverImage);
+				pullDownButton.setDisabledImage(hoverImage); // PR#1GE56QT - Avoid creation of unnecessary image.
+				pullDownButton.setImage(hoverImage);
+//				pullDownButton.setHotImage(hoverImage);
 				pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
 				pullDownButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -128,11 +128,11 @@ public class ViewPane extends PartPane
 			if (fast) {
 				ToolItem dockButton = new ToolItem(toolbar, SWT.CHECK, index++);
 				dockButton.setSelection(true);
-				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
+//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
 				Image hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
-				dockButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				dockButton.setImage(img);
-				dockButton.setHotImage(hoverImage);
+				dockButton.setDisabledImage(hoverImage); // PR#1GE56QT - Avoid creation of unnecessary image.
+				dockButton.setImage(hoverImage);
+//				dockButton.setHotImage(hoverImage);
 				dockButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
 				dockButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -141,11 +141,11 @@ public class ViewPane extends PartPane
 				});
 		
 				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
+//				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
 				hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER);
-				minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				minimizeButton.setImage(img);
-				minimizeButton.setHotImage(hoverImage);
+				minimizeButton.setDisabledImage(hoverImage); // PR#1GE56QT - Avoid creation of unnecessary image.
+				minimizeButton.setImage(hoverImage);
+//				minimizeButton.setHotImage(img);
 				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
 				minimizeButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -155,11 +155,11 @@ public class ViewPane extends PartPane
 			}
 			
 			ToolItem closeButton= new ToolItem(toolbar, SWT.PUSH, index++);
-			Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+//			Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
 			Image hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
-			closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-			closeButton.setImage(img);
-			closeButton.setHotImage(hoverImage);
+			closeButton.setDisabledImage(hoverImage); // PR#1GE56QT - Avoid creation of unnecessary image.
+			closeButton.setImage(hoverImage);
+//			closeButton.setHotImage(hoverImage);
 			closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
 			closeButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
