@@ -2140,22 +2140,22 @@ M4 = Platform-specific fourth key
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactory"
           	id="org.eclipse.debug.ui.breakpointProjectContainerFactory"
-          	label="Project"
+          	label="%Project.label"
           	icon="icons/full/obj16/prj_obj.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFileContainerFactory"
           	id="org.eclipse.debug.ui.breakpointFileContainerFactory"
-          	label="File"
+          	label="%File.label"
           	icon="icons/full/obj16/file_obj.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeContainerFactory"
           	id="org.eclipse.debug.ui.breakpointTypeContainerFactory"
-          	label="Breakpoint Type"
+          	label="%BreakpointType.label"
           	icon="icons/full/obj16/brkp_type.gif"/>
           <breakpointContainerFactory
           	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainerFactory"
           	id="org.eclipse.debug.ui.breakpointGroupContainerFactory"
-          	label="Custom Groups"
+          	label="%CustomGroups.label"
           	icon="icons/full/obj16/brkp_grp.gif"/>
     </extension>
 </plugin>
