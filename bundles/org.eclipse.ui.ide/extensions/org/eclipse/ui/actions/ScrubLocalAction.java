@@ -50,14 +50,14 @@ public class ScrubLocalAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages
                 .getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
     }
@@ -65,14 +65,14 @@ public class ScrubLocalAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {
         resource.setLocal(false, IResource.DEPTH_INFINITE, monitor);
     }

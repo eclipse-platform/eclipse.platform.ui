@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -152,7 +151,7 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages
         .getString("CloseResourceAction.operationMessage"); //$NON-NLS-1$
     }
@@ -160,7 +159,7 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages
                 .getString("CloseResourceAction.problemMessage"); //$NON-NLS-1$
     }
@@ -168,11 +167,11 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
     }
 
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 	        throws CoreException {
 	    ((IProject) resource).close(monitor);
 	}
@@ -242,7 +241,7 @@ public class CloseResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    boolean shouldPerformResourcePruning() {
+    protected boolean shouldPerformResourcePruning() {
         return false;
     }
 

@@ -100,21 +100,21 @@ public class RefreshAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages.getString("RefreshAction.progressMessage"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages.getString("RefreshAction.problemMessage"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("RefreshAction.problemTitle"); //$NON-NLS-1$
     }
 
@@ -133,7 +133,7 @@ public class RefreshAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {
         // Check if project's location has been deleted, 
         // as per 1G83UCE: ITPUI:WINNT - Refresh from local doesn't detect new or deleted projects

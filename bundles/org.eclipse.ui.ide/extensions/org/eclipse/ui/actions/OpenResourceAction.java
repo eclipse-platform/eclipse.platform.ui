@@ -66,7 +66,7 @@ public class OpenResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages
         .getString("OpenResourceAction.operationMessage"); //$NON-NLS-1$
     }
@@ -74,7 +74,7 @@ public class OpenResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages
                 .getString("OpenResourceAction.problemMessage"); //$NON-NLS-1$
     }
@@ -82,11 +82,11 @@ public class OpenResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("OpenResourceAction.dialogTitle"); //$NON-NLS-1$
     }
 
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 	        throws CoreException {
 	    ((IProject) resource).open(monitor);
 	}
@@ -94,7 +94,7 @@ public class OpenResourceAction extends WorkspaceAction implements
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    boolean shouldPerformResourcePruning() {
+    protected boolean shouldPerformResourcePruning() {
         return false;
     }
 

@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -156,7 +155,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @return the message
      */
-    abstract String getOperationMessage();
+    protected abstract String getOperationMessage();
 
     /**
      * Returns the string to display for this action's problems dialog.
@@ -169,7 +168,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @return the problems message
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages
                 .getString("WorkbenchAction.problemsMessage"); //$NON-NLS-1$
     }
@@ -184,7 +183,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @return the problems dialog title
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("WorkspaceAction.problemsTitle"); //$NON-NLS-1$
     }
 
@@ -212,30 +211,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @param monitor a progress monitor
      * @exception CoreException if the operation fails
      */
-    abstract void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected abstract void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException;
-
-    /**
-     * Returns whether the given resource is accessible, where files and folders
-     * are always considered accessible, and where a project is accessible iff it
-     * is open.
-     *
-     *	@param resource the resource
-     *	@return <code>true</code> if the resource is accessible, and 
-     *     <code>false</code> if it is not
-     */
-    boolean isAccessible(IResource resource) {
-        switch (resource.getType()) {
-        case IResource.FILE:
-            return true;
-        case IResource.FOLDER:
-            return true;
-        case IResource.PROJECT:
-            return ((IProject) resource).isOpen();
-        default:
-            return false;
-        }
-    }
 
     /**
      * Returns whether the given resource is a descendent of any of the resources
@@ -280,7 +257,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @param error a <code>CoreException</code>
      */
-    private MultiStatus recordError(MultiStatus errors, CoreException error) {
+    MultiStatus recordError(MultiStatus errors, CoreException error) {
         if (errors == null)
         	errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH,
                     IStatus.ERROR, getProblemsMessage(), error);
@@ -340,7 +317,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @return <code>true</code> if pruning should be performed, 
      *   and <code>false</code> if pruning is not desired
      */
-    boolean shouldPerformResourcePruning() {
+    protected boolean shouldPerformResourcePruning() {
         return true;
     }
 
@@ -357,7 +334,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
         }
         for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
             IResource r = (IResource) i.next();
-            if (!isAccessible(r)) {
+            if (!r.isAccessible()) {
                 return false;
             }
         }
@@ -367,6 +344,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
     /**
      * Returns the elements that the action is to be performed on.
      * By default return the selected resources.
+     * <p>
+     * Subclasses may override this method.
      *
      * @return list of resource elements (element type: <code>IResource</code>)
      */

@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -128,21 +127,21 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages.getString("BuildAction.operationMessage"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages.getString("BuildAction.problemMessage"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
     }
 
@@ -192,7 +191,7 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {
         ((IProject) resource).build(buildType, monitor);
     }
@@ -316,7 +315,7 @@ public class BuildAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    boolean shouldPerformResourcePruning() {
+    protected boolean shouldPerformResourcePruning() {
         return true;
     }
 

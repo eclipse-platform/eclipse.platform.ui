@@ -304,14 +304,14 @@ public class RenameResourceAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getOperationMessage() {
+    protected String getOperationMessage() {
         return IDEWorkbenchMessages.getString("RenameResourceAction.progress"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsMessage() {
+    protected String getProblemsMessage() {
         return IDEWorkbenchMessages
                 .getString("RenameResourceAction.problemMessage"); //$NON-NLS-1$
     }
@@ -319,7 +319,7 @@ public class RenameResourceAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    String getProblemsTitle() {
+    protected String getProblemsTitle() {
         return IDEWorkbenchMessages
                 .getString("RenameResourceAction.problemTitle"); //$NON-NLS-1$
     }
@@ -335,7 +335,7 @@ public class RenameResourceAction extends WorkspaceAction {
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
-    void invokeOperation(IResource resource, IProgressMonitor monitor)
+    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {
 
         monitor.beginTask(RENAMING_MESSAGE, 100);
