@@ -6,7 +6,6 @@
  */
 package org.eclipse.help.ui.internal.views;
 
-import java.util.*;
 import java.util.LinkedList;
 
 /**

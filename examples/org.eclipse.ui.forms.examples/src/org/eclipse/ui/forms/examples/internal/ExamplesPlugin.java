@@ -46,6 +46,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_HELP_TOC_OPEN = "toc_open";
 	public static final String IMG_HELP_TOC_CLOSED = "toc_closed";
 	public static final String IMG_HELP_SEARCH = "e_search_menu";
+	public static final String IMG_CLEAR = "clear";
 
 	/**
 	 * The constructor.
@@ -74,6 +75,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_HELP_TOC_OPEN, "toc_open.gif");
 		registerImage(registry, IMG_CLOSE, "close_view.gif");
 		registerImage(registry, IMG_HELP_SEARCH, "e_search_menu.gif");
+		registerImage(registry, IMG_CLEAR, "clear.gif");
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

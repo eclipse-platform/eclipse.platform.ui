@@ -6,6 +6,7 @@
  */
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.browser.Browser;
@@ -85,5 +86,17 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			}
 		}
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public boolean fillContextMenu(IMenuManager manager) {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean hasFocusControl(Control control) {
+		return browser.equals(control);
 	}
 }

@@ -6,6 +6,7 @@
  */
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IFormPart;
 
@@ -20,4 +21,6 @@ public interface IHelpPart extends IFormPart {
 	Control getControl();
 	String getId();
 	void setVisible(boolean visible);
+	boolean hasFocusControl(Control control);
+	boolean fillContextMenu(IMenuManager manager);
 }

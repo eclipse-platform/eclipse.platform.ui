@@ -6,6 +6,7 @@
  */
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -34,26 +35,19 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public SeeAlsoPart(Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
-		//TableWrapLayout layout = new TableWrapLayout();
-		//layout.topMargin = layout.bottomMargin = 0;
-		//layout.leftMargin = layout.rightMargin = 0;
-		//layout.verticalSpacing = 0;
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
 		container.setLayout(layout);
 		Composite sep = toolkit.createCompositeSeparator(container);
-		//TableWrapData td = new TableWrapData(TableWrapData.FILL);
-		//td.heightHint = 1;
-		//sep.setLayoutData(td);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 1;
 		sep.setLayoutData(gd);
 	
 		text = toolkit.createFormText(container, true);
-		//text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+		text.marginWidth = 5;
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));		
 		text.addHyperlinkListener(new HyperlinkAdapter() {
@@ -114,5 +108,18 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public boolean fillContextMenu(IMenuManager manager) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean hasFocusControl(Control control) {
+		return text.equals(control);
 	}
 }

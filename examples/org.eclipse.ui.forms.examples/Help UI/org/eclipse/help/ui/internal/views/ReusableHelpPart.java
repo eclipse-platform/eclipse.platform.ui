@@ -8,20 +8,37 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.ManagedForm;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ILayoutExtension;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * @author dejan
@@ -39,12 +56,43 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	private ArrayList pages;
 	private Action backAction;
 	private Action nextAction;
+	private Action openInfoCenterAction;
+	private OpenHrefAction openAction;
+	private OpenHrefAction openInHelpAction;
 	private ReusableHelpPartHistory history;
 	private HelpPartPage currentPage;
 
 	private IRunnableContext runnableContext;
 
 	private IToolBarManager toolBarManager;
+	
+	private abstract class BusyRunAction extends Action {
+		public BusyRunAction(String name) {
+			super(name);
+		}
+		public void run() {
+			BusyIndicator.showWhile(getControl().getDisplay(), 
+					new Runnable() {
+				public void run() {
+					busyRun();
+				}
+			});
+		}
+		protected abstract void busyRun();
+	}
+	
+	private abstract class OpenHrefAction extends BusyRunAction {
+		private Object target;
+		public OpenHrefAction(String name) {
+			super(name);
+		}
+		public void setTarget(Object target) {
+			this.target = target;
+		}
+		public Object getTarget() {
+			return target;
+		}
+	}
 
 	private static class PartRec {
 		String id;
@@ -60,6 +108,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	private class HelpPartPage {
 		private String id;
 		private int vspacing = verticalSpacing;
+		private int horizontalMargin = 0;
 
 		private String text;
 		private SubToolBarManager toolBarManager;
@@ -77,6 +126,12 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		}
 		public int getVerticalSpacing() {
 			return vspacing;
+		}
+		public void setHorizontalMargin(int value) {
+			this.horizontalMargin = value;
+		}
+		public int getHorizontalMargin() {
+			return horizontalMargin;
 		}
 		public IToolBarManager getToolBarManager() {
 			return toolBarManager;
@@ -139,6 +194,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			if (currentPage==null)
 				return new Point(0, 0);
 			PartRec[] parts = currentPage.getParts();
+			int hmargin = currentPage.getHorizontalMargin();
 			int innerWhint = wHint!=SWT.DEFAULT?wHint-2*hmargin:wHint;
 			Point result = new Point(0, 0);
 			for (int i=0; i<parts.length; i++) {
@@ -164,6 +220,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 			Rectangle clientArea = composite.getClientArea();
 
 			PartRec[] parts = currentPage.getParts();
+			int hmargin = currentPage.getHorizontalMargin();			
 			int nfixedParts = parts.length - currentPage.getNumberOfFlexibleParts();
 			Point [] fixedSizes = new Point[nfixedParts];
 			int fixedHeight = 0;
@@ -230,6 +287,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		// all topics page
 		page = new HelpPartPage(ALL_TOPICS_PAGE, "All Topics");
 		page.setVerticalSpacing(0);
+		page.setHorizontalMargin(0);		
 		page.addPart(TOPIC_TREE, true);
 		page.addPart(SEE_ALSO, false);
 		pages.add(page);
@@ -241,7 +299,6 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		pages.add(page);
 		// context help page
 		page = new HelpPartPage(CONTEXT_HELP_PAGE, "Context Help");
-		//page.setVerticalSpacing(10);
 		page.addPart(CONTEXT_HELP, false);
 		page.addPart(SEARCH, false);
 		page.addPart(SEARCH_RESULT, true);
@@ -263,16 +320,38 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		backAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 		backAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backAction.setEnabled(false);
+		backAction.setText("&Back");
+		
 		nextAction = new Action("next") {
 			public void run() {
 				doNext();
 			}
 		};
+		nextAction.setText("&Forward");
 		nextAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		nextAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
+		
+		openInfoCenterAction = new BusyRunAction("openInfoCenter") {
+			protected void busyRun() {
+				WorkbenchHelp.displayHelp();
+			}
+		};
+		openInfoCenterAction.setText("&Help Contents");
+		openAction = new OpenHrefAction("open") {
+			protected void busyRun() {
+				doOpen(getTarget());
+			}
+		};
+		openAction.setText("&Open");
+		openInHelpAction = new OpenHrefAction("openInHelp") {
+			protected void busyRun() {
+				doOpenInHelp(getTarget());
+			}
+		};
+		openInHelpAction.setText("Open in Help &Contents");
 	}
 	
 	private void doBack() {
@@ -298,6 +377,16 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.getBody().setLayout(new HelpPartLayout());
 		mform = new ManagedForm(toolkit, form);
+		MenuManager manager = new MenuManager();
+		IMenuListener listener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				contextMenuAboutToShow(manager);
+			}
+		};
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(listener);
+		Menu contextMenu = manager.createContextMenu(form.getForm());
+		form.getForm().setMenu(contextMenu);
 	}
 	
 	public void showPage(String id) {
@@ -353,7 +442,6 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	public ManagedForm getForm() {
 		return mform;
 	}
-	
 	public void reflow() {
 		mform.getForm().getBody().layout();
 		mform.reflow(true);
@@ -462,5 +550,69 @@ public class ReusableHelpPart implements IHelpViewConstants {
 				+ WebappManager.getPort() + "/help/topic"; //$NON-NLS-1$
 		char sep = url.lastIndexOf('?')!= -1 ? '&':'?';
 		return base + url+sep+"noframes=true";
+	}
+
+	private void contextMenuAboutToShow(IMenuManager manager) {
+		IFormPart [] parts = mform.getParts();
+		boolean hasContext=false;
+		Control focusControl = getControl().getDisplay().getFocusControl();
+		for (int i=0; i<parts.length; i++) {
+			IHelpPart part = (IHelpPart)parts[i];
+			if (part.hasFocusControl(focusControl)) {
+				hasContext = part.fillContextMenu(manager);
+				break;
+			}
+		}
+		if (hasContext)
+			manager.add(new Separator());
+		manager.add(backAction);
+		manager.add(nextAction);
+		manager.add(new Separator());
+		manager.add(openInfoCenterAction);
+	}
+	boolean fillSelectionProviderMenu(ISelectionProvider provider, IMenuManager manager) {
+		fillOpenActions(provider, manager);
+		return true;
+	}
+	private void fillOpenActions(Object target, IMenuManager manager) {
+		openAction.setTarget(target);
+		openInHelpAction.setTarget(target);
+		manager.add(openAction);
+		manager.add(openInHelpAction);
+	}
+	boolean fillFormContextMenu(FormText text, IMenuManager manager) {
+		fillOpenActions(text, manager);
+		return true;
+	}
+	private String getHref(Object target) {
+		if (target instanceof ISelectionProvider) {
+			ISelectionProvider provider = (ISelectionProvider)target;
+			IStructuredSelection ssel = (IStructuredSelection)provider.getSelection();
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof ITopic) {
+				ITopic topic = (ITopic)obj;
+				return topic.getHref();
+			}
+		}
+		else if (target instanceof FormText) {
+			FormText text = (FormText)target;
+			Object href = text.getSelectedLinkHref();
+			if (href!=null)
+				return href.toString();
+		}
+		return null;
+		
+	}
+
+	private void doOpen(Object target) {
+		String href = getHref(target);
+		if (href!=null)
+			showURL(href);
+	}
+
+	private void doOpenInHelp(Object target) {
+		String href = getHref(target);
+		if (href!=null)
+			WorkbenchHelp.displayHelpResource(href);
 	}
 }

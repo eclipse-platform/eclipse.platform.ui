@@ -9,16 +9,40 @@ package org.eclipse.help.ui.internal.views;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.help.ui.internal.search.*;
+import org.eclipse.help.ui.internal.search.HelpSearchQuery;
+import org.eclipse.help.ui.internal.search.HelpSearchResult;
+import org.eclipse.help.ui.internal.search.SearchQueryData;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.search.ui.*;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
+import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 /**
  * @author dejan
@@ -29,6 +53,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class SearchPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
 	private Text phraseText;
+	private Button goButton;
 	private String id;
 	/**
 	 * @param parent
@@ -39,8 +64,27 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		super(parent, toolkit, Section.EXPANDED|Section.TWISTIE|Section.TITLE_BAR);
 		Section section = getSection();
 		section.setText("Search");
+		section.marginWidth = 5;
+		section.addExpansionListener(new IExpansionListener() {
+			public void expansionStateChanging(ExpansionEvent e) {
+				toggleSearchResults(e.getState());
+			}
+			public void expansionStateChanged(ExpansionEvent e) {
+			}
+		});
 		Composite helpContainer = toolkit.createComposite(section);
 		section.setClient(helpContainer);
+		ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
+		toolkit.adapt(clearLink, true, true);
+		clearLink.setToolTipText("Clear results");
+		clearLink.setImage(ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_CLEAR));
+		clearLink.setBackground(section.getTitleBarGradientBackground());		
+		clearLink.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				doClear();
+			}
+		});
+		section.setTextClient(clearLink);
 
 		GridLayout glayout = new GridLayout();
 		glayout.numColumns = 3;
@@ -52,24 +96,24 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		phraseText = toolkit.createText(helpContainer, ""); //$NON-NLS-1$
 		phraseText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		final Button button = toolkit.createButton(helpContainer,
+		goButton = toolkit.createButton(helpContainer,
 				"Go", SWT.PUSH); //$NON-NLS-1$
-		button.addSelectionListener(new SelectionAdapter() {
+		goButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doSearch(phraseText.getText());
 			}
 		});
-		button.setEnabled(false);
+		goButton.setEnabled(false);
 		phraseText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String text = phraseText.getText();
-				button.setEnabled(text.length() > 0);
+				goButton.setEnabled(text.length() > 0);
 			}
 		});
 		phraseText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				if (e.character == '\r') {
-					if (button.isEnabled())
+					if (goButton.isEnabled())
 						doSearch(phraseText.getText());
 				}
 			}
@@ -148,5 +192,27 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpViewConstants.SEARCH_RESULT);
 		if (part!=null)
 			part.updateResults(phrase, buffer, hresult);
+	}
+	private void doClear() {
+		SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpViewConstants.SEARCH_RESULT);
+		if (part!=null)
+			part.clearResults();
+	}
+	private void toggleSearchResults(boolean visible) {
+		SearchResultsPart part = (SearchResultsPart)parent.findPart(IHelpViewConstants.SEARCH_RESULT);
+		if (part!=null)
+			part.setVisible(visible);		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public boolean fillContextMenu(IMenuManager manager) {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean hasFocusControl(Control control) {
+		return phraseText.equals(control) || goButton.equals(control);
 	}
 }

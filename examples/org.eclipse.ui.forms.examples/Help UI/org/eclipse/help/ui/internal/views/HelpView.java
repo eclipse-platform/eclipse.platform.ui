@@ -8,7 +8,9 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.Hashtable;
 
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -30,6 +32,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 
 	private Hashtable pageRecs;
 	private IWorkbenchPart monitoredPart;
+	private boolean visible;
 
 	/**
 	 * 
@@ -62,6 +65,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();
+		if (monitoredPart!=null)
+			uninstallSelectionListener(monitoredPart);
 		service.removePartListener(this);
 		if (reusableHelpPart != null) {
 			reusableHelpPart.dispose();
@@ -96,9 +101,9 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 			return;
 		if (!reusableHelpPart.isMonitoringContextHelp())
 			return;
-		IWorkbenchPart part = ref.getPart(false);
-		if (part.equals(this))
+		if (isThisPart(ref))
 			return;
+		IWorkbenchPart part = ref.getPart(false);
 		Display display = part.getSite().getShell().getDisplay();
 		Control c = display.getFocusControl();
 		if (c != null && c.isVisible() && !c.isDisposed()) {
@@ -107,13 +112,36 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 				reusableHelpPart.update(provider, c);
 				if ((provider.getContextHelpChangeMask() & IContextHelpProvider.SELECTION)!=0) {
 					// context help changes with selections
-					part.getSite().getSelectionProvider().addSelectionChangedListener(this);
-					monitoredPart = part;
+					installSelectionListener(part);
 				}
 			}
 			else
 				reusableHelpPart.update(c);
 		}
+	}
+	
+	private void installSelectionListener(IWorkbenchPart part) {
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		if (provider instanceof IPostSelectionProvider)
+			((IPostSelectionProvider)provider).addPostSelectionChangedListener(this);
+		else
+			provider.addSelectionChangedListener(this);
+		monitoredPart = part;
+		System.out.println("Installing "+part.getSite().getRegisteredName());
+	}
+	private void uninstallSelectionListener(IWorkbenchPart part) {
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		if (provider instanceof IPostSelectionProvider)
+			((IPostSelectionProvider)provider).removePostSelectionChangedListener(this);
+		else
+			provider.removeSelectionChangedListener(this);
+		monitoredPart = null;
+		System.out.println("Uninstalling "+part.getSite().getRegisteredName());
+	}
+	
+	private boolean isThisPart(IWorkbenchPartReference ref) {
+		IWorkbenchPart part = ref.getPart(false);
+		return part.equals(this);
 	}
 	
 	private void updateActivePart() {
@@ -133,8 +161,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	private void handlePartDeactivation(IWorkbenchPartReference ref) {
 		IWorkbenchPart part = ref.getPart(false);
 		if (monitoredPart!=null && part!=null && part.equals(monitoredPart)) {
-			monitoredPart.getSite().getSelectionProvider().removeSelectionChangedListener(this);
-			monitoredPart = null;
+			uninstallSelectionListener(part);
 		}
 	}
 
@@ -144,6 +171,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partActivated(final IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef))
+			visible = true;
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				handlePartActivation(partRef);
@@ -157,6 +186,10 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef)) {
+			visible= true;
+			selectionChanged(null);
+		}
 	}
 
 	/*
@@ -183,6 +216,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partHidden(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef))
+			visible = false;
 	}
 
 	/*
@@ -199,6 +234,10 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partOpened(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef)) {
+			visible = true;
+			selectionChanged(null);
+		}
 	}
 
 	/*
@@ -207,6 +246,10 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partVisible(IWorkbenchPartReference partRef) {
+		if (isThisPart(partRef)) {
+			visible=true;
+			selectionChanged(null);
+		}
 	}
 
 	/*
@@ -222,6 +265,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
+		if (!visible) return;
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateActivePart();

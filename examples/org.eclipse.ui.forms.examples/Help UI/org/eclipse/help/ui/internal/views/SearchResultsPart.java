@@ -10,14 +10,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.eclipse.help.internal.search.SearchHit;
-import org.eclipse.help.ui.internal.search.*;
 import org.eclipse.help.ui.internal.search.HelpSearchResult;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.help.ui.internal.search.SorterByScore;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -83,6 +87,10 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public void setVisible(boolean visible) {
 		searchResults.setVisible(visible);
 	}
+	void clearResults() {
+		searchResults.setText("", false, false);
+		parent.reflow();
+	}
 	void updateResults(String phrase, StringBuffer buff, HelpSearchResult hresult) {
 		this.phrase = phrase;
 		buff.delete(0, buff.length());
@@ -141,5 +149,17 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	private void doOpenLink(Object href) {
 		parent.showURL((String)href);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public boolean fillContextMenu(IMenuManager manager) {
+		return parent.fillFormContextMenu(searchResults, manager);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean hasFocusControl(Control control) {
+		return searchResults.equals(control);
 	}
 }

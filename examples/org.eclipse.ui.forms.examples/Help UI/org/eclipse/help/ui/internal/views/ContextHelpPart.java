@@ -8,6 +8,7 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.context.IStyledContext;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -37,6 +38,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		section.setText("About");
 		text = toolkit.createFormText(section, true);
 		section.setClient(text);
+		section.marginWidth = 5;
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
 		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
@@ -201,5 +203,17 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			return true;
 		}
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public boolean fillContextMenu(IMenuManager manager) {
+		return parent.fillFormContextMenu(text, manager);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
+	 */
+	public boolean hasFocusControl(Control control) {
+		return text.equals(control);
 	}
 }
