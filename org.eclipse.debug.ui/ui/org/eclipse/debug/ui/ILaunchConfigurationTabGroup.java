@@ -10,8 +10,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  
 /**
- * NOTE: THIS INTERFACE IS NOT YET IN USE - DO NOT USE
- * 
  * A launch configuration tab group is used to edit/view attributes
  * of a specific type of launch configuration. Launch
  * configurations are presented in a dialog, with a tab folder.

@@ -9,6 +9,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabExtension;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +46,12 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * Current message, or <code>null</code>
 	 */
 	private String fMessage;
+	
+	/**
+	 * Extension associated with this tab, or <code>null</code>
+	 * @deprecated - to be removed
+	 */
+	private LaunchConfigurationTabExtension fExtension;
 	
 	/**
 	 * Returns the dialog this tab is contained in, or
@@ -181,5 +188,28 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		return SWTUtil.createPushButton(parent, label, image);	
 	}
 	
+	/**
+	 * Sets the tab extension associated with this tab. This is temporary
+	 * support until clients migrate from tabs to tab groups.
+	 * 
+	 * @param extension launch tab extension
+	 * @deprecated will be removed
+	 */
+	public void setLaunchConfigurationTabExtension(LaunchConfigurationTabExtension extension) {
+		fExtension = extension;
+	}	
+	
+	/**
+	 * Subclasses should implement this method - to be removed.
+	 * 
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		if (fExtension != null) {
+			return fExtension.getName();
+		}
+		return "<Unspecified>";
+	}
+
 }
 

@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui.launchConfigurations;
+package org.eclipse.debug.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -19,10 +19,6 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -41,10 +37,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
- * This tab appears in the LaunchConfigurationDialog for all launch configuration
- * types.  It collects information that governs where the configuration is stored,
- * whether or not it is shared via standard VCM mechanisms, and which perspectives to
- * open/switch to on a run or debug launch.
+ * Common launch configuration tab to specify the location a launch configuration
+ * is stored, whether it should appear in the favorites list, and perspective
+ * switching for an associated launch.
+ * <p>
+ * Clients may instantiate this class. This class is not intended to be subclassed.
+ * </p>
+ * @since 2.0
  */
 public class CommonTab extends AbstractLaunchConfigurationTab {
 		
@@ -218,55 +217,55 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Create some empty space 
 	 */
-	protected void createVerticalSpacer(Composite comp) {
+	private void createVerticalSpacer(Composite comp) {
 		new Label(comp, SWT.NONE);
 	}
 
-	protected void setSharedLocationButton(Button sharedLocationButton) {
+	private void setSharedLocationButton(Button sharedLocationButton) {
 		this.fSharedLocationButton = sharedLocationButton;
 	}
 
-	protected Button getSharedLocationButton() {
+	private Button getSharedLocationButton() {
 		return fSharedLocationButton;
 	}
 
-	protected void setSharedLocationText(Text sharedLocationText) {
+	private void setSharedLocationText(Text sharedLocationText) {
 		this.fSharedLocationText = sharedLocationText;
 	}
 
-	protected Text getSharedLocationText() {
+	private Text getSharedLocationText() {
 		return fSharedLocationText;
 	}
 
-	protected void setSharedLocationLabel(Label sharedLocationLabel) {
+	private void setSharedLocationLabel(Label sharedLocationLabel) {
 		this.fSharedLocationLabel = sharedLocationLabel;
 	}
 
-	protected Label getSharedLocationLabel() {
+	private Label getSharedLocationLabel() {
 		return fSharedLocationLabel;
 	}
 
-	protected void setLocalSharedLabel(Label localSharedLabel) {
+	private void setLocalSharedLabel(Label localSharedLabel) {
 		fLocalSharedLabel = localSharedLabel;
 	}
 
-	protected Label getLocalSharedLabel() {
+	private Label getLocalSharedLabel() {
 		return fLocalSharedLabel;
 	}
 
- 	protected void setLocalRadioButton(Button button) {
+ 	private void setLocalRadioButton(Button button) {
  		fLocalRadioButton = button;
  	}
  	
- 	protected Button getLocalRadioButton() {
+ 	private Button getLocalRadioButton() {
  		return fLocalRadioButton;
  	} 	
  	
- 	protected void setSharedRadioButton(Button button) {
+ 	private void setSharedRadioButton(Button button) {
  		fSharedRadioButton = button;
  	}
  	
- 	protected Button getSharedRadioButton() {
+ 	private Button getSharedRadioButton() {
  		return fSharedRadioButton;
  	} 	
  	
@@ -276,7 +275,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @return a combo box
 	 */
-	protected Combo getDebugPerspectiveCombo() {
+	private Combo getDebugPerspectiveCombo() {
 		return fDebugPerspectiveCombo;
 	}
 
@@ -296,7 +295,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @return a combo box
 	 */
-	protected Combo getRunPerspectiveCombo() {
+	private Combo getRunPerspectiveCombo() {
 		return fRunPerspectiveCombo;
 	}
 
@@ -334,22 +333,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return fSwitchToLabel;
 	}
 
-	protected void handleSharedRadioButtonSelected() {
+	private void handleSharedRadioButtonSelected() {
 		setSharedEnabled(isShared());
 		updateLaunchConfigurationDialog();
 	}
 	
-	protected void setSharedEnabled(boolean enable) {
+	private void setSharedEnabled(boolean enable) {
 		getSharedLocationLabel().setEnabled(enable);
 		getSharedLocationText().setEnabled(enable);
 		getSharedLocationButton().setEnabled(enable);
 	}
 	
-	protected boolean isShared() {
+	private boolean isShared() {
 		return getSharedRadioButton().getSelection();
 	}
 	
-	protected void handleSharedLocationButtonSelected() {
+	private void handleSharedLocationButtonSelected() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 																	   getWorkspaceRoot(),
 																	   false,
@@ -372,7 +371,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}		
 	}
 	
-	protected IContainer getContainer(String path) {
+	private IContainer getContainer(String path) {
 		Path containerPath = new Path(path);
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
@@ -384,7 +383,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param label perspective label
 	 * @return perspective descriptor
 	 */
-	protected IPerspectiveDescriptor getPerspectiveWithLabel(String label) {		
+	private IPerspectiveDescriptor getPerspectiveWithLabel(String label) {		
 		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithLabel(label);
 	}
 	
@@ -395,7 +394,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param id perspective identifier
 	 * @return perspective descriptor
 	 */
-	protected IPerspectiveDescriptor getPerspectiveWithId(String id) {		
+	private IPerspectiveDescriptor getPerspectiveWithId(String id) {		
 		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
 	}	
 
@@ -405,7 +404,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @param combo combo box
 	 */
-	protected void fillWithPerspectives(Combo combo) {
+	private void fillWithPerspectives(Combo combo) {
 		combo.add(PERSPECTIVE_NONE);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] persps = reg.getPerspectives();
@@ -425,14 +424,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateFavoritesFromConfig(configuration);
 	}
 	
-	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
+	private void updateLocalSharedFromConfig(ILaunchConfiguration config) {
 		boolean isShared = !config.isLocal();
 		getSharedRadioButton().setSelection(isShared);
 		getLocalRadioButton().setSelection(!isShared);
 		setSharedEnabled(isShared);
 	}
 	
-	protected void updateSharedLocationFromConfig(ILaunchConfiguration config) {
+	private void updateSharedLocationFromConfig(ILaunchConfiguration config) {
 		IFile file = config.getFile();
 		if (file != null) {
 			IContainer parent = file.getParent();
@@ -443,7 +442,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	protected void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
+	private void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
 		ILaunchConfigurationType type = null;
 		String runPerspID = null;
 		try {
@@ -461,7 +460,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getRunPerspectiveLabel().setEnabled(enable);
 	}
 	
-	protected void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
+	private void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
 		ILaunchConfigurationType type = null;
 		String debugPerspID = null;
 		try {			
@@ -479,7 +478,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		getDebugPerspectiveLabel().setEnabled(enable);
 	}
 	
-	protected void updateFavoritesFromConfig(ILaunchConfiguration config) {
+	private void updateFavoritesFromConfig(ILaunchConfiguration config) {
 		ILaunchConfigurationType type = null;
 		boolean isDebug = false;
 		boolean isRun = false;
@@ -511,7 +510,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param combo combo box with perspective labels
 	 * @param id perspective identifier or <code>null</code>
 	 */
-	protected void updatePerspectiveCombo(Combo combo, String id) {
+	private void updatePerspectiveCombo(Combo combo, String id) {
 		if (id == null) {
 			combo.setText(PERSPECTIVE_NONE);
 		} else {
@@ -525,7 +524,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	protected void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
+	private void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
 		if (isShared()) {
 			String containerPathString = getSharedLocationText().getText();
 			IContainer container = (IContainer) getContainer(containerPathString);
@@ -539,7 +538,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * Update the run perspective attribute based on current
 	 * UI settings.
 	 */
-	protected void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
+	private void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
 		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getRunPerspectiveCombo().getText());
 		String perspID = null;
 		if (descriptor != null) {
@@ -552,7 +551,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * Update the debug perspective attribute based on current
 	 * UI settings.
 	 */
-	protected void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
+	private void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
 		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getDebugPerspectiveCombo().getText());
 		String perspID = null;
 		if (descriptor != null) {
@@ -568,7 +567,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configs.
 	 */
-	protected void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
+	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
 		if (getDebugFavoriteButton().getSelection()) {
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, true);
 		} else {
@@ -640,7 +639,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @return check box
 	 */
-	protected Button getDebugFavoriteButton() {
+	private Button getDebugFavoriteButton() {
 		return fDebugFavoriteButton;
 	}
 
@@ -660,7 +659,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @return check box
 	 */
-	protected Button getRunFavoriteButton() {
+	private Button getRunFavoriteButton() {
 		return fRunFavoriteButton;
 	}
 
@@ -673,6 +672,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void setRunFavoriteButton(Button button) {
 		fRunFavoriteButton = button;
 	}	
+
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "&Common";
+	}
 
 }
 

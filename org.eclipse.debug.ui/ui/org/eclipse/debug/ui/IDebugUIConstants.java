@@ -567,4 +567,12 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_DEBUG_ACTION_GROUPS= "debugActionGroups";	 //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration tab groups extension point identifier
+	 * (value <code>"launchConfigurationTabGroups"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS= "launchConfigurationTabGroups";	 //$NON-NLS-1$	
 }

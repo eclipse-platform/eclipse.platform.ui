@@ -213,5 +213,12 @@ public interface ILaunchConfigurationTab {
 	 *  launch configuration
 	 */
 	public void launched(ILaunch launch);
+	
+	/**
+	 * Returns the name of this tab.
+	 * 
+	 * @return the name of this tab
+	 */
+	public String getName();
 }
 

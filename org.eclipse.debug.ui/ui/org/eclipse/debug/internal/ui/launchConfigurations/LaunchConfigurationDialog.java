@@ -36,6 +36,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -169,9 +170,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private ILaunchConfiguration fUnderlyingConfig;
 	
 	/**
-	 * The current tab extensions being displayed
+	 * The current tab group being displayed
 	 */
-	private ILaunchConfigurationTab[] fTabs;
+	private ILaunchConfigurationTabGroup fTabGroup;
 	
 	/**
 	 * The type of config tabs are currently displayed
@@ -505,11 +506,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 
 		ILaunchConfiguration config = null;
 		try {
-	 		ILaunchConfigurationTab[] tabs = createTabs(configType);
-	 		for (int i = 0; i < tabs.length; i++) {
-	 			tabs[i].setDefaults(workingCopy);
-	 			tabs[i].dispose();
-	 		}
+	 		ILaunchConfigurationTabGroup group= createGroup(configType);
+	 		group.setDefaults(workingCopy);
+	 		group.dispose();
 	 		if (workingCopy.getName().trim().length() == 0) {
 	 			// assign a name if not done yet
 	 			IResource res = getResourceContext();
@@ -530,24 +529,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Returns tab extensions for the given type of launch configuration.
+	 * Returns tab group for the given type of launch configuration.
 	 * Tabs are initialized to be contained in this dialog.
 	 * 
-	 * @exception CoreException if unable to instantiate a tab
+	 * @exception CoreException if unable to instantiate a tab group
 	 */
-	protected ILaunchConfigurationTab[] createTabs(ILaunchConfigurationType configType) throws CoreException {
+	protected ILaunchConfigurationTabGroup createGroup(ILaunchConfigurationType configType) throws CoreException {
 		// initialize with default values
 		// build the new tabs
- 		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
- 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[exts.length];
- 		for (int i = 0; i < exts.length; i++) {
- 			String mode = exts[i].getMode();
- 			if (mode == null || mode.equals(getMode())) {
-	 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
- 				tabs[i].setLaunchConfigurationDialog(this);
- 			}
- 		}	
- 		return tabs;
+ 		ILaunchConfigurationTabGroup group = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType);
+ 		group.createTabs(this, getMode());
+ 		return group;
 	}
 	
 	/**
@@ -1181,22 +1173,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		
 	 		// update the name field before to avoid verify error 
 	 		getNameTextWidget().setText(config.getName());	 		
-	 		
-	 		// update the tabs with the new working copy
-	 		ILaunchConfigurationTab[] tabs = getTabs();
-	 		
+	 			 		
 	 		// Set the defaults for all tabs before any are initialized
 	 		// so that every tab can see ALL the default values
 	 		if (init) {
-	 			for (int i = 0; i < tabs.length; i++) {
-					tabs[i].setDefaults(getLaunchConfiguration());
-				}
+				getTabGroup().setDefaults(getLaunchConfiguration());
 	 		}
 
 	 		// update the tabs with the new working copy	 		
-	 		for (int i = 0; i < tabs.length; i++) {
-				tabs[i].initializeFrom(getLaunchConfiguration());
-	 		}	 		
+			getTabGroup().initializeFrom(getLaunchConfiguration());
 	 		
 	 		// update the name field after in case client changed it 
 	 		getNameTextWidget().setText(config.getName());
@@ -1241,18 +1226,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		disposeExistingTabs();
 
 		// build the new tabs
- 		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
- 		ILaunchConfigurationTab[] tabs = null;
+ 		ILaunchConfigurationTabGroup group = null;
  		try {
-	 		tabs = createTabs(configType);
+	 		group = createGroup(configType);
  		} catch (CoreException ce) {
  			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs.",ce.getStatus());
  			return;
  		}
  		
- 		for (int i = 0; i < exts.length; i++) {
+ 		ILaunchConfigurationTab[] tabs = group.getTabs();
+ 		for (int i = 0; i < tabs.length; i++) {
  			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
- 			String name = exts[i].getName();
+ 			String name = tabs[i].getName();
  			if (name == null) {
  				name = "unspecified";
  			}
@@ -1263,19 +1248,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 			tab.setControl(control);
  			}
  		}
- 		setTabs(tabs);	
+ 		setTabGroup(group);	
  		setTabType(configType);
  		getEditArea().setVisible(true);
  	}
  	
  	protected void disposeExistingTabs() {
 		TabItem[] oldTabs = getTabFolder().getItems();
-		ILaunchConfigurationTab[] tabs = getTabs();
+		if (getTabGroup() != null) {
+			getTabGroup().dispose();
+		}
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
-			tabs[i].dispose();
 		} 		
-		setTabs(null);
+		setTabGroup(null);
 		setTabType(null);
  	}
  	
@@ -1387,19 +1373,32 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	}	 	
  	
  	/**
- 	 * Sets the current tab extensions being displayed
+ 	 * Sets the current tab group being displayed
  	 * 
- 	 * @param tabs the current tab extensions being displayed
+ 	 * @param group the current tab group being displayed
  	 */
- 	private void setTabs(ILaunchConfigurationTab[] tabs) {
- 		fTabs = tabs;
+ 	private void setTabGroup(ILaunchConfigurationTabGroup group) {
+ 		fTabGroup = group;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the current tab group
+ 	 * 
+ 	 * @return the current tab group, or <code>null</code> if none
+ 	 */
+ 	public ILaunchConfigurationTabGroup getTabGroup() {
+ 		return fTabGroup;
  	}
  	
  	/**
  	 * @see ILaunchConfigurationDialog#getTabs()
  	 */
  	public ILaunchConfigurationTab[] getTabs() {
- 		return fTabs;
+ 		if (getTabGroup() == null) {
+ 			return null;
+ 		} else {
+ 			return getTabGroup().getTabs();
+ 		}
  	} 	
  	
 	/**
@@ -1636,11 +1635,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void updateWorkingCopyFromPages() {
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
-		ILaunchConfigurationTab[] tabs = getTabs();
-		if (tabs != null) {
-			for (int i = 0; i < tabs.length; i++) {
-				tabs[i].performApply(workingCopy);
-			}
+		if (getTabGroup() != null) {
+			getTabGroup().performApply(workingCopy);
 		}
 	}
 	
@@ -1709,22 +1705,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		// notify pages
 		if (launch != null) {
-			ILaunchConfigurationTab[] tabs = getTabs();
+			ILaunchConfigurationTabGroup group = getTabGroup();
 			boolean disposeTabs = false;
-			if (tabs == null) {
+			if (group == null) {
 				// when doing a single click launch, tabs
 				// may not exist - create and then dispose
 				// so we can notify them of a launch
 				disposeTabs = true;
-				tabs = createTabs(config.getType());
+				group = createGroup(config.getType());
 			}
-			for (int i = 0; i < tabs.length; i++) {
-				tabs[i].launched(launch);
-			}
+			group.launched(launch);
 			if (disposeTabs) {
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].dispose();
-				}
+				group.dispose();
 			}
 		}
 		
