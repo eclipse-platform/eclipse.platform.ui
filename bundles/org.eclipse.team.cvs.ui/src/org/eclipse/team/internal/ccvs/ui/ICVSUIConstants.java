@@ -15,6 +15,7 @@ public interface ICVSUIConstants {
 	// overlays
 	public final String IMG_MERGEABLE_CONFLICT = "ovr16/confauto_ov.gif";
 	public final String IMG_QUESTIONABLE = "ovr16/question_ov.gif";
+	public final String IMG_MERGED = "ovr16/merged_ov.gif";
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif";

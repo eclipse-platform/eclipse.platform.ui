@@ -46,6 +46,7 @@ public class CVSDecorationRunnable implements Runnable {
 	private ImageDescriptor dirty;
 	private ImageDescriptor checkedIn;
 	private ImageDescriptor checkedOut;
+	private ImageDescriptor merged;
 
 	// Provides resources to be decorated and is notified when decoration has been calculated
 	private IDecorationNotifier notifier;
@@ -69,11 +70,10 @@ public class CVSDecorationRunnable implements Runnable {
 
 	/* package */
 	CVSDecorationRunnable(IDecorationNotifier notifier) {
-
 		dirty = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		checkedOut = new CachedImageDescriptor(TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
-
+		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
 		this.notifier = notifier;
 	}
 
@@ -196,16 +196,36 @@ public class CVSDecorationRunnable implements Runnable {
 		boolean showHasRemote = store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
 		boolean showAdded = store.getBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION);
 		
+		if (showAdded && resource.getType() == IResource.FILE) {
+			try {
+				IPath location = resource.getLocation();
+				if(location!=null) {
+					ICVSFile cvsFile = new LocalFile(location.toFile());
+					ResourceSyncInfo info = cvsFile.getSyncInfo();
+					// show merged icon if file has been merged but has not been edited (e.g. on commit it will be ignored)
+					if(info!=null && info.isNeedsMerge(cvsFile.getTimeStamp())) {
+						overlays.add(merged);
+					// show added icon if file has been added locally.
+					} else if(info!=null && info.isAdded()) {
+						overlays.add(checkedOut);
+					}					
+				}
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e.getStatus());
+				return null;				
+			}
+		}
+		
+		// show outgoing arrow
 		if(showDirty && isDirty) {
 				overlays.add(dirty);
 		}
 		
+		// show remote icon
 		if (showHasRemote && provider.hasRemote(resource)) {
 			overlays.add(checkedIn);
 		}
-		if (showAdded && resource.getType() == IResource.FILE && provider.isCheckedOut(resource)) {
-			overlays.add(checkedOut);
-		}
+				
 		if(overlays.isEmpty()) {
 			return null;
 		} else {		
@@ -246,8 +266,9 @@ public class CVSDecorationRunnable implements Runnable {
 							}
 						}
 						if (!cvsResource.isFolder()) {
+							ResourceSyncInfo info = cvsResource.getSyncInfo();
+							// file is dirty or file has been merged by an update
 							if (((ICVSFile) cvsResource).isModified()) {
-								// file has changed, show as dirty
 								throw DECORATOR_EXCEPTION;
 							}
 						}
