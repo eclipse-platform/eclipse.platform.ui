@@ -17,9 +17,16 @@ import java.util.Map;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -32,11 +39,7 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
  * Support for source viewer decoration.
@@ -45,6 +48,114 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class SourceViewerDecorationSupport {
 	
+	
+	/**
+	 * Underline drawing strategy.
+	 * 
+	 * @since 3.0
+	 */
+	private static final class UnderlineDrawingStrategy implements IDrawingStrategy {
+		/**
+		 * {@inheritdoc}
+		 */
+		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+				
+				Point left= textWidget.getLocationAtOffset(offset);
+				Point right= textWidget.getLocationAtOffset(offset + length);
+				int y= left.y + textWidget.getLineHeight() - 1;
+				
+				gc.setForeground(color);
+				gc.drawLine(left.x, y, right.x, y);
+									
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+	}
+	
+	/**
+	 * Draws a box around a given range.
+	 * 
+	 * @since 3.0
+	 */
+	private static final class BoxDrawingStrategy implements IDrawingStrategy {
+		/**
+		 * {@inheritdoc}
+		 */
+		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+				
+				Point left= textWidget.getLocationAtOffset(offset);
+				Point right= textWidget.getLocationAtOffset(offset + length);
+				int x1= left.x;
+				int x2= right.x - 1;
+				int y1= left.y;
+				int y2= y1 + textWidget.getLineHeight() - 1;
+				
+				gc.setForeground(color);
+				gc.drawRectangle(x1, y1, x2 - x1, y2 - y1);
+									
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+	}
+	
+	/**
+	 * Draws an iBeam at the given offset, the length is ignored.
+	 * 
+	 * @since 3.0
+	 */
+	private static final class IBeamStrategy implements IDrawingStrategy {
+		/**
+		 * {@inheritdoc}
+		 */
+		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+				
+				Point left= textWidget.getLocationAtOffset(offset);
+				int x1= left.x;
+				int y1= left.y + 1;
+				
+				gc.setForeground(color);
+				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight() - 2);
+									
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+	}
+	
+	/**
+	 * The box drawing strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgBoxStrategy= new BoxDrawingStrategy();
+	
+	/**
+	 * The null drawing strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgNullStrategy= new AnnotationPainter.NullStrategy();
+	
+	/**
+	 * The underline drawing strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgUnderlineStrategy= new UnderlineDrawingStrategy();
+	
+	/**
+	 * The iBeam drawing strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgIBeamStrategy= new IBeamStrategy();
+	
+	/**
+	 * The squigglies drawing strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgSquiggliesStrategy= new AnnotationPainter.SquiggliesStrategy();
 	
 	/*
 	 * @see IPropertyChangeListener
@@ -170,18 +281,39 @@ public class SourceViewerDecorationSupport {
 		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
 			Object type= e.next();
-			if (areAnnotationsShown(type))
-				showAnnotations(type, false, false);
+			int style= getAnnotationDecorationType(type);
+			if (style != AnnotationPreference.STYLE_NONE)
+				showAnnotations(type, false, style, false);
 			else
 				hideAnnotations(type, false, false);
 			if (areAnnotationsHighlighted(type))
-				showAnnotations(type, true, false);
+				showAnnotations(type, true, 0, false);
 			else
 				hideAnnotations(type, true, false);
+			
 		}
 		updateAnnotationPainter();
 	}
 	
+	/**
+	 * @param type
+	 * @return
+	 */
+	private int getAnnotationDecorationType(Object annotationType) {
+		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
+			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+			if (info != null) {
+				String key= info.getTextStylePreferenceKey();
+				if (key != null)
+					return fPreferenceStore.getInt(key);
+				else
+					// legacy
+					return AnnotationPreference.STYLE_SQUIGGLIES;
+			}
+		}
+		return AnnotationPreference.STYLE_NONE;
+	}
+
 	/**
 	 * Updates the annotation overview for all configured annotation types.
 	 */
@@ -392,9 +524,10 @@ public class SourceViewerDecorationSupport {
 				return;
 			}
 			
-			if (info.getTextPreferenceKey().equals(p)) {
-				if (areAnnotationsShown(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), false, true);
+			if (info.getTextPreferenceKey().equals(p) || info.getTextStylePreferenceKey() != null && info.getTextStylePreferenceKey().equals(p)) {
+				int style= getAnnotationDecorationType(info.getAnnotationType());
+				if (AnnotationPreference.STYLE_NONE != style)
+					showAnnotations(info.getAnnotationType(), false, style, true);
 				else
 					hideAnnotations(info.getAnnotationType(), false, true);
 				return;
@@ -402,12 +535,18 @@ public class SourceViewerDecorationSupport {
 			
 			if (info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p)) {
 				if (areAnnotationsHighlighted(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), true, true);
+					showAnnotations(info.getAnnotationType(), true, 0, true);
 				else
 					hideAnnotations(info.getAnnotationType(), true, true);
 				return;
 			}
 			
+			int style= getAnnotationDecorationType(info.getAnnotationType());
+			if (style != AnnotationPreference.STYLE_NONE)
+				showAnnotations(info.getAnnotationType(), false, style, false);
+			else
+				hideAnnotations(info.getAnnotationType(), false, false);
+
 			if (info.getOverviewRulerPreferenceKey().equals(p)) {
 				if (isAnnotationOverviewShown(info.getAnnotationType()))
 					showAnnotationOverview(info.getAnnotationType());
@@ -606,7 +745,7 @@ public class SourceViewerDecorationSupport {
 	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
 	 * @param updatePainter if <code>true</code> update the annotation painter
 	 */
-	private void showAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
+	private void showAnnotations(Object annotationType, boolean highlighting, int style, boolean updatePainter) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
@@ -618,8 +757,27 @@ public class SourceViewerDecorationSupport {
 			fAnnotationPainter.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			if (highlighting)
 				fAnnotationPainter.addHighlightAnnotationType(annotationType);
-			else
-				fAnnotationPainter.addAnnotationType(annotationType);
+			else {
+				IDrawingStrategy strategy;
+				switch (style) {
+					case AnnotationPreference.STYLE_BOX:
+						strategy= fgBoxStrategy;
+						break;
+					case AnnotationPreference.STYLE_UNDERLINE:
+						strategy= fgUnderlineStrategy;
+						break;
+					case AnnotationPreference.STYLE_SQUIGGLIES:
+						strategy= fgSquiggliesStrategy;
+						break;
+					case AnnotationPreference.STYLE_IBEAM:
+						strategy= fgIBeamStrategy;
+						break;
+					case AnnotationPreference.STYLE_NONE:
+					default:
+						strategy= fgNullStrategy;
+				}
+				fAnnotationPainter.addAnnotationType(annotationType, strategy);
+			}
 			
 			if (updatePainter)
 				updateAnnotationPainter();

@@ -71,6 +71,8 @@ public class MarkerAnnotationPreferences {
 				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());
 			if (info.getHighlightPreferenceKey() != null)
 				store.setDefault(info.getHighlightPreferenceKey(), info.getHighlightPreferenceValue());
+			if (info.getTextStylePreferenceKey() != null)
+				store.setDefault(info.getTextStylePreferenceKey(), info.getTextStyleValue());
 		}
 	}
 	
@@ -316,6 +318,26 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("annotationImageProvider"); //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setAnnotationImageProviderData(element, "annotationImageProvider"); //$NON-NLS-1$
+		
+		s= element.getAttribute("textStylePreferenceKey"); //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			info.setTextStylePreferenceKey(s);
+		
+		s= element.getAttribute("textStylePreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0) {
+
+			if (s.equals("SQUIGGLIES"))
+				info.setTextStyleValue(AnnotationPreference.STYLE_SQUIGGLIES);
+			else if (s.equals("BOX"))
+				info.setTextStyleValue(AnnotationPreference.STYLE_BOX);
+			else if (s.equals("UNDERLINE"))
+				info.setTextStyleValue(AnnotationPreference.STYLE_UNDERLINE);
+			else if (s.equals("IBEAM"))
+				info.setTextStyleValue(AnnotationPreference.STYLE_IBEAM);
+			else
+				info.setTextStyleValue(AnnotationPreference.STYLE_NONE);
+				
+		}
 		
 		return info;
 	}

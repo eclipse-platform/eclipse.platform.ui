@@ -45,7 +45,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 
 
-
 /**
  * Paints annotations provided by an annotation model as squiggly lines and/or
  * highlighted onto an associated source viewer.
@@ -55,15 +54,134 @@ import org.eclipse.jface.text.TextPresentation;
  */
 public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener, IAnnotationModelListenerExtension, ITextPresentationListener {	
 	
+	
+	/**
+	 * A drawing strategy responsible for drawing a certain decoration.
+	 * 
+	 * @since 3.0
+	 */
+	public interface IDrawingStrategy {
+		/**
+		 * Draws a decoration of the given length start at the given offset in the
+		 * given color onto the specified gc.
+		 * 
+		 * @param gc the grahical context
+		 * @param offset the offset of the line
+		 * @param length the length of the line
+		 * @param color the color of the line
+		 */
+		void draw(GC gc, StyledText textWidget, int offset, int length, Color color);
+	}
+	
+	/**
+	 * Squiggly drawing strategy.
+	 * 
+	 * @since 3.0
+	 */
+	public static class SquiggliesStrategy implements IDrawingStrategy {
+		/**
+		 * {@inheritdoc}
+		 */
+		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+				
+				Point left= textWidget.getLocationAtOffset(offset);
+				Point right= textWidget.getLocationAtOffset(offset + length);
+				
+				gc.setForeground(color);
+				int[] polyline= computePolyline(left, right, gc.getFontMetrics().getHeight());
+				gc.drawPolyline(polyline);
+									
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+		
+		/**
+		 * Computes an array of alternating x and y values which are the corners of the squiggly line of the
+		 * given height between the given end points.
+		 *  
+		 * @param left the left end point
+		 * @param right the right end point
+		 * @param height the height of the squiggly line
+		 * @return the array of alternating x and y values which are the corners of the squiggly line
+		 */
+		private int[] computePolyline(Point left, Point right, int height) {
+			
+			final int WIDTH= 4; // must be even
+			final int HEIGHT= 2; // can be any number
+//			final int MINPEEKS= 2; // minimal number of peeks
+			
+			int peeks= (right.x - left.x) / WIDTH;
+//			if (peeks < MINPEEKS) {
+//				int missing= (MINPEEKS - peeks) * WIDTH;
+//				left.x= Math.max(0, left.x - missing/2);
+//				peeks= MINPEEKS;
+//			}
+			
+			int leftX= left.x;
+					
+			// compute (number of point) * 2
+			int length= ((2 * peeks) + 1) * 2;
+			if (length < 0)
+				return new int[0];
+				
+			int[] coordinates= new int[length];
+			
+			// cache peeks' y-coordinates
+			int bottom= left.y + height - 1;
+			int top= bottom - HEIGHT;
+			
+			// populate array with peek coordinates
+			for (int i= 0; i < peeks; i++) {
+				int index= 4 * i;
+				coordinates[index]= leftX + (WIDTH * i);
+				coordinates[index+1]= bottom;
+				coordinates[index+2]= coordinates[index] + WIDTH/2;
+				coordinates[index+3]= top;
+			}
+			
+			// the last down flank is missing
+			coordinates[length-2]= left.x + (WIDTH * peeks);
+			coordinates[length-1]= bottom;
+			
+			return coordinates;
+		}
+	}
+	
+	/**
+	 * Drawing strategy that does nothing.
+	 * @since 3.0
+	 */
+	public static final class NullStrategy implements IDrawingStrategy {
+		/**
+		 * {@inheritdoc}
+		 */
+		public void draw(GC gc, StyledText textWidget, int offset, int length, Color color) {
+			// do nothing
+		}
+	}
+	
 	/**
 	 * Tells whether this class is in debug mode.
 	 * @since 3.0
 	 */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/AnnotationPainter"));  //$NON-NLS-1$//$NON-NLS-2$
+	/**
+	 * The squiggly painter strategy.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgSquigglyDrawer= new SquiggliesStrategy();
+	/**
+	 * The default strategy that does nothing.
+	 * @since 3.0
+	 */
+	private static IDrawingStrategy fgNullDrawer= new NullStrategy();
 	
 	/** 
 	 * The presentation information (decoration) for an annotation.  Each such
-	 * object represents one squiggly.
+	 * object represents one decoration drawn on the text area, such as squiggly lines
+	 * and underlines.
 	 */
 	private static class Decoration {
 		/** The position of this decoration */
@@ -75,8 +193,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * @since 3.0
 		 */
 		private int fLayer;
+		/**
+		 * The painter strategy for this decoration.
+		 * @since 3.0
+		 */
+		private IDrawingStrategy fPainter;
 	}
-	
 	
 	/** Indicates whether this painter is active */
 	private boolean fIsActive= false;
@@ -87,7 +209,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/** The associated source viewer */
 	private ISourceViewer fSourceViewer;
 	/** The cached widget of the source viewer */
-	private StyledText fTextWidget;
+	private StyledText textWidget;
 	/** The annotation model providing the annotations to be drawn */
 	private IAnnotationModel fModel;
 	/** The annotation access */
@@ -142,6 +264,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	private boolean fInputDocumentAboutToBeChanged;
+	/**
+	 * The map of registerd drawing strategies.
+	 * @since 3.0
+	 */
+	private Map fDrawingStrategies= new HashMap();
 
 	
 	/**
@@ -155,7 +282,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	public AnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 		fSourceViewer= sourceViewer;
 		fAnnotationAccess= access;
-		fTextWidget= sourceViewer.getTextWidget();
+		textWidget= sourceViewer.getTextWidget();
 	}
 	
 	/** 
@@ -174,7 +301,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void enablePainting() {
 		if (!fIsPainting && hasDecorations()) {
 			fIsPainting= true;
-			fTextWidget.addPaintListener(this);
+			textWidget.addPaintListener(this);
 			handleDrawRequest(null);
 		}
 	}
@@ -188,7 +315,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void disablePainting(boolean redraw) {
 		if (fIsPainting) {
 			fIsPainting= false;
-			fTextWidget.removePaintListener(this);
+			textWidget.removePaintListener(this);
 			if (redraw && hasDecorations())
 				handleDrawRequest(null);
 		}
@@ -438,8 +565,36 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		} else {
 			decoration.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
 		}
+		decoration.fPainter= getDrawingStrategy(annotation);
 		
 		return decoration;
+	}
+	
+	/**
+	 * Returns the drawing type for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the annotation painter
+	 * @since 3.0
+	 */
+	private IDrawingStrategy getDrawingStrategy(Annotation annotation) {
+		String type= annotation.getType();
+		IDrawingStrategy strategy = (IDrawingStrategy) fDrawingStrategies.get(type);
+		if (strategy != null)
+			return strategy;
+		
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
+			Object[] sts = ext.getSupertypes(type);
+			for (int i = 0; i < sts.length; i++) {
+				strategy= (IDrawingStrategy) fDrawingStrategies.get(sts[i]);
+				if (strategy != null)
+					return strategy;
+			}
+		}
+		
+		return fgNullDrawer;
+		
 	}
 	
 	/**
@@ -453,7 +608,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private boolean shouldBeDrawn(Object annotationType) {
 		return contains(annotationType, fAllowedAnnotationTypes, fConfiguredAnnotationTypes);
 	}
-	
+
 	/**
 	 * Returns whether the given annotation type should be highlighted.
 	 * 
@@ -620,12 +775,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 	 */
 	public synchronized void modelChanged(final AnnotationModelEvent event) {
-		if (fTextWidget != null && !fTextWidget.isDisposed()) {
+		if (textWidget != null && !textWidget.isDisposed()) {
 			if (fIsSettingModel) {
 				// inside the ui thread -> no need for posting
 				updatePainting(event);
 			} else {
-				Display d= fTextWidget.getDisplay();
+				Display d= textWidget.getDisplay();
 				if (DEBUG && event != null && event.isWorldChange()) {
 					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
 					try {
@@ -637,7 +792,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				if (d != null) {
 					d.asyncExec(new Runnable() {
 						public void run() {
-							if (fTextWidget != null && !fTextWidget.isDisposed())
+							if (textWidget != null && !textWidget.isDisposed())
 								updatePainting(event);
 						}
 					});
@@ -661,13 +816,26 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	
 	/**
 	 * Adds the given annotation type to the list of annotation types whose
-	 * annotations should be painted by this painter. If the annotation  type
+	 * annotations should be painted by this painter using squiggly drawing. If the annotation  type
 	 * is already in this list, this method is without effect.
 	 * 
 	 * @param annotationType the annotation type
 	 */
 	public void addAnnotationType(Object annotationType) {
+		addAnnotationType(annotationType, fgSquigglyDrawer);
+	}
+	
+	/**
+	 * Adds the given annotation type to the list of annotation types whose
+	 * annotations should be painted by this painter using the given drawing strategy. 
+	 * If the annotation  type is already in this list, the old drawing strategy gets replaced.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param drawingStrategy the drawing strategy that should be used for this annotation type
+	 */
+	public void addAnnotationType(Object annotationType, IDrawingStrategy drawingStrategy) {
 		fConfiguredAnnotationTypes.add(annotationType);
+		fDrawingStrategies.put(annotationType, drawingStrategy);
 	}
 	
 	/**
@@ -779,7 +947,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fAllowedHighlightAnnotationTypes.clear();
 		fAllowedHighlightAnnotationTypes= null;
 		
-		fTextWidget= null;
+		textWidget= null;
 		fSourceViewer= null;
 		fAnnotationAccess= null;
 		fModel= null;
@@ -795,9 +963,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
-		if (fTextWidget != null && !fTextWidget.isDisposed()) {	
+		if (textWidget != null && !textWidget.isDisposed()) {	
 			int top= fSourceViewer.getTopIndex();
-			if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
+			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
 				top--;
 			try {
 				IDocument document= fSourceViewer.getDocument();
@@ -813,7 +981,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see PaintListener#paintControl(PaintEvent)
 	 */
 	public void paintControl(PaintEvent event) {
-		if (fTextWidget != null)
+		if (textWidget != null)
 			handleDrawRequest(event.gc);
 	}
 	
@@ -824,7 +992,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private void handleDrawRequest(GC gc) {
 		
-		if (fTextWidget == null) {
+		if (textWidget == null) {
 			// is already disposed
 			return;
 		}
@@ -862,11 +1030,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 							IRegion line= document.getLineInformation(i);
 							int paintStart= Math.max(line.getOffset(), p.getOffset());
 							int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
-							if (paintEnd > paintStart) {
+							if (paintEnd >= paintStart) {
 								// otherwise inside a line delimiter
 								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
 								if (widgetRange != null)
-									draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+									pp.fPainter.draw(gc, textWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
 						}
 						
@@ -907,81 +1075,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * Computes an array of alternating x and y values which are the corners of the squiggly line of the
-	 * given height between the given end points.
-	 *  
-	 * @param left the left end point
-	 * @param right the right end point
-	 * @param height the height of the squiggly line
-	 * @return the array of alternating x and y values which are the corners of the squiggly line
-	 */
-	private int[] computePolyline(Point left, Point right, int height) {
-		
-		final int WIDTH= 4; // must be even
-		final int HEIGHT= 2; // can be any number
-//		final int MINPEEKS= 2; // minimal number of peeks
-		
-		int peeks= (right.x - left.x) / WIDTH;
-//		if (peeks < MINPEEKS) {
-//			int missing= (MINPEEKS - peeks) * WIDTH;
-//			left.x= Math.max(0, left.x - missing/2);
-//			peeks= MINPEEKS;
-//		}
-		
-		int leftX= left.x;
-				
-		// compute (number of point) * 2
-		int length= ((2 * peeks) + 1) * 2;
-		if (length < 0)
-			return new int[0];
-			
-		int[] coordinates= new int[length];
-		
-		// cache peeks' y-coordinates
-		int bottom= left.y + height - 1;
-		int top= bottom - HEIGHT;
-		
-		// populate array with peek coordinates
-		for (int i= 0; i < peeks; i++) {
-			int index= 4 * i;
-			coordinates[index]= leftX + (WIDTH * i);
-			coordinates[index+1]= bottom;
-			coordinates[index+2]= coordinates[index] + WIDTH/2;
-			coordinates[index+3]= top;
-		}
-		
-		// the last down flank is missing
-		coordinates[length-2]= left.x + (WIDTH * peeks);
-		coordinates[length-1]= bottom;
-		
-		return coordinates;
-	}
-	
-	/**
-	 * Draws a squiggly line of the given length start at the given offset in the
-	 * given color.
-	 * 
-	 * @param gc the grahical context
-	 * @param offset the offset of the line
-	 * @param length the length of the line
-	 * @param color the color of the line
-	 */
-	private void draw(GC gc, int offset, int length, Color color) {
-		if (gc != null) {
-			
-			Point left= fTextWidget.getLocationAtOffset(offset);
-			Point right= fTextWidget.getLocationAtOffset(offset + length);
-			
-			gc.setForeground(color);
-			int[] polyline= computePolyline(left, right, gc.getFontMetrics().getHeight());
-			gc.drawPolyline(polyline);
-								
-		} else {
-			fTextWidget.redrawRange(offset, length, true);
-		}
 	}
 	
 	/*

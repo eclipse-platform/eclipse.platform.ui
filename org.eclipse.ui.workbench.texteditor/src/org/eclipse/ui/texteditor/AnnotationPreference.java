@@ -53,6 +53,11 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * @since 2.1
  */
 public class AnnotationPreference {
+	public static final int STYLE_NONE = 0;
+	public static final int STYLE_SQUIGGLIES = 1;
+	public static final int STYLE_BOX = 2;
+	public static final int STYLE_UNDERLINE = 3;
+	public static final int STYLE_IBEAM = 4;
 	
 	/** IDs for presentation preference attributes */
 	
@@ -103,6 +108,10 @@ public class AnnotationPreference {
 	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_KEY= new Object();
 	/** The value for the visibility in the next/previous drop down toolbar action. */
 	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_VALUE= new Object();
+	/** The preference key for the decoration style. */
+	protected final static Object TEXT_STYLE_PREFERENCE_KEY= new Object();
+	/** The value for the text decoration style. */
+	protected final static Object TEXT_STYLE_PREFERENCE_VALUE= new Object();
 	
 	/**
 	 * Array of all supported attributes.
@@ -129,7 +138,9 @@ public class AnnotationPreference {
 			OVERVIEW_RULER_PREFERENCE_KEY,
 			OVERVIEW_RULER_PREFERENCE_VALUE,
 			SHOW_IN_NAVIGATION_DROPDOWN_KEY,
-			SHOW_IN_NAVIGATION_DROPDOWN_VALUE
+			SHOW_IN_NAVIGATION_DROPDOWN_VALUE,
+			TEXT_STYLE_PREFERENCE_KEY,
+			TEXT_STYLE_PREFERENCE_VALUE
 	};
 	
 	/** The annotation type */
@@ -299,6 +310,7 @@ public class AnnotationPreference {
 				key.equals(getStringValue(OVERVIEW_RULER_PREFERENCE_KEY)) || 
 				key.equals(getStringValue(TEXT_PREFERENCE_KEY)) || 
 				key.equals(getStringValue(HIGHLIGHT_PREFERENCE_KEY)) || 
+				key.equals(getStringValue(TEXT_STYLE_PREFERENCE_KEY)) || 
 				key.equals(getStringValue(VERTICAL_RULER_PREFERENCE_KEY));
 	}
 	
@@ -729,6 +741,50 @@ public class AnnotationPreference {
 	 */
 	public void setShowInNextPrevDropdownToolbarAction(boolean showInNextPrevDropdownToolbarAction) {
 		setValue(SHOW_IN_NAVIGATION_DROPDOWN_VALUE, showInNextPrevDropdownToolbarAction);
+	}
+	
+	/**
+	 * Sets the preference key for the text style property.
+	 * 
+	 * @param key the new key
+	 * @since 3.0
+	 */
+	public void setTextStylePreferenceKey(String key) {
+		setValue(TEXT_STYLE_PREFERENCE_KEY, key);
+	}
+
+	/**
+	 * Returns the preference key for the decoration style used when the annotation is shown in text.
+	 * 
+	 * @return the preference key for the decoration style or <code>null</code> if the key is undefined
+	 */
+	public String getTextStylePreferenceKey() {
+		return getStringValue(TEXT_STYLE_PREFERENCE_KEY);
+	}
+	
+	/**
+	 * Returns the value for the decoration style used when the annotation is shown in text.
+	 * 
+	 * @return the value for the decoration style or <code>null</code> if the key is undefined
+	 * @since 3.0
+	 */
+	public int getTextStyleValue() {
+		return getIntegerValue(TEXT_STYLE_PREFERENCE_VALUE);
+	}
+
+	/**
+	 * Sets the value for the text style property.
+	 * 
+	 * @param textStyle the new text decoration style
+	 * @since 3.0
+	 */
+	public void setTextStyleValue(int value) {
+		if (value != STYLE_NONE && value != STYLE_BOX
+				&& value != STYLE_IBEAM && value != STYLE_SQUIGGLIES
+				&& value != STYLE_UNDERLINE)
+			throw new IllegalArgumentException();
+		
+		setValue(TEXT_STYLE_PREFERENCE_VALUE, value);
 	}
 	
 	/**

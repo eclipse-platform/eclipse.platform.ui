@@ -241,6 +241,36 @@ since: 3.0
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="textStylePreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for the text decoration property.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="textStylePreferenceValue">
+            <annotation>
+               <documentation>
+                  The default value for the &quot;show in text&quot; decoration style.
+since: 3.0
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="SQUIGGLIES">
+                  </enumeration>
+                  <enumeration value="BOX">
+                  </enumeration>
+                  <enumeration value="UNDERLINE">
+                  </enumeration>
+                  <enumeration value="IBEAM">
+                  </enumeration>
+                  <enumeration value="NONE">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 
