@@ -110,8 +110,10 @@ public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws Core
 	Assert.isLegal(partner != null);
 	Assert.isLegal(resource != null);
 
-	if (!isRegistered(partner))
-		throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, partner.toString()));
+	if (!isRegistered(partner)) {
+		String message = Policy.bind("synchronizer.partnerNotRegistered", partner.toString()); //$NON-NLS-1$
+		throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
+	}
 
 	// namespace check, if the resource doesn't exist then return null
 	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), true, false);
@@ -206,8 +208,10 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 	try {
 		workspace.prepareOperation();
 		workspace.beginOperation(true);
-		if (!isRegistered(partner))
-			throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, partner.toString()));
+		if (!isRegistered(partner)) {
+			String message = Policy.bind("synchronizer.partnerNotRegistered", partner.toString()); //$NON-NLS-1$
+			throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
+		}
 		// we do not store sync info on the workspace root
 		if (resource.getType() == IResource.ROOT)
 			return;
