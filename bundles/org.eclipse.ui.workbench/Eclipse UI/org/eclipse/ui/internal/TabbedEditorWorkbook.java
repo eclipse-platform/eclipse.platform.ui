@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
@@ -52,16 +57,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.ColorSchemeService;
-
 import org.eclipse.ui.IEditorReference;
-
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.IDragSource;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
@@ -122,10 +121,25 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		visibleEditor.moveAbove(tabFolder);
 	}
 
-	protected void createPresentation(Composite parent) {
+	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+			if (IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty()) && tabFolder != null)
+				tabFolder.setStyle(preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS) ? SWT.MULTI : SWT.SINGLE);
+		}
+	};
+	
+	protected void createPresentation(final Composite parent) {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
-		tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | SWT.FLAT | tabLocation);
+		boolean single = !preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 
+		int style = SWT.BORDER | SWT.FLAT | tabLocation;
+
+		if (single)
+			style |= SWT.SINGLE;
+
+		preferenceStore.addPropertyChangeListener(propertyChangeListener);
+		
+		tabFolder = new CTabFolder2(parent, style);
 		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
 
@@ -378,8 +392,8 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				
 				if (tabUnderPointer == null) {
 					return null;
-				}
-				
+	}
+
 				return mapTabToEditor.get(tabUnderPointer);
 			}
 
@@ -656,13 +670,13 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			return;
 
 		IEditorReference ref = editorPane.getEditorReference();
-
+		
 		// Update title.
 		String title = ref.getTitle();
 		if (ref.isDirty())
 			title = "*" + title; //$NON-NLS-1$
 		tab.setText(title);
-
+		
 		boolean useColorIcons = ActionContributionItem.getUseColorIconsInToolbars();
 
 		Image image = ref.getTitleImage();
@@ -814,4 +828,5 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	}
 
 
-}
+	}
+	
