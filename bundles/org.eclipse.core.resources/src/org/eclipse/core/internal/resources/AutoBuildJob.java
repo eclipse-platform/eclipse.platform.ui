@@ -9,9 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -21,57 +18,33 @@ import org.eclipse.core.runtime.jobs.Job;
 class AutoBuildJob extends Job {
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
+	private boolean avoidBuild = false;
 
-	private final Workspace workspace;
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
-		this.workspace = workspace;
-		setRule(workspace.getRoot());
 	}
 	/**
 	 * Used to prevent auto-builds at the end of operations that contain explicit builds
 	 */
 	public synchronized void avoidBuild() {
-		buildNeeded = false;
+		avoidBuild = true;
 	}
 	public synchronized void checkCancel() {
-		int state = getState();
-		//cancel the build job if it is waiting to run
-		if (state == Job.WAITING)  {
-			cancel();
-			return;
-		}
-		//cancel the build job if another job is attempting to modify the workspace
-		//while the build job is running
-		if (state == Job.RUNNING && Platform.getJobManager().currentJob() != this) 
-			workspace.getBuildManager().interrupt();
-	}
-	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask(null, Policy.opWork);
-			try {
-				workspace.prepareOperation(null);
-				workspace.beginOperation(true);
-				workspace.broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
-				if (workspace.isAutoBuilding())
-					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				avoidBuild();
-				workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
-			}
-		} finally {
-			monitor.done();
-		}
+//		int state = getState();
+//		//cancel the build job if it is waiting to run
+//		if (state == Job.WAITING)  {
+//			cancel();
+//			return;
+//		}
+//		//cancel the build job if another job is attempting to modify the workspace
+//		//while the build job is running
+//		if (state == Job.RUNNING && Platform.getJobManager().currentJob() != this) 
+//			workspace.getBuildManager().interrupt();
 	}
 	public synchronized void endTopLevel(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		if (shouldBuild())
-			schedule(Policy.AUTO_BUILD_DELAY);
+//		if (shouldBuild())
+//			schedule(Policy.AUTO_BUILD_DELAY);
 	}
 	/**
 	 * Forces a build to occur at the end of the next top level operation.  This is
@@ -82,27 +55,33 @@ class AutoBuildJob extends Job {
 		forceBuild = true;
 	}
 	public IStatus run(IProgressMonitor monitor) {
-		//synchronized in case build starts during checkCancel
-		synchronized (this)  {
-			if (monitor.isCanceled())
-				return Status.CANCEL_STATUS;
-		}
-		try {
-			//clear build flags
-			forceBuild = buildNeeded = false;
-			doBuild(monitor);
+//		//synchronized in case build starts during checkCancel
+//		synchronized (this)  {
+//			if (monitor.isCanceled())
+//				return Status.CANCEL_STATUS;
+//		}
+//		try {
+//			//clear build flags
+//			forceBuild = buildNeeded = false;
+//			doBuild(monitor);
 			return Status.OK_STATUS;
-		} catch (OperationCanceledException e) {
-			buildNeeded = true;
-			return Status.CANCEL_STATUS;
-		} catch (CoreException sig) {
-			return sig.getStatus();
-		}
+//		} catch (OperationCanceledException e) {
+//			buildNeeded = true;
+//			return Status.CANCEL_STATUS;
+//		} catch (CoreException sig) {
+//			return sig.getStatus();
+//		}
 	}
-	private synchronized boolean shouldBuild() {
+	public synchronized boolean shouldBuild() {
 		//build if the workspace requires a build (description changes)
-		if (forceBuild)
+		if (forceBuild) {
+			forceBuild = false;
 			return true;
+		}
+		if (avoidBuild) {
+			avoidBuild = false;
+			return false;
+		}
 		//return whether there have been any changes to the workspace tree.
 		return buildNeeded;
 	}

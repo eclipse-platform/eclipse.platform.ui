@@ -837,11 +837,11 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	// This is done in a try finally to ensure that we always decrement the operation count
 	// and release the workspace lock.  This must be done at the end because snapshot
 	// and "hasChanges" comparison have to happen without interference from other threads.
-	boolean hasTreeChanges= false;
+	boolean hasTreeChanges = false;
 	try {
 		workManager.setBuild(build);
 		// if we are not exiting a top level operation then just decrement the count and return
-		if (workManager.getPreparedOperationDepth() > 1) 
+		if (workManager.getPreparedOperationDepth() > 1)
 			return;
 		// do the following in a try/finally to ensure that the operation tree is nulled at the end
 		// as we are completing a top level operation.
@@ -858,8 +858,15 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			//double check if the tree has actually changed
 			if (hasTreeChanges)
 				hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
-			tree.immutable();
+			autoBuildJob.endTopLevel(hasTreeChanges);
+
+			broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
+			if (isAutoBuilding() && autoBuildJob.shouldBuild())
+				getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
+			broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
 			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+
+			tree.immutable();
 			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			saveManager.snapshotIfNeeded(hasTreeChanges);
 		} finally {
@@ -870,8 +877,6 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	} finally {
 		workManager.checkOut();
 	}
-	//notify build job after lock is released so there is no contention for the lock
-	autoBuildJob.endTopLevel(hasTreeChanges);
 }
 
 /**
