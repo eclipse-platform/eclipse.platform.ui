@@ -374,7 +374,22 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
 	public void initializeFromMemento(String memento) throws CoreException {
-		dispose();
+	    doInitializeFromMemento(memento, true);
+	}
+	
+	/**
+	 * Initializes this source lookup director from the given memento.
+	 * Disposes itself before initialization if specified.
+	 * 
+	 * @param memento source locator memento
+	 * @param dispose whether to dispose any current source containers and participants
+	 *  before initializing
+	 * @throws CoreException if an exception occurrs during initialization
+	 */
+	protected void doInitializeFromMemento(String memento, boolean dispose) throws CoreException {
+	    if (dispose) {
+	        dispose();
+	    }
 		Element rootElement = DebugPlugin.parseDocument(memento);		
 		if (!rootElement.getNodeName().equalsIgnoreCase(DIRECTOR_ROOT_NODE)) { 
 			abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.14"), null); //$NON-NLS-1$
@@ -395,7 +410,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			}
 		}
 		initializeParticipants();
-	}
+	}	
 	
 	/**
 	 * Sets the source containers used by this source lookup
@@ -504,8 +519,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @see org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLookupDirector#initializeFromMemento(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
+	    dispose();
 		setLaunchConfiguration(configuration);
-		initializeFromMemento(memento);
+		doInitializeFromMemento(memento, false);
 	}
 
 	/* (non-Javadoc)
