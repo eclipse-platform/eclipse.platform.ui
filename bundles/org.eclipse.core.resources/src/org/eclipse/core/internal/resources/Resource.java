@@ -1532,23 +1532,23 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		switch (getType()) {
 			case IResource.FILE :
 				if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-					tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+					tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.FOLDER :
 				if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-					tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+					tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.PROJECT :
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
 				if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
-					tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
+					tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.ROOT :
 				IProject[] projects = ((IWorkspaceRoot) this).getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
 					if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))
-						tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2));
+						tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length));
 				}
 		}
 	}
@@ -1565,13 +1565,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if (isLinked())
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 				if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
-					tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2));
+					tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
 			case IResource.FOLDER :
 				if (isLinked())
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 				if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
-					tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2));
+					tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
 			case IResource.PROJECT :
 				IProject project = (IProject) this;
@@ -1583,7 +1583,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				IProjectDescription description = project.getDescription();
 				description.setName(destination.getName());
 				if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
-					tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2));
+					tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
 			case IResource.ROOT :
 				String msg = Policy.bind("resources.moveRoot"); //$NON-NLS-1$

@@ -67,6 +67,8 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			delete(node.existsInWorkspace() ? target : null, localFile);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
+		} finally {
+			monitor.worked(1);
 		}
 	}
 
@@ -124,22 +126,18 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	public boolean visit(UnifiedTreeNode node) throws CoreException {
 		Policy.checkCanceled(monitor);
 		Resource target = (Resource) node.getResource();
-		try {
-			if (target.getType() == IResource.PROJECT)
-				return true;
-			if (shouldSkip(target)) {
-				removeFromSkipList(target);
-				int ticks = target.countResources(IResource.DEPTH_INFINITE, false);
-				monitor.worked(ticks);
-				return false;
-			}
-			if (isAncestorOfResourceToSkip(target))
-				return true;
-
-			delete(node, true, keepHistory);
+		if (target.getType() == IResource.PROJECT)
+			return true;
+		if (shouldSkip(target)) {
+			removeFromSkipList(target);
+			int ticks = target.countResources(IResource.DEPTH_INFINITE, false);
+			monitor.worked(ticks);
 			return false;
-		} finally {
-			monitor.worked(1);
 		}
+		if (isAncestorOfResourceToSkip(target))
+			return true;
+
+		delete(node, true, keepHistory);
+		return false;
 	}
 }

@@ -617,7 +617,7 @@ class ResourceTree implements IResourceTree {
 			boolean success;
 			try {
 				FileSystemResourceManager localManager = ((Folder) folder).getLocalManager();
-				localManager.delete(folder, force, true, false, monitor);
+				localManager.delete(folder, force, true, false, Policy.subMonitorFor(monitor, Policy.totalWork));
 				java.io.File folderLocation = folder.getLocation().toFile();
 				success = Workspace.clear(folderLocation);
 			} catch (CoreException ce) {
