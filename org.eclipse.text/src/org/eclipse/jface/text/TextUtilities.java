@@ -26,7 +26,7 @@ import java.util.Set;
 public class TextUtilities {
 	
 	/**
-	 * Default line delimiters used by these text functons.
+	 * Default line delimiters used by these text functions.
 	 */
 	public final static String[] DELIMITERS= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	
@@ -496,5 +496,34 @@ public class TextUtilities {
 		}
 		
 		return lineDelimiter;
+	}
+	
+	/**
+	 * Returns <code>true</code> if the two regions overlap. Returns <code>false</code> if one of the
+	 * arguments is <code>null</code>.
+	 * 
+	 * @param left the left region
+	 * @param right the right region
+	 * @return <code>true</code> if the two regions overlap, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	public static boolean overlaps(IRegion left, IRegion right) {
+		
+		if (left == null || right == null)
+			return false;
+		
+		int rightEnd= right.getOffset() + right.getLength();
+		int leftEnd= left.getOffset()+ left.getLength();
+		
+		if (right.getLength() > 0) {
+			if (left.getLength() > 0)
+				return left.getOffset() < rightEnd && right.getOffset() < leftEnd;
+			return  right.getOffset() <= left.getOffset() && left.getOffset() < rightEnd;
+		}
+		
+		if (left.getLength() > 0)
+			return left.getOffset() <= right.getOffset() && right.getOffset() < leftEnd;
+		
+		return left.getOffset() == right.getOffset();
 	}
 }
