@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,14 +35,16 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * This is the debug action which appears in the desktop menu and toolbar.
  */
-public abstract class ExecutionAction extends Action {
+public abstract class ExecutionAction extends Action implements IActionDelegate {
 	/**
 	 * @see Action#run()
 	 */
@@ -323,5 +326,24 @@ public abstract class ExecutionAction extends Action {
 			return true;
 		}		
 		return false;
+	}
+	
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
+		run();
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+	}	
+	
+	/**
+	 * @see IViewActionDelegate#init(IAction, ISelection)
+	 */
+	public void init(IViewPart part) {
 	}
 }

@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui;
  */
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugAction;
 
 public class DebugDropDownAction extends LaunchDropDownAction {
 
