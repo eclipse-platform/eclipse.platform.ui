@@ -91,8 +91,8 @@
 	<extension point="org.eclipse.search.searchPages">
 	<page label="%help_search_page"
 		class="org.eclipse.help.ui.internal.search.HelpSearchPage"
-		id="org.eclipse.help.ui.searchPage">
-		icon="icons/searchview.gif" 
+		id="org.eclipse.help.ui.searchPage"
+		icon="icons/searchview.gif"> 
 		</page>
 	</extension>
    
@@ -107,6 +107,7 @@
 		<attribute name="order"/>
 	</extension>
    
+	<!-- Search Results Sorter -->
 	<extension point="org.eclipse.search.searchResultSorters"> 
 		<sorter id="org.eclipse.help.ui.helpsearchhitsorter" 
 			pageId="org.eclipse.help.ui.searchPage" 
