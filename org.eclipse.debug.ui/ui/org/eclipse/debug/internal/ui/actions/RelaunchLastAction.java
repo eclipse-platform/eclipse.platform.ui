@@ -10,11 +10,13 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -65,11 +67,26 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 					MessageDialog.openError(getShell(), title, message);				
 				}
 			} else {
-				Display.getCurrent().beep();
+				// If the history is empty, just open the launch config dialog
+				openLaunchConfigurationDialog();
 			}
 		} catch (CoreException ce) {
 			DebugUIPlugin.errorDialog(getShell(), ActionMessages.getString("RelaunchLastAction.Error_relaunching_3"), ActionMessages.getString("RelaunchLastAction.Error_encountered_attempting_to_relaunch_4"), ce); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+	
+	/**
+	 * Open the launch configuration dialog, passing in the current workbench selection.
+	 */
+	private void openLaunchConfigurationDialog() {
+		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (dwindow == null) {
+			return;
+		}
+		IStructuredSelection selection= DebugUIPlugin.resolveSelection(dwindow);
+		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
+		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
+		dialog.open();
 	}
 	
 	/**

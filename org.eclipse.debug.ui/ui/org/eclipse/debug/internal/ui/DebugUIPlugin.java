@@ -47,10 +47,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -498,5 +502,38 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		serializer.asDOMSerializer().serialize(doc);
 		return s.toString("UTF8"); //$NON-NLS-1$		
 	}	
+
+	/**
+	 * Determines and returns the selection in the specified window.  If nothing is
+	 * actually selected, look for an active editor.
+	 */
+	public static IStructuredSelection resolveSelection(IWorkbenchWindow window) {
+		if (window == null) {
+			return null;
+		}
+		ISelection selection= window.getSelectionService().getSelection();
+		if (selection == null || selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
+			// there is no obvious selection - go fishing
+			selection= null;
+			IWorkbenchPage page= window.getActivePage();
+			if (page == null) {
+				//workspace is closed
+				return null;
+			}
+
+			// first, see if there is an active editor, and try its input element
+			IEditorPart editor= page.getActiveEditor();
+			Object element= null;
+			if (editor != null) {
+				element= editor.getEditorInput();
+			}
+
+			if (selection == null && element != null) {
+				selection= new StructuredSelection(element);
+			}
+		}
+		return (IStructuredSelection)selection;
+	}
+	
 }
 
