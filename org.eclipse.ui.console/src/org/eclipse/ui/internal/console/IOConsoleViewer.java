@@ -32,33 +32,9 @@ public class IOConsoleViewer extends TextConsoleViewer {
     private boolean fAutoScroll = true;
 
     private IDocumentListener fDocumentListener;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.TextViewer#handleDispose()
-     */
-    protected void handleDispose() {
-        IDocument document = getDocument();
-        if (document != null) {
-            document.removeDocumentListener(fDocumentListener);
-        }
-        super.handleDispose();
-    }
-
+    
     public IOConsoleViewer(Composite parent, TextConsole console) {
         super(parent, console);
-        fDocumentListener = new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {
-            }
-
-            public void documentChanged(DocumentEvent event) {
-                if (fAutoScroll) {
-                    revealEndOfDocument();
-                }
-            }
-        };
-        getDocument().addDocumentListener(fDocumentListener);
     }
 
     public boolean isAutoScroll() {
@@ -122,9 +98,41 @@ public class IOConsoleViewer extends TextConsoleViewer {
     }
 
     /**
-     * @return false if text is editable
+     * @return <code>false</code> if text is editable
      */
     public boolean isReadOnly() {
         return !getTextWidget().getEditable();
+    }
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
+     */
+    public void setDocument(IDocument document) {
+        IDocument oldDocument= getDocument();
+        
+        super.setDocument(document);
+        
+        if (oldDocument != null) {
+            oldDocument.removeDocumentListener(getDocumentListener());
+        }
+        if (document != null) {
+            document.addDocumentListener(getDocumentListener());
+        }
+    }
+    
+    private IDocumentListener getDocumentListener() {
+        if (fDocumentListener == null) {
+            fDocumentListener= new IDocumentListener() {
+                public void documentAboutToBeChanged(DocumentEvent event) {
+                }
+
+                public void documentChanged(DocumentEvent event) {
+                    if (fAutoScroll) {
+                        revealEndOfDocument();
+                    }
+                }
+            };
+        }
+        return fDocumentListener;
     }
 }
