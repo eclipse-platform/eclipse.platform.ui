@@ -56,7 +56,7 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * The history view allows browsing of an array of resource revisions
  */
-public class HistoryView extends ViewPart implements IMenuListener, ISelectionListener {
+public class HistoryView extends ViewPart implements ISelectionListener {
 	private ICVSRemoteFile remoteFile;
 	
 	private TableViewer viewer;
@@ -64,6 +64,8 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	
 	private OpenRemoteFileAction openAction;
 	private IAction toggleTextAction;
+	private Action copyAction;
+	private Action selectAllAction;
 	
 	private SashForm sashForm;
 	
@@ -139,7 +141,11 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(viewer.getTable());
-		menuMgr.addMenuListener(this);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				fillTableMenu(menuMgr);
+			}
+		});
 		menuMgr.setRemoveAllWhenShown(true);
 		viewer.getTable().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -148,6 +154,28 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
 		actionBarsMenu.add(toggleTextAction);
+		
+		// Create actions for the text editor
+		copyAction = new Action(Policy.bind("HistoryView.copy")) {
+			public void run() {
+				text.copy();
+			}
+		};
+		
+		selectAllAction = new Action(Policy.bind("HistoryView.selectAll")) {
+			public void run() {
+				text.selectAll();
+			}
+		};		
+		menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				fillTextMenu(menuMgr);
+			}
+		});
+		menu = menuMgr.createContextMenu(text);
+		text.setMenu(menu);
 	}
 	
 	/**
@@ -307,15 +335,18 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance()};
 		viewer.addDropSupport(ops, transfers, new HistoryDropAdapter(viewer, this));
 	}
-	/**
-	 * @see IMenuListener#menuAboutToShow
-	 */
-	public void menuAboutToShow(IMenuManager manager) {
+	private void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 	
 		manager.add(new Separator("additions"));
 		manager.add(new Separator("additions-end"));
+	}
+	private void fillTextMenu(IMenuManager manager) {
+		copyAction.setEnabled(text.getSelectionCount() > 0);
+		selectAllAction.setEnabled(true);
+		manager.add(copyAction);
+		manager.add(selectAllAction);
 	}
 	/**
 	 * Makes the history view visible in the active perspective. If there
