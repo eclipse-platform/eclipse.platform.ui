@@ -86,7 +86,9 @@ public class ProjectNode extends AntNode {
 	 */
 	public void setDefaultTarget(TargetNode target) {
 		defaultTarget= target;
-		defaultTargetName= target.getName();
+		if (target != null) {
+			defaultTargetName= target.getName();
+		}
 	}
 	
 	/**
