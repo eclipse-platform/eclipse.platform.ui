@@ -73,7 +73,7 @@ import org.eclipse.jface.text.Region;
 public abstract class TextEdit {
 
 	/**
-	 * Flags indicating that either <code>CREATE_UNDO</code> nor
+	 * Flags indicating that neither <code>CREATE_UNDO</code> nor
 	 * <code>UPDATE_REGIONS</code> is set. 
 	 */
 	public static final int NONE= 0;
@@ -97,14 +97,14 @@ public abstract class TextEdit {
 	
 	private static class InsertionComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
-			TextEdit edit1 = (TextEdit) o1;
-			TextEdit edit2 = (TextEdit) o2;
+			TextEdit edit1= (TextEdit)o1;
+			TextEdit edit2= (TextEdit)o2;
 					
-			int offset1 = edit1.getOffset();
-			int length1 = edit1.getLength();
+			int offset1= edit1.getOffset();
+			int length1= edit1.getLength();
 					
-			int offset2 = edit2.getOffset();
-			int length2 = edit2.getLength();
+			int offset2= edit2.getOffset();
+			int length2= edit2.getLength();
 					
 			// make sure that a duplicate insertion point at the same offet is 
 			// inserted last. Have to double check with the spec. It says the
@@ -178,17 +178,17 @@ public abstract class TextEdit {
 	 * @return the manipulated region
 	 */
 	public final IRegion getRegion() {
-		return new Region(fOffset, fLength);
+		return new Region(getOffset(), getLength());
 	}
 	
 	/**
 	 * Returns the offset of the edit. An offset is a 0-based 
 	 * character index. Returns <code>-1</code> if the edit
-	 * is marked as deleted
+	 * is marked as deleted.
 	 * 
 	 * @return the offset of the edit
 	 */
-	public final int getOffset() {
+	public int getOffset() {
 		return fOffset;
 	}
 	
@@ -198,7 +198,7 @@ public abstract class TextEdit {
 	 * 
 	 * @return the length of the edit
 	 */
-	public final int getLength() {
+	public int getLength() {
 		return fLength;
 	}
 	
@@ -214,7 +214,7 @@ public abstract class TextEdit {
 	 * @return the inclusive end position
 	 */
 	public final int getInclusiveEnd() {
-		return fOffset + fLength - 1;
+		return getOffset() + getLength() - 1;
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public abstract class TextEdit {
 	 * @return the exclusive end position
 	 */
 	public final int getExclusiveEnd() {
-		return fOffset + fLength;
+		return getOffset() + getLength();
 	}
 	
 	/**
@@ -251,13 +251,16 @@ public abstract class TextEdit {
 	 * @return <code>true<code> if the edit covers the other edit;
 	 *  otherwise <code>false</code> is returned.
 	 */
-	public final boolean covers(TextEdit other) {
-		if (fLength == 0 && !canZeroLengthCover()) {	
+	public boolean covers(TextEdit other) {
+		if (getLength() == 0 && !canZeroLengthCover())	
 			return false;
-		} else {
-			int otherOffset= other.fOffset;
-			return fOffset <= otherOffset && otherOffset + other.fLength <= fOffset + fLength;
-		}		
+		
+		if (!other.isDefined())
+			return true;
+		
+		int thisOffset= getOffset();
+		int otherOffset= other.getOffset();
+		return thisOffset <= otherOffset && otherOffset + other.getLength() <= thisOffset + getLength();
 	}
 	
 	/**
@@ -268,6 +271,17 @@ public abstract class TextEdit {
 	 */
 	protected boolean canZeroLengthCover() {
 		return false;
+	}
+	
+	/**
+	 * Returns whether the region of this edit is defined or not.
+	 * 
+	 * @return whether the region of this edit is defined or not
+	 * 
+	 * @since 3.1
+	 */
+	/* package */ boolean isDefined() {
+		return true;
 	}
 
 	//---- parent and children management -----------------------------
@@ -430,11 +444,10 @@ public abstract class TextEdit {
 				end= Math.max(end, edit.getExclusiveEnd());
 			}
 		}
-		if (edits.length == deleted) {
+		if (edits.length == deleted)
 			return null;
-		} else {
-			return new Region(offset, end - offset);
-		}
+			
+		return new Region(offset, end - offset);
 	}
 		
 	/*
@@ -485,14 +498,14 @@ public abstract class TextEdit {
 		} else {
 			buffer.append(name);
 		}
-		buffer.append(" } "); //$NON-NLS-1$
+		buffer.append("} "); //$NON-NLS-1$
 		if (isDeleted()) {
 			buffer.append("[deleted]"); //$NON-NLS-1$
 		} else {
 			buffer.append("["); //$NON-NLS-1$
-			buffer.append(fOffset);
+			buffer.append(getOffset());
 			buffer.append(","); //$NON-NLS-1$
-			buffer.append(fLength);
+			buffer.append(getLength());
 			buffer.append("]"); //$NON-NLS-1$
 		}
 		return buffer.toString();

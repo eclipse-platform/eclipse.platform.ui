@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.util.List;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -83,6 +85,55 @@ public class MultiTextEdit extends TextEdit {
 		// does nothing
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	/* package */ final boolean isDefined() {
+		if (fDefined)
+			return true;
+		return hasChildren();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public final int getOffset() {
+		if (fDefined)
+			return super.getOffset();
+		
+		List/*<TextEdit>*/ children= internalGetChildren();	
+		if (children == null || children.size() == 0)
+			return 0;
+		// the children are already sorted
+		return ((TextEdit)children.get(0)).getOffset();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public final int getLength() {
+		if (fDefined)
+			return super.getLength();
+		
+		List/*<TextEdit>*/ children= internalGetChildren();	
+		if (children == null || children.size() == 0)
+			return 0;
+		// the children are already sorted
+		TextEdit first= (TextEdit)children.get(0);
+		TextEdit last= (TextEdit)children.get(children.size() - 1);
+		return last.getOffset() - first.getOffset() + last.getLength();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean covers(TextEdit other) {
+		if (fDefined)
+			return super.covers(other);
+		// an undefined multiple text edit covers everything
+		return true;
+	}
+	
 	/*
 	 * @see org.eclipse.text.edits.TextEdit#canZeroLengthCover()
 	 */
@@ -146,5 +197,15 @@ public class MultiTextEdit extends TextEdit {
 			internalSetLength(0);
 		}
 		fDefined= true;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		String result= super.toString();
+		if (fDefined)
+			return result;
+		return result + " [undefined]"; //$NON-NLS-1$
 	}
 }

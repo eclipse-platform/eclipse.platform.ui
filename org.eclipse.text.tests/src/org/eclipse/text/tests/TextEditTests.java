@@ -200,6 +200,54 @@ public class TextEditTests extends TestCase {
 		assertTrue(exception);
 	}
 	
+	public void testUndefinedMultiEdit1() throws Exception {
+		MultiTextEdit m1= new MultiTextEdit();
+		m1.addChild(new InsertEdit(0,""));
+		fRoot.addChild(m1);
+		
+		MultiTextEdit m2= new MultiTextEdit();
+		m2.addChild(new InsertEdit(2, ""));
+		fRoot.addChild(m2);
+	}
+	
+	public void testUndefinedMultiEdit2() throws Exception {
+		MultiTextEdit m1= new MultiTextEdit();
+		MultiTextEdit m2= new MultiTextEdit();
+		assertTrue(m1.covers(m2));
+		assertTrue(m2.covers(m1));
+	}
+	
+	public void testUndefinedMultiEdit3() throws Exception {
+		MultiTextEdit m2= new MultiTextEdit();
+		assertEquals(0, m2.getOffset());
+		assertEquals(0, m2.getLength());
+		m2.addChild(new DeleteEdit(1,3));
+		assertEquals(1, m2.getOffset());
+		assertEquals(3, m2.getLength());
+	}
+	
+	public void testUndefinedMultiEdit4() throws Exception {
+		MultiTextEdit m2= new MultiTextEdit();
+		m2.addChild(new DeleteEdit(1,3));
+		m2.addChild(new DeleteEdit(4, 2));
+		assertEquals(1, m2.getOffset());
+		assertEquals(5, m2.getLength());
+	}
+	
+	public void testUndefinedMultiEdit5() throws Exception {
+		MultiTextEdit m2= new MultiTextEdit();
+		m2.addChild(new DeleteEdit(4, 2));
+		m2.addChild(new DeleteEdit(1,3));
+		assertEquals(1, m2.getOffset());
+		assertEquals(5, m2.getLength());
+	}
+	
+	public void testUndefinedMultiEdit6() throws Exception {
+		DeleteEdit d1= new DeleteEdit(1,3);
+		MultiTextEdit m2= new MultiTextEdit();
+		assertTrue(d1.covers(m2));
+	}
+	
 	public void testUnconnected1() throws Exception {
 		MoveSourceEdit s1= new MoveSourceEdit(3, 1);
 		boolean exception= false;
