@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.internal.commands.api.older.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.older.ActionHandler;
 

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
 import org.eclipse.ui.keys.KeySequence;
 
 final class KeyBinding implements IKeyBinding {

@@ -12,8 +12,8 @@
 package org.eclipse.ui.internal.commands.older;
 
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.commands.NotActiveException;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.older.NotActiveException;
+import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 
 /**
  * <p>

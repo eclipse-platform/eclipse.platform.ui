@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandEvent;
+import org.eclipse.ui.internal.commands.api.older.ICommand;
+import org.eclipse.ui.internal.commands.api.older.ICommandEvent;
 
 final class CommandEvent implements ICommandEvent {
 

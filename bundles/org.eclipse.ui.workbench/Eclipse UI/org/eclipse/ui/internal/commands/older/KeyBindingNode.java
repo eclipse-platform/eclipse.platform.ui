@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.csm.commands.KeySequenceBindingDefinition;
+import org.eclipse.ui.internal.commands.KeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;

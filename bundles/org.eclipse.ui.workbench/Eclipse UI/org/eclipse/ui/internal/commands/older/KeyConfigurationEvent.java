@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IKeyConfigurationEvent;
+import org.eclipse.ui.internal.commands.api.older.IKeyConfiguration;
+import org.eclipse.ui.internal.commands.api.older.IKeyConfigurationEvent;
 
 final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 

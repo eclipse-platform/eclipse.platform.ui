@@ -14,10 +14,10 @@ package org.eclipse.ui.internal.commands.older;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICategoryEvent;
-import org.eclipse.ui.commands.ICategoryListener;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.older.ICategory;
+import org.eclipse.ui.internal.commands.api.older.ICategoryEvent;
+import org.eclipse.ui.internal.commands.api.older.ICategoryListener;
+import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IContextBinding;
+import org.eclipse.ui.internal.commands.api.older.IContextBinding;
 
 final class ContextBinding implements IContextBinding {
 

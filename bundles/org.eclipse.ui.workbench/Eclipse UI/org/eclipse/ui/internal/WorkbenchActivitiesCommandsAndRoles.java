@@ -35,13 +35,13 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
-import org.eclipse.ui.commands.IActionServiceListener;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManagerEvent;
-import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.older.IActionService;
+import org.eclipse.ui.internal.commands.api.older.IActionServiceEvent;
+import org.eclipse.ui.internal.commands.api.older.IActionServiceListener;
+import org.eclipse.ui.internal.commands.api.older.ICommand;
+import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
+import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
+import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
@@ -501,7 +501,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					// a completion was found.
 					String commandId = match.getCommandId();
 					Map actionsById = workbench.commandManager.getActionsById();
-					org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+					org.eclipse.ui.internal.commands.api.older.IAction action = (org.eclipse.ui.internal.commands.api.older.IAction) actionsById.get(commandId);
 
 					if (action != null) {
 						// an action was found corresponding to the completion

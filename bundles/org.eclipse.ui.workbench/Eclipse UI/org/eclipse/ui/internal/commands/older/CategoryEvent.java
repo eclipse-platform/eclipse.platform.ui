@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICategoryEvent;
+import org.eclipse.ui.internal.commands.api.older.ICategory;
+import org.eclipse.ui.internal.commands.api.older.ICategoryEvent;
 
 final class CategoryEvent implements ICategoryEvent {
 

@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandEvent;
-import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IImageBinding;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.older.ICommand;
+import org.eclipse.ui.internal.commands.api.older.ICommandEvent;
+import org.eclipse.ui.internal.commands.api.older.ICommandListener;
+import org.eclipse.ui.internal.commands.api.older.IContextBinding;
+import org.eclipse.ui.internal.commands.api.older.IImageBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {

@@ -14,10 +14,10 @@ package org.eclipse.ui.internal.commands.older;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IKeyConfigurationEvent;
-import org.eclipse.ui.commands.IKeyConfigurationListener;
-import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.older.IKeyConfiguration;
+import org.eclipse.ui.internal.commands.api.older.IKeyConfigurationEvent;
+import org.eclipse.ui.internal.commands.api.older.IKeyConfigurationListener;
+import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class KeyConfiguration implements IKeyConfiguration {

@@ -80,7 +80,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.older.ActionHandler;
 import org.eclipse.ui.internal.commands.older.CommandManager;

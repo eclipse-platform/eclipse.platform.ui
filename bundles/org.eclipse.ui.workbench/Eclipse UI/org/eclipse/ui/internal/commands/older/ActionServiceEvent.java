@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceEvent;
+import org.eclipse.ui.internal.commands.api.older.IActionService;
+import org.eclipse.ui.internal.commands.api.older.IActionServiceEvent;
 
 final class ActionServiceEvent implements IActionServiceEvent {
 

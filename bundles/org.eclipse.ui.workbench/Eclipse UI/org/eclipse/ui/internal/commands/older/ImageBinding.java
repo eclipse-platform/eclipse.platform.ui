@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.commands.IImageBinding;
+import org.eclipse.ui.internal.commands.api.older.IImageBinding;
 
 final class ImageBinding implements IImageBinding {
 
