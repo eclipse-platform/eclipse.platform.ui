@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.jface.util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Contains static methods for performing simple geometric operations
  * on the SWT geometry classes.
+ *
+ * @since 3.0
  */
 public class Geometry {
 
@@ -136,6 +138,10 @@ public class Geometry {
 	 */
 	public static int getDistanceFromEdge(Rectangle rectangle, Point testPoint, int edgeOfInterest) {
 		switch(edgeOfInterest) {
+			case SWT.TOP: return testPoint.y - rectangle.y ;
+			case SWT.BOTTOM: return rectangle.y + rectangle.height - testPoint.y;
+			case SWT.LEFT: return testPoint.x - rectangle.x;
+			case SWT.RIGHT: return rectangle.x + rectangle.width - testPoint.x;
 		}
 		
 		return 0;
@@ -186,6 +192,10 @@ public class Geometry {
 	 */
 	public static int getOppositeSide(int swtDirectionConstant) {
 		switch(swtDirectionConstant) {
+			case SWT.TOP: return SWT.BOTTOM;
+			case SWT.BOTTOM: return SWT.TOP;
+			case SWT.LEFT: return SWT.RIGHT;
+			case SWT.RIGHT: return SWT.LEFT;
 		}
 		
 		return swtDirectionConstant;

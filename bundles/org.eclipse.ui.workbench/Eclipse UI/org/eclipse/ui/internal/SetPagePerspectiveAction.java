@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Sets the current perspective of the workbench

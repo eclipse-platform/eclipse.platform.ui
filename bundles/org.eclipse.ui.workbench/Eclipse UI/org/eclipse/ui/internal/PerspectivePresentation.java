@@ -24,10 +24,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;

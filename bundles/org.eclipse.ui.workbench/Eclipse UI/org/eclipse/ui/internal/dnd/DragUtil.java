@@ -23,8 +23,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tracker;
 
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.ui.internal.DragCursors;
-import org.eclipse.ui.internal.Geometry;
+
 
 /**
  * Provides the methods for attaching drag-and-drop listeners to SWT controls. 

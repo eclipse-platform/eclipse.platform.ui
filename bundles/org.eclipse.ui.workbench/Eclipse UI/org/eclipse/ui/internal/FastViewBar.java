@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Geometry;
 
 import org.eclipse.ui.IViewReference;
 

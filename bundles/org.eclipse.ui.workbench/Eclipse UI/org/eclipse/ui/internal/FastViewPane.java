@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 
+import org.eclipse.jface.util.Geometry;
+
 /**
  * Handles the presentation of an active fastview. A fast view pane docks to one side of a
  * parent composite, and is capable of displaying a single view. The view may be resized.
