@@ -262,10 +262,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * Helper method to update the buttons of the viewer - must be called in UI thread
 	 */
 	protected void updateButtons() {
-		IWorkbenchPage page = getView().getSite().getPage();
-		if (!page.getActivePart().equals(getView())) {
-			page.activate(getView());
-		}
 		// fire a selection change such that the debug menu can
 		// update
 		getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
