@@ -78,8 +78,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	private static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
 	private static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
 	private static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
-	
-	private boolean fSuspendOccurred= false;
 		
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -149,10 +147,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			public void run() {
 				if (id != null && shouldSwitchPerspectiveForLaunch(id)) {
 					switchToPerspective(id);
-				}
-				if (fSuspendOccurred && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-					doShowDebugView();
-					fSuspendOccurred= false;
 				}
 			}
 		});
@@ -227,7 +221,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && (event.getDetail() == DebugEvent.BREAKPOINT || event.getDetail() == DebugEvent.STEP_END)) {
-				fSuspendOccurred= true; // Set flag to open debug view
 				doPerspectiveSwitch(event);
 			}
 		}
@@ -296,9 +289,8 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 						switchToPerspective(targetId);
 					}
 				}
-				if (fSuspendOccurred && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
 					doShowDebugView();
-					fSuspendOccurred= false;
 				}
 			}
 		};
