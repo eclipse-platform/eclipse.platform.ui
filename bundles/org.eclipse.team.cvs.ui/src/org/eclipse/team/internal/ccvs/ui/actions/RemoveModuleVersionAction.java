@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -59,7 +60,7 @@ public class RemoveModuleVersionAction extends TeamAction {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < tags.length; i++) {
 					ModuleVersion tag = tags[i];
-					manager.removeVersionTag(tag.getCVSResource(), tag.getTag());
+					manager.removeVersionTags(tag.getCVSResource(), new CVSTag[] {tag.getTag()});
 				}
 			}
 		}, Policy.bind("RemoveModuleVersionAction.removeTag"), this.PROGRESS_BUSYCURSOR);

@@ -76,7 +76,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void branchTagAdded(BranchTag tag, final ICVSRepositoryLocation root) {
+		public void branchTagsAdded(BranchTag[] tags, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -84,7 +84,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void branchTagRemoved(BranchTag tag, final ICVSRepositoryLocation root) {
+		public void branchTagsRemoved(BranchTag[] tags, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -92,7 +92,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void versionTagAdded(CVSTag tag, final ICVSRepositoryLocation root) {
+		public void versionTagsAdded(CVSTag[] tags, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -100,7 +100,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			});
 		}
-		public void versionTagRemoved(CVSTag tag, final ICVSRepositoryLocation root) {
+		public void versionTagsRemoved(CVSTag[] tags, final ICVSRepositoryLocation root) {
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {

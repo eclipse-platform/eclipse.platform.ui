@@ -78,7 +78,7 @@ public class DefineBranchAction extends TeamAction {
 						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, null);
 						if (dialog.open() == InputDialog.OK) {
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
-							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(roots[0], new BranchTag(tag, roots[0]));
+							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTags(roots[0], new BranchTag[] {new BranchTag(tag, roots[0])});
 						}
 					}
 				});

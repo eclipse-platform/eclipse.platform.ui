@@ -8,6 +8,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
@@ -46,13 +48,18 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 	 * Return children of the root with this tag.
 	 */
 	public Object[] getChildren(Object o) {
-		if (!(o instanceof BranchTag)) return null;
 		// Return the remote elements for the tag
-		try {
-			return root.members(tag, new NullProgressMonitor());
-		} catch (TeamException e) {
-			return null;
-		}
+		final Object[][] result = new Object[1][];
+		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+			public void run() {
+				try {
+					result[0] = root.members(tag, new NullProgressMonitor());
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e.getStatus());
+				}
+			}
+		});
+		return result[0];
 	}
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (!(object instanceof BranchTag)) return null;

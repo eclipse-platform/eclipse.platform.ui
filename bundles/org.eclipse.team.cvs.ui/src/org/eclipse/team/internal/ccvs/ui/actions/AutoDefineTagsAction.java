@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -18,9 +19,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -84,16 +88,34 @@ public class AutoDefineTagsAction extends TeamAction {
 							tagSet.add(tags[k]);
 						}
 					}
+					
+					// Break tags up into version tags and branch tags.
+					List branchTags = new ArrayList();
+					List versionTags = new ArrayList();
 					Iterator it = tagSet.iterator();
 					while (it.hasNext()) {
 						CVSTag tag = (CVSTag)it.next();
-						if (tag.getType()==CVSTag.BRANCH) {
-							manager.addBranchTag(root, new BranchTag(tag, root));
+						if (tag.getType() == CVSTag.BRANCH) {
+							branchTags.add(new BranchTag(tag, root));
 						} else {
-							// Problem: need to get the root remote project. Can't do this without
-							// additional API to get parent.
-							//manager.addVersionTag(resource, tag.getName());
+							versionTags.add(tag);
 						}
+					}
+					if (branchTags.size() > 0) {
+						manager.addBranchTags(root, (BranchTag[])branchTags.toArray(new BranchTag[0]));
+					}
+					if (versionTags.size() > 0) {
+						// Current behaviour for version tags is to match the behaviour in VCM 1.0, 
+						// which is to attach them to the top-most folder in CVS. This may change in the future
+						// to allow a more flexible scheme of attaching 'project' semantics to arbitrary
+						// cvs folders. Get the top-most folder now to optimize.
+						ICVSRemoteResource current = file.getRemoteParent();
+						ICVSRemoteResource next = current.getRemoteParent();
+						while (next != null && next.getRemoteParent() != null) {
+							current = next;
+							next = current.getRemoteParent();
+						}
+						manager.addVersionTags(current, (CVSTag[])versionTags.toArray(new CVSTag[0]));
 					}
 				}
 			}

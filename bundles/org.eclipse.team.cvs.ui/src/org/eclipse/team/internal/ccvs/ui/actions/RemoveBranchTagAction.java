@@ -60,7 +60,7 @@ public class RemoveBranchTagAction extends TeamAction {
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < tags.length; i++) {
 					BranchTag tag = tags[i];
-					manager.removeBranchTag(tag.getRoot(), tag);
+					manager.removeBranchTag(tag.getRoot(), new BranchTag[] {tag});
 				}
 			}
 		}, Policy.bind("RemoveBranchTagAction.removeTag"), this.PROGRESS_BUSYCURSOR);

@@ -79,7 +79,7 @@ public class DefineVersionAction extends TeamAction {
 						if (dialog.open() == InputDialog.OK) {
 							ICVSRemoteResource resource = projects[0].getCVSResource();
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.VERSION);
-							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTag(resource, tag);
+							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(resource, new CVSTag[] {tag});
 						}
 					}
 				});

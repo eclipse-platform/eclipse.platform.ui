@@ -8,6 +8,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -49,28 +51,35 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 * is displayed in a tree, the returned objects will be this
 	 * element's children.  Returns an empty enumeration if this
 	 * object has no children. The children of the RemoteModule
-	 * are the versions for that 
+	 * are the versions for that module.
 	 */
 	public Object[] getChildren(Object o) {
-		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
-		ModuleVersion[] result = new ModuleVersion[tags.length];
-		for (int i = 0; i < result.length; i++) {
-			CVSTag tag = tags[i];
-			// There should be a better way of getting the resource with a given tag.
-			try {
-				ICVSRemoteResource[] members = folder.getRepository().members(tag, new NullProgressMonitor());
-				String name = folder.getName();
-				for (int j = 0; j < members.length; j++) {
-					if (members[j].getName().equals(name)) {
-						result[i] = new ModuleVersion((ICVSRemoteFolder)members[j], tag, this);
+		final Object[][] result = new Object[1][];
+		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+			// This is inefficient; need API to get remote resource for a given tag
+			public void run() {
+				CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
+				ModuleVersion[] versions = new ModuleVersion[tags.length];
+				try {
+					for (int i = 0; i < versions.length; i++) {
+						CVSTag tag = tags[i];
+						ICVSRemoteResource[] members = folder.getRepository().members(tag, new NullProgressMonitor());
+						String name = folder.getName();
+						for (int j = 0; j < members.length; j++) {
+							if (members[j].getName().equals(name)) {
+								versions[i] = new ModuleVersion((ICVSRemoteFolder)members[j], tag, RemoteModule.this);
+								break;
+							}
+						}
 					}
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e.getStatus());
+					return;
 				}
-			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
-				return null;
+				result[0] = versions;
 			}
-		}
-		return result;
+		});
+		return result[0];
 	}
 	
 	/**

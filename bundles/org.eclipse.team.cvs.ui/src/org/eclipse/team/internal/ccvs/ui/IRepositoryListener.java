@@ -12,9 +12,9 @@ import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 public interface IRepositoryListener {
 	public void repositoryAdded(ICVSRepositoryLocation root);
 	public void repositoryRemoved(ICVSRepositoryLocation root);
-	public void branchTagAdded(BranchTag tag, ICVSRepositoryLocation root);
-	public void branchTagRemoved(BranchTag tag, ICVSRepositoryLocation root);
-	public void versionTagAdded(CVSTag tag, ICVSRepositoryLocation root);
-	public void versionTagRemoved(CVSTag tag, ICVSRepositoryLocation root);
+	public void branchTagsAdded(BranchTag[] tags, ICVSRepositoryLocation root);
+	public void branchTagsRemoved(BranchTag[] tags, ICVSRepositoryLocation root);
+	public void versionTagsAdded(CVSTag[] tags, ICVSRepositoryLocation root);
+	public void versionTagsRemoved(CVSTag[] tags, ICVSRepositoryLocation root);
 }
 
