@@ -204,4 +204,33 @@ class ImplicitJobs {
 		//the suspend job will be remembered once the rule is acquired
 		begin(rule, monitor, true);
 	}
+	
+	/**
+	 * Implements IJobManager#transferRule(ISchedulingRule, Thread)
+	 */
+	synchronized void transfer(ISchedulingRule rule, Thread destinationThread) {
+		//nothing to do for null
+		if (rule == null)
+			return;
+		//ensure destination thread doesn't already have a rule
+		ThreadJob job = (ThreadJob) threadJobs.get(destinationThread);
+		Assert.isLegal(job == null);
+		final Thread currentThread = Thread.currentThread();
+		//nothing to do if transferring to the same thread
+		if (currentThread == destinationThread)
+			return;
+		//ensure calling thread owns the job being transferred
+		job = (ThreadJob) threadJobs.get(currentThread);
+		Assert.isLegal(job != null);
+		Assert.isLegal(job.getRule() == rule);
+		//transfer the thread job without ending it
+		job.setThread(destinationThread);
+		threadJobs.remove(currentThread);
+		threadJobs.put(destinationThread, job);
+		//transfer lock
+		if (job.acquireRule) {
+			manager.getLockManager().removeLockThread(currentThread, rule);
+			manager.getLockManager().addLockThread(destinationThread, rule);
+		}
+	}
 }

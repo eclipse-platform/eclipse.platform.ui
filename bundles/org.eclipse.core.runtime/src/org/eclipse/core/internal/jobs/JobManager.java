@@ -1030,6 +1030,13 @@ public class JobManager implements IJobManager {
 		implicitJobs.suspend(rule, monitorFor(monitor));
 	}
 	
+	/* non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#transferRule()
+	 */
+	public void transferRule(ISchedulingRule rule, Thread destinationThread) {
+		implicitJobs.transfer(rule, destinationThread);
+	}
+
 	/**
 	 * Validates that the given scheduling rule obeys the constraints of
 	 * scheduling rules as described in the <code>ISchedulingRule</code>

@@ -333,6 +333,25 @@ public interface IJobManager {
 	public void sleep(Object family);
 
 	/**
+	 * Transfers ownership of a scheduling rule to another thread.  The identical
+	 * scheduling rule must currently be owned by the calling thread as a result of 
+	 * a previous call to <code>beginRule</code>.  The destination thread must
+	 * not already own a scheduling rule.
+	 * <p>
+	 * Calling this method is equivalent to atomically calling <code>endRule</code> 
+	 * in the calling thread followed by an immediate <code>beginRule</code> in 
+	 * the destination thread.  The destination thread is responsible for subsequently 
+	 * calling <code>endRule</code> when it is finished using the rule.
+	 * <p>
+	 * This method has no effect when the destination thread is the same as the
+	 * calling thread.
+	 * 
+	 * @param rule The scheduling rule to transfer
+	 * @param destinationThread The new owner for the transferred rule.
+	 */
+	public void transferRule(ISchedulingRule rule, Thread destinationThread);
+	
+	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
 	 * 
