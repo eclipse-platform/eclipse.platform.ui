@@ -51,7 +51,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 
  * @since 2.1
  */
-public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener, ITextPresentationListener {	
+public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener, IAnnotationModelListenerExtension, ITextPresentationListener {	
 	
 	/** 
 	 * The presentation information (decoration) for an annotation.  Each such
@@ -209,7 +209,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Updates the set of decorations based on the current state of
 	 * the painter's annotation model.
 	 */
-	private synchronized void catchupWithModel() {
+	private synchronized void catchupWithModel(AnnotationModelEvent event) {
 	    
 		if (fDecorations != null) {
 			fDecorations.clear();
@@ -376,10 +376,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Recomputes the squiggles to be drawn and redraws them.
 	 */
-	private void updatePainting() {
+	private void updatePainting(AnnotationModelEvent event) {
 		disablePainting(true);
 		
-		catchupWithModel();
+		catchupWithModel(null);
 		
 		if (!fInputDocumentAboutToBeChanged)
 			invalidateTextPresentation();
@@ -426,22 +426,29 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
 	public synchronized void modelChanged(final IAnnotationModel model) {
+		modelChanged((AnnotationModelEvent)null);
+	}
+	    
+	/*
+	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
+	 */
+	public synchronized void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			if (fIsSettingModel) {
 				// inside the ui thread -> no need for posting
-				updatePainting();
+				updatePainting(event);
 			} else {
 				Display d= fTextWidget.getDisplay();
 				if (d != null) {
 					d.asyncExec(new Runnable() {
 						public void run() {
 							if (fTextWidget != null && !fTextWidget.isDisposed())
-								updatePainting();
+								updatePainting(event);
 						}
 					});
 				}
@@ -790,7 +797,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fIsActive= false;
 			disablePainting(redraw);
 			setModel(null);
-			catchupWithModel();
+			catchupWithModel(null);
 		}
 	}
 	
@@ -810,7 +817,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				setModel(fSourceViewer.getAnnotationModel());
 			}
 		} else if (CONFIGURATION == reason || INTERNAL == reason)
-			updatePainting();
+			updatePainting(null);
 	}
 
 	/*
