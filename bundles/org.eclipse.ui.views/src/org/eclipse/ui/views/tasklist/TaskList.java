@@ -96,12 +96,14 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IMarkerEditorPositioner;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -125,8 +127,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class TaskList extends ViewPart {
 
 	private Table table;
-	private TableEditor tableEditor;
-	private MenuManager contextMenu;
 	private TaskSorter sorter;
 
 	private CellEditor descriptionEditor;
@@ -619,7 +619,6 @@ public class TaskList extends ViewPart {
 		table.setMenu(menu);
 		// Be sure to register it so that other plug-ins can add actions.
 		getSite().registerContextMenu(menuMgr, viewer);
-		this.contextMenu = menuMgr;
 
 		// Track selection in the page.
 		getSite().getPage().addPartListener(partListener);
@@ -634,7 +633,7 @@ public class TaskList extends ViewPart {
 		editorActionHandler.setSelectAllAction(selectAllAction);
 
 		getViewSite().getActionBars().setGlobalActionHandler(
-			IWorkbenchActionConstants.PROPERTIES,
+			ActionFactory.PROPERTIES.getId(),
 			propertiesAction);
 
 		getSite().setSelectionProvider(viewer);
@@ -655,10 +654,7 @@ public class TaskList extends ViewPart {
 					(IMarker) ((IStructuredSelection) getSelection())
 						.getFirstElement();
 				if (marker != null) {
-					IWorkbench workbench =
-						getViewSite().getWorkbenchWindow().getWorkbench();
-					contextId =
-						workbench.getMarkerHelpRegistry().getHelp(marker);
+					contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
 				}
 
 				if (contextId == null)
@@ -683,7 +679,7 @@ public class TaskList extends ViewPart {
 		table.setLinesVisible(true);
 		//table.setLayout(new TableLayout());
 
-		tableEditor = new TableEditor(table);
+		new TableEditor(table);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchPart.
@@ -1332,8 +1328,17 @@ public class TaskList extends ViewPart {
 				IEditorInput input = editor.getEditorInput();
 				if (input instanceof IFileEditorInput) {
 					IFile file = ((IFileEditorInput) input).getFile();
-					if (selectedMarker.getResource().equals(file))
-						editor.gotoMarker(selectedMarker);
+					if (selectedMarker.getResource().equals(file)) {
+						IMarkerEditorPositioner positioner = null;
+						if (editor instanceof IMarkerEditorPositioner) {
+							positioner = (IMarkerEditorPositioner) editor;
+						} else {
+							positioner = (IMarkerEditorPositioner) editor.getAdapter(IMarkerEditorPositioner.class);
+						}
+						if (positioner != null) {
+							positioner.gotoPosition(selectedMarker);
+						}
+					}
 				}
 			}
 		}

@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
@@ -47,7 +48,7 @@ class GotoTaskAction extends TaskAction {
 		if (marker.exists() && resource instanceof IFile) {
 			IWorkbenchPage page = getTaskList().getSite().getPage();
 			try {
-				page.openEditor(marker,OpenStrategy.activateOnOpen());
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
 			} catch (PartInitException e) {
 				DialogUtil.openError(
 					page.getWorkbenchWindow().getShell(),

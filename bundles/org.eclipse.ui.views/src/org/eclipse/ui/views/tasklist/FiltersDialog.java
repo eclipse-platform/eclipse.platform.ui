@@ -181,7 +181,6 @@ class FiltersDialog extends Dialog {
 	 */
 	private class WorkingSetGroup {
 		private Button button;
-		private Button selectButton;
 		/**
 		 * Creates the working set filter selection widgets.
 		 * 
@@ -201,7 +200,7 @@ class FiltersDialog extends Dialog {
 			layout.marginHeight = 0;
 			radio.dispose();
 			composite.setLayout(layout);
-			selectButton = createButton(composite, SELECT_ID, TaskListMessages.getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
+			createButton(composite, SELECT_ID, TaskListMessages.getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
 		}
 		/**
 		 * Returns wether or not a working set filter should be used

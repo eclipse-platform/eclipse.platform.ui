@@ -30,7 +30,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * 
  * @since 2.0
  */
-/*package*/ class PasteAction extends SelectionListenerAction {
+/*package*/ class PasteAction extends ResourceSelectionListenerAction {
 
 	/**
 	 * The id of this action.

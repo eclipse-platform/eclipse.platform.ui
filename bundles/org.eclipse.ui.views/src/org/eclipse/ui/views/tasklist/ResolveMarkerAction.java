@@ -18,9 +18,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * This action displays a list of resolutions for the selected marker
@@ -46,8 +46,7 @@ class ResolveMarkerAction extends TaskAction {
 		IMarker marker = (IMarker) selection.getFirstElement();
 		if (marker == null)
 			return false;
-		IWorkbench workbench = getTaskList().getViewSite().getWorkbenchWindow().getWorkbench();
-		return workbench.getMarkerHelpRegistry().hasResolutions(marker);
+		return IDE.getMarkerHelpRegistry().hasResolutions(marker);
 	}
 	
 	/**
@@ -82,8 +81,7 @@ class ResolveMarkerAction extends TaskAction {
 	 * @return the resolutions for the selected marker	
 	 */
 	private IMarkerResolution[] getResolutions(IMarker marker) {
-		IWorkbench workbench = getTaskList().getViewSite().getWorkbenchWindow().getWorkbench();
-		return workbench.getMarkerHelpRegistry().getResolutions(marker);
+		return IDE.getMarkerHelpRegistry().getResolutions(marker);
 	}
 
 	/**

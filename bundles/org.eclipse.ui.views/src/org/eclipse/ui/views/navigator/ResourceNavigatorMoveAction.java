@@ -14,13 +14,13 @@ import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.MoveProjectAction;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
@@ -56,7 +56,7 @@ public void run() {
 	super.run();
 	List destinations = getDestinations();
 	if (destinations != null && destinations.isEmpty() == false) {
-		IWorkspaceRoot root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		List resources = new ArrayList();
 		Iterator iterator = destinations.iterator();
 	
