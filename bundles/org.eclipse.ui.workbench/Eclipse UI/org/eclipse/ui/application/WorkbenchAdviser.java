@@ -11,15 +11,21 @@
 
 package org.eclipse.ui.application;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.part.EditorInputTransfer;
 
 /**
  * Public base class for configuring the workbench.
@@ -399,5 +405,26 @@ public abstract class WorkbenchAdviser {
 		// default: no initial perspective
 		return null;
 	}
+	
+	/**
+	 * Returns the list of drag and drop <code>Transfer</code> types
+	 * that are to be supported by the given workbench window.
+	 * <p>
+	 * This method is called during window creation (or restore).
+	 * The default implementation returns a modifiable list containing 
+	 * just the <code>EditorInputTransfer</code>.
+	 * Subclasses may extend or override to provide a list of application-specific
+	 * transfer types.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the workbench window
+	 * @return list of drag and drop transfer types (element type: <code>Transfer</code>)
+	 */
+	public List getEditorAreaTransfers(IWorkbenchWindowConfigurer configurer) {
+		// default: EditorInputTransfer
+		List results = new ArrayList(1);
+		results.add(EditorInputTransfer.getInstance());
+		return results;
+	} 
 }
 

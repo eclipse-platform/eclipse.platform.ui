@@ -23,6 +23,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
  * A dialog for perspective creation
@@ -88,7 +89,7 @@ protected Control createDialogArea(Composite parent) {
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.getTable().setFont(parent.getFont());
-	list.setLabelProvider(new PerspLabelProvider());
+	list.setLabelProvider(new PerspectiveLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
 	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);

@@ -242,6 +242,7 @@ public class DecoratorManager
 	private Object getResourceAdapter(Object element) {
 
 		//Get any adaptions to IResource
+		// @issue adaptable = true problem
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
 			Object resourceAdapter =

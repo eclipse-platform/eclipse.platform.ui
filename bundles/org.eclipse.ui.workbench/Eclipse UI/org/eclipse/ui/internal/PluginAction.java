@@ -186,6 +186,7 @@ public abstract class PluginAction extends Action
 				adaptableNotChecked = false;
 				return false;
 			}
+			// @issue adaptable = true problem
 			Class resourceClass = IResource.class;
 
 			if (typeName.equals(resourceClass.getName())) {

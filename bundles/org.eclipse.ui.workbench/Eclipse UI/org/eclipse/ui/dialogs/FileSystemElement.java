@@ -12,12 +12,9 @@ package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  *  Instances of this class represent files or file-like entities (eg.- zip

@@ -439,9 +439,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		// Revert the perspectives
 		perspectiveRegistry.revertPerspectives(perspToRevert);
 
-		// Update perspective history.
-		 ((Workbench) workbench).getPerspectiveHistory().refreshFromRegistry();
-
 		// store the open new project perspective settings
 		projectSwitchField.store();
 		IPreferenceStore store = getPreferenceStore();

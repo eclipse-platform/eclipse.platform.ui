@@ -329,6 +329,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			Object object = objects.get(i);
 
 			if (object instanceof IAdaptable) {
+				// @issue adaptable = true problem
 				if (object instanceof IResource)
 					continue;
 

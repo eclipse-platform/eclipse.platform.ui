@@ -119,6 +119,7 @@ private boolean isEnabledFor(ISelection sel) {
  * conditions specified in the registry for this action.
  */
 private boolean isEnabledFor(ITextSelection sel) {
+	// @issue ref to ITextSelection to get size for enablesFor attribute
 	int count = sel.getLength();
 	
 	if(verifySelectionCount(count) == false)

@@ -1639,10 +1639,6 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 			return;
 		perspList.setActive(persp);
 		window.firePerspectiveActivated(this, desc);
-		
-		// Update MRU list.
-		Workbench wb = (Workbench)window.getWorkbench();
-		wb.getPerspectiveHistory().add(desc);
 	}
 }
 /**
@@ -2278,10 +2274,6 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 
 	persp.saveDescAs(newDesc);
 	window.updatePerspectiveShortcut(oldDesc, newDesc, this);
-	
-	// Update MRU list.
-	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(newDesc);
 }
 /**
  * Save the state of the page.
@@ -2447,10 +2439,6 @@ private void setPerspective(Perspective newPersp) {
 
 		// Notify listeners of activation
 		window.firePerspectiveActivated(this, newPersp.getDesc());
-	
-		// Update MRU list.
-		Workbench wb = (Workbench)window.getWorkbench();
-		wb.getPerspectiveHistory().add(newPersp.getDesc());
 	
 		// Update the shortcut	
 		window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);

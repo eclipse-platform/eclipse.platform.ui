@@ -18,8 +18,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Opens a new window. The initial perspective
@@ -34,13 +34,13 @@ public class OpenInNewWindowAction extends Action {
 
 	/**
 	 * Creates a new <code>OpenInNewWindowAction</code>. Sets
-	 * the new window page's input to be the workspace root
-	 * by default.
+	 * the new window page's input to be an application-specific
+	 * default.
 	 * 
 	 * @param window the workbench window containing this action
 	 */
 	public OpenInNewWindowAction(IWorkbenchWindow window) {
-		this(window, WorkbenchPlugin.getPluginWorkspace().getRoot());
+		this(window, ((Workbench)window.getWorkbench()).getDefaultWindowInput());
 	}
 
 	/**

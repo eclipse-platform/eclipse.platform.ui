@@ -180,6 +180,7 @@ public abstract class ObjectContributorManager {
 	protected List getContributors(Object object) {
 
 		Class objectClass = object.getClass();
+		// @issue adaptable = true problem
 		IResource adapted = getAdaptedResource(object);
 
 		if (adapted == null)

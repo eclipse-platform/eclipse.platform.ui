@@ -15,13 +15,14 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.PerspLabelProvider;
+import org.eclipse.ui.model.PerspectiveLabelProvider;
+
 /**
  * Implements a action to enable the user switch between perspectives
  * using keyboard.
  */
 public class CyclePerspectiveAction extends CyclePartAction {
-	private PerspLabelProvider labelProvider = new PerspLabelProvider(false);;
+	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(false);;
 /**
  * Creates a CyclePerspectiveAction.
  */

@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DeclarativeDecoratorDefinition is a decorator 
@@ -71,7 +70,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 
 		if (decorator == null) {
 
-			if (definingElement.getAttribute(WizardsRegistryReader.ATT_CLASS)
+			if (definingElement.getAttribute(DecoratorRegistryReader.ATT_CLASS)
 				== null)
 				decorator =
 					new DeclarativeDecorator(definingElement, iconLocation);
@@ -80,12 +79,10 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 				Platform.run(new ISafeRunnable() {
 					public void run() {
 						try {
-							decorator =
-								(
-									ILightweightLabelDecorator) WorkbenchPlugin
-										.createExtension(
+							decorator =	(ILightweightLabelDecorator) WorkbenchPlugin
+								.createExtension(
 									definingElement,
-									WizardsRegistryReader.ATT_CLASS);
+									DecoratorRegistryReader.ATT_CLASS);
 							decorator.addListener(
 								WorkbenchPlugin
 									.getDefault()

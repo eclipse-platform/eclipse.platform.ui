@@ -76,7 +76,8 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
 	IWorkbenchPropertyPage ppage = null;
 	ppage = (IWorkbenchPropertyPage)WorkbenchPlugin.createExtension(
 		pageElement, PropertyPagesRegistryReader.ATT_CLASS);
-		
+
+	// @issue adaptable = true problem		
 	if(isResourceContributor)
 		ppage.setElement((IAdaptable) element.getAdapter(IResource.class));
 	else

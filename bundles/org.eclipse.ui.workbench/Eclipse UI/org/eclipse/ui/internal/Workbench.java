@@ -63,7 +63,6 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -113,7 +112,6 @@ public final class Workbench implements IWorkbench {
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
-	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop = true;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
@@ -461,16 +459,6 @@ public final class Workbench implements IWorkbench {
 			editorHistory = new EditorHistory(store.getInt(IPreferenceConstants.RECENT_FILES));
 		}
 		return editorHistory;
-	}
-	/*
-	 * Returns the perspective history.
-	 * @issue No one seems to be making use of the history, so why maintain it?
-	 */
-	protected PerspectiveHistory getPerspectiveHistory() {
-		if (perspHistory == null) {
-			perspHistory = new PerspectiveHistory(getPerspectiveRegistry());
-		}
-		return perspHistory;
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
@@ -980,18 +968,7 @@ public final class Workbench implements IWorkbench {
 		MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
 			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
-		// Read perspective history.
-		// This must be done before we recreate the windows, because it is
-		// consulted during the recreation.
 		IMemento childMem;
-		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
-			childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
-			if (childMem != null)
-				result.add(getPerspectiveHistory().restoreState(childMem));
-		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
-		}
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
 			IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
@@ -1213,8 +1190,6 @@ public final class Workbench implements IWorkbench {
 			result.merge(window.saveState(childMem));
 		}
 		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
-		// Save perspective history.
-		result.add(getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY))); //$NON-NLS-1$
 		return result;
 	}
 	
@@ -1501,5 +1476,14 @@ public final class Workbench implements IWorkbench {
 	 */
 	/* package */ WorkbenchAdviser getAdviser() {
 		return adviser;
+	}
+	
+	/**
+	 * Returns the default workbench window input.
+	 * 
+	 * @return the default window input or <code>null</code> if none
+	 */
+	public IAdaptable getDefaultWindowInput() {
+		return getAdviser().getDefaultWindowInput();
 	}
 }

@@ -346,6 +346,7 @@ public class ActionExpression {
 				return true;
 
 			// Try out the underlying resource.
+			// @issue adaptable = true problem
 			if (object instanceof IResource) {
 				return false;
 			} else {

@@ -79,6 +79,7 @@ public class ObjectFilterTest {
 			return false;
 			
 		// Try out the underlying resource.
+		// @issue adaptable = true problem
 		IResource res = null;
 		if (object instanceof IAdaptable)
 			res = (IResource)((IAdaptable)object).getAdapter(IResource.class);
