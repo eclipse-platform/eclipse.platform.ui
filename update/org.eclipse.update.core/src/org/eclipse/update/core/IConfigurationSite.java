@@ -89,11 +89,12 @@ public interface IConfigurationSite {
 	void configure(IFeatureReference feature) throws CoreException;
 	
 	/**
-	 * Unconfigure the feature from the execution path
+	 * Unconfigure the feature from the execution path.
+	 * returns false if the unconfigure is not sucessful
 	 * @since 2.0 
 	 */
 
-	void unconfigure(IFeatureReference feature,IProblemHandler handler) throws CoreException;
+	boolean unconfigure(IFeatureReference feature,IProblemHandler handler) throws CoreException;
 	
 		
 	/**

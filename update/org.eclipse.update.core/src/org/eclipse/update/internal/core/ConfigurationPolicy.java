@@ -69,7 +69,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
-	void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
+	boolean unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
 
 		boolean unconfigure = true;
 		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -103,7 +103,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
 			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+			return true;
 		}
+		
+		return false;
 	}
 
 	/**

@@ -6,6 +6,8 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
@@ -209,6 +211,13 @@ public class SiteFTP implements ISite {
 	 * @see ISite#createSiteContentConsumer(IFeature)
 	 */
 	public ISiteContentConsumer createSiteContentConsumer(IFeature feature) throws CoreException {
+		return null;
+	}
+
+	/*
+	 * @see ISite#getFeatureReference(IFeature)
+	 */
+	public IFeatureReference getFeatureReference(IFeature feature) {
 		return null;
 	}
 

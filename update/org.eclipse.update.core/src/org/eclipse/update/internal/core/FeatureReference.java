@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteMapModel;
 
@@ -21,7 +22,9 @@ import org.eclipse.update.core.model.SiteMapModel;
  * 
  */
 
-public class FeatureReference extends FeatureReferenceModel implements IFeatureReference, IWritable {
+public class FeatureReference
+	extends FeatureReferenceModel
+	implements IFeatureReference, IWritable {
 
 	private IFeature feature;
 
@@ -51,8 +54,8 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		if (categories == null) {
 			categories = new ArrayList();
 			String[] categoriesAsString = getCategoryNames();
-			for (int i = 0; i < categoriesAsString.length; i++){
-					categories.add(getSite().getCategory(categoriesAsString[i]));
+			for (int i = 0; i < categoriesAsString.length; i++) {
+				categories.add(getSite().getCategory(categoriesAsString[i]));
 			}
 		}
 
@@ -73,20 +76,34 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 
 		String type = getType();
 		if (feature == null) {
-			if (type== null || type.equals("")) {
+
+			if (type == null || type.equals("")) {
 				URL url = getURL();
-				if (url!=null && url.toExternalForm().endsWith(FeaturePackagedContentProvider.JAR_EXTENSION)) {
+				if (url != null
+					&& url.toExternalForm().endsWith(FeaturePackagedContentProvider.JAR_EXTENSION)) {
 					// if it ends with JAR, guess it is a FeaturePackaged
-					String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
-					type=(pluginID+IFeatureFactory.INSTALLABLE_FEATURE_TYPE);
+					String pluginID =
+						UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
+					type = (pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE);
 				} else {
 					// ask the Site for the default type 
-					type=(getSite().getDefaultInstallableFeatureType());
+					type = (getSite().getDefaultInstallableFeatureType());
 				}
 			}
-		feature = createFeature(type,getURL(),getSite());				
+
+			feature = createFeature(type, getURL(), getSite());
+
+			if (feature == null) {
+				setBroken(true);
+			} else {
+				if (feature.getUpdateSiteEntry() != null) {
+					URLEntryModel model = new URLEntryModel();
+					model.setURLString(feature.getUpdateSiteEntry().getURL().toExternalForm());
+					setUpdateURL(model);
+				}
+			}
 		}
-		
+
 		return feature;
 	}
 
@@ -94,37 +111,40 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @see IFeatureReference#addCategory(ICategory)
 	 */
 	public void addCategory(ICategory category) {
-		this. addCategoryName(category.getName());
+		this.addCategoryName(category.getName());
 	}
 
 	/*
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
-	String gap = "";
-	for (int i = 0; i < indent; i++) gap += " ";
-	String increment = "";
-	for (int i = 0; i < IWritable.INDENT; i++) increment += " ";
-		
-		w.print(gap+"<feature ");
+		String gap = "";
+		for (int i = 0; i < indent; i++)
+			gap += " ";
+		String increment = "";
+		for (int i = 0; i < IWritable.INDENT; i++)
+			increment += " ";
+
+		w.print(gap + "<feature ");
 		// feature type
-		if (getType()!=null){
-			w.print("type=\""+Writer.xmlSafe(getType()+"\""));
+		if (getType() != null) {
+			w.print("type=\"" + Writer.xmlSafe(getType() + "\""));
 			w.print(" ");
 		}
-		
+
 		// feature URL
 		String URLInfoString = null;
-		if(getURL()!=null) {
-			URLInfoString = UpdateManagerUtils.getURLAsString(getSite().getURL(),getURL());
-			w.print("url=\""+Writer.xmlSafe(URLInfoString)+"\"");
+		if (getURL() != null) {
+			URLInfoString = UpdateManagerUtils.getURLAsString(getSite().getURL(), getURL());
+			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
 		}
 		w.println(">");
-		
+
 		String[] categoryNames = getCategoryNames();
-		for (int i = 0; i < categoryNames.length; i++){
+		for (int i = 0; i < categoryNames.length; i++) {
 			String element = categoryNames[i];
-			w.println(gap+increment+"<category name=\""+Writer.xmlSafe(element)+"\"/>");		
+			w.println(
+				gap + increment + "<category name=\"" + Writer.xmlSafe(element) + "\"/>");
 		}
 		w.println("</feature>");
 	}
@@ -132,25 +152,33 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	/**
 	 * create an instance of a class that implements IFeature
 	 */
-	private IFeature createFeature(String featureType, URL url, ISite site) throws CoreException{
+	private IFeature createFeature(String featureType, URL url, ISite site)
+		throws CoreException {
 		IFeature feature = null;
-		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(featureType);
-		feature = factory.createFeature(url,site);
+		IFeatureFactory factory =
+			FeatureTypeFactory.getInstance().getFactory(featureType);
+		feature = factory.createFeature(url, site);
 		return feature;
 	}
-	
 
 	/*
 	 * @see IFeatureReference#setURL(URL)
 	 */
 	public void setURL(URL url) throws CoreException {
-		if (url!=null){
+		if (url != null) {
 			setURLString(url.toExternalForm());
 			try {
-				resolve(url,null);
-			} catch (MalformedURLException e){
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Cannot resolve URL:" + url.toExternalForm(), e);
+				resolve(url, null);
+			} catch (MalformedURLException e) {
+				String id =
+					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status =
+					new Status(
+						IStatus.WARNING,
+						id,
+						IStatus.OK,
+						"Cannot resolve URL:" + url.toExternalForm(),
+						e);
 				throw new CoreException(status);
 			}
 		}
@@ -160,7 +188,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @see IFeatureReference#getSite()
 	 */
 	public ISite getSite() {
-		return (ISite)getSiteModel();
+		return (ISite) getSiteModel();
 	}
 
 	/*

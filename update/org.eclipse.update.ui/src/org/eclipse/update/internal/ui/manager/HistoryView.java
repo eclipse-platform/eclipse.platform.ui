@@ -187,6 +187,8 @@ public class HistoryView
 			if (obj instanceof IFeatureAdapter) {
 				try {
 				IFeature feature = ((IFeatureAdapter) obj).getFeature();
+				// FIXME the feature may be null or the FeatureReference
+				// maybe broken.
 				String version = feature.getVersionIdentifier().getVersion().toString();
 				return feature.getLabel() + " " + version;
 				}

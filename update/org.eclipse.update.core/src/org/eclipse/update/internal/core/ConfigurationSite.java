@@ -210,8 +210,8 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
-	public void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
-		((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(feature, handler);
+	public boolean unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
+		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(feature, handler);
 	}
 
 	/*
