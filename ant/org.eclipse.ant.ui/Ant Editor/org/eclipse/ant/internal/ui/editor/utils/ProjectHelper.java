@@ -81,11 +81,11 @@ public class ProjectHelper extends ProjectHelper2 {
 	/**
 	 * The Ant Model
 	 */
-	private static AntModel fAntModel;
+	private static AntModel fgAntModel;
 
-	private static AntHandler elementHandler = new ElementHandler();
-	private static AntHandler projectHandler = new ProjectHandler();
-	private static AntHandler targetHandler = new TargetHandler();
+	private static AntHandler elementHandler= new ElementHandler();
+	private static AntHandler projectHandler= new ProjectHandler();
+	private static AntHandler targetHandler= new TargetHandler();
 	private static AntHandler mainHandler= new MainHandler();
 	private static LexicalHandler lexicalHandler= new LexHandler();
 	
@@ -219,6 +219,11 @@ public class ProjectHelper extends ProjectHelper2 {
 			} catch (BuildException be) {
 				ErrorHelper.handleErrorFromElementText(start, count, context, be);
 			}
+		}
+		
+		public void reset() {
+			task= null;
+			currentTask= null;
 		}
 	}
 	
@@ -569,10 +574,11 @@ public class ProjectHelper extends ProjectHelper2 {
 	}
 
 	public static void setAntModel(AntModel antModel) {
-		fAntModel = antModel;
+		fgAntModel= antModel;
+		((ProjectHelper.ElementHandler)elementHandler).reset();
 	}
 
 	public static AntModel getAntModel() {
-		return fAntModel;
+		return fgAntModel;
 	}
 }

@@ -126,6 +126,7 @@ public class AntModel {
 		synchronized (this) {
 			fDocument= null;
 			fCore= null;
+			ProjectHelper.setAntModel(null);
 		}
 	}
 	
