@@ -114,7 +114,8 @@ public class CommitWizard extends ResizableWizard {
 		 */
 		public void done(IJobChangeEvent event) {
 			super.done(event);
-			jobListener.done(event);
+			if (jobListener != null)
+				jobListener.done(event);
 		}
 		
 		/* (non-Javadoc)
@@ -122,7 +123,8 @@ public class CommitWizard extends ResizableWizard {
 		 */
 		public void scheduled(IJobChangeEvent event) {
 			super.scheduled(event);
-			jobListener.scheduled(event);
+			if (jobListener != null)
+				jobListener.scheduled(event);
 		}
     }
     
