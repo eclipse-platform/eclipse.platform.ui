@@ -1,26 +1,27 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.part;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.SubActionBars;
-import org.eclipse.ui.part.PageSite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.jface.action.*;
+import java.util.*;
+
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.FocusEvent;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.SubActionBars;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Abstract superclass of all multi-page workbench views.
@@ -360,6 +361,10 @@ public void dispose() {
 	Iterator enum = clone.values().iterator();
 	while (enum.hasNext()) {
 		PageRec rec = (PageRec) enum.next();
+		// Fix for bug 25818 -- to be cleaned up
+		if (rec.subActionBars != null) {
+			rec.subActionBars.dispose();
+		}
 		removePage(rec);
 	}
 
@@ -533,6 +538,7 @@ public void partBroughtToTop(IWorkbenchPart part) {
  * method deal with the closing of the active part. Subclasses may extend.
  */
 public void partClosed(IWorkbenchPart part) {
+	PageRec rec = getPageRec(part);
 	// Update the active part.
 	if (activeRec != null && activeRec.part == part) {
 		activeRec.subActionBars.dispose();
@@ -544,9 +550,14 @@ public void partClosed(IWorkbenchPart part) {
 		activeRec = null;
 		showPageRec(defaultPageRec);
 	}
+	else {
+		// Fix for bug 25818 -- to be cleaned up
+		if (rec != null && rec.subActionBars != null) {
+			rec.subActionBars.dispose();
+		}
+	}
 	
 	// Find and remove the part page.
-	PageRec rec = getPageRec(part);
 	if (rec != null)
 		removePage(rec);
 }
