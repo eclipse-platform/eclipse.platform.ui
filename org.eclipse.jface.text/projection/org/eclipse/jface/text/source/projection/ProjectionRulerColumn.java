@@ -100,6 +100,8 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 				if (next instanceof ProjectionAnnotation) {
 					ProjectionAnnotation annotation= (ProjectionAnnotation) next;
 					Position p= model.getPosition(annotation);
+					if (p == null)
+						continue;
 					
 					int distance= getDistance(p, document, line);
 					if (distance == -1)

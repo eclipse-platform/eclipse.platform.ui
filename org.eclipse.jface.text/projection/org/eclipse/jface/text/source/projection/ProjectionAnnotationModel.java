@@ -111,7 +111,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
 			if (annotation.isCollapsed()) {
 				Position position= getPosition(annotation);
-				if (position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
+				if (position != null && position.overlapsWith(offset, length) /* || is a delete at the boundary */ ) {
 					annotation.markExpanded();
 					modifyAnnotation(annotation, false);
 					expanding= true;

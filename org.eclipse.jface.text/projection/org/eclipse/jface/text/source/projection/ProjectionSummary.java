@@ -187,11 +187,13 @@ class ProjectionSummary {
 			ProjectionAnnotation projection= (ProjectionAnnotation) e.next();
 			if (projection.isCollapsed()) {
 				Position position= model.getPosition(projection);
-				IRegion summaryRegion= fProjectionViewer.computeCollapsedRegion(position);
-				if (summaryRegion != null) {
-					Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position);
-					if (summaryAnchor != null)
-						createSummary(additions, summaryRegion, summaryAnchor);
+				if (position != null) {
+					IRegion summaryRegion= fProjectionViewer.computeCollapsedRegion(position);
+					if (summaryRegion != null) {
+						Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position);
+						if (summaryAnchor != null)
+							createSummary(additions, summaryRegion, summaryAnchor);
+					}
 				}
 			}
 			
@@ -259,7 +261,7 @@ class ProjectionSummary {
 	}
 	
 	private boolean includes(IRegion range, Position position) {
-		if (!position.isDeleted())
+		if (position != null && !position.isDeleted())
 			return range.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= range.getOffset() + range.getLength();
 		return false;
 	}

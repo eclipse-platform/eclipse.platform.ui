@@ -402,15 +402,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Position found= null;
 			Annotation bestMatch= null;
 			Point selection= getSelectedRange();
-			for (Iterator it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
-				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
-				if (pa.isCollapsed()) {
-					Position pos= fProjectionAnnotationModel.getPosition(pa);
+			for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
+				if (annotation.isCollapsed()) {
+					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					// take the first most fine grained match
-					if (touches(selection, pos))
-						if (found == null || pos.includes(found.offset) && pos.includes(found.offset + found.length)) {
-							found= pos;
-							bestMatch= pa;
+					if (position != null && touches(selection, position))
+						if (found == null || position.includes(found.offset) && position.includes(found.offset + found.length)) {
+							found= position;
+							bestMatch= annotation;
 						}
 				}
 			}
@@ -420,8 +420,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 	
-	private boolean touches(Point selection, Position pos) {
-		return pos.overlapsWith(selection.x, selection.y) || selection.y == 0 && pos.offset + pos.length == selection.x + selection.y;
+	private boolean touches(Point selection, Position position) {
+		return position.overlapsWith(selection.x, selection.y) || selection.y == 0 && position.offset + position.length == selection.x + selection.y;
 	}
 
 	private void collapse() {
@@ -429,15 +429,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Position found= null;
 			Annotation bestMatch= null;
 			Point selection= getSelectedRange();
-			for (Iterator it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
-				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
-				if (!pa.isCollapsed()) {
-					Position pos= fProjectionAnnotationModel.getPosition(pa);
+			for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
+				if (!annotation.isCollapsed()) {
+					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					// take the first most fine grained match
-					if (touches(selection, pos))
-						if (found == null || found.includes(pos.offset) && found.includes(pos.offset + pos.length)) {
-							found= pos;
-							bestMatch= pa;
+					if (position != null && touches(selection, position))
+						if (found == null || found.includes(position.offset) && found.includes(position.offset + position.length)) {
+							found= position;
+							bestMatch= annotation;
 						}
 				}
 			}
@@ -761,7 +761,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			if (annotation.isCollapsed()) {
-				Position position= fProjectionAnnotationModel.getPosition(annotation);
+				Position position= fProjectionAnnotationModel.;
 				if (position == null) {
 					// annotation might already be deleted, we will be informed later on about this deletion
 					continue;
@@ -825,9 +825,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			if (annotation.isCollapsed()) {
 				Position position= fProjectionAnnotationModel.getPosition(annotation);
-				IRegion region= computeCollapsedRegion(position);
-				if (region != null)
-					collapse(region.getOffset(), region.getLength(), fireRedraw);
+				if (position != null) {
+					IRegion region= computeCollapsedRegion(position);
+					if (region != null)
+						collapse(region.getOffset(), region.getLength(), fireRedraw);
+				}
 			}
 		}
 	}
@@ -879,9 +881,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
-					IRegion region= computeCollapsedRegion(position);
-					if (region != null)
-						removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+					if (position != null) {
+						IRegion region= computeCollapsedRegion(position);
+						if (region != null)
+							removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+					}
 				}
 			}
 			
