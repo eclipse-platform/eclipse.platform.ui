@@ -264,6 +264,11 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
 		});
 	}
 }
+
+/**
+ * The cancel button has been pressed.
+ * @since 3.0
+ */
 protected void cancelPressed() {
 	//NOTE: this was previously done from a listener installed on the cancel
 	//button.  On GTK, the listener installed by Dialog.createButton is called
@@ -290,6 +295,7 @@ public boolean close() {
 
 /**
  * Clear the cursors in the dialog.
+ * @since 3.0
  */
 protected void clearCursors() {
 	if (cancel != null && !cancel.isDisposed()) {
@@ -403,6 +409,7 @@ public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable
  * 
  * @return <code>true</code> to open the dialog before run,
  *   <code>false</code> to only create the dialog, but not open it
+ * @since 3.0
  */
 public boolean getOpenOnRun() {
 	return openOnRun;
@@ -416,6 +423,7 @@ public boolean getOpenOnRun() {
  * 
  * @param openOnRun <code>true</code> to open the dialog before run,
  *   <code>false</code> to only create the dialog, but not open it
+ * @since 3.0
  */
 public void setOpenOnRun(boolean openOnRun) {
 	this.openOnRun = openOnRun;
@@ -425,6 +433,7 @@ public void setOpenOnRun(boolean openOnRun) {
  * Returns the nesting depth of running operations.
  * 
  * @return the nesting depth of running operations
+ * @since 3.0
  */
 protected int getNestingDepth() {
 	return nestingDepth;
@@ -432,11 +441,17 @@ protected int getNestingDepth() {
 
 /**
  * Increments the nesting depth of running operations.
+ * @since 3.0
  */
 protected void incrementNestingDepth() {
 	nestingDepth++;
 }
 
+/**
+ * Decrements the nesting depth of running operations.
+ * @since 3.0
+ *
+ */
 protected void decrementNestingDepth() {
 	nestingDepth--;
 }
@@ -446,6 +461,7 @@ protected void decrementNestingDepth() {
  * Default behaviour is to open or create the dialog,
  * based on the setting of <code>getOpenOnRun</code>,
  * and increment the nesting depth.
+ * @since 3.0
  */
 protected void aboutToRun() {
 	if (getOpenOnRun()) {
@@ -461,6 +477,7 @@ protected void aboutToRun() {
  * Called just after the operation is run.
  * Default behaviour is to decrement the nesting depth,
  * and close the dialog.
+ * @since 3.0
  */
 protected void finishedRun() {
 	decrementNestingDepth();
@@ -484,6 +501,7 @@ public void setCancelable(boolean cancelable) {
  *
  * @param b <code>true</code> to enable the cancel button,
  *   and <code>false</code> to disable it
+ * @since 3.0
  */
 protected void setOperationCancelButtonEnabled(boolean b) {
 	operationCancelableState = b;
