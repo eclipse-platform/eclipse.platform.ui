@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.commands;
 
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.commands.util.Sequence;
 
 /**
@@ -31,13 +32,18 @@ public interface ICommand {
 	 * @param commandListener the ICommandListener instance to register.
 	 */	
 	void addCommandListener(ICommandListener commandListener);
-	
+
 	/**
 	 * TODO javadoc
-	 * 
-	 * @return
 	 */	
-	boolean exists();
+	void execute()
+		throws Exception;
+
+	/**
+	 * TODO temporary method
+	 */	
+	void execute(Event event)
+		throws Exception;
 
 	/**
 	 * TODO javadoc
@@ -76,14 +82,6 @@ public interface ICommand {
 	 * 
 	 * @return
 	 */	
-	IHandler getHandler()
-		throws Exception;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
 	String getId();
 	
 	/**
@@ -108,6 +106,44 @@ public interface ICommand {
 	 * @return
 	 */	
 	String getPluginId()
+		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param propertyName
+	 * @return
+	 */	
+	Object getProperty(String propertyName)
+		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	String[] getPropertyNames()
+		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	boolean isDefined();
+
+	/**
+	 * TODO temporary method
+	 */	
+	boolean isEnabled()
+		throws Exception;
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	boolean isHandled()
 		throws Exception;
 
 	/**

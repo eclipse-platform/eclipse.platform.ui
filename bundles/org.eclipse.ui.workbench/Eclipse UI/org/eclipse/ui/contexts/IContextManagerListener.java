@@ -26,4 +26,10 @@ package org.eclipse.ui.contexts;
  */
 public interface IContextManagerListener {
 
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param contextManagerEvent
+	 */
+	void contextManagerChanged(ContextManagerEvent contextManagerEvent);
 }

@@ -31,19 +31,5 @@ public interface IContextListener {
 	 * 
 	 * @param contextEvent
 	 */	
-	void contextAdded(ContextEvent contextEvent);
-	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param contextEvent
-	 */	
 	void contextChanged(ContextEvent contextEvent);
-	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param contextEvent
-	 */	
-	void contextRemoved(ContextEvent contextEvent);
 }

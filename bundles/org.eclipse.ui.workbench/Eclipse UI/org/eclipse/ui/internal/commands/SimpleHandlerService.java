@@ -9,12 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
 
 import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.internal.commands.util.Util;
 
 /**

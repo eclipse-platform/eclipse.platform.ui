@@ -32,14 +32,7 @@ public interface IContext {
 	 * @param contextListener the IContextListener instance to register.
 	 */	
 	void addContextListener(IContextListener contextListener);
-	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 */	
-	boolean exists();
-	
+		
 	/**
 	 * TODO javadoc
 	 * 
@@ -82,6 +75,21 @@ public interface IContext {
 	 */	
 	String getPluginId()
 		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	boolean isActive()
+		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	boolean isDefined();
 
 	/**
 	 * Unregisters an IContextListener instance with this context.

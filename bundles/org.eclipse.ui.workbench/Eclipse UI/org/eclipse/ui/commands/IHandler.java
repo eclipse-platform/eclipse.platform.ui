@@ -35,14 +35,12 @@ public interface IHandler {
 	/**
 	 * TODO javadoc
 	 */	
-	void execute()
-		throws Exception;
+	void execute();
 
 	/**
 	 * TODO temporary method
 	 */	
-	void execute(Event event)
-		throws Exception;
+	void execute(Event event);
 
 	/**
 	 * TODO javadoc
@@ -51,6 +49,14 @@ public interface IHandler {
 	 * @return
 	 */	
 	Object getProperty(String name)
+		throws Exception;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	String[] getPropertyNames()
 		throws Exception;
 
 	/**

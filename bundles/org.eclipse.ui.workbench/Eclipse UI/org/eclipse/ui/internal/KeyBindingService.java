@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

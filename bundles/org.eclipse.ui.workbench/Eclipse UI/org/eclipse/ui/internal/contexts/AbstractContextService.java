@@ -9,11 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.ui.contexts.ContextServiceEvent;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.contexts.IContextServiceListener;
 
 /**
  * <p>

@@ -9,11 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.ui.commands.HandlerServiceEvent;
+import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.commands.IHandlerServiceListener;
 
 /**
  * <p>

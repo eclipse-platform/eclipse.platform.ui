@@ -32,18 +32,20 @@ public class ActionHandler implements IHandler {
 	public void addPropertyListener(IPropertyListener propertyListener) {
 	}
 
-	public void execute()
-		throws Exception {	
+	public void execute() {	
 		action.run();
 	}
 
-	public void execute(Event event) 
-		throws Exception {
+	public void execute(Event event) {
 		action.runWithEvent(event);
 	}
 
 	public Object getProperty(String name)
 		throws Exception {
+		return null;
+	}
+
+	public String[] getPropertyNames() {
 		return null;
 	}
 
