@@ -11,25 +11,35 @@
 package org.eclipse.debug.ui.launchVariables;
 
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.IContextLaunchVariable;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchVariables.LaunchVariableMessages;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,7 +48,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A launch configuration tab which allows the user to specify
@@ -47,10 +67,25 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class RefreshTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
 
-	private LaunchConfigurationVariableForm variableForm;
+	// Check Buttons
+	private Button fRefreshButton;
+	private Button fRecursiveButton;
 	
-	protected Button refreshField;
-	protected Button recursiveField;
+	// Group box
+	private Group fGroup;
+	
+	// Radio Buttons
+	private Button fContainerButton;
+	private Button fProjectButton;
+	private Button fResourceButton;
+	private Button fWorkingSetButton;
+	private Button fWorkspaceButton;
+	
+	// Push Button
+	private Button fSelectButton;
+	
+	// Working set
+	private IWorkingSet fWorkingSet;
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -61,15 +96,98 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		layout.numColumns = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
-		mainComposite.setLayoutData(gridData);
+		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
-		createVerticalSpacer(mainComposite, 1);
-		createRefreshComponent(mainComposite);
-		createRecursiveComponent(mainComposite);
-		createScopeComponent(mainComposite);
+		
+		createVerticalSpacer(mainComposite, 2);
+		
+		fRefreshButton = new Button(mainComposite, SWT.CHECK);
+		fRefreshButton.setFont(mainComposite.getFont());
+		fRefreshButton.setText(LaunchVariableMessages.getString("RefreshTab.31")); //$NON-NLS-1$
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 2;
+		fRefreshButton.setLayoutData(gd);
+		fRefreshButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnabledState();
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fGroup = new Group(mainComposite, SWT.NONE);
+		fGroup.setFont(mainComposite.getFont());
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = false;
+		fGroup.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fGroup.setLayoutData(gd);
+
+		fWorkspaceButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.32")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fWorkspaceButton.setLayoutData(gd);
+
+		fResourceButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.33")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fResourceButton.setLayoutData(gd);
+
+		fProjectButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.34")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fProjectButton.setLayoutData(gd);		
+
+		fContainerButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.35")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fContainerButton.setLayoutData(gd);
+				
+		fWorkingSetButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.36")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		fWorkingSetButton.setLayoutData(gd);
+		fWorkingSetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnabledState();
+				updateLaunchConfigurationDialog();
+			}
+		});		
+		
+		fSelectButton = createPushButton(fGroup, LaunchVariableMessages.getString("RefreshTab.37"), null); //$NON-NLS-1$
+		gd = (GridData)fSelectButton.getLayoutData();
+		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
+		fSelectButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectResources();
+			}
+		});
+		
+		createVerticalSpacer(fGroup, 2);
+		createRecursiveComponent(fGroup);
+	}
+
+	/**
+	 * Prompts the user to select the resources to refresh.
+	 */
+	private void selectResources() {
+		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		
+		if (fWorkingSet == null){
+			fWorkingSet = workingSetManager.createWorkingSet("workingSet", new IAdaptable[0]); //$NON-NLS-1$
+		}
+		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(fWorkingSet);
+		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
+		dialog.create();		
+		
+		if (dialog.open() == Window.CANCEL) {
+			return;
+		}
+		fWorkingSet = wizard.getSelection();		
 	}
 	
 	/**
@@ -79,54 +197,18 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * @param parent the composite to create the controls in
 	 */
 	private void createRecursiveComponent(Composite parent) {
-		recursiveField = new Button(parent, SWT.CHECK);
-		recursiveField.setText(LaunchVariableMessages.getString("RefreshTab.0")); //$NON-NLS-1$
+		fRecursiveButton = new Button(parent, SWT.CHECK);
+		fRecursiveButton.setText(LaunchVariableMessages.getString("RefreshTab.0")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		recursiveField.setLayoutData(data);
-		recursiveField.setFont(parent.getFont());
-		recursiveField.addSelectionListener(new SelectionAdapter() {
+		data.horizontalSpan = 2;
+		fRecursiveButton.setLayoutData(data);
+		fRecursiveButton.setFont(parent.getFont());
+		fRecursiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 	}
-	
-	/**
-	 * Creates the controls needed to edit the refresh scope
-	 * attribute of a launch configuration
-	 * 
-	 * @param parent the composite to create the controls in
-	 */
-	private void createRefreshComponent(Composite parent) {
-		refreshField = new Button(parent, SWT.CHECK);
-		refreshField.setText(LaunchVariableMessages.getString("RefreshTab.1")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		refreshField.setLayoutData(data);
-		refreshField.setFont(parent.getFont());
-		refreshField.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (variableForm != null) {
-					variableForm.validate();	
-				}
-				updateEnabledState();
-				updateLaunchConfigurationDialog();
-			}
-		});
-	}
-	
-	/**
-	 * Creates the controls needed to edit the refresh scope variable
-	 * attribute of a launch configuration
-	 * 
-	 * @param parent the composite to create the controls in
-	 */
-	private void createScopeComponent(Composite parent) {
-		String label = LaunchVariableMessages.getString("RefreshTab.2"); //$NON-NLS-1$
-		IContextLaunchVariable[] vars = DebugPlugin.getDefault().getLaunchVariableManager().getRefreshVariables();
-		variableForm = new LaunchConfigurationVariableForm(label, vars);
-		variableForm.createContents(parent, this);
-	}
-	
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -141,10 +223,11 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		updateRefresh(configuration);
 		updateRecursive(configuration);
 		updateScope(configuration);
+		updateEnabledState();		
 	}
+	
 	/**
-	 * Method udpateScope.
-	 * @param configuration
+	 * Updates the tab to display the refresh scope specified by the launch config
 	 */
 	private void updateScope(ILaunchConfiguration configuration) {
 		String scope = null;
@@ -153,14 +236,38 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
-		String varName = null;
-		String varValue = null;
-		if (scope != null) {
-			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(scope, 0);
-			varName = varDef.name;
-			varValue = varDef.argument;
+		fWorkspaceButton.setSelection(false);
+		fResourceButton.setSelection(false);
+		fContainerButton.setSelection(false);
+		fProjectButton.setSelection(false);
+		fWorkingSetButton.setSelection(false);
+		if (scope == null) {
+			// select the workspace by default
+			fWorkspaceButton.setSelection(true);
+		} else {
+			if (scope.equals("${workspace}")) { //$NON-NLS-1$
+				fWorkspaceButton.setSelection(true);
+			} else if (scope.equals("${resource}")) { //$NON-NLS-1$
+				fResourceButton.setSelection(true);
+			} else if (scope.equals("${container}")) { //$NON-NLS-1$
+				fContainerButton.setSelection(true);
+			} else if (scope.equals("${project}")) { //$NON-NLS-1$
+				fProjectButton.setSelection(true);
+			} else if (scope.startsWith("${resource:")) { //$NON-NLS-1$
+				fWorkingSetButton.setSelection(true);
+				try {
+					IResource[] resources = expandResources(scope, null);
+					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+					fWorkingSet = workingSetManager.createWorkingSet(LaunchVariableMessages.getString("RefreshTab.40"), resources);					 //$NON-NLS-1$
+				} catch (CoreException e) {
+					fWorkingSet = null;
+				}
+			} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
+				fWorkingSetButton.setSelection(true);
+				String memento = scope.substring(14, scope.length() - 1);
+				fWorkingSet = restoreWorkingSet(memento);
+			}
 		}
-		variableForm.selectVariable(varName, varValue);
 	}
 	/**
 	 * Method updateRecursive.
@@ -173,7 +280,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
-		recursiveField.setSelection(recursive);
+		fRecursiveButton.setSelection(recursive);
 	}
 	/**
 	 * Method updateRefresh.
@@ -186,23 +293,71 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception reading launch configuration", ce)); //$NON-NLS-1$
 		}
-		refreshField.setSelection(scope != null);
-		updateEnabledState();		
+		fRefreshButton.setSelection(scope != null);
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-
-		if (refreshField.getSelection()) {
-			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
-			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
+		if (fRefreshButton.getSelection()) {
+			String scope = generateScopeMemento();
+			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, scope);
+			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, fRecursiveButton.getSelection(), true);
 		} else {
 			//clear the refresh attributes
 			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
 			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, true, true);
 		}
+	}
+
+	/**
+	 * Generates a memento for the refresh scope. This is based on old refresh
+	 * variables.
+	 * 
+	 * @return a memento
+	 */
+	private String generateScopeMemento() {
+		if (fWorkspaceButton.getSelection()) {
+			return "${workspace}"; //$NON-NLS-1$
+		}
+		if (fResourceButton.getSelection()) {
+			return "${resource}"; //$NON-NLS-1$
+		}
+		if (fContainerButton.getSelection()) {
+			return "${container}"; //$NON-NLS-1$
+		}
+		if (fProjectButton.getSelection()) {
+			return "${project}"; //$NON-NLS-1$
+		}
+		if (fWorkingSetButton.getSelection()) {
+			if (fWorkingSet == null || fWorkingSet.getElements().length == 0) {
+				return null;
+			}
+			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(IVariableConstants.TAG_LAUNCH_CONFIGURATION_WORKING_SET);
+			IPersistableElement persistable = null;
+			if (fWorkingSet instanceof IPersistableElement) {
+				persistable = (IPersistableElement) fWorkingSet;
+			} else if (fWorkingSet instanceof IAdaptable) {
+				persistable = (IPersistableElement) ((IAdaptable) fWorkingSet).getAdapter(IPersistableElement.class);
+			}
+			if (persistable != null) {
+				workingSetMemento.putString(IVariableConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+				persistable.saveState(workingSetMemento);
+				StringWriter writer= new StringWriter();
+				try {
+					workingSetMemento.save(writer);
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
+				}
+				StringBuffer memento = new StringBuffer();
+				memento.append("${working_set:"); //$NON-NLS-1$
+				memento.append(writer.toString());
+				memento.append("}"); //$NON-NLS-1$
+				return memento.toString();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -216,17 +371,17 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * Updates the enablement state of the fields.
 	 */
 	private void updateEnabledState() {
-		if (refreshField != null) {
-			boolean enabled= refreshField.getSelection();
-			if (recursiveField != null) {
-				recursiveField.setEnabled(enabled);
-			}
-			if (variableForm != null) {
-				variableForm.setEnabled(enabled);
-			}
-			if (!enabled) {
-				super.setErrorMessage(null);
-			}
+		boolean enabled= fRefreshButton.getSelection();
+		fRecursiveButton.setEnabled(enabled);
+		fGroup.setEnabled(enabled);
+		fWorkspaceButton.setEnabled(enabled);
+		fResourceButton.setEnabled(enabled);
+		fContainerButton.setEnabled(enabled);
+		fProjectButton.setEnabled(enabled);
+		fWorkingSetButton.setEnabled(enabled);
+		fSelectButton.setEnabled(enabled && fWorkingSetButton.getSelection());
+		if (!enabled) {
+			super.setErrorMessage(null);
 		}
 	}
 	
@@ -267,16 +422,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		return getErrorMessage() == null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-		if (variableForm != null) {
-			variableForm.dispose();
-		}
-		super.dispose();
-	}
-
 	/**
 	 * Refreshes the resources as specified by the given launch configuration.
 	 * 
@@ -337,37 +482,105 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		if (scope == null) {
 			return null;
 		}
-	
 		return expandResources(scope, monitor);
 	}
 
 	/**
-	 * Expands the given variable string to a set of resources. The 
-	 * variable string is a variable which is a refresh variable 
-	 * contained in the refresh variable registry.
+	 * Returns a collection of resources referred to by the refresh scope attribute
+	 * of a launch configuration.
 	 * 
-	 * @param refreshString
-	 * @param monitor
-	 * @return
-	 * @throws CoreException
+	 * @param scope refresh scope attribute
+	 * @param monitor progress monitor
+	 * @return collection of resources referred to by the refresh scope attribute
+	 * @throws CoreException if unable to resolve a set of resources
 	 */
-	public static IResource[] expandResources(String variableString, IProgressMonitor monitor) throws CoreException {
-		LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(variableString, 0);
-		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
-			String msg = MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.9"), new Object[] { variableString }); //$NON-NLS-1$
-			throw new CoreException(DebugUIPlugin.newErrorStatus(msg, null));
+	public static IResource[] expandResources(String scope, IProgressMonitor monitor) throws CoreException {
+		if (scope.startsWith("${resource:")) { //$NON-NLS-1$
+			// This is an old format that is replaced with 'working_set'
+			String pathString = scope.substring(11, scope.length() - 1);
+			Path path = new Path(pathString);
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (resource == null) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.38"), new String[]{pathString}), null)); //$NON-NLS-1$
+			} else {
+				return new IResource[]{resource};
+			}
+		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
+			String memento = scope.substring(14, scope.length() - 1);
+			IWorkingSet workingSet =  restoreWorkingSet(memento);
+			if (workingSet == null) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, LaunchVariableMessages.getString("RefreshTab.39"), null)); //$NON-NLS-1$
+			} else {
+				IAdaptable[] elements = workingSet.getElements();
+				IResource[] resources = new IResource[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					IAdaptable adaptable = elements[i];
+					if (adaptable instanceof IResource) {
+						resources[i] = (IResource) adaptable;
+					} else {
+						resources[i] = (IResource) adaptable.getAdapter(IResource.class);
+					}
+				}
+				return resources;				
+			}
+		} else if(scope.equals("${workspace}")) { //$NON-NLS-1$
+			return new IResource[]{ResourcesPlugin.getWorkspace().getRoot()};
+		} else {
+			IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+			if (resource == null) {
+				// empty selection
+				return new IResource[]{};
+			}
+			if (scope.equals("${resource}")) { //$NON-NLS-1$
+				// resource = resource
+			} else if (scope.equals("${container}")) { //$NON-NLS-1$
+				resource = resource.getParent();
+			} else if (scope.equals("${project}")) { //$NON-NLS-1$
+				resource = resource.getProject();
+			}
+			return new IResource[]{resource};
 		}
+	}
 	
-		IContextLaunchVariable variable = DebugPlugin.getDefault().getLaunchVariableManager().getRefreshVariable(varDef.name);
-		if (variable == null) {
-			String msg = MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.10"), new Object[] { varDef.name }); //$NON-NLS-1$
-			throw new CoreException(DebugUIPlugin.newErrorStatus(msg, null));
-		}
-	
-		if (monitor.isCanceled()) {
+	/**
+	 * Restores a working set based on the XMLMemento represented within
+	 * the varValue.
+	 * 
+	 * see bug 37143.
+	 * @param mementoString The string memento of the working set
+	 * @return the restored working set or <code>null</code> if problems occurred restoring the
+	 * working set.
+	 */
+	private static IWorkingSet restoreWorkingSet(String mementoString) {
+		StringReader reader= new StringReader(mementoString);
+		XMLMemento memento= null;
+		try {
+			memento = XMLMemento.createReadRoot(reader);
+		} catch (WorkbenchException e) {
+			DebugUIPlugin.log(e);
 			return null;
 		}
-	
-		return variable.getExpander().getResources(varDef.name, varDef.argument, LaunchVariableContextManager.getDefault().getVariableContext());
-	}
+
+		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
+
+		if (factoryID == null) {
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.2")); //$NON-NLS-1$
+			return null;
+		}
+		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+		if (factory == null) {
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.3") + factoryID); //$NON-NLS-1$
+			return null;
+		}
+		IAdaptable adaptable = factory.createElement(memento);
+		if (adaptable == null) {
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.4") + factoryID); //$NON-NLS-1$
+		}
+		if ((adaptable instanceof IWorkingSet) == false) {
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.5") + factoryID); //$NON-NLS-1$
+			return null;
+		}
+			
+		return (IWorkingSet) adaptable;
+	}	
 }
