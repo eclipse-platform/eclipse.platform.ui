@@ -92,7 +92,7 @@ public class EmbeddedBrowser {
 			shell.setMaximized(true);
 		//
 		shell.open();
-		browser.setUrl("about:blank");
+		//browser.setUrl("about:blank");
 		
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent e) {
