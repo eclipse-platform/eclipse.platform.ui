@@ -278,4 +278,10 @@ public class ProjectNode extends AntNode {
 		return name;
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
 }
