@@ -12,17 +12,17 @@ body {
  * that are centered in the middle of the page.
  */
 #overview-links {
-	width : 820px;
+	width : 800px;
 	height : 200px;
 	position : relative;
 	left : 50%;
-	margin-left : -425px;
+	margin-left : -400px;
 	top : -50px;
 }
 
 #overview-links a { 
 	height : 80px; 
-	width : 400px;
+	width : 390px;
 	text-align : left; 
 	margin-left : 10px;
 	float : left;

@@ -123,7 +123,7 @@ a#samples:hover p .text { left : -165px; }
 a#news { left : 245px;}
 a#news img { background-image : url(graphics/obj_64/whatsnew_obj.gif); }
 a#news:hover img { background-image : url(graphics/obj_64/hovwhatsnew_obj.gif); }
-a#news:hover p .text { left : -245px; }
+a#news:hover p .text { left : -220px; width : 240px; }
 
 a#workbench { 
 	position : absolute; 

@@ -52,19 +52,19 @@ div#page-links a p .text {
 
 div#page-links a:hover { border-right : 5px; }
 
-a#new-and-noteworthy img { background-image : url(../graphics/obj_48/whatsnew_obj.gif); }
-a#new-and-noteworthy:hover img { background-image : url(../graphics/obj_48/hovwhatsnew_obj.gif); }
+a#new-and-noteworthy img { background-image : url(../graphics/obj_48/noteworthy_obj.gif); }
+a#new-and-noteworthy:hover img { background-image : url(../graphics/obj_48/hovnoteworthy_obj.gif); }
 
 a#migration { left : 400px; }
 a#migration img { background-image : url(../graphics/obj_48/migrate_obj.gif); }
 a#migration:hover img { background-image : url(../graphics/obj_48/hovmigrate_obj.gif); }
 
 a#updates { top : 80px; }
-a#updates img { background-image : url(../graphics/obj_48/whatsnew_obj.gif); }
-a#updates:hover img { background-image : url(../graphics/obj_48/hovwhatsnew_obj.gif); }
+a#updates img { background-image : url(../graphics/obj_48/updates_obj.gif); }
+a#updates:hover img { background-image : url(../graphics/obj_48/hovupdates_obj.gif); }
 
 a#eclipse { top : 80px; left : 400px;}
-a#eclipse img { background-image : url(../graphics/obj_48/whatsnew_obj.gif); }
-a#eclipse:hover img { background-image : url(../graphics/obj_48/hovwhatsnew_obj.gif); }
+a#eclipse img { background-image : url(../graphics/obj_48/community_obj.gif); }
+a#eclipse:hover img { background-image : url(../graphics/obj_48/hovcommunity_obj.gif); }
 
 
