@@ -19,6 +19,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.jface.dialogs.Dialog;
 
 /**
  * 
@@ -75,6 +76,7 @@ public class JarVerificationPage extends BannerPage {
 		//------------		
 		//createChoiceArea(compositeClient);
 
+		Dialog.applyDialogFont(compositeParent);
 		return compositeClient;
 
 	}
