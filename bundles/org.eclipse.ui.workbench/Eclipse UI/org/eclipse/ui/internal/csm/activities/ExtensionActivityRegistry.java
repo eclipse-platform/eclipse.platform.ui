@@ -18,7 +18,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.registry.IConfigurationElement;
 import org.eclipse.core.runtime.registry.IExtension;
+import org.eclipse.core.runtime.registry.IExtensionDelta;
 import org.eclipse.core.runtime.registry.IExtensionRegistry;
+import org.eclipse.core.runtime.registry.IRegistryChangeEvent;
+import org.eclipse.core.runtime.registry.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
@@ -32,9 +35,26 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			throw new NullPointerException();
 		
 		this.extensionRegistry = extensionRegistry;
+
+		this.extensionRegistry.addRegistryChangeListener(new IRegistryChangeListener() {
+			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {				
+				IExtensionDelta[] extensionDeltas = registryChangeEvent.getExtensionDeltas(Persistence.PACKAGE_PREFIX, Persistence.PACKAGE_BASE);
+				
+				if (extensionDeltas.length != 0)
+					try {
+						load();
+					} catch (IOException eIO) {
+					}
+			}
+		});
+		
+		try {
+			load();
+		} catch (IOException eIO) {
+		}
 	}
 
-	void load()
+	private void load()
 		throws IOException {	
 		if (activityDefinitions == null)
 			activityDefinitions = new ArrayList();

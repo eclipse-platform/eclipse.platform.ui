@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,8 +59,6 @@ public final class ActivityManager implements IActivityManager {
 	public ActivityManager() {
 		if (extensionActivityRegistry == null)
 			extensionActivityRegistry = new ExtensionActivityRegistry(Platform.getExtensionRegistry());
-			
-		loadExtensionActivityRegistry();		
 
 		extensionActivityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
@@ -162,14 +159,6 @@ public final class ActivityManager implements IActivityManager {
 								
 				((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
 			}				
-	}
-
-	private void loadExtensionActivityRegistry() {
-		try {
-			extensionActivityRegistry.load();
-		} catch (IOException eIO) {
-			eIO.printStackTrace();
-		}
 	}
 	
 	private void notifyActivities(Collection activityIds) {	

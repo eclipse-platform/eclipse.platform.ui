@@ -21,7 +21,8 @@ import org.eclipse.ui.internal.util.Util;
 final class Persistence {
 
 	final static String PACKAGE_BASE = "activities"; //$NON-NLS-1$
-	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
+	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$	
+	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
 	final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$

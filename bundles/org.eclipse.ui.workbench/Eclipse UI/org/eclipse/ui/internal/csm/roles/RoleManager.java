@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,8 +43,6 @@ public final class RoleManager implements IRoleManager {
 		if (extensionRoleRegistry == null)
 			extensionRoleRegistry = new ExtensionRoleRegistry(Platform.getExtensionRegistry());
 			
-		loadExtensionRoleRegistry();		
-
 		extensionRoleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
 			public void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent) {
 				readRegistry();
@@ -101,14 +98,6 @@ public final class RoleManager implements IRoleManager {
 								
 				((IRoleManagerListener) roleManagerListeners.get(i)).roleManagerChanged(roleManagerEvent);
 			}				
-	}
-
-	private void loadExtensionRoleRegistry() {
-		try {
-			extensionRoleRegistry.load();
-		} catch (IOException eIO) {
-			eIO.printStackTrace();
-		}
 	}
 	
 	private void notifyRoles(Collection roleIds) {	
