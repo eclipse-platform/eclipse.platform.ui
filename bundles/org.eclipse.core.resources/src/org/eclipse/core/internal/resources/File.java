@@ -40,7 +40,7 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 		Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 		if (workspace.shouldValidate) 
 			workspace.validateSave(this);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
@@ -104,7 +104,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 		String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE, true);
-		final ISchedulingRule rule = Rules.createRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
@@ -315,7 +315,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 		monitor.beginTask(message, Policy.totalWork);
 		if (workspace.shouldValidate) 
 			workspace.validateSave(this);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);

@@ -79,7 +79,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER, true);
-		final ISchedulingRule rule = Rules.createRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			IPath location = getLocalManager().locationFor(this);

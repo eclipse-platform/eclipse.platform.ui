@@ -131,7 +131,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, Policy.opWork);
-			final ISchedulingRule rule = Rules.buildRule();
+			final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 			try {
 				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(true);

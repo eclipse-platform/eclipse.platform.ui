@@ -65,7 +65,7 @@ protected MultiStatus basicSetDescription(ProjectDescription description) {
  * @see IProject#build
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
-	final ISchedulingRule rule = Rules.buildRule();
+	final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 	try {
 		workspace.prepareOperation(rule, monitor);
 		ResourceInfo info = getResourceInfo(false, false);
@@ -86,7 +86,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
  * @see IProject#build
  */
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
-	final ISchedulingRule rule = Rules.buildRule();
+	final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 	try {
 		workspace.prepareOperation(rule, monitor);
 		ResourceInfo info = getResourceInfo(false, false);
@@ -152,7 +152,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 	try {
 		String msg = Policy.bind("resources.closing.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			// Do this before the prepare to allow lifecycle participants to change the tree.
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
@@ -228,7 +228,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 	try {
 		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
 		checkValidPath(path, PROJECT, false);
-		final ISchedulingRule rule = Rules.createRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
@@ -443,7 +443,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 		String destName = destDesc.getName();
 		IPath destPath = new Path(destName).makeAbsolute();
 		Project destination = (Project) workspace.getRoot().getProject(destName);
-		final ISchedulingRule rule = Rules.copyRule(this, destination);
+		final ISchedulingRule rule = workspace.getRuleFactory().copyRule(this, destination);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
@@ -552,7 +552,7 @@ public ProjectDescription internalGetDescription() {
  * corresponding API method but is needed separately since it is used
  * during workspace restore (i.e., when you cannot do an operation)
  */
-void internalSetDescription(IProjectDescription value, boolean incrementContentId) throws CoreException {
+void internalSetDescription(IProjectDescription value, boolean incrementContentId) {
 	ResourceInfo info = getResourceInfo(false, true);
 	((ProjectInfo) info).setDescription((ProjectDescription) value);
 	if (incrementContentId) {
@@ -651,7 +651,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		IProject destination = workspace.getRoot().getProject(description.getName());
-		final ISchedulingRule rule = Rules.moveRule(this, destination);
+		final ISchedulingRule rule = workspace.getRuleFactory().moveRule(this, destination);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
@@ -699,7 +699,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 		String msg = Policy.bind("resources.opening.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
 		monitor.subTask(msg);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			ProjectInfo info = (ProjectInfo)getResourceInfo(false, false);
@@ -882,7 +882,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	try {
 		String message = Policy.bind("resource.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));

@@ -435,6 +435,7 @@ public boolean contains(ISchedulingRule rule) {
 		return false;
 	return path.isPrefixOf(((IResource)rule).getFullPath());
 }
+
 public void convertToPhantom() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, true);
 	if (info == null || isPhantom(getFlags(info)))
@@ -514,7 +515,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 		destination = makePathAbsolute(destination);
 		checkValidPath(destination, getType(), false);
 		Resource destResource = workspace.newResource(destination, getType());
-		final ISchedulingRule rule = Rules.copyRule(this, destResource);
+		final ISchedulingRule rule = workspace.getRuleFactory().copyRule(this, destResource);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
@@ -546,7 +547,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * specified depth. Include this resource. Include phantoms if
  * the phantom boolean is true.
  */
-public int countResources(int depth, boolean phantom) throws CoreException {
+public int countResources(int depth, boolean phantom) {
 	return workspace.countResources(path, depth, phantom);
 }
 /**
@@ -560,7 +561,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		monitor.beginTask(message, Policy.totalWork);
 		Policy.checkCanceled(monitor);
 		checkValidPath(path, FOLDER, true);
-		final ISchedulingRule rule = Rules.createRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			//if the location doesn't have a device, see if the OS will assign one
@@ -601,7 +602,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  */
 public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
-	final ISchedulingRule rule = Rules.markerRule(this);
+	final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
 	try {
 		workspace.prepareOperation(rule, null);
 		checkAccessible(getFlags(getResourceInfo(false, false)));
@@ -631,7 +632,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork * 1000);
-		final ISchedulingRule rule = Rules.deleteRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().deleteRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// if there is no resource then there is nothing to delete so just return
@@ -687,7 +688,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * @see IResource
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
-	final ISchedulingRule rule = Rules.markerRule(this);
+	final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
 	try {
 		workspace.prepareOperation(rule, null);
 		ResourceInfo info = getResourceInfo(false, false);
@@ -1104,7 +1105,7 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
 		destination = makePathAbsolute(destination);
 		checkValidPath(destination, getType(), false);
 		Resource destResource = workspace.newResource(destination, getType());
-		final ISchedulingRule rule = Rules.moveRule(this, destResource);
+		final ISchedulingRule rule = workspace.getRuleFactory().moveRule(this, destResource);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
@@ -1153,7 +1154,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		String message = isRoot ? Policy.bind("resources.refreshingRoot") : Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
-		final ISchedulingRule rule = Rules.refreshRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().refreshRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			if (!isRoot && !getProject().isAccessible())
@@ -1253,7 +1254,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	try {
 		String message = Policy.bind("resources.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
-		final ISchedulingRule rule = Rules.modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			ResourceInfo info = getResourceInfo(false, false);

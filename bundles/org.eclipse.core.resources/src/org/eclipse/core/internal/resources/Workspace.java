@@ -102,7 +102,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public Workspace() {
 		super();
 		localMetaArea = new LocalMetaArea();
-		ruleFactory = new Rules.DefaultFactory(this);
 		tree = new ElementTree();
 		/* tree should only be modified during operations */
 		tree.immutable();
@@ -166,7 +165,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = Rules.buildRule();
+		final ISchedulingRule rule = getRuleFactory().buildRule();
 		try {
 			monitor.beginTask(null, Policy.opWork);
 			try {
@@ -1061,7 +1060,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IWorkspaceRoot getRoot() {
 		return defaultRoot;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IWorkspace#getRuleFactory()
+	 */
 	public IResourceRuleFactory getRuleFactory() {
+		//note that the rule factory is created lazily because it
+		//requires loading the teamHook extension
+		if (ruleFactory == null)
+			ruleFactory = new Rules(this);
 		return ruleFactory;
 	}
 	public SaveManager getSaveManager() {

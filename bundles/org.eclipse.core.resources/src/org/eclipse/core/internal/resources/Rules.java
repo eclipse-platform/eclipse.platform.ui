@@ -8,106 +8,141 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.resources;
-import java.util.HashSet;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 /**
- * Class for calculating scheduling rules for various resource operations.
+ * Class for calculating scheduling rules for resource changing operations.
+ * This factory delegates to the TeamHook to obtain an appropriate factory
+ * for the resource that the operation is proposing to modify.
  */
-public class Rules {
-	static class DefaultFactory implements IResourceRuleFactory {
-		private IWorkspace workspace;
-		public DefaultFactory(IWorkspace workspace) {
-			this.workspace = workspace;
-		}
-		public ISchedulingRule buildRule() {
-			return workspace.getRoot();
-		}
-		public ISchedulingRule copyRule(IResource source, IResource destination) {
-			//source is not modified, destination is created
-			return parent(destination);
-		}
-		public ISchedulingRule createRule(IResource resource) {
-			return parent(resource);
-		}
-		public ISchedulingRule deleteRule(IResource resource) {
-			return parent(resource);
-		}
-		public ISchedulingRule markerRule(IResource resource) {
-			return null;
-		}
-		public ISchedulingRule modifyRule(IResource resource) {
-			return resource;
-		}
-		public ISchedulingRule moveRule(IResource source, IResource destination) {
-			//move needs the parent of both source and destination
-			return MultiRule.combine(parent(source), parent(destination));
-		}
-		private ISchedulingRule parent(IResource resource) {
-			switch (resource.getType()) {
-				case IResource.ROOT :
-				case IResource.PROJECT :
-					return resource;
-				default :
-					return resource.getParent();
-			}
-		}
-		public ISchedulingRule refreshRule(IResource resource) {
-			return parent(resource);
-		}
-		public ISchedulingRule validateEditRule(IResource[] resources) {
-			if (resources.length == 0)
-				return null;
-			//optimize rule for single file
-			if (resources.length == 1)
-				return resources[0].isReadOnly() ? parent(resources[0]) : null;
-			//need a lock on the parents of all read-only files
-			HashSet rules = new HashSet();
-			for (int i = 0; i < resources.length; i++)
-				if (resources[i].isReadOnly())
-					rules.add(parent(resources[i]));
-			if (rules.isEmpty())
-				return null;
-			if (rules.size() == 1)
-				return (ISchedulingRule)rules.iterator().next();
-			ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
-			return new MultiRule(ruleArray);
-		}
-	}
-	private static IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
-	public static ISchedulingRule buildRule() {
-		return factory.buildRule();
-	}
-	public static ISchedulingRule copyRule(IResource source, IResource destination) {
-		return factory.copyRule(source, destination);
-	}
-	public static ISchedulingRule createRule(IResource resource) {
-		return factory.createRule(resource);
-	}
-	public static ISchedulingRule deleteRule(IResource resource) {
-		return factory.deleteRule(resource);
-	}
-	public static ISchedulingRule markerRule(IResource resource) {
-		return factory.markerRule(resource);
-	}
-	public static ISchedulingRule modifyRule(IResource resource) {
-		return factory.modifyRule(resource);
-	}
-	public static ISchedulingRule moveRule(IResource source, IResource destination) {
-		return factory.moveRule(source, destination);
-	}
-	public static ISchedulingRule refreshRule(IResource resource) {
-		return factory.refreshRule(resource);
-	}
-	public static ISchedulingRule validateEditRule(IResource[] resources) {
-		return factory.validateEditRule(resources);
+class Rules implements IResourceRuleFactory {
+	/**
+	 * Map of project names to the factory for that project.
+	 */
+	private final Map projectsToRules = Collections.synchronizedMap(new HashMap());
+	private final TeamHook teamHook;
+	private final IWorkspaceRoot root;
+
+	/**
+	 * Creates a new scheduling rule factory for the given workspace
+	 * @param workspace
+	 */
+	Rules(Workspace workspace) {
+		this.root = workspace.getRoot();
+		this.teamHook = workspace.getTeamHook();
 	}
 	/**
-	 * Don't allow instantiation
+	 * Obtains the scheduling rule from the appropriate factory for a build operation.
 	 */
-	private Rules() {
-		// not allowed
+	public ISchedulingRule buildRule() {
+		//team hook currently cannot change this rule
+		return root;
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factories for a copy operation.
+	 */
+	public ISchedulingRule copyRule(IResource source, IResource destination) {
+		if (source.getType() == IResource.ROOT || destination.getType() == IResource.ROOT)
+			return root;
+		//source is not modified, destination is created
+		return factoryFor(destination).copyRule(source, destination);
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factory for a create operation.
+	 */
+	public ISchedulingRule createRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return root;
+		return factoryFor(resource).createRule(resource);
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factory for a delete operation.
+	 */
+	public ISchedulingRule deleteRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return root;
+		return factoryFor(resource).deleteRule(resource);
+	}
+	/**
+	 * Returns the scheduling rule factory for the given resource
+	 */
+	private IResourceRuleFactory factoryFor(IResource destination) {
+		IResourceRuleFactory fac = (IResourceRuleFactory) projectsToRules.get(destination.getFullPath().segment(0));
+		if (fac == null) {
+			//ask the team hook to supply one
+			fac = teamHook.getRuleFactory(destination.getProject());
+			projectsToRules.put(destination.getFullPath().segment(0), fac);
+		}
+		return fac;
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factory for a marker change operation.
+	 */
+	public ISchedulingRule markerRule(IResource resource) {
+		//team hook currently cannot change this rule
+		return null;
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factory for a modify operation.
+	 */
+	public ISchedulingRule modifyRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return root;
+		return factoryFor(resource).modifyRule(resource);
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factories for a move operation.
+	 */
+	public ISchedulingRule moveRule(IResource source, IResource destination) {
+		if (source.getType() == IResource.ROOT || destination.getType() == IResource.ROOT)
+			return root;
+		//treat a move across projects as a create on the destination and a delete on the source
+		if (!source.getFullPath().segment(0).equals(destination.getFullPath().segment(0)))
+			return MultiRule.combine(deleteRule(source), createRule(destination));
+		return factoryFor(source).moveRule(source, destination);
+	}
+	/**
+	 * Obtains the scheduling rule from the appropriate factory for a refresh operation.
+	 */
+	public ISchedulingRule refreshRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return root;
+		return factoryFor(resource).refreshRule(resource);
+	}
+	/* (non-javadoc)
+	 * Implements TeamHook#setRuleFactory
+	 */
+	void setRuleFactory(IProject project, IResourceRuleFactory factory) {
+		projectsToRules.put(project.getName(), factory);
+	}
+	/**
+	 * Combines rules for each parameter to validateEdit from the corresponding
+	 * rule factories.
+	 */
+	public ISchedulingRule validateEditRule(IResource[] resources) {
+		if (resources.length == 0)
+			return null;
+		//optimize rule for single file
+		if (resources.length == 1) 
+			return factoryFor(resources[0]).validateEditRule(resources);
+		//gather rules for each resource from appropriate factory
+		HashSet rules = new HashSet();
+		IResource[] oneResource = new IResource[1];
+		for (int i = 0; i < resources.length; i++) {
+			oneResource[0] = resources[i];
+			ISchedulingRule rule = factoryFor(resources[i]).validateEditRule(oneResource);
+			if (rule != null)
+				rules.add(rule);
+		}
+		if (rules.isEmpty())
+			return null;
+		if (rules.size() == 1)
+			return (ISchedulingRule) rules.iterator().next();
+		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules	.toArray(new ISchedulingRule[rules.size()]);
+		return new MultiRule(ruleArray);
 	}
 }

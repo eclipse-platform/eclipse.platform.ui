@@ -59,7 +59,7 @@ private void checkInfo(MarkerInfo info) throws CoreException {
  * @see IMarker#delete
  */
 public void delete() throws CoreException {
-	final ISchedulingRule rule = Rules.markerRule(resource);
+	final ISchedulingRule rule = getWorkspace().getRuleFactory().markerRule(resource);
 	try {
 		getWorkspace().prepareOperation(rule, null);
 		getWorkspace().beginOperation(true);
