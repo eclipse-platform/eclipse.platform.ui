@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -269,6 +271,18 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				IResource resource = delta.getResource();
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
+				// Make sure that the project is a CVS folder.
+				if (provider != null) {
+					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
+					if (! folder.isCVSFolder()) {
+						try {
+							Team.removeNatureFromProject(resource.getProject(), CVSProviderPlugin.getTypeId(), null);
+						} catch (TeamException e) {
+							CVSProviderPlugin.log(e.getStatus());
+						}
+					}
+				}
+				
 				// if a project is moved the originating project will not be associated with the CVS provider
 				// however listeners will probably still be interested in the move delta.	
 				if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
