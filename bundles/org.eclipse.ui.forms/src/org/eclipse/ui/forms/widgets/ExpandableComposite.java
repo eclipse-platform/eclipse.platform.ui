@@ -220,7 +220,10 @@ public class ExpandableComposite extends Composite {
 				int tcx, tcy;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
 					tcx = x + size.x + GAP;
-					tcy = y;
+					if (tsize.y>tcsize.y)
+						tcy = tsize.y + marginHeight + tvmargin - tcsize.y;
+					else
+						tcy = y;
 				}
 				else {
 					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
