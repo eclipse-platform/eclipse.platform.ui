@@ -236,7 +236,13 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			for (int i = 0; i < members.length; i++) {
 				monitor.worked(1);
 				IResource resource = members[i];
-				if (members[i].getType() != IResource.FILE) {
+				if (resource.getType() == IResource.FILE) {
+                    ResourceAttributes attrs = resource.getResourceAttributes();
+                    if (attrs.isReadOnly()) {
+                        attrs.setReadOnly(false);
+                        resource.setResourceAttributes(attrs);
+                    }
+                } else {
 					recursiveUnmanage((IContainer) resource, monitor);
 				}
 			}
