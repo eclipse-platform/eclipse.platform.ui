@@ -11,11 +11,9 @@
 package org.eclipse.core.tests.internal.registrycache;
 
 import java.io.*;
-import java.util.ResourceBundle;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.registry.*;
-import org.eclipse.core.internal.runtime.ResourceTranslator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.xml.sax.InputSource;
