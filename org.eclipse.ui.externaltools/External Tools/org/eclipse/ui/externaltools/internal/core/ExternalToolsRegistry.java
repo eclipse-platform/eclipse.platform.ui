@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
 /**
@@ -117,6 +118,10 @@ public final class ExternalToolsRegistry {
 		}
 		catch (IOException e) {
 			ExternalToolsPlugin.getDefault().log("File I/O error with external tool state reader.", e); //$NON-NLS-1$
+		}
+		catch (WorkbenchException e) {
+			ExternalToolsPlugin.getDefault().getLog().log(e.getStatus());
+			System.err.println("Error with external tool state reader. See .log file for more details"); //$NON-NLS-1$
 		}
 		finally {
 			if (reader != null) {
