@@ -79,7 +79,6 @@ public abstract class ContributionManager implements IContributionManager {
      */
     public void add(IContributionItem item) {
         if (allowItem(item)) {
-            item.setParent(this);
             contributions.add(item);
             itemAdded(item);
         }
@@ -115,7 +114,6 @@ public abstract class ContributionManager implements IContributionManager {
                         }
                     }
                     if (allowItem(item)) {
-                        item.setParent(this);
                         contributions.add(i, item);
                         itemAdded(item);
                     }
@@ -274,7 +272,6 @@ public abstract class ContributionManager implements IContributionManager {
             throw new IndexOutOfBoundsException(
                     "inserting " + item.getId() + " at " + index); //$NON-NLS-1$ //$NON-NLS-2$
         if (allowItem(item)) {
-            item.setParent(this);
             contributions.add(index, item);
             itemAdded(item);
         }
@@ -298,7 +295,6 @@ public abstract class ContributionManager implements IContributionManager {
         if (ix >= 0) {
             // System.out.println("insert after: " + ix);
             if (allowItem(item)) {
-                item.setParent(this);
                 contributions.add(ix + 1, item);
                 itemAdded(item);
             }
@@ -323,7 +319,6 @@ public abstract class ContributionManager implements IContributionManager {
         if (ix >= 0) {
             // System.out.println("insert before: " + ix);
             if (allowItem(item)) {
-                item.setParent(this);
                 contributions.add(ix, item);
                 itemAdded(item);
             }
@@ -358,6 +353,7 @@ public abstract class ContributionManager implements IContributionManager {
      * Marks the manager as dirty and updates the number of dynamic items, and the memento.
      */
     protected void itemAdded(IContributionItem item) {
+        item.setParent(this);
         markDirty();
         if (item.isDynamic())
             dynamicItems++;
@@ -368,6 +364,7 @@ public abstract class ContributionManager implements IContributionManager {
      * Marks the manager as dirty and updates the number of dynamic items.
      */
     protected void itemRemoved(IContributionItem item) {
+        item.setParent(null);
         markDirty();
         if (item.isDynamic())
             dynamicItems--;
@@ -419,7 +416,12 @@ public abstract class ContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void removeAll() {
+        IContributionItem[] items = getItems();
         contributions.clear();
+        for (int i = 0; i < items.length; i++) {
+            IContributionItem item = items[i];
+            itemRemoved(item);
+        }
         dynamicItems = 0;
         markDirty();
     }
