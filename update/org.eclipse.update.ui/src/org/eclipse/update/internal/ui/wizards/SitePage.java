@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
@@ -375,7 +376,17 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				IStructuredSelection ssel =
 					(IStructuredSelection) treeViewer.getSelection();
 				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
-				if (!bookmark.isReadOnly()) {
+				String selName = bookmark.getLabel();
+				boolean answer = MessageDialog
+								.openQuestion(
+										getShell(),
+										UpdateUI
+												.getString("SitePage.remove.location.conf.title"), //$NON-NLS-1$
+										UpdateUI
+												.getString("SitePage.remove.location.conf")	//$NON-NLS-1$
+												+ " " + selName); //$NON-NLS-1$
+
+				if (answer && !bookmark.isReadOnly()) {
 					updateModel.removeBookmark(bookmark);
 					updateSearchRequest();
 				}
