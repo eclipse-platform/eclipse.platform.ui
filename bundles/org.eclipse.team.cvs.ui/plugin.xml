@@ -85,7 +85,7 @@
    </extension>
 <!-- ************** Project Sets (for backwards compatibility) **************** -->
 	<extension point="org.eclipse.team.core.projectSets">
-		<projectSet id="org.eclipse.team.cvs.core.cvsnature" class="org.eclipse.team.internal.ccvs.ui.CVSProjectSetSerializer"/>
+		<projectSets id="org.eclipse.team.cvs.core.cvsnature" class="org.eclipse.team.internal.ccvs.ui.CVSProjectSetSerializer"/>
 	</extension>
 <!-- ******************* Configurationb Wizard ****************** -->
    <extension

@@ -10,6 +10,9 @@
 &lt;p&gt;
 Repositories that extend this extension point can provide implementations for common repository specific rules for resource modifications, moving and deleting. See the following interfaces for more details &lt;code&gt;IFileModificationValidator&lt;/code&gt; and &lt;code&gt;MoveDeleteHook&lt;/code&gt;.
 &lt;/p&gt;
+&lt;p&gt;
+A Repository type can also be specified in order to provide non-project specific funtionality such as a &lt;samp&gt;org.eclipse.team.core.ProjectSetCapability&lt;/samp&gt;.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -43,6 +46,20 @@ Repositories that extend this extension point can provide implementations for co
                   the fully-qualified name of a subclass of 
      &lt;samp&gt;org.eclipse.team.core.RepositoryProvider&lt;/samp&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="typeClass" type="string">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a subclass of 
+     &lt;samp&gt;org.eclipse.team.core.RepositoryProviderType&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -88,6 +105,7 @@ Repositories that extend this extension point can provide implementations for co
       </appInfo>
       <documentation>
          The provided implementation of RepositoryProvider provides helper methods and common code for mapping and unmapping providers to projects.
+The optional RepositoryProviderType provides project set import and export through a ProjectSetCapability.
       </documentation>
    </annotation>
 
