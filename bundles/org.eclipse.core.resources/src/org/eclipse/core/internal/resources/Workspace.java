@@ -1762,6 +1762,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	public void setCrashed(boolean value) {
 		crashed = value;
+		if (crashed) {
+			String msg = "A workspace crash was detected. The previous session did not exit normally."; //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(ICoreConstants.CRASH_DETECTED, msg));
+			if (Policy.DEBUG)
+				System.out.println(msg);
+		}
 	}
 
 	/* (non-Javadoc)

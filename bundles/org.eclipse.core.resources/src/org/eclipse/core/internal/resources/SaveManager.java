@@ -409,6 +409,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Initializes the snapshot mechanism for this workspace.
 	 */
 	protected void initSnap(IProgressMonitor monitor) throws CoreException {
+		//discard any pending snapshot request
+		snapshotJob.cancel();
 		//the "lastSnap" tree must be frozen as the exact tree obtained from startup,
 		// otherwise ensuing snapshot deltas may be based on an incorrect tree (see bug 12575)
 		lastSnap = workspace.getElementTree();

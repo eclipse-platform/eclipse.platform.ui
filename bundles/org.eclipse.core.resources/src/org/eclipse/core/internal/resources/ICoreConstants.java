@@ -75,6 +75,8 @@ public interface ICoreConstants {
 	// Information Only [00-24]
 	public static final int OPERATION_FAILED = 10002;
 	// Warnings [25-74]
+	public static final int CRASH_DETECTED = 10035;
+	
 	// Errors [75-99]
 
 	public static final int PROJECT_SEGMENT_LENGTH = 1;
