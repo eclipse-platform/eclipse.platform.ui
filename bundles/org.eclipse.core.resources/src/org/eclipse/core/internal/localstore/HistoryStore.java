@@ -192,6 +192,12 @@ public void clean() {
  * @since  2.1
  */
 public void copyHistory(final IPath source, final IPath destination) {
+	// Note that if any states in the local history for destination
+	// have the same timestamp as a state for the local history
+	// for source, the local history for destination will appear 
+	// as an older state than the one for source.
+	
+	
 	// return early if either of the paths are null or if the source and
 	// destination are the same.
 	if (source == null || destination == null) {
