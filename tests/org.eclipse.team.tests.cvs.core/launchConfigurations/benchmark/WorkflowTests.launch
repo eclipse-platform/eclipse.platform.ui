@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.eclipse.pde.junit.launchconfig">
+    <booleanAttribute key="org.eclipse.pde.junit.DELETE_WORKSPACE" value="true"/>
+    <stringAttribute key="org.eclipse.debug.ui.target_debug_perspective" value="perspective_default"/>
+    <stringAttribute key="org.eclipse.debug.ui.target_run_perspective" value="perspective_none"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
+    <stringAttribute key="org.eclipse.pde.junitWORKSPACE_LOCATION" value="D:\dev\eclipse\runtime-test-workspace"/>
+    <stringAttribute key="org.eclipse.pde.junit.APPLICATION_NAME" value="org.eclipse.pde.junit.uitestapplication"/>
+    <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os win32 -ws win32 -arch x86"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.cvs.properties=D:\dev"/>
+</launchConfiguration>
