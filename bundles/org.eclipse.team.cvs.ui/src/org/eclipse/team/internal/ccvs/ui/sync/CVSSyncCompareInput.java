@@ -7,6 +7,9 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -65,13 +69,57 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	
 	protected CVSSyncCompareInput(IResource[] resources, int granularity) {
 		super(granularity);
-		this.resources = resources;
+		this.resources = getNonOverlapping(resources);
 	}
 	
 	public CVSSyncCompareInput(IResource[] resources, boolean onlyOutgoing) {
 		super(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS) ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
 		this.onlyOutgoing = onlyOutgoing;
-		this.resources = resources;		
+		this.resources = getNonOverlapping(resources);		
+	}
+	
+	/**
+	 * Method getNonOverlapping ensures that a resource is not covered more than once.
+	 * @param resources
+	 * @return IResource[]
+	 */
+	private IResource[] getNonOverlapping(IResource[] resources) {
+		// Sort the resources so the shortest paths are first
+		List sorted = new ArrayList();
+		sorted.addAll(Arrays.asList(resources));
+		Collections.sort(sorted, new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				IResource resource0 = (IResource) arg0;
+				IResource resource1 = (IResource) arg1;
+				return resource0.getFullPath().segmentCount() - resource1.getFullPath().segmentCount();
+			}
+			public boolean equals(Object arg0) {
+				return false;
+			}
+		});
+		// Collect all non-overlapping resources
+		List coveredPaths = new ArrayList();
+		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
+			IResource resource = (IResource) iter.next();
+			IPath resourceFullPath = resource.getFullPath();
+			boolean covered = false;
+			for (Iterator it = coveredPaths.iterator(); it.hasNext();) {
+				IPath path = (IPath) it.next();
+				if(path.isPrefixOf(resourceFullPath)) {
+					covered = true;
+				}
+			}
+			if (covered) {
+				// if the resource is covered by a parent, remove it
+				iter.remove();
+			} else {
+				// if the resource is a non-covered folder, add it to the covered paths
+				if (resource.getType() == IResource.FOLDER) {
+					coveredPaths.add(resource.getFullPath());
+				}
+			}
+		}
+		return (IResource[]) sorted.toArray(new IResource[sorted.size()]);
 	}
 	
 	/**
