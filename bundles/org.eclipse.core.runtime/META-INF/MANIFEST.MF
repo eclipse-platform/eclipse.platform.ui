@@ -25,6 +25,7 @@ Import-Package:
  org.osgi.framework,
  org.eclipse.osgi.service.debug,
  org.eclipse.osgi.service.environment,
+ org.eclipse.osgi.service.urlconversion,
  org.osgi.service.packageadmin,
  org.osgi.service.url,
  org.osgi.util.tracker,

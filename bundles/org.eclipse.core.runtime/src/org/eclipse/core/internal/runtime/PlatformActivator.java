@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
@@ -31,6 +32,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
+	private ServiceReference urlServiceReference;
 	private static File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile();
 
 	public static BundleContext getContext() {
@@ -40,6 +42,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		PlatformActivator.context = context;
 		acquireInfoService();
+		acquireURLConverterService();
 		startInternalPlatform();
 		startRegistry(context);
 		installPlatformURLSupport();
@@ -133,6 +136,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		// Stop the registry
 		stopRegistry(context);
 		environmentInfoServiceReleased(environmentServiceReference);
+		urlServiceReleased(urlServiceReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
@@ -152,7 +156,14 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			return;
 		InternalPlatform.infoService  = (EnvironmentInfo) context.getService(environmentServiceReference);
 	}
-	
+
+	private void acquireURLConverterService() throws Exception{
+		urlServiceReference = context.getServiceReference(URLConverter.class.getName());
+		if (urlServiceReference == null)
+			return;
+		InternalPlatform.urlConverter  = (URLConverter) context.getService(urlServiceReference);
+	}
+
 	private void startInternalPlatform() throws Exception {
 		InternalPlatform.getDefault().start(context);	
 	}
@@ -166,6 +177,17 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.infoService = null;
 		context.ungetService(environmentServiceReference);
 		environmentServiceReference = null;
+	}
+
+	private void urlServiceReleased(ServiceReference reference) {
+		if (urlServiceReference == null)
+			return;
+		if (urlServiceReference != reference)
+			return;
+
+		InternalPlatform.urlConverter = null;
+		context.ungetService(urlServiceReference);
+		urlServiceReference = null;
 	}
 
 //	public void serviceChanged(ServiceEvent event) {

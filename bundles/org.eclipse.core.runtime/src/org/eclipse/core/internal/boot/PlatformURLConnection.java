@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,9 @@ public abstract class PlatformURLConnection extends URLConnection {
 		connect(true); // connect and force caching if necessary
 		URL u = connection.getURL();
 		String up = u.getProtocol();
-		if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR)) {
+		if (!up.equals(PlatformURLHandler.FILE) && 
+			!up.equals(PlatformURLHandler.JAR) &&
+			!up.startsWith(PlatformURLHandler.BUNDLE)) {
 			throw new IOException("url.noaccess");
 		}
 		return u;

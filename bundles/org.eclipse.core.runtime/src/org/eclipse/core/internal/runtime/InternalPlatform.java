@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -42,6 +43,7 @@ public final class InternalPlatform implements IPlatform {
 
 	static ServiceRegistration platformRegistration;
 	static EnvironmentInfo infoService;
+	static URLConverter urlConverter;
 
 	// registry index - used to store last modified times for
 	// registry caching
@@ -200,15 +202,33 @@ public final class InternalPlatform implements IPlatform {
 			}
 			return url;
 		}
-		if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			return url;
-		URLConnection connection = url.openConnection();
-		if (!(connection instanceof PlatformURLConnection))
-			return url;
-		String file = connection.getURL().getFile();
-		if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR)) //$NON-NLS-1$
-			throw new IOException();
-		return ((PlatformURLConnection) connection).getURLAsLocal();
+
+		URL result = url;
+
+		// If this is a platform URL get the local URL from the PlatformURLConnection
+		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL)){
+			URLConnection connection = result.openConnection();
+			if (!(connection instanceof PlatformURLConnection))
+				return result;
+			String file = connection.getURL().getFile();
+			if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR)) //$NON-NLS-1$
+				throw new IOException();
+		
+			result = ((PlatformURLConnection) connection).getURLAsLocal();
+		}
+
+		// If the result is a bundleentry or bundleresouce URL then 
+		// convert it to a file URL.  This will end up extracting the 
+		// bundle entry to cache if the bundle is packaged as a jar.
+		if (result.getProtocol().startsWith(PlatformURLHandler.BUNDLE)) {
+			URLConverter urlConverter = getURLConverter();
+			if (urlConverter == null) {
+				throw new IOException("url.noaccess");
+			}
+			result = urlConverter.convertToFileURL(result);
+		}
+
+		return result;
 	}
 	private void assertInitialized() {
 		//avoid the Policy.bind if assertion is true
@@ -1100,7 +1120,11 @@ public final class InternalPlatform implements IPlatform {
 	public EnvironmentInfo getEnvironmentInfoService() {
 		return infoService;
 	}
-	
+
+	public URLConverter getURLConverter(){
+		return urlConverter;
+	}
+
 	public boolean isRunning() {
 		int state = context.getBundle(PI_RUNTIME).getState();
 		return state == Bundle.ACTIVE;
