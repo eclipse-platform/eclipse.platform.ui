@@ -19,6 +19,109 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input December 18th 2003 ==========<br>
+<pre>
+This build contains several changes and additions to the annotation mechanism.
+
+1) Annotation Types
+
+There is now the explicit notion of an annotation type. See Annotation.getType() and Annotation.setType().
+The type of an annotation can change over it's lifetime. A new extension point has been added for the declaration
+of annotation types: "org.eclipse.ui.editors.annotationTypes". An annotation type has a name and can be declared 
+as being a subtype of another declared annotation type. An annotation type declaration may also use the attributes 
+"markerType" and "markerSeverity" in order to specify that markers of a given type and a given severity should be 
+represented in text editors as annotations of a particular annotation type. The attributes "markerType" and 
+"markerSeverity" in the "org.eclipse.ui.editors.markerAnnotationSpecification" should no longer be used. Marker 
+annotation specifications are thus becoming independent from markers and the name thus misleading. However, the 
+name is kept in order to ensure backward compatibility.
+
+Instances of subclasses of AbstractMarkerAnnotationModel automatically detect and set the correct  annotation 
+types for annotations they create from markers. In order to programmatically retrieve the annotation type for 
+a given marker or a given pair of markerType and markerSeverity use org.eclipse.ui.texteditor.AnnotationTypeLookup.
+
+Access to the hierarchy of annotation types is provided by AnnotationTypeHierarchy. For a given annotation type 
+name you can get an AnnotationType that provides information about the chain of super types and a method to check 
+whether an annotation type given as name is a subtype. You can also retrieve the information from 
+IAnnotationAccessExtension. DefaultMarkerAnnotationAccess implements this interface.
+
+2) MarkerAnnotationSpecification
+
+The annotation type is the key with which to find the associated marker annotation specification. As annotation 
+types can extend other annotation types, there is an implicit relation between marker annotation specifications 
+as well. Therefore a marker annotation specification for a given annotation type is completed by the marker 
+annotation specifications given for the super types of the given annotation type. Therefore, marker annotation 
+specification do not have to be complete as this was required before. Marker annotation specifications are 
+reified by AnnotationPreferences. By using org.eclipse.ui.texteditor.AnnotationPreferenceLookup, you can retrieve 
+an annotation preference for a given annotation type that transparently performs the completion of the preference 
+along the annotation super type chain.
+
+3) Painting annotation
+
+Marker annotation specification has been extended with three addition attributed in order to allow the definition 
+of custom appearances of a given annotation type in the vertical ruler. These attributes are: "icon", "symbolicIcon", 
+and "annotationImageProvider". The value for "icon" is the path to a file containing the icon image. The value of 
+"symbolicIcon" can be one of "error", "warning", "info", "task", "bookmark". The attribute "symbolicIcon" is used 
+to tell the platform that annotation should be depicted with the same images that are used by the platform to 
+present errors, warnings, infos, tasks, and bookmarks respectively. The value of "annotationImageProvider" is a 
+class implementing org.eclipse.ui.texteditor.IAnnotationImageProvider that allows for a full custom annotation 
+presentation.
+
+The vertical ruler uses it's associated IAnnotationAccess/IAnnotationAccessExtension to draw annotations. 
+The vertical ruler does not call Annotation.paint any longer. In general, Annotations are no longer supposed 
+to draw themselves. The "paint" and "getLayer" methods have been deprecated in order to make annotation eventually 
+UI independent. DefaultMarkerAnnotationAccess serves as default implementation of IAnnotationAccess/IAnnotationAccessExtension. 
+DefaultMarkerAnnotationAccess implements the following strategy for painting annotations: If an annotation implements 
+IAnnotationPresentation, IAnnotationPresentation.paint is called. If not, the annotation image provider is looked up 
+in the annotation preference. The annotation image provider is only available if specified and if the plug-in defining 
+the enclosing marker annotation specification has already been loaded. If there is an annotation image provider, the 
+call is forwarded to it. If not, the specified "icon" is looked up. "symbolicIcon" is used as the final fallback. For 
+drawing annotations, the annotation presentation layer is relevant. DefaultMarkerAnnotationAccess looks up the presentation 
+layer using the following strategy: If the annotation preference specifies a presentation layer, the specified layer is 
+used. If there is no layer and the annotation implements IAnnotationPresentation, IAnnotationPresentation.getLayer is used 
+otherwise the default presentation layer (which is 0) is returned.
+
+4) Additions to Annotation
+
+Annotations additionally support: a message, a flag to indicate whether the annotation is marked as deleted, a 
+flag to indicate whether the annotation is persistent or temporary.
+
+5) Migration
+
+The following annotation types are declared by the org.eclipse.ui.editors plug-in:
+
+   &ltextension point="org.eclipse.ui.editors.annotationTypes"&gt
+      &lttype
+         name="org.eclipse.ui.workbench.texteditor.error"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="2"&gt
+      &lt/type&gt
+      &lttype
+         name="org.eclipse.ui.workbench.texteditor.warning"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="1"&gt
+      &lt/type&gt
+      &lttype
+         name="org.eclipse.ui.workbench.texteditor.info"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="0"&gt
+      &lt/type&gt
+      &lttype
+         name="org.eclipse.ui.workbench.texteditor.task"
+         markerType="org.eclipse.core.resources.taskmarker"&gt
+      &lt/type&gt
+      &lttype
+         name="org.eclipse.ui.workbench.texteditor.bookmark"
+         markerType="org.eclipse.core.resources.bookmark"&gt
+      &lt/type&gt
+   &lt/extension&gt
+
+The defined markerAnnotationSpecification extension no longer provide "markerType" and "markerSeverity" 
+attributes. They define the "symbolicIcon" attribute with the according value. Thus, MarkerAnnotation.paint 
+and MarkerAnnotation.getLayer are not called any longer, i.e. overriding these methods does not have 
+any effect.
+</pre>
+<br>
+<br>
 ========== Eclipse Build Input November 11th 2003 ==========<br>
 <pre>
 - Finished annotation background painter
