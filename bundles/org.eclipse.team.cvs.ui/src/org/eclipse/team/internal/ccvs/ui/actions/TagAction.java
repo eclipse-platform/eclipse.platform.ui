@@ -43,24 +43,10 @@ public class TagAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					final Shell s = getShell();
 					final String[] result = new String[1];
-					s.getDisplay().syncExec(new Runnable() {
+					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							// Prompt for the tag
-							IInputValidator validator = new IInputValidator() {
-								public String isValid(String tagName) {
-									IStatus status = CVSTag.validateTagName(tagName);
-									if (status.isOK()) {
-										return null;
-									} else {
-										return status.getMessage();
-									}
-								}
-							};
-							InputDialog dialog = new InputDialog(s, Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator);
-							if (dialog.open() != InputDialog.OK) return;
-							result[0] = dialog.getValue();
+							result[0] = promptForTag();
 						}
 					});
 					if (result[0] == null) return;
@@ -83,6 +69,7 @@ public class TagAction extends TeamAction {
 		}, Policy.bind("TagAction.tag"), this.PROGRESS_DIALOG);
 
 	}
+	
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
@@ -96,6 +83,28 @@ public class TagAction extends TeamAction {
 			if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Prompts the user for a tag name.
+	 * @return the tag, or null to cancel
+	 */
+	protected String promptForTag() {
+		// Prompt for the tag
+		IInputValidator validator = new IInputValidator() {
+			public String isValid(String tagName) {
+				IStatus status = CVSTag.validateTagName(tagName);
+				if (status.isOK()) {
+					return null;
+				} else {
+					return status.getMessage();
+				}
+			}
+		};
+		InputDialog dialog = new InputDialog(getShell(),
+			Policy.bind("TagAction.tagResources"), Policy.bind("TagAction.enterTag"), previousTag, validator);
+		if (dialog.open() != InputDialog.OK) return null;
+		return dialog.getValue();
 	}
 }
 

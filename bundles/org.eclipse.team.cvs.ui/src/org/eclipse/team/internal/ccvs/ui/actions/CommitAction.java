@@ -34,7 +34,7 @@ public class CommitAction extends TeamAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-					String comment = manager.promptForComment(getShell());
+					String comment = promptForComment(manager);
 					if (comment != null) {
 						manager.commit(getSelectedResources(), comment, monitor);
 					}
@@ -60,5 +60,13 @@ public class CommitAction extends TeamAction {
 			if (!cvsProvider.isCheckedOut(resources[i])) return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Prompts the user for a release comment.
+	 * @return the comment, or null to cancel
+	 */
+	protected String promptForComment(RepositoryManager manager) {
+		return manager.promptForComment(getShell());
 	}
 }

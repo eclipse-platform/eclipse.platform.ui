@@ -41,22 +41,7 @@ public class CommitSyncAction extends MergeAction {
 	protected SyncSet run(SyncSet syncSet, IProgressMonitor monitor) {
 		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
 		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
-			String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
-			String question = Policy.bind("CommitSyncAction.questionRelease");
-			String title = Policy.bind("CommitSyncAction.titleRelease");
-			String[] tips = new String[] {
-				Policy.bind("CommitSyncAction.releaseAll"),
-				Policy.bind("CommitSyncAction.releasePart"),
-				Policy.bind("CommitSyncAction.cancelRelease")
-			};
-			Shell shell = getShell();
-			final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);
-			shell.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					dialog.open();
-				}
-			});
-			switch (dialog.getReturnCode()) {
+			switch (promptForConflicts(syncSet)) {
 				case 0:
 					// Yes, synchronize conflicts as well
 					break;
@@ -129,7 +114,7 @@ public class CommitSyncAction extends MergeAction {
 		}
 		try {
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-			String comment = manager.promptForComment(getShell());
+			String comment = promptForComment(manager);
 			if (comment == null) {
 				// User cancelled. Remove the nodes from the sync set.
 				return null;
@@ -189,7 +174,7 @@ public class CommitSyncAction extends MergeAction {
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(getShell(), Policy.bind("error"), Policy.bind("CommitSyncAction.errorCommitting"), e.getStatus());
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
 				}
 			});
 			return null;
@@ -232,4 +217,35 @@ public class CommitSyncAction extends MergeAction {
 	protected boolean isEnabled(ITeamNode node) {
 		return true;
 	}	
+	
+	/**
+	 * Prompts the user to determine how conflicting changes should be handled.
+	 * @return 0 to sync conflicts, 1 to sync all non-conflicts, 2 to cancel
+	 */
+	protected int promptForConflicts(SyncSet syncSet) {
+		String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
+		String question = Policy.bind("CommitSyncAction.questionRelease");
+		String title = Policy.bind("CommitSyncAction.titleRelease");
+		String[] tips = new String[] {
+			Policy.bind("CommitSyncAction.releaseAll"),
+			Policy.bind("CommitSyncAction.releasePart"),
+			Policy.bind("CommitSyncAction.cancelRelease")
+		};
+		Shell shell = getShell();
+		final ToolTipMessageDialog dialog = new ToolTipMessageDialog(shell, title, null, question, MessageDialog.QUESTION, buttons, tips, 0);
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				dialog.open();
+			}
+		});
+		return dialog.getReturnCode();
+	}
+	
+	/**
+	 * Prompts the user for a release comment.
+	 * @return the comment, or null to cancel
+	 */
+	protected String promptForComment(RepositoryManager manager) {
+		return manager.promptForComment(getShell());
+	}
 }

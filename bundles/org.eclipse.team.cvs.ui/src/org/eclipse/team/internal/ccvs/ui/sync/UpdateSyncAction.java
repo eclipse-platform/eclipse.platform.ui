@@ -108,32 +108,22 @@ public class UpdateSyncAction extends MergeAction {
 
 	protected SyncSet run(final SyncSet syncSet, IProgressMonitor monitor) {
 		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
-		final boolean doAutomerge[] = new boolean[] {false};
+		boolean onlyUpdateAutomergeable = false;
 		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {
-			final Shell shell = getShell();
 			if (syncSet.hasAutoMergeableConflicts()) {
-				final int[] result = new int[] {Dialog.CANCEL};
-				shell.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						ConfirmDialog dialog = new ConfirmDialog(shell);
-						result[0] = dialog.open();
-						doAutomerge[0] = dialog.getAutomerge();
-					}
-				});
-				if (result[0] == Dialog.CANCEL) return null;
-				if (doAutomerge[0]) {
-					syncSet.removeNonMergeableNodes();
-				}	
+				switch (promptForMergeableConflicts()) {
+					case 0: // cancel
+						return null;
+					case 1: // only update auto-mergeable conflicts
+						onlyUpdateAutomergeable = true;
+						syncSet.removeNonMergeableNodes();
+						break;
+					case 2: // update all conflicts
+						onlyUpdateAutomergeable = false;
+						break;
+				}				
 			} else {
-				final boolean[] result = new boolean[] { false };
-				shell.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						result[0] = MessageDialog.openQuestion(shell, Policy.bind("UpdateSyncAction.Overwrite_local_changes__5"), Policy.bind("UpdateSyncAction.You_have_local_changes_you_are_about_to_overwrite._Do_you_wish_to_continue__6")); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				});
-				if (!result[0]) {
-					return null;
-				}
+				if (! promptForConflicts()) return null;				
 			}
 		}
 		
@@ -207,7 +197,7 @@ public class UpdateSyncAction extends MergeAction {
 							break;
 						case Differencer.CHANGE:
 							// Depends on the flag.
-							if (doAutomerge[0] && (changed[i].getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+							if (onlyUpdateAutomergeable && (changed[i].getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
 								updateShallow.add(resource);
 							} else {
 								updateIgnoreLocalShallow.add(resource);
@@ -278,7 +268,7 @@ public class UpdateSyncAction extends MergeAction {
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(getShell(), Policy.bind("error"), Policy.bind("UpdateSyncAction.errorUpdating"), e.getStatus());
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
 				}
 			});
 			return null;
@@ -321,5 +311,39 @@ public class UpdateSyncAction extends MergeAction {
 	}
 	protected boolean isEnabled(ITeamNode node) {
 		return true;
+	}
+	
+	/**
+	 * Prompt for mergeable conflicts.
+	 * @return 0 to cancel, 1 to only update mergeable conflicts, 2 to overwrite if unmergeable
+	 */
+	protected int promptForMergeableConflicts() {
+		final boolean doAutomerge[] = new boolean[] {false};
+		final int[] result = new int[] {Dialog.CANCEL};
+		final Shell shell = getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				ConfirmDialog dialog = new ConfirmDialog(shell);
+				result[0] = dialog.open();
+				doAutomerge[0] = dialog.getAutomerge();
+			}
+		});
+		if (result[0] == Dialog.CANCEL) return 0;
+		return doAutomerge[0] ? 1 : 2;
+	}
+	
+	/**
+	 * Prompt for non-automergeable conflicts.
+	 * @return false to cancel, true to overwrite local changes
+	 */
+	protected boolean promptForConflicts() {
+		final boolean[] result = new boolean[] { false };
+		final Shell shell = getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				result[0] = MessageDialog.openQuestion(shell, Policy.bind("UpdateSyncAction.Overwrite_local_changes__5"), Policy.bind("UpdateSyncAction.You_have_local_changes_you_are_about_to_overwrite._Do_you_wish_to_continue__6")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		});
+		return result[0];
 	}
 }
