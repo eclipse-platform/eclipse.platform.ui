@@ -9,11 +9,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.eclipse.debug.core.*;
+
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.AbstractDocument;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.ITextStore;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -79,7 +87,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	protected void fireDocumentChanged(DocumentEvent event) {
 		super.fireDocumentChanged(event);
 		String eventText= event.getText();
-		if (eventText == null || 0 >= eventText.length() || eventText.length() > 2) {
+		if (eventText == null || 0 >= eventText.length() || eventText.length() > 2 || isClosed()) {
 			return;
 		}
 		String[] lineDelimiters= event.getDocument().getLegalLineDelimiters();
@@ -106,6 +114,9 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		return fClosed;
 	}
 	
+	/**
+	 * @see IDocument#replace(int, int, String)
+	 */
 	public void replace(int pos, int replaceLength, String text) {
 		if (isReadOnly() || pos < getStartOfEditableContent()) {
 			return;
@@ -136,6 +147,10 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		
 	}
 
+	
+	/**
+	 * @see IDocument#set(String)
+	 */
 	public void set(String text) {
 		fNewStreamWriteEnd= text.length();
 		super.set(text);
@@ -183,13 +198,15 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	/**
 	 * System out or System error has had text append to it.
 	 * Adds the new text to the document.
+	 * 
+	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
 	protected void streamAppended(final String text, final int source) {
 		update(new Runnable() {
 			public void run() {
 				int appendedLength= text.length();
 				fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
-				ConsoleDocument.this.replace0(fLastStreamWriteEnd, 0, text);
+				replace0(fLastStreamWriteEnd, 0, text);
 				updateOutputStyleRanges(source);
 				fLastStreamWriteEnd= fNewStreamWriteEnd;
 			}
@@ -197,19 +214,23 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	}
 		
 	/**
-	 * @see IInputStreamListener
+	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
 	protected void systemErrAppended(String text) {
 		streamAppended(text, ERR);
 	}
 
 	/**
-	 * @see IInputStreamListener
+	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
 	protected void systemOutAppended(String text) {
 		streamAppended(text, OUT);
 	}
 
+	
+	/**
+	 * @see Object#equals(Object)
+	 */
 	public boolean equals(Object obj) {
 			boolean correctInstance= obj instanceof ConsoleDocument;
 			if (fProcess != null) {
@@ -219,6 +240,9 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 			}
     }
     
+	/**
+	 * @see Object#hashCode()
+	 */
     public int hashCode() {
     	return (fProcess != null) ? fProcess.hashCode() : super.hashCode();
     }
@@ -354,7 +378,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	}
 	
 	/**
-	 * @see IDebugEventListener
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvent(DebugEvent event) {
 		if (fProcess == null) {
