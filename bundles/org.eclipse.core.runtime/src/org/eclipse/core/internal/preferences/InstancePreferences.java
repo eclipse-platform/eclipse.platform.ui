@@ -13,6 +13,7 @@ package org.eclipse.core.internal.preferences;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.SafeFileInputStream;
 import org.eclipse.core.runtime.*;
@@ -62,13 +63,13 @@ public class InstancePreferences extends EclipsePreferences {
 	public void sync() throws BackingStoreException {
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		IEclipsePreferences node = getLoadLevel();
 		if (node == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		if (node instanceof EclipsePreferences) {
@@ -93,12 +94,14 @@ public class InstancePreferences extends EclipsePreferences {
 		if (!prefFile.exists()) {
 			// no preference file - that's fine
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$ //$NON-NLS-2$
+			// convert pre-M9 prefs before returning
+			loadLegacyPreM9();
 			return;
 		}
 
 		if (InternalPlatform.DEBUG_PREFERENCES)
-			System.out.println("Loading legacy preferences from " + prefFile); //$NON-NLS-1$
+			Policy.debug("Loading legacy preferences from " + prefFile); //$NON-NLS-1$
 
 		// load preferences from file
 		SafeFileInputStream input = null;
@@ -108,11 +111,8 @@ public class InstancePreferences extends EclipsePreferences {
 			values.load(input);
 		} catch (IOException e) {
 			// problems loading preference store - quietly ignore
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				String message = "IOException encountered loading legacy preference file " + prefFile; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
-				log(status);
-			}
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("IOException encountered loading legacy preference file " + prefFile); //$NON-NLS-1$
 			return;
 		} finally {
 			if (input != null) {
@@ -121,7 +121,7 @@ public class InstancePreferences extends EclipsePreferences {
 				} catch (IOException e) {
 					// ignore problems with close
 					if (InternalPlatform.DEBUG_PREFERENCES) {
-						System.out.println("IOException encountered closing legacy preference file " + prefFile); //$NON-NLS-1$
+						Policy.debug("IOException encountered closing legacy preference file " + prefFile); //$NON-NLS-1$
 						e.printStackTrace();
 					}
 				}
@@ -138,7 +138,7 @@ public class InstancePreferences extends EclipsePreferences {
 			// value shouldn't be null but check just in case...
 			if (value != null) {
 				if (InternalPlatform.DEBUG_PREFERENCES)
-					System.out.println("Loaded legacy preference: " + key + " -> " + value); //$NON-NLS-1$ //$NON-NLS-2$
+					Policy.debug("Loaded legacy preference: " + key + " -> " + value); //$NON-NLS-1$ //$NON-NLS-2$
 				// call these 2 methods rather than #put() so we don't send out unnecessary notification
 				properties.put(key, value);
 				makeDirty();
@@ -150,7 +150,30 @@ public class InstancePreferences extends EclipsePreferences {
 		if (!prefFile.renameTo(destFile))
 			//Only print out message in failure case if we are debugging.
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to rename legacy preferences file: " + prefFile + " -> " + destFile); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("Unable to rename legacy preferences file: " + prefFile + " -> " + destFile); //$NON-NLS-1$ //$NON-NLS-2$
+
+		loadLegacyPreM9();
+	}
+
+	/*
+	 * TODO: Remove this method after M9 but before the 3.0 release.
+	 * It converts from the interim format used in integration builds (pre M9).
+	 */
+	private void loadLegacyPreM9() {
+		if (qualifier == null)
+			return;
+		IPath oldLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
+		if (!oldLocation.toFile().exists())
+			return;
+		try {
+			load(oldLocation);
+		} catch (BackingStoreException e) {
+			String message = "IOException encountered loading legacy preference file " + oldLocation; //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			log(status);
+			return;
+		}
+		oldLocation.toFile().delete();
 	}
 
 	protected IPath getLocation() {
@@ -177,7 +200,7 @@ public class InstancePreferences extends EclipsePreferences {
 		if (qualifier == null)
 			return;
 		// get the base location from the platform
-		location = InternalPlatform.getDefault().getMetaArea().getStateLocation(qualifier).append(DEFAULT_PREFERENCES_FILENAME);
+		location = computeLocation(InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME), qualifier);
 	}
 
 	/*

@@ -14,8 +14,11 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -552,14 +555,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 	}
 
-	public void testSync() {
-
-	}
-
-	public void testFlush() {
-
-	}
-
 	public void testRemoveNode() {
 		Preferences root = getScopeRoot();
 		ArrayList list = new ArrayList();
@@ -840,6 +835,49 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		node = node.node(name);
 		assertEquals("3.0", expected.toString(), node.absolutePath());
 	}
+	
+	public void testAccept() {
+		IEclipsePreferences scopeRoot = getScopeRoot();
+		ArrayList expected = new ArrayList();
+		final ArrayList actual = new ArrayList();
+
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) {
+				actual.add(node.absolutePath());
+				return true;
+			}
+		};
+
+		// just the scope root
+		try {
+			scopeRoot.accept(visitor);
+		} catch (BackingStoreException e) {
+			fail("0.99", e);
+		}
+		expected.add(scopeRoot.absolutePath());
+		assertEquals("0.1", expected.toArray(new String[0]), actual.toArray(new String[0]));
+		
+		// make sure the root and all scopes are visited
+		expected.clear();
+		actual.clear();
+		try {
+			Platform.getPreferencesService().getRootNode().accept(visitor);
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+		expected.add(Path.ROOT.toString());
+		try {
+			String[] scopes = Platform.getPreferencesService().getRootNode().childrenNames();
+			for (int i=0; i<scopes.length; i++)
+				expected.add('/' + scopes[i]);
+		} catch (BackingStoreException e) {
+			fail("1.100", e);
+		}
+		for (Iterator i=expected.iterator(); i.hasNext(); ) {
+			String path = (String) i.next(); 
+			assertTrue("1.0 (" + actual + ", " + path + ")", actual.contains(path));
+		}
+	}
 
 	public void testPreferenceChangeListeners() {
 		IEclipsePreferences node = getScopeRoot();
@@ -926,7 +964,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		String key = "key." + getUniqueString();
 		String value = "value." + getUniqueString();
 		String OLD_PREFS_FILENAME = "pref_store.ini";
-		String NEW_PREFS_FILENAME = "prefs.ini";
 
 		// create fake plug-in and store 2.1 format tests in legacy location
 		Bundle runtimeBundle = Platform.getBundle(Platform.PI_RUNTIME);
@@ -962,7 +999,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 		// ensure the values have been flushed to disk
 		// first indication is the new file exists on disk.
-		IPath newFile = oldFile.removeLastSegments(1).append(NEW_PREFS_FILENAME);
+		IPath newFile = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+		newFile = newFile.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).append(pluginID).addFileExtension(EclipsePreferences.PREFS_FILE_EXTENSION);
 		assertTrue("4.0", newFile.toFile().exists());
 		// then check to see if the value is in the file
 		String newKey = Path.ROOT.append(InstanceScope.SCOPE).append(pluginID).append(key).toString();
