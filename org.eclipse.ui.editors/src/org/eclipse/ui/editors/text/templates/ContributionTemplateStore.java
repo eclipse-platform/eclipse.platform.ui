@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text.templates;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -134,10 +135,9 @@ public class ContributionTemplateStore extends TemplateStore {
 					}
 				}
 				
-				InputStream stream= url.openStream();
-				Reader input= new InputStreamReader(stream);
+				InputStream stream= new BufferedInputStream(url.openStream());
 				TemplateReaderWriter reader= new TemplateReaderWriter();
-				TemplatePersistenceData[] datas= reader.read(input, bundle);
+				TemplatePersistenceData[] datas= reader.read(stream, bundle);
 				for (int i= 0; i < datas.length; i++) {
 					TemplatePersistenceData data= datas[i];
 					if (data.isCustom()) {

@@ -11,6 +11,8 @@
 package org.eclipse.jface.text.templates.persistence;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ import org.eclipse.jface.text.templates.Template;
 
 /**
  * Serializes templates as character stream and reads the same format back.
- * Clients may instantiate this class. 
+ * Clients may instantiate this class, it is not intended to be subclassed.
  * 
  * @since 3.0
  */
@@ -58,6 +60,12 @@ public class TemplateReaderWriter {
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
+	
+	/**
+	 * Create a new instance.
+	 */
+	public TemplateReaderWriter() {
+	}
 	
 	/**
 	 * Reads templates from a reader and returns them. The reader must present
@@ -80,14 +88,37 @@ public class TemplateReaderWriter {
 	 * @throws IOException if reading from the stream fails 
 	 */	
 	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws IOException {
-		
+		return read(new InputSource(reader), bundle);
+	}
+	
+	/**
+	 * Reads templates from a stream and adds them to the templates.
+	 * 
+	 * @param stream the byte stream to read templates from
+	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
+	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
+	 * @throws IOException if reading from the stream fails 
+	 */	
+	public TemplatePersistenceData[] read(InputStream stream, ResourceBundle bundle) throws IOException {
+		return read(new InputSource(stream), bundle);
+	}
+	
+	/**
+	 * Reads templates from an InputSource and adds them to the templates.
+	 * 
+	 * @param source the input source
+	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
+	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
+	 * @throws IOException if reading from the stream fails 
+	 */	
+	private TemplatePersistenceData[] read(InputSource source, ResourceBundle bundle) throws IOException {
 		try {
 			Collection templates= new ArrayList();
 			Set ids= new HashSet();
 			
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser= factory.newDocumentBuilder();		
-			Document document= parser.parse(new InputSource(reader));
+			Document document= parser.parse(source);
 			
 			NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
 			
@@ -151,6 +182,17 @@ public class TemplateReaderWriter {
 	}
 	
 	/**
+	 * Saves the templates as XML, encoded as UTF-8 onto the given byte stream.
+	 * 
+	 * @param templates the templates to save
+	 * @param stream the byte output to write the templates to in XML
+	 * @throws IOException if writing the templates fails 
+	 */
+	public void save(TemplatePersistenceData[] templates, OutputStream stream) throws IOException {
+		save(templates, new StreamResult(stream));
+	}
+	
+	/**
 	 * Saves the templates as XML.
 	 * 
 	 * @param templates the templates to save
@@ -158,6 +200,17 @@ public class TemplateReaderWriter {
 	 * @throws IOException if writing the templates fails 
 	 */
 	public void save(TemplatePersistenceData[] templates, Writer writer) throws IOException {
+		save(templates, new StreamResult(writer));
+	}
+	
+	/**
+	 * Saves the templates as XML.
+	 * 
+	 * @param templates the templates to save
+	 * @param result the stream result to write to
+	 * @throws IOException if writing the templates fails 
+	 */
+	private void save(TemplatePersistenceData[] templates, StreamResult result) throws IOException {
 		try {
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder= factory.newDocumentBuilder();		
@@ -219,7 +272,6 @@ public class TemplateReaderWriter {
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(document);
-			StreamResult result = new StreamResult(writer);
 
 			transformer.transform(source, result);
 
