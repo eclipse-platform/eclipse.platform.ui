@@ -120,14 +120,8 @@ public interface IWorkbenchContextSupport {
      * @return <code>true</code> if the shell had already been registered
      *         (i.e., the registration has changed); <code>false</code>
      *         otherwise.
-     * 
-     * @throws IllegalArgumentException
-     *             If the type provided is not one of the constants provided.
-     * @throws NullPointerException
-     *             If the shell is <code>null</code>.
      */
-    public boolean registerShell(final Shell shell, final int type)
-            throws IllegalArgumentException, NullPointerException;
+    public boolean registerShell(final Shell shell, final int type);
 
     /**
      * TODO

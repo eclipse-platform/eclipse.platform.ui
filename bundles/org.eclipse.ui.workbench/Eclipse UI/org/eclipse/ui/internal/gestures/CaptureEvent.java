@@ -21,8 +21,7 @@ public final class CaptureEvent implements Comparable {
 	private final static int HASH_INITIAL =
 		CaptureEvent.class.getName().hashCode();
 
-	public static CaptureEvent create(int data, int pen, Point[] points)
-		throws IllegalArgumentException {
+	public static CaptureEvent create(int data, int pen, Point[] points) {
 		return new CaptureEvent(data, pen, points);
 	}
 
@@ -30,8 +29,7 @@ public final class CaptureEvent implements Comparable {
 	private int pen;
 	private Point[] points;
 
-	private CaptureEvent(int data, int pen, Point[] points)
-		throws IllegalArgumentException {
+	private CaptureEvent(int data, int pen, Point[] points) {
 		super();
 		this.data = data;
 		this.pen = pen;

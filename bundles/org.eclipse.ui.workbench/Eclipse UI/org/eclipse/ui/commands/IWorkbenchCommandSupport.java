@@ -84,8 +84,8 @@ public interface IWorkbenchCommandSupport {
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(Shell,
      *      int)
      */
-    void registerForKeyBindings(Shell shell, boolean dialogOnly);
-
+    void registerForKeyBindings(Shell shell, boolean dialogOnly);  
+    
     /**
      * TODO
      * 

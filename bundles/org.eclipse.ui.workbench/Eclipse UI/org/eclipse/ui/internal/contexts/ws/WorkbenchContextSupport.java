@@ -524,8 +524,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(org.eclipse.swt.widgets.Shell,
      *      int)
      */
-    public boolean registerShell(final Shell shell, final int type)
-            throws IllegalArgumentException, NullPointerException {
+    public boolean registerShell(final Shell shell, final int type) {
         // We do not allow null shell registration. It is reserved.
         if (shell == null) { throw new NullPointerException(
                 "The shell was null"); //$NON-NLS-1$

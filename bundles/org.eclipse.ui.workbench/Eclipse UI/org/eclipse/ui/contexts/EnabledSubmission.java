@@ -11,10 +11,8 @@
 package org.eclipse.ui.contexts;
 
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -32,11 +30,6 @@ public final class EnabledSubmission implements Comparable {
     private final static int HASH_INITIAL = EnabledSubmission.class.getName()
             .hashCode();
 
-    /**
-     * The shell that must be active for the associated context to be considered
-     * enabled. If this value is <code>null</code>, then any shell can be
-     * active.
-     */
     private final Shell activeShell;
 
     private IWorkbenchSite activeWorkbenchSite;
@@ -52,7 +45,7 @@ public final class EnabledSubmission implements Comparable {
     /**
      * Constructs a new instance of <code>EnabledSubmission</code>.
      * 
-     * @param workbenchSite
+     * @param activeWorkbenchSite
      *            The workbench site which must be active for this submission to
      *            be active. If this value is <code>null</code>, then any
      *            workbench site can be active.
@@ -60,26 +53,23 @@ public final class EnabledSubmission implements Comparable {
      *            The workbench window which must be active for this submission
      *            to be active. If this value is <code>null</code>, then any
      *            workbench window can be active.
-     * @param contextIdentifier
+     * @param contextId
      *            The context which should be activated when this submission is
      *            enabled. This value must not be <code>null</code>.
      * @deprecated The workbench window has been replaced with a reference to a
      *             shell. This is a required level of generality for key
      *             bindings in dialogs (since dialogs are not workbench
      *             windows). Please use the other constructor.
-     * 
-     * @throws NullPointerException
-     *             If <code>contextId</code> is <code>null</code>.
      */
-    public EnabledSubmission(IWorkbenchSite workbenchSite,
-            IWorkbenchWindow activeWorkbenchWindow, String contextIdentifier) {
-        this(activeWorkbenchWindow.getShell(), workbenchSite, contextIdentifier);
+    public EnabledSubmission(IWorkbenchSite activeWorkbenchSite,
+            IWorkbenchWindow activeWorkbenchWindow, String contextId) {
+        this(activeWorkbenchWindow.getShell(), activeWorkbenchSite, contextId);
     }
 
     /**
      * Constructs a new instance of <code>EnabledSubmission</code>.
      * 
-     * @param shell
+     * @param activeShell
      *            The shell which must be active for this submission to be
      *            active. If this value is <code>null</code>, then any shell
      *            can be active.
@@ -87,20 +77,16 @@ public final class EnabledSubmission implements Comparable {
      *            The workbench site which must be active for this submission to
      *            be active. If this value is <code>null</code>, then any
      *            workbench site can be active. workbench window can be active.
-     * @param contextIdentifier
+     * @param contextId
      *            The context which should be activated when this submission is
      *            enabled. This value must not be <code>null</code>.
-     * 
-     * @throws NullPointerException
-     *             If <code>contextId</code> is <code>null</code>.
      */
-    public EnabledSubmission(final Shell shell,
-            final IWorkbenchSite workbenchSite, final String contextIdentifier)
-            throws NullPointerException {
-        if (contextIdentifier == null) throw new NullPointerException();
-        activeShell = shell;
-        activeWorkbenchSite = workbenchSite;
-        contextId = contextIdentifier;
+    public EnabledSubmission(final Shell activeShell,
+            final IWorkbenchSite workbenchSite, final String contextId) {
+        if (contextId == null) throw new NullPointerException();
+        this.activeShell = activeShell;
+        this.activeWorkbenchSite = workbenchSite;
+        this.contextId = contextId;
     }
 
     public int compareTo(Object object) {

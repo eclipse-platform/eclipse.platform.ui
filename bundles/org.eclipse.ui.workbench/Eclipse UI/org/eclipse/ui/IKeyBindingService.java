@@ -43,7 +43,7 @@ public interface IKeyBindingService {
      * @param action
      *            the action to be registered with the key binding service.
      */
-    void registerAction(IAction action) throws IllegalArgumentException;
+    void registerAction(IAction action);
 
     /**
      * Sets the active accelerator scope ids.
@@ -51,7 +51,7 @@ public interface IKeyBindingService {
      * @param ids
      *            the active accelerator scope ids.
      */
-    void setScopes(String[] scopes) throws IllegalArgumentException;
+    void setScopes(String[] scopes);
 
     /**
      * Unregisters an action with the key binding service.
@@ -59,5 +59,5 @@ public interface IKeyBindingService {
      * @param action
      *            the action to be unregistered with the key binding service.
      */
-    void unregisterAction(IAction action) throws IllegalArgumentException;
+    void unregisterAction(IAction action);
 }
