@@ -15,7 +15,8 @@ import junit.framework.*;
 /**
  * A test descriptor represents a test case. It is used by the session 
  * test framework to run tests remotely. Using test descriptors, one 
- * can run any test case provided by any plug-in.  
+ * can run any test case provided by any plug-in by just providing the
+ * plug-in id, the test class and the test case name.  
  */
 public class TestDescriptor extends TestCase {
 	private String applicationId;
