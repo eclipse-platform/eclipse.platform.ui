@@ -62,9 +62,8 @@ class ResolveMarkerAction extends TaskAction {
         getTaskList().cancelEditing();
         IMarkerResolution[] resolutions = getResolutions(marker);
         if (resolutions.length == 0) {
-            MessageDialog.openInformation(getShell(), TaskListMessages
-                    .getString("Resolve.title"), //$NON-NLS-1$
-                    TaskListMessages.getString("Resolve.noResolutionsLabel")); //$NON-NLS-1$
+            MessageDialog.openInformation(getShell(), TaskListMessages.Resolve_title, 
+                    TaskListMessages.Resolve_noResolutionsLabel); 
             return;
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(

@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
@@ -190,12 +191,10 @@ public class TaskPropertiesDialog extends Dialog {
         super.configureShell(newShell);
 
         if (marker == null) {
-            newShell.setText(TaskListMessages
-                    .getString("TaskProp.newTaskTitle")); //$NON-NLS-1$
+            newShell.setText(TaskListMessages.TaskProp_newTaskTitle);
         } else {
             String kind = MarkerUtil.getKindText(marker);
-            newShell.setText(TaskListMessages.format(
-                    "TaskProp.propertiesTitle", new Object[] { kind })); //$NON-NLS-1$
+            newShell.setText(NLS.bind(TaskListMessages.TaskProp_propertiesTitle,  kind));
         }
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
@@ -234,7 +233,7 @@ public class TaskPropertiesDialog extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.getString("TaskProp.creationTime")); //$NON-NLS-1$
+        label.setText(TaskListMessages.TaskProp_creationTime);
         label.setFont(font);
 
         creationTime = new Label(composite, SWT.NONE);
@@ -269,7 +268,7 @@ public class TaskPropertiesDialog extends Dialog {
         
         
         Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
+        label.setText(TaskListMessages.TaskProp_description);
         label.setFont(font);
         int style = SWT.SINGLE | SWT.BORDER;
         if (!isEditable()) {
@@ -293,13 +292,13 @@ public class TaskPropertiesDialog extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.getString("TaskProp.priority")); //$NON-NLS-1$
+        label.setText(TaskListMessages.TaskProp_priority); 
         label.setFont(font);
         priorityCombo = new Combo(composite, SWT.READ_ONLY);
         priorityCombo.setItems(new String[] {
-                TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
-                TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
-                TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
+                TaskListMessages.TaskList_high,
+                TaskListMessages.TaskList_normal,
+                TaskListMessages.TaskList_low
                 });
         // Prevent Esc and Return from closing the dialog when the combo is active.
         priorityCombo.addTraverseListener(new TraverseListener() {
@@ -313,8 +312,7 @@ public class TaskPropertiesDialog extends Dialog {
         priorityCombo.setFont(font);
 
         completedCheckbox = new Button(composite, SWT.CHECK);
-        completedCheckbox.setText(TaskListMessages
-                .getString("TaskProp.completed")); //$NON-NLS-1$
+        completedCheckbox.setText(TaskListMessages.TaskProp_completed); 
         GridData gridData = new GridData();
         gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
         completedCheckbox.setLayoutData(gridData);
@@ -337,7 +335,7 @@ public class TaskPropertiesDialog extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.getString("TaskProp.severity")); //$NON-NLS-1$
+        label.setText(TaskListMessages.TaskProp_severity);
         label.setFont(font);
         // workaround for bug 11078: Can't get a read-only combo box
         severityLabel = new Label(composite, SWT.NONE);
@@ -374,7 +372,7 @@ public class TaskPropertiesDialog extends Dialog {
 
         Label resourceLabel = new Label(composite, SWT.NONE);
         resourceLabel
-                .setText(TaskListMessages.getString("TaskProp.onResource")); //$NON-NLS-1$
+                .setText(TaskListMessages.TaskProp_onResource);
         resourceLabel.setFont(font);
         resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -383,7 +381,7 @@ public class TaskPropertiesDialog extends Dialog {
         resourceText.setFont(font);
 
         Label folderLabel = new Label(composite, SWT.NONE);
-        folderLabel.setText(TaskListMessages.getString("TaskProp.inFolder")); //$NON-NLS-1$
+        folderLabel.setText(TaskListMessages.TaskProp_inFolder); 
         folderLabel.setFont(font);
         folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
                 | SWT.BORDER);
@@ -392,7 +390,7 @@ public class TaskPropertiesDialog extends Dialog {
         folderText.setFont(font);
 
         Label locationLabel = new Label(composite, SWT.NONE);
-        locationLabel.setText(TaskListMessages.getString("TaskProp.location")); //$NON-NLS-1$
+        locationLabel.setText(TaskListMessages.TaskProp_location);
         locationLabel.setFont(font);
         locationText = new Text(composite, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
@@ -426,13 +424,13 @@ public class TaskPropertiesDialog extends Dialog {
             String sev = ""; //$NON-NLS-1$
             switch (MarkerUtil.getSeverity(marker)) {
             case IMarker.SEVERITY_ERROR:
-                sev = TaskListMessages.getString("TaskList.error"); //$NON-NLS-1$
+                sev = TaskListMessages.TaskList_error;
                 break;
             case IMarker.SEVERITY_WARNING:
-                sev = TaskListMessages.getString("TaskList.warning"); //$NON-NLS-1$
+                sev = TaskListMessages.TaskList_warning; 
                 break;
             case IMarker.SEVERITY_INFO:
-                sev = TaskListMessages.getString("TaskList.info"); //$NON-NLS-1$
+                sev = TaskListMessages.TaskList_info;
                 break;
             }
             severityLabel.setText(sev);
@@ -591,8 +589,7 @@ public class TaskPropertiesDialog extends Dialog {
         }
 
         if (coreExceptions[0] != null)
-            ErrorDialog.openError(getShell(), TaskListMessages
-                    .getString("TaskProp.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError(getShell(), TaskListMessages.TaskProp_errorMessage, 
                     null, coreExceptions[0].getStatus());
     }
 
@@ -605,11 +602,9 @@ public class TaskPropertiesDialog extends Dialog {
     private void createOrUpdateMarker(IProgressMonitor monitor, Map attrs)
             throws CoreException {
 
-        monitor.beginTask(TaskListMessages
-                .getString("TaskPropertiesDialog.WorkingOnMarker"), 100); //$NON-NLS-1$
+        monitor.beginTask(TaskListMessages.TaskPropertiesDialog_WorkingOnMarker, 100); 
         if (marker == null) {
-            monitor.subTask(TaskListMessages
-                    .getString("TaskPropertiesDialog.CreatingMarker")); //$NON-NLS-1$
+            monitor.subTask(TaskListMessages.TaskPropertiesDialog_CreatingMarker);
             IResource resource = getResource();
             if (resource == null) {
                 resource = ResourcesPlugin.getWorkspace().getRoot();
@@ -629,8 +624,7 @@ public class TaskPropertiesDialog extends Dialog {
         // Do not use setAttributes(Map) as that overwrites any attributes
         // not covered by the dialog.
 
-        monitor.subTask(TaskListMessages
-                .getString("TaskPropertiesDialog.UpdatingAttributes")); //$NON-NLS-1$
+        monitor.subTask(TaskListMessages.TaskPropertiesDialog_UpdatingAttributes);
         int increment = 50 / attrs.keySet().size();
         for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
             String key = (String) i.next();

@@ -58,7 +58,7 @@ class GotoTaskAction extends TaskAction {
                 IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
             } catch (PartInitException e) {
                 DialogUtil.openError(page.getWorkbenchWindow().getShell(),
-                        TaskListMessages.getString("GotoTask.errorMessage"), //$NON-NLS-1$
+                        TaskListMessages.GotoTask_errorMessage, 
                         e.getMessage(), e);
             }
         }

@@ -72,8 +72,7 @@ class RemoveTaskAction extends TaskAction {
             viewer.setSelection(viewer.getSelection(), true);
 
         } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), TaskListMessages
-                    .getString("RemoveTask.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError(getShell(), TaskListMessages.RemoveTask_errorMessage,
                     null, e.getStatus());
         }
     }

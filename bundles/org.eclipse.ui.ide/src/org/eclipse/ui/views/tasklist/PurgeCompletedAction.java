@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -56,18 +57,14 @@ class PurgeCompletedAction extends TaskAction {
             }
             // Check if there is anything to do
             if (completed.size() == 0) {
-                MessageDialog.openInformation(getShell(), TaskListMessages
-                        .getString("PurgeCompleted.title"), //$NON-NLS-1$
-                        TaskListMessages
-                                .getString("PurgeCompleted.noneCompleted")); //$NON-NLS-1$
+                MessageDialog.openInformation(getShell(), TaskListMessages.PurgeCompleted_title, 
+                        TaskListMessages.PurgeCompleted_noneCompleted); 
                 return;
             }
 
             // Verify.
-            if (!MessageDialog.openConfirm(getShell(), TaskListMessages
-                    .getString("PurgeCompleted.title"), //$NON-NLS-1$
-                    TaskListMessages.format("PurgeCompleted.permanent", //$NON-NLS-1$
-                            new Object[] { new Integer(completed.size()) }))) {
+            if (!MessageDialog.openConfirm(getShell(), TaskListMessages.PurgeCompleted_title,
+                    NLS.bind(TaskListMessages.PurgeCompleted_permanent,String.valueOf(completed.size())))) {
                 return;
             }
 
@@ -78,8 +75,7 @@ class PurgeCompletedAction extends TaskAction {
             ErrorDialog
                     .openError(
                             getShell(),
-                            TaskListMessages
-                                    .getString("PurgeCompleted.errorMessage"), null, e.getStatus()); //$NON-NLS-1$
+                            TaskListMessages.PurgeCompleted_errorMessage, null, e.getStatus()); 
         }
     }
 }

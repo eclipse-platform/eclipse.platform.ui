@@ -78,8 +78,7 @@ class CopyTaskAction extends TaskAction {
             if (MessageDialog
                     .openQuestion(
                             getShell(),
-                            TaskListMessages
-                                    .getString("CopyToClipboardProblemDialog.title"), TaskListMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+                            TaskListMessages.CopyToClipboardProblemDialog_title, TaskListMessages.CopyToClipboardProblemDialog_message)) 
                 setClipboard(markers, markerReport);
         }
     }

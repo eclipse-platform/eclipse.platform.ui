@@ -293,13 +293,13 @@ public class TaskList extends ViewPart {
     }
 
     private String columnHeaders[] = {
-            TaskListMessages.getString("TaskList.headerIcon"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerCompleted"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerPriority"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerDescription"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerResource"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerFolder"), //$NON-NLS-1$
-            TaskListMessages.getString("TaskList.headerLocation") //$NON-NLS-1$
+            TaskListMessages.TaskList_headerIcon,
+            TaskListMessages.TaskList_headerCompleted, 
+            TaskListMessages.TaskList_headerPriority, 
+            TaskListMessages.TaskList_headerDescription, 
+            TaskListMessages.TaskList_headerResource,
+            TaskListMessages.TaskList_headerFolder, 
+            TaskListMessages.TaskList_headerLocation
     };
 
     private ColumnLayoutData columnLayouts[] = {
@@ -479,19 +479,19 @@ public class TaskList extends ViewPart {
     static String createMarkerReport(IMarker[] markers) {
         StringBuffer buf = new StringBuffer();
         // Create the header
-        buf.append(TaskListMessages.getString("TaskList.reportKind")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_reportKind);
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.reportStatus")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_reportStatus); 
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.reportPriority")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_reportPriority); 
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.headerDescription")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_headerDescription);
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.headerResource")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_headerResource); 
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.headerFolder")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_headerFolder); 
         buf.append("\t"); //$NON-NLS-1$
-        buf.append(TaskListMessages.getString("TaskList.headerLocation")); //$NON-NLS-1$
+        buf.append(TaskListMessages.TaskList_headerLocation); 
         buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 
         // Create the report for the markers
@@ -564,8 +564,7 @@ public class TaskList extends ViewPart {
         compositeMarkerLimitExceeded.setLayout(new GridLayout());
         Label labelMarkerLimitExceeded = new Label(
                 compositeMarkerLimitExceeded, SWT.WRAP);
-        labelMarkerLimitExceeded.setText(TaskListMessages
-                .getString("TaskList.markerLimitExceeded")); //$NON-NLS-1$
+        labelMarkerLimitExceeded.setText(TaskListMessages.TaskList_markerLimitExceeded);
         parent.setLayout(stackLayout);
         setMarkerLimitExceeded(false);
 
@@ -644,9 +643,9 @@ public class TaskList extends ViewPart {
         CellEditor editors[] = new CellEditor[columnHeaders.length];
         editors[1] = new CheckboxCellEditor(table);
         String[] priorities = new String[] {
-                TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
-                TaskListMessages.getString("TaskList.normal"), //$NON-NLS-1$
-                TaskListMessages.getString("TaskList.low") //$NON-NLS-1$
+                TaskListMessages.TaskList_high, 
+                TaskListMessages.TaskList_normal, 
+                TaskListMessages.TaskList_low
         };
         editors[2] = new ComboBoxCellEditor(table, priorities, SWT.READ_ONLY);
         editors[3] = descriptionEditor = new TextCellEditor(table);
@@ -762,8 +761,7 @@ public class TaskList extends ViewPart {
     void fillActionBars() {
         IActionBars actionBars = getViewSite().getActionBars();
         IMenuManager menu = actionBars.getMenuManager();
-        IMenuManager submenu = new MenuManager(TaskListMessages
-                .getString("SortByMenu.text")); //$NON-NLS-1$
+        IMenuManager submenu = new MenuManager(TaskListMessages.SortByMenu_text);
 
         menu.add(submenu);
         submenu.add(sortByCategoryAction);
@@ -1065,18 +1063,16 @@ public class TaskList extends ViewPart {
 
         // goto
         gotoTaskAction = new GotoTaskAction(this, "gotoFile"); //$NON-NLS-1$
-        gotoTaskAction.setText(TaskListMessages.getString("GotoTask.text")); //$NON-NLS-1$
-        gotoTaskAction.setToolTipText(TaskListMessages
-                .getString("GotoTask.tooltip")); //$NON-NLS-1$
+        gotoTaskAction.setText(TaskListMessages.GotoTask_text); 
+        gotoTaskAction.setToolTipText(TaskListMessages.GotoTask_tooltip); 
         gotoTaskAction.setImageDescriptor(MarkerUtil
                 .getImageDescriptor("gotoobj")); //$NON-NLS-1$
         gotoTaskAction.setEnabled(false);
 
         // new task
         newTaskAction = new NewTaskAction(this, "newTask"); //$NON-NLS-1$
-        newTaskAction.setText(TaskListMessages.getString("NewTask.text")); //$NON-NLS-1$
-        newTaskAction.setToolTipText(TaskListMessages
-                .getString("NewTask.tooltip")); //$NON-NLS-1$
+        newTaskAction.setText(TaskListMessages.NewTask_text); 
+        newTaskAction.setToolTipText(TaskListMessages.NewTask_tooltip);
         newTaskAction.setImageDescriptor(MarkerUtil
                 .getImageDescriptor("addtsk")); //$NON-NLS-1$
         newTaskAction.setDisabledImageDescriptor(MarkerUtil
@@ -1084,23 +1080,20 @@ public class TaskList extends ViewPart {
 
         // copy task
         copyTaskAction = new CopyTaskAction(this, "copy"); //$NON-NLS-1$
-        copyTaskAction.setText(TaskListMessages.getString("CopyTask.text")); //$NON-NLS-1$
-        copyTaskAction.setToolTipText(TaskListMessages
-                .getString("CopyTask.tooltip")); //$NON-NLS-1$
+        copyTaskAction.setText(TaskListMessages.CopyTask_text); 
+        copyTaskAction.setToolTipText(TaskListMessages.CopyTask_tooltip);
         copyTaskAction.setEnabled(false);
 
         // paste task
         pasteTaskAction = new PasteTaskAction(this, "paste"); //$NON-NLS-1$
-        pasteTaskAction.setText(TaskListMessages.getString("PasteTask.text")); //$NON-NLS-1$
-        pasteTaskAction.setToolTipText(TaskListMessages
-                .getString("PasteTask.tooltip")); //$NON-NLS-1$
+        pasteTaskAction.setText(TaskListMessages.PasteTask_text); 
+        pasteTaskAction.setToolTipText(TaskListMessages.PasteTask_tooltip);
         pasteTaskAction.setEnabled(false);
 
         // remove task
         removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
-        removeTaskAction.setText(TaskListMessages.getString("RemoveTask.text")); //$NON-NLS-1$
-        removeTaskAction.setToolTipText(TaskListMessages
-                .getString("RemoveTask.tooltip")); //$NON-NLS-1$
+        removeTaskAction.setText(TaskListMessages.RemoveTask_text);
+        removeTaskAction.setToolTipText(TaskListMessages.RemoveTask_tooltip); 
         removeTaskAction.setImageDescriptor(sharedImages
                 .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
         removeTaskAction.setDisabledImageDescriptor(sharedImages
@@ -1109,133 +1102,105 @@ public class TaskList extends ViewPart {
 
         //mark completed task
         markCompletedAction = new MarkCompletedAction(this, "markCompleted"); //$NON-NLS-1$
-        markCompletedAction.setText(TaskListMessages
-                .getString("MarkCompleted.text")); //$NON-NLS-1$
-        markCompletedAction.setToolTipText(TaskListMessages
-                .getString("MarkCompleted.tooltip")); //$NON-NLS-1$
+        markCompletedAction.setText(TaskListMessages.MarkCompleted_text);
+        markCompletedAction.setToolTipText(TaskListMessages.MarkCompleted_tooltip);
         markCompletedAction.setEnabled(false);
 
         //delete completed task
         purgeCompletedAction = new PurgeCompletedAction(this, "deleteCompleted"); //$NON-NLS-1$
-        purgeCompletedAction.setText(TaskListMessages
-                .getString("PurgeCompleted.text")); //$NON-NLS-1$
-        purgeCompletedAction.setToolTipText(TaskListMessages
-                .getString("PurgeCompleted.tooltip")); //$NON-NLS-1$
+        purgeCompletedAction.setText(TaskListMessages.PurgeCompleted_text);
+        purgeCompletedAction.setToolTipText(TaskListMessages.PurgeCompleted_tooltip); 
         purgeCompletedAction.setImageDescriptor(sharedImages
                 .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
         purgeCompletedAction.setEnabled(true);
 
         // select all
         selectAllAction = new SelectAllTasksAction(this, "selectAll"); //$NON-NLS-1$
-        selectAllAction.setText(TaskListMessages.getString("SelectAll.text")); //$NON-NLS-1$
-        selectAllAction.setToolTipText(TaskListMessages
-                .getString("SelectAll.tooltip")); //$NON-NLS-1$
+        selectAllAction.setText(TaskListMessages.SelectAll_text); 
+        selectAllAction.setToolTipText(TaskListMessages.SelectAll_tooltip);
 
         // resolutions
         resolveMarkerAction = new ResolveMarkerAction(this, "resolve"); //$NON-NLS-1$
-        resolveMarkerAction.setText(TaskListMessages.getString("Resolve.text")); //$NON-NLS-1$
-        resolveMarkerAction.setToolTipText(TaskListMessages
-                .getString("Resolve.tooltip")); //$NON-NLS-1$
+        resolveMarkerAction.setText(TaskListMessages.Resolve_text); 
+        resolveMarkerAction.setToolTipText(TaskListMessages.Resolve_tooltip);
         resolveMarkerAction.setEnabled(false);
 
         // Sort by ->	
         sortByCategoryAction = new SortByAction(TaskSorter.TYPE);
-        sortByCategoryAction.setText(TaskListMessages
-                .getString("SortByCategory.text")); //$NON-NLS-1$
-        sortByCategoryAction.setToolTipText(TaskListMessages
-                .getString("SortByCategory.tooltip")); //$NON-NLS-1$
+        sortByCategoryAction.setText(TaskListMessages.SortByCategory_text);
+        sortByCategoryAction.setToolTipText(TaskListMessages.SortByCategory_tooltip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByCategoryAction,
 				ITaskListHelpContextIds.TASK_SORT_TYPE_ACTION);
 
         sortByCompletedAction = new SortByAction(TaskSorter.COMPLETION);
-        sortByCompletedAction.setText(TaskListMessages
-                .getString("SortByCompleted.text")); //$NON-NLS-1$
-        sortByCompletedAction.setToolTipText(TaskListMessages
-                .getString("SortByCompleted.tooltip")); //$NON-NLS-1$
+        sortByCompletedAction.setText(TaskListMessages.SortByCompleted_text);
+        sortByCompletedAction.setToolTipText(TaskListMessages.SortByCompleted_tooltip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				sortByCompletedAction,
 				ITaskListHelpContextIds.TASK_SORT_COMPLETED_ACTION);
 
         sortByPriorityAction = new SortByAction(TaskSorter.PRIORITY);
-        sortByPriorityAction.setText(TaskListMessages
-                .getString("SortByPriority.text")); //$NON-NLS-1$
-        sortByPriorityAction.setToolTipText(TaskListMessages
-                .getString("SortByPriority.tooltip")); //$NON-NLS-1$
+        sortByPriorityAction.setText(TaskListMessages.SortByPriority_text); 
+        sortByPriorityAction.setToolTipText(TaskListMessages.SortByPriority_tooltip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByPriorityAction,
 				ITaskListHelpContextIds.TASK_SORT_PRIORITY_ACTION);
 
         sortByDescriptionAction = new SortByAction(TaskSorter.DESCRIPTION);
-        sortByDescriptionAction.setText(TaskListMessages
-                .getString("SortByDescription.text")); //$NON-NLS-1$
-        sortByDescriptionAction.setToolTipText(TaskListMessages
-                .getString("SortByDescription.tooltip")); //$NON-NLS-1$
+        sortByDescriptionAction.setText(TaskListMessages.SortByDescription_text); 
+        sortByDescriptionAction.setToolTipText(TaskListMessages.SortByDescription_tooltip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				sortByDescriptionAction,
 				ITaskListHelpContextIds.TASK_SORT_DESCRIPTION_ACTION);
 
         sortByResourceAction = new SortByAction(TaskSorter.RESOURCE);
-        sortByResourceAction.setText(TaskListMessages
-                .getString("SortByResource.text")); //$NON-NLS-1$
-        sortByResourceAction.setToolTipText(TaskListMessages
-                .getString("SortByResource.tooltip")); //$NON-NLS-1$
+        sortByResourceAction.setText(TaskListMessages.SortByResource_text);
+        sortByResourceAction.setToolTipText(TaskListMessages.SortByResource_tooltip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByResourceAction,
 				ITaskListHelpContextIds.TASK_SORT_RESOURCE_ACTION);
 
         sortByContainerAction = new SortByAction(TaskSorter.FOLDER);
-        sortByContainerAction.setText(TaskListMessages
-                .getString("SortByContainer.text")); //$NON-NLS-1$
-        sortByContainerAction.setToolTipText(TaskListMessages
-                .getString("SortByContainer.tooltip")); //$NON-NLS-1$
+        sortByContainerAction.setText(TaskListMessages.SortByContainer_text); 
+        sortByContainerAction.setToolTipText(TaskListMessages.SortByContainer_tooltip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				sortByContainerAction,
 				ITaskListHelpContextIds.TASK_SORT_FOLDER_ACTION);
 
         sortByLocationAction = new SortByAction(TaskSorter.LOCATION);
-        sortByLocationAction.setText(TaskListMessages
-                .getString("SortByLocation.text")); //$NON-NLS-1$
-        sortByLocationAction.setToolTipText(TaskListMessages
-                .getString("SortByLocation.tooltip")); //$NON-NLS-1$
+        sortByLocationAction.setText(TaskListMessages.SortByLocation_text); 
+        sortByLocationAction.setToolTipText(TaskListMessages.SortByLocation_tooltip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortByLocationAction,
 				ITaskListHelpContextIds.TASK_SORT_LOCATION_ACTION);
 
         sortByCreationTimeAction = new SortByAction(TaskSorter.CREATION_TIME);
-        sortByCreationTimeAction.setText(TaskListMessages
-                .getString("SortByCreationTime.text")); //$NON-NLS-1$
-        sortByCreationTimeAction.setToolTipText(TaskListMessages
-                .getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
+        sortByCreationTimeAction.setText(TaskListMessages.SortByCreationTime_text);
+        sortByCreationTimeAction.setToolTipText(TaskListMessages.SortByCreationTime_tooltip); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				sortByCreationTimeAction,
 				ITaskListHelpContextIds.TASK_SORT_CREATION_TIME_ACTION);
 
         sortAscendingAction = new SortDirectionAction(TaskSorter.ASCENDING);
-        sortAscendingAction.setText(TaskListMessages
-                .getString("SortAscending.text")); //$NON-NLS-1$
-        sortAscendingAction.setToolTipText(TaskListMessages
-                .getString("SortAscending.tooltip")); //$NON-NLS-1$
+        sortAscendingAction.setText(TaskListMessages.SortAscending_text);
+        sortAscendingAction.setToolTipText(TaskListMessages.SortAscending_tooltip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortAscendingAction,
 				ITaskListHelpContextIds.TASK_SORT_ASCENDING_ACTION);
 
         sortDescendingAction = new SortDirectionAction(TaskSorter.DESCENDING);
-        sortDescendingAction.setText(TaskListMessages
-                .getString("SortDescending.text")); //$NON-NLS-1$
-        sortDescendingAction.setToolTipText(TaskListMessages
-                .getString("SortDescending.tooltip")); //$NON-NLS-1$
+        sortDescendingAction.setText(TaskListMessages.SortDescending_text);
+        sortDescendingAction.setToolTipText(TaskListMessages.SortDescending_tooltip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(sortDescendingAction,
 				ITaskListHelpContextIds.TASK_SORT_DESCENDING_ACTION);
 
         // filters...
         filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$
-        filtersAction.setText(TaskListMessages.getString("Filters.text")); //$NON-NLS-1$
-        filtersAction.setToolTipText(TaskListMessages
-                .getString("Filters.tooltip")); //$NON-NLS-1$
+        filtersAction.setText(TaskListMessages.Filters_text); 
+        filtersAction.setToolTipText(TaskListMessages.Filters_tooltip);
         filtersAction.setImageDescriptor(MarkerUtil
                 .getImageDescriptor("filter")); //$NON-NLS-1$
 
         // properties
         propertiesAction = new TaskPropertiesAction(this, "properties"); //$NON-NLS-1$
-        propertiesAction.setText(TaskListMessages.getString("Properties.text")); //$NON-NLS-1$
-        propertiesAction.setToolTipText(TaskListMessages
-                .getString("Properties.tooltip")); //$NON-NLS-1$
+        propertiesAction.setText(TaskListMessages.Properties_text); 
+        propertiesAction.setToolTipText(TaskListMessages.Properties_tooltip);
         propertiesAction.setEnabled(false);
     }
 
@@ -1486,8 +1451,7 @@ public class TaskList extends ViewPart {
                 //			}
             }
         } catch (CoreException e) {
-            String msg = TaskListMessages
-                    .getString("TaskList.errorModifyingTask"); //$NON-NLS-1$
+            String msg = TaskListMessages.TaskList_errorModifyingTask; 
             ErrorDialog.openError(getSite().getShell(), msg, null, e
                     .getStatus());
         }

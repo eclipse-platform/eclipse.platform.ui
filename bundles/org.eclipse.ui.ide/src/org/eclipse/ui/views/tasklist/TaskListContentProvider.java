@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -95,9 +96,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
             return ""; //$NON-NLS-1$
         }
 
-        return TaskListMessages.format("TaskList.statusSummaryVisible", //$NON-NLS-1$
-                new Object[] { new Integer(sum(visibleMarkerCounts)),
-                        getStatusSummaryBreakdown(visibleMarkerCounts) });
+        return NLS.bind(TaskListMessages.TaskList_statusSummaryVisible,new Integer(sum(visibleMarkerCounts)),
+		getStatusSummaryBreakdown(visibleMarkerCounts));
     }
 
     /**
@@ -108,9 +108,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
      */
     public String getStatusSummarySelected(IStructuredSelection selection) {
         int[] selectedMarkerCounts = getMarkerCounts(selection.toList());
-        return TaskListMessages.format("TaskList.statusSummarySelected", //$NON-NLS-1$
-                new Object[] { new Integer(sum(selectedMarkerCounts)),
-                        getStatusSummaryBreakdown(selectedMarkerCounts) });
+        return NLS.bind(TaskListMessages.TaskList_statusSummarySelected, new Integer(sum(selectedMarkerCounts)),
+		getStatusSummaryBreakdown(selectedMarkerCounts) );
     }
 
     /**
@@ -118,11 +117,13 @@ class TaskListContentProvider implements IStructuredContentProvider,
      * given tasks, errors, warnings, and infos.
      */
     private String getStatusSummaryBreakdown(int[] counts) {
-        return TaskListMessages.format("TaskList.statusSummaryBreakdown", //$NON-NLS-1$
-                new Object[] { new Integer(counts[TASKS]),
-                        new Integer(counts[ERRORS]),
-                        new Integer(counts[WARNINGS]),
-                        new Integer(counts[INFOS]) });
+        return NLS.bind(
+				TaskListMessages.TaskList_statusSummaryBreakdown, 
+				new Object []{ 
+						new Integer(counts[TASKS]),
+						new Integer(counts[ERRORS]),
+						new Integer(counts[WARNINGS]),
+						new Integer(counts[INFOS])});
     }
 
     /**
@@ -138,12 +139,10 @@ class TaskListContentProvider implements IStructuredContentProvider,
         TasksFilter filter = taskList.getFilter();
 
         if (filter.isShowingAll()) {
-            return TaskListMessages.format("TaskList.titleSummaryUnfiltered", //$NON-NLS-1$
-                    new Object[] { new Integer(visibleMarkerCount) });
+            return NLS.bind(TaskListMessages.TaskList_titleSummaryUnfiltered, new Integer(visibleMarkerCount));
         } else {
-            return TaskListMessages.format("TaskList.titleSummaryFiltered", //$NON-NLS-1$
-                    new Object[] { new Integer(visibleMarkerCount),
-                            new Integer(getTotalMarkerCount()) });
+            return NLS.bind(TaskListMessages.TaskList_titleSummaryFiltered, new Integer(visibleMarkerCount),
+			new Integer(getTotalMarkerCount()));
         }
     }
 

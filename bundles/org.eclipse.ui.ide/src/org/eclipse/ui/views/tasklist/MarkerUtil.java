@@ -37,11 +37,10 @@ class MarkerUtil implements IMarkerConstants {
 
     private static ImageRegistry imageRegistry = new ImageRegistry();
 
-    private static MessageFormat line = new MessageFormat(TaskListMessages
-            .getString("TaskList.line")); //$NON-NLS-1$;
+    private static MessageFormat line = new MessageFormat(TaskListMessages.TaskList_line);
 
     private static MessageFormat lineAndLocation = new MessageFormat(
-            TaskListMessages.getString("TaskList.lineAndLocation")); //$NON-NLS-1$
+            TaskListMessages.TaskList_lineAndLocation); 
 
     static {
         createImageDescriptors();
@@ -174,9 +173,9 @@ class MarkerUtil implements IMarkerConstants {
     public static String getCompleteText(IMarker marker) {
         if (isMarkerType(marker, IMarker.TASK)) {
             if (isComplete(marker))
-                return TaskListMessages.getString("TaskList.completed"); //$NON-NLS-1$
+                return TaskListMessages.TaskList_completed; 
             else
-                return TaskListMessages.getString("TaskList.notCompleted"); //$NON-NLS-1$
+                return TaskListMessages.TaskList_notCompleted;
         }
         return ""; //$NON-NLS-1$
     }
@@ -186,15 +185,15 @@ class MarkerUtil implements IMarkerConstants {
      */
     public static String getKindText(IMarker marker) {
         if (isMarkerType(marker, IMarker.TASK)) {
-            return TaskListMessages.getString("TaskList.task"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_task; 
         }
         switch (getSeverity(marker)) {
         case IMarker.SEVERITY_ERROR:
-            return TaskListMessages.getString("TaskList.error"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_error; 
         case IMarker.SEVERITY_WARNING:
-            return TaskListMessages.getString("TaskList.warning"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_warning; 
         case IMarker.SEVERITY_INFO:
-            return TaskListMessages.getString("TaskList.info"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_info; 
         }
         return ""; //$NON-NLS-1$
     }
@@ -390,11 +389,11 @@ class MarkerUtil implements IMarkerConstants {
 
         switch (getPriority(marker)) {
         case IMarker.PRIORITY_HIGH:
-            return TaskListMessages.getString("TaskList.high"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_high; 
         case IMarker.PRIORITY_NORMAL:
-            return TaskListMessages.getString("TaskList.normal"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_normal;
         case IMarker.PRIORITY_LOW:
-            return TaskListMessages.getString("TaskList.low"); //$NON-NLS-1$
+            return TaskListMessages.TaskList_low;
         }
         return ""; //$NON-NLS-1$		
     }

@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -222,8 +223,7 @@ class FiltersDialog extends Dialog {
          */
         WorkingSetGroup(Composite parent) {
             // radio button has to be part of main radio button group
-            button = createRadioButton(parent, TaskListMessages
-                    .getString("TaskList.noWorkingSet")); //$NON-NLS-1$
+            button = createRadioButton(parent, TaskListMessages.TaskList_noWorkingSet);
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             button.setLayoutData(data);
 
@@ -235,8 +235,7 @@ class FiltersDialog extends Dialog {
             layout.marginHeight = 0;
             radio.dispose();
             composite.setLayout(layout);
-            createButton(composite, SELECT_ID, TaskListMessages
-                    .getString("TaskList.workingSetSelect"), false); //$NON-NLS-1$
+            createButton(composite, SELECT_ID, TaskListMessages.TaskList_workingSetSelect, false);
         }
 
         /**
@@ -310,11 +309,9 @@ class FiltersDialog extends Dialog {
         void setWorkingSet(IWorkingSet workingSet) {
             button.setData(workingSet);
             if (workingSet != null) {
-                button.setText(TaskListMessages.format("TaskList.workingSet", //$NON-NLS-1$
-                        new Object[] { workingSet.getName() }));
+                button.setText(NLS.bind(TaskListMessages.TaskList_workingSet,  workingSet.getName()));
             } else {
-                button.setText(TaskListMessages
-                        .getString("TaskList.noWorkingSet")); //$NON-NLS-1$
+                button.setText(TaskListMessages.TaskList_noWorkingSet);
             }
         }
     }
@@ -404,7 +401,7 @@ class FiltersDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(TaskListMessages.getString("TaskList.filter")); //$NON-NLS-1$
+        newShell.setText(TaskListMessages.TaskList_filter);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				ITaskListHelpContextIds.FILTERS_DIALOG);
     }
@@ -422,15 +419,11 @@ class FiltersDialog extends Dialog {
         composite.setFont(parent.getFont());
 
         String[] filters = {
-                TaskListMessages.getString("TaskList.contains"), TaskListMessages.getString("TaskList.doesNotContain") }; //$NON-NLS-2$ //$NON-NLS-1$
-        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages
-                .getString("TaskList.whereDescription"), filters, "", 200);//$NON-NLS-2$ //$NON-NLS-1$
-        severityGroup = new CheckboxEnumGroup(composite, TaskListMessages
-                .getString("TaskList.severity.label"), severityType); //$NON-NLS-1$
-        priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages
-                .getString("TaskList.priority.label"), priorityType); //$NON-NLS-1$
-        completionGroup = new CheckboxEnumGroup(composite, TaskListMessages
-                .getString("TaskList.status.label"), completionType); //$NON-NLS-1$
+                TaskListMessages.TaskList_contains, TaskListMessages.TaskList_doesNotContain }; 
+        descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.TaskList_whereDescription, filters, "", 200);//$NON-NLS-1$ //$NON-NLS-1$
+        severityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_severity_label, severityType); 
+        priorityGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_priority_label, priorityType); 
+        completionGroup = new CheckboxEnumGroup(composite, TaskListMessages.TaskList_status_label, completionType); 
     }
 
     void createResetArea(Composite parent) {
@@ -440,7 +433,7 @@ class FiltersDialog extends Dialog {
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
         Button reset = new Button(composite, SWT.PUSH);
-        reset.setText(TaskListMessages.getString("TaskList.resetText")); //$NON-NLS-1$
+        reset.setText(TaskListMessages.TaskList_resetText);
         reset.setData(new Integer(RESET_ID));
 
         reset.addSelectionListener(new SelectionAdapter() {
@@ -546,14 +539,12 @@ class FiltersDialog extends Dialog {
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setLayout(new GridLayout());
         group.setFont(parent.getFont());
-        anyResourceButton = createRadioButton(group, TaskListMessages
-                .getString("TaskList.anyResource")); //$NON-NLS-1$
+        anyResourceButton = createRadioButton(group, TaskListMessages.TaskList_anyResource);
         anyResourceInSameProjectButton = createRadioButton(group,
-                TaskListMessages.getString("TaskList.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
-        selectedResourceButton = createRadioButton(group, TaskListMessages
-                .getString("TaskList.selectedResource")); //$NON-NLS-1$
+                TaskListMessages.TaskList_anyResourceInSameProject);// added by cagatayk@acm.org
+        selectedResourceButton = createRadioButton(group, TaskListMessages.TaskList_selectedResource); 
         selectedResourceAndChildrenButton = createRadioButton(group,
-                TaskListMessages.getString("TaskList.selectedAndChildren")); //$NON-NLS-1$
+                TaskListMessages.TaskList_selectedAndChildren); 
         workingSetGroup = new WorkingSetGroup(group);
     }
 
@@ -569,7 +560,7 @@ class FiltersDialog extends Dialog {
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.getString("TaskList.showItemsOfType")); //$NON-NLS-1$
+        label.setText(TaskListMessages.TaskList_showItemsOfType);
 
         typesViewer = new CheckboxTreeViewer(composite);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -621,8 +612,7 @@ class FiltersDialog extends Dialog {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         composite.setLayout(layout);
-        filterOnMarkerLimit = createCheckbox(composite, TaskListMessages
-                .getString("TaskList.limitVisibleTasksTo"), false); //$NON-NLS-1$
+        filterOnMarkerLimit = createCheckbox(composite, TaskListMessages.TaskList_limitVisibleTasksTo, false);
         filterOnMarkerLimit.setLayoutData(new GridData());
         markerLimit = new Text(composite, SWT.SINGLE | SWT.BORDER);
         markerLimit.setTextLimit(6);
@@ -758,37 +748,29 @@ class FiltersDialog extends Dialog {
                 new EnumValue[] {
                         new EnumValue(
                                 IMarker.SEVERITY_ERROR,
-                                TaskListMessages
-                                        .getString("TaskList.severity.error"), MarkerUtil.getImage("error")),//$NON-NLS-2$ //$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_error, MarkerUtil.getImage("error")),//$NON-NLS-1$
                         new EnumValue(
                                 IMarker.SEVERITY_WARNING,
-                                TaskListMessages
-                                        .getString("TaskList.severity.warning"), MarkerUtil.getImage("warn")),//$NON-NLS-2$ //$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_warning, MarkerUtil.getImage("warn")),//$NON-NLS-1$
                         new EnumValue(
                                 IMarker.SEVERITY_INFO,
-                                TaskListMessages
-                                        .getString("TaskList.severity.info"), MarkerUtil.getImage("info")) //$NON-NLS-2$ //$NON-NLS-1$
+                                TaskListMessages.TaskList_severity_info, MarkerUtil.getImage("info"))  //$NON-NLS-1$
                 });
 
         priorityType = new EnumType(
                 new EnumValue[] {
                         new EnumValue(
                                 IMarker.PRIORITY_HIGH,
-                                TaskListMessages
-                                        .getString("TaskList.priority.high"), MarkerUtil.getImage("hprio")),//$NON-NLS-2$ //$NON-NLS-1$
-                        new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages
-                                .getString("TaskList.priority.normal"), null), //$NON-NLS-1$
+                                TaskListMessages.TaskList_priority_high, MarkerUtil.getImage("hprio")), //$NON-NLS-1$
+                        new EnumValue(IMarker.PRIORITY_NORMAL, TaskListMessages.TaskList_priority_normal, null), 
                         new EnumValue(
                                 IMarker.PRIORITY_LOW,
-                                TaskListMessages
-                                        .getString("TaskList.priority.low"), MarkerUtil.getImage("lprio")) //$NON-NLS-2$ //$NON-NLS-1$
+                                TaskListMessages.TaskList_priority_low, MarkerUtil.getImage("lprio")) //$NON-NLS-1$
                 });
 
         completionType = new EnumType(new EnumValue[] {
-                new EnumValue(1, TaskListMessages
-                        .getString("TaskList.status.completed"), null), //$NON-NLS-1$
-                new EnumValue(0, TaskListMessages
-                        .getString("TaskList.status.notCompleted"), null) //$NON-NLS-1$
+                new EnumValue(1, TaskListMessages.TaskList_status_completed, null), 
+                new EnumValue(0, TaskListMessages.TaskList_status_notCompleted, null) 
                 });
     }
 
@@ -810,10 +792,8 @@ class FiltersDialog extends Dialog {
         } catch (NumberFormatException eNumberFormat) {
             MessageBox messageBox = new MessageBox(getShell(), SWT.OK
                     | SWT.APPLICATION_MODAL | SWT.ICON_ERROR);
-            messageBox.setText(TaskListMessages
-                    .getString("TaskList.titleMarkerLimitInvalid")); //$NON-NLS-1$
-            messageBox.setMessage(TaskListMessages
-                    .getString("TaskList.messageMarkerLimitInvalid")); //$NON-NLS-1$
+            messageBox.setText(TaskListMessages.TaskList_titleMarkerLimitInvalid);
+            messageBox.setMessage(TaskListMessages.TaskList_messageMarkerLimitInvalid); 
             messageBox.open();
 
             if (markerLimit.forceFocus()) {

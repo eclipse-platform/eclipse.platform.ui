@@ -78,9 +78,8 @@ class NewTaskAction extends TaskAction {
                 }
             });
         } else {
-            MessageDialog.openInformation(getShell(), TaskListMessages
-                    .getString("NewTask.notShownTitle"), //$NON-NLS-1$
-                    TaskListMessages.getString("NewTask.notShownMsg")); //$NON-NLS-1$
+            MessageDialog.openInformation(getShell(), TaskListMessages.NewTask_notShownTitle, 
+                    TaskListMessages.NewTask_notShownMsg); 
         }
     }
 }

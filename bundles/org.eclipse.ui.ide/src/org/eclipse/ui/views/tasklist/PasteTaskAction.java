@@ -78,8 +78,7 @@ class PasteTaskAction extends TaskAction {
                 }
             }, null);
         } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), TaskListMessages
-                    .getString("PasteTask.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError(getShell(), TaskListMessages.PasteTask_errorMessage, 
                     null, e.getStatus());
             return;
         }
