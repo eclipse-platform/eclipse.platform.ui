@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -22,14 +20,11 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -42,6 +37,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
  * Preference page for configuring the debugger's automatic
@@ -118,7 +114,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer= new CheckboxTableViewer(table);
 		PerspectiveProvider provider= new PerspectiveProvider();
 		fPerspectiveViewer.setContentProvider(provider);
-		fPerspectiveViewer.setLabelProvider(provider);
+		PerspectiveLabelProvider labelProvider= new PerspectiveLabelProvider();
+		fPerspectiveViewer.setLabelProvider(labelProvider);
 		fPerspectiveViewer.setInput(this);
 		
 		checkPerspectives(getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
@@ -180,9 +177,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fResetViewsButton.setEnabled(enableReset);
 	}
 
-	private class PerspectiveProvider implements IStructuredContentProvider, ILabelProvider {
-
-		private List fImages= new ArrayList();
+	private static class PerspectiveProvider implements IStructuredContentProvider {
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -190,46 +185,13 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		public Object[] getElements(Object inputElement) {
 			return PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 		}
-		
-		public void dispose() {
-			Iterator images= fImages.iterator();
-			while (images.hasNext()) {
-				((Image) images.next()).dispose();
-			}
-		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage(Object element) {
-			Image image= null;
-			if (element instanceof IPerspectiveDescriptor) {
-				image= ((IPerspectiveDescriptor) element).getImageDescriptor().createImage();
-				fImages.add(image);
-			}
-			return image;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			String text= null;
-			if (element instanceof IPerspectiveDescriptor) {
-				IPerspectiveDescriptor descriptor = (IPerspectiveDescriptor) element;
-				text= descriptor.getLabel();
-			}
-			return text;
-		}
-		public void addListener(ILabelProviderListener listener) {
-		}
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-		public void removeListener(ILabelProviderListener listener) {
-		}
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+         */
+        public void dispose() {
+        }
 		
 	}
 }
