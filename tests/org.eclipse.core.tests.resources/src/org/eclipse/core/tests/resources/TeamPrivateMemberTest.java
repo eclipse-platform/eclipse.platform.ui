@@ -84,6 +84,16 @@ public void testMembers() {
 }
 public void testAccept() {
 }
+public void testDelete() {
+}
+public void testCopy() {
+}
+public void testMove() {
+}
+public void findMember() {
+}
+public void testFindMarkers() {
+}
 public void testDeltaAccept() {
 }
 public void testExists() {
