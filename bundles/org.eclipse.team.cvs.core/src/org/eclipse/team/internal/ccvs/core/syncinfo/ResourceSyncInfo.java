@@ -352,14 +352,15 @@ public class ResourceSyncInfo {
 	 * @param version the version to set
 	 */
 	protected void setRevision(String revision) {
-		if(revision.startsWith(DELETED_PREFIX)) {
+		if(revision==null || revision.equals(ADDED_REVISION)) {
+			this.revision = ADDED_REVISION;
+			timeStamp = null;
+			syncType = TYPE_REGULAR;
+			isDeleted = false;
+		} else if(revision.startsWith(DELETED_PREFIX)) {
 			this.revision = revision.substring(DELETED_PREFIX.length());
 			isDeleted = true;
 		} else {
-			if(revision.equals(ADDED_REVISION)) {
-				timeStamp = null;
-				syncType = TYPE_REGULAR;
-			}
 			this.revision = revision;
 			isDeleted = false;
 		}

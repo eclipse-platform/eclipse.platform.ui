@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
 import org.eclipse.team.internal.ccvs.core.streams.ProgressMonitorInputStream;
 import org.eclipse.team.internal.ccvs.core.streams.SizeConstrainedInputStream;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -519,10 +520,14 @@ public class Session {
 	public void sendModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
 		
-		connection.writeLine("Modified " + file.getName()); //$NON-NLS-1$
+		String filename = file.getName();
+		connection.writeLine("Modified " + filename); //$NON-NLS-1$
 		ResourceSyncInfo info = file.getSyncInfo();
 		if (info != null) {
 			connection.writeLine(info.getPermissions());
+		} else {
+			// for new resources send the default permissions
+			connection.writeLine(new MutableResourceSyncInfo(filename, null /*new revision*/).getPermissions());
 		}
 		sendFile(file, isBinary, monitor);
 	}
