@@ -119,10 +119,16 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		int index;
 		if (cbItem.isOrderBefore()) {
 			index = getInsertBeforeIndex(cbItem);
-		} else {
+		} else if (cbItem.isOrderAfter()) {
 			index = getInsertAfterIndex(cbItem);
+		} else {
+			index = -1;
 		}
-		coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, index);
+		if (index == -1) {
+			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN);
+		} else {
+			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, index);
+		}
 		return coolItem;
 	}
 	/**
@@ -198,9 +204,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		for (int i=0; i<items.length; i++) {
 			if (items[i].equals(coolBarItem)) {
 				if (i > 0) {
-					afterItem = (CoolBarContributionItem)items[i-1];
+					while (i > 0) {
+						afterItem = (CoolBarContributionItem)items[i-1];
+						if (afterItem.isVisible()) break;
+						i--;
+					}
 				} else {
-					afterItem = null;
+					// item is not after anything
+					index = 0;
 				}
 				break;
 			}
@@ -213,7 +224,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				index++;
 			}
 		}
-		if (index == -1) index = 0;
 		return index;
 	}
 	private int getInsertBeforeIndex(CoolBarContributionItem coolBarItem) {
@@ -224,9 +234,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		for (int i=0; i<items.length; i++) {
 			if (items[i].equals(coolBarItem)) {
 				if (i < items.length - 1) {
-					beforeItem = (CoolBarContributionItem)items[i+1];
+					while (i < items.length - 1) {
+						beforeItem = (CoolBarContributionItem)items[i+1];
+						if (beforeItem.isVisible()) break;
+						i++;
+					}
 				} else {
-					beforeItem = null;
+					// item is not before anything
+					index = coolBar.getItems().length;
 				}
 				break;
 			}
@@ -238,7 +253,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				index = coolBar.indexOf(beforeCoolItem);
 			}
 		}
-		if (index == -1) index = coolBar.getItems().length;
 		return index;
 	}
 	/**
@@ -601,38 +615,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						coolItem.dispose();
 					}
 				}
-
-				// create a CoolItem for each group of items that does not have a CoolItem 
-				ArrayList coolItemIds = getCoolItemIds();
-				items = getItems();
-				for (int i = 0; i < items.length; i++) {
-					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
-					if (!coolItemIds.contains(cbItem.getId())) {
-						if (cbItem.isVisible()) {
-							ToolBar toolBar = cbItem.getControl();
-							if ((toolBar != null) && (!toolBar.isDisposed())) {
-								changed = true;
-								toolBar.setVisible(true);
-								CoolItem coolItem = createCoolItem(cbItem);
-								coolItem.setControl(toolBar);
-								coolItem.setData(cbItem);
-								cbItem.update(true);
-								int minWidth = toolBar.getItems()[0].getWidth();
-								Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-								Point coolSize = coolItem.computeSize(size.x, size.y);
-								coolItem.setSize(coolSize);
-								coolItem.setPreferredSize(coolSize);
-								coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
-								coolItem.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent event) {
-										if (event.detail == SWT.ARROW) {
-											handleChevron(event);
-										}
-									}
-								});
-							}
-						}
-					} 				}
+				
 				// remove non-visible CoolBarContributionItems
 				coolItems = coolBar.getItems();
 				for (int i = 0; i < coolItems.length; i++) {
@@ -648,6 +631,38 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					}
 				}
 
+				// create a CoolItem for each group of items that does not have a CoolItem 
+				ArrayList coolItemIds = getCoolItemIds();
+				items = getItems();
+				for (int i = 0; i < items.length; i++) {
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
+					if (!coolItemIds.contains(cbItem.getId())) {
+						if (cbItem.isVisible()) {
+							ToolBar toolBar = cbItem.getControl();
+							if ((toolBar != null) && (!toolBar.isDisposed()) && cbItem.hasDisplayableItems()) {
+								changed = true;
+								toolBar.setVisible(true);
+								CoolItem coolItem = createCoolItem(cbItem);
+								coolItem.setControl(toolBar);
+								coolItem.setData(cbItem);
+								cbItem.update(true);
+								int minWidth = toolBar.getItems()[0].getWidth();
+								Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+								Point coolSize = coolItem.computeSize(size.x, size.y);
+								// note setMinimumSize must be called before setSize, see PR 15565
+								coolItem.setMinimumSize(minWidth, coolSize.y);
+								coolItem.setPreferredSize(coolSize);
+								coolItem.setSize(coolSize);
+								coolItem.addSelectionListener(new SelectionAdapter() {
+									public void widgetSelected(SelectionEvent event) {
+										if (event.detail == SWT.ARROW) {
+											handleChevron(event);
+										}
+									}
+								});
+							}
+						}
+					} 				}
 				setDirty(false);
 
 				// workaround for 14330
@@ -660,7 +675,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					relayout();
 				}
 			}
-
 		}
 	}
 }

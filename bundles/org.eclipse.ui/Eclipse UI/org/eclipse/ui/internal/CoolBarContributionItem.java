@@ -5,11 +5,12 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
+import java.util.Vector;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -147,6 +148,17 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 */
 	public CoolItemToolBarManager getToolBarManager() {
 		return toolBarManager;
+	}
+	/**
+	 */
+	public boolean hasDisplayableItems() {
+		IContributionItem[] items = toolBarManager.getItems();
+		for (int i=0; i<items.length; i++) {
+			IContributionItem item = items[i];
+			if (item.isSeparator() || item.isGroupMarker() || (!item.isVisible())) continue;
+			return true;
+		}
+		return false;
 	}
 	/**
 	 */
