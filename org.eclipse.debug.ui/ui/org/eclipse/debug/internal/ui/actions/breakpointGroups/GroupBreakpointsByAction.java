@@ -96,16 +96,16 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         	IBreakpointContainerFactory factory= factories[i];
             IAction action = new GroupBreakpointsAction(factory, fView);
             StringBuffer actionLabel= new StringBuffer();
-    		if (i >= 0 && i < 10) {
-    			// add the numerical accelerator, starting with 1
+    		if (i != 9) {
                 if (i < 9) {
+                    // add the numerical accelerators 1 through 9
                     actionLabel.append('&');
-                    actionLabel.append(i + 1);
-                } else {
-                    actionLabel.append("1&0"); //$NON-NLS-1$
                 }
-    			actionLabel.append(' ');
-    		}
+                actionLabel.append(i + 1);
+    		} else {
+                actionLabel.append("1&0"); //$NON-NLS-1$
+            }
+            actionLabel.append(' ');
 			actionLabel.append(factory.getLabel());
 			action.setText(actionLabel.toString());
 			action.setImageDescriptor(factory.getImageDescriptor());
