@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -238,8 +237,7 @@ public void dispose() {
 
 public void destroyControl() {
 	if (dropDown && (editorsTable != null)) {
-		ViewForm parent = (ViewForm) editorsTable.getParent();
-		parent.setContent(null);
+		Composite parent = editorsTable.getParent();
 		parent.dispose();
 		dispose();
 	}
