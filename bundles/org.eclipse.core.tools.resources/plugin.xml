@@ -111,6 +111,12 @@
             category="org.eclipse.core.tools.resources"
             class="org.eclipse.core.tools.resources.LocalHistoryBrowserView"
             id="org.eclipse.core.tools.resources.LocalHistoryBrowserView"/>
+      <view
+            name="Marker View"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.resources"
+            class="org.eclipse.core.tools.resources.markers.MarkerView"
+            id="org.eclipse.core.tools.resources.markers.MarkerView"/>
    </extension>
 
 </plugin>
