@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IProcess;
  * creation by the debug plug-in, and can be contributed via plug-in XML. When a
  * new process is created via <code>DebugPlugin.newProcess(..)</code>, the
  * launch configuration associated with the specified launch is consulted for
- * a process factory attribute (<code>ATTR_PROCESS_FACTORY_ID</code>). If
+ * a process factory attribute (<code>DebugPlugin.ATTR_PROCESS_FACTORY_ID</code>). If
  * present, the associated process factory is consulted to create a process for
  * the launch. If not present a default process implementation is created and
  * returned by the debug plug-in.

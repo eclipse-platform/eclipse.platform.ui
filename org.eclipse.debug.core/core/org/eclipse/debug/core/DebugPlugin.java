@@ -581,12 +581,17 @@ public class DebugPlugin extends Plugin {
 	 * <code>java.lang.Process</code>. A streams proxy is created
 	 * for the I/O streams in the system process. The process
 	 * is added to the given launch.
-	 *
+	 * <p>
+	 * If the launch configuration associated with the given launch
+	 * specifies a process factory, it will be used to instantiate
+	 * the new process.
+	 * </p>
 	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
 	 * @return the process
 	 * @see IProcess
+	 * @see IProcessFactory
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label) {
 		return newProcess(launch, process, label, null);
@@ -598,11 +603,11 @@ public class DebugPlugin extends Plugin {
 	 * for the I/O streams in the system process. The process
 	 * is added to the given launch, and the process is initialized
 	 * with the given attribute map.
-	 * 
-	 * The process will be created by the <code>IProcessFactory<code> if it has been 
-	 * designated via the org.eclipse.debug.core.processFactories extension point for the
-	 * process factory id indicated in the launch configuration associated with the launch.
-	 * 
+	 * <p>
+	 * If the launch configuration associated with the given launch
+	 * specifies a process factory, it will be used to instantiate
+	 * the new process.
+	 * </p>
 	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
@@ -610,6 +615,7 @@ public class DebugPlugin extends Plugin {
 	 * @return the process <code>null</code> can be returned if errors occur dealing with the process factory
 	 * designated to create the process.
 	 * @see IProcess
+	 * @see IProcessFactory
 	 * @since 2.1
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {

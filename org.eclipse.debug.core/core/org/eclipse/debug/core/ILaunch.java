@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.ITerminate;
  * provided by the class <code>Launch</code>.
  * </p>
  * @see Launch
+ * @see org.eclipse.debug.core.IProcessFactory
  */
 public interface ILaunch extends ITerminate, IAdaptable {
 	/**
