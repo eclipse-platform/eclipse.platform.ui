@@ -33,9 +33,12 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -149,12 +152,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			XmlElement tempElement = (XmlElement)anElement;
 			if("target".equals(tempElement.getName())) { //$NON-NLS-1$
 				XmlElement projectNode= tempElement.getParentNode();
-				XmlAttribute attribute= projectNode.getAttributeNamed("default"); //$NON-NLS-1$
+				XmlAttribute attribute= projectNode.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
 				String defaultTarget= ""; //$NON-NLS-1$
 				if (attribute != null) {
 					defaultTarget= attribute.getValue();
 				}
-				if (tempElement.getAttributeNamed("name").getValue().equals(defaultTarget)) { //$NON-NLS-1$
+				if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue().equals(defaultTarget)) {
 					//TODO:replace with default target icon when available Bug 29815
 					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
 				} else {
@@ -184,6 +187,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		public String getText(Object aNode) {
 			return ((XmlElement)aNode).getDisplayName();
 		}
+	}
+	
+	private boolean isDefaultTargetNode(XmlElement node) {
+		XmlElement parent= node.getParentNode();
+		if (parent == null){
+			return false; 
+		}
+		XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
+		return defaultTarget != null && defaultTarget.getValue().equals(node.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
 	}
    
 	/**
@@ -215,6 +227,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		viewer.setLabelProvider(new PlantyLabelProvider());
 		viewer.setInput(getContentOutline(file));
 		viewer.expandToLevel(2);
+		updateColor();
 	}
     
 	/**
@@ -513,6 +526,35 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		getControl().setRedraw(false);
 		getTreeViewer().setInput(getContentOutline(file));
 		getTreeViewer().expandToLevel(2);
+		updateColor();
 		getControl().setRedraw(true);
+	}
+	
+	/**
+	 * Recolors the tree items for the default target coloring
+	 */
+	private void updateColor() {
+		TreeItem[] items= getTreeViewer().getTree().getItems();
+		for (int i = 0; i < items.length; i++) {
+			updateColor(items[i]);
+		}
+	}
+	
+	/**
+	 * Recolors a tree item and all its children for the default target coloring
+	 */
+	private void updateColor(TreeItem item) {
+		if (item.getData() == null) {
+			return;
+		}
+		if (isDefaultTargetNode((XmlElement) item.getData())) {
+			item.setForeground(getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		} else {
+			item.setForeground(null);
+		}
+		TreeItem[] children= item.getItems();
+		for (int i = 0; i < children.length; i++) {
+			updateColor(children[i]);
+		}
 	}
 }

@@ -604,7 +604,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				if (info.isDefault()) {
 					item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
 				} else {
-					item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+					item.setForeground(null);
 				}
 			}
 		}

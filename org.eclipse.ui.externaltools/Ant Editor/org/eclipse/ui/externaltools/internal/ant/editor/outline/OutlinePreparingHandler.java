@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.xml.sax.Attributes;
@@ -136,10 +137,10 @@ public class OutlinePreparingHandler extends DefaultHandler {
         if(tempElementName.equalsIgnoreCase("target")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-                    XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
                     if(tempXmlAttr != null) {
                     	StringBuffer name= new StringBuffer(tempXmlAttr.getValue());
-                    	XmlAttribute defaultTarget= getParentNode().getAttributeNamed("default"); //$NON-NLS-1$
+                    	XmlAttribute defaultTarget= getParentNode().getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
                     	if (defaultTarget != null && defaultTarget.getValue().equals(tempXmlAttr.getValue())) {
                     		name.append(AntOutlineMessages.getString("OutlinePreparingHandler._[default]_2")); //$NON-NLS-1$
                     	}
@@ -151,7 +152,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         } else if (tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$
 			tempElement = new XmlElement(tempElementName) {
 				public String getDisplayName() {
-					XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
+					XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
 					if(tempXmlAttr != null) {
 						return tempXmlAttr.getValue();
 					}
@@ -161,19 +162,19 @@ public class OutlinePreparingHandler extends DefaultHandler {
         } else if(tempElementName.equalsIgnoreCase("property")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
-                    XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
                     if(tempXmlAttr != null) {
                     	return tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
+                    tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_FILE);
                     if(tempXmlAttr != null) {
                     	return "file="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
-                    tempXmlAttr = getAttributeNamed("resource"); //$NON-NLS-1$
+                    tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_RESOURCE);
                     if(tempXmlAttr != null) {
                     	return "resource="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
-                    tempXmlAttr = getAttributeNamed("environment"); //$NON-NLS-1$
+                    tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_ENVIRONMENT);
                     if(tempXmlAttr != null) {
                     	return "environment="+tempXmlAttr.getValue(); //$NON-NLS-1$
                     }	
@@ -185,7 +186,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "antcall "; //$NON-NLS-1$
-                    XmlAttribute tempXmlAttr = getAttributeNamed("target"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_TARGET);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -197,7 +198,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "mkdir "; //$NON-NLS-1$
-                    XmlAttribute tempXmlAttr = getAttributeNamed("dir"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_DIR);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -209,7 +210,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "copy "; //$NON-NLS-1$
-                    XmlAttribute tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_FILE);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -224,7 +225,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("destfile"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_DESTFILE);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
@@ -241,7 +242,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("src"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_SRC);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
@@ -254,7 +255,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = super.getDisplayName();
-                    XmlAttribute tempXmlAttr = getAttributeNamed("zipfile"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_ZIPFILE);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += " " + tempXmlAttr.getValue(); //$NON-NLS-1$
                     }
@@ -266,11 +267,11 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "exec "; //$NON-NLS-1$
-                    XmlAttribute tempXmlAttr = getAttributeNamed("command"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_COMMAND);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("executable"); //$NON-NLS-1$
+                    tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_EXECUTABLE);
                     if(tempXmlAttr != null) {
                     	tempDisplayName += tempXmlAttr.getValue();
                     }
@@ -282,11 +283,11 @@ public class OutlinePreparingHandler extends DefaultHandler {
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
 		        	String tempDisplayName = "delete "; //$NON-NLS-1$
-                    XmlAttribute tempXmlAttr = getAttributeNamed("file"); //$NON-NLS-1$
+                    XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_FILE);
                     if(tempXmlAttr != null) {
                     	return tempDisplayName + tempXmlAttr.getValue();
                     }
-                    tempXmlAttr = getAttributeNamed("dir"); //$NON-NLS-1$
+                    tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_DIR);
                     if(tempXmlAttr != null) {
                     	return tempDisplayName + tempXmlAttr.getValue();
                     }
