@@ -6,13 +6,11 @@ package org.eclipse.team.tests.ccvs.core.cvsresources;
 import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
+public class AllTests extends EclipseTest {
 
-public class AllTests extends TestSuite {
-
-
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {	
 		TestRunner.run(AllTests.class);
 	}
 	

@@ -604,7 +604,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Delete a file
 		IFile file = project.getFile("folder1/b.txt");
-		file.delete(true, DEFAULT_MONITOR);
+		file.delete(true, DEFAULT_MONITOR); // WARNING: As of 2002/03/05, this is equivalent to a cvs remove
 
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -616,8 +616,8 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.IN_SYNC,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
 				
-		// Catch up to the deletion by updating
-		getProvider(file).update(new IResource[] {file}, new Command.LocalOption[] {Command.DO_NOT_RECURSE}, null, null, DEFAULT_MONITOR);
+		// Commit the deletion
+		getProvider(file).checkin(new IResource[] {file}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		
 		// Get the sync tree again for the project and ensure others aren't effected
 		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
