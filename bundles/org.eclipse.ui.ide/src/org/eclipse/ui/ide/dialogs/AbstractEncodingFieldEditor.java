@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -277,13 +277,13 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		return defaultEncodingButton.getSelection() || isValidEncoding(encodingCombo.getText());
 	}
 
+	/**
+	 * Return whether or not this is a valid encoding.
+	 * @param enc
+	 * @return boolean
+	 */
 	private boolean isValidEncoding(String enc) {
-		try {
-			new String(new byte[0], enc);
-			return true;
-		} catch (UnsupportedEncodingException e) {
-			return false;
-		}
+		return Charset.isSupported(enc);
 	}
 
 	/**

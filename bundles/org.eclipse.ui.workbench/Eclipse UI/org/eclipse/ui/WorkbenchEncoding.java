@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -25,22 +31,23 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * @since 3.1
  */
 public class WorkbenchEncoding {
-	
+
 	/**
 	 * The list of encodings read from the extension registry
 	 */
 	static List definedEncodings;
-	
-	private static class EncodingsRegistryReader extends RegistryReader{
-		
+
+	private static class EncodingsRegistryReader extends RegistryReader {
+
 		private static final String ATT_NAME = "name"; //$NON-NLS-1$
-		
+
 		/**
 		 * Create a new instance of the receiver.
 		 */
 		public EncodingsRegistryReader() {
 			super();
 		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -48,7 +55,7 @@ public class WorkbenchEncoding {
 		 */
 		protected boolean readElement(IConfigurationElement element) {
 			String name = element.getAttribute(ATT_NAME);
-			if(name != null)
+			if (name != null)
 				definedEncodings.add(name);
 			return true;
 		}
@@ -111,33 +118,50 @@ public class WorkbenchEncoding {
 		return System.getProperty("file.encoding", "UTF-8");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	
 	/**
 	 * Return the list of encodings defined using the org.eclipse.ui.encodings
 	 * extension point.
 	 * 
 	 * @return List of String
 	 */
-	public static List getDefinedEncodings(){
-		
-		if(definedEncodings == null)
+	public static List getDefinedEncodings() {
+
+		if (definedEncodings == null)
 			readEncodings();
 		return definedEncodings;
-		
+
 	}
 
 	/**
 	 * Read the encodings from the extension registry.
 	 */
 	private static void readEncodings() {
-		
-		definedEncodings = new ArrayList();
+
+		definedEncodings = Collections.synchronizedList(new ArrayList());
 		EncodingsRegistryReader reader = new EncodingsRegistryReader();
-		
+
 		reader.readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_ENCODINGS);
-		
+				IWorkbenchConstants.PL_ENCODINGS);
+
+		//Make it an array in case of concurrency issues with Iterators
+		String[] encodings = new String[definedEncodings.size()];
+		List invalid = new ArrayList();
+		definedEncodings.toArray(encodings);
+		for (int i = 0; i < encodings.length; i++) {
+			String string = encodings[i];
+			if (!Charset.isSupported(string))
+				invalid.add(string);
+		}
+
+		Iterator invalidIterator = invalid.iterator();
+		while (invalidIterator.hasNext()) {
+			String next = (String) invalidIterator.next();
+			WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
+					new String[] { next }));
+			definedEncodings.remove(next);
+
+		}
+
 	}
 
-		
 }

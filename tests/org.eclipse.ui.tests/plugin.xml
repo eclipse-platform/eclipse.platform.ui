@@ -1801,4 +1801,9 @@
       <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
       <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
    </extension>
+   
+    <extension
+         point="org.eclipse.ui.encodings">
+      <encoding name="Blorf"/>
+   </extension>
 </plugin>            

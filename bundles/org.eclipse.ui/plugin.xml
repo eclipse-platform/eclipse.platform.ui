@@ -1390,7 +1390,6 @@
       <encoding name="UTF-16BE"/>
       <encoding name="UTF-16LE"/>
       <encoding name="US-ASCII"/>
-      <encoding name="Unicode"/>
    </extension>
    <!--
       <extension
