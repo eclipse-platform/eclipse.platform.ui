@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.texteditor;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class EditorMessages {
+class EditorMessages {
 
 	private static final String RESOURCE_BUNDLE= EditorMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);

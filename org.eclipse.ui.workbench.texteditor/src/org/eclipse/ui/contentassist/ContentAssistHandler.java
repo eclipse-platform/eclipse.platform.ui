@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.contentassist;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -183,11 +182,11 @@ public class ContentAssistHandler {
 				ICommand command= commandManager.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				List bindings= command.getKeySequenceBindings();
 				if (bindings.size() == 0) {
-					return "Content Assist Available";
+					return ContentAssistMessages.getString("ContentAssistHandler.contentAssistAvailable"); //$NON-NLS-1$
 				} else {
 					IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
 					Object[] args= { ksb.getKeySequence().format() };
-					return MessageFormat.format("Content Assist Available ({0})", args);
+					return ContentAssistMessages.getFormattedString("ContentAssistHandler.contentAssistAvailableWithKeyBinding", args); //$NON-NLS-1$
 				}
 			}
 		};

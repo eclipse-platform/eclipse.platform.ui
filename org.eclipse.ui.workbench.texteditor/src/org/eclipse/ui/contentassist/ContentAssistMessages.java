@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.core.internal.filebuffers;
+package org.eclipse.ui.contentassist;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -21,13 +21,13 @@ import java.util.ResourceBundle;
  * 
  * @since 3.0
  */
-class FileBuffersMessages {
+class ContentAssistMessages {
 
-	private static final String RESOURCE_BUNDLE= FileBuffersMessages.class.getName();
+	private static final String RESOURCE_BUNDLE= ContentAssistMessages.class.getName();
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
-	private FileBuffersMessages() {
+	private ContentAssistMessages() {
 	}
 
 	/**
