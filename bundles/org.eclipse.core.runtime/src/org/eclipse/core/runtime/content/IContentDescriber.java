@@ -45,33 +45,41 @@ public interface IContentDescriber {
 	/**
 	 * Description result constant, indicating that it was not possible 
 	 * to determinate whether the contents were valid for 
-	 * the intented content type.
+	 * the intended content type.
 	 * 
 	 * @see #describe
 	 */	
 	public final static int INDETERMINATE = -1;	
+
 	/**
 	 * Tries to fill a description for the given contents. Returns 
-	 * a boolean indicating whether the given stream of 
+	 * an <code>int</code> indicating whether the given stream of 
 	 * bytes represents a valid sample for its corresponding content type.
 	 * If no description options are specified, this method only performs 
-	 * content type detection. In this case, a description object might not 
+	 * content type detection. In this case, a description object may not 
 	 * be provided.  
 	 * <p>
 	 * The input stream must be kept open, and any IOExceptions while 
 	 * reading the stream should flow to the caller.
 	 * </p>
 	 * 
-	 * @param input the contents to be examined
+	 * @param contents the contents to be examined
 	 * @param description a description to be filled in, or <code>null</code> if 
 	 * no options are provided  
 	 * @param optionsMask a bit-wise OR of all options that should be described
-	 * @return whether this describer recognized the contents
+	 * @return one of the following:<ul>
+	 * <li><code>VALID</code></li>,
+	 * <li><code>INVALID</code></li>,
+	 * <li><code>INDETERMINATE</code></li>
+	 * </ul>
 	 * @throws IOException if an I/O error occurs
 	 * @see IContentDescription#ALL
 	 * @see IContentDescription#CHARSET
 	 * @see IContentDescription#BYTE_ORDER_MARK
 	 * @see IContentDescription#CUSTOM_PROPERTIES
+	 * @see #VALID
+	 * @see #INVALID
+	 * @see #INDETERMINATE
 	 */
 	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException;
 	/**

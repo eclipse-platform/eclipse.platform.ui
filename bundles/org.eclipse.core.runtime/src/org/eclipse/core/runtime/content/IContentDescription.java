@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * </ol>
  * </p>
  * <p>
- * <cite>Content interpreters</cite> provided by plug-ins will fill most of the
+ * <cite>Content describers</cite> provided by plug-ins will fill most of the
  * properties in a content description object, except for the content type, 
  * which is defined by the platform. After a content 
  * description is filled by a content interpreter, it is marked as immutable
@@ -118,4 +118,5 @@ public interface IContentDescription {
 	 * if the property is to be removed
 	 */
 	public void setProperty(QualifiedName key, Object value);
+
 }

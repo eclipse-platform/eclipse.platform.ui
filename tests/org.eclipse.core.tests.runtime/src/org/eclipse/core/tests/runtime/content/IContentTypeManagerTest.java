@@ -11,10 +11,9 @@
 package org.eclipse.core.tests.runtime.content;
 
 import java.io.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+import org.eclipse.core.internal.content.*;
 import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.content.XMLContentDescriber;
 import org.eclipse.core.runtime.IPlatform;
@@ -33,42 +32,40 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	public IContentTypeManagerTest(String name) {
 		super(name);
 	}
-	public IContentTypeManager getLocalContentTypeManager() {
-		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
-		contentTypeManager.startup();
-		return contentTypeManager;
-	}
 	public void testRegistry() {
-		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
+		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
-		assertTrue("1.1", isText(textContentType));
+		assertTrue("1.1", isText(contentTypeManager, textContentType));
 		assertNull("1.2", ((ContentType) textContentType).getDescriber());
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
-		assertTrue("2.1", isText(xmlContentType));
+		assertTrue("2.1", isText(contentTypeManager, xmlContentType));
 		assertEquals("2.2", textContentType, xmlContentType.getBaseType());
 		IContentDescriber xmlDescriber = ((ContentType) xmlContentType).getDescriber();
 		assertNotNull("2.3", xmlDescriber);
 		assertTrue("2.4", xmlDescriber instanceof XMLContentDescriber);
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		assertNotNull("3.0", xmlBasedDifferentExtensionContentType);
-		assertTrue("3.1", isText(xmlBasedDifferentExtensionContentType));
+		assertTrue("3.1", isText(contentTypeManager, xmlBasedDifferentExtensionContentType));
 		assertEquals("3.2", xmlContentType, xmlBasedDifferentExtensionContentType.getBaseType());
 		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
 		assertNotNull("4.0", xmlBasedSpecificNameContentType);
-		assertTrue("4.1", isText(xmlBasedSpecificNameContentType));
+		assertTrue("4.1", isText(contentTypeManager, xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
-		IContentType[] xmlTypes = contentTypeManager.findContentTypesForFileName("foo.xml");
+		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor("foo.xml");
 		assertEquals("5.0", 1, xmlTypes.length);
 		assertEquals("5.1", xmlContentType, xmlTypes[0]);
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
 		assertNotNull("6.0", binaryContentType);
-		assertTrue("6.1", !isText(binaryContentType));
+		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
-		IContentType[] binaryTypes = contentTypeManager.findContentTypesForFileName("foo.samplebin");
+		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor("foo.samplebin");
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
+		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS +  ".mytext");
+		assertNotNull("8.0", myText);
+		assertEquals("8.1", "BAR", myText.getDefaultCharset());		
 	}
 	private boolean contains(Object[] array, Object element) {
 		for (int i = 0; i < array.length; i++)
@@ -80,9 +77,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	 * @see IContentTypeManager#getContentTypeFor
 	 */
 	public void testContentDetection() throws IOException {
-		IContentTypeManager contentTypeManager = (LocalContentTypeManager) getLocalContentTypeManager();
-		IContentType[] candidates;
-		IContentType inappropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".text");
+		ContentTypeManager contentTypeManager = (ContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary");
 		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
@@ -93,32 +89,42 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNull("4.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[]{inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}));
 	}
 	public void testContentDescription() throws IOException {
-		IContentTypeManager contentTypeManager = (LocalContentTypeManager) getLocalContentTypeManager();
+		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xmlType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
-		IContentType[] candidates = contentTypeManager.findContentTypesForFileName("foo.xml");
 		IContentDescription description;
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML), candidates, 0);
+		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", 0);
 		assertNotNull("1.0", description);
 		assertEquals("1.1", xmlType, description.getContentType());
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML), candidates, IContentDescription.CHARSET);
+		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.CHARSET);
 		assertNotNull("2.0", description);
 		assertEquals("2.1", xmlType, description.getContentType());
 		// the default charset should have been filled by the content type manager
 		assertEquals("2.2", "UTF-8", description.getCharset());
-		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1), candidates, IContentDescription.CHARSET);
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1, "UTF-8"), "foo.xml", IContentDescription.CHARSET);
 		assertNotNull("3.0", description);
 		assertEquals("3.1", xmlType, description.getContentType());
 		assertEquals("3.2", "ISO-8859-1", description.getCharset());
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML), candidates, IContentDescription.ALL);
+		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.ALL);
 		assertNotNull("4.0", description);
 		assertEquals("4.1", xmlType, description.getContentType());
 		assertEquals("4.2", "UTF-8", description.getCharset());
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML), candidates, IContentDescription.ALL + 1);
-		assertNotNull("5.0", description);		
-		assertNull("5.0", description.getCharset());		
-	}	
+		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
+		assertNotNull("5.0", description);
+		assertEquals("5.1", "BAR", description.getCharset());
+		// test full lookup
+		IContentType sampleBinary = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary");
+		InputStream contents;
+		contents = getInputStream(SampleBinaryDescriber.TAG + " extra contents", "US-ASCII");
+		IContentType[] selected;
+		description = contentTypeManager.getDescriptionFor(contents, null, 0);
+		assertNotNull("6.0", description);
+		assertEquals("6.1", sampleBinary, description.getContentType());
+	}
+	public InputStream getInputStream(String contents, String encoding) throws UnsupportedEncodingException {
+		return new ByteArrayInputStream(contents.getBytes(encoding));
+	}
 	public InputStream getInputStream(String contents) throws UnsupportedEncodingException {
-		return new ByteArrayInputStream(contents.getBytes("UTF-8"));
+		return new ByteArrayInputStream(contents.getBytes());
 	}
 	/**
 	 * This test shows how we deal with orphan content types (content types
@@ -126,17 +132,17 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	 * not appear in the catalog.
 	 */
 	public void testOrphanContentType() {
-		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
+		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		assertNull("1.0", contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "orphan"));
-		assertEquals("1.1", 0, contentTypeManager.findContentTypesForFileName("foo.orphan").length);
-		assertEquals("1.2", 0, contentTypeManager.findContentTypesForFileName("orphan.orphan").length);
+		assertEquals("1.1", 0, contentTypeManager.findContentTypesFor("foo.orphan").length);
+		assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("orphan.orphan").length);
 		//test late addition of base type - it should become valid
 		LocalContentTypeManager localManager = ((LocalContentTypeManager) contentTypeManager);
-		IContentType newType = localManager.createContentType("org.eclipse.foo", "bar", "Foo Bar", null, null, null);
+		IContentType newType = localManager.createContentType("org.eclipse.foo", "bar", "Foo Bar", null, null, null, null);
 		localManager.addContentType(newType);
 		assertNotNull("2.0", contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "orphan"));
-		assertEquals("2.1", 1, contentTypeManager.findContentTypesForFileName("foo.orphan").length);
-		assertEquals("2.2", 1, contentTypeManager.findContentTypesForFileName("orphan.orphan").length);
+		assertEquals("2.1", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
+		assertEquals("2.2", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
 	}
 	/**
 	 * The fooBar content type is associated with the "foo.bar" file name and 
@@ -145,16 +151,16 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	 * "foo.bar" file name.
 	 */
 	public void testDoubleAssociation() {
-		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
+		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType fooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "fooBar");
 		assertNotNull("1.0", fooBarType);
 		// ensure we don't get fooBar twice 
-		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesForFileName("foo.bar");
+		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesFor("foo.bar");
 		assertEquals("2.1", 1, fooBarAssociated.length);
 		assertEquals("2.2", fooBarType, fooBarAssociated[0]);
 	}
 	public void testIsKindOf() {
-		IContentTypeManager contentTypeManager = getLocalContentTypeManager();
+		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
@@ -163,18 +169,31 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("1.0", textContentType.isKindOf(textContentType));
 		assertTrue("2.0", xmlContentType.isKindOf(textContentType));
 		assertTrue("2.1", !textContentType.isKindOf(xmlContentType));
-		assertTrue("2.2", xmlContentType.isKindOf(xmlContentType));		
+		assertTrue("2.2", xmlContentType.isKindOf(xmlContentType));
 		assertTrue("3.0", xmlBasedDifferentExtensionContentType.isKindOf(textContentType));
-		assertTrue("3.1", xmlBasedDifferentExtensionContentType.isKindOf(xmlContentType));		
+		assertTrue("3.1", xmlBasedDifferentExtensionContentType.isKindOf(xmlContentType));
 		assertTrue("4.0", !xmlBasedDifferentExtensionContentType.isKindOf(xmlBasedSpecificNameContentType));
-		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));		
+		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));
 	}
-
-	private boolean isText(IContentType candidate) {
-		IContentType text = ((ContentType) candidate).getManager().getContentType(IContentTypeManager.CT_TEXT);
+	public void testFindContentType() throws Exception {
+		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");		
+		IContentType[] selected;
+		selected = contentTypeManager.findContentTypesFor(getInputStream("Just a test"), "file.txt");
+		assertEquals("1.0", 1, selected.length);
+		assertEquals("1.1", textContentType, selected[0]);
+		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
+		selected = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), "foo.xml");
+		assertEquals("2.0", 1, selected.length);
+		assertEquals("2.1", xmlContentType, selected[0]);
+		selected = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
+		assertTrue("3.0", contains(selected, xmlContentType));		
+	}
+	private boolean isText(IContentTypeManager manager, IContentType candidate) {
+		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		return candidate.isKindOf(text);
 	}
 	public static Test suite() {
-		return new TestSuite(IContentTypeManagerTest.class);		
+		return new TestSuite(IContentTypeManagerTest.class);
 	}
 }

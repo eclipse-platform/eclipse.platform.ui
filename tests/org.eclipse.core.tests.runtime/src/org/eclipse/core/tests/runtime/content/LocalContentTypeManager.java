@@ -10,43 +10,31 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.internal.content.ContentTypeManager;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 public class LocalContentTypeManager extends ContentTypeManager {
 	public LocalContentTypeManager() {
-		// to increase constructor's visibility
-	}
-	/**
-	 * Ensures only content types / content interpreters contributed by runtime and runtime.tests
-	 * will be added to the catalog.
-	 */
-	protected void startup() {
-		IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
-		IExtensionPoint contentTypesXP = registry.getExtensionPoint(IPlatform.PI_RUNTIME, PT_CONTENTTYPES);
-		IExtension[] allExtensions = contentTypesXP.getExtensions();
-		List selectedElements = new ArrayList();
-		for (int i = 0; i < allExtensions.length; i++) {
-			String namespace = allExtensions[i].getNamespace();
-			if (!namespace.equals(IPlatform.PI_RUNTIME) && !namespace.equals(RuntimeTest.PI_RUNTIME_TESTS))
-				continue;
-			IConfigurationElement[] contentTypes = allExtensions[i].getConfigurationElements();
-			for (int j = 0; j < contentTypes.length; j++)
-				registerContentType(contentTypes[j]);			
-		}
-		validateContentTypes();
+		// to increase visibility
 	}
 	public void addContentType(IContentType contentType) {
 		super.addContentType(contentType);
-		validateContentTypes();
+		reorganize();
 	}
-	public IContentType createContentType(String namespace, String simpleId, String name, String[] fileExtensions, String[] fileNames, String baseTypeId) {
-		return super.createContentType(namespace, simpleId, name, fileExtensions, fileNames, baseTypeId);
+	public IContentType createContentType(String namespace, String simpleId, String name, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset) {
+		return ContentType.createContentType(this, namespace, simpleId, name, (byte) 0, fileExtensions, fileNames, baseTypeId, defaultCharset, null);
 	}
+	protected ContentTypeBuilder createBuilder() {
+		return new LocalContentTypeBuilder(this);
+	}
+	// to increase visibility
+	public void startup() {
+		super.startup();
+	}
+	public static IContentTypeManager getLocalContentTypeManager() {
+		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
+		contentTypeManager.startup();
+		return contentTypeManager;
+	}	
 }

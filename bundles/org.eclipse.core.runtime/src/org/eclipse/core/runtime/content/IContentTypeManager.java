@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * The global access point for content type-related needs.
+ * The content type manager provides facilities file name and content-based
+ * type lookup, and content description.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -40,26 +41,27 @@ public interface IContentTypeManager {
 	 * </pre> 
 	 * </p>
 	 */
-	public final static String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
-	
+	public final static String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$	
+
 	/**
-	 * Applies content-based content type detection on the given input stream
-	 * taking only the provided set of content types into account.
-	 * Returns <code>null</code> if no appropriate content types are 
-	 * found in the given set. If multiple content types are considered
-	 * appropriate, returns the most appropriated one if it can be determined, 
-	 * <code>null</code> otherwise.  
+	 * Returns the preferred content type for the given contents and file name.
 	 * <p>
-	 * The provided input stream <i>must</i> be resettable, otherwise an 
-	 * IllegalArgumentException will be thrown. 
+	 * Returns <code>null</code> if no associated content types are 
+	 * found.
 	 * </p>
+	 * <p>
+	 * If a file name is not provided, the entire content type registry will be 
+	 * queried. For performance reasons, it is highly recomended 
+	 * to provide a file name if available.
+	 * </p> 
+	 * <p>
+	 * Any IOExceptions that may occur while reading the given input stream 
+	 * will flow to the caller.
+	 * </p> 
 	 * 
-	 * @param contents a resettable input stream (#markSupported must be <code>true</code>)
-	 * @param set the content types to be taken into account, or <code>null</code>, 
-	 * for all content types in the catalog 
-	 * @return the most appropriate content type for the given contents, or <code>null</code>
+	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */	
-	IContentType findContentTypeFor(InputStream contents, IContentType[] set) throws IOException;	
+	IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
 	/**
 	 * Returns the preferred content type for the given file name. If multiple content types 
 	 * are associated with the given file name, the one considered the most appropriated will
@@ -67,32 +69,41 @@ public interface IContentTypeManager {
 	 * 
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */
-	IContentType findContentTypeForFileName(String fileName);	
+	IContentType findContentTypeFor(String fileName);
 	/**
-	 * Executes content-based content type detection on the given contents
-	 * taking only the provided content types into account 
-	 * Returns an empty array if no associated content types are 
-	 * found in the given set
+	 * Returns the content types associated to the given contents and file name.
 	 * <p>
-	 * If the set provided is <code>null</code>, all content types in the 
-	 * catalog are taken into account.  
+	 * Returns an empty array if no associated content types are found.
 	 * </p>
+	 * <p>
+	 * If a file name is not provided, the entire content type registry will be 
+	 * queried. For performance reasons, it is highly recomended 
+	 * to provide a file name if available.
+	 * </p>
+	 * <p>
+	 * Any IOExceptions that may occur while reading the given input stream 
+	 * will flow to the caller.
+	 * </p> 
 	 * 
-	 * @param contents a (preferrably) resettable input stream
-	 * @param set the content types to be taken into account
-	 * @return all content types associated to the given file spec
+	 * @param contents an input stream
+	 * @param fileName the file name associated to the contents, or <code>null</code> 
+	 * @return all content types associated to the given contents and file name
 	 */	
-	IContentType[] findContentTypesFor(InputStream contents, IContentType[] set) throws IOException;
+	IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;	
 	/**
-	 * Returns all content types known by the platform that are associated to the given file name. 
+	 * Returns all content types known by the platform that are associated to the given file name.
+	 * <p> 
 	 * Returns an empty array if there are no content types associated.
+	 * </p>
 	 * 
 	 * @return all content types associated to the given file spec
 	 */
-	IContentType[] findContentTypesForFileName(String fileName);
+	IContentType[] findContentTypesFor(String fileName);
 	/**
-	 * Returns all content types known by the platform. Returns an empty array 
-	 * if there are no content types configured.
+	 * Returns all content types known by the platform. 
+	 * <p>
+	 * Returns an empty array if there are no content types available.
+	 * </p>
 	 * 
 	 * @return all content types known by the platform.
 	 */
@@ -106,20 +117,22 @@ public interface IContentTypeManager {
 	 */
 	IContentType getContentType(String contentTypeIdentifier);
 	/**
-	 * Tries to obtain a description for the given contents. Any 
-	 * IOExceptions that may occur while reading the given input stream will 
-	 * flow to the caller.
+	 * Tries to obtain a description for the given contents and file name. 
+	 * <p>
+	 * Any IOExceptions that may occur while reading the given input stream 
+	 * will flow to the caller.
+	 * </p>
+	 * <p>
+	 * If a file name is not provided, the entire content type registry will be 
+	 * queried. For performance reasons, it is highly recomended 
+	 * to provide a file name if available.
+	 * </p> 
 	 *  
 	 * @param contents the contents to be interpreted
-	 * @param set the content types to be taken into account, or <code>null</code>,
-	 * for all content types in the catalog
+	 * @param fileName the file name associated to the contents, or <code>null</code>
 	 * @param optionsMask a bit-wise OR of all options that should be described
 	 * @return a content description if one could be obtained, or <code>null</code>
-	 * @see IContentDescription 
+	 * @see IContentDescription
 	 */
-	IContentDescription getDescriptionFor(InputStream contents, IContentType[] set, int optionsMask) throws IOException;
-	//TODO
-	// user settings based
-	//void setDefaultContentTypeForFile(String filespec, IContentType defaultType);
-	//IContentType getDefaultContentTypeForFile(String filespec);
+	IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException;
 }

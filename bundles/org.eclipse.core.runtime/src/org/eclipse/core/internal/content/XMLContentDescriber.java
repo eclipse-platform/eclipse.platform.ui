@@ -20,26 +20,39 @@ import org.eclipse.core.runtime.content.IContentDescriber;
  * @see http://www.w3.org/TR/REC-xml *
  */
 public class XMLContentDescriber implements IContentDescriber {
-	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
+	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
+		// the XMLDecl is some kind of Unicode, not matter what the encoding for the 
+		// rest of the document is
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8")); //$NON-NLS-1$
 		String line = reader.readLine();
 		// end of stream
 		if (line == null)
-			return INVALID;
+			return INDETERMINATE;
 		// XMLDecl should be the first string (no blanks allowed)
 		if (!line.startsWith(XML_PREFIX))
 			return INDETERMINATE;
-		// if only the content type should be checked
+		// describe charset if requested
 		if ((flags & IContentDescription.CHARSET) != 0)
 			description.setCharset(getCharset(line));
 		return VALID;
 	}
-	public int getSupportedOptions() {
-		return IContentDescription.CHARSET;
-	}
+	public int describe(Reader input, IContentDescription description, int flags) throws IOException {
+		BufferedReader reader = new BufferedReader(input);
+		String line = reader.readLine();
+		// end of stream
+		if (line == null)
+			return INDETERMINATE;
+		// XMLDecl should be the first string (no blanks allowed)
+		if (!line.startsWith(XML_PREFIX))
+			return INDETERMINATE;
+		// describe charset if requested
+		if ((flags & IContentDescription.CHARSET) != 0)
+			description.setCharset(getCharset(line));
+		return VALID;
+	}	
 	private String getCharset(String firstLine) {
 		int encodingPos = firstLine.indexOf(ENCODING);
 		if (encodingPos == -1)
@@ -51,5 +64,8 @@ public class XMLContentDescriber implements IContentDescriber {
 		if (secondQuote == -1)
 			return null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
+	}
+	public int getSupportedOptions() {
+		return IContentDescription.CHARSET;
 	}
 }

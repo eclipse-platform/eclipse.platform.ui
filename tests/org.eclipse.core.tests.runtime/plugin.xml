@@ -33,6 +33,11 @@
 	
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type 
+			id="mytext" 
+			name="My Text" 
+			file-extensions="tzt"
+			default-charset="BAR"/>		
+		<content-type 
 			id="fooBar" 
 			name="Foo Bar" 
 			file-extensions="bar"
@@ -51,13 +56,20 @@
 		<content-type 
 			id="sample-binary"
 			name="Sample Binary"
-			file-extensions="samplebin"/>
+			file-extensions="samplebin"
+			describer-class="org.eclipse.core.tests.runtime.content.SampleBinaryDescriber"/>
+		<file-association
+			content-type="org.eclipse.core.runtime.text" 		
+			file-extensions="tkst"/>					
 		<content-type 
 			id="orphan" 
 			name="Orphan Type" 
 			base-type="org.eclipse.foo.bar"
 			file-extensions="orphan"
-			file-names="foo.orphan"/>						
+			file-names="foo.orphan"/>
+		<file-association
+			content-type="org.eclipse.foo.bar" 		
+			file-extensions="orphan2"/>					
 	</extension>	
 
 	<extension point="org.eclipse.core.runtime.adapters">

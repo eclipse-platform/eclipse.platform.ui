@@ -11,50 +11,59 @@
 package org.eclipse.core.internal.content;
 
 import java.io.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.content.*;
+import org.osgi.service.prefs.Preferences;
 
-public class ContentTypeManager implements IContentTypeManager, IRegistryChangeListener {
+public class ContentTypeManager implements IContentTypeManager {
+	class ContentTypeComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			ContentType type1 = (ContentType) o1;
+			ContentType type2 = (ContentType) o2;
+			if (type1.getPriority() != type2.getPriority())
+				return type1.getPriority() - type2.getPriority();
+			// to ensure stability
+			return type1.getId().compareTo(type2.getId());
+		}
+	}
+	final static String CONTENT_TYPE_PREF_NODE = IPlatform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
 	private static ContentTypeManager instance;
 	private static final int MARK_LIMIT = 0x400;
-	public static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$	
-	/*
-	 * Returns the extension for a file name (omiting the leading '.'). 
-	 */
-	static String getFileExtension(String fileName) {
-		int dotPosition = fileName.lastIndexOf('.');
-		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? null : fileName.substring(dotPosition + 1);
-	}
-	public synchronized static IContentTypeManager getInstance() {
-		if (instance != null)
-			return instance;
-		instance = new ContentTypeManager();
-		instance.startup();
-		return instance;
-	}
+	private ContentTypeBuilder builder;
 	private Map catalog = new HashMap();
+	private Comparator comparator = new ContentTypeComparator();
+	private Map fileExtensions = new HashMap();
+	private Map fileNames = new HashMap();
 	/**
 	 * Constructs a new content type manager.
 	 */
 	protected ContentTypeManager() {
-		// to prevent external instatiation of this implementation
+		builder = createBuilder();
 	}
 	protected void addContentType(IContentType contentType) {
 		catalog.put(contentType.getId(), contentType);
 	}
-	protected IContentType createContentType(String namespace, String simpleId, String name, String[] fileExtensions, String[] fileNames, String baseTypeId) {
-		ContentType contentType = new ContentType(this);
-		contentType.setSimpleId(simpleId);
-		contentType.setNamespace(namespace);
-		contentType.setName(name);
-		contentType.setFileExtensions(fileExtensions);
-		contentType.setFileNames(fileNames);
-		contentType.setBaseTypeId(baseTypeId);
-		return contentType;
+	private void addFileSpecContributor(IContentType contentType, int fileSpecType, Map fileSpecsMap) {
+		String[] fileSpecs = contentType.getFileSpecs(fileSpecType);
+		for (int i = 0; i < fileSpecs.length; i++) {
+			Set existing = (Set) fileSpecsMap.get(fileSpecs[i]);
+			if (existing == null)
+				fileSpecsMap.put(fileSpecs[i], existing = new TreeSet(comparator));
+			existing.add(contentType);
+		}
+	}
+	protected ContentTypeBuilder createBuilder() {
+		return new ContentTypeBuilder(this);
+	}
+	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
+		try {
+			return selectedDescriber.describe(contents, description, optionsMask);
+		} finally {
+			contents.reset();
+		}
 	}
 	/**
 	 * A content type will be valid if:
@@ -63,17 +72,17 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	 * <li>it designates a base type that exists and is valid</li>
 	 * </ol> 
 	 */
-	private void ensureValid(ContentType type) {
+	private boolean ensureValid(ContentType type) {
 		if (type.getValidation() != ContentType.UNKNOWN)
-			return;
+			return type.isValid();
 		if (type.getBaseTypeId() == null) {
 			type.setValidation(ContentType.VALID);
-			return;
+			return true;
 		}
 		ContentType baseType = (ContentType) catalog.get(type.getBaseTypeId());
 		if (baseType == null) {
 			type.setValidation(ContentType.INVALID);
-			return;
+			return false;
 		}
 		// set this temporarily as invalid to prevent cycles
 		// all types in the cycle will be marked as invalid
@@ -81,9 +90,10 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		ensureValid(baseType);
 		// base type is either be valid or invalid - type will have the same status
 		type.setValidation(baseType.getValidation());
+		return type.isValid();
 	}
-	/**
-	 * @see IContentTypeManager
+	/*
+	 * "public" to make testing easier 
 	 */
 	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
 		ByteArrayInputStream buffer = readBuffer(contents);
@@ -93,71 +103,73 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 			subset = getAllContentTypes();
 		List appropriate = new ArrayList();
 		for (int i = 0; i < subset.length; i++) {
+			buffer.reset();
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
 			if (describer != null)
-				if (describe(describer, buffer, null, 0) == IContentDescriber.VALID)
-					appropriate.add(subset[i]);
+				if (describe(describer, buffer, null, 0) == IContentDescriber.INVALID)
+					continue;
+			appropriate.add(subset[i]);
 		}
 		return mostAppropriate(appropriate);
 	}
-	private ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
-		boolean failed = false;
-		try {
-			contents.mark(MARK_LIMIT);
-			byte[] buffer = new byte[MARK_LIMIT];
-			int read = contents.read(buffer);
-			return read == -1 ? null : new ByteArrayInputStream(buffer, 0, read);
-		} catch (IOException ioe) {
-			failed = true;
-			throw ioe;
-		} finally {
-			if (!failed)
-				contents.reset();
-		}
+	/**
+	 * @see IContentTypeManager
+	 */
+	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
+		IContentType[] all = findContentTypesFor(contents, fileName);
+		return all.length > 0 ? all[0] : null;
 	}
 	/**
 	 * @see IContentTypeManager
 	 */
-	public IContentType findContentTypeForFileName(String fileName) {
+	public IContentType findContentTypeFor(String fileName) {
 		// basic implementation just gets all content types		
-		IContentType[] associated = findContentTypesForFileName(fileName);
+		IContentType[] associated = findContentTypesFor(fileName);
 		return associated.length == 0 ? null : associated[1];
 	}
-	/**
-	 * @see IContentTypeManager
+	/*
+	 * "public" to make testing easier 
 	 */
 	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
+		if (subset.length == 0)
+			return new IContentType[0];
 		ByteArrayInputStream buffer = readBuffer(contents);
 		if (buffer == null)
-			return null;
-		if (subset == null)
-			subset = getAllContentTypes();
-		List appropriate = new ArrayList();
-		for (int i = 0; i < subset.length; i++) {
-			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
-			if (describer != null && describe(describer, buffer, null, 0) == IContentDescriber.VALID)
-				appropriate.add(subset[i]);
-		}
-		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
+			return new IContentType[0];
+		return internalFindContentTypesFor(buffer, subset);
 	}
 	/**
 	 * @see IContentTypeManager
 	 */
-	public IContentType[] findContentTypesForFileName(String fileName) {
-		Set types = new HashSet();
-		for (Iterator iter = catalog.values().iterator(); iter.hasNext();) {
-			ContentType contentType = (ContentType) iter.next();
-			if (contentType.isValid() && indexOf(contentType.getFileNames(), fileName) >= 0)
-				types.add(contentType);
-		}
+	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
+		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return new IContentType[0];
+		return internalFindContentTypesFor(buffer, subset);
+	}
+	/**
+	 * @see IContentTypeManager
+	 */
+	public IContentType[] findContentTypesFor(String fileName) {
+		//TODO: should include children
+		IContentType[] result = new IContentType[2];
+		int count = 0;
+		// files associated by name should appear before those associated by extension		
+		SortedSet allByFileName = (SortedSet) fileNames.get(fileName);
+		if (allByFileName != null && !allByFileName.isEmpty())
+			result[count++] = (IContentType) ((ContentType) allByFileName.first()).getTarget();
 		String fileExtension = getFileExtension(fileName);
-		if (fileExtension != null)
-			for (Iterator iter = catalog.values().iterator(); iter.hasNext();) {
-				ContentType contentType = (ContentType) iter.next();
-				if (contentType.isValid() && indexOf(contentType.getFileExtensions(), fileExtension) >= 0)
-					types.add(contentType);
-			}
-		return (IContentType[]) types.toArray(new IContentType[types.size()]);
+		if (fileExtension != null) {
+			SortedSet allByFileExtension = (SortedSet) fileExtensions.get(fileExtension);
+			if (allByFileExtension != null && !allByFileExtension.isEmpty())
+				result[count++] = (IContentType) ((ContentType) allByFileExtension.first()).getTarget();
+		}
+		if (count == 0)
+			return new IContentType[0];
+		if (count == 1 || result[0] == result[1])
+			return new IContentType[]{result[0]};
+		return result;
 	}
 	/**
 	 * @see IContentTypeManager
@@ -175,50 +187,77 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	 * @see IContentTypeManager
 	 */
 	public IContentType getContentType(String contentTypeIdentifier) {
-		ContentType type = (ContentType) catalog.get(contentTypeIdentifier);
+		ContentType type = internalGetContentType(contentTypeIdentifier);
 		return (type != null && type.isValid()) ? type : null;
 	}
 	/**
 	 * @see IContentTypeManager
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, IContentType[] subset, int optionsMask) throws IOException {		
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException {
 		// naïve implementation for now
 		ByteArrayInputStream buffer = readBuffer(contents);
 		if (buffer == null)
-			return null;		
-		IContentType selected = findContentTypeFor(contents, subset);
-		if (selected == null)
+			return null;
+		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
+		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
+		if (selected.length == 0)
 			return null;
 		ContentDescription description = new ContentDescription();
-		description.setContentType(selected);
+		description.setContentType(selected[0]);
 		// TODO less-than-optimal: causes stream to be read again
-		IContentDescriber selectedDescriber = ((ContentType) selected).getDescriber();
+		IContentDescriber selectedDescriber = ((ContentType) selected[0]).getDescriber();
 		if (selectedDescriber != null && (selectedDescriber.getSupportedOptions() & optionsMask) == optionsMask)
 			describe(selectedDescriber, buffer, description, optionsMask);
 		// check if any of the defaults need to be applied
 		if ((optionsMask & IContentDescription.CHARSET) != 0 && description.getCharset() == null)
-			description.setCharset(selected.getDefaultCharset());
+			description.setCharset(selected[0].getDefaultCharset());
 		description.markAsImmutable();
 		return description;
 	}
-	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
-		try {
-			return selectedDescriber.describe(contents, description, optionsMask);
-		} finally {
-			contents.reset();
-		}
+	Preferences getPreferences() {
+		return InternalPlatform.getDefault().getPreferencesService().getRootNode().node(CONTENT_TYPE_PREF_NODE);
 	}
-	private int indexOf(Object[] array, Object object) {
-		for (int i = 0; i < array.length; i++)
-			if (array[i].equals(object))
-				return i;
-		return -1;
+	private IContentType[] internalFindContentTypesFor(ByteArrayInputStream buffer, IContentType[] subset) throws IOException {
+		List appropriate = new ArrayList();
+		int valid = 0;
+		for (int i = 0; i < subset.length; i++) {
+			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
+			int status = IContentDescriber.INDETERMINATE;
+			if (describer != null) {
+				status = describe(describer, buffer, null, 0);
+				if (status == IContentDescriber.INVALID)
+					continue;
+			}
+			if (status == IContentDescriber.VALID)
+				appropriate.add(valid++, subset[i]);
+			else
+				appropriate.add(subset[i]);
+		}
+		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
+	}
+	ContentType internalGetContentType(String contentTypeIdentifier) {
+		return (ContentType) catalog.get(contentTypeIdentifier);
 	}
 	private boolean isBaseTypeOf(IContentType base, IContentType target) {
 		IContentType targetBase = target.getBaseType();
 		if (targetBase == null)
 			return false;
 		return targetBase == base ? true : isBaseTypeOf(base, targetBase);
+	}
+	private void makeAliases(Map fileSpecs) {
+		// process all content types per file specs
+		// marking conflicting content types as aliases 
+		// for the higher priority content type
+		for (Iterator i = fileSpecs.values().iterator(); i.hasNext();) {
+			Set associated = (Set) i.next();
+			if (associated.size() < 2)
+				// no conflicts here
+				continue;
+			Iterator j = associated.iterator();
+			ContentType ellected = (ContentType) j.next();
+			while (j.hasNext())
+				((ContentType) j.next()).setAliasTarget(ellected);
+		}
 	}
 	private int moreAppropriate(IContentType type1, IContentType type2) {
 		return isBaseTypeOf(type1, type2) ? -1 : (isBaseTypeOf(type2, type1) ? 1 : 0);
@@ -250,65 +289,61 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		}
 		return chosen;
 	}
-	private String[] parseItems(String string) {
-		if (string == null)
-			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
-		if (!tokenizer.hasMoreTokens())
-			return new String[0];
-		String first = tokenizer.nextToken();
-		if (!tokenizer.hasMoreTokens())
-			return new String[]{first};
-		ArrayList items = new ArrayList();
-		items.add(first);
-		do {
-			items.add(tokenizer.nextToken());
-		} while (tokenizer.hasMoreTokens());
-		return (String[]) items.toArray(new String[items.size()]);
-	}
-	protected void registerContentType(IConfigurationElement contentTypeCE) {
-		//TODO: need to ensure the config. element is valid
-		ContentType contentType = new ContentType(this, contentTypeCE);
-		contentType.setSimpleId(contentTypeCE.getAttributeAsIs("id")); //$NON-NLS-1$
-		contentType.setNamespace(contentTypeCE.getDeclaringExtension().getNamespace());
-		contentType.setName(contentTypeCE.getAttribute("name")); //$NON-NLS-1$
-		contentType.setFileExtensions(parseItems(contentTypeCE.getAttributeAsIs("file-extensions"))); //$NON-NLS-1$
-		contentType.setFileNames(parseItems(contentTypeCE.getAttributeAsIs("file-names"))); //$NON-NLS-1$
-		contentType.setBaseTypeId(contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
-		contentType.setDefaultCharset(contentTypeCE.getAttributeAsIs("default-charset")); //$NON-NLS-1$
-		contentType.setDescriberClass(contentTypeCE.getAttributeAsIs("describer-class") != null); //$NON-NLS-1$
-		catalog.put(contentType.getId(), contentType);
-	}
-	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas = (event.getExtensionDeltas(IPlatform.PI_RUNTIME, PT_CONTENTTYPES));
-		for (int i = 0; i < deltas.length; i++) {
-			IConfigurationElement[] configElements = deltas[i].getExtension().getConfigurationElements();
-			if (deltas[i].getKind() == IExtensionDelta.ADDED)
-				for (int j = 0; j < configElements.length; j++)
-					registerContentType(configElements[j]);
-			else {
-				//TODO should unregister removed types
-			}
+	protected void reorganize() {
+		fileExtensions.clear();
+		fileNames.clear();
+		// forget the validation status and aliases for all content types 
+		for (Iterator i = catalog.values().iterator(); i.hasNext();) {
+			ContentType type = ((ContentType) i.next());
+			type.setValidation(ContentType.UNKNOWN);
+			type.setAliasTarget(null);
 		}
-		// remove orphan types / cycles
-		validateContentTypes();
+		// do the validation
+		for (Iterator i = catalog.values().iterator(); i.hasNext();) {
+			ContentType type = (ContentType) i.next();
+			if (!ensureValid(type))
+				continue;
+			addFileSpecContributor(type, IContentType.FILE_EXTENSION_SPEC, fileExtensions);
+			addFileSpecContributor(type, IContentType.FILE_NAME_SPEC, fileNames);
+		}
+		makeAliases(fileNames);
+		makeAliases(fileExtensions);
 	}
 	protected void startup() {
-		IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this, IPlatform.PI_RUNTIME);
 		catalog = new HashMap();
-		IExtensionPoint contentTypesXP = registry.getExtensionPoint(IPlatform.PI_RUNTIME, PT_CONTENTTYPES);
-		IConfigurationElement[] allContentTypeCEs = contentTypesXP.getConfigurationElements();
-		for (int j = 0; j < allContentTypeCEs.length; j++)
-			registerContentType(allContentTypeCEs[j]);
-		validateContentTypes();
+		builder.startup();
+		builder.buildContentTypes();
 	}
-	protected void validateContentTypes() {
-		// forget the validation status for all content types
-		for (Iterator i = catalog.values().iterator(); i.hasNext();)
-			((ContentType) i.next()).setValidation(ContentType.UNKNOWN);
-		for (Iterator i = catalog.values().iterator(); i.hasNext();) {
-			ensureValid((ContentType) i.next());
+	/*
+	 * Returns the extension for a file name (omiting the leading '.'). 
+	 */
+	static String getFileExtension(String fileName) {
+		int dotPosition = fileName.lastIndexOf('.');
+		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? null : fileName.substring(dotPosition + 1);
+	}
+	public synchronized static IContentTypeManager getInstance() {
+		if (instance != null)
+			return instance;
+		instance = new ContentTypeManager();
+		instance.startup();
+		return instance;
+	}
+	/*
+	 * Returns null if no bytes can be read
+	 */
+	static ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
+		boolean failed = false;
+		try {
+			contents.mark(MARK_LIMIT);
+			byte[] buffer = new byte[MARK_LIMIT];
+			int read = contents.read(buffer);
+			return read == -1 ? null : new ByteArrayInputStream(buffer, 0, read);
+		} catch (IOException ioe) {
+			failed = true;
+			throw ioe;
+		} finally {
+			if (!failed)
+				contents.reset();
 		}
 	}
 }
