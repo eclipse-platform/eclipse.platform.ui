@@ -119,24 +119,6 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 		
 		/*
-		 * FIXME: string is not user friendly.
-		 * 
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#getDescription()
-		 * @since 3.1
-		 */
-		public String getDescription() {
-		    StringBuffer text= new StringBuffer(this.toString()+" "); //$NON-NLS-1$
-		    text.append(new Integer(fStart).toString());
-		    text.append(":"); //$NON-NLS-1$
-		    text.append(new Integer(fEnd).toString());
-		    text.append(" "); //$NON-NLS-1$
-		    text.append(fText);
-		    text.append(" "); //$NON-NLS-1$
-		    text.append(fPreservedText);
-		    return text.toString();
-		}
-		
-		/*
 		 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
 		 * @since 3.1
 		 */
