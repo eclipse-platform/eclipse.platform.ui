@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 import org.eclipse.help.internal.ui.util.StreamConsumer;
@@ -28,9 +29,16 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	public IEBrowserAdapter() {
 		try {
 			// Create command string for launching the process
+			String executable = "java";
+			if (BootLoader.OS_WIN32.equals(BootLoader.getOS()))
+				executable += "w.exe";
 			cmd =
 				new String[] {
-					System.getProperty("java.home") + "\\bin\\javaw.exe",
+					System.getProperty("java.home")
+						+ File.separator
+						+ "bin"
+						+ File.separator
+						+ executable,
 					"-D"
 						+ IEHost.SYS_PROPERTY_INSTALLURL
 						+ "="
@@ -98,8 +106,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	public void run() {
 		Process pr;
 		try {
-			pr = Runtime.getRuntime().exec(cmd /*, new String[]{"PATH=%PATH%;d:\\"}*/
-			);
+			pr = Runtime.getRuntime().exec(cmd);
 			(new StreamConsumer(pr.getInputStream())).start();
 			(new StreamConsumer(pr.getErrorStream())).start();
 			commandWriter = new PrintWriter(pr.getOutputStream(), true);
@@ -167,7 +174,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		for (Iterator i = cpaths.iterator(); i.hasNext();) {
 			String cp = (String) i.next();
 			if (cp.length() > 0)
-				classPath += cp + ";";
+				classPath += cp + File.pathSeparator;
 		}
 		return classPath;
 	}
@@ -188,19 +195,38 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	 * Calculates library path for a specified plugin
 	 */
 	private String getPath(String pluginID) {
-		URL urls[] =
-			((URLClassLoader) Platform
-				.getPlugin(pluginID)
-				.getDescriptor()
-				.getPluginClassLoader())
-				.getURLs();
+		URL installURL = Platform.getPlugin(pluginID).getDescriptor().getInstallURL();
+		try {
+			installURL = Platform.resolve(installURL);
+		} catch (IOException ioe) {
+			return "";
+		}
+		File installFile = new File(installURL.getFile());
+		String[] variants = buildLibraryVariants();
 		String path = "";
-		for (int i = 0; i < urls.length; i++) {
-			File cp = new File(urls[i].getFile());
-			if (!cp.isDirectory())
-				cp = cp.getParentFile();
-			path += cp.toString() + ";";
+		for (int v = 0; v < variants.length; v++) {
+			path += new File(installFile, variants[v]).getAbsolutePath()
+				+ File.pathSeparator;
 		}
 		return path;
+	}
+	/**
+	 * Copied and modified from DelegatingURLClassLoader
+	 */
+	private static String[] buildLibraryVariants() {
+		ArrayList result = new ArrayList();
+		result.add("ws/" + BootLoader.getWS() + "/");
+		result.add(
+			"os/" + BootLoader.getOS() + "/" + System.getProperty("os.arch") + "/");
+		result.add("os/" + BootLoader.getOS() + "/");
+		String nl = BootLoader.getNL();
+		nl = nl.replace('_', '/');
+		while (nl.length() > 0) {
+			result.add("nl/" + nl + "/");
+			int i = nl.lastIndexOf('/');
+			nl = (i < 0) ? "" : nl.substring(0, i);
+		}
+		result.add("");
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 }
