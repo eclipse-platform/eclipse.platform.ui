@@ -729,6 +729,7 @@ public class StringConverter {
 	 * "font name-style-height" (for example "Times New Roman-bold-36").
 	 * @param value The font data.
 	 * @return The string representation of the font data object.
+	 * @deprecated use asString(FontData)
 	 */
 	public static String asDisplayableString(FontData value) {
 		Assert.isNotNull(value);
