@@ -417,11 +417,11 @@ public class InternalAntRunner {
 			if (!executeScript) {
 				return;
 			}
-			
+			processProperties(argList);
 			addBuildListeners(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
-			
+
 			fireBuildStarted(getCurrentProject());
 			
 			if (argList != null) {
@@ -437,7 +437,7 @@ public class InternalAntRunner {
 			}
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
-			setProperties(getCurrentProject());
+
 			setTasks(getCurrentProject());
 			setTypes(getCurrentProject());
 			
@@ -728,7 +728,7 @@ public class InternalAntRunner {
 		if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
 			messageOutputLevel = Project.MSG_WARN;
 		}
-		
+
 		if (commands.remove("-emacs")) { //$NON-NLS-1$
 			emacsMode = true;
 		}
@@ -795,8 +795,6 @@ public class InternalAntRunner {
 			return false;
 		}
 
-		processProperties(commands);
-
 		if (!commands.isEmpty()) {
 			//unrecognized args
 			logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{commands.get(0)}), Project.MSG_ERR); //$NON-NLS-1$
@@ -807,11 +805,26 @@ public class InternalAntRunner {
 		return true;
 	}
 
+	/**
+	 * Creates the log file with the name specified by the user.
+	 * If the fileName is not absolute, the file will be created in the
+	 * working directory if specified or in the same directory as the location
+	 * of the build file.	 */
 	protected void createLogFile(String fileName) throws FileNotFoundException, IOException {
 		IPath path= new Path(fileName);
 		if (!path.isAbsolute()) {
-			path= new Path(getBuildFileLocation());
-			path= path.removeLastSegments(1);
+			String base= getCurrentProject().getUserProperty("basedir");
+			if (base != null) {
+				File baseDir= new File(base);
+				if (baseDir != null) {
+					//relative to the base dir
+					path= new Path(baseDir.getAbsolutePath());
+				} 
+			}else {
+				//relative to the build file location
+				path= new Path(getBuildFileLocation());
+				path= path.removeLastSegments(1);
+			}
 			path= path.addTrailingSeparator();
 			path= path.append(fileName);
 		}
@@ -828,8 +841,11 @@ public class InternalAntRunner {
 		}
 	}
 
+	/**
+	 * Processes cmd line properties and adds the user properties to the project
+	 * Any user properties that have been explicitly set are set on the project as well.	 * 	 */
 	protected void processProperties(List commands) {
-		userProperties = new HashMap(10);
+		
 		String[] args = (String[]) commands.toArray(new String[commands.size()]);
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -856,10 +872,11 @@ public class InternalAntRunner {
 					value = args[++i];
 				}
 
-				userProperties.put(name, value);
+				getCurrentProject().setUserProperty(name, value);
 				commands.remove(args[i]);
 			}
 		}
+		setProperties(getCurrentProject());
 	}
 
 	/**
