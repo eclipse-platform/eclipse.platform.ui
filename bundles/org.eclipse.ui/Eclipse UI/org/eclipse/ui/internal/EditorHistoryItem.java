@@ -66,12 +66,7 @@ public void restoreState(IMemento memento) {
 		return;
 	}
 	IAdaptable adaptable = factory.createElement(persistableMemento);
-	if (adaptable == null) {
-		WorkbenchPlugin.log("Unable to restore mru list - cannot instantiate input element: " + factoryId);//$NON-NLS-1$
-		return;
-	}
-	if ((adaptable instanceof IEditorInput) == false) {
-		WorkbenchPlugin.log("Unable to restore mru list - input is no IEditorInput");//$NON-NLS-1$
+	if (adaptable == null || (adaptable instanceof IEditorInput) == false) {
 		return;
 	}
 	input = (IEditorInput) adaptable;
