@@ -239,9 +239,9 @@ public Object getPropertyValue(Object name) {
 	}
 	if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
 		if (element.isReadOnly())
-			return "false";//$NON-NLS-1$
+			return PropertiesMessages.getString("ResourceProperty.false"); //$NON-NLS-1$
 		else
-			return "true";//$NON-NLS-1$
+			return PropertiesMessages.getString("ResourceProperty.true"); //$NON-NLS-1$
 	}
 	if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
 		return String.valueOf(element.isDerived());
