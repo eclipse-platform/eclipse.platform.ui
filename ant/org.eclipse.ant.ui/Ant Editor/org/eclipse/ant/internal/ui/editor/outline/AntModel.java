@@ -41,7 +41,6 @@ import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
-import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
@@ -225,7 +224,7 @@ public class AntModel {
 	}
 
 	public AntElementNode[] getRootElements() {
-		possiblyWaitForReconcile();
+		reconcile(null);
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
 		} 
@@ -1204,9 +1203,9 @@ public class AntModel {
 		return null;
 	}
 	
-	public AntProjectNode getProjectNode(boolean waitForReconcile) {
-		if (waitForReconcile) {
-			possiblyWaitForReconcile();
+	public AntProjectNode getProjectNode(boolean doReconcile) {
+		if (doReconcile) {
+			reconcile(null);
 		}
 		return fProjectNode;
 	}
@@ -1215,28 +1214,12 @@ public class AntModel {
 		return getProjectNode(true);
 	}
 	
-	private void possiblyWaitForReconcile() {
-		synchronized (fDirtyLock) {
-			if (!fIsDirty) {
-				return;
-			}
-		}
-		synchronized (this) {
-			//wait for the reconcile from the edit
-			//or if that fails, timeout
-			try {
-				wait(XMLReconcilingStrategy.DELAY * 10);
-			} catch (InterruptedException e) {
-			}
-		}
-	}
-
 	public void setReplaceHasOccurred() {
 		fReplaceHasOccurred= true;
 	}
 	
 	public void updateMarkers() {
-		possiblyWaitForReconcile();
+		reconcile(null);
 		fMarkerUpdater.updateMarkers();
 	}
 	
