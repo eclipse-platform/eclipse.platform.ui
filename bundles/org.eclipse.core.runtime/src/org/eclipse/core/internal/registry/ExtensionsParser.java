@@ -255,9 +255,9 @@ public class ExtensionsParser extends DefaultHandler {
 			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 			return;
 		}
-		// new manifests should have the plugin/fragment element empty
+		// new manifests should have the plugin (not fragment) element empty
 		// in compatibility mode, any extraneous elements will be silently ignored
-		compatibilityMode = attributes.getLength() > 0;
+		compatibilityMode = !(elementName.equals(PLUGIN) && attributes.getLength() == 0);
 		stateStack.push(new Integer(BUNDLE_STATE));
 		BundleModel current = factory.createBundle();
 		current.setSchemaVersion(schemaVersion);
