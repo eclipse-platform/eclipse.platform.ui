@@ -7,8 +7,8 @@
         path="/org.eclipse.core.resources/resources.jar" sourcepath="/org.eclipse.core.resources/resourcessrc.zip"/>
     <classpathentry kind="lib"
         path="/org.eclipse.core.runtime/runtime.jar" sourcepath="/org.eclipse.core.runtime/runtimesrc.zip"/>
-    <classpathentry kind="lib" path="/org.eclipse.swt/swt.jar" sourcepath="/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="lib" path="/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="src" sourcepath="JRE_SRC"/>
+    <classpathentry kind="lib" path="/org.eclipse.swt/ws/win32/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
