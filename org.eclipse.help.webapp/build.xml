@@ -9,7 +9,7 @@
 	
 	<target name="init">
 		<property name="plugin" value="org.eclipse.help.webapp"/>
-		<property name="version" value="1.9.0"/>
+		<property name="version" value="2.0.0"/>
 	</target>
 
 	<target name="build.update.jar" depends="init">
