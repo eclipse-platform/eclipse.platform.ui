@@ -34,6 +34,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -553,7 +554,8 @@ public class AntClasspathBlock {
 					entries= antContentProvider.getModel().getEntries(ClasspathModel.USER);
 					valid= !JARPresent(entries, TOOLS).isEmpty();
 					if (!valid) {
-						valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), AntPreferencesMessages.getString("AntClasspathBlock.33"), false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						valid= dialog.getReturnCode() == IDialogConstants.YES_ID;
 					}
 				}
 			}

@@ -28,7 +28,6 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
-import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,6 +50,7 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
@@ -263,7 +263,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (store.getBoolean(IAntUIPreferenceConstants.ANT_ERROR_DIALOG)) {
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
-					MessageDialogWithToggle.openError(null, title, e.getMessage(), IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.22"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+					MessageDialogWithToggle.openError(null, title, e.getMessage(), AntLaunchConfigurationMessages.getString("AntLaunchDelegate.22"), false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_ERROR_DIALOG); //$NON-NLS-1$
 				}
 			});
 		}
