@@ -179,21 +179,21 @@ public class IPageServiceTest extends UITestCase
 	public void pageActivated(IWorkbenchPage page) {
 		pageEventReceived = true;
 	}
-
+
 	/**
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 		pageEventReceived = true;
 	}
-
+
 	/**
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
 		pageEventReceived = true;
 	}
-
+
 	/**
 	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
 	 */
@@ -202,7 +202,7 @@ public class IPageServiceTest extends UITestCase
 	{
 		perspEventReceived = true;
 	}
-
+
 	/**
 	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
 	 */
@@ -211,5 +211,5 @@ public class IPageServiceTest extends UITestCase
 	{
 		perspEventReceived = true;
 	}
-
+
 }

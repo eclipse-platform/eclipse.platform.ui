@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
-
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -37,7 +37,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * properties and handles the transition to another set of 
  * properties.
  */
-
+
 public class PropertySheetAuto extends UITestCase {
 	
 	/**
@@ -237,5 +237,5 @@ public class PropertySheetAuto extends UITestCase {
 		}
 	}
 }
-
+
   

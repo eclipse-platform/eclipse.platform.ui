@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests;
-
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
-
+
 /**
  * Test all areas of the UI.
  */

@@ -49,7 +49,7 @@ public class SelectionProviderView
 	public void setFocus() {
 		text.setFocus();
 	}
-
+
 	/**
 	 * @see WorkbenchPart#createPartControl(Composite)
 	 */
@@ -57,7 +57,7 @@ public class SelectionProviderView
 		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
-
+
 	/* (non-Javadoc)
 	 * Method declared on IViewPart.
 	 */
@@ -73,7 +73,7 @@ public class SelectionProviderView
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.add(listener);
 	}
-
+
 	/**
 	 * @see ISelectionProvider#getSelection()
 	 */

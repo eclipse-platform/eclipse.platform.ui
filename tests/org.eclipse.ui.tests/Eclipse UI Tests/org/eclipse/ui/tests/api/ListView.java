@@ -154,6 +154,6 @@ public class ListView extends MockViewPart
 		addElement(new ListElement("green"));
 		addElement(new ListElement("red", true));
 	}
-
+
 }
 

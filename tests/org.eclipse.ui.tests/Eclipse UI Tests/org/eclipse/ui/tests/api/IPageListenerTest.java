@@ -132,7 +132,7 @@ public class IPageListenerTest extends UITestCase
 		if (pageMask == null || page == pageMask)
 			eventsReceived |= ACTIVATE;
 	}
-
+
 	/**
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
@@ -140,7 +140,7 @@ public class IPageListenerTest extends UITestCase
 		if (pageMask == null || page == pageMask)
 			eventsReceived |= CLOSE;
 	}
-
+
 	/**
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
@@ -148,5 +148,5 @@ public class IPageListenerTest extends UITestCase
 		if (pageMask == null || page == pageMask)
 			eventsReceived |= OPEN;
 	}
-
+
 }
