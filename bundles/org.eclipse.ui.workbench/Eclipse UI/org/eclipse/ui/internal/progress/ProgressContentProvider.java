@@ -12,10 +12,13 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * The ProgressContentProvider is the content provider used for
@@ -26,6 +29,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	IJobChangeListener listener;
 	private TreeViewer viewer;
+	private List updates = Collections.synchronizedList(new ArrayList());
+	private boolean updateAll = false;
+	private Job updateJob;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		listener = new JobChangeAdapter() {
@@ -112,7 +118,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
 	}
 
 	/**
@@ -210,19 +216,17 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param info
 	 */
 	private void refreshViewer(final JobInfo info) {
-		if (viewer.getControl().isDisposed())
-			return;
+		
+		if(updateJob == null)
+			createUpdateJob();
 
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				if (viewer.getControl().isDisposed())
-					return;
-				viewer.refresh(info);
-			}
-		});
+		if(info == null)
+			updateAll = true;
+		else
+			updates.add(info);
+			
+		//Add in a 100ms delay so as to keep priority low
+		updateJob.schedule(100);			
 	}
 
 	/**
@@ -236,5 +240,33 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			jobs.remove(job);
 			viewer.refresh(null);
 		}
+	}
+	
+	private void createUpdateJob(){
+		updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if(updateAll){
+					viewer.refresh(null,true);
+					updateAll = false;
+					updates.clear();
+				}
+				else{
+					Object[] updateItems = updates.toArray();
+					updates.clear();
+					for(int i = 0; i < updateItems.length; i++){
+						viewer.refresh(updateItems[i],true);
+					}
+				}
+				return Status.OK_STATUS;
+					
+			}
+			
+		};
+		updateJob.setSystem(true);
+		updateJob.setPriority(Job.DECORATE);
+		
 	}
 }
