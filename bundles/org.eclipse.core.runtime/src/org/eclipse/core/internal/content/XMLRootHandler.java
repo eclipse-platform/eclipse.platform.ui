@@ -10,8 +10,7 @@
  ******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
@@ -51,6 +50,11 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	}
 
 	/**
+	 * Should we check the root element?
+	 */
+	private boolean checkRoot;
+
+	/**
 	 * The system identifier for the DTD that was found while parsing the XML.
 	 * This member variable is <code>null</code> unless the file has been
 	 * parsed successful to the point of finding the DTD's system identifier.
@@ -63,10 +67,10 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 * successful to the point of finding the top-level element.
 	 */
 	private String elementFound = null;
-	/**
-	 * Should we check the root element?
-	 */
-	private boolean checkRoot;
+
+	public XMLRootHandler(boolean checkRoot) {
+		this.checkRoot = checkRoot;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -143,12 +147,41 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 			parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
 			if (parserReference == null)
 				return false;
-			SAXParserFactory factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);			
+			SAXParserFactory factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
 			if (factory == null)
 				return false;
 			factory.setNamespaceAware(true);
 			final SAXParser parser = createParser(factory);
 			parser.parse(contents, this);
+		} catch (final ParserConfigurationException e) {
+			String message = Policy.bind("content.parsingError"); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, message, e));
+			return false;
+		} catch (final StopParsingException e) {
+			// Abort the parsing normally.  Fall through...
+		} catch (final SAXException e) {
+			// we may be handed any kind of contents... it is normal we fail to parse
+			return false;
+		} finally {
+			if (parserReference != null)
+				InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
+		}
+		return true;
+	}
+
+	public boolean parseContents(Reader contents) throws IOException {
+		ServiceReference parserReference = null;
+		// Parse the file into we have what we need (or an error occurs).
+		try {
+			parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
+			if (parserReference == null)
+				return false;
+			SAXParserFactory factory = (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
+			if (factory == null)
+				return false;
+			factory.setNamespaceAware(true);
+			final SAXParser parser = createParser(factory);
+			parser.parse(new InputSource(contents), this);
 		} catch (final ParserConfigurationException e) {
 			String message = Policy.bind("content.parsingError"); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, message, e));
@@ -207,9 +240,5 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	public final void startEntity(final String name) {
 		// Not interested.
-	}
-
-	public XMLRootHandler(boolean checkRoot) {
-		this.checkRoot = checkRoot;
 	}
 }

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -59,14 +60,30 @@ public class XMLRootElementContentDescriber extends XMLContentDescriber implemen
 	private String elementToFind = null;
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.content.IContentDescriber#describe(java.io.InputStream,
-	 *      org.eclipse.core.runtime.content.IContentDescription, int)
+	 * @see IContentDescriber
 	 */
-	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException {
+	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		// call the basic XML describer to do basic recognition
-		if (super.describe(contents, description, optionsMask) == INVALID)
+		if (super.describe(contents, description) == INVALID)
+			return INVALID;
+		contents.reset();
+		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
+		if (!xmlHandler.parseContents(contents))
+			return INVALID;
+		// Check to see if we matched our criteria.
+		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
+			return INVALID;
+		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
+			return INVALID;
+		// We must be okay then.		
+		return VALID;
+	}
+	/*
+	 * @see IContentDescriber
+	 */
+	public int describe(Reader contents, IContentDescription description) throws IOException {
+		// call the basic XML describer to do basic recognition
+		if (super.describe(contents, description) == INVALID)
 			return INVALID;
 		contents.reset();
 		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
@@ -82,10 +99,7 @@ public class XMLRootElementContentDescriber extends XMLContentDescriber implemen
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
+	 * @see IExecutableExtension
 	 */
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		if (data instanceof String)

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.content;
 
+import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -35,48 +36,36 @@ import org.eclipse.core.runtime.QualifiedName;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * <p>
- * TODO: remove this before the 3.0 release
- * <b>Note</b>: This interface is part of early access API that may well 
- * change in incompatible ways until it reaches its finished form. 
- * </p>
  * 
  * @see IContentDescriber  
  * @since 3.0 
  */
 public interface IContentDescription {
 	/**
-	 * Flag indicating that the charset for the contents should be described. 
+	 * Key for the byte order mark property.
 	 */
-	public final static int CHARSET = 0x01;
-	/**
-	 * Flag indicating that the bye order mark for the contents should be described. 
-	 */
-	public final static int BYTE_ORDER_MARK = 0x02;
-	/**
-	 * Flag indicating that custom properties for the contents should be described. 
-	 */
-	public final static int CUSTOM_PROPERTIES = 0x7f;
-	/**
-	 * Flag indicating that all available information should be described.
-	 */
-	public final static int ALL = 0xffff;
+	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset");  //$NON-NLS-1$	
 
 	/**
-	 * Returns the byte order mark (BOM) for the contents. Returns 0 (zero) if a 
-	 * BOM was not found or was not determined.
-	 * 
-	 * @return the byte order mark, or zero
+	 * Key for the byte order mark property.
 	 */
-	public int getMark();
-
+	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IPlatform.PI_RUNTIME, "bom");  //$NON-NLS-1$
+	
 	/**
-	 * Returns the charset for the contents. Returns <code>null</code> if the 
-	 * charset could not be/was not determined.
+	 * Options constant meaning that all properties should be described. 
+	 */
+	public final static QualifiedName[] ALL = null;
+	
+	/**
+	 * Returns whether the given property is requested to be described. This 
+	 * method is intended to allow content describers to determine  which
+	 * properties should be described.
 	 *  
-	 * @return a charset, or <code>null</code>
+	 * @param propertyKey a key for the property to be verified 
+	 * @return <code>true</code> if the property is to be described, 
+	 * <code>false</code> otherwise
 	 */
-	public String getCharset();
+	public boolean isRequested(QualifiedName propertyKey);
 
 	/**
 	 * Returns the content type detected. Returns <code>null</code> if the 
@@ -95,23 +84,9 @@ public interface IContentDescription {
 	 * 
 	 * @param key the property key
 	 * @return the property value, or <code>null</code>, if the property is not
-	 * found  
+	 * found   
 	 */
 	public Object getProperty(QualifiedName key);
-
-	/**
-	 * Sets the charset for this description.
-	 * 
-	 * @param charset the new charset, or <code>null</code>
-	 */
-	public void setCharset(String charset);
-
-	/**
-	 * Sets the Byte Order Mark for this description.
-	 *  
-	 * @param mark the new BOM, or zero 
-	 */
-	public void setMark(int mark);
 
 	/**
 	 * Sets the given property to the given value. 
@@ -123,7 +98,8 @@ public interface IContentDescription {
 	 * @param key the qualified name of the property 
 	 * @param value the property value, or <code>null</code>,
 	 * if the property is to be removed
+	 * @throws IllegalStateException if called after this description has been
+	 * filled in
 	 */
 	public void setProperty(QualifiedName key, Object value);
-
 }

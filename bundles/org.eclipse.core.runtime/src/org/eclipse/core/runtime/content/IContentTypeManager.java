@@ -10,19 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.content;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * The content type manager provides facilities file name and content-based
  * type lookup, and content description.
  * <p>
  * This interface is not intended to be implemented by clients.
- * </p>
- * <p> 
- * TODO remove this before the 3.0 release
- * <b>Note</b>: This interface is part of early access API that may well 
- * change in incompatible ways until it reaches its finished form. 
  * </p>
  * 
  * @since 3.0
@@ -141,9 +136,31 @@ public interface IContentTypeManager {
 	 *  
 	 * @param contents the contents to be interpreted
 	 * @param fileName the file name associated to the contents, or <code>null</code>
-	 * @param optionsMask a bit-wise OR of all options that should be described
+	 * @param options an array of keys for all properties that should be 
+	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
 	 * @return a content description if one could be obtained, or <code>null</code>
-	 * @see IContentDescription
+	 * @see IContentDescription 
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException;
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException;
+
+	/**
+	 * Tries to obtain a description for the given contents and file name. 
+	 * <p>
+	 * Any IOExceptions that may occur while reading the given input stream 
+	 * will flow to the caller.
+	 * </p>
+	 * <p>
+	 * If a file name is not provided, the entire content type registry will be 
+	 * queried. For performance reasons, it is highly recomended 
+	 * to provide a file name if available.
+	 * </p> 
+	 *  
+	 * @param contents the contents to be interpreted
+	 * @param fileName the file name associated to the contents, or <code>null</code>
+	 * @param options an array of keys for all properties that should be 
+	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
+	 * @return a content description if one could be obtained, or <code>null</code>
+	 * @see IContentDescription 
+	 */
+	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
 }

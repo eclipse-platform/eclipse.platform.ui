@@ -118,25 +118,25 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xmlType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentDescription description;
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", 0);
+		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.ALL);
 		assertNotNull("1.0", description);
 		assertEquals("1.1", xmlType, description.getContentType());
-		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.CHARSET);
+		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNotNull("2.0", description);
 		assertEquals("2.1", xmlType, description.getContentType());
 		// the default charset should have been filled by the content type manager
-		assertEquals("2.2", "UTF-8", description.getCharset());
-		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1, "UTF-8"), "foo.xml", IContentDescription.CHARSET);
+		assertEquals("2.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
+		description = contentTypeManager.getDescriptionFor(getInputStream(XML_ISO_8859_1, "UTF-8"), "foo.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNotNull("3.0", description);
 		assertEquals("3.1", xmlType, description.getContentType());
-		assertEquals("3.2", "ISO-8859-1", description.getCharset());
+		assertEquals("3.2", "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
 		description = contentTypeManager.getDescriptionFor(getInputStream(MINIMAL_XML, "UTF-8"), "foo.xml", IContentDescription.ALL);
 		assertNotNull("4.0", description);
 		assertEquals("4.1", xmlType, description.getContentType());
-		assertEquals("4.2", "UTF-8", description.getCharset());
+		assertEquals("4.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
 		assertNotNull("5.0", description);
-		assertEquals("5.1", "BAR", description.getCharset());
+		assertEquals("5.1", "BAR", description.getProperty(IContentDescription.CHARSET));
 	}
 
 	public void testBinaryTypes() throws IOException {
@@ -145,11 +145,11 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType sampleBinary2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary2");
 		InputStream contents;
 		contents = getInputStream(SAMPLE_BIN1_OFFSET + SAMPLE_BIN1_SIGNATURE + " extra contents", "US-ASCII");
-		IContentDescription description = contentTypeManager.getDescriptionFor(contents, null, 0);
+		IContentDescription description = contentTypeManager.getDescriptionFor(contents, null, IContentDescription.ALL);
 		assertNotNull("6.0", description);
 		assertEquals("6.1", sampleBinary1, description.getContentType());
 		contents = getInputStream(SAMPLE_BIN2_OFFSET + SAMPLE_BIN2_SIGNATURE + " extra contents", "US-ASCII");
-		description = contentTypeManager.getDescriptionFor(contents, null, 0);
+		description = contentTypeManager.getDescriptionFor(contents, null, IContentDescription.ALL);
 		assertNotNull("7.0", description);
 		assertEquals("7.1", sampleBinary2, description.getContentType());
 	}

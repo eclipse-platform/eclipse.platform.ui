@@ -17,27 +17,22 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 public class ContentDescription implements IContentDescription {
-	private String charset;
 	private IContentType contentType;
-	private boolean immutable;
-	private int mark;
-	private Map properties;
+	private Map properties = new HashMap(3);
+	private boolean allOptions;
 
-	ContentDescription() {
-		super();
+	ContentDescription(QualifiedName[] requested) {
+		if (requested == null) {
+			allOptions = true;
+			return;
+		}
+		for (int i = 0; i < requested.length; i++)
+			properties.put(requested[i], null);
 	}
 
 	private void assertMutable() {
-		//TODO: NLS this
-		if (immutable)
+		if (contentType != null)
 			throw new IllegalStateException("Content description is immutable"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see IContentDescription
-	 */
-	public String getCharset() {
-		return charset;
 	}
 
 	/**
@@ -50,30 +45,8 @@ public class ContentDescription implements IContentDescription {
 	/**
 	 * @see IContentDescription
 	 */
-	public int getMark() {
-		return mark;
-	}
-
-	/**
-	 * @see IContentDescription
-	 */
 	public Object getProperty(QualifiedName key) {
-		if (properties == null)
-			return null;
 		return properties.get(key);
-	}
-
-	public void markAsImmutable() {
-		assertMutable();
-		immutable = true;
-	}
-
-	/**
-	 * @see IContentDescription
-	 */
-	public void setCharset(String charset) {
-		assertMutable();
-		this.charset = charset;
 	}
 
 	public void setContentType(IContentType contentType) {
@@ -84,18 +57,17 @@ public class ContentDescription implements IContentDescription {
 	/**
 	 * @see IContentDescription
 	 */
-	public void setMark(int mark) {
+	public void setProperty(QualifiedName key, Object value) {
 		assertMutable();
-		this.mark = mark;
+		properties.put(key, value);
 	}
 
 	/**
 	 * @see IContentDescription
 	 */
-	public void setProperty(QualifiedName key, Object value) {
-		assertMutable();
-		if (properties == null)
-			properties = new HashMap();
-		properties.put(key, value);
+	public boolean isRequested(QualifiedName propertyKey) {
+		if (allOptions)
+			return true;
+		return properties.containsKey(propertyKey);
 	}
 }

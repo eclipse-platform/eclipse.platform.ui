@@ -12,17 +12,13 @@ package org.eclipse.core.runtime.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * Content describers know how to retrieve basic information on specific file
+ * Content describers know how to retrieve metadata from 
  * contents.
  * <p>
  * Clients may implement this interface.
- * </p>
- * <p>
- * TODO: remove this note before 3.0 release
- * <b>Note</b>: This interface is part of early access API that may well 
- * change in incompatible ways until it reaches its finished form. 
  * </p>
 
  * @see IContentDescription
@@ -45,7 +41,7 @@ public interface IContentDescriber {
 	public final static int INVALID = 1;
 	/**
 	 * Description result constant, indicating that it was not possible 
-	 * to determinate whether the contents were valid for 
+	 * to determine whether the contents were valid for 
 	 * the intended content type.
 	 * 
 	 * @see #describe(InputStream, IContentDescription, int)
@@ -56,9 +52,8 @@ public interface IContentDescriber {
 	 * Tries to fill a description for the given contents. Returns 
 	 * an <code>int</code> indicating whether the given stream of 
 	 * bytes represents a valid sample for its corresponding content type.
-	 * If no description options are specified, this method only performs 
-	 * content type detection. In this case, a description object may not 
-	 * be provided.  
+	 * If no content description is provided, this method should perform 
+	 * content type validation.
 	 * <p>
 	 * The input stream must be kept open, and any IOExceptions while 
 	 * reading the stream should flow to the caller.
@@ -66,29 +61,25 @@ public interface IContentDescriber {
 	 * 
 	 * @param contents the contents to be examined
 	 * @param description a description to be filled in, or <code>null</code> if 
-	 * no options are provided  
-	 * @param optionsMask a bit-wise OR of all options that should be described
+	 * only content type validation is to be performed  
 	 * @return one of the following:<ul>
 	 * <li><code>VALID</code></li>,
 	 * <li><code>INVALID</code></li>,
 	 * <li><code>INDETERMINATE</code></li>
 	 * </ul>
 	 * @throws IOException if an I/O error occurs
-	 * @see IContentDescription#ALL
-	 * @see IContentDescription#CHARSET
-	 * @see IContentDescription#BYTE_ORDER_MARK
-	 * @see IContentDescription#CUSTOM_PROPERTIES
+	 * @see IContentDescription
 	 * @see #VALID
 	 * @see #INVALID
 	 * @see #INDETERMINATE
 	 */
-	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException;
+	public int describe(InputStream contents, IContentDescription description) throws IOException;
 
 	/**
-	 * Returns the options supported by this describer as a bit mask. 
+	 * Returns the properties supported by this describer. 
 	 *   
-	 * @return the supported options
-	 * @see #describe(InputStream, IContentDescription, int)
+	 * @return the supported properties
+	 * @see #describe(InputStream, IContentDescription)
 	 */
-	public int getSupportedOptions();
+	public QualifiedName[] getSupportedOptions();
 }

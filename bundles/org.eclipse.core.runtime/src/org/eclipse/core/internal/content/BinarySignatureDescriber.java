@@ -27,7 +27,7 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 	private int offset;
 	private boolean required = true;
 
-	public int describe(InputStream contents, IContentDescription description, int optionsMask) throws IOException {
+	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] buffer = new byte[signature.length];
 		int notValid = required ? INVALID : INDETERMINATE;
 		if (contents.skip(offset) < offset)
@@ -40,8 +40,8 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 		return VALID;
 	}
 
-	public int getSupportedOptions() {
-		return 0;
+	public QualifiedName[] getSupportedOptions() {
+		return new QualifiedName[0];
 	}
 
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
@@ -52,8 +52,8 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 				Hashtable parameters = (Hashtable) data;
 				if (!parameters.containsKey(SIGNATURE)) {
 					String message = Policy.bind("content.badInitializationData", XMLRootElementContentDescriber.class.getName()); //$NON-NLS-1$
-					throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null));					
-				}					
+					throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, null));
+				}
 				signature = parseSignature((String) parameters.get(SIGNATURE));
 				if (parameters.containsKey(OFFSET))
 					offset = Integer.parseInt((String) parameters.get(OFFSET));
@@ -68,7 +68,7 @@ public class BinarySignatureDescriber implements IContentDescriber, IExecutableE
 
 	private byte[] parseSignature(String data) {
 		List bytes = new ArrayList();
-		StringTokenizer tokenizer = new StringTokenizer(data," \t\n\r\f,");
+		StringTokenizer tokenizer = new StringTokenizer(data, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
 			bytes.add(new Byte(Byte.parseByte(tokenizer.nextToken().trim(), 16)));
 		byte[] signature = new byte[bytes.size()];

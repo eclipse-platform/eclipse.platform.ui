@@ -44,6 +44,7 @@ public class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation;
+	private boolean text;
 
 	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(manager);
@@ -91,6 +92,10 @@ public class ContentType implements IContentType {
 			items.add(tokenizer.nextToken());
 		} while (tokenizer.hasMoreTokens());
 		return (String[]) items.toArray(new String[items.size()]);
+	}
+
+	public boolean isText() {
+		return isKindOf(manager.getContentType(IContentTypeManager.CT_TEXT));
 	}
 
 	static String toListString(List list) {
@@ -193,22 +198,43 @@ public class ContentType implements IContentType {
 	/**
 	 * @see IContentType
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, int optionsMask) throws IOException {
+	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
 		if (aliasTarget != null)
-			return getTarget().getDescriptionFor(contents, optionsMask);
-		IContentDescriber describer = this.getDescriber();
-		if (describer == null)
-			return null;
+			return getTarget().getDescriptionFor(contents, options);
 		ByteArrayInputStream buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return null;
-		ContentDescription description = new ContentDescription();
-		describer.describe(buffer, description, optionsMask);
-		description.setContentType(this);
+		ContentDescription description = new ContentDescription(options);
+		IContentDescriber describer = this.getDescriber();
+		if (describer != null)
+			describer.describe(buffer, description);
 		// check if any of the defaults need to be applied
-		if ((optionsMask & IContentDescription.CHARSET) != 0 && description.getCharset() == null)
-			description.setCharset(getDefaultCharset());
-		description.markAsImmutable();
+		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+		description.setContentType(this);
+		return description;
+	}
+
+	/**
+	 * @see IContentType
+	 */
+	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
+		if (aliasTarget != null)
+			return getTarget().getDescriptionFor(contents, options);
+		CharArrayReader buffer = ContentTypeManager.readBuffer(contents);
+		if (buffer == null)
+			return null;
+		ContentDescription description = new ContentDescription(options);
+		IContentDescriber describer = this.getDescriber();
+		if (describer != null) {
+			if (!(describer instanceof ITextContentDescriber))
+				throw new UnsupportedOperationException();
+			((ITextContentDescriber) describer).describe(buffer, description);
+		}
+		// check if any of the defaults need to be applied
+		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+		description.setContentType(this);
 		return description;
 	}
 

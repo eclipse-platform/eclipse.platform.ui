@@ -15,11 +15,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class XMLContentDescriberTest extends EclipseWorkspaceTest {
-	private final static String XML_WITH_ENCODED_DATA = "<?xml version=\"1.0\" encoding=\"Shift_JIS\"?><root attribute=\"build???SJIS.xml\">";	
+	private final static String XML_WITH_ENCODED_DATA = "<?xml version=\"1.0\" encoding=\"Shift_JIS\"?><root attribute=\"build???SJIS.xml\">";
 
 	public XMLContentDescriberTest() {
 		super();
@@ -30,11 +31,12 @@ public class XMLContentDescriberTest extends EclipseWorkspaceTest {
 	}
 
 	public void testEncodedContents() throws Exception {
-		IContentDescription description = InternalPlatform.getDefault().getContentTypeManager().getDescriptionFor(new ByteArrayInputStream(XML_WITH_ENCODED_DATA.getBytes("Shift_JIS")), "fake.xml", IContentDescription.CHARSET);
+		IContentDescription description = InternalPlatform.getDefault().getContentTypeManager().getDescriptionFor(new ByteArrayInputStream(XML_WITH_ENCODED_DATA.getBytes("Shift_JIS")), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNotNull("1.0", description);
 		assertEquals("1.1", IPlatform.PI_RUNTIME + ".xml", description.getContentType().getId());
-		assertEquals("1.2", "Shift_JIS", description.getCharset());
+		assertEquals("1.2", "Shift_JIS", description.getProperty(IContentDescription.CHARSET));
 	}
+
 	public static Test suite() {
 		return new TestSuite(XMLContentDescriberTest.class);
 	}

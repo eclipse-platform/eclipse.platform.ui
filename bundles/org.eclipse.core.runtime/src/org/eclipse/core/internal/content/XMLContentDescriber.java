@@ -11,20 +11,21 @@
 package org.eclipse.core.internal.content;
 
 import java.io.*;
-import org.eclipse.core.runtime.content.IContentDescriber;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.ITextContentDescriber;
 
 /**
  * A content interpreter for XML files. 
  * 
  * @see "http://www.w3.org/TR/REC-xml *"
  */
-public class XMLContentDescriber implements IContentDescriber {
+public class XMLContentDescriber implements ITextContentDescriber {
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final byte[] XML_PREFIX_BYTES = new byte[] {'<', '?', 'x', 'm', 'l', ' '}; //$NON-NLS-1$
 
-	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
+	public int describe(InputStream input, IContentDescription description) throws IOException {
 		//TODO: support BOM
 		byte[] prefix = new byte[XML_PREFIX.length()];
 		if (input.read(prefix) < prefix.length)
@@ -34,11 +35,13 @@ public class XMLContentDescriber implements IContentDescriber {
 			if (prefix[i] != XML_PREFIX_BYTES[i])
 				// we don't have a XMLDecl... there is not enough info to say anything
 				return INDETERMINATE;
+		if (description == null)
+			return VALID;
 		// describe charset if requested
-		if ((flags & IContentDescription.CHARSET) != 0) {
+		if ((description.isRequested(IContentDescription.CHARSET))) {
 			String fullXMLDecl = readFullXMLDecl(input);
 			if (fullXMLDecl != null)
-				description.setCharset(getCharset(fullXMLDecl));
+				description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
 		}
 		return VALID;
 	}
@@ -52,7 +55,7 @@ public class XMLContentDescriber implements IContentDescriber {
 		return c == '?' ? xmlDecl.toString() : null;
 	}
 
-	public int describe(Reader input, IContentDescription description, int flags) throws IOException {
+	public int describe(Reader input, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
 		String line = reader.readLine();
 		// end of stream
@@ -62,8 +65,8 @@ public class XMLContentDescriber implements IContentDescriber {
 		if (!line.startsWith(XML_PREFIX))
 			return INDETERMINATE;
 		// describe charset if requested
-		if ((flags & IContentDescription.CHARSET) != 0)
-			description.setCharset(getCharset(line));
+		if ((description.isRequested(IContentDescription.CHARSET)))
+			description.setProperty(IContentDescription.CHARSET, getCharset(line));
 		return VALID;
 	}
 
@@ -80,7 +83,7 @@ public class XMLContentDescriber implements IContentDescriber {
 		return firstLine.substring(firstQuote + 1, secondQuote);
 	}
 
-	public int getSupportedOptions() {
-		return IContentDescription.CHARSET;
+	public QualifiedName[] getSupportedOptions() {
+		return new QualifiedName[] {IContentDescription.CHARSET};
 	}
 }

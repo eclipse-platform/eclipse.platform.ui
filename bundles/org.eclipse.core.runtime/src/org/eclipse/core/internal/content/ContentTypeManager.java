@@ -13,8 +13,7 @@ package org.eclipse.core.internal.content;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.osgi.service.prefs.Preferences;
 
@@ -81,6 +80,22 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 	}
 
+	public static CharArrayReader readBuffer(Reader contents) throws IOException {
+		boolean failed = false;
+		try {
+			contents.mark(MARK_LIMIT);
+			char[] buffer = new char[MARK_LIMIT];
+			int read = contents.read(buffer);
+			return read == -1 ? null : new CharArrayReader(buffer, 0, read);
+		} catch (IOException ioe) {
+			failed = true;
+			throw ioe;
+		} finally {
+			if (!failed)
+				contents.reset();
+		}
+	}
+
 	/**
 	 * Constructs a new content type manager.
 	 */
@@ -106,9 +121,17 @@ public class ContentTypeManager implements IContentTypeManager {
 		return new ContentTypeBuilder(this);
 	}
 
-	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description, int optionsMask) throws IOException {
+	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) throws IOException {
 		try {
-			return selectedDescriber.describe(contents, description, optionsMask);
+			return selectedDescriber.describe(contents, description);
+		} finally {
+			contents.reset();
+		}
+	}
+
+	private int describe(final IContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) throws IOException {
+		try {
+			return ((ITextContentDescriber) selectedDescriber).describe(contents, description);
 		} finally {
 			contents.reset();
 		}
@@ -142,18 +165,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		return type.isValid();
 	}
 
-	/*
-	 * "public" to make testing easier 
-	 */
-	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		ByteArrayInputStream buffer = readBuffer(contents);
-		if (buffer == null)
-			return null;
-		if (subset == null)
-			subset = getAllContentTypes();
-		return internalFindContentTypesFor(buffer, subset);
-	}
-
 	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
 		IContentType[] result = findContentTypesFor(contents, subset);
 		return result.length > 0 ? result[0] : null;
@@ -174,6 +185,18 @@ public class ContentTypeManager implements IContentTypeManager {
 		// basic implementation just gets all content types		
 		IContentType[] associated = findContentTypesFor(fileName);
 		return associated.length == 0 ? null : associated[0];
+	}
+
+	/*
+	 * "public" to make testing easier 
+	 */
+	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;
+		if (subset == null)
+			subset = getAllContentTypes();
+		return internalFindContentTypesFor(buffer, subset);
 	}
 
 	/**
@@ -261,7 +284,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	/**
 	 * @see IContentTypeManager
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, int optionsMask) throws IOException {
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
 		// naïve implementation for now
 		ByteArrayInputStream buffer = readBuffer(contents);
 		if (buffer == null)
@@ -270,17 +293,22 @@ public class ContentTypeManager implements IContentTypeManager {
 		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
 		if (selected.length == 0)
 			return null;
-		ContentDescription description = new ContentDescription();
-		description.setContentType(selected[0]);
-		// TODO less-than-optimal: causes stream to be read again
-		IContentDescriber selectedDescriber = ((ContentType) selected[0]).getDescriber();
-		if (selectedDescriber != null && (selectedDescriber.getSupportedOptions() & optionsMask) == optionsMask)
-			describe(selectedDescriber, buffer, description, optionsMask);
-		// check if any of the defaults need to be applied
-		if ((optionsMask & IContentDescription.CHARSET) != 0 && description.getCharset() == null)
-			description.setCharset(selected[0].getDefaultCharset());
-		description.markAsImmutable();
-		return description;
+		return selected[0].getDescriptionFor(contents, options);
+	}
+
+	/**
+	 * @see IContentTypeManager
+	 */
+	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
+		// naïve implementation for now
+		CharArrayReader buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;
+		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
+		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
+		if (selected.length == 0)
+			return null;
+		return selected[0].getDescriptionFor(contents, options);
 	}
 
 	Preferences getPreferences() {
@@ -294,7 +322,31 @@ public class ContentTypeManager implements IContentTypeManager {
 			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
-				status = describe(describer, buffer, null, 0);
+				status = describe(describer, buffer, null);
+				if (status == IContentDescriber.INVALID)
+					continue;
+			}
+			if (status == IContentDescriber.VALID)
+				appropriate.add(valid++, subset[i]);
+			else
+				appropriate.add(subset[i]);
+		}
+		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
+		if (valid > 1)
+			Arrays.sort(result, 0, valid, depthComparator);
+		if (result.length - valid > 1)
+			Arrays.sort(result, valid, result.length, depthComparator);
+		return result;
+	}
+
+	private IContentType[] internalFindContentTypesFor(CharArrayReader buffer, IContentType[] subset) throws IOException {
+		List appropriate = new ArrayList();
+		int valid = 0;
+		for (int i = 0; i < subset.length; i++) {
+			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
+			int status = IContentDescriber.INDETERMINATE;
+			if (describer != null) {
+				status = describe(describer, buffer, null);
 				if (status == IContentDescriber.INVALID)
 					continue;
 			}
@@ -336,27 +388,6 @@ public class ContentTypeManager implements IContentTypeManager {
 			while (j.hasNext())
 				((ContentType) j.next()).setAliasTarget(ellected);
 		}
-	}
-
-	private IContentType moreAppropriate(IContentType type1, IContentType type2) {
-		return isBaseTypeOf(type1, type2) ? type2 : type1;
-	}
-
-	//TODO: should take any user-defined precedences into account
-	//TODO: could pick a common ancestor if two different specific types are deemed appropriate
-	private IContentType mostAppropriate(List candidates) {
-		int candidatesCount = candidates.size();
-		if (candidatesCount == 0)
-			return null;
-		IContentType chosen = (IContentType) candidates.remove(candidatesCount - 1);
-		if (candidatesCount == 1)
-			return chosen;
-		for (Iterator i = candidates.iterator(); i.hasNext();) {
-			IContentType current = (IContentType) i.next();
-			i.remove();
-			chosen = moreAppropriate(chosen, current);
-		}
-		return chosen;
 	}
 
 	protected void reorganize() {
