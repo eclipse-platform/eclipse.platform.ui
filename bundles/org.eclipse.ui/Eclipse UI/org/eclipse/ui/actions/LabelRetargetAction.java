@@ -4,9 +4,10 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.actions.*;
 
 /**
  * A <code>LabelRetargetAction</code> extends the behavior of
@@ -21,7 +22,9 @@ import org.eclipse.ui.actions.*;
 public class LabelRetargetAction extends RetargetAction {
 	private String defaultText;
 	private String defaultToolTipText;
+	private ImageDescriptor defaultImage;
 	private String acceleratorText;
+	
 /**
  * Constructs a LabelRetargetAction.
  */
@@ -46,7 +49,7 @@ protected void propogateChange(PropertyChangeEvent event) {
 	}
 }
 /**
- * Set the action handler.  Update self.
+ * Sets the action handler.  Update self.
  */
 protected void setActionHandler(IAction handler) {
 	// Run the default behavior.
@@ -56,11 +59,26 @@ protected void setActionHandler(IAction handler) {
 	if (handler == null) {
 		super.setText(defaultText);
 		super.setToolTipText(defaultToolTipText);
+		super.setImageDescriptor(defaultImage);
 	} else {
 		super.setText(appendAccelerator(handler.getText()));
 		super.setToolTipText(handler.getToolTipText());
+		ImageDescriptor image = handler.getImageDescriptor();
+		if (image == null) {
+			image = defaultImage;
+		}
+		super.setImageDescriptor(image);
 	}
 }
+
+/**
+ * Sets the action's label image to the given value.
+ */
+public void setImageDescriptor(ImageDescriptor image) {
+	super.setImageDescriptor(image);
+	defaultImage = image;
+}
+
 /**
  * Sets the action's label text to the given value.
  */

@@ -121,6 +121,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction backAction;
 	private RetargetAction forwardAction;
 	private RetargetAction upAction;
+	private RetargetAction nextAction;
+	private RetargetAction previousAction;
+	
 	private RetargetAction buildProjectAction;
 	private RetargetAction rebuildProjectAction;
 	private RetargetAction openProjectAction;
@@ -385,6 +388,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT));
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
+		menu.add(new Separator());
+		menu.add(nextAction);
+		menu.add(previousAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_END));
 		return menu;
@@ -900,11 +906,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			propertiesAction.setAccelerator(SWT.ALT | SWT.CR);
 			moveAction = createGlobalAction(IWorkbenchActionConstants.MOVE, "edit", false); //$NON-NLS-1$
 			renameAction = createGlobalAction(IWorkbenchActionConstants.RENAME, "edit", false); //$NON-NLS-1$
-	//		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
 			goIntoAction = createGlobalAction(IWorkbenchActionConstants.GO_INTO, "navigate", false); //$NON-NLS-1$
 			backAction = createGlobalAction(IWorkbenchActionConstants.BACK, "navigate", true); //$NON-NLS-1$
 			forwardAction = createGlobalAction(IWorkbenchActionConstants.FORWARD, "navigate", true); //$NON-NLS-1$
 			upAction = createGlobalAction(IWorkbenchActionConstants.UP, "navigate", true); //$NON-NLS-1$
+			nextAction = createGlobalAction(IWorkbenchActionConstants.NEXT, "navigate", true); //$NON-NLS-1$
+			nextAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEXT_NAV));
+			previousAction = createGlobalAction(IWorkbenchActionConstants.PREVIOUS, "navigate", true); //$NON-NLS-1$
+			previousAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PREVIOUS_NAV));
 			buildProjectAction = createGlobalAction(IWorkbenchActionConstants.BUILD_PROJECT, "project", false); //$NON-NLS-1$
 			rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
 			openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$

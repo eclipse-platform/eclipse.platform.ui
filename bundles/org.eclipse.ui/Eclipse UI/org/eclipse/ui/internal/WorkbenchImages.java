@@ -199,6 +199,10 @@ private final static void declareImages() {
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_HOVER, PATH_CLOCALTOOL+"home_nav.gif");
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_DISABLED, PATH_DLOCALTOOL+"home_nav.gif");
 
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEXT_NAV, PATH_CTOOL+"next_nav.gif");//$NON-NLS-1$
+
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PREVIOUS_NAV, PATH_CTOOL+"prev_nav.gif");//$NON-NLS-1$
+
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE, PATH_EVIEW+"new_persp.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER, PATH_CVIEW+"new_persp.gif");//$NON-NLS-1$
 //	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_DISABLED, PATH_DTOOL+"new_page.gif");

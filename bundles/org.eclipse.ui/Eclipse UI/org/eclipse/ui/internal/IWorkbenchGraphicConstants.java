@@ -102,6 +102,9 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_HOME_NAV_HOVER = "IMG_CTOOL_HOME_NAV_HOVER"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_HOME_NAV_DISABLED = "IMG_CTOOL_HOME_NAV_DISABLED"; //$NON-NLS-1$
 
+	public final static String IMG_CTOOL_NEXT_NAV = "IMG_CTOOL_NEXT_NAV"; //$NON-NLS-1$
+	public final static String IMG_CTOOL_PREVIOUS_NAV = "IMG_CTOOL_PREVIOUS_NAV"; //$NON-NLS-1$
+	
 	public final static String IMG_CTOOL_NEW_PAGE = "IMG_CTOOL_NEW_PAGE"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_NEW_PAGE_HOVER = "IMG_CTOOL_NEW_PAGE_HOVER"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_NEW_PAGE_DISABLED = "IMG_CTOOL_NEW_PAGE_DISABLED"; //$NON-NLS-1$

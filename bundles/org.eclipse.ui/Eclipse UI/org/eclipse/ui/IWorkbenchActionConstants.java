@@ -524,6 +524,18 @@ public interface IWorkbenchActionConstants {
 	public static final String UP = "up";	// Global action. //$NON-NLS-1$
 
 	/**
+	 * Navigate menu: name of standard Next global action
+	 * (value <code>"next"</code>).
+	 */
+	public static final String NEXT = "next";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Navigate menu: name of standard Up global action
+	 * (value <code>"previous"</code>).
+	 */
+	public static final String PREVIOUS = "previous";	// Global action. //$NON-NLS-1$
+
+	/**
 	 * Project menu: name of group for start of menu
 	 * (value <code>"projStart"</code>).
 	 */
