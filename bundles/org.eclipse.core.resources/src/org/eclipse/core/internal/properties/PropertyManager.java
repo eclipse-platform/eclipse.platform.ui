@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -138,7 +138,7 @@ protected PropertyStore getPropertyStore(IResource target) throws CoreException 
 		Resource host = (Resource) getPropertyHost(target);
 		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
 		if (info == null) {
-			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Policy.bind("properties.storeNotAvailable", target.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		PropertyStore store = info.getPropertyStore();
@@ -148,7 +148,7 @@ protected PropertyStore getPropertyStore(IResource target) throws CoreException 
 	} catch (Exception e) {
 		if (e instanceof CoreException)
 			throw (CoreException)e;
-		String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString()); //$NON-NLS-1$
+		String message = Policy.bind("properties.storeNotAvailable", target.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 	}
 }
