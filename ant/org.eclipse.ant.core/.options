@@ -2,6 +2,3 @@
 
 # Turn on debugging for the org.eclipse.ant.core plugin.
 org.eclipse.ant.core/debug=true
-
-# Displays buildfile run times.
-org.eclipse.ant.core/buildfile/timing=false
