@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.protocols;
 import java.io.*;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
@@ -51,7 +52,10 @@ public class PluginURL extends HelpURL {
 			if (end == -1)
 				end = url.length();
 			file = url.substring(start, end);
-			file = URLCoder.decode(file);
+			try {
+				file = URLDecoder.decode(file, "UTF8");
+			} catch (UnsupportedEncodingException uee) {
+			}
 		}
 		return file;
 	}
@@ -60,7 +64,10 @@ public class PluginURL extends HelpURL {
 			// Assume the url is pluginID/path_to_topic.html
 			int i = url.indexOf('/');
 			String pluginId = i == -1 ? "" : url.substring(0, i);
-			pluginId = URLCoder.decode(pluginId);
+			try {
+				pluginId = URLDecoder.decode(pluginId, "UTF8");
+			} catch (UnsupportedEncodingException uee) {
+			}
 			plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		}
 		return plugin;

@@ -36,12 +36,7 @@ function liveActionInternal(topHelpWindow, pluginId, className, argument)
 		i = url.lastIndexOf("/");
 
 	url=url.substring(0, i+1);
-	var encodedArg;
-	if(window.encodeURIComponent){
-		encodedArg=encodeURIComponent(argument);
-	}else{
-		encodedArg=escape(argument);
-	}
+	var encodedArg=encodeURIComponent(argument);
 	url=url+"livehelp/?pluginID="+pluginId+"&class="+className+"&arg="+encodedArg+"&nocaching="+Math.random();
 
 	// we need to find the toolbar frame.

@@ -44,7 +44,7 @@ public class QueryBuilder {
 			this.locale =
 				new Locale(language.substring(0, 2), language.substring(3, 5));
 		} else {
-			this.locale = new Locale(language.substring(0, 2), "");
+			this.locale = new Locale(language.substring(0, 2));
 		}
 		this.analyzerDesc = analyzerDesc;
 		this.analyzer = analyzerDesc.getAnalyzer();

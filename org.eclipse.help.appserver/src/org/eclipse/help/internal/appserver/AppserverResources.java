@@ -182,7 +182,7 @@ class AppserverResources {
 		// break the string into tokens to get the Locale object
 		StringTokenizer locales = new StringTokenizer(nl, "_");
 		if (locales.countTokens() == 1)
-			return new Locale(locales.nextToken(), "");
+			return new Locale(locales.nextToken());
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)

@@ -130,10 +130,10 @@ function selectWorkingSet() {
 		search = "?";
 	}
 
-	search += "workingSet=" + escape(workingSet)+"&encoding=js";
+	search += "workingSet=" + encodeURIComponent(workingSet);
 	var searchWord = window.opener.document.forms["searchForm"].searchWord.value;
 	if (searchWord)
-		search += "&searchWord="+escape(searchWord);
+		search += "&searchWord="+encodeURIComponent(searchWord);
 		
 	window.opener.location.replace(
 		window.opener.location.protocol +
@@ -146,7 +146,7 @@ function selectWorkingSet() {
 }
 
 function removeWorkingSet() {
-	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+escape(getWorkingSet())+"&encoding=js");
+	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+encodeURIComponent(getWorkingSet()));
 }
 
 var workingSetDialog;
@@ -170,7 +170,7 @@ function newWorkingSet() {
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 		
-	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+escape(getWorkingSet())+"&encoding=js", "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
+	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+encodeURIComponent(getWorkingSet()), "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
 	workingSetDialog.focus(); 
 }
 
@@ -192,7 +192,7 @@ function editWorkingSet() {
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 		
-	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+escape(getWorkingSet())+"&encoding=js", "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+encodeURIComponent(getWorkingSet()), "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	workingSetDialog.focus(); 
 }
 

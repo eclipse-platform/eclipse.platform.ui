@@ -154,7 +154,7 @@ function doSubmit()
 		if (!hrefs || hrefs == "")
 			return false;
 
-		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ hrefs+"&oldName="+escape(oldName)+"&encoding=js";
+		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+"&oldName="+encodeURIComponent(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
 		window.close();
@@ -170,9 +170,9 @@ function getSelectedResources() {
 		if (inputs[i].checked == false) continue;
 		if (getGrayed(inputs[i])) continue;
 		if (isToc(inputs[i].name)) {
-			hrefs += "&hrefs="+escape(inputs[i].name);
+			hrefs += "&hrefs="+encodeURIComponent(inputs[i].name);
 		} else if (!isParentTocSelected(inputs[i].name)) {
-			hrefs += "&hrefs="+escape(inputs[i].name);
+			hrefs += "&hrefs="+encodeURIComponent(inputs[i].name);
 		}
 	}
 	return hrefs;

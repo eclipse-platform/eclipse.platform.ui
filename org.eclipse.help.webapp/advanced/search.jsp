@@ -140,7 +140,7 @@ if (data.isIE()){
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 	
-	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet)+"&encoding=js", "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	advancedDialog = window.open("workingSetManager.jsp?workingSet="+encodeURIComponent(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	advancedDialog.focus(); 
 }
 
@@ -168,11 +168,10 @@ function doSearch(query)
 		var maxHits = form.maxHits.value;
 		if (!searchWord || searchWord == "")
 			return;
-		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
+		query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits;
 		if (workingSet != '<%=ServletResources.getString("All", request)%>')
-			query = query +"&scope="+escape(workingSet);
+			query = query +"&scope="+encodeURIComponent(workingSet);
 	}
-	query=query+"&encoding=js";
 		
 	/******** HARD CODED VIEW NAME *********/
 	// do some tests to ensure the results are available

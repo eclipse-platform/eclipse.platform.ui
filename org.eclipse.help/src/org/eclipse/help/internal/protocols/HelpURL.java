@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.protocols;
 
-
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * Manages a help URL.  Note that there is a limitation in handling
@@ -28,7 +27,7 @@ public class HelpURL {
 	protected HashMap arguments = null;
 	protected long contentSize; // length of input data
 	protected String locale;
-	
+
 	/**
 	 * HelpURL constructor comment.
 	 */
@@ -65,24 +64,18 @@ public class HelpURL {
 		String file = url.toLowerCase(Locale.US);
 		if (file.endsWith(".html") || file.endsWith(".htm"))
 			return "text/html";
-		else
-			if (file.endsWith(".css"))
-				return "text/css";
-			else
-				if (file.endsWith(".gif"))
-					return "image/gif";
-				else
-					if (file.endsWith(".jpg"))
-						return "image/jpeg";
-					else
-						if (file.endsWith(".pdf"))
-							return "application/pdf";
-						else
-							if (file.endsWith(".xml"))
-								return "application/xml";
-							else
-								if (file.endsWith(".xsl"))
-									return "application/xsl";
+		else if (file.endsWith(".css"))
+			return "text/css";
+		else if (file.endsWith(".gif"))
+			return "image/gif";
+		else if (file.endsWith(".jpg"))
+			return "image/jpeg";
+		else if (file.endsWith(".pdf"))
+			return "application/pdf";
+		else if (file.endsWith(".xml"))
+			return "application/xml";
+		else if (file.endsWith(".xsl"))
+			return "application/xsl";
 		return "text/plain";
 	}
 	/**
@@ -108,33 +101,31 @@ public class HelpURL {
 		String stringValue = null;
 		if (value instanceof String)
 			stringValue = (String) value;
+		else if (value instanceof Vector)
+			stringValue = (String) ((Vector) value).firstElement();
 		else
-			if (value instanceof Vector)
-				stringValue = (String) ((Vector) value).firstElement();
-			else
-				return null;
+			return null;
 		try {
-			return URLCoder.decode(stringValue);
+			return URLDecoder.decode(stringValue, "UTF8");
 		} catch (Exception e) {
 			return null;
 		}
 
 	}
-	
+
 	/**
 	 * Returns the locale specified by client.
 	 */
-	protected String getLocale()
-	{	
+	protected String getLocale() {
 		if (locale != null)
 			return locale;
-			
+
 		locale = getValue(lang);
 		if (locale == null)
 			locale = BootLoader.getNL();
 		if (locale == null)
 			locale = Locale.getDefault().toString();
-		
+
 		return locale;
 	}
 	// this returns whether or not a response created for a request
@@ -170,16 +161,15 @@ public class HelpURL {
 					Object existing = arguments.get(arg);
 					if (existing == null)
 						arguments.put(arg, val);
-					else
-						if (existing instanceof Vector) {
-							((Vector) existing).add(val);
-							arguments.put(arg, existing);
-						} else {
-							Vector v = new Vector(2);
-							v.add(existing);
-							v.add(val);
-							arguments.put(arg, v);
-						}
+					else if (existing instanceof Vector) {
+						((Vector) existing).add(val);
+						arguments.put(arg, existing);
+					} else {
+						Vector v = new Vector(2);
+						v.add(existing);
+						v.add(val);
+						arguments.put(arg, v);
+					}
 				}
 			}
 		}

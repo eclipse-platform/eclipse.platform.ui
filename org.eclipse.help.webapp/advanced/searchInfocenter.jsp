@@ -130,7 +130,7 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "resizeable=no,height="+h+",width="+w );
+	advancedDialog = window.open("advanced.jsp?searchWord="+encodeURIComponent(document.getElementById("searchWord").value), "advancedDialog", "resizeable=no,height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 
@@ -157,9 +157,8 @@ function doSearch(query)
 		var maxHits = form.maxHits.value;
 		if (!searchWord || searchWord == "")
 			return;
-		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
+		query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits;
 	}
-	query=query+"&encoding=js";
 		
 	/******** HARD CODED VIEW NAME *********/
 	// do some tests to ensure the results are available
