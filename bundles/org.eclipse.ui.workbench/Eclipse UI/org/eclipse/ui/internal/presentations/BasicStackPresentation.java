@@ -455,12 +455,9 @@ public class BasicStackPresentation extends StackPresentation {
 			return "";
 		} 
 		
-		String result = current.getTitle();
-		if (result.equals(current.getName())) {
-			return "";
-		}
+		String result = current.getTitleStatus();
 		
-		return result + " ";
+		return result;
 	}
 	
 	/**

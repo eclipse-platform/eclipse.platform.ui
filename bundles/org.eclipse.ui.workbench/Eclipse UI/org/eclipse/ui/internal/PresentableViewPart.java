@@ -156,6 +156,36 @@ public class PresentableViewPart implements IPresentablePart {
 	public Control getControl() {
 		return pane.getControl();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getTitleStatus()
+	 */
+	public String getTitleStatus() {
+		String title = getTitle();
+		
+		String name = getName();
+		
+		// Return the empty string if the title is unmodified
+		if (title.equals(name)) {
+			return new String();
+		} 
+
+		if (title.startsWith(name)) {
+			String substr = title.substring(name.length(), title.length());
+			
+			substr = substr.trim();
+			
+			if (substr.startsWith("(")) {
+				int end = substr.indexOf(")", 1);
+				
+				if (end != -1) {
+					return substr.substring(1, end);
+				}
+			}			
+		}
+		
+		return title;
+	}
 	
 	
 }

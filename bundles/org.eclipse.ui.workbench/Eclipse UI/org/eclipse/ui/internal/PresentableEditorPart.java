@@ -121,4 +121,11 @@ public class PresentableEditorPart implements IPresentablePart {
 	public Control getControl() {
 		return pane.getControl();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getTitleStatus()
+	 */
+	public String getTitleStatus() {
+		return new String();
+	}
 }

@@ -131,6 +131,20 @@ public interface IPresentablePart {
 	 * @return the workbench part title
 	 */
 	public String getTitle();
+
+	/**
+	 * Returns the status message from the part's title, or the empty string if none. 
+	 * This is a substring of the part's title. A typical title will consist of
+	 * the part name, a separator, and a status message describing the current contents.
+	 * <p>
+	 * Presentations can query getName() and getTitleStatus() if they want to display
+	 * the status message and name separately, or they can use getTitle() if they want
+	 * to display the entire title.
+	 * </p> 
+	 * 
+	 * @return the status message or the empty string if none
+	 */
+	public String getTitleStatus();
 	
 	/**
 	 * Returns the title image of this workbench part.  If this value changes 
