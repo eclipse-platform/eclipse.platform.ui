@@ -2008,8 +2008,7 @@ protected void saveToolBarLayout() {
 	IToolBarManager toolsMgr = window.getToolsManager();
 	if (toolsMgr instanceof CoolBarManager) {
 		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		CoolBarLayout layout = coolBarMgr.getLayout();
-		persp.setToolBarLayout(layout);
+		coolBarMgr.saveLayoutFor(persp);
 	}
 }
 /**
@@ -2248,8 +2247,7 @@ protected void setToolBarLayout() {
 	IToolBarManager mgr = window.getToolsManager();
 	if (mgr instanceof CoolBarManager) {
 		CoolBarManager coolBarMgr = (CoolBarManager)mgr;
-		CoolBarLayout layout = persp.getToolBarLayout();
-		coolBarMgr.setLayout(layout);
+		coolBarMgr.setLayoutFor(persp);
 	}
 }
 /**

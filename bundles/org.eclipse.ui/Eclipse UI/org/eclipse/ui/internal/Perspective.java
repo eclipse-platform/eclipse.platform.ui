@@ -750,7 +750,8 @@ public IStatus restoreState(IMemento memento) {
 	IMemento layoutMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
 	if (layoutMem != null) {
 		toolBarLayout = new CoolBarLayout();
-		result.add(toolBarLayout.restoreState(layoutMem));
+		boolean success = toolBarLayout.restoreState(layoutMem);
+		if (!success) toolBarLayout = null;
 	}	
 	this.memento = memento;
 	// Add the visible views.

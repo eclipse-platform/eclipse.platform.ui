@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 
 /**
- * WORK IN PROGRESS FOR COOLBAR SUPPORT
  */
 public class CoolBarManager extends ContributionManager implements IToolBarManager {
 	/** 
@@ -39,6 +38,26 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private MenuManager coolBarMenuManager = new MenuManager();
 
+	/** 
+	 * Flag to track whether or not to remember coolbar item positions when an item
+	 * is deleted.
+	 */
+	private boolean rememberPositions = false;
+	/** 
+	 * Stack for remembering positions of coolitems that have been removed.
+	 */
+	private ArrayList rememberedPositions = new ArrayList();
+	
+	private class RestoreItemData {
+		CoolItemPosition savedPosition;
+		String beforeItemId;
+		String afterItemId;
+		int beforeIndex = -1;
+		int afterIndex = -1;
+		
+		RestoreItemData() {
+		}
+	}
 	/**
 	 */
 	public CoolBarManager() {
@@ -117,6 +136,27 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	private CoolItem createCoolItem(CoolBarContributionItem cbItem, ToolBar toolBar) {
 		CoolItem coolItem;
 		toolBar.setVisible(true);
+		CoolItemPosition position = getRememberedPosition(cbItem.getId());
+		if (position != null) {
+			coolItem = createRememberedCoolItem(cbItem, toolBar, position);
+		} else {
+			coolItem = createNewCoolItem(cbItem, toolBar);
+		}
+		coolItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (event.detail == SWT.ARROW) {
+					handleChevron(event);
+				}
+			}
+		});	
+		return coolItem;
+	}
+	/**
+	 * Create a new coolbar item for the given contribution item.  Put the item in its original 
+	 * creation position.
+	 */
+	private CoolItem createNewCoolItem(CoolBarContributionItem cbItem, ToolBar toolBar) {
+		CoolItem coolItem;
 		int index = -1;
 		if (cbItem.isOrderBefore()) {
 			index = getInsertBeforeIndex(cbItem);
@@ -133,18 +173,93 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolItem.setData(cbItem);
 		setSizeFor(coolItem);
 					
-		coolItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				if (event.detail == SWT.ARROW) {
-					handleChevron(event);
-				}
-			}
-		});
 		return coolItem;
 	}
 	/**
+	 * Create a new coolbar item for the given contribution item.  Put the item in its rememberedl 
+	 * position.
 	 */
-	/* package */ void dispose(CoolBarContributionItem cbItem) {
+	private CoolItem createRememberedCoolItem(CoolBarContributionItem cbItem, ToolBar toolBar, CoolItemPosition position) {		
+		RestoreItemData data = getRestoreData(cbItem, position);		
+		int savedAfterRow = -1;
+		int savedBeforeRow = -1;
+		int savedItemRow = data.savedPosition.getRowOf(cbItem.getId());
+		if (data.afterItemId != null) savedAfterRow = data.savedPosition.getRowOf(data.afterItemId);
+		if (data.beforeItemId != null) savedBeforeRow = data.savedPosition.getRowOf(data.beforeItemId);
+
+		int createIndex = -1;
+		int[] newWraps = null;
+		CoolBarLayout currentLayout = getLayout();
+		
+		// figure out where to place the item and how to adjust the wrap indices.
+		if (data.afterIndex != -1 && data.beforeIndex != -1) {
+			// the exact position to place the item was found
+			if ((savedItemRow == savedAfterRow) || (savedItemRow == savedBeforeRow)) {
+				int row;
+				if (savedItemRow == savedAfterRow) {
+					createIndex = data.afterIndex;
+					row = currentLayout.getRowOfIndex(createIndex);
+				} else {
+					createIndex = data.beforeIndex + 1;
+					row = currentLayout.getRowOfIndex(data.beforeIndex);
+				}
+				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
+			} else {
+				// add the item on a row by itself
+				createIndex = data.afterIndex;
+				int row = currentLayout.getRowOfIndex(createIndex);
+ 				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
+			}
+		} else if (data.afterIndex != -1) {
+			createIndex = data.afterIndex;
+			if (savedItemRow == savedAfterRow) {
+				int row = currentLayout.getRowOfIndex(createIndex);
+				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
+			} else {
+				// create new row before the row that afterIndex is on [if the item
+				// being restored has items before it in its saved layout????]
+				createIndex = data.afterIndex;
+				int row = currentLayout.getRowOfIndex(createIndex);
+				if (row != 0) row--;
+ 				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
+			}
+		} else if (data.beforeIndex != -1) {
+			createIndex = data.beforeIndex + 1;
+			if (savedItemRow == savedBeforeRow) {
+				int row = currentLayout.getRowOfIndex(data.beforeIndex);
+				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
+			} else {
+				// create a new row after the row on which beforeIndex is [if the item
+				// being restored has items after it in its saved layout????]
+				int row = currentLayout.getRowOfIndex(data.beforeIndex);
+				row++;
+ 				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
+			}
+		} else {
+			// add the item to the end of the coolbar
+			createIndex = coolBar.getItemCount();
+		}
+
+		// create the item
+// workaround for SWT 22055 bug
+if (newWraps != null) coolBar.setRedraw(false);
+		CoolItem coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, createIndex);
+		coolItem.setControl(toolBar);
+		coolItem.setData(cbItem);
+//		setSizeFor(coolItem, position.getSizeOf(cbItem.getId()).x);
+		setSizeFor(coolItem);
+		if (newWraps != null)	{
+			coolBar.setWrapIndices(newWraps);
+coolBar.setRedraw(true);
+		}
+		
+		positionAdded(position);
+		
+		return coolItem;
+	}	
+	/**
+	 */
+	private void dispose(CoolBarContributionItem cbItem) {
 		CoolItem coolItem = findCoolItem(cbItem);
 		if (coolItem != null) {
 			dispose(coolItem);
@@ -156,6 +271,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private void dispose(CoolItem coolItem) {
 		if ((coolItem != null) && !coolItem.isDisposed()) {
+			CoolBarContributionItem cbItem = (CoolBarContributionItem)coolItem.getData();
+			if (cbItem != null && rememberPositions) rememberPositionFor(cbItem.getId(), getLayout());
 			coolItem.setData(null);
 			Control control = coolItem.getControl();
 			// if the control is already disposed, setting the coolitem
@@ -211,31 +328,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		return null;
 	}
-	/** 
-	 * Return a consistent set of wrap indices.  The return value
-	 * will always include at least one entry and the first entry will 
-	 * always be zero.  CoolBar.getWrapIndices() is inconsistent 
-	 * in whether or not it returns an index for the first row when one
-	 * row exists.
-	 */
-	private int[] getAdjustedWrapIndices() {
-		int[] wrapIndices = coolBar.getWrapIndices();
-		int[] adjustedWrapIndices;
-		if (wrapIndices.length == 0) {
-			adjustedWrapIndices = new int[] { 0 };
-		} else {
-			if (wrapIndices[0] != 0) {
-				adjustedWrapIndices = new int[wrapIndices.length + 1];
-				adjustedWrapIndices[0] = 0;
-				for (int i = 0; i < wrapIndices.length; i++) {
-					adjustedWrapIndices[i + 1] = wrapIndices[i];
-				}
-			} else {
-				adjustedWrapIndices = wrapIndices;
-			}
-		}
-		return adjustedWrapIndices;
-	}
 	/**
 	 */
 	private ArrayList getContributionIds() {
@@ -264,6 +356,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/* package */ CoolBar getControl() {
 		return coolBar;
 	}
+	/**
+	 */
 	private int getInsertAfterIndex(CoolBarContributionItem coolBarItem) {
 		IContributionItem[] items = getItems();
 		int index = -1;
@@ -294,6 +388,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		return index;
 	}
+	/**
+	 */
 	private int getInsertBeforeIndex(CoolBarContributionItem coolBarItem) {
 		IContributionItem[] items = getItems();
 		int index = -1;
@@ -324,57 +420,122 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		return index;
 	}
 	/**
-	 *  @return a int array that contains the index of the last item of each row
-	 *  (FH: helper method)
 	 */
-	private int[] getLastItemIndices() {
-		int count = coolBar.getItemCount();
-		int[] indices = coolBar.getWrapIndices();
-		int n = indices.length;
-		if (n == 0) {
-			return count == 0 ? new int[0] : new int[] { count - 1 };
-		}
-		else {
-			// convert from first item indices to last item indices
-			for (int i = 0; i < n - 1; ++i) {
-				indices[i] = indices[i+1] - 1;
-			}
-			indices[n - 1] = count - 1;
-		}
-		return indices;
-	}
-	/**
-	 */
-	/* package */ CoolBarLayout getLayout() {
+	private CoolBarLayout getLayout() {
 		if (!coolBarExist())
-			return null;
-	
-		CoolBarLayout layout = new CoolBarLayout();
-		CoolItem[] coolItems = coolBar.getItems();
-		ArrayList newItems = new ArrayList(coolItems.length);
-		for (int i = 0; i < coolItems.length; i++) {
-			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
-			if (item != null) {
-				newItems.add(item.getId());
-			}
-		}
-		layout.items = newItems;
-		layout.itemSizes = coolBar.getItemSizes();
-		layout.itemWrapIndices = coolBar.getWrapIndices();
-	
-		//FH -> Save the preferred size as actual size for the last item on a row
-		int[] lastIndices = getLastItemIndices();
-		for (int i = 0; i < lastIndices.length; i++) {
-			int lastIndex = lastIndices[i];
-			if (lastIndex >= 0 && lastIndex < coolItems.length) {
-				CoolItem lastItem = coolItems[lastIndex];
-				layout.itemSizes[lastIndex] = lastItem.getPreferredSize();
-			}
-		}
+			return null;	
+		CoolBarLayout layout = new CoolBarLayout(coolBar);
+		layout.rememberedPositions = new ArrayList();
+		layout.rememberedPositions.addAll(rememberedPositions);
 		return layout;
 	}
+	private RestoreItemData getRestoreData(CoolBarContributionItem cbItem, CoolItemPosition position) {
+		RestoreItemData bestMatch = new RestoreItemData();		
+		ArrayList coolBarItems = getLayout().items;
+		
+		// Look at the remembered layouts starting at the layout for the item and heading 
+		// down the stack looking for the best saved layout to use for restoring the 
+		// item position.  Stop processing when an exact match is found or the position of
+		// the item has changed in the remembered layouts.
+		int startIndex = rememberedPositions.indexOf(position);
+		CoolBarLayout previousLayout = null;
+		for (int i=startIndex; i < rememberedPositions.size(); i++) {			
+			CoolItemPosition savedPosition = (CoolItemPosition)rememberedPositions.get(i);
+			ArrayList savedItems = savedPosition.getItems();
+			
+			// the item we are trying to restore is not in the saved layout, so stop
+			int savedItemIndex = savedItems.indexOf(cbItem.getId());
+			if (savedItemIndex == -1) break;
+				
+			// if the previousLayout is not similar to the next layout,
+			// stop processing
+			if (previousLayout != null) {
+				if (!previousLayout.isDerivativeOf(savedPosition.layout)) break;
+			}
+			
+			boolean afterBeforeItemFound = bestMatch.afterIndex != -1 && bestMatch.beforeIndex != -1;
+			
+			String afterId = null;
+			String beforeId = null;	
+			int beforeIndex = -1;
+			int afterIndex = -1;	
+					
+			// look at the saved items after savedItemIndex, see if any of these items
+			// is in the current coolbar layout
+			for (int j = savedItemIndex + 1; j < savedItems.size(); j++) {
+				//
+				afterId = (String)savedItems.get(j);
+				afterIndex = coolBarItems.indexOf(afterId);
+				if (afterIndex != -1) {
+					break;
+				}
+			}
+			// look at the saved items before savedItemIndex, see if any of these items
+			// is in the current coolbar layout
+			for (int j = savedItemIndex - 1; j >= 0; j--) {
+				//
+				beforeId = (String)savedItems.get(j);
+				beforeIndex = coolBarItems.indexOf(beforeId);
+				if (beforeIndex != -1) {
+					break;
+				}
+			}
+			if (beforeIndex != -1 && afterIndex != -1) {
+				// test whether or not we've found an exact position, 
+				// if we have use this savedPosition
+				if (beforeIndex + 1 == afterIndex) {
+					bestMatch.savedPosition = savedPosition;
+					bestMatch.afterItemId = afterId;
+					bestMatch.afterIndex = afterIndex;
+					bestMatch.beforeItemId = beforeId;
+					bestMatch.beforeIndex = beforeIndex;
+					break;
+				} else {
+					bestMatch.savedPosition = savedPosition;
+					bestMatch.afterItemId = afterId;
+					bestMatch.afterIndex = afterIndex;
+					bestMatch.beforeItemId = beforeId;
+					bestMatch.beforeIndex = beforeIndex;
+				}
+			} else if (beforeIndex != -1) {
+				// If we found both items previously, that is the best match.
+				// This condition can happen if items were added between this 
+				// savedPosition and the previous savedPosition.
+				if (afterBeforeItemFound) break;
+				bestMatch.savedPosition = savedPosition;
+				bestMatch.beforeItemId = beforeId;
+				bestMatch.beforeIndex = beforeIndex;
+				bestMatch.afterItemId = null;
+				bestMatch.afterIndex = -1;
+			} else if (afterIndex != -1) {
+				// If we found both items previously, that is the best match. 
+				// This condition can happen if items were added between this 
+				// savedPosition and the previous savedPosition.
+				if (afterBeforeItemFound) break;
+				bestMatch.savedPosition = savedPosition;
+				bestMatch.afterItemId = afterId;
+				bestMatch.afterIndex = afterIndex;
+				bestMatch.beforeItemId = null;
+				bestMatch.beforeIndex = -1;
+			} else {
+				// nothing found
+				break;
+			}
+			previousLayout = savedPosition.layout;
+		}
+		return bestMatch;
+	}
 	/**
+	 * Return the remembered position for the given CoolBarContributionItem.  If a position
+	 * was not remembered, return null.
 	 */
+	private CoolItemPosition getRememberedPosition (String cbItemId) {
+		for (int i=0; i<rememberedPositions.size(); i++) {
+			CoolItemPosition position = (CoolItemPosition)rememberedPositions.get(i);
+			if (position.id.equals(cbItemId) && !position.added) return position;
+		}
+		return null;
+	}
 	/* package */ int getStyle() {
 		return style;
 	}
@@ -512,6 +673,48 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolBarMenu.setVisible(true);
 	}
 	/**
+	 */
+	private void positionAdded(CoolItemPosition position) {
+		// mark the position as added back
+		position.added = true;
+	
+		// remembered positions on the top of the stack that have been added can be removed
+		boolean done =  rememberedPositions.size() == 0;
+		while (!done) {
+			CoolItemPosition topLayout = (CoolItemPosition)rememberedPositions.get(0);
+			if (topLayout.added) {
+				rememberedPositions.remove(0);
+				done = rememberedPositions.size() == 0;
+			} else {
+				done = true;
+			}			
+		}
+		// all except the least recently added position in a set of contiguously added positions
+		// can be removed from the stack within each g
+		int testIndex = 1;
+		done =  testIndex + 1 > rememberedPositions.size() - 1;
+		while (!done) {
+			CoolItemPosition pos = (CoolItemPosition)rememberedPositions.get(testIndex);
+			if (pos.added) {
+				CoolItemPosition nextPos = (CoolItemPosition)rememberedPositions.get(testIndex + 1);
+				CoolItemPosition prevPos = (CoolItemPosition)rememberedPositions.get(testIndex - 1);
+				boolean nextSameGroup = pos.layout.isDerivativeOf(nextPos.layout);
+				boolean prevSameGroup = prevPos.layout.isDerivativeOf(pos.layout);
+				if (!nextSameGroup && !prevSameGroup) {
+					// only item in this group
+					rememberedPositions.remove(testIndex);
+				} else if (nextPos.added && nextSameGroup && !prevSameGroup) {
+					rememberedPositions.remove(testIndex);
+				} else {
+					testIndex++;
+				}
+			} else {
+				testIndex++;
+			}
+			done = testIndex + 1 > rememberedPositions.size() - 1; 
+		}	
+	}
+	/**
 	 * Layout out the coolbar items so that each one is sized to its preferred size.
 	 */
 	/* package */ void redoLayout() {
@@ -523,6 +726,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			CoolItem coolItem = coolItems[i];
 			setSizeFor(coolItem);
 		}
+		// clear any remembered data
+		rememberedPositions = new ArrayList();
 		relayout();		
 	}
 	/**
@@ -558,8 +763,41 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolBar.getParent().layout();
 	}
 	/**
+	 * Save the position of the given CoolItem for restoring the item later.
 	 */
-	/* package */ void setLayout(CoolBarLayout layout) {
+	private CoolItemPosition rememberPositionFor(String cbItemId, CoolBarLayout layout) {
+		// create a CoolItemPosition for the given cbItem, no need to save 
+		// remembered positions as part of the layout
+		layout.rememberedPositions = new ArrayList();
+		CoolItemPosition position = new CoolItemPosition(cbItemId, layout);
+		
+		// remove the previously remembered position for the item if
+		// it exists
+		int index = -1;
+		for (int i=0; i<rememberedPositions.size(); i++) {
+			CoolItemPosition item = (CoolItemPosition)rememberedPositions.get(i);
+			if (position.id.equals(item.id)) index = i;
+		}
+		if (index != -1) rememberedPositions.remove(index);
+		
+		// add the position to the beginning of the stack of remembered
+		// positions
+		rememberedPositions.add(0, position);
+		return position;
+	}
+	void saveLayoutFor(Perspective perspective) {
+		perspective.setToolBarLayout(getLayout());
+		rememberPositions = false;
+		rememberedPositions = new ArrayList();
+	}
+	void setLayoutFor(Perspective perspective) {
+		rememberedPositions = new ArrayList();
+		setLayout(perspective.getToolBarLayout());
+		rememberPositions = true;
+	}
+	/**
+	 */
+	private void setLayout(CoolBarLayout layout) {
 		try {
 			setLayoutTo(layout);
 		} catch (Exception e) {
@@ -601,7 +839,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			return;
 		}
 
-
 		int maxItemCount = coolBar.getItemCount();
 		int[] itemOrder = new int[maxItemCount];
 		Point[] itemSizes = new Point[maxItemCount];
@@ -632,15 +869,21 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			itemOrder[count]=((Integer)foundItemOrder.elementAt(count)).intValue();
 			itemSizes[count]=(Point)foundItemSizes.elementAt(count);
 		}
+		
+		rememberedPositions = layout.rememberedPositions;
 		// Handle those items that are on the coolbar, but not in the layout.
-		// Just add these items at the end of the coolbar.
-		ArrayList addedItems = new ArrayList();
+		// Just add these items at the end of the coolbar for now.
+		ArrayList rememberedAddedItems = new ArrayList();
 		for (int i=0; i<found.length; i++) {
 			if (found[i] == -1) {
 				itemOrder[count]=i;
-				CoolItem cItem = coolBar.getItem(count);
+				CoolItem cItem = coolBar.getItem(i);
 				itemSizes[count]=cItem.getSize();
-				addedItems.add(cItem);
+				CoolBarContributionItem cbItem = (CoolBarContributionItem)cItem.getData();
+				CoolItemPosition position = getRememberedPosition(cbItem.getId());
+				if (position != null) {
+					rememberedAddedItems.add(cItem);
+				}
 				count++;
 			}
 		}
@@ -657,54 +900,81 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		int[] wrapIndices = new int[wrapItems.length];
 		ArrayList currentCoolItemIds = getCoolItemIds();
 		int j = 0;
-		int numItems = itemSizes.length;
-		for (int i = 0; i < wrapItems.length; i++) {
-			int index = currentCoolItemIds.indexOf(wrapItems[i]);
+		int k = 0;
+		while (k < wrapItems.length) {
+			int index = currentCoolItemIds.indexOf(wrapItems[k]);
 			if (index != -1) {
 				wrapIndices[j] = index;
 				j++;
+				k++;
 			} else {
-				// wrap item no longer exists, wrap on the next visual item 
-				int visualIndex = layout.itemWrapIndices[i];
-				if ((i+1) < wrapItems.length) {
-					// there's another wrap row, set the wrap to the next
-					// visual item as long as it isn't on the next row
-					int nextWrapIndex = layout.itemWrapIndices[i+1];
-					if ((visualIndex < nextWrapIndex) && (visualIndex < itemSizes.length)) {
-						wrapIndices[j] = visualIndex;
-						j++;
-					}
+				// wrap item no longer exists, try wrapping on the next item in the
+				// saved layout, if we hit a new row, stop
+				int visualIndex = layout.items.indexOf(wrapItems[k]);
+				int row = layout.getRowOfIndex(visualIndex);
+				int nextIndex = visualIndex + 1;
+				int nextRow = layout.getRowOfIndex(nextIndex);
+				if (nextIndex < layout.items.size() && nextRow == row) {
+					String nextItem = (String)layout.items.get(nextIndex);
+					wrapItems[k]=nextItem;
 				} else {
-					// we're on the last row, set the wrap to the 
-					// next visual item
-					if (visualIndex < itemSizes.length) {
-						wrapIndices[j] = visualIndex;
-						j++;
-					}
+					k++;
 				}
 			}
 		}
 		int[] itemWraps = new int[j];
 		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
 		coolBar.setWrapIndices(itemWraps);
-		
+
+		// restore the position of items whose position was remembered
+		ArrayList cbItems = new ArrayList();
+		ArrayList toolbars = new ArrayList();
+		// dispose of the coolitems, then add back one at a time - necessary to restore the
+		// original layout
+		for (int i=0; i<rememberedAddedItems.size(); i++) {
+			CoolItem item = (CoolItem)rememberedAddedItems.get(i);
+			CoolBarContributionItem cbItem = (CoolBarContributionItem)item.getData();
+			cbItems.add(cbItem);
+			ToolBar tBar = (ToolBar) item.getControl();
+			toolbars.add(tBar);
+			dispose(item);
+		}
+		for (int i=0; i<cbItems.size(); i++) {		
+			CoolBarContributionItem cbItem = (CoolBarContributionItem)cbItems.get(i);
+			CoolItemPosition position = getRememberedPosition(cbItem.getId());
+			// restore the item's saved position
+			ToolBar tBar = (ToolBar)toolbars.get(i);
+			createRememberedCoolItem(cbItem, tBar, position);
+		}
+
+		// need to remember position for any item that was in the layout but not 
+		// currently on the coolbar
+		ArrayList currentIds = getCoolItemIds();
+		for (int i=0; i<layout.items.size(); i++) {
+			String id = (String)layout.items.get(i);
+			if (!currentIds.contains(id)) {
+				rememberPositionFor(id, layout);
+			}
+		}
 		coolBar.setRedraw(true);
 	}
 	private void setSizeFor(CoolItem coolItem) {
+		setSizeFor(coolItem, -1);
+	}
+	/**
+	 */
+	private void setSizeFor(CoolItem coolItem, int coolWidth) {
 		ToolBar toolBar = (ToolBar) coolItem.getControl();
 		Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point coolSize = coolItem.computeSize(size.x, size.y);
 		// note setMinimumSize must be called before setSize, see PR 15565
 		coolItem.setMinimumSize(size.x, size.y);
-		coolItem.setSize(coolSize);
 		coolItem.setPreferredSize(coolSize);
-	}
-	/**
-	 * Recalculate and set the size for the given CoolBarContributionItem's coolitem.
-	 */
-	/* package */ void updateSizeFor(CoolBarContributionItem cbItem) {
-		CoolItem coolItem = findCoolItem(cbItem);
-		if (coolItem != null) setSizeFor(coolItem);
+		if (coolWidth == -1) {
+			coolItem.setSize(coolSize);
+		} else {
+			coolItem.setSize(new Point(coolWidth, coolSize.y));
+		} 
 	}
 	/**
 	 */
@@ -773,6 +1043,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						}
 					} 				
 				}
+				
 				setDirty(false);
 
 				// workaround for 14330
@@ -782,5 +1053,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				if (useRedraw) coolBar.setRedraw(true);
 			}
 		}
+	}
+	/**
+	 * Recalculate and set the size for the given CoolBarContributionItem's coolitem.
+	 */
+	/* package */ void updateSizeFor(CoolBarContributionItem cbItem) {
+		CoolItem coolItem = findCoolItem(cbItem);
+		if (coolItem != null) setSizeFor(coolItem);
 	}
 }
