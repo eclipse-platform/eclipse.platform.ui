@@ -95,95 +95,91 @@ M4 = Platform-specific fourth key -->
             categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.format">
       </command>
-      <keyBinding
-            keySequence="M1+SHIFT+F"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.ant.ui.format"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.showTooltip.name"
             description="%ActionDefinition.showTooltip.description"
             categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.showTooltip">
       </command>
-      <keyBinding
-            keySequence="F2"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.ant.ui.showTooltip"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openExternalDoc.name"
             description="%ActionDefinition.openExternalDoc.description"
             categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.openExternalDoc">
       </command>
-      <keyBinding
-            keySequence="M2+F2"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.ant.ui.openExternalDoc"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.renameInFile.name"
             description="%ActionDefinition.renameInFile.description"
             categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.ant.ui.renameInFile">
       </command>
-      <keyBinding
-            keySequence="M3+M2+R"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.ant.ui.renameInFile"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%AntShortcut.description.run"
             description="%AntShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.ant.ui.antShortcut.run">
       </command>
-      <keyBinding
-            keySequence="M3+M2+X Q"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ant.ui.antShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
        <command
             name="%AntShortcut.description.debug"
             description="%AntShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.ant.ui.antShortcut.debug">
       </command>
-      <keyBinding
-            keySequence="M3+M2+D Q"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ant.ui.antShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command 
       	name="%toggleMarkOccurrences.label"
       	description="%toggleMarkOccurrences.description"
       	categoryId="org.eclipse.jdt.ui.category.source"
       	id="org.eclipse.ant.ui.toggleMarkOccurrences" /> 
-  	  <keyBinding 
-  	    	keySequence="M3+M2+O"
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+      <key
+			sequence="M1+SHIFT+F"
+			contextId="org.eclipse.ant.ui.AntEditorScope"
+			commandId="org.eclipse.ant.ui.format"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            sequence="F2"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.showTooltip"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+F2"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.openExternalDoc"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M3+M2+R"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.renameInFile"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M3+M2+X Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M3+M2+D Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key 
+  	    	sequence="M3+M2+O"
   	    	contextId="org.eclipse.ant.ui.AntEditorScope"
   	    	commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
-  	    	keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
-      <keyBinding 
+  	    	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+      <key
          	platform="carbon"
-         	keySequence="M3+M2+O"
+         	sequence="M3+M2+O"
          	contextId="org.eclipse.ant.ui.AntEditorScope"
          	commandId=""
-         	keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
-      <keyBinding 
+         	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+      <key 
       		platform="carbon" 
-      		keySequence="M1+M3+O" 
+      		sequence="M1+M3+O" 
 			contextId="org.eclipse.ant.ui.AntEditorScope"
 			commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
-   </extension>
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+	</extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
