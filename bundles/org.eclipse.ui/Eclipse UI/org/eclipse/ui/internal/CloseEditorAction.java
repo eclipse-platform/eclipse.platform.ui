@@ -4,11 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  * Closes the active editor.
