@@ -68,8 +68,7 @@ public class ConfigurationActivator implements BundleActivator {
 			}
 		}
 		loadOptions();
-		if (DEBUG)
-			System.out.println("Starting update configurator...");
+		Utils.debug("Starting update configurator...");
 
 		installBundles();
 	}
@@ -78,7 +77,11 @@ public class ConfigurationActivator implements BundleActivator {
 	private void initialize() throws Exception {
 		platform = acquirePlatform();
 		if (platform==null)
-			throw new Exception("Can not start"); 
+			throw new Exception("Can not start");
+		
+		// we can now log to the log file for this bundle
+		Utils.setLog(platform.getLog(context.getBundle()));
+		
 		URL installURL = platform.getInstallURL();
 		configArea = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
@@ -127,9 +130,9 @@ public class ConfigurationActivator implements BundleActivator {
 			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + "/last.config.stamp"));
 			stream.writeLong(configuration.getChangeStamp());
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getLocalizedMessage());
+			Utils.log(e.getLocalizedMessage());
 		} catch (IOException e) {
-			System.out.println(e.getLocalizedMessage());
+			Utils.log(e.getLocalizedMessage());
 		}
 	}
 
@@ -138,6 +141,7 @@ public class ConfigurationActivator implements BundleActivator {
 			return;
 		platformTracker.close();
 		platformTracker = null;
+		Utils.setLog(null);
 	}
 	
 	private IPlatform acquirePlatform() {
@@ -167,7 +171,7 @@ public class ConfigurationActivator implements BundleActivator {
 						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation());
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
-					System.err.println("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
+					Utils.log("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
 				}
 			}
 			ArrayList installed = new ArrayList(plugins.length);
@@ -185,8 +189,7 @@ public class ConfigurationActivator implements BundleActivator {
 					}
 				} catch (Exception e) {
 					if ((location.indexOf("org.eclipse.core.boot") == -1) && (location.indexOf("org.eclipse.osgi") == -1)) {
-						System.err.println("Ignoring bundle at: " + location);
-						System.err.println(e.getMessage());
+						Utils.log(Utils.newStatus("Ignoring bundle at: " + location, e));
 					}
 				}
 			}
@@ -202,9 +205,9 @@ public class ConfigurationActivator implements BundleActivator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			releasePlatform();
 			// keep track of the last config processed
 			writePlatformConfigurationTimeStamp();
+			releasePlatform();
 		}
 	}
 
@@ -286,8 +289,7 @@ public class ConfigurationActivator implements BundleActivator {
 				String message = e.getMessage();
 				if (message == null)
 					message = "";
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.OK, message, e);
-				((IPlatform) platformTracker.getService()).getLog(context.getBundle()).log(status);
+				Utils.log(Utils.newStatus(message, e));
 			}
 		}
 		return PlatformConfiguration.getCurrent();
