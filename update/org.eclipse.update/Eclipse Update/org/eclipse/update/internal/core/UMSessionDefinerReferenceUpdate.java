@@ -62,7 +62,7 @@ public void defineComponentOperation(UMSessionManagerParcel parcel, IInstallable
 	operation.setTarget(applyTarget);
 	operation.setData(descriptor);
 
-	// Create apply operation for plug-ins		// LINDA - ALL plugins selected for now
+	// Create apply operation for plug-ins		
 	//------------------------------------
 
 	operation = parcel.createOperation();

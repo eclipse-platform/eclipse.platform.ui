@@ -146,12 +146,12 @@ public String copyStream(InputStream streamInput, OutputStream streamOutput, lon
 		if (progressMonitor != null) {
 			if (bSubtask == false) {
 				if (lContentLength > 0 && lContentLength < Integer.MAX_VALUE)
-					progressMonitor.beginTask("Copy: " + strTaskName, (int) lContentLength);
+					progressMonitor.beginTask(UpdateManagerStrings.getString("S_Copy") + ": " +strTaskName, (int) lContentLength);
 				else
-					progressMonitor.beginTask("Copy: " + strTaskName, IProgressMonitor.UNKNOWN);
+					progressMonitor.beginTask(UpdateManagerStrings.getString("S_Copy") + ": "  + strTaskName, IProgressMonitor.UNKNOWN);
 			}
 			else {
-				progressMonitor.subTask("Copy: " + strTaskName);
+				progressMonitor.subTask(UpdateManagerStrings.getString("S_Copy") + ": "  + strTaskName);
 			}
 		}
 
@@ -165,7 +165,7 @@ public String copyStream(InputStream streamInput, OutputStream streamOutput, lon
 			}
 			catch (IOException ex) {
 				iBytesReceived = 0;
-				strErrorMessage = "Error reading from input stream: " + ex.getMessage();
+				strErrorMessage = UpdateManagerStrings.getString("S_Error_reading_from_input_stream") + ": " + ex.getMessage();
 			}
 
 			// Write
@@ -179,7 +179,7 @@ public String copyStream(InputStream streamInput, OutputStream streamOutput, lon
 				}
 				catch (IOException ex) {
 					iBytesReceived = 0;
-					strErrorMessage = "Error writing to output stream: " + ex.getMessage();
+					strErrorMessage = UpdateManagerStrings.getString("S_Error_writing_to_output_stream") + ": " + ex.getMessage();
 				}
 			}
 		}
@@ -230,7 +230,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 		urlInput = new URL(getSource());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Source URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Source_URL_is_malformed"), ex);
 	}
 
 	URL urlOutput = null;
@@ -241,7 +241,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 		urlOutput = new URL(getTarget());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Target URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Target_URL_is_malformed"), ex);
 	}
 
 	// Input
@@ -260,7 +260,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 			streamInput = response.getInputStream();
 		}
 		catch (IOException ex) {
-			strErrorMessage = createMessageString("Unable to obtain source input stream", ex);
+			strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_obtain_source_input_stream"), ex);
 		}
 
 	}
@@ -280,7 +280,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 			urlConnectionOutput.setDoOutput(true);
 		}
 		catch (IOException ex) {
-			strErrorMessage = createMessageString( "Unable to connect", ex );
+			strErrorMessage = createMessageString( UpdateManagerStrings.getString("S_Unable_to_connect"), ex );
 		}
 
 		// Output stream
@@ -290,7 +290,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 				streamOutput = urlConnectionOutput.getOutputStream();
 			}
 			catch (IOException ex) {
-				strErrorMessage = createMessageString( "Unable to obtain target output stream", ex );
+				strErrorMessage = createMessageString( UpdateManagerStrings.getString("S_Unable_to_obtain_target_output_stream"), ex );
 			}
 		}
 
@@ -304,7 +304,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 		 		streamOutput = getFileOutputStream(urlOutput);
 	        }
 	        catch( IOException ex){
-				strErrorMessage = createMessageString( "Unable to create file", ex );
+				strErrorMessage = createMessageString( UpdateManagerStrings.getString("S_Unable_to_create_file"), ex );
 			}
 		}
 	}
@@ -332,7 +332,7 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 			streamOutput.close();
 		}
 		catch (IOException ex) {
-			strErrorMessage = createMessageString( "Error closing output stream", ex );
+			strErrorMessage = createMessageString( UpdateManagerStrings.getString("S_Error_closing_output_stream"), ex );
 		}
 	}
 	
@@ -370,7 +370,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		urlInput = new URL(getSource());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Source URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Source_URL_is_malformed"), ex);
 	}
 
 	// Output URL
@@ -380,7 +380,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		urlOutput = new URL(getTarget());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Target URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Target_URL_is_malformed"), ex);
 	}
 
 	// For unzipping plugins or component/configuration jar, 
@@ -418,7 +418,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		jarFile = new JarFile(strFilespec);
 	}
 	catch (IOException ex) {
-		strErrorMessage = createMessageString("Unable to open Jar file", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_open_Jar_file"), ex);
 	}
 
 	if (jarFile != null) {
@@ -439,7 +439,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		}
 
 		if (progressMonitor != null) {
-			progressMonitor.beginTask("Install: " + strFilename, iCount);
+			progressMonitor.beginTask(UpdateManagerStrings.getString("S_Install") + ": " + strFilename, iCount);
 		}
 
 		// Write out a safety lock
@@ -493,12 +493,12 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 			}
 			catch (IOException ex) {
 				streamInputEntry = null;
-				strErrorMessage = createMessageString("Unable to open jar entry input stream", ex);
+				strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_open_jar_entry_input_stream"), ex);
 				break;
 			}
 			catch (SecurityException ex) {
 				streamInputEntry = null;
-				strErrorMessage = createMessageString("Encountered jar entry security exception", ex);
+				strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Encountered_jar_entry_security_exception"), ex);
 				break;
 			}
 
@@ -524,7 +524,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					}
 				}
 				catch (MalformedURLException ex) {
-					strErrorMessage = createMessageString("Unable to create jar entry URL", ex);
+					strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_create_jar_entry_URL"), ex);
 				}
 			}
 
@@ -538,7 +538,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					streamOutputFile = getFileOutputStream(urlOutputFile);
 				}
 				catch (IOException ex) {
-					strErrorMessage = createMessageString("Unable to create output file for Jar entry: " + urlOutputFile.toExternalForm(), ex);
+					strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_create_output_file_for_Jar_entry") + ": " + urlOutputFile.toExternalForm(), ex);
 					break;
 				}
 			}
@@ -613,7 +613,7 @@ public boolean doVerify(IProgressMonitor progressMonitor) {
 		urlInput = new URL(getSource());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Source URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Source_URL_is_malformed"), ex);
 	}
 
 	IInstallable installable = (IInstallable) getData();
@@ -646,7 +646,7 @@ public boolean doVerify(IProgressMonitor progressMonitor) {
 
 	if (result.getResultCode() == JarVerificationResult.CANCEL_INSTALL) {
 		Exception ex = result.getResultException();
-		strErrorMessage = createMessageString("Installation cancelled by user", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Installation_cancelled_by_user"), ex);
 	}
 
 	// Increment the number of attempts
@@ -786,12 +786,12 @@ public void getStatusString(java.lang.StringBuffer strb, int iIndentation) {
 	else {
 		if (getAction().equals(UpdateManagerConstants.OPERATION_COPY) == true) {
 			indent(strb, iIndentation);
-			strb.append("Copy: " + getSource());
+			strb.append(UpdateManagerStrings.getString("S_Copy") + ": " + getSource());
 		}
 		else if (getAction().equals(UpdateManagerConstants.OPERATION_UNZIP_INSTALL) ||
 				getAction().equals(UpdateManagerConstants.OPERATION_UNZIP_PLUGINS) == true) {
 			indent(strb, iIndentation);
-			strb.append("Install: " + getSource());
+			strb.append(UpdateManagerStrings.getString("S_Install") + ": " + getSource());
 		}
 
 		// Obtain messages
@@ -851,7 +851,7 @@ public boolean undoCopy(IProgressMonitor progressMonitor) {
 		urlOutput = new URL(getTarget());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Target URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Target_URL_is_malformed"), ex);
 	}
 
 	if (urlOutput != null) {
@@ -865,7 +865,7 @@ public boolean undoCopy(IProgressMonitor progressMonitor) {
 		File file = new File(strFilespec);
 		if (file.exists() == true) {
 			if (file.delete() == false) {
-				strErrorMessage = "Unable to delete file: " + strFilespec;
+				strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_delete_file") + ": " + strFilespec;
 			}
 		}
 	}
@@ -909,7 +909,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		urlInput = new URL(getSource());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Source URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Source_URL_is_malformed"), ex);
 	}
 
 	// Output URL
@@ -919,7 +919,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		urlOutput = new URL(getTarget());
 	}
 	catch (MalformedURLException ex) {
-		strErrorMessage = createMessageString("Target URL is malformed", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Target_URL_is_malformed"), ex);
 	}
 
 	// For unzipping plugins or component/configuration jar, 
@@ -949,7 +949,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		jarFile = new JarFile(strFilespec);
 	}
 	catch (IOException ex) {
-		strErrorMessage = createMessageString("Unable to open Jar file", ex);
+		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_open_Jar_file"), ex);
 	}
 
 	if (jarFile != null) {
@@ -968,7 +968,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 			strFilename = strFilespec.substring(iIndex + 1);
 		}
 		
-		if (progressMonitor != null) progressMonitor.beginTask("Undo: " + strFilename, iCount);
+		if (progressMonitor != null) progressMonitor.beginTask(UpdateManagerStrings.getString("S_Undo") + ": " + strFilename, iCount);
 		
 		// Write out a safety lock
 		//------------------------
@@ -1033,7 +1033,7 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 					if (file.isDirectory())
 						UpdateManager.cleanupDirectory(file);
 					if (file.delete() == false) {
-						strErrorMessage = "Unable to delete file: " + strFilespec;
+						strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_delete_file") + ": " + strFilespec;
 					}
 				}
 			}

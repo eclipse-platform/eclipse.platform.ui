@@ -168,13 +168,13 @@ public void getStatusString(java.lang.StringBuffer strb, int iIndentation) {
 	String strStatus = getStatus();
 
 	if (strStatus.equals(UpdateManagerConstants.STATUS_SUCCEEDED) == true) {
-		strb.append("Installations have completed successfully");
+		strb.append(UpdateManagerStrings.getString("S_Installations_have_completed_successfully"));
 		strb.append("\n");
-		strb.append("You must restart the workbench to activate any changes");
+		strb.append(UpdateManagerStrings.getString("S_You_must_restart_the_workbench_to_activate_any_changes"));
 	}
 
 	else {
-		strb.append("An installation error, or cancellation has occurred");
+		strb.append(UpdateManagerStrings.getString("S_An_installation_error_or_cancellation_has_occurred"));
 
 		// Parcels may be sequential, do in forward order
 		//-----------------------------------------------
