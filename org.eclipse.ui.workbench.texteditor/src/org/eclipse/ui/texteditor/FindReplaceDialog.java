@@ -50,7 +50,6 @@ import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -213,7 +212,7 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @since 3.0
 	 */
-	private ContentAssistant fContentAssistant;
+//	private ContentAssistant fContentAssistant;
 
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -928,7 +927,7 @@ class FindReplaceDialog extends Dialog {
 		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
 
-		fContentAssistant.uninstall();
+//		fContentAssistant.uninstall();
 
 		// prevent leaks
 		fActiveShell= null;
