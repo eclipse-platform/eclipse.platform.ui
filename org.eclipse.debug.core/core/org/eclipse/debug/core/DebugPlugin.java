@@ -157,18 +157,6 @@ public class DebugPlugin extends Plugin {
 		super(descriptor);
 		setDefault(this);
 	}
-
-	/**
-	 * Adds the given listener to the collection of registered debug
-	 * event listeners. Has no effect if an identical listener is already
-	 * registered.
-	 *
-	 * @param listener the listener to add
-	 * @deprecated use #addDebugEventListener(IDebugEventSetListener)
-	 */
-	public void addDebugEventListener(IDebugEventListener listener) {
-		fEventListeners.add(listener);
-	}
 	
 	/**
 	 * Adds the given listener to the collection of registered debug
@@ -181,19 +169,6 @@ public class DebugPlugin extends Plugin {
 	public void addDebugEventListener(IDebugEventSetListener listener) {
 		fEventListeners.add(listener);
 	}	
-
-	/**
-	 * Notifies all registered debug event listeners of the given event.
-	 * Has no effect if the event is filtered by a registered
-	 * debug event filter.
-	 *
-	 * @param event the debug event to fire
-	 * @see IDebugEventFilter
-	 * @deprecated use <code>fireDebugEventSet(DebugEvent[])</code>
-	 */
-	public void fireDebugEvent(DebugEvent event) {
-		fireDebugEventSet(new DebugEvent[] {event});
-	}
 	
 	/**
 	 * Notifies all registered debug event set listeners of the given
@@ -214,14 +189,7 @@ public class DebugPlugin extends Plugin {
 		} else {
 			Object[] listeners= getEventListeners();
 			for (int i= 0; i < listeners.length; i++) {
-				Object listener = listeners[i];
-				if (listener instanceof IDebugEventSetListener) {
-					((IDebugEventSetListener)listener).handleDebugEvents(events);
-				} else {
-					for (int j = 0; j < events.length; j++) {
-						((IDebugEventListener)listener).handleDebugEvent(events[j]);
-					}
-				}
+				((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
 			}		
 		}
 	}
@@ -300,18 +268,6 @@ public class DebugPlugin extends Plugin {
 	public IExpressionManager getExpressionManager() {
 		return fExpressionManager;
 	}	
-
-	/**
-	 * Removes the given listener from the collection of registered debug
-	 * event listeners. Has no effect if an identical listener is not already
-	 * registered.
-	 *
-	 * @param listener the listener to remove
-	 * @deprecated use #removeDebugEventListener(IDebugEventSetListener)
-	 */
-	public void removeDebugEventListener(IDebugEventListener listener) {
-		fEventListeners.remove(listener);
-	}
 	
 	/**
 	 * Removes the given listener from the collection of registered debug
