@@ -160,7 +160,6 @@ public void createPartControl(Composite parent) {
 	viewer.setInput(getInitialInput());
 	initFrameList();
 	initDragAndDrop();
-	initRefreshKey();
 	initRenameKey();
 	updateTitle();
 	
@@ -175,6 +174,8 @@ public void createPartControl(Composite parent) {
 	viewer.getTree().setMenu(menu);
 	getSite().registerContextMenu(menuMgr, viewer);
 	makeActions();
+	addKeyListeners();
+	addMouseListeners();
 	
 	// Update the global action enable state to match
 	// the current selection.
@@ -191,12 +192,7 @@ public void createPartControl(Composite parent) {
 			handleDoubleClick(event);
 		}
 	});
-	viewer.getControl().addKeyListener(new KeyAdapter() {
-		public void keyPressed(KeyEvent e) {
-			handleKeyPressed(e);
-		}
-	});
-
+	
 	fillActionBars();
 	
 	getSite().setSelectionProvider(viewer);
@@ -482,25 +478,12 @@ String getToolTipText(Object element) {
 void handleDoubleClick(DoubleClickEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
-	if (element instanceof IFile) {
-		openFileAction.selectionChanged(s);
-		openFileAction.run();
-	}
-	else {
-		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
-		if (viewer.isExpandable(element)) {
-			viewer.setExpandedState(element, !viewer.getExpandedState(element));
-		}
+	
+	// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
+	if (viewer.isExpandable(element)) {
+		viewer.setExpandedState(element, !viewer.getExpandedState(element));
 	}
 	
-}
-/**
- * Handles key events in viewer.
- */
-void handleKeyPressed(KeyEvent event) {
-	if (event.character == SWT.DEL && event.stateMask == 0 && deleteResourceAction.isEnabled()) {
-		deleteResourceAction.run();
-	}
 }
 /**
  * Handles selection changed in viewer.
@@ -550,24 +533,7 @@ void initFrameList() {
 	frameList = new FrameList(frameSource);
 	frameSource.connectTo(frameList);	
 }
-/**
- * Create the KeyListener for doing the refresh on the viewer.
- */
-private void initRefreshKey() {
 
-	getResourceViewer().getControl().addKeyListener(new KeyAdapter() {
-		// Listen on key released instead of pressed just in case some
-		// menu bar item sets up an accelerator on F5.
-		public void keyReleased(KeyEvent event) {
-			if (event.keyCode == SWT.F5) {
-				localRefreshAction.selectionChanged(StructuredSelection.EMPTY);
-				localRefreshAction.run();
-				localRefreshAction.selectionChanged(
-					(IStructuredSelection) getResourceViewer().getSelection());
-			}
-		}
-	});
-}
 /**
  * Create the KeyListener for doing the resource rename on the viewer.
  */
@@ -888,4 +854,26 @@ void updateTitle() {
 		setTitleToolTip(getToolTipText(input));
 	}
 }
+
+/**
+ * Add in a key listener for any actions that listen
+ * to the key strokes.
+ */
+
+protected void addKeyListeners(){
+	
+	viewer.getControl().addKeyListener(localRefreshAction);
+	viewer.getControl().addKeyListener(deleteResourceAction);
+}
+
+/**
+ * Add in a mouse listener for any actions that listen
+ * to the mouse events.
+ */
+
+protected void addMouseListeners(){
+	
+	viewer.addDoubleClickListener(openFileAction);
+}
+
 }
