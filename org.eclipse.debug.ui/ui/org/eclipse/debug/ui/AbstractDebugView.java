@@ -193,6 +193,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		 */
 		public void partOpened(IWorkbenchPartReference ref) {
 		}
+		
+		/**
+		 * @see org.eclipse.ui.IPartListener2#partInputChanged(IWorkbenchPartReference)
+		 */
+		public void partInputChanged(IWorkbenchPartReference ref){
+		}
 
 	}	
 	
