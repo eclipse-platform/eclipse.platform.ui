@@ -342,13 +342,11 @@ public final class LegacyResourceSupport {
      */
     public static IStructuredSelection adaptSelection(IStructuredSelection selection, String objectClass) {
 		List newSelection = new ArrayList(10);
-		IAdapterManager adapterManager = Platform.getAdapterManager();
 		for (Iterator it = selection.iterator(); it.hasNext();) {
-			Object element = (Object) it.next();
-			Object adaptedElement;
-			element = getAdapter(element, objectClass);		
-			if(element != null)
-				newSelection.add(element);
+			Object element = it.next();
+			Object adaptedElement = getAdapter(element, objectClass);		
+			if (adaptedElement != null)
+				newSelection.add(adaptedElement);
 		}
 		return new StructuredSelection(newSelection);
 	}
