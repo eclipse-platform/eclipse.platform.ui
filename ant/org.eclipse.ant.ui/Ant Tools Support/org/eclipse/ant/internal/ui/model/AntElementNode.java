@@ -604,6 +604,12 @@ public class AntElementNode implements IAdaptable {
         getAntModel().dispose();
     }
     
+    /**
+     * Returns the name or path of the element referenced at the offset within the declaration of this node or
+     * <code>null</code> if no element is referenced at the offset
+     * @param offset The offset within the declaration of this node
+     * @return <code>null</code> or the name or path of the referenced element
+     */
     public String getReferencedElement(int offset) {
 		return null;
 	}
