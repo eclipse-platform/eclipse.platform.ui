@@ -449,7 +449,7 @@ public class EditorRegistry implements IEditorRegistry {
 			map.put(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID, editor);
 		}
 	}
-	public void initializeFromStorage() {
+	private void initializeFromStorage() {
 		typeEditorMappings = new EditorMap();
 		extensionImages = new HashMap();
 
