@@ -228,7 +228,7 @@ public void insertBefore(String ID, IAction action) {
 public void insertBefore(String ID, IContributionItem item) {
 	IContributionItem ci= find(ID);
 	if (ci == null)
-		throw new IllegalArgumentException("can't find ID");//$NON-NLS-1$
+		throw new IllegalArgumentException("can't find ID " + ID);//$NON-NLS-1$
 	int ix = contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert before: " + ix);
@@ -281,6 +281,14 @@ protected void itemRemoved(IContributionItem item) {
  */
 public void markDirty() {
 	setDirty(true);
+}
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
+ */
+public void prepend(IContributionItem item) {
+	item.setParent(this);
+	contributions.add(0,item);
+	itemAdded(item);
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
