@@ -110,10 +110,19 @@ public class EditorActionBars extends SubActionBars2 {
 		if (extensionContributor != null)
 			extensionContributor.dispose();
 		
+		// Dispose of the Cool Item that is created for this editor.
+		// For action sets we just make the cool item invisible. Here we
+		// will actually delete all the contribuitons items in the tool bar
+		// manager that is in the tool bar conribution item.
 		if (toolBarContributionItem != null) {
 			toolBarContributionItem.dispose();
 		}
 		toolBarContributionItem = null;
+		// Remove actions
+		if (coolItemToolBarMgr != null) {
+			coolItemToolBarMgr.removeAll();
+		}
+		coolItemToolBarMgr = null;
 	}
 	/**
 	 * Gets the editor contributor
@@ -147,25 +156,25 @@ public class EditorActionBars extends SubActionBars2 {
 		if (coolBarManager == null) {
 			return null;
 		}
-		if (coolItemToolBarMgr == null) {
-			// Create a CoolItem manager for this action bar. The
-			// CoolBarContributionItem(s)
-			// will be created when the EditorActionBar is initialized.
-			coolItemToolBarMgr = new ToolBarManager(coolBarManager.getStyle());
-			((ToolBarManager) coolItemToolBarMgr).setOverrides(new Overrides());
-
-		}
+		
 		if (toolBarContributionItem == null) {
-			toolBarContributionItem =
-				new ToolBarContributionItem(coolItemToolBarMgr, type);
+			IContributionItem foundItem = coolBarManager.find(type);
+			if (foundItem instanceof ToolBarContributionItem) {
+				toolBarContributionItem = (ToolBarContributionItem)foundItem;
+				coolItemToolBarMgr = toolBarContributionItem.getToolBarManager();
+			}else {
+				coolItemToolBarMgr = new ToolBarManager(coolBarManager.getStyle());
+				toolBarContributionItem = new ToolBarContributionItem(coolItemToolBarMgr, type);
+				// Add editor item to group
+				coolBarManager.prependToGroup(
+						IWorkbenchActionConstants.GROUP_EDITOR,
+						toolBarContributionItem);
+			}
+			((ToolBarManager) coolItemToolBarMgr).setOverrides(new Overrides());
 			toolBarContributionItem.setVisible(getActive());
 			coolItemToolBarMgr.markDirty();
-			// Add editor item to group
-			coolBarManager.prependToGroup(
-				IWorkbenchActionConstants.GROUP_EDITOR,
-				toolBarContributionItem);
 		}
-
+		
 		return coolItemToolBarMgr;
 	}
 	/**
@@ -307,7 +316,7 @@ public class EditorActionBars extends SubActionBars2 {
 			// Update the manager
 			coolItemToolBarMgr.update(false);
 			if (toolBarContributionItem != null) {
-				toolBarContributionItem.update(ICoolBarManager.SIZE);
+				toolBarContributionItem.setVisible(visible);
 			}
 			coolBarManager.update(false);
 		}

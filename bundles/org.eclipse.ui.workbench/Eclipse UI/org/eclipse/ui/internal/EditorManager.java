@@ -263,6 +263,10 @@ public class EditorManager {
 		if (actionBars.getRef() <= 0) {
 			String type = actionBars.getEditorType();
 			actionCache.remove(type);
+			// refresh the cool bar manager before disposing of a cool item
+			if (window.getCoolBarManager() != null) {
+				window.getCoolBarManager().refresh();
+			}
 			actionBars.dispose();
 		}
 	}

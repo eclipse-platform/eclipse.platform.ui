@@ -680,7 +680,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 						// Dispose of widget if not needed
 						if ((foundItem == null) || (!foundItem.isVisible())) {	
 							// dispose the widget
-							dispose(coolItem);
+							foundItem.dispose();
 							changed = true;
 						}
 						
