@@ -477,6 +477,7 @@ public String getFileFromURL(URL target) {
 		try {
 			return getFileFromURL(new URL(file));
 		} catch (MalformedURLException e) {
+			// ignore bad URLs
 		}
 	}
 	return null;
@@ -564,14 +565,20 @@ public String getResourceString(String value, ResourceBundle b) {
 	String dflt = ix == -1 ? s : s.substring(ix+1);
 
 	if (b==null) {
-		try { b = getResourceBundle(); }
-		catch (MissingResourceException e) {};
+		try { 
+			b = getResourceBundle();
+		} catch (MissingResourceException e) {
+			// just return the default (dflt)
+		};
 	}
 	
 	if (b==null) return dflt;
 	
-	try { return b.getString(key.substring(1)); }
-	catch(MissingResourceException e) { return dflt; }
+	try { 
+		return b.getString(key.substring(1));
+	} catch(MissingResourceException e) {
+		return dflt;
+	}
 }
 /**
  * @see IPluginDescriptor
@@ -800,6 +807,7 @@ private URL findOS(URL install, IPath path, Map override) {
 			// check for override
 			os = (String) override.get("$os$");
 		} catch (ClassCastException e) {
+			// just in case
 		}
 	if (os == null)
 		// use default
@@ -837,6 +845,7 @@ private URL findWS(URL install, IPath path, Map override) {
 			// check for override
 			ws = (String) override.get("$ws$");
 		} catch (ClassCastException e) {
+			// just in case
 		}
 	if (ws == null)
 		// use default
@@ -865,6 +874,7 @@ private URL findNL(URL install, IPath path, Map override) {
 			// check for override
 			nl = (String) override.get("$nl$");
 		} catch (ClassCastException e) {
+			// just in case
 		}
 	if (nl == null)
 		// use default
@@ -906,6 +916,7 @@ private URL findInPlugin(URL install, String filePath) {
 		if (file != null && new File(file).exists())
 			return location;						
 	} catch (IOException e) {
+		// ignore bad URLs
 	}
 	return null;
 }

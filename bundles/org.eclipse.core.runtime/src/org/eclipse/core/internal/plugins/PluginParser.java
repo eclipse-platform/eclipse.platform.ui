@@ -73,6 +73,7 @@ private static void initializeParser() {
 	try {
 	 	((SAXParser)parser).setFeature("http://xml.org/sax/features/string-interning", true);
 	} catch (SAXException e) {
+		// In case support for this feature is removed
 	}
 }
 

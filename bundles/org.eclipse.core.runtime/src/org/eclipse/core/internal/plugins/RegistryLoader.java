@@ -111,6 +111,7 @@ private void processPluginPathEntry(PluginRegistryModel registry, URL location) 
 				if (!found)
 					found = processPluginPathFile(registry, new URL(location, members[j] + "/fragment.xml"));
 			} catch (MalformedURLException e) {
+				// Skip bad URLs
 			}
 			if (debug)
 				debug(found ? "Processed - " : "Processed (not found) - " + members[j]);
@@ -189,7 +190,12 @@ private String getQualifiedVersion(PluginModel entry, URL base) {
 	} catch(Exception e) {
 		return entry.getVersion();
 	} finally {		
-		if (is != null) try { is.close(); } catch(IOException e) {}
+		if (is != null)
+			try {
+				is.close();
+			} catch (IOException e) {
+				// Don't throw anything back if the close fails
+			}
 	}
 }
 private boolean requiredPluginModel(PluginModel plugin, URL location) {
