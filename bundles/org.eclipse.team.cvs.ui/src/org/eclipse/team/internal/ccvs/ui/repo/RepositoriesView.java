@@ -75,7 +75,7 @@ public class RepositoriesView extends RemoteViewPart {
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
-			getViewer().getControl().getDisplay().syncExec(new Runnable() {
+			getViewer().getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					refreshViewer();
 					getViewer().setSelection(new StructuredSelection(root));
@@ -90,7 +90,7 @@ public class RepositoriesView extends RemoteViewPart {
 		}
 		private void refresh() {
 			Display display = getViewer().getControl().getDisplay();
-			display.syncExec(new Runnable() {
+			display.asyncExec(new Runnable() {
 				public void run() {
 					RepositoriesView.this.refreshViewer();
 				}

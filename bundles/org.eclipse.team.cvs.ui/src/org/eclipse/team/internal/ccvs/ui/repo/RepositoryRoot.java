@@ -33,6 +33,7 @@ public class RepositoryRoot extends PlatformObject {
 	Map autoRefreshFiles = new HashMap();
 	// Map of String (module name) -> ICVSRemoteFolder (that is a defined module)
 	Map modulesCache;
+	Object modulesCacheLock = new Object();
 	// Lis of date tags
 	List dateTags = new ArrayList();
 	
@@ -92,18 +93,19 @@ public class RepositoryRoot extends PlatformObject {
 	
 	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) {
 		if (modulesCache == null) {
-			modulesCache = new HashMap();
-			synchronized(modulesCache) {
-				try {
-					ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
+			try {
+				// Fetch the modules before locking the cache (to avoid deadlock)
+				ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
+				synchronized(modulesCacheLock) {
+					modulesCache = new HashMap();
 					for (int i = 0; i < folders.length; i++) {
 						ICVSRemoteResource resource = folders[i];
 						modulesCache.put(resource.getName(), resource);
 					}
-				} catch (CVSException e) {
-					// we could't fetch the modules. Log the problem and continue
-					CVSUIPlugin.log(e);
 				}
+			} catch (CVSException e) {
+				// we could't fetch the modules. Log the problem and continue
+				CVSUIPlugin.log(e);
 			}
 		}
 		return modulesCache;
@@ -499,9 +501,9 @@ public class RepositoryRoot extends PlatformObject {
 	 * RepositoriesView is pressed.
 	 */
 	void clearCache() {
-		if (modulesCache == null) return;
-		synchronized(modulesCache) {
-			modulesCache = null;
+		synchronized(modulesCacheLock) {
+			if (modulesCache != null)
+				modulesCache = null;
 		}
 	}
 

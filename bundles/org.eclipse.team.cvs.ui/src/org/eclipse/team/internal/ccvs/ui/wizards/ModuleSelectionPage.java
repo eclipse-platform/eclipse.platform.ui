@@ -51,6 +51,9 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	private String helpContextId;
 	private boolean supportsMultiSelection;
 	
+	private boolean isFetchingModules = false;
+	private Object fetchingModulesLock = new Object();
+	
 	public ModuleSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
@@ -132,29 +135,49 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			moduleList.getControl().setEnabled(true);
 			moduleName = null;
 			if (moduleList.getInput() == null || updateModulesList) {
+				boolean fetchModules = false;
 				// The input is set after the page is shown to avoid
 				// fetching if the user wants to specify the name manually
 				try {
-					// Validate the location first since the module fecthing is
-					// done in a deferred fashion
-					getContainer().run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								location.validateConnection(monitor);
-							} catch (CVSException e) {
-								throw new InvocationTargetException(e);
-							}
+					// This can be called from different events in the event loop.
+					// Ensure that we only fetch the input once
+					synchronized (fetchingModulesLock) {
+						if (!isFetchingModules) {
+							// This the first thread in so fetch the modules
+							fetchModules = true;
+							isFetchingModules = true;
 						}
-					});
+					}
+					if (fetchModules) {
+						// Validate the location first since the module fecthing is
+						// done in a deferred fashion
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {
+									location.validateConnection(monitor);
+								} catch (CVSException e) {
+									throw new InvocationTargetException(e);
+								}
+							}
+						});
+						setModuleListInput();
+					}
 				} catch (InvocationTargetException e) {
 					if (!badLocation) {
 						badLocation = true;
 						CVSUIPlugin.openError(getShell(), null, null, e);
+						// This will null the module list input
+						setModuleListInput();
 					}
 				} catch (InterruptedException e) {
 					// Canceled by the user
+				} finally {
+					synchronized (fetchingModulesLock) {
+						if (fetchModules) {
+							isFetchingModules = false;
+						}
+					}
 				}
-				setModuleListInput();
 			}
 			setPageComplete(internalGetSelectedModules().length > 0);
 		}
