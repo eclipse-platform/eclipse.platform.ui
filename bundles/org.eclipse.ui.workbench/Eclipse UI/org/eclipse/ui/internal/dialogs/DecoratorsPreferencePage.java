@@ -19,6 +19,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.decorators.*;
+import org.eclipse.ui.internal.misc.Sorter;
 
 /**
  * The DecoratorsPreferencePage is the preference page for enabling and disabling
@@ -96,6 +97,16 @@ public class DecoratorsPreferencePage
 		checkboxViewer.getTable().setFont(mainFont);
 		
 		checkboxViewer.setContentProvider(new IStructuredContentProvider() {
+			
+			Sorter sorter = new Sorter(){
+				/*
+				 * @see Sorter.compare(element,element)
+				 */
+				public boolean compare(Object elementOne, Object elementTwo){
+					return ((DecoratorDefinition) elementTwo).getName().compareTo(((DecoratorDefinition) elementOne).getName()) > 0;
+				}
+			};
+			
 			public void dispose() {
 				//Nothing to do on dispose
 			}
@@ -103,7 +114,7 @@ public class DecoratorsPreferencePage
 			}
 			public Object[] getElements(Object inputElement) {
 				//Make an entry for each decorator definition
-				return (DecoratorDefinition[]) inputElement;
+				return sorter.sort((Object[]) inputElement);
 			}
 		
 		});
