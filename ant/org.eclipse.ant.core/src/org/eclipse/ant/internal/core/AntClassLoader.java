@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Tromey (tromey@redhat.com) - patch for bug 40972
  *******************************************************************************/
 package org.eclipse.ant.internal.core;
 
@@ -24,7 +25,7 @@ public class AntClassLoader extends URLClassLoader {
 		this.pluginLoaders = pluginLoaders;
 	}
 
-	public Class loadClass(String name) throws ClassNotFoundException {
+	protected Class findClass(String name) throws ClassNotFoundException {
 		Class result = null;
 		//do not load the "base" ant classes from the plugin class loaders 
 		//these should only be specified from the Ant runtime classpath preferences setting
@@ -42,7 +43,7 @@ public class AntClassLoader extends URLClassLoader {
 
 	protected Class loadClassURLs(String name) {
 		try {
-			return super.loadClass(name);
+			return super.findClass(name);
 		} catch (ClassNotFoundException e) {
 			// Ignore exception now. If necessary we'll throw
 			// a ClassNotFoundException in loadClass(String)
