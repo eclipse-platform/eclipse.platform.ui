@@ -424,18 +424,18 @@ abstract public class AbstractReconciler implements IReconciler {
 	public void install(ITextViewer textViewer) {
 		
 		Assert.isNotNull(textViewer);
+		fViewer= textViewer;
+		
 		synchronized (this) {
 			if (fThread != null)
 				return;
 			fThread= new BackgroundThread(getClass().getName());
 		}
 		
-		fViewer= textViewer;
+		fDirtyRegionQueue= new DirtyRegionQueue();
 		
 		fListener= new Listener();
 		fViewer.addTextInputListener(fListener);
-		
-		fDirtyRegionQueue= new DirtyRegionQueue();
 		
 		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=67046
 		// if the reconciler gets installed on a viewer that already has a document
@@ -457,7 +457,10 @@ abstract public class AbstractReconciler implements IReconciler {
 		if (fListener != null) {
 			
 			fViewer.removeTextInputListener(fListener);
-			if (fDocument != null) fDocument.removeDocumentListener(fListener);
+			if (fDocument != null) {
+				fListener.inputDocumentAboutToBeChanged(fDocument, null);
+				fListener.inputDocumentChanged(fDocument, null);
+			}
 			fListener= null;
 			
             synchronized (this) {
