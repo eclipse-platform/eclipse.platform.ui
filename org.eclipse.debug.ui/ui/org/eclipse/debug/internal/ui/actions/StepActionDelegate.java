@@ -5,11 +5,13 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.jface.action.IAction;
 
-public abstract class StepActionDelegate extends ControlActionDelegate {
+public abstract class StepActionDelegate extends ListenerActionDelegate {
 	
 	/**
 	 * @see ControlActionDelegate#doAction(Object)
@@ -52,4 +54,22 @@ public abstract class StepActionDelegate extends ControlActionDelegate {
 	 * @exception DebugException if the action fails
 	 */
 	protected abstract void stepAction(IStep element) throws DebugException;
+	
+	/**
+	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
+	 */
+	protected void doHandleDebugEvent(DebugEvent event) {
+		IAction action= getAction();
+		switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				action.setEnabled(false);
+				break;
+			case DebugEvent.RESUME :
+				action.setEnabled(false);
+				break;
+			case DebugEvent.SUSPEND :
+				update(getAction(), getSelection());
+				break;
+		}
+	}		
 }
