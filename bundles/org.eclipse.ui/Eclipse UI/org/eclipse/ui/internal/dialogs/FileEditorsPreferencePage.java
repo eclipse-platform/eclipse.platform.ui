@@ -293,23 +293,6 @@ protected void fillEditorTable() {
  * Place the existing resource types in the table
  */
 protected void fillResourceTypeTable() {
-	// Setup the columns (icon, type)
-	TableLayout tableLayout = new TableLayout();
-	resourceTypeTable.setLayout(tableLayout);
-	resourceTypeTable.setHeaderVisible(true);
-
-	ColumnLayoutData layoutData = new ColumnPixelData(20, false);
-	tableLayout.addColumnData(layoutData);
-	TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
-	tableCol.setResizable(false);
-	tableCol.setText(""); // no label for icon column//$NON-NLS-1$
-
-	layoutData = new ColumnWeightData(40, false);
-	tableLayout.addColumnData(layoutData);
-	tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
-	tableCol.setResizable(false);
-	tableCol.setText(WorkbenchMessages.getString("FileEditorPreference.type")); //$NON-NLS-1$
-
 	// Populate the table with the items
 	IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 	for (int i = 0; i < array.length; i++) {
@@ -385,11 +368,14 @@ protected TableItem newResourceTableItem(IFileEditorMapping mapping, int index, 
 		imagesToDispose.add(image);
 	
 	TableItem item = new TableItem(resourceTypeTable, SWT.NULL, index);
-	item.setImage(0, image);
-	item.setText(1, mapping.getLabel());
+	if (image != null) {
+		item.setImage(image);
+	}
+	item.setText(mapping.getLabel());
 	item.setData(mapping);
-	if (selected)
+	if (selected) {
 		resourceTypeTable.setSelection(index);
+	}
 
 	return item;
 }
