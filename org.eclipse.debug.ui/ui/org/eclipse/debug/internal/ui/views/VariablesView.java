@@ -56,12 +56,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -123,7 +124,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Collections for tracking actions.
 	 */
 	private Map fGlobalActions= new HashMap(3);	
-	private List fSelectionActions = new ArrayList(3);
+	private List fSelectionActions = new ArrayList(1);
 	
 	/**
 	 * These are used to initialize and persist the position of the sash that
@@ -238,23 +239,34 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setDetailPaneOrientation(orientString);
 		
 		// add tree viewer
-		TreeViewer vv = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		final TreeViewer vv = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		vv.setContentProvider(createContentProvider());
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);
+		vv.getControl().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getSite().setSelectionProvider(vv);
+			}
+		});
+		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
 		
 		// add text viewer
-		setDetailViewer(new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL));
-		getDetailViewer().setDocument(getDetailDocument());
+		SourceViewer dv= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
+		setDetailViewer(dv);
+		dv.setDocument(getDetailDocument());
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
-		getDetailViewer().setEditable(false);
+		dv.setEditable(false);
 		getSashForm().setMaximizedControl(vv.getControl());
-		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
-		getDetailViewer().getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
-		getSite().setSelectionProvider(getDetailViewer().getSelectionProvider());
-				
+		
+		dv.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
+		getSite().setSelectionProvider(dv.getSelectionProvider());
+		dv.getControl().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getSite().setSelectionProvider(getDetailViewer().getSelectionProvider());
+			}
+		});
 		// add a context menu to the detail area
-		createDetailContextMenu(getDetailViewer().getTextWidget());
+		createDetailContextMenu(dv.getTextWidget());
 		
 		// listen to selection in debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
@@ -262,7 +274,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		return vv;
 	}
-	
+		
 	protected void addVerifyKeyListener() {
 		getDetailViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
@@ -437,6 +449,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().CONTENTASSIST_PROPOSALS);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
+		
 		addVerifyKeyListener();
 		// set initial content here, as viewer has to be set
 		setInitialContent();
@@ -720,5 +733,5 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		showMessage(e.getMessage());
 	}
 
-}
+	}
 
