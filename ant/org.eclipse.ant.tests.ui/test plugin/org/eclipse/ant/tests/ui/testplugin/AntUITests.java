@@ -29,9 +29,9 @@ import org.eclipse.ant.ui.internal.editor.test.TaskDescriptionProviderTest;
 public class AntUITests extends TestSuite {
 	
 	/**
-		 * Flag that indicates test are in progress
-		 */
-		protected boolean testing = true;
+	 * Flag that indicates test are in progress
+	 */
+	protected boolean testing = true;
 
     public static Test suite() {
 
