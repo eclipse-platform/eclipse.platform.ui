@@ -94,11 +94,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -299,6 +302,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String VARIABLES_COPY_ACTION=  ActionFactory.COPY.getId() + ".Variables"; //$NON-NLS-1$
 
 	protected static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
+	protected static final String SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + ".variablesView.SASH_WEIGHTS"; //$NON-NLS-1$
 	
 	/**
 	 * Remove myself as a selection listener
@@ -476,7 +480,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public Viewer createViewer(Composite parent) {
 		TreeViewer variablesViewer = createTreeViewer(parent);
 		createDetailsViewer();
-		getSashForm().setMaximizedControl(variablesViewer.getControl());
 
 		createOrientationActions();
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -489,6 +492,43 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return variablesViewer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if (memento != null) {
+			Integer bigI = memento.getInteger(SASH_WEIGHTS+"-Length"); //$NON-NLS-1$
+			if (bigI == null) {
+				return;
+			}
+			int numWeights = bigI.intValue();
+			int[] weights = new int[numWeights];
+			for (int i = 0; i < numWeights; i++) {
+				bigI = memento.getInteger(SASH_WEIGHTS+"-"+i); //$NON-NLS-1$
+				if (bigI == null) {
+					return;
+				}
+				weights[i] = bigI.intValue();
+			}
+			if (weights.length > 0){
+				setLastSashWeights(weights);
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		int[] weights = getSashForm().getWeights();
+		memento.putInteger(SASH_WEIGHTS+"-Length", weights.length); //$NON-NLS-1$
+		for (int i = 0; i < weights.length; i++) {
+			memento.putInteger(SASH_WEIGHTS+"-"+i, weights[i]); //$NON-NLS-1$
+		}		
+	}
+
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION;
 	}
