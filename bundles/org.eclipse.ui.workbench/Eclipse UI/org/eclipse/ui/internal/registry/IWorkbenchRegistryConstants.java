@@ -187,14 +187,16 @@ public interface IWorkbenchRegistryConstants {
 	 * Editor content type id binding attribute.  Value <code>contentTypeId</code>.
 	 */
 	public static final String ATT_CONTENT_TYPE_ID = "contentTypeId"; //$NON-NLS-1$
-
-    /**
-     * Browser support tag.  Value <code>support</code>.
-     */
-    public static final String TAG_SUPPORT = "support"; //$NON-NLS-1$
-
+    
     /**
      * Editor management strategy attribute.  Value <code>matchingStrategy</code>.
      */
     public static final String ATT_MATCHING_STRATEGY = "matchingStrategy"; //$NON-NLS-1$
+    
+/* ***** org.eclipse.ui.browserSupport constants ***** */
+    
+    /**
+     * Browser support tag.  Value <code>support</code>.
+     */
+    public static final String TAG_SUPPORT = "support"; //$NON-NLS-1$
 }
