@@ -363,28 +363,27 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		info = newInfo;
 	}		
 	
-	/*
-	 * @see ICVSFile#getInputStream()
-	 */
 	public InputStream getContents() throws CVSException {
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
 	}
 
-	/*
-	 * @see ICVSFile#setReadOnly()
-	 */
 	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException {
 		try {
-			byte[] buffer = new byte[1024];
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			int read;
-			while ((read = stream.read(buffer)) >= 0) {
-				Policy.checkCanceled(monitor);
-				out.write(buffer, 0, read);
+			try {
+				byte[] buffer = new byte[1024];
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				int read;
+				while ((read = stream.read(buffer)) >= 0) {
+					Policy.checkCanceled(monitor);
+					out.write(buffer, 0, read);
+				}
+				out.close();
+				contents = out.toByteArray();
+			} finally {
+				stream.close();
 			}
-			contents = out.toByteArray();
 		} catch(IOException e) {
-			throw new CVSException(Policy.bind("")); //$NON-NLS-1$ //$NON-NLS-2$
+			throw CVSException.wrapException(e);
 		}
 	}
  
