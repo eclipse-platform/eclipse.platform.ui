@@ -12,7 +12,7 @@
 package org.eclipse.core.internal.plugins;
 
 import java.util.*;
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.*;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
@@ -37,6 +37,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 	// model parser
 	private static SAXParser parser;
+	private static SAXParserFactory parserFactory;
 	
 	Locator locator = null;
 	
@@ -70,19 +71,27 @@ public class PluginParser extends DefaultHandler implements IModel {
 public PluginParser(Factory factory) {
 	super();
 	this.factory = factory;
-	parser.setContentHandler(this);
-	parser.setDTDHandler(this);
-	parser.setEntityResolver(this);
-	parser.setErrorHandler(this);
 }
 
 private static void initializeParser() {
-	parser = new SAXParser();
 	try {
-	 	((SAXParser)parser).setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
-	} catch (SAXException e) {
-		// In case support for this feature is removed
+		parserFactory = SAXParserFactory.newInstance();
+		parserFactory.setNamespaceAware(true);
+		try {
+			parserFactory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+		} catch (SAXException e) {
+			// In case support for this feature is removed
+		}
+		parser = parserFactory.newSAXParser();
+	} catch (Exception e) {
+		String message = Policy.bind("parse.initializationException", e.getMessage()); //$NON-NLS-1$
+		log(message, e);
 	}
+}
+
+private static void log(String message, Exception e) {
+	IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+	Platform.getPlugin(Platform.PI_RUNTIME).getLog().log(status);
 }
 
 /**
@@ -229,7 +238,7 @@ public void endElement(String uri, String elementName, String qName) {
 			currentConfigElement.setParent(parent);
 			if (((Integer) stateStack.peek()).intValue() == PLUGIN_EXTENSION_STATE) {
 				// Want to add this configuration element to the subelements of an extension
-				ConfigurationElementModel[] oldValues = (ConfigurationElementModel[]) ((ExtensionModel) parent).getSubElements();
+				ConfigurationElementModel[] oldValues = ((ExtensionModel) parent).getSubElements();
 				int size = (oldValues == null) ? 0 : oldValues.length;
 				ConfigurationElementModel[] newValues = new ConfigurationElementModel[size + 1];
 				for (int i = 0; i < size; i++) {
@@ -238,7 +247,7 @@ public void endElement(String uri, String elementName, String qName) {
 				newValues[size] = currentConfigElement;
 				((ExtensionModel) parent).setSubElements(newValues);
 			} else {
-				ConfigurationElementModel[] oldValues = (ConfigurationElementModel[]) ((ConfigurationElementModel) parent).getSubElements();
+				ConfigurationElementModel[] oldValues = ((ConfigurationElementModel) parent).getSubElements();
 				int size = (oldValues == null) ? 0 : oldValues.length;
 				ConfigurationElementModel[] newValues = new ConfigurationElementModel[size + 1];
 				for (int i = 0; i < size; i++) {
@@ -250,20 +259,22 @@ public void endElement(String uri, String elementName, String qName) {
 			break;
 	}
 }
+
 public void error(SAXParseException ex) {
 	logStatus(ex);
 }
+
 public void fatalError(SAXParseException ex) throws SAXException {
 	logStatus(ex);
 	throw ex;
 }
 
 public void handleExtensionPointState(String elementName, Attributes attributes) {
-
 	// We ignore all elements under extension points (if there are any)
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 	internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
 }
+
 public void handleExtensionState(String elementName, Attributes attributes) {
 
 	// You need to change the state here even though we will be executing the same
@@ -300,7 +311,6 @@ public void handleInitialState(String elementName, Attributes attributes) {
 		}
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
-
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 	internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName)); //$NON-NLS-1$
@@ -416,13 +426,12 @@ public void handlePluginState(String elementName, Attributes attributes) {
 	internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
 }
 public void handleRequiresImportState(String elementName, Attributes attributes) {
-
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName)); //$NON-NLS-1$
 }
-public void handleRequiresState(String elementName, Attributes attributes) {
 
+public void handleRequiresState(String elementName, Attributes attributes) {
 	if (elementName.equals(PLUGIN_REQUIRES_IMPORT)) {
 		parsePluginRequiresImport(attributes);
 		return;
@@ -432,8 +441,8 @@ public void handleRequiresState(String elementName, Attributes attributes) {
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName)); //$NON-NLS-1$
 }
-public void handleRuntimeState(String elementName, Attributes attributes) {
 
+public void handleRuntimeState(String elementName, Attributes attributes) {
 	if (elementName.equals(LIBRARY)) {
 		// Change State
 		stateStack.push(new Integer(RUNTIME_LIBRARY_STATE));
@@ -449,6 +458,7 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 
 public void ignoreableWhitespace(char[] ch, int start, int length) {
 }
+
 private void logStatus(SAXParseException ex) {
 	String name = ex.getSystemId();
 	if (name == null)
@@ -469,7 +479,7 @@ private void logStatus(SAXParseException ex) {
 
 synchronized public PluginModel parsePlugin(InputSource in) throws Exception {
 	locationName = in.getSystemId();
-	parser.parse(in);
+	parser.parse(in, this);
 	return (PluginModel) objectStack.pop();
 }
 
@@ -711,6 +721,7 @@ public void parsePluginRequiresImport(Attributes attributes) {
 	// Populate the vector of prerequisites with this new element
 	((Vector)objectStack.peek()).addElement(current);
 }
+
 public void parseRequiresAttributes(Attributes attributes) {
 }
 

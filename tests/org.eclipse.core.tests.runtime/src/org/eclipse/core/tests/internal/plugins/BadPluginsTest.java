@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.tests.harness.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.*;
 
@@ -77,23 +78,29 @@ public void testBadElements() {
 				IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
 				assertTrue(i + ".0 Only one plugin", pluginDescriptors.length == 0);
 				if (errorMessages[i].equals("")) {
+					// FIXME: why print to the console? what are we trying to accomplish?
 					System.out.println ("id = <no plugin>");
 					System.out.println (problems.toString());
 				} else
-					assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+					// ensure we got the right errors
+					assertTrue(i + ".1", problems.toString().indexOf(errorMessages[i]) != -1);
 			} else {
 				IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
 				assertTrue(i + ".0 Only one plugin", pluginDescriptors.length == 1);
 				PluginDescriptorModel plugin = (PluginDescriptorModel)pluginDescriptors[0];
 				assertTrue(i + ".1 Got the right plugin", plugin.getId().equals(badElements[i]));
 				if (errorMessages[i].equals("")) {
+					// FIXME: why print to the console? what are we trying to accomplish?
 					System.out.println ("id = " + plugin.getId());
 					System.out.println (problems.toString());
 				} else
-					assertTrue(i + ".2 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+					// ensure we got the right errors
+					assertTrue(i + ".2", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
 		}
-	} catch (Exception e) {}
+	} catch (Exception e) {
+		fail("0.99", e);
+	}
 }
 
 public void testBadAttributes() {
@@ -130,15 +137,13 @@ public void testBadAttributes() {
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
 			InternalFactory factory = new InternalFactory(problems);
 			String pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[i] + ".xml");
-			URL pluginURLs[] = new URL[1];
 			URL pURL = null;
 			try {
 				pURL = new URL (pluginPath);
 			} catch (java.net.MalformedURLException e) {
 				assertTrue("Bad URL for " + pluginPath, true);
 			}
-			pluginURLs[0] = pURL;
-			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
+			IPluginRegistry registry = ParseHelper.doParsing (factory, new URL[] {pURL}, false);
 			String id = null;
 			if ((badAttrs[i].equals("badFragment1AttributesTest")) ||
 			    (badAttrs[i].equals("badFragment2AttributesTest"))) {
@@ -155,13 +160,17 @@ public void testBadAttributes() {
 				assertTrue(i + ".1 Got the right plugin", id.equals(badAttrs[i]));
 			}
 			if (errorMessages[i].equals("")) {
+				// FIXME: why are we printing to the console here? what are we trying to accomplish?
 				System.out.println("id = " + id);
 				System.out.println(problems.toString());
 			} else {
-				assertTrue(i + ".2 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+				// ensure we got the right errors
+				assertTrue(i + ".2", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
 		}
-	} catch (Exception e) {}
+	} catch (Exception e) {
+		fail("0.99", e);
+	}
 }
 
 public void testBadPlugins() {
@@ -197,30 +206,27 @@ public void testBadPlugins() {
 		for (int i = 0; i < badTests.length; i++) {
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
 			InternalFactory factory = new InternalFactory(problems);
-			String[] pluginPath = new String[1];
-			pluginPath[0] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[i] + ".xml");
-			URL pluginURLs[] = new URL[1];
-			for (int j = 0; j < pluginURLs.length; j++) {
-				URL pURL = null;
-				try {
-					pURL = new URL (pluginPath[j]);
-				} catch (java.net.MalformedURLException e) {
-					assertTrue("Bad URL for " + pluginPath[j], true);
-				}
-				pluginURLs[j] = pURL;
+			String pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[i] + ".xml");
+			URL pURL = null;
+			try {
+				pURL = new URL (pluginPath);
+			} catch (MalformedURLException e) {
+				assertTrue("Bad URL for " + pluginPath, true);
 			}
-			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
+			IPluginRegistry registry = ParseHelper.doParsing (factory, new URL[] {pURL}, false);
 			PluginDescriptorModel[] plugins = ((PluginRegistryModel)registry).getPlugins();
 			assertTrue(i + ".0 No plugins found", plugins.length == 0);
 			if (errorMessages[i].equals("")) {
+				// FIXME: why print to the console? what are we trying to accomplish?
 				System.out.println("id = " + badTests[i]);
 				System.out.println(problems.toString());
 			} else {
-				assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+				// ensure we got the right errors
+				assertTrue(i + ".1", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
 		}
 	} catch (Exception e) {
-		fail("0.2 Unexpected exception - " + e.getMessage());
+		fail("0.2", e);
 	}
 }
 
@@ -264,14 +270,16 @@ public void testBadFragment() {
 			id = plugin.getId();
 			assertTrue(i + ".3 Got the right plugin", id.equals("badFragmentsPluginTest"));
 			if (errorMessages[i].equals("")) {
+				// FIXME: why print to the console? what are we trying to accomplish?
 				System.out.println("id = " + id);
 				System.out.println(problems.toString());
 			} else {
-				assertTrue(i + ".4 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+				// ensure we got the right errors
+				assertTrue(i + ".4", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
 		}
 	} catch (Exception e) {
-		fail("0.5 Unexpected exception - " + e.getMessage());
+		fail("0.5", e);
 	}
 }
 
@@ -325,14 +333,16 @@ public void testFailedFragment() {
 			PluginFragmentModel[] fragmentDescriptors = ((PluginRegistryModel)registry).getFragments();
 			assertTrue(i + ".0 No fragments found", fragmentDescriptors.length == 0);
 			if (errorMessages[i].equals("")) {
+				// FIXME: why print to the console? what are we trying to accomplish?
 				System.out.println("id = " + badAttrs[i]);
 				System.out.println(problems.toString());
 			} else {
-				assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+				// ensure we got the right errors
+				assertTrue(i + ".1", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
 		}
 	} catch (Exception e) {
-		fail("0.2 Unexpected exception - " + e.getMessage());
+		fail("0.2", e);
 	}
 }
 public void testDuplicatePlugin() {
@@ -358,12 +368,14 @@ public void testDuplicatePlugin() {
 		PluginDescriptorModel[] pluginDescriptors = ((PluginRegistryModel)registry).getPlugins();
 		assertTrue("1.0 One plugin found", pluginDescriptors.length == 1);
 		if (errorMessage.equals("")) {
+			// FIXME: why print to the console? what are we trying to accomplish?
 			System.out.println(problems.toString());
 		} else {
-			assertTrue("1.1 Got the right errors", problems.toString().indexOf(errorMessage) != -1);
+			// ensure we got the right errors
+			assertTrue("1.1", problems.toString().indexOf(errorMessage) != -1);
 		}
 	} catch (Exception e) {
-		fail("0.2 Unexpected exception - " + e.getMessage());
+		fail("0.2", e);
 	}
 }
 }

@@ -290,7 +290,7 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 
 /**
  * This method is to be used internally only for adding the proper class path and resource path
- * entries to the class loaders for Runtime and Xerces. They are special cases since they need
+ * entries to the class loaders for Runtime. This is a special case since it needs
  * to be brought up before everything else. (and before the registry is loaded)
  */
 public void addURLs(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters) {

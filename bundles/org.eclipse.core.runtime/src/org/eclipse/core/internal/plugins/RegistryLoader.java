@@ -86,15 +86,14 @@ private PluginModel processManifestFile(URL manifest) {
 			// Give the system id a value in case we want it for
 			// error reporting within the parser.
 			in.setSystemId(manifest.getFile());
-			result = new PluginParser((Factory) factory).parsePlugin(in);
+			result = new PluginParser(factory).parsePlugin(in);
 		} finally {
 			is.close();
 		}
-	} catch (SAXParseException se) {
-		/* exception details logged by parser */
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null)); //$NON-NLS-1$
+	} catch (SAXParseException e) {
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), e)); //$NON-NLS-1$
 	} catch (Exception e) {
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString() + ":  " + e.getMessage()), null)); //$NON-NLS-1$ //$NON-NLS-2$
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString() + ":  " + e.getMessage()), e)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	return result;
 }
