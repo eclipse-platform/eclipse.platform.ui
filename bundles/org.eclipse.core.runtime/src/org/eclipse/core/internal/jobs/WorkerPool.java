@@ -58,8 +58,7 @@ class WorkerPool {
 		manager.getLockManager().removeAllLocks(Thread.currentThread());
 	}
 	protected synchronized void endWorker(Worker worker) {
-		threads.remove(worker);
-		if (JobManager.DEBUG)
+		if (threads.remove(worker) && JobManager.DEBUG)
 			JobManager.debug("worker removed from pool: " + worker); //$NON-NLS-1$
 	}
 	/**
@@ -118,8 +117,11 @@ class WorkerPool {
 	protected Job startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
-			if (!running || threads.size() > MAX_THREADS)
+			if (!running || threads.size() > MAX_THREADS) {
+				//must remove the worker immediately to prevent all threads from expiring
+				endWorker(worker);
 				return null;
+			}
 		}
 		Job job = manager.startJob();
 		//spin until a job is found or until we have been idle for too long
@@ -133,10 +135,9 @@ class WorkerPool {
 			// the thread can expire
 			synchronized (this) {
 				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size() - busyThreads) > MIN_THREADS) {
-					//must remove the worker immediately to prevent all threads from
-					//checking this condition one after the other and all expiring
-					threads.remove(worker);
-					break;
+					//must remove the worker immediately to prevent all threads from expiring
+					endWorker(worker);
+					return null;
 				}
 			}
 		}
