@@ -21,9 +21,6 @@ import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,6 +38,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.CommandException;
@@ -49,10 +51,10 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.internal.commands.KeysPreferencePage;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.keys.KeySequence;
+
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -573,15 +575,11 @@ final class KeyAssistDialog extends Dialog {
         		"org.eclipse.ui.preferencePages.Keys", //$NON-NLS-1$
 				"org.eclipse.ui.preferencePages.Perspectives" //$NON-NLS-1$
         };
-        final WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
-                .createDialogOn(keysPageId,highlights);
-
-        // Select the right command on the preference page.
-        final IPreferencePage page = dialog.getCurrentPage();
-        if (page instanceof KeysPreferencePage) {
-            final KeysPreferencePage keysPreferencePage = (KeysPreferencePage) page;
-            keysPreferencePage.editCommand(commandName, keySequence);
-        }
+        
+        //Add in some data for the key binding to edit
+        String[] data = new String[] {commandName,keySequence};
+        final PreferenceDialog dialog = PreferencesUtil.
+        	createPreferenceDialogOn(null,keysPageId,highlights,data);
 
         /*
          * Forget the remembered state (so we don't get stuck editing

@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * The PreferenceLinkArea is the link area used to
@@ -59,7 +60,7 @@ public class PreferenceLinkArea extends LinkArea {
 			 */
 			public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 					throws  InterruptedException {
-				WorkbenchPreferenceDialog.createDialogOn(node.getId());
+				PreferencesUtil.createPreferenceDialogOn(null,node.getId(),null,null);
 			}
 		};
 	}

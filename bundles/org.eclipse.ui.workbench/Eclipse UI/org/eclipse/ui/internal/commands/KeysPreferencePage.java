@@ -2666,4 +2666,16 @@ public class KeysPreferencePage extends PreferencePage implements
      * else if (conflict) tableItem.setForeground(new
      * Color(getShell().getDisplay(), RGB_CONFLICT)); }
      */
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+	 */
+	public void applyData(Object data) {
+		if(data instanceof String[]){
+			String[] values = (String[]) data;
+			if(values.length == 2)
+			   editCommand(values[0], values[1]);
+		}
+			
+	}
 }

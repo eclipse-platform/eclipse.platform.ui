@@ -19,10 +19,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceContentProvider;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -43,6 +45,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 	protected FilteredTree filteredTree;
+
+	private Object pageData;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -80,8 +84,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 				IPreferenceNode node = (IPreferenceNode) element;
 				Object[] children = contentProvider.getChildren(node);
-				return match(node.getLabelText())
-						|| (filter(viewer, element, children).length > 0);
+				return match(node.getLabelText()) || (filter(viewer, element, children).length > 0);
 
 			}
 		};
@@ -156,7 +159,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		return leftArea;
 	}
-	
+
 	/**
 	 * Show only the supplied ids.
 	 * 
@@ -165,6 +168,36 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	public void showOnly(String[] filteredIds) {
 		filteredTree.getViewer().addFilter(new PreferenceNodeFilter(filteredIds));
 
+	}
+
+	/**
+	 * Set the data to be applied to a page after it is created.
+	 * @param pageData Object
+	 */
+	public void setPageData(Object pageData) {
+		this.pageData = pageData;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPage(org.eclipse.jface.preference.IPreferenceNode)
+	 */
+	protected void createPage(IPreferenceNode node) {
+
+		super.createPage(node);
+		if (this.pageData == null)
+			return;
+		//Apply the data if it has been set.
+		IPreferencePage page = node.getPage();
+		if (page instanceof PreferencePage)
+			((PreferencePage) page).applyData(this.pageData);
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#getCurrentPage()
+	 */
+	public IPreferencePage getCurrentPage() {
+		return super.getCurrentPage();
 	}
 
 }

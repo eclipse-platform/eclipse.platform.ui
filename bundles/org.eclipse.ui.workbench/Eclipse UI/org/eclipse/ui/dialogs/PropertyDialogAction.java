@@ -10,26 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.util.Iterator;
-
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferencePage;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
-import org.eclipse.ui.internal.dialogs.PropertyPageManager;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Standard action for opening a Property Pages Dialog on the currently selected
@@ -63,10 +59,6 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 */
 	private String initialPageId;
 
-	/**
-	 * The data to apply to the default page.
-	 */
-	private Object pageData;
 
 	/**
 	 * Creates a new action for opening a property dialog on the elements from
@@ -83,23 +75,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		Assert.isNotNull(shell);
 		this.shell = shell;
 		setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this,
-				IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
-	}
-
-	/**
-	 * Returns the name of the given element.
-	 * 
-	 * @param element
-	 *            the element
-	 * @return the name of the element
-	 */
-	private String getName(IAdaptable element) {
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
-				.getAdapter(IWorkbenchAdapter.class);
-		if (adapter != null) 
-			return adapter.getLabel(element);
-		return "";//$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
 	}
 
 	/**
@@ -110,8 +86,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @return boolean
 	 */
 	private boolean hasPropertyPagesFor(Object object) {
-		PropertyPageContributorManager manager = PropertyPageContributorManager
-				.getManager();
+		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
 		return manager.hasContributorsFor(object);
 	}
 
@@ -153,8 +128,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 *         otherwise
 	 */
 	public boolean isApplicableForSelection(IStructuredSelection selection) {
-		return selection.size() == 1
-				&& hasPropertyPagesFor(selection.getFirstElement());
+		return selection.size() == 1 && hasPropertyPagesFor(selection.getFirstElement());
 	}
 
 	/**
@@ -177,51 +151,12 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 *         are found.
 	 */
 	public PreferenceDialog createDialog() {
-		PropertyPageManager pageManager = new PropertyPageManager();
-		String title = "";//$NON-NLS-1$
-		// get selection
-		IAdaptable element = (IAdaptable) getStructuredSelection()
-				.getFirstElement();
+
+		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
 		if (element == null)
 			return null;
-		// load pages for the selection
-		// fill the manager with contributions from the matching contributors
-		PropertyPageContributorManager.getManager().contribute(pageManager,
-				element);
-		// testing if there are pages in the manager
-		Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER)
-				.iterator();
-		String name = getName(element);
-		if (!pages.hasNext()) {
-			MessageDialog
-					.openInformation(
-							shell,
-							WorkbenchMessages
-									.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
-							WorkbenchMessages
-									.format(
-											"PropertyDialog.noPropertyMessage", new Object[] { name })); //$NON-NLS-1$
-			return null;
-		}
-		title = WorkbenchMessages.format(
-				"PropertyDialog.propertyMessage", new Object[] { name }); //$NON-NLS-1$
-		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager,
-				getStructuredSelection());
-
-		if (initialPageId != null)
-			propertyDialog.setSelectedNode(initialPageId);
-		propertyDialog.create();
-
-		if (pageData != null) {
-			IPreferencePage page = propertyDialog.getCurrentPage();
-			if (page instanceof PreferencePage)
-				((PreferencePage) page).applyData(pageData);
-		}
-		propertyDialog.getShell().setText(title);
-		WorkbenchHelp.setHelp(propertyDialog.getShell(),
-				IWorkbenchHelpContextIds.PROPERTY_DIALOG);
-
-		return propertyDialog;
+		return PropertyDialog
+				.createDialogOn(shell, initialPageId, element);
 	}
 
 	/**
@@ -231,18 +166,5 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(selection.size() == 1 && selection.getFirstElement() != null);
-	}
-
-	/**
-	 * Select the page at propertyPageId and apply the data to it.
-	 * 
-	 * @param propertyPageId
-	 * @param data
-	 * @since 3.1
-	 */
-	public void select(String propertyPageId, Object data) {
-		initialPageId = propertyPageId;
-		pageData = data;
-
 	}
 }

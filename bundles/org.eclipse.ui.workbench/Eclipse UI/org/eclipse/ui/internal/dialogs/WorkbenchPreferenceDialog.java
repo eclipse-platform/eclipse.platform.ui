@@ -144,7 +144,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	public static boolean canShowGroups() {
 		return getGroups().length > 0;
 	}
-
+	
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It
 	 * is the responsibility of the caller to then call <code>open()</code>.
@@ -156,9 +156,65 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 *            <code>null</code>. If it is <code>null</code>, then the
 	 *            preference page is not selected or modified in any way.
 	 * @return The selected preference page.
+	 * @deprecated This method will be removed before 3.1 is released.
+	 * Use  org.eclipse.ui.dialogs.PreferencesUtil#createPreferenceDialogOn(Shell, String,String[], Object)
 	 * @since 3.1
+	 * @see org.eclipse.ui.dialogs.PreferencesUtil
 	 */
 	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId) {
+		return createDialogOn(null,preferencePageId);
+	}
+	
+	/**
+	 * Creates a workbench preference dialog to a particular preference page.
+	 * Show the other pages as filtered results using whatever filtering
+	 * criteria the search uses. It is the responsibility of the caller to then
+	 * call <code>open()</code>. The call to <code>open()</code> will not
+	 * return until the dialog closes, so this is the last chance to manipulate
+	 * the dialog.
+	 * 
+	 * @param preferencePageId
+	 *            The identifier of the preference page to open; may be
+	 *            <code>null</code>. If it is <code>null</code>, then the
+	 *            preference page is not selected or modified in any way.
+	 * @param displayedIds
+	 *            The ids of the other pages to be highlighted using the same
+	 *            filtering criterea as search.
+	 * @return The dialog.
+	 * @deprecated This method will be removed before 3.1 is released.
+	 * Use  org.eclipse.ui.dialogs.PreferencesUtil#createPreferenceDialogOn(Shell, String,String[], Object)
+	 * @since 3.1
+	 * @see org.eclipse.ui.dialogs.PreferencesUtil
+	 */
+	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
+			String[] displayedIds) {
+		WorkbenchPreferenceDialog dialog =  createDialogOn(null,preferencePageId);
+		if(dialog == null)
+			return null;
+		if (displayedIds != null)
+			dialog.showOnly(displayedIds);
+		return dialog;
+	}
+	
+	/**
+	 * Creates a workbench preference dialog to a particular preference page. It
+	 * is the responsibility of the caller to then call <code>open()</code>.
+	 * The call to <code>open()</code> will not return until the dialog
+	 * closes, so this is the last chance to manipulate the dialog.
+	 * 
+	 * @param shell
+	 * 			The Shell to parent the dialog off of if it is not
+	 * 			already created. May be <code>null</code>
+	 * 			in which case the active workbench window will be used
+	 * 			if available.
+	 * @param preferencePageId
+	 *            The identifier of the preference page to open; may be
+	 *            <code>null</code>. If it is <code>null</code>, then the
+	 *            preference page is not selected or modified in any way.
+	 * @return The selected preference page.
+	 * @since 3.1
+	 */
+	public static final WorkbenchPreferenceDialog createDialogOn(Shell shell, final String preferencePageId) {
 		final WorkbenchPreferenceDialog dialog;
 
 		if (instance == null) {
@@ -167,14 +223,16 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			 * the given selected page.
 			 */
 
-			// Determine a decent parent shell.
-			final IWorkbench workbench = PlatformUI.getWorkbench();
-			final IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-			final Shell parentShell;
-			if (workbenchWindow != null) {
-				parentShell = workbenchWindow.getShell();
-			} else {
-				parentShell = null;
+			Shell parentShell = shell;
+			if (parentShell == null) {
+				// Determine a decent parent shell.
+				final IWorkbench workbench = PlatformUI.getWorkbench();
+				final IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+				if (workbenchWindow != null) {
+					parentShell = workbenchWindow.getShell();
+				} else {
+					parentShell = null;
+				}
 			}
 
 			// Create the dialog
@@ -200,32 +258,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 
 		// Get the selected node, and return it.
-		return dialog;
-	}
-
-	/**
-	 * Creates a workbench preference dialog to a particular preference page.
-	 * Show the other pages as filtered results using whatever filtering
-	 * criteria the search uses. It is the responsibility of the caller to then
-	 * call <code>open()</code>. The call to <code>open()</code> will not
-	 * return until the dialog closes, so this is the last chance to manipulate
-	 * the dialog.
-	 * 
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
-	 * @param filteredIds
-	 *            The ids of the other pages to be highlighted using the same
-	 *            filtering criterea as search.
-	 * @return The selected preference page.
-	 * @since 3.1
-	 * @see #createDialogOn(String)
-	 */
-	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
-			String[] filteredIds) {
-		WorkbenchPreferenceDialog dialog = createDialogOn(preferencePageId);
-		dialog.showOnly(filteredIds);
 		return dialog;
 	}
 
@@ -256,8 +288,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @since 3.1
 	 */
 	private PreferencePageHistory history;
-
-	private Object pageData;
 
 	private CTabItem tab;
 
@@ -481,19 +511,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createPage(org.eclipse.jface.preference.IPreferenceNode)
-	 */
-	protected void createPage(IPreferenceNode node) {
-		super.createPage(node);
-		if (this.pageData == null)
-			return;
-		//Apply the data if it has been set.
-		IPreferencePage page = node.getPage();
-		if (page instanceof PreferencePage)
-			((PreferencePage) page).applyData(this.pageData);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -629,18 +646,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return historyBar;
 	}
 
-	/**
-	 * Returns the currently selected page. This can be used in conjuction with
-	 * <code>createDialogOn</code> to create a dialog, manipulate the
-	 * preference page, and then display it to the user.
-	 * 
-	 * @return The currently selected page; this value may be <code>null</code>
-	 *         if there is no selected page.
-	 * @since 3.1
-	 */
-	public final IPreferencePage getCurrentPage() {
-		return super.getCurrentPage();
-	}
 
 	/**
 	 * Return the file name setting or a default value if there isn't one.
@@ -748,7 +753,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 
 	}
-
 
 	/**
 	 * Import a preference file.
@@ -899,15 +903,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 					WorkbenchPreferenceDialog.FILE_PATH_SETTING, currentFileName);
 
 	}
-
-	/**
-	 * Set the data to be applied to a page after it is created.
-	 * @param pageData Object
-	 */
-	public void setPageData(Object pageData) {
-		this.pageData = pageData;
-	}
-
 
 	/**
 	 * Set te text and images for the group in the item.
