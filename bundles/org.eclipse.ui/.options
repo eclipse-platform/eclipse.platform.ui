@@ -5,3 +5,6 @@ org.eclipse.ui/debug=true
 
 # Show a dialog with details button when an internal error occur.
 org.eclipse.ui/debug/internalerror/openDialog=false
+
+# Enable the trace of SWT graphics.
+org.eclipse.ui/trace/graphics=false

@@ -26,6 +26,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -1331,7 +1332,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		String appName = getAboutInfo().getAppName();
 		if (appName != null)
 			Display.setAppName(appName);
-		Display display = new Display();
+		Display display = null;
+		if("true".equals(Platform.getDebugOption("org.eclipse.ui/trace/graphics"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			DeviceData data = new DeviceData();
+			data.tracking = true;
+			display = new Display(data);			
+		} else {
+			display = new Display();
+		}
 		//Workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
 		display.addListener(SWT.Close, new Listener() {
