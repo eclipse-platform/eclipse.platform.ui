@@ -333,12 +333,13 @@ public class LinkedModeModel {
 		fDocuments.clear();
 		fGroups.clear();
 
-		for (Iterator it= fListeners.iterator(); it.hasNext(); ) {
+		List listeners= new ArrayList(fListeners);
+		fListeners.clear();
+		for (Iterator it= listeners.iterator(); it.hasNext(); ) {
 			ILinkedModeListener listener= (ILinkedModeListener) it.next();
 			listener.left(this, flags);
 		}
 
-		fListeners.clear();
 
 		if (fParentEnvironment != null)
 			fParentEnvironment.resume(flags);
