@@ -75,10 +75,16 @@ import org.eclipse.ui.internal.util.Util;
 public class WorkbenchKeyboard {
 
     /**
-     * Whether the keyboard should kick into debugging mode. This is a local
-     * flag, that allows the debugging stuff to be compiled out.
+     * Whether the keyboard should kick into debugging mode. This causes real
+     * key bindings trapped by the key binding architecture to be reported.
      */
     private static final boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
+
+    /**
+     * Whether the keyboard should report every event received by its global
+     * filter.
+     */
+    private static final boolean DEBUG_VERBOSE = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
 
     /**
      * The maximum height of the multi-stroke key binding assistant shell.
@@ -205,7 +211,7 @@ public class WorkbenchKeyboard {
     private final Listener keyDownFilter = new Listener() {
 
         public void handleEvent(Event event) {
-            if (DEBUG) {
+            if (DEBUG && DEBUG_VERBOSE) {
                 System.out.print("KEYS >>> Listener.handleEvent(type = "); //$NON-NLS-1$
                 switch (event.type) {
                 case SWT.KeyDown:
@@ -393,9 +399,9 @@ public class WorkbenchKeyboard {
         Map actionsById = ((CommandManager) commandManager).getActionsById();
         org.eclipse.ui.commands.IHandler action = (org.eclipse.ui.commands.IHandler) actionsById
                 .get(commandId);
-        if (DEBUG) {
+        if (DEBUG && DEBUG_VERBOSE) {
             if (action == null) {
-                System.out.println("KEYS >>>     action  =null"); //$NON-NLS-1$
+                System.out.println("KEYS >>>     action  = null"); //$NON-NLS-1$
             } else {
                 System.out.println("KEYS >>>     action = " //$NON-NLS-1$
                         + ((ActionHandler) action).getAction());
@@ -751,7 +757,7 @@ public class WorkbenchKeyboard {
     public boolean press(List potentialKeyStrokes, Event event,
             boolean dialogOnly) {
         // TODO remove event parameter once key-modified actions are removed
-        if (DEBUG) {
+        if (DEBUG && DEBUG_VERBOSE) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
                             + potentialKeyStrokes + ", dialogOnly = " //$NON-NLS-1$

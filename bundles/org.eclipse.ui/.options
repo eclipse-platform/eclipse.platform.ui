@@ -32,3 +32,6 @@ org.eclipse.jface/trace/actions=false
 
 # Reports events received and dispatched by the key binding architecture
 org.eclipse.ui/trace/keyBindings=false
+
+# Report every event received by the key binding architecture
+org.eclipse.ui/trace/keyBindings.verbose=false
