@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -66,19 +70,11 @@ class SelectBreakpointGroupDialog extends InputDialog {
 		data.horizontalAlignment= GridData.BEGINNING;
 		data.verticalAlignment= GridData.BEGINNING;
 
-        Object[] children = fView.getTreeContentProvider().getElements(fView.getViewer().getInput());
-        final List groups= new ArrayList();
-        for (int i = 0; i < children.length; i++) {
-            Object child= children[i];
-            if (child instanceof String) {
-                groups.add(child);
-            }
-        }
-        
-        if (groups.size() > 0) {
+        final String[] groups= getGroups();
+        if (groups.length > 0) {
 			button.addSelectionListener(new SelectionAdapter() {
 	            public void widgetSelected(SelectionEvent e) {
-	                handleBrowsePressed(groups.toArray());
+	                handleBrowsePressed(groups);
 	            }
 	        });
         } else {
@@ -86,6 +82,26 @@ class SelectBreakpointGroupDialog extends InputDialog {
         }
 		
 		return area;
+	}
+	
+	/**
+	 * Returns all existing custom breakpoint groups
+	 * @return all existing custom breakpoint groups
+	 */
+	protected String[] getGroups() {
+	    IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+	    Set groups= new HashSet();
+	    for (int i = 0; i < breakpoints.length; i++) {
+            try {
+                String group = breakpoints[i].getGroup();
+                if (group != null) {
+                    groups.add(group);
+                }
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+        }
+	    return (String[]) groups.toArray(new String[groups.size()]);
 	}
 
     /**
