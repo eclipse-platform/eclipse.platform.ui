@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -53,6 +54,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -64,8 +67,11 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -271,6 +277,30 @@ public abstract class MarkerView extends TableView {
 				getSite().getPage().getSelection());
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
 		refresh();
+		
+		// Set help on the view itself
+		getViewer().getControl().addHelpListener(new HelpListener() {
+			/*
+			 *  (non-Javadoc)
+			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
+			 */
+			public void helpRequested(HelpEvent e) {
+				String contextId = null;
+				// See if there is a context registered for the current selection
+				ConcreteMarker marker =
+					(ConcreteMarker) ((IStructuredSelection) getViewer().getSelection())
+						.getFirstElement();
+				if (marker != null) {
+					contextId = IDE.getMarkerHelpRegistry().getHelp(marker.getMarker());
+				}
+
+				if (contextId == null) {
+					contextId = PlatformUI.PLUGIN_ID + ".task_list_view_context";
+				}
+
+				WorkbenchHelp.displayHelp(contextId);
+			}
+		});
 	}
 
 	protected void viewerSelectionChanged(IStructuredSelection selection) {
