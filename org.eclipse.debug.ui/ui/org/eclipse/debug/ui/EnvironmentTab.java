@@ -318,7 +318,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			(IStructuredSelection) environmentTable.getSelection();
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {VALUE_LABEL}, null, null); //$NON-NLS-1$
+		String value= var.getValue();
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {VALUE_LABEL}, new String[] {value}, null); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
