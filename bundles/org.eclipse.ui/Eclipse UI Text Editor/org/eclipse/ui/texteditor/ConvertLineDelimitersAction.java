@@ -60,7 +60,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			IDocument document= getDocument();
 			if (document != null) {
 				Shell shell= getTextEditor().getSite().getShell();
-				ConvertRunnable runnable= new ConvertRunnable(document, fLineDelimiter);
+				ConvertRunnable runnable= new ConvertRunnable(getTextEditor(), document, fLineDelimiter);
 
 				if (document.getNumberOfLines() < 40) {
 					BusyIndicator.showWhile(shell.getDisplay(), runnable);
@@ -83,11 +83,13 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * Converts all line delimiters of the document to <code>lineDelimiter</code>.
 	 */
 	private static class ConvertRunnable implements IRunnableWithProgress, Runnable {
-		
+
+		private final ITextEditor fEditor;		
 		private final IDocument fDocument;
 		private final String fLineDelimiter;
 		
-		public ConvertRunnable(IDocument document, String lineDelimiter) {
+		public ConvertRunnable(ITextEditor editor, IDocument document, String lineDelimiter) {
+			fEditor= editor;
 			fDocument= document;
 			fLineDelimiter= lineDelimiter;	
 		}
@@ -111,6 +113,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			final int lineCount= fDocument.getNumberOfLines();
 			monitor.beginTask(EditorMessages.getString("Editor.ConvertLineDelimiter.title"), lineCount); //$NON-NLS-1$
 			
+			if (fEditor instanceof ITextEditorExtension)
+				((ITextEditorExtension) fEditor).beginCompoundChange();
+			
 			try {
 				for (int i= 0; i < lineCount; i++) {
 					if (monitor.isCanceled())
@@ -129,6 +134,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				throw new InvocationTargetException(e);
 
 			} finally {
+				if (fEditor instanceof ITextEditorExtension)
+					((ITextEditorExtension) fEditor).endCompoundChange();
+				
 				monitor.done();
 			}
 		}

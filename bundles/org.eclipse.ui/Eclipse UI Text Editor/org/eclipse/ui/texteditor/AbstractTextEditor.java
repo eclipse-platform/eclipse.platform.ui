@@ -3049,4 +3049,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fRulerContextMenuListeners.remove(listener);
 	}
 
+	/*
+	 * @see ITextEditorExtension#beginCompoundChange()
+	 */
+	public void beginCompoundChange() {
+		if (fSourceViewer instanceof ITextViewerExtension)
+			((ITextViewerExtension) fSourceViewer).beginCompoundChange();
+	}
+
+	/*
+	 * @see ITextEditorExtension#endCompoundChange()
+	 */
+	public void endCompoundChange() {
+		if (fSourceViewer instanceof ITextViewerExtension)
+			((ITextViewerExtension) fSourceViewer).endCompoundChange();
+	}
+
 }

@@ -586,8 +586,8 @@ public class DefaultUndoManager implements IUndoManager {
 					String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
 
 					if ((length == 1) || TextUtilities.equals(delimiters, oldText) > -1) {
-						// because of overwrite mode or model bmanipulation
-						if (!fOverwriting || (start != fCurrent.fEnd)) {
+						// because of overwrite mode or model manipulation
+						if (!fOverwriting || (start != fCurrent.fStart +  fTextBuffer.length())) {
 							commit();
 							fOverwriting= true;
 						}

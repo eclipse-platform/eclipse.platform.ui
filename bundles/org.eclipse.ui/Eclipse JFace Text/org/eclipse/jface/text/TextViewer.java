@@ -2370,21 +2370,22 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	}
 	
 	/**
-	 * Returns whether multiple lines are selected.
+	 * Returns whether one or multiple lines are selected.
 	 * 
-	 * @return <code>true</code> if multiple lines are selected
+	 * @return <code>true</code> if one or multiple lines are selected
 	 */
 	protected boolean areMultipleLinesSelected() {
 		Point s= getSelectedRange();
-		if (s.y < 1)
+		if (s.y == 0)
 			return false;
 			
 		try {
 			
 			IDocument document= getDocument();
 			int startLine= document.getLineOfOffset(s.x);
-			int endLine= document.getLineOfOffset(s.x + s.y -1);
-			return startLine != endLine;
+			int endLine= document.getLineOfOffset(s.x + s.y);
+			IRegion line= document.getLineInformation(startLine);
+			return startLine != endLine || (s.x == line.getOffset() && s.y == line.getLength());
 		
 		} catch (BadLocationException x) {
 		}
@@ -2977,6 +2978,22 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			newDocument.addPositionCategory(MARK_POSITION_CATEGORY);
 			newDocument.addPositionUpdater(fMarkPositionUpdater);			
 		}
+	}
+
+	/*
+	 * @see ITextViewerExtension#beginCompoundChange()
+	 */
+	public void beginCompoundChange() {
+		if (fUndoManager != null)
+			fUndoManager.beginCompoundChange();
+	}
+
+	/*
+	 * @see ITextViewerExtension#endCompoundChange()
+	 */
+	public void endCompoundChange() {
+		if (fUndoManager != null)
+			fUndoManager.endCompoundChange();
 	}
 
 }
