@@ -11,17 +11,15 @@
 
 package org.eclipse.ant.tests.ui.support.inputHandlers;
 
-import org.eclipse.ant.internal.ui.antsupport.inputhandler.SWTInputHandler;
 
-
-public class TestSWTInputHandler extends SWTInputHandler {
+public class TestSWTInputHandler {//extends SWTInputHandler {
 	
    
-    /* (non-Javadoc)
-     * @see org.eclipse.ant.internal.ui.antsupport.inputhandler.SWTInputHandler#open(java.lang.String, java.lang.String, boolean[])
-     */
-    protected void open(String title, String prompt, boolean[] result) {
-        fRequest.setInput("TestSWTInputHandler");
-        result[0]= true;
-    }
+//    /* (non-Javadoc)
+//     * @see org.eclipse.ant.internal.ui.antsupport.inputhandler.SWTInputHandler#open(java.lang.String, java.lang.String, boolean[])
+//     */
+//    protected void open(String title, String prompt, boolean[] result) {
+//        fRequest.setInput("TestSWTInputHandler");
+//        result[0]= true;
+//    }
 }
