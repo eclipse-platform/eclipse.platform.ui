@@ -64,7 +64,6 @@ function highlightHandler()
 _highlightHandler = highlightHandler;
 
 function onloadHandler() {
-alert("ws="+getWorkingSet());
 	sizeButtons();
 	enableButtons();
 	document.getElementById("alldocs").focus();
