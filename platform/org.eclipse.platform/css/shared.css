@@ -182,8 +182,7 @@ body, .page{
 	padding-left : 5px;
 	padding-right : 5px;
 	float : left;
-	text-align : center;
-}
+	text-align : center;}
 
 #navigation-links a img {
 	height : 52px;
@@ -197,32 +196,35 @@ body, .page{
 
 #navigation-links a:hover, 
 #navigation-links a:focus 
-#navigation-links a:active { border-right : 0px;}
+#navigation-links a:active {	border-right: 0px;}
+
+
 
 /* properties for each of the navigation-links  */
+#navigation-links a#configure  { background-image : 			   	  url(graphics/icons/etool/firsteps48.gif); }
+#navigation-links a#configure:hover img,
+#navigation-links a#configure:focus img,
+#navigation-links a#configure:active img { background-image : url(graphics/icons/ctool/firsteps48.gif); }
+
 #navigation-links a#overview img { background-image : url(graphics/icons/etool/overview48.gif); }
 #navigation-links a#overview:hover img,
 #navigation-links a#overview:focus img,
 #navigation-links a#overview:active img { background-image : url(graphics/icons/ctool/overview48.gif); }
-/*#navigation-links a#overview:active img { background-image : url(graphics/icons/ctool/overview48sel.gif); }*/
 
 #navigation-links a#tutorials img { background-image : url(graphics/icons/etool/tutorials48.gif); }
 #navigation-links a#tutorials:hover img,
 #navigation-links a#tutorials:active img,
 #navigation-links a#tutorials:focus img { background-image : url(graphics/icons/ctool/tutorials48.gif); }
-/*#navigation-links a#tutorials:active img { background-image : url(graphics/icons/ctool/tutorials48sel.gif); }*/
 
 #navigation-links a#samples img { background-image : url(graphics/icons/etool/samples48.gif); }
 #navigation-links a#samples:hover img,
 #navigation-links a#samples:active img,
 #navigation-links a#samples:focus img { background-image : url(graphics/icons/ctool/samples48.gif); }
-/*#navigation-links a#samples:active img { background-image : url(graphics/icons/ctool/samples48sel.gif); }*/
 
 #navigation-links a#news img { background-image : url(graphics/icons/etool/whatsnew48.gif); }
 #navigation-links a#news:hover img,
 #navigation-links a#news:focus img,
 #navigation-links a#news:active img { background-image : url(graphics/icons/ctool/whatsnew48.gif); }
-/*#navigation-links a#news:active img { background-image : url(graphics/icons/ctool/whatsnew48sel.gif); }*/
 
 #navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
 #navigation-links a#workbench .text { display : none; }
