@@ -19,7 +19,10 @@ public class XMLGenerator {
 	 * Constructor.
 	 */
 	public XMLGenerator(Writer writer) {
-		this.out = new PrintWriter(writer);
+		if (writer instanceof PrintWriter)
+			this.out = (PrintWriter)writer;
+		else
+			this.out = new PrintWriter(writer);
 	}
 	/**
 	 * Constructor.
