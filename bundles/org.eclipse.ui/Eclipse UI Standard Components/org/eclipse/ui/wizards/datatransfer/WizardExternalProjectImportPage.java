@@ -54,11 +54,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		}
 	};
 
-	// initial value stores
-	private String initialProjectFieldValue;
-
-	// the value the user has entered
-	private String customLocationFieldValue;
+	//Keep track of the directory that we browsed to last time
+	//the wizard was invoked.
+	private static String previouslyBrowsedDirectory = "";
 
 	// widgets
 	private Text projectNameField;
@@ -66,11 +64,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	private Label locationLabel;
 	private Button browseButton;
 
-	private Listener nameModifyListener = new Listener() {
-		public void handleEvent(Event e) {
-			setPageComplete(validatePage());
-		}
-	};
 
 	private Listener locationModifyListener = new Listener() {
 		public void handleEvent(Event e) {
@@ -89,7 +82,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	public WizardExternalProjectImportPage() {
 		super("wizardExternalProjectPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		customLocationFieldValue = ""; //$NON-NLS-1$
 		setTitle(
 			DataTransferMessages.getString("WizardExternalProjectImportPage.title")); //$NON-NLS-1$
 		setDescription(
@@ -116,6 +108,13 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		setMessage(null);
 		setControl(composite);
 	}
+
+	private Listener nameModifyListener = new Listener() {
+		public void handleEvent(Event e) {
+			setPageComplete(validatePage());
+		}
+	};
+
 	/**
 	 * Creates the project location specification controls.
 	 *
@@ -162,10 +161,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
 
-		// Set the initial value first before listener
-		// to avoid handling an event during the creation.
-		if (initialProjectFieldValue != null)
-			projectNameField.setText(initialProjectFieldValue);
 		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 	/**
@@ -225,9 +220,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 *   if no project name is known
 	 */
 	public String getProjectName() {
-		if (projectNameField == null)
-			return initialProjectFieldValue;
-
 		return getProjectNameFieldValue();
 	}
 	/**
@@ -261,6 +253,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
 				"WizardExternalProjectImportPage.directoryLabel")); //$NON-NLS-1$
 
 		String dirName = getProjectLocationFieldValue();
+		if (dirName.equals(""))
+			dirName = previouslyBrowsedDirectory;
+
 		if (!dirName.equals("")) { //$NON-NLS-1$
 			File path = new File(dirName);
 			if (path.exists())
@@ -269,9 +264,9 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		String selectedDirectory = dialog.open();
 		if (selectedDirectory != null) {
-			customLocationFieldValue = selectedDirectory;
-			locationPathField.setText(customLocationFieldValue);
-			setProjectName(projectFile(customLocationFieldValue));
+			previouslyBrowsedDirectory = selectedDirectory;
+			locationPathField.setText(previouslyBrowsedDirectory);
+			setProjectName(projectFile(previouslyBrowsedDirectory));
 		}
 	}
 
@@ -356,7 +351,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		setMessage(null);
 		return true;
 	}
-	
+
 	/**
 	 * Check that the name of the project equals the last segment
 	 * of the location path - i.e. it is the default value.
@@ -372,7 +367,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		projectNameField.setEditable(true);
 		return false;
 	}
-			
+
 	/**
 	 * Return whether or not the specifed location is a prefix
 	 * of the root.
