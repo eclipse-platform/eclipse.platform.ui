@@ -328,6 +328,14 @@ public abstract class ResourceState {
 	public abstract ResourceState[] getRemoteChildren() throws TeamException;
 
 	/**
+	 * Create the necessary remote directories corresponding to the local resource.
+	 * That is, if the resource is a folder, create it and its parents if they don't
+	 * already exist. If the resource is a file, create its parents if they don't
+	 * already exist.
+	 */
+	protected abstract void mkRemoteDirs(IProgressMonitor monitor) throws TeamException;
+	
+	/**
 	 */
 	public IResource getLocal() {
 		return localResource;
