@@ -14,6 +14,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -154,9 +155,18 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				return null;
 			}
 			public String getText(Object element) {
-				if (element instanceof SearchPageDescriptor)
-					return ((SearchPageDescriptor)element).getLabel();
-				else
+				if (element instanceof SearchPageDescriptor) {
+					String label= ((SearchPageDescriptor)element).getLabel();
+					int i= label.indexOf('&');
+					while (i >= 0) {
+						if (i < label.length())
+							label= label.substring(0, i) + label.substring(i+1);
+						else
+							label.substring(0, i);
+						i= label.indexOf('&');
+					}
+					return label;
+				} else
 					return null;
 			}
 		};
@@ -173,6 +183,13 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 							okButton.setEnabled(viewer.getCheckedElements().length > 0);
 						}
 					});
+					SelectionListener listener = new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							okButton.setEnabled(viewer.getCheckedElements().length > 0);
+						}
+					};
+					this.getButton(IDialogConstants.SELECT_ALL_ID).addSelectionListener(listener);
+					this.getButton(IDialogConstants.DESELECT_ALL_ID).addSelectionListener(listener);
 				}
 			};
 		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
@@ -430,6 +447,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	public void setPerformActionEnabled(boolean state) {
 		super.setPerformActionEnabled(state);
 		fPageStateIgnoringScopePart= state;
+		setPerformActionEnabledFromScopePart(hasValidScope());
 	} 
 
 	/**
