@@ -147,6 +147,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
+		initializeSourceLocator(launch);
 		try {
 			delegate.launch(this, mode, launch, monitor);
 		} catch (CoreException e) {
@@ -158,8 +159,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		if (monitor.isCanceled()) {
 			getLaunchManager().removeLaunch(launch);
-		} else {
-			initializeSourceLocator(launch);
 		}
 		return launch;
 	}
