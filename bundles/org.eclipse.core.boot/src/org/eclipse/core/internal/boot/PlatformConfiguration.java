@@ -1255,6 +1255,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		// process command line arguments
 		String[] passthruArgs = processCommandLine(cmdArgs);
+		if (cmdDev)
+			cmdNoUpdate = true; // force -noupdate when in dev mode (eg. PDE)
 		
 		// create current configuration
 		if (currentPlatformConfiguration == null)
