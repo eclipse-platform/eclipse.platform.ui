@@ -155,9 +155,15 @@ public final class BaseHelpSystem {
 		}
 		// close any browsers created
 		// BrowserManager.getInstance().closeAll();
+		
+		if (getInstance().bookmarkManager!=null) {
+			getInstance().bookmarkManager.close();
+			getInstance().bookmarkManager=null;
+		}
 
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
+			getInstance().searchManager=null;
 		}
 		if (getInstance().webappStarted) {
 			// stop the web apps

@@ -38,7 +38,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private Action printAction;
 	private String statusURL;
 	private String title;
-	private boolean block=false;
+	private boolean query=false;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
@@ -80,16 +80,19 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(false);				
 				monitor.done();
 				lastProgress = -1;
-				block=true;
+				query=true;
 				boolean status = browser.execute("window.status=document.title;");
-				block=false;
+				if (status) {
+					BrowserPart.this.title = (String)browser.getData("query");
+				}
+				query=false;
 			}
 		});
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
-				if (block) {
-					title = event.text;
-					block=false;
+				if (query) {
+					browser.setData("query", event.text);
+					query=false;
 					return;
 				}
 				IStatusLineManager statusLine = BrowserPart.this.parent

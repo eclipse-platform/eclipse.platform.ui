@@ -95,6 +95,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 
 		treeViewer.getTree().addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
+				validateLastItem();
 				if (lastItem == null)
 					return;
 				Rectangle bounds = lastItem.getBounds();
@@ -122,6 +123,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 
 		treeViewer.getTree().addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseExit(MouseEvent e) {
+				validateLastItem();
 				if (lastItem != null) {
 					TreeItem item = lastItem;
 					lastItem = null;
@@ -134,6 +136,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 			public void mouseMove(MouseEvent e) {
 				Point p = new Point(e.x, e.y);
 				TreeItem item = treeViewer.getTree().getItem(p);
+				validateLastItem();
 				if (item != null) {
 					if (lastItem != null) {
 						if (!lastItem.equals(item)) {
@@ -243,7 +246,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		}
 	}
 
-	private void handleSelectionChanged(IStructuredSelection sel) {
+	protected void handleSelectionChanged(IStructuredSelection sel) {
 		Object obj = sel.getFirstElement();
 		if (obj instanceof IHelpResource) {
 			IHelpResource res = (IHelpResource) obj;
@@ -320,5 +323,10 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 	}
 
 	public void stop() {
+	}
+
+	private void validateLastItem() {
+		if (lastItem != null && lastItem.isDisposed())
+			lastItem=null;
 	}
 }

@@ -19,13 +19,15 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 		Observer {
-	private Image containerWithTopicImage;
+	private Action deleteAction;
 
 	class BookmarksProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -120,38 +122,61 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	protected void configureTreeViewer() {
 		treeViewer.setContentProvider(new BookmarksProvider());
 		treeViewer.setLabelProvider(new BookmarksLabelProvider());
-		treeViewer.setAutoExpandLevel(2);
+		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		deleteAction = new Action("") { //$NON-NLS-1$
+			public void run() {
+				Object obj = ((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+				if (obj instanceof BookmarkManager.Bookmark) {
+					BookmarkManager.Bookmark b = (BookmarkManager.Bookmark)obj;
+					BaseHelpSystem.getBookmarkManager().removeBookmark(b);
+				}
+			}
+		};
+		deleteAction.setText(HelpUIResources.getString("BookmarksPart.delete")); //$NON-NLS-1$
+		deleteAction.setEnabled(false);
+	}
+	
+	protected void handleSelectionChanged(IStructuredSelection sel) {
+		Object obj = sel.getFirstElement();
+		deleteAction.setEnabled(obj!=null && obj instanceof BookmarkManager.Bookmark);
+		super.handleSelectionChanged(sel);
 	}
 
 	public boolean fillContextMenu(IMenuManager manager) {
 		boolean value = super.fillContextMenu(manager);
 		ISelection selection = treeViewer.getSelection();
+		boolean canDeleteAll=false;
+		int count = BaseHelpSystem.getBookmarkManager().getBookmarks().length;
+		canDeleteAll = count>0;
+
 		if (canDelete((IStructuredSelection) selection)) {
 			if (value)
 				manager.add(new Separator());
-			addDeleteAction((IStructuredSelection) selection, manager);
-			return true;
+			manager.add(deleteAction);
+			value=true;
 		}
+		if (canDeleteAll) {
+			Action action = new Action("") { //$NON-NLS-1$
+				public void run() {
+					BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+						public void run() {
+							BaseHelpSystem.getBookmarkManager().removeAllBookmarks();
+						}
+					});
+				}
+			};
+			action.setText(HelpUIResources.getString("BookmarksPart.deleteAll")); //$NON-NLS-1$
+			manager.add(action);
+			value=true;
+		}
+		if (value==true)
+			manager.add(new Separator());
 		return value;
 	}
 
 	private boolean canDelete(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
 		return obj instanceof BookmarkManager.Bookmark;
-	}
-
-	private void addDeleteAction(final IStructuredSelection ssel,
-			IMenuManager manager) {
-		Action action = new Action("") { //$NON-NLS-1$
-			public void run() {
-				BookmarkManager.Bookmark b = (BookmarkManager.Bookmark) ssel
-						.getFirstElement();
-				BaseHelpSystem.getBookmarkManager().removeBookmark(b);
-			}
-		};
-		action.setText(HelpUIResources.getString("BookmarksPart.delete")); //$NON-NLS-1$
-		manager.add(action);
-		manager.add(new Separator());
 	}
 
 	protected void doOpen(Object obj) {
@@ -163,8 +188,16 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 				parent.showURL(res.getHref());
 		}
 	}
+	
+	public void update(final Observable o, final Object arg) {
+		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				asyncUpdate(o, arg);
+			}
+		});
+	}
 
-	public void update(Observable o, Object arg) {
+	private void asyncUpdate(Observable o, Object arg) {
 		BookmarkManager.BookmarkEvent event = (BookmarkManager.BookmarkEvent) arg;
 		switch (event.getType()) {
 		case BookmarkManager.ADD:
@@ -175,8 +208,14 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 			treeViewer.remove(event.getBookmark());
 			break;
 		case BookmarkManager.REMOVE_ALL:
+		case BookmarkManager.WORLD_CHANGED:
 			treeViewer.refresh();
 			break;
 		}
+	}
+	public IAction getGlobalAction(String id) {
+		if (id.equals(ActionFactory.DELETE.getId()))
+			return deleteAction;
+		return super.getGlobalAction(id);
 	}
 }

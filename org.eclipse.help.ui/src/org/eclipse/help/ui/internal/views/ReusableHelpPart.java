@@ -287,6 +287,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 					createRecPart(rec);
 					hookGlobalAction(ActionFactory.PRINT.getId(), rec.part);
 					hookGlobalAction(ActionFactory.COPY.getId(), rec.part);
+					hookGlobalAction(ActionFactory.DELETE.getId(), rec.part);
 					tabList.add(rec.part.getControl());
 				}
 				rec.part.setVisible(visible);
