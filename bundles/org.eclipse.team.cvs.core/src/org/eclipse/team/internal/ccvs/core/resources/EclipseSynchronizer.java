@@ -1438,15 +1438,16 @@ public class EclipseSynchronizer implements IFlushOperation {
 		try {
 			beginOperation();
 			
-			if (indicator == getDirtyIndicator(resource)) {
-				return;
+			if (getSyncInfoCacheFor(resource).cachesDirtyState()) {
+				if (indicator == getDirtyIndicator(resource)) {
+					return;
+				}
+				getSyncInfoCacheFor(resource).setDirtyIndicator(resource, indicator);	
 			} 					
 			
 			if (Policy.DEBUG_DIRTY_CACHING) {
 				debug(resource, indicator, "adjusting dirty state"); //$NON-NLS-1$
-			}
-
-			getSyncInfoCacheFor(resource).setDirtyIndicator(resource, indicator);										
+			}									
 
 			IContainer parent = resource.getParent();
 			if(indicator == NOT_DIRTY_INDICATOR) {

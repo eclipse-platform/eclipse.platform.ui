@@ -224,6 +224,15 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		// We don't cache the dirty count for folders because it would cause
 		// resource delta's in the decorator thread and possible deadlock.
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#cachesDirtyState()
+	 */
+	public boolean cachesDirtyState() {
+		// We don't cache the dirty count for folders because it would cause
+		// resource delta's in the decorator thread and possible deadlock.
+		return false;
+	}
 		
 	/*package*/ void flushDirtyCache(IResource container) throws CVSException {
 		// Dirty state is not cached

@@ -479,4 +479,11 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			throw CVSException.wrapException(e);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#cachesDirtyState()
+	 */
+	public boolean cachesDirtyState() {
+		return true;
+	}
 }
