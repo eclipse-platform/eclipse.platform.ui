@@ -107,7 +107,11 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 				fLastLine.length= fCurrentLine.length;
 				fLastLine.isDeleted= fCurrentLine.isDeleted;
 
-				fCurrentLine.isDeleted= false;
+				if (fCurrentLine.isDeleted) {
+					fCurrentLine.isDeleted= false;
+					fPositionManager.managePosition(fCurrentLine);
+				}
+				
 				fCurrentLine.offset= document.getLineOffset(lineNumber);
 				if (lineNumber == document.getNumberOfLines() - 1)
 					fCurrentLine.length= document.getLength() - fCurrentLine.offset;
@@ -170,10 +174,14 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		}
 		
 		StyledText textWidget= fViewer.getTextWidget();
-		Point upperLeft= textWidget.getLocationAtOffset(widgetOffset);
-		int width= textWidget.getClientArea().width + textWidget.getHorizontalPixel();
-		int height= textWidget.getLineHeight();
-		textWidget.redraw(0, upperLeft.y, width, height, false);
+		// check for https://bugs.eclipse.org/bugs/show_bug.cgi?id=64898
+		// this is a guard against the symptoms but not the actual solution
+		if (0 <= widgetOffset && widgetOffset <= textWidget.getCharCount()) {
+			Point upperLeft= textWidget.getLocationAtOffset(widgetOffset);
+			int width= textWidget.getClientArea().width + textWidget.getHorizontalPixel();
+			int height= textWidget.getLineHeight();
+			textWidget.redraw(0, upperLeft.y, width, height, false);
+		}
 	}
 
 	/*
