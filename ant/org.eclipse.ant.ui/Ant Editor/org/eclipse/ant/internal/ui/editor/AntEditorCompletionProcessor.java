@@ -859,8 +859,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	}
 
 	/** 
-    * Returns all possible proposals that define the structure of a buildfile.
+    * Returns proposals that define the structure of a buildfile.
     * 
+    * Note that template proposals which define the structure of a buildfile 
+    * are handled by {@link #determineTemplateProposals(ITextViewer, int)} 
+    * which limits proposals by context type.
+
     * @param document the entire document 
     * @param prefix the prefix that all proposals should start with. The prefix
     * may be an empty string.
