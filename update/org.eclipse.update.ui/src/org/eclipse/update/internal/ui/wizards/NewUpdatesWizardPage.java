@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.wizards;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
@@ -249,4 +250,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		System.arraycopy(selected, 0, jobs, 0, selected.length);
 		return jobs;
 	}
+	
+	public PendingChange [] getSelectedJobsWithLicenses() {
+		Object[] selected = tableViewer.getCheckedElements();
+		ArrayList list = new ArrayList();
+		for (int i=0; i<selected.length; i++) {
+			PendingChange job = (PendingChange)selected[i];
+			if (InstallWizard.hasLicense(job))
+				list.add(job);
+		}
+		return (PendingChange[])list.toArray(new PendingChange[list.size()]);
+	}
+		
 }

@@ -40,7 +40,7 @@ public class InstallWizard extends Wizard {
 		return successfulInstall;
 	}
 
-	private boolean hasLicense() {
+	static boolean hasLicense(PendingChange job) {
 		IFeature feature = job.getFeature();
 		IURLEntry info = feature.getLicense();
 		if (info == null)
@@ -93,7 +93,7 @@ public class InstallWizard extends Wizard {
 		config = createInstallConfiguration();
 
 		if (job.getJobType() == PendingChange.INSTALL) {
-			if (hasLicense()) {
+			if (hasLicense(job)) {
 				addPage(new LicensePage(job));
 			}
 			targetPage = new TargetPage(job, config);

@@ -21,6 +21,7 @@ public class NewUpdatesWizard extends Wizard {
 	private static final String KEY_INSTALLING = "NewUpdatesWizard.installing";
 	private IInstallConfiguration config;
 	private NewUpdatesWizardPage mainPage;
+	private LicensePage licensePage;
 	private PendingChange[] jobs;
 	private int installCount = 0;
 
@@ -33,7 +34,7 @@ public class NewUpdatesWizard extends Wizard {
 	}
 
 	public boolean isSuccessfulInstall() {
-		return installCount>0;
+		return installCount > 0;
 	}
 
 	private void createPendingChanges(SearchObject searchObject) {
@@ -84,7 +85,7 @@ public class NewUpdatesWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final PendingChange [] selectedJobs = mainPage.getSelectedJobs();
+		final PendingChange[] selectedJobs = mainPage.getSelectedJobs();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
@@ -107,8 +108,7 @@ public class NewUpdatesWizard extends Wizard {
 			Throwable targetException = e.getTargetException();
 			if (targetException instanceof InstallAbortedException) {
 				return true;
-			}
-			else {
+			} else {
 				UpdateUIPlugin.logException(e);
 			}
 			return false;
@@ -123,7 +123,24 @@ public class NewUpdatesWizard extends Wizard {
 		if (config != null) {
 			mainPage = new NewUpdatesWizardPage(jobs, config);
 			addPage(mainPage);
+			licensePage = new LicensePage(true);
+			addPage(licensePage);
 		}
+	}
+
+	public IWizardPage getNextPage(IWizardPage page) {
+		if (page instanceof LicensePage)
+			return null;
+		PendingChange[] licenseJobs = mainPage.getSelectedJobsWithLicenses();
+		if (licenseJobs.length == 0)
+			return null;
+		licensePage.setJobs(licenseJobs);
+		return licensePage;
+	}
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		if (page instanceof LicensePage)
+			return mainPage;
+		return null;
 	}
 
 	public boolean canFinish() {
@@ -134,21 +151,32 @@ public class NewUpdatesWizard extends Wizard {
 	/*
 	 * When we are uninstalling, there is not targetSite
 	 */
-	private void execute(PendingChange [] selectedJobs, IProgressMonitor monitor) throws InstallAbortedException, CoreException {
-		monitor.beginTask(UpdateUIPlugin.getResourceString(KEY_INSTALLING), jobs.length);
-		for (int i=0; i<selectedJobs.length; i++) {
+	private void execute(
+		PendingChange[] selectedJobs,
+		IProgressMonitor monitor)
+		throws InstallAbortedException, CoreException {
+		monitor.beginTask(
+			UpdateUIPlugin.getResourceString(KEY_INSTALLING),
+			jobs.length);
+		for (int i = 0; i < selectedJobs.length; i++) {
 			PendingChange job = selectedJobs[i];
-			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+			SubProgressMonitor subMonitor =
+				new SubProgressMonitor(
+					monitor,
+					1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 			executeOneJob(job, subMonitor);
 			InstallWizard.saveLocalSite();
 			installCount++;
 		}
 	}
-	
-	private void executeOneJob(PendingChange job, SubProgressMonitor monitor) throws InstallAbortedException, CoreException {
+
+	private void executeOneJob(PendingChange job, SubProgressMonitor monitor)
+		throws InstallAbortedException, CoreException {
 		IFeature feature = job.getFeature();
 		IFeature oldFeature = job.getOldFeature();
-		IConfiguredSite targetSite = TargetPage.getDefaultTargetSite(config, job);
+		IConfiguredSite targetSite =
+			TargetPage.getDefaultTargetSite(config, job);
 		targetSite.install(feature, getVerificationListener(), monitor);
 		unconfigure(oldFeature);
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
