@@ -43,6 +43,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -614,6 +615,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		
 		fInitializationJob.setSystem(true);
 		fInitializationJob.setPriority(Job.DECORATE);
+		fInitializationJob.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
 		fInitializationJob.schedule();
 	}
 
