@@ -11,13 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.OverrideAndUpdateOperation;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
@@ -34,13 +37,28 @@ public class OverrideAndUpdateAction extends CVSSubscriberAction {
 	protected SyncInfoFilter getSyncInfoFilter() {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
+	
+	private SyncInfoFilter getConflictingAdditionFilter() {
+		return new SyncInfoFilter.AndSyncInfoFilter(
+			new SyncInfoFilter[] {
+				new SyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}), 
+				new SyncInfoFilter.SyncInfoChangeTypeFilter(new int[] {SyncInfo.ADDITION})
+			});
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		try {
 			if(promptForOverwrite(syncSet)) {
-				new ReplaceOperation(getShell(), syncSet.getResources(), null /* tag */, false /* recurse */).run(monitor);
+				SyncInfo[] conflicts = syncSet.getNodes(getConflictingAdditionFilter());
+				List conflictingResources = new ArrayList();
+				for (int i = 0; i < conflicts.length; i++) {
+					SyncInfo info = conflicts[i];
+					conflictingResources.add(info.getLocal());
+				}
+				new OverrideAndUpdateOperation(getShell(), syncSet.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
 			}
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);

@@ -18,14 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -71,16 +66,9 @@ public class ReplaceOperation extends UpdateOperation {
 		throws CVSException, InterruptedException {
 			
 			monitor.beginTask(null, 100);
-			// Accumulate the managed resources from the list of provided resources
-			List managedResources = new ArrayList();
-			for (int i = 0; i < resources.length; i++) {
-				ICVSResource resource = resources[i];
-				if (resource.isManaged() || 
-						(resource.isFolder() && ((ICVSFolder)resource).isCVSFolder())) {
-					managedResources.add(resource);
-				}
-			}
+			ICVSResource[] managedResources = getResourcesToUpdate(resources);
 			try {
+				// Purge any unmanaged or added files
 				new PrepareForReplaceVisitor().visitResources(
 					provider.getProject(), 
 					resources, 
@@ -88,16 +76,43 @@ public class ReplaceOperation extends UpdateOperation {
 					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
 				
+				// Prune any empty folders left after the resources were purged
+				new PruneFolderVisitor().visit(session, resources);
+				
 				// Only perform the remote command if some of the resources being replaced were managed
-				if (managedResources.isEmpty()) {
+				if (managedResources.length == 0) {
 					return OK;
 				} else {
 					// Perform an update, ignoring any local file modifications
-					return super.executeCommand(session, provider, resources, Policy.subMonitorFor(monitor, 70));
+					return super.executeCommand(session, provider, managedResources, Policy.subMonitorFor(monitor, 70));
 				}
 			} finally {
 				monitor.done();
 			}
+	}
+
+	/**
+	 * Return the resources that need to be updated from the server.
+	 * By default, this is all resources that are managed.
+	 * @param resources all resources being replaced
+	 * @return resources that ae to be updated from the server
+	 * @throws CVSException
+	 */
+	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources) throws CVSException {
+		// Accumulate the managed resources from the list of provided resources
+		List managedResources = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource resource = resources[i];
+			if ((resource.isFolder() && ((ICVSFolder)resource).isCVSFolder())) {
+				managedResources.add(resource);
+			} else if (!resource.isFolder()){
+				byte[] syncBytes = ((ICVSFile)resource).getSyncBytes();
+				if (syncBytes != null && !ResourceSyncInfo.isAddition(syncBytes)) {
+					managedResources.add(resource);
+				}
+			}
+		}
+		return (ICVSResource[]) managedResources.toArray(new ICVSResource[managedResources.size()]);
 	}
 	
 }

@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
@@ -78,7 +79,7 @@ public class UpdateOperation extends SingleCommandOperation {
 				Command.NO_GLOBAL_OPTIONS, 
 				commandOptions, 
 				resources,
-				null,
+				getCommandOutputListener(),
 				monitor);
 	}
 
@@ -87,6 +88,15 @@ public class UpdateOperation extends SingleCommandOperation {
 	 */
 	protected String getTaskName() {
 		return Policy.bind("UpdateOperation.taskName"); //$NON-NLS-1$;
+	}
+	
+	/**
+	 * Return the listener that is used to process E and M messages.
+	 * The default is <code>null</code>.
+	 * @return
+	 */
+	protected ICommandOutputListener getCommandOutputListener() {
+		return null;
 	}
 
 }
