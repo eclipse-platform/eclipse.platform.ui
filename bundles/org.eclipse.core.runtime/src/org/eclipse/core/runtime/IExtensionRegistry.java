@@ -193,16 +193,6 @@ public interface IExtensionRegistry {
 	public IExtension[] getExtensions(String namespace);
 
 	/**
-	 * Returns all elements that declare extensions and/or extension points. Returns an 
-	 * empty array if there are no known extensions/extension points in this registry. 
-	 * 
-	 * @return the identifiers of all elements known to this registry
-	 * @deprecated Use #getNamespaces instead. This method is going to be removed 
-	 * after M8
-	 */
-	public String[] getElementIdentifiers();
-
-	/**
 	 * Returns all namespaces where extensions and/or extension points. Returns an 
 	 * empty array if there are no known extensions/extension points in this registry.
 	 * 
