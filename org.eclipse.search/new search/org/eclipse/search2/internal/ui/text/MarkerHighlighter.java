@@ -45,8 +45,8 @@ public class MarkerHighlighter extends Highlighter {
 				}
 			}, fFile, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// just log the thing. There's nothing we can do anyway.
+			SearchPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -66,8 +66,8 @@ public class MarkerHighlighter extends Highlighter {
 				try {
 					marker.delete();
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// just log the thing. There's nothing we can do anyway.
+					SearchPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -77,8 +77,8 @@ public class MarkerHighlighter extends Highlighter {
 		try {
 			fFile.deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// just log the thing. There's nothing we can do anyway.
+			SearchPlugin.log(e.getStatus());
 		}
 	}
 
