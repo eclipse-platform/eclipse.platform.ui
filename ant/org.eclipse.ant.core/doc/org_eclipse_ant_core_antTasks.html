@@ -42,8 +42,8 @@ task.&nbsp; Generally this class must be a subclass of&nbsp; <tt>org.apache.tool
 library containing the task</li>
 </ul>
 <b><i>Examples: </i></b>The following is an example of an object declaration:
-<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ant.core.antTask"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;antTask name="coolTask" class="com.example.CoolTask"/></tt>
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ant.core.antTasks"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;antTask name="coolTask" class="com.example.CoolTask" library= "lib/examples.jar"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><b><i>Supplied Implementation:</i></b> The platform itself supplies
 a number of tasks including <tt>incremental, javac and refreshLocal</tt>.
