@@ -36,7 +36,7 @@ public interface ICVSFile extends ICVSResource {
 	 * Gets an input stream for reading from the file.
 	 * It is the responsibility of the caller to close the stream when finished.
  	 */
-	InputStream getInputStream() throws CVSException;
+	InputStream getContents() throws CVSException;
 	
 	/**
 	 * Set the contents of the file to the contents of the provided input stream

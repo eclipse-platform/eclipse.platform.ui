@@ -58,7 +58,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 		return getIOFile().length();	
 	}
 
-	public InputStream getInputStream() throws CVSException {
+	public InputStream getContents() throws CVSException {
  		try {
 			return getIFile().getContents();
 		} catch (CoreException e) {

@@ -368,8 +368,8 @@ public final class SameResultEnv extends JUnitTestCase {
 					
 		// Compare the content of the files
 		try {
-			InputStream in1 = mFile1.getInputStream();
-			InputStream in2 = mFile2.getInputStream();
+			InputStream in1 = mFile1.getContents();
+			InputStream in2 = mFile2.getContents();
 			byte[] buffer1 = new byte[(int)mFile1.getSize()];
 			byte[] buffer2 = new byte[(int)mFile2.getSize()];
 			// This is not the right way to do it, because the Stream

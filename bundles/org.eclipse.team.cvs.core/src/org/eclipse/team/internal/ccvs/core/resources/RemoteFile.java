@@ -89,7 +89,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		
 		// use the contents of the file on disk so that the server can calculate the relative
 		// sync state. This is a trick to allow the server to calculate sync state for us.
-		InputStream is = managed.getInputStream();
+		InputStream is = managed.getContents();
 		file.setContents(is, ICVSFile.UPDATED, false, Policy.monitorFor(null));
 			
 		parent.setChildren(new ICVSRemoteResource[] {file});
@@ -304,7 +304,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/*
 	 * @see ICVSFile#getInputStream()
 	 */
-	public InputStream getInputStream() throws CVSException {
+	public InputStream getContents() throws CVSException {
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
 	}
 
