@@ -122,7 +122,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 					//return an appropriate error message for case variant collisions
 					if (!CoreFileSystemLibrary.isCaseSensitive()) {
 						String name = getLocalManager().getLocalName(localFile);
-						if (!localFile.getName().equals(name)) {
+						if (name != null && !localFile.getName().equals(name)) {
 							String msg =  Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString());
 							throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 						}
