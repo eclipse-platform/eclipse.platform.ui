@@ -1,2 +1,2 @@
-org.eclipse.help/debug = true
-org.eclipse.help/debug/search = false
+org.eclipse.help.base/debug = true
+org.eclipse.help.base/debug/search = false
