@@ -5,7 +5,13 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;import org.eclipse.core.resources.IMarker;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.*;import org.eclipse.ui.help.WorkbenchHelp;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 
@@ -15,6 +21,8 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
+		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION });

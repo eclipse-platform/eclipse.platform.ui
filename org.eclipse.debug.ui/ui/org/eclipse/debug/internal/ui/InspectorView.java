@@ -55,28 +55,16 @@ public class InspectorView extends AbstractDebugView {
 	 */
 	protected void initializeActions() {
 		fShowTypesAction= new ShowTypesAction(fViewer);
-		fShowTypesAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
-		fShowTypesAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
-		fShowTypesAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
 		fShowTypesAction.setChecked(false);
 		
 		fShowQualifiedAction= new ShowQualifiedAction(fViewer);
-		fShowQualifiedAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
 		fShowQualifiedAction.setChecked(false);
 				
 		fAddToInspectorAction = new InspectorViewAddToInspectorAction(fViewer);
 
 		fRemoveFromInspectorAction= new RemoveFromInspectorAction(fViewer);
-		fRemoveFromInspectorAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
-		fRemoveFromInspectorAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
-		fRemoveFromInspectorAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
 
 		fRemoveAllFromInspectorAction= new RemoveAllFromInspectorAction(fViewer);
-		fRemoveAllFromInspectorAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
-		fRemoveAllFromInspectorAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
-		fRemoveAllFromInspectorAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
 		
 		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
 		fChangeVariableAction.setEnabled(false);

@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends ControlActionDelegate {
@@ -77,4 +78,10 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.RELAUNCH_ACTION;
 	}
+	
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void setActionImages(IAction action) {
+	}		
 }

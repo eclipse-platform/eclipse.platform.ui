@@ -40,21 +40,12 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	protected void initializeActions(LaunchesViewer viewer) {
 
 		fTerminateAction= new ControlAction(viewer, new TerminateActionDelegate());
-		fTerminateAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE));
-		fTerminateAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE));
-		fTerminateAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE));
 		fTerminateAction.setEnabled(false);
 
 		fDisconnectAction= new ControlAction(viewer, new DisconnectActionDelegate());
-		fDisconnectAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT));
-		fDisconnectAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT));
-		fDisconnectAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DISCONNECT));
 		fDisconnectAction.setEnabled(false);
 
 		fRemoveTerminatedAction= new RemoveTerminatedAction(this instanceof DebugView);
-		fRemoveTerminatedAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
-		fRemoveTerminatedAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED));
-		fRemoveTerminatedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED));
 		fRemoveTerminatedAction.setEnabled(false);
 
 		fRelaunchAction= new ControlAction(viewer, new RelaunchActionDelegate());

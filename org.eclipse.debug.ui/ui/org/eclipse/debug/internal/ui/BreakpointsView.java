@@ -84,26 +84,15 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 */
 	protected void initializeActions() {
 		fRemoveBreakpointAction= new RemoveBreakpointAction(fViewer);
-		fRemoveBreakpointAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
-		fRemoveBreakpointAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
-		fRemoveBreakpointAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
 		
 		fRemoveAllBreakpointsAction= new RemoveAllBreakpointsAction();
-		fRemoveAllBreakpointsAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
-		fRemoveAllBreakpointsAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
-		fRemoveAllBreakpointsAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
 		boolean enable= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true;
 		fRemoveAllBreakpointsAction.setEnabled(enable);
 		
 		fShowQualifiedNamesAction = new ShowQualifiedAction(fViewer);
-		fShowQualifiedNamesAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
-		fShowQualifiedNamesAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
-		fShowQualifiedNamesAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
 		fShowQualifiedNamesAction.setChecked(true);
 		
 		fOpenMarkerAction= new OpenBreakpointMarkerAction(fViewer);
-		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
-		fOpenMarkerAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
 
 		fEnableDisableBreakpointAction= new EnableDisableBreakpointAction(fViewer);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fEnableDisableBreakpointAction);

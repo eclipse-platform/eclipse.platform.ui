@@ -5,7 +5,9 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.Action;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Clears the output of the selected launches
@@ -19,6 +21,9 @@ public class ClearOutputAction extends Action {
 		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
 		fConsoleViewer= viewer;
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CLEAR));		
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CLEAR));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CLEAR));
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.CLEAR_CONSOLE_ACTION });

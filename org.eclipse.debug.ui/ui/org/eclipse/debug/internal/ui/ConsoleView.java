@@ -93,9 +93,6 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 */
 	private void initializeActions() {
 		fClearOutputAction= new ClearOutputAction(fConsoleViewer);
-		fClearOutputAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CLEAR));		
-		fClearOutputAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CLEAR));
-		fClearOutputAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CLEAR));
 		
 		ResourceBundle bundle= DebugUIUtils.getResourceBundle();
 		// In order for the clipboard actions to accessible via their shortcuts

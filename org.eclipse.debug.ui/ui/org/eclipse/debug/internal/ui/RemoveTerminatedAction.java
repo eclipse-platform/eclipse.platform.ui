@@ -5,7 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.IProcess;import org.eclipse.jface.action.Action;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.help.WorkbenchHelp;
  
 /**
  * Removes all terminated/detached launches from the UI. 
@@ -19,6 +23,9 @@ public class RemoveTerminatedAction extends Action {
 	public RemoveTerminatedAction(boolean removeDebug) {
 		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED));
 		fRemoveDebug= removeDebug;
 		setEnabled(false);
 		WorkbenchHelp.setHelp(

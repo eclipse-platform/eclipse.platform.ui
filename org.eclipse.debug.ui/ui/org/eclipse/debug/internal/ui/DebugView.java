@@ -105,45 +105,27 @@ public class DebugView extends LaunchesView {
 
 		fResumeAction= new ControlAction(viewer, new ResumeActionDelegate());
 		viewer.addSelectionChangedListener(fResumeAction);
-		fResumeAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RESUME));
-		fResumeAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME));
-		fResumeAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME));
 		fResumeAction.setEnabled(false);
 
 		fSuspendAction= new ControlAction(viewer, new SuspendActionDelegate());
 		viewer.addSelectionChangedListener(fSuspendAction);
-		fSuspendAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_SUSPEND));
-		fSuspendAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SUSPEND));
-		fSuspendAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SUSPEND));
 		fSuspendAction.setEnabled(false);
 
 		fStepIntoAction= new ControlAction(viewer, new StepIntoActionDelegate());
 		viewer.addSelectionChangedListener(fStepIntoAction);
-		fStepIntoAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPINTO));
-		fStepIntoAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPINTO));
-		fStepIntoAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPINTO));
 		fStepIntoAction.setEnabled(false);
 
 		fStepOverAction= new ControlAction(viewer, new StepOverActionDelegate());
 		viewer.addSelectionChangedListener(fStepOverAction);
-		fStepOverAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPOVER));
-		fStepOverAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPOVER));
-		fStepOverAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPOVER));
 		fStepOverAction.setEnabled(false);
 
 		fStepReturnAction= new ControlAction(viewer, new StepReturnActionDelegate());
 		viewer.addSelectionChangedListener(fStepReturnAction);
-		fStepReturnAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPRETURN));
-		fStepReturnAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPRETURN));
-		fStepReturnAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPRETURN));
 		fStepReturnAction.setEnabled(false);
 
 		fCopyToClipboardAction= new ControlAction(viewer, new CopyToClipboardActionDelegate());
 
 		fShowQualifiedAction= new ShowQualifiedAction(viewer);
-		fShowQualifiedAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
 		fShowQualifiedAction.setChecked(false);
 	}
 

@@ -6,8 +6,10 @@ package org.eclipse.debug.internal.ui;
  */
  
 import java.util.*;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
@@ -154,5 +156,11 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		}
 		return walkHierarchy(parent, elements);
 		
+	}
+
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void setActionImages(IAction action) {		
 	}
 }

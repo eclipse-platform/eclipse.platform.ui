@@ -7,6 +7,8 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 
 public class DisconnectActionDelegate extends ControlActionDelegate {
 	
@@ -37,4 +39,13 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.DISCONNECT_ACTION;
 	}
+
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void setActionImages(IAction action) {		
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DISCONNECT));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DISCONNECT));
+	}	
 }

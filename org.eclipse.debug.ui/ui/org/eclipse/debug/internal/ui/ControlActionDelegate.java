@@ -29,6 +29,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * action specific initialization.
 	 */
 	public void initializeForOwner(ControlAction controlAction) {
+		setActionImages(controlAction);
 		LaunchesViewer provider= (LaunchesViewer)controlAction.getSelectionProvider();
 		IContentProvider contentProvider= provider.getContentProvider();
 		fMode= ILaunchManager.DEBUG_MODE;
@@ -159,5 +160,10 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Returns this action's help context id
 	 */
 	protected abstract String getHelpContextId();
+	
+	/**
+	 * Set the enabled, disabled & hover icons for this action delegate
+	 */
+	protected abstract void setActionImages(IAction action);
 	
 }

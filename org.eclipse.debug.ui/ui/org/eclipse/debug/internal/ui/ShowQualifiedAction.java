@@ -5,7 +5,13 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ILabelProvider;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An action that toggles the state of its viewer to
@@ -23,6 +29,9 @@ public class ShowQualifiedAction extends Action {
 		super(DebugUIUtils.getResourceString(SHOW));
 		fViewer= viewer;
 		setToolTipText(DebugUIUtils.getResourceString(SHOW));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.SHOW_QUALIFIED_NAMES_ACTION });

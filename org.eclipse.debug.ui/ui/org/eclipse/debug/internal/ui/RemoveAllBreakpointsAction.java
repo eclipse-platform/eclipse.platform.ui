@@ -5,7 +5,12 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.jface.action.Action;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
@@ -20,6 +25,9 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 	public RemoveAllBreakpointsAction() {
 		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.REMOVE_ALL_ACTION });

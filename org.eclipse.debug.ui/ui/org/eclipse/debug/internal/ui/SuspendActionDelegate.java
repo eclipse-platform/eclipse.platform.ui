@@ -7,6 +7,8 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class SuspendActionDelegate extends ControlActionDelegate {
@@ -49,5 +51,14 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SUSPEND_ACTION;
+	}
+
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void setActionImages(IAction action) {		
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_SUSPEND));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SUSPEND));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SUSPEND));
 	}
 }

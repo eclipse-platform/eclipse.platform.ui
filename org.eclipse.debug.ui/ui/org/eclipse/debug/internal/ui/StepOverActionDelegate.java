@@ -7,6 +7,8 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 
 public class StepOverActionDelegate extends StepActionDelegate {
 	
@@ -35,5 +37,14 @@ public class StepOverActionDelegate extends StepActionDelegate {
 	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.STEP_OVER_ACTION;
+	}
+
+	/**
+	 * @see ControlActionDelegate
+	 */
+	protected void setActionImages(IAction action) {		
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPOVER));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPOVER));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPOVER));
 	}
 }

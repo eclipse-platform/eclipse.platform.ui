@@ -115,15 +115,9 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 */
 	protected void initializeActions() {
 		fShowTypesAction= new ShowTypesAction(fViewer);
-		fShowTypesAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
-		fShowTypesAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
-		fShowTypesAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
 		fShowTypesAction.setChecked(false);
 		
 		fShowQualifiedAction= new ShowQualifiedAction(fViewer);
-		fShowQualifiedAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
-		fShowQualifiedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
 		fShowQualifiedAction.setChecked(false);
 		
 		fAddToInspectorAction= new AddToInspectorAction(fViewer);
