@@ -44,10 +44,10 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 			BooleanFieldEditor.DEFAULT, 
 			getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor(
-			ICVSUIConstants.PREF_PROMPT_ON_EDIT,
+			ICVSUIConstants.PREF_EDIT_ACTION,
 			Policy.bind("WatchEditPreferencePage.validateEditSaveAction"), //$NON-NLS-1$
 			1,
-			new String[][] {{Policy.bind("WatchEditPreferencePage.always"), CVSUIPlugin.ALWAYS_EDIT}, {Policy.bind("WatchEditPreferencePage.prompt"), CVSUIPlugin.PROMPT}}, //$NON-NLS-1$ //$NON-NLS-2$
+			new String[][] {{Policy.bind("WatchEditPreferencePage.edit"), CVSUIPlugin.EDIT}, {Policy.bind("WatchEditPreferencePage.highjack"), CVSUIPlugin.HIGHJACK}}, //$NON-NLS-1$ //$NON-NLS-2$
 			getFieldEditorParent(), true));
 	}
 

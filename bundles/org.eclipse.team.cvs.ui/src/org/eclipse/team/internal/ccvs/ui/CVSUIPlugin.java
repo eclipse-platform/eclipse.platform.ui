@@ -82,8 +82,8 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	private RepositoryManager repositoryManager;
 	
 	// constants used by watch/edit as values for string preference
-	public static final String ALWAYS_EDIT = "always_edit"; //$NON-NLS-1$
-	public static final String PROMPT = "prompt"; //$NON-NLS-1$
+	public static final String EDIT = "edit"; //$NON-NLS-1$
+	public static final String HIGHJACK = "highjack"; //$NON-NLS-1$
 	
 	// Property change listener
 	IPropertyChangeListener listener = new IPropertyChangeListener() {
@@ -517,7 +517,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		
 		// Set the watch/edit preferences defaults and values
 		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
-		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_EDIT, PROMPT);
+		store.setDefault(ICVSUIConstants.PREF_EDIT_ACTION, EDIT);
 		// Ensure that the preference values in UI match Core
 		store.setValue(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getBoolean(CVSProviderPlugin.READ_ONLY));
 		

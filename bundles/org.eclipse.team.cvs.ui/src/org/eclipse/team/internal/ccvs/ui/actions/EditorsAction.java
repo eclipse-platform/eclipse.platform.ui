@@ -60,14 +60,14 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 			return Team.OK_STATUS;
 	}
 
-	
+	public boolean isPerformEdit() {
+		return CVSUIPlugin.EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
+	}
 	
 	
 	public boolean promptToEdit(Shell shell) {
 	
-		if (!CVSUIPlugin.PROMPT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_PROMPT_ON_EDIT))) {
-			return true;
-		}
+		if (!isPerformEdit()) return true;
 		
 		if (f_editorsInfo.length > 0) {
 			EditorsDialog view = new EditorsDialog(shell, f_editorsInfo);

@@ -96,7 +96,7 @@ public interface ICVSUIConstants {
 
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
-	public final String PREF_PROMPT_ON_EDIT = "pref_prompt_on_edit"; //$NON-NLS-1$
+	public final String PREF_EDIT_ACTION = "pref_edit_action"; //$NON-NLS-1$
 	
 	// Repositories view preferences
 	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project"; //$NON-NLS-1$

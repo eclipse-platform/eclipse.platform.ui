@@ -155,8 +155,17 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			return true;
 		
 		EditorsAction editors = new EditorsAction(getProvider(files),files);
-		run(shell, editors);
-		return editors.promptToEdit(shell);
+		if (editors.isPerformEdit()) {
+			run(shell, editors);
+			return editors.promptToEdit(shell);
+		} else {
+			// Allow the files to be edited without notifying the server
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				file.setReadOnly(false);
+			}
+			return false;
+		}
 
 	}
 	
