@@ -100,6 +100,13 @@ public class UpdateOperation extends SingleCommandOperation {
 		return Policy.bind("UpdateOperation.taskName"); //$NON-NLS-1$;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("UpdateOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Return the listener that is used to process E and M messages.
 	 * The default is <code>null</code>.

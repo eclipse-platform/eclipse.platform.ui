@@ -143,12 +143,6 @@ public class Util {
 				return resource.getName();
 			}
 			String truncatedPath = toTruncatedPath(stringPath, split);
-			// Special handling when the root is a project.
-			// Append project name to the beginning of the path
-			IResource iResource = root.getIResource();
-			if (iResource != null && iResource.getType() == IResource.PROJECT) {
-				truncatedPath = iResource.getName() + Session.SERVER_SEPARATOR + truncatedPath;
-			}
 			return truncatedPath;
 		} catch(CVSException e) {
 			return resource.getName();

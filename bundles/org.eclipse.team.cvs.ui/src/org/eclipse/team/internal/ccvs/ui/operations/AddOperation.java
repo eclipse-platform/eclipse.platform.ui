@@ -48,6 +48,13 @@ public class AddOperation extends RepositoryProviderOperation {
 		return Policy.bind("AddAction.adding"); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("AddOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+	}
+	
 	/*
 	 * Add the given resources to the project. 
 	 * <p>

@@ -55,6 +55,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 			ISchedulingRule rule = getSchedulingRule(provider);
 			try {
 				Platform.getJobManager().beginRule(rule, monitor);
+				monitor.setTaskName(getTaskName(provider));
 				execute(provider, providerResources, subMonitor);
 			} finally {
 				Platform.getJobManager().endRule(rule);
@@ -62,6 +63,14 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		}
 	}
 	
+	/**
+	 * Return the taskname to be shown in the progress monitor while operating
+	 * on the given provider.
+	 * @param provider the provider being processed
+	 * @return the taskname to be shown in the progress monitor
+	 */
+	protected abstract String getTaskName(CVSTeamProvider provider);
+
 	/**
 	 * Retgurn the scheduling rule to be obtained before work
 	 * begins on the given provider. By default, it is the provider's project.

@@ -64,6 +64,13 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("DisconnectOperation.1", provider.getProject().getName()); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#canRunAsJob()
 	 */
 	public boolean canRunAsJob() {

@@ -60,6 +60,13 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 		return Policy.bind("UpdateOnlyMergeable.taskName"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("UpdateOperation.0", provider.getProject().getName()); //$NON-NLS-1$
+	}
+	
 	protected void addSkippedFiles(IFile[] files) {
 		skippedFiles.addAll(Arrays.asList(files));
 	}

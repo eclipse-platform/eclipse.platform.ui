@@ -255,6 +255,13 @@ public class BranchOperation extends RepositoryProviderOperation {
 		return Policy.bind("BranchOperation.0"); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#getTaskName(org.eclipse.team.internal.ccvs.core.CVSTeamProvider)
+	 */
+	protected String getTaskName(CVSTeamProvider provider) {
+		return Policy.bind("BranchOperation.1", provider.getProject().getName()); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Answers <code>true</code> if all resources in the array have a sticky tag
 	 */
