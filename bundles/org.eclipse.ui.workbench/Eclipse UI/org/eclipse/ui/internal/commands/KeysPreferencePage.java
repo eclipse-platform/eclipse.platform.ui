@@ -56,6 +56,8 @@ import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
 import org.eclipse.ui.internal.commands.api.ICommandDefinition;
 import org.eclipse.ui.internal.commands.api.ICommandRegistry;
+import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
+import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.contexts.ContextDefinition;
@@ -149,6 +151,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 	*/
 
+	// TODO private List assignmentsForCommand = new ArrayList();	
+	// TODO private List assignmentsForKeySequence = new ArrayList();
 	private Button buttonAdd;
 	private Button buttonRemove;
 	private Button buttonRestore;
@@ -165,6 +169,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Map commandUniqueNamesById;
 	private CommandManager commandManager;
 	private Map contextDefinitionsById;
+	private Map contextIdsByCommandId;
 	private Map contextIdsByUniqueName;
 	private Map contextUniqueNamesById;
 	private ContextManager contextManager;
@@ -187,17 +192,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private KeySequenceText textKeySequence;
 	private SortedMap tree;
 	private IWorkbench workbench;	
-
-	/*
-	private List commandRecords = new ArrayList();	
-	private List keySequenceRecords = new ArrayList();
-	*/
 		
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
 		commandManager = CommandManager.getInstance();
 		contextManager = ContextManager.getInstance();
-		tree = new TreeMap();
 	}
 
 	public boolean performOk() {
@@ -225,183 +224,304 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	public void setVisible(boolean visible) {
 		if (visible == true) {
-			ICommandRegistry pluginCommandRegistry = commandManager.getPluginCommandRegistry();	
-			IContextRegistry pluginContextRegistry = contextManager.getPluginContextRegistry();			
+			ICommandRegistry pluginCommandRegistry = commandManager.getPluginCommandRegistry();				
 			ICommandRegistry preferenceCommandRegistry = commandManager.getPreferenceCommandRegistry();
-			IContextRegistry preferenceContextRegistry = contextManager.getPreferenceContextRegistry();	
 			List categoryDefinitions = new ArrayList();
 			categoryDefinitions.addAll(pluginCommandRegistry.getCategoryDefinitions());
 			categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());
-			CommandManager.validateCategoryDefinitions(categoryDefinitions);
-			categoryDefinitionsById = Collections.unmodifiableMap(CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false));
-			Map categoryDefinitionsByName = Collections.unmodifiableMap(CategoryDefinition.categoryDefinitionsByName(categoryDefinitionsById.values(), false));
-			categoryIdsByUniqueName = new HashMap();
-			Iterator iterator = categoryDefinitionsByName.entrySet().iterator();				
+			categoryDefinitionsById = CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false);			
+			
+			for (Iterator iterator = categoryDefinitionsById.values().iterator(); iterator.hasNext();) {
+				ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator.next();
+				String name = categoryDefinition.getName();
+				
+				if (name == null || name.length() == 0)
+					iterator.remove();
+			}			
+			
+			List commandDefinitions = new ArrayList();
+			commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
+			commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
+			commandDefinitionsById = CommandDefinition.commandDefinitionsById(commandDefinitions, false);
+			commandIdsByCategoryId = new HashMap();
+			HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
 
-			while (iterator.hasNext()) {
+			for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {
+				ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
+				String categoryId = commandDefinition.getCategoryId();
+				String name = commandDefinition.getName();
+
+				if (name == null || name.length() == 0 || categoryId != null && !categoryDefinitionsById.containsKey(categoryId))
+					iterator.remove();
+				else {
+					String commandId = commandDefinition.getId();
+					Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+				
+					if (commandIds == null) {
+						commandIds = new HashSet();
+						commandIdsByCategoryId.put(categoryId, commandIds);
+					}
+				
+					commandIds.add(commandId);
+					categoryIdsReferencedByCommandDefinitions.add(categoryId);				
+				}
+			}
+			
+			categoryDefinitionsById.keySet().retainAll(categoryIdsReferencedByCommandDefinitions);			
+			List keyConfigurationDefinitions = new ArrayList();
+			keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
+			keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());			
+			keyConfigurationDefinitionsById = KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false);
+
+			for (Iterator iterator = keyConfigurationDefinitionsById.values().iterator(); iterator.hasNext();) {
+				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();		
+				String name = keyConfigurationDefinition.getName();
+				
+				if (name == null || name.length() == 0)
+					iterator.remove();
+			}
+
+			for (Iterator iterator = keyConfigurationDefinitionsById.values().iterator(); iterator.hasNext();) {
+				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();				
+				String parentId = keyConfigurationDefinition.getParentId();
+				
+				while (parentId != null) {
+					keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(parentId);
+				
+					if (keyConfigurationDefinition == null) {
+						iterator.remove();
+						break;
+					}
+					
+					parentId = keyConfigurationDefinition.getParentId();
+				} 
+			}
+
+			List activeKeyConfigurationDefinitions = new ArrayList();
+			activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
+			activeKeyConfigurationDefinitions.addAll(preferenceCommandRegistry.getActiveKeyConfigurationDefinitions());
+			String activeKeyConfigurationId = null;
+			
+			if (!activeKeyConfigurationDefinitions.isEmpty()) {
+				IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions.get(activeKeyConfigurationDefinitions.size() - 1);
+				activeKeyConfigurationId = activeKeyConfigurationDefinition.getKeyConfigurationId();
+				
+				if (!keyConfigurationDefinitionsById.containsKey(activeKeyConfigurationId))
+					activeKeyConfigurationId = null;
+			}
+
+			IContextRegistry pluginContextRegistry = contextManager.getPluginContextRegistry();			
+			IContextRegistry preferenceContextRegistry = contextManager.getPreferenceContextRegistry();	
+			List contextDefinitions = new ArrayList();
+			contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
+			contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
+			contextDefinitionsById = ContextDefinition.contextDefinitionsById(contextDefinitions, false);
+
+			for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator.hasNext();) {
+				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
+				String name = contextDefinition.getName();
+				
+				if (name == null || name.length() == 0)
+					iterator.remove();
+			}
+
+			for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator.hasNext();) {
+				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
+				String parentId = contextDefinition.getParentId();
+					
+				while (parentId != null) {
+					contextDefinition = (IContextDefinition) contextDefinitionsById.get(parentId);
+					
+					if (contextDefinition == null) {
+						iterator.remove();
+						break;
+					}
+						
+					parentId = contextDefinition.getParentId();
+				} 
+			}
+
+			List contextBindingDefinitions = new ArrayList();
+			contextBindingDefinitions.addAll(pluginCommandRegistry.getContextBindingDefinitions());
+			contextBindingDefinitions.addAll(preferenceCommandRegistry.getContextBindingDefinitions());
+			contextIdsByCommandId = new HashMap();
+			
+			for (Iterator iterator = contextBindingDefinitions.iterator(); iterator.hasNext();) {
+				IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();
+				String commandId = contextBindingDefinition.getCommandId();
+				String contextId = contextBindingDefinition.getContextId();
+				boolean validCommandId = commandDefinitionsById.containsKey(commandId);
+				boolean validContextId = contextDefinitionsById.containsKey(contextId);
+				
+				if (!validCommandId || !validContextId)
+					iterator.remove();
+				else {					
+					Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+				
+					if (contextIds == null) {
+						contextIds = new HashSet();
+						contextIdsByCommandId.put(commandId, contextIds);
+					}
+
+					contextIds.add(contextId);					
+				}			
+			}
+
+			List imageBindingDefinitions = new ArrayList();
+			imageBindingDefinitions.addAll(pluginCommandRegistry.getImageBindingDefinitions());
+			imageBindingDefinitions.addAll(preferenceCommandRegistry.getImageBindingDefinitions());
+
+			for (Iterator iterator = imageBindingDefinitions.iterator(); iterator.hasNext();) {
+				IImageBindingDefinition imageBindingDefinition = (IImageBindingDefinition) iterator.next();
+				String commandId = imageBindingDefinition.getCommandId();
+				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);
+				
+				if (!validCommandId)
+					iterator.remove();
+			}
+
+			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeyBindingDefinitions());
+
+			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				KeySequence keySequence = keyBindingDefinition.getKeySequence();
+				String commandId = keyBindingDefinition.getCommandId();
+				String contextId = keyBindingDefinition.getContextId();
+				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
+				Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
+				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
+				boolean validContextId = contextId == null || contextDefinitionsById.containsKey(contextId);
+				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
+				boolean validContextIdForCommandId = contextIds == null || contextIds.contains(contextId);
+			
+				if (!validKeySequence || !validCommandId || !validContextId || !validKeyConfigurationId || !validContextIdForCommandId)
+					iterator.remove();
+			}
+
+			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeyBindingDefinitions());
+
+			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				KeySequence keySequence = keyBindingDefinition.getKeySequence();
+				String commandId = keyBindingDefinition.getCommandId();
+				String contextId = keyBindingDefinition.getContextId();
+				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
+				Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
+				boolean validCommandId = commandId == null || commandDefinitionsById.containsKey(commandId);							
+				boolean validContextId = contextId == null || contextDefinitionsById.containsKey(contextId);
+				boolean validKeyConfigurationId = keyConfigurationId == null || keyConfigurationDefinitionsById.containsKey(keyConfigurationId);
+				boolean validContextIdForCommandId = contextIds == null || contextIds.contains(contextId);
+			
+				if (!validKeySequence || !validCommandId || !validContextId || !validKeyConfigurationId || !validContextIdForCommandId)
+					iterator.remove();
+			}
+
+			tree = new TreeMap();
+			
+			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+			}
+
+			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+			}			
+		
+			Map categoryDefinitionsByName = CategoryDefinition.categoryDefinitionsByName(categoryDefinitionsById.values(), false);
+			categoryIdsByUniqueName = new HashMap();
+			categoryUniqueNamesById = new HashMap();
+
+			for (Iterator iterator = categoryDefinitionsByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set categoryDefinitions2 = (Set) entry.getValue();
-				Iterator iterator2 = categoryDefinitions2.iterator();
+				Iterator iterator2 = categoryDefinitions2.iterator();				
 				
 				if (categoryDefinitions2.size() == 1) {					
 					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator2.next(); 
 					categoryIdsByUniqueName.put(name, categoryDefinition.getId());
+					categoryUniqueNamesById.put(categoryDefinition.getId(), name);
 				} else while (iterator2.hasNext()) {
 					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator2.next(); 
 					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, categoryDefinition.getId() }); //$NON-NLS-1$
 					categoryIdsByUniqueName.put(uniqueName, categoryDefinition.getId());							
+					categoryUniqueNamesById.put(categoryDefinition.getId(), uniqueName);
 				}
 			}	
 
-			categoryUniqueNamesById = new HashMap();
-			iterator = categoryIdsByUniqueName.entrySet().iterator();				
-
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				categoryUniqueNamesById.put(entry.getValue(), entry.getKey());
-			}
-
-			List commandDefinitions = new ArrayList();
-			commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
-			commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
-			CommandManager.validateCommandDefinitions(commandDefinitions);
-			commandDefinitionsById = Collections.unmodifiableMap(CommandDefinition.commandDefinitionsById(commandDefinitions, false));
-			Map commandDefinitionsByName = Collections.unmodifiableMap(CommandDefinition.commandDefinitionsByName(commandDefinitionsById.values(), false));
+			Map commandDefinitionsByName = CommandDefinition.commandDefinitionsByName(commandDefinitionsById.values(), false);
 			commandIdsByUniqueName = new HashMap();
-			iterator = commandDefinitionsByName.entrySet().iterator();				
+			commandUniqueNamesById = new HashMap();
 
-			while (iterator.hasNext()) {
+			for (Iterator iterator = commandDefinitionsByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set commandDefinitions2 = (Set) entry.getValue();
-				Iterator iterator2 = commandDefinitions2.iterator();
+				Iterator iterator2 = commandDefinitions2.iterator();				
 				
 				if (commandDefinitions2.size() == 1) {					
 					ICommandDefinition commandDefinition = (ICommandDefinition) iterator2.next(); 
 					commandIdsByUniqueName.put(name, commandDefinition.getId());
+					commandUniqueNamesById.put(commandDefinition.getId(), name);
 				} else while (iterator2.hasNext()) {
 					ICommandDefinition commandDefinition = (ICommandDefinition) iterator2.next(); 
 					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, commandDefinition.getId() }); //$NON-NLS-1$
 					commandIdsByUniqueName.put(uniqueName, commandDefinition.getId());							
+					commandUniqueNamesById.put(commandDefinition.getId(), uniqueName);
 				}
 			}	
 
-			commandUniqueNamesById = new HashMap();
-			iterator = commandIdsByUniqueName.entrySet().iterator();				
-
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				commandUniqueNamesById.put(entry.getValue(), entry.getKey());
-			}
-
-			List contextDefinitions = new ArrayList();
-			contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
-			contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
-			ContextManager.validateContextDefinitions(contextDefinitions);
-			contextDefinitionsById = Collections.unmodifiableMap(ContextDefinition.contextDefinitionsById(contextDefinitions, false));
-			Map contextDefinitionsByName = Collections.unmodifiableMap(ContextDefinition.contextDefinitionsByName(contextDefinitionsById.values(), false));
-			contextIdsByUniqueName = new HashMap();
-			iterator = contextDefinitionsByName.entrySet().iterator();				
-
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String name = (String) entry.getKey();
-				Set contextDefinitions2 = (Set) entry.getValue();
-				Iterator iterator2 = contextDefinitions2.iterator();
-				
-				if (contextDefinitions2.size() == 1) {					
-					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
-					contextIdsByUniqueName.put(name, contextDefinition.getId());
-				} else while (iterator2.hasNext()) {
-					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
-					contextIdsByUniqueName.put(uniqueName, contextDefinition.getId());												
-				}
-			}	
-
-			contextUniqueNamesById = new HashMap();
-			iterator = contextIdsByUniqueName.entrySet().iterator();				
-
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				contextUniqueNamesById.put(entry.getValue(), entry.getKey());
-			}
-
-			List keyConfigurationDefinitions = new ArrayList();
-			keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
-			keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());
-			CommandManager.validateKeyConfigurationDefinitions(keyConfigurationDefinitions);
-			keyConfigurationDefinitionsById = Collections.unmodifiableMap(KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false));
-			Map keyConfigurationDefinitionsByName = Collections.unmodifiableMap(KeyConfigurationDefinition.keyConfigurationDefinitionsByName(keyConfigurationDefinitionsById.values(), false));
+			Map keyConfigurationDefinitionsByName = KeyConfigurationDefinition.keyConfigurationDefinitionsByName(keyConfigurationDefinitionsById.values(), false);
 			keyConfigurationIdsByUniqueName = new HashMap();
-			iterator = keyConfigurationDefinitionsByName.entrySet().iterator();				
+			keyConfigurationUniqueNamesById = new HashMap();
 
-			while (iterator.hasNext()) {
+			for (Iterator iterator = keyConfigurationDefinitionsByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String name = (String) entry.getKey();
 				Set keyConfigurationDefinitions2 = (Set) entry.getValue();
-				Iterator iterator2 = keyConfigurationDefinitions2.iterator();
+				Iterator iterator2 = keyConfigurationDefinitions2.iterator();				
 				
 				if (keyConfigurationDefinitions2.size() == 1) {					
 					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator2.next(); 
 					keyConfigurationIdsByUniqueName.put(name, keyConfigurationDefinition.getId());
+					keyConfigurationUniqueNamesById.put(keyConfigurationDefinition.getId(), name);
 				} else while (iterator2.hasNext()) {
 					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator2.next(); 
 					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, keyConfigurationDefinition.getId() }); //$NON-NLS-1$
-					keyConfigurationIdsByUniqueName.put(uniqueName, keyConfigurationDefinition.getId());		
+					keyConfigurationIdsByUniqueName.put(uniqueName, keyConfigurationDefinition.getId());							
+					keyConfigurationUniqueNamesById.put(keyConfigurationDefinition.getId(), uniqueName);
 				}
 			}	
 
-			keyConfigurationUniqueNamesById = new HashMap();
-			iterator = keyConfigurationIdsByUniqueName.entrySet().iterator();				
+			Map contextDefinitionsByName = ContextDefinition.contextDefinitionsByName(contextDefinitionsById.values(), false);
+			contextIdsByUniqueName = new HashMap();
+			contextUniqueNamesById = new HashMap();
 
-			while (iterator.hasNext()) {
+			for (Iterator iterator = contextDefinitionsByName.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
-				keyConfigurationUniqueNamesById.put(entry.getValue(), entry.getKey());
-			}
-
-			commandIdsByCategoryId = new HashMap();
-			iterator = commandDefinitionsById.values().iterator();
-			
-			while (iterator.hasNext()) {
-				ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
-				String commandId = commandDefinition.getId();
-				String categoryId = commandDefinition.getCategoryId();				
-				Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+				String name = (String) entry.getKey();
+				Set contextDefinitions2 = (Set) entry.getValue();
+				Iterator iterator2 = contextDefinitions2.iterator();				
 				
-				if (commandIds == null) {
-					commandIds = new HashSet();
-					commandIdsByCategoryId.put(categoryId, commandIds);
+				if (contextDefinitions2.size() == 1) {					
+					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
+					contextIdsByUniqueName.put(name, contextDefinition.getId());
+					contextUniqueNamesById.put(contextDefinition.getId(), name);
+				} else while (iterator2.hasNext()) {
+					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
+					contextIdsByUniqueName.put(uniqueName, contextDefinition.getId());							
+					contextUniqueNamesById.put(contextDefinition.getId(), uniqueName);
 				}
-				
-				commandIds.add(commandId);
-			}
+			}	
 
-			Map categoryIdsInUseByUniqueName = new HashMap(categoryIdsByUniqueName);
-			categoryIdsInUseByUniqueName.values().retainAll(commandIdsByCategoryId.keySet());		
-			List categoryNames = new ArrayList(categoryIdsInUseByUniqueName.keySet());
-			Collections.sort(categoryNames, Collator.getInstance());
-			
-			if (commandIdsByCategoryId.containsKey(null))						
-				categoryNames.add(0, Util.translateString(resourceBundle, "other")); //$NON-NLS-1$
-
-			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
-			List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
-			Collections.sort(commandNames, Collator.getInstance());						
-			comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
-			List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
-			Collections.sort(contextNames, Collator.getInstance());						
-			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
-			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
-			List keyConfigurationNames = new ArrayList(keyConfigurationIdsByUniqueName.keySet());
-			Collections.sort(keyConfigurationNames, Collator.getInstance());						
-			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
-			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
-			// TODO relayout page if any setVisible(false)		
-			boolean showCategory = !categoryIdsInUseByUniqueName.isEmpty();
+			/* TODO rich client platform. simplify UI if possible
+			boolean showCategory = !categoryIdsByUniqueName.isEmpty();
 			labelCategory.setVisible(showCategory);
-			comboCategory.setVisible(showCategory);									
+			comboCategory.setVisible(showCategory);					
 			boolean showContext = !contextIdsByUniqueName.isEmpty();
 			labelContext.setVisible(showContext);
 			comboContext.setVisible(showContext);					
@@ -410,46 +530,68 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			labelKeyConfiguration.setVisible(showKeyConfiguration);
 			comboKeyConfiguration.setVisible(showKeyConfiguration);
 			labelKeyConfigurationExtends.setVisible(showKeyConfiguration);
-			List activeKeyConfigurationDefinitions = new ArrayList();
-			activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
-			activeKeyConfigurationDefinitions.addAll(preferenceCommandRegistry.getActiveKeyConfigurationDefinitions());
-			String activeKeyConfigurationId = null;
-		
-			if (activeKeyConfigurationDefinitions.size() >= 1) {
-				IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions.get(activeKeyConfigurationDefinitions.size() - 1);
-				activeKeyConfigurationId = activeKeyConfigurationDefinition.getKeyConfigurationId();
-			
-				if (activeKeyConfigurationId != null && !keyConfigurationDefinitionsById.containsKey(activeKeyConfigurationId))
-					activeKeyConfigurationId = null;
-			}
-			
-			setContextId(null);
-			setKeyConfigurationId(activeKeyConfigurationId);
-			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeyBindingDefinitions());
-			CommandManager.validateKeyBindingDefinitions(pluginKeyBindingDefinitions);
-			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeyBindingDefinitions());
-			CommandManager.validateKeyBindingDefinitions(preferenceKeyBindingDefinitions);
-			tree.clear();
-			iterator = preferenceKeyBindingDefinitions.iterator();
-			
-			while (iterator.hasNext()) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
-			}
+			*/
 
-			iterator = pluginKeyBindingDefinitions.iterator();
-			
-			while (iterator.hasNext()) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
-			}
+			List categoryNames = new ArrayList(categoryIdsByUniqueName.keySet());
+			Collections.sort(categoryNames, Collator.getInstance());						
 
-			// TODO additional filtering of contexts and key configurations if they are not well-formed (circular or orphaned)
-			// TOOD additional filtering of bindings for referential intergrity 
+			if (commandIdsByCategoryId.containsKey(null))						
+				categoryNames.add(0, Util.translateString(resourceBundle, "other")); //$NON-NLS-1$
+			
+			comboCategory.setItems((String[]) categoryNames.toArray(new String[categoryNames.size()]));
+			comboCategory.clearSelection();
+			comboCategory.deselectAll();
+			
+			if (commandIdsByCategoryId.containsKey(null) || !categoryNames.isEmpty())
+				comboCategory.select(0);			
+
+			List keyConfigurationNames = new ArrayList(keyConfigurationIdsByUniqueName.keySet());
+			Collections.sort(keyConfigurationNames, Collator.getInstance());						
+			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
+			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
+			setKeyConfigurationId(activeKeyConfigurationId);		
+			update();
 		}
 
-		update();
 		super.setVisible(visible);
+	}
+
+	private void setCommandsForCategory() {
+		String categoryId = getCategoryId();
+		String commandId = getCommandId();
+		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+		Map commandIdsByUniqueName = new HashMap(this.commandIdsByUniqueName);
+		commandIdsByUniqueName.values().retainAll(commandIds);
+		List commandNames = new ArrayList(commandIdsByUniqueName.keySet());			
+		Collections.sort(commandNames, Collator.getInstance());						
+		comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
+		setCommandId(commandId);
+		
+		if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
+			comboCommand.select(0);		
+	}
+	
+	private void setContextsForCommand() {
+		String commandId = getCommandId();
+		String contextId = getContextId();
+		Set contextIds = (Set) contextIdsByCommandId.get(commandId);
+		Map contextIdsByUniqueName = new HashMap(this.contextIdsByUniqueName);			
+		
+		// TODO for context bound commands, this code retains only those context explictly bound. what about assigning key bindings to implicit descendant contexts? 
+		if (contextIds != null)
+			contextIdsByUniqueName.values().retainAll(contextIds);
+
+		List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
+		Collections.sort(contextNames, Collator.getInstance());						
+		
+		if (contextIds == null)
+			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
+		
+		comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));				
+		setContextId(contextId);
+
+		if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
+			comboContext.select(0);
 	}
 
 	protected Control createContents(Composite parent) {
@@ -889,6 +1031,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void update() {
+		setCommandsForCategory();
+		setContextsForCommand();		
 		String categoryId = getCategoryId();
 		String commandId = getCommandId();
 		String contextId = getContextId();
