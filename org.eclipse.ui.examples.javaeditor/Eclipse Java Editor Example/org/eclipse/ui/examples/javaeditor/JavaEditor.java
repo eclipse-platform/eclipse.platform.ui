@@ -140,7 +140,7 @@ public class JavaEditor extends TextEditor {
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setSourceViewerConfiguration(new JavaSourceViewerConfiguration());
-		setEditorContextMenuId("#JavaEditorContext"); //$NON-NLS-1$
-		setRulerContextMenuId("#JavaRulerContext"); //$NON-NLS-1$
+//		setEditorContextMenuId("#JavaEditorContext"); //$NON-NLS-1$
+//		setRulerContextMenuId("#JavaRulerContext"); //$NON-NLS-1$
 	}
 }

@@ -3,6 +3,8 @@
 	<name>org.eclipse.text</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.runtime</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -12,6 +12,7 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,20 +21,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-
-import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+
+import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.source.IAnnotationModel;
+
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 
@@ -45,6 +48,32 @@ import org.eclipse.core.runtime.Status;
  * </p>
  */
 public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3 {
+
+		/**
+		 * Opertion created by the document provider and to be executed by the providers runnable context.
+		 * 
+		 * @since 3.0
+		 */
+		protected static abstract class DocumentProviderOperation implements IRunnableWithProgress {
+			
+			/**
+			 * The actual functionality of this operation.
+			 * 
+			 * @throws CoreException
+			 */
+			protected abstract void execute(IProgressMonitor monitor) throws CoreException;
+			
+			/*
+			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					execute(monitor);
+				} catch (CoreException x) {
+					throw new InvocationTargetException(x);
+				}
+			}
+		}
 		
 		/**
 		 * Collection of all information managed for a connected element.
@@ -148,13 +177,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Constant for representing the ok status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
+	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
 	
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
+	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
 	
 	
 	/** Element information of all connected elements */
@@ -209,6 +238,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
 	
+	/**
+	 * Returns the runnable context for this document provider.
+	 * 
+	 * @return the runnable context for this document provider
+	 * @since 3.0
+	 */
+	protected abstract IRunnableContext getOperationRunner(IProgressMonitor monitor);
 	
 	/**
 	 * Returns the element info object for the given element.
@@ -405,13 +441,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		return (info != null ? info.fCanBeSaved : false);
 	}
 	
-	/*
-	 * @see IDocumentProvider#resetDocument(Object)
+	/**
+	 * Executes the actual work of reseting the given elements document.
+	 * 
+	 * @param element the element
+	 * @param monitor the progress monitor
+	 * @throws CoreException
+	 * @since 3.0
 	 */
-	public void resetDocument(Object element) throws CoreException {
-		if (element == null)
-			return;
-			
+	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null) {
 			
@@ -436,33 +474,80 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				fireElementContentReplaced(element);
 				fireElementDirtyStateChanged(element, false);
 			}
-		}
+		}		
 	}
 	
-	/*
-	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
+	/**
+	 * Executes the given operation in the providers runnable context.
+	 * 
+	 * @param operation the operation to be executes
+	 * @param monitor the progress monitor
+	 * @exception CoreException the operation's core exception
+	 * @since 3.0
 	 */
-	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
+	protected void executeOperation(DocumentProviderOperation operation, IProgressMonitor monitor) throws CoreException {
+		try {
+			IRunnableContext runner= getOperationRunner(monitor);
+			if (runner != null)
+				runner.run(false, false, operation);
+			else
+				operation.run(monitor);
+		} catch (InvocationTargetException x) {
+			Throwable e= x.getTargetException();
+			if (e instanceof CoreException)
+				throw (CoreException) e;
+			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+		} catch (InterruptedException e) {
+			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+		}
+	}
+		
+	/*
+	 * @see IDocumentProvider#resetDocument(Object)
+	 */
+	public final void resetDocument(final Object element) throws CoreException {
 		
 		if (element == null)
 			return;
-			
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		if (info != null) {
-			
-			if (info.fDocument != document) {
-				Status status= new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, IStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
-				throw new CoreException(status);				
+				
+		DocumentProviderOperation operation= new DocumentProviderOperation() {
+			protected void execute(IProgressMonitor monitor) throws CoreException {
+				doResetDocument(element, monitor);
 			}
+		};
+		
+		executeOperation(operation, getProgressMonitor());	
+	}
+	
+
+	/*
+	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
+	 */
+	public final void saveDocument(IProgressMonitor monitor, final Object element, final IDocument document, final boolean overwrite) throws CoreException {
+		
+		if (element == null)
+			return;
+				
+		DocumentProviderOperation operation= new DocumentProviderOperation() {
+			public void execute(IProgressMonitor monitor) throws CoreException {
+				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+				if (info != null) {
+					if (info.fDocument != document) {
+						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
+						throw new CoreException(status);				
+					}
+					doSaveDocument(monitor, element, document, overwrite);
+					info.fCanBeSaved= false;
+					addUnchangedElementListeners(element, info);
+					fireElementDirtyStateChanged(element, false);
 			
-			doSaveDocument(monitor, element, document, overwrite);
-			info.fCanBeSaved= false;
-			addUnchangedElementListeners(element, info);
-			fireElementDirtyStateChanged(element, false);
-			
-		} else {
-			doSaveDocument(monitor, element, document, overwrite);
-		}	
+				} else {
+					doSaveDocument(monitor, element, document, overwrite);
+				}
+			}
+		};
+		
+		executeOperation(operation, monitor);
 	}
 	
 	/**
@@ -794,11 +879,32 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		return STATUS_ERROR;
 	}
 	
+	/**
+	 * Performs the actual work of snchronizing the given element.
+	 * 
+	 * @param element the element
+	 * @param monitor the progress monitor
+	 * @since 3.0
+	 */
+	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
+	}
+	
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
 	 * @since 2.0
 	 */
-	public void synchronize(Object element) throws CoreException {
+	public final void synchronize(final Object element) throws CoreException {
+		
+		if (element == null)
+			return;
+			
+		DocumentProviderOperation operation= new DocumentProviderOperation() {
+			public void execute(IProgressMonitor monitor) throws CoreException {
+				doSynchronize(element, monitor);
+			}
+		};
+		
+		executeOperation(operation, getProgressMonitor());
 	}
 	
 	/*

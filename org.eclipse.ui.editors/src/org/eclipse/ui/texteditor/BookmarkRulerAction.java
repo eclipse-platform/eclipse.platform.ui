@@ -26,6 +26,6 @@ public class BookmarkRulerAction extends AbstractRulerActionDelegate {
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", editor, rulerInfo, IMarker.BOOKMARK, true); //$NON-NLS-1$
+		return new MarkerRulerAction(TextEditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", editor, rulerInfo, IMarker.BOOKMARK, true); //$NON-NLS-1$
 	}
 }

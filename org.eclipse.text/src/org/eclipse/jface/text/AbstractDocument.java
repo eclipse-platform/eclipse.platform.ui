@@ -43,7 +43,7 @@ import java.util.regex.PatternSyntaxException;
 public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IRepairableDocument {
 	
 	/**
-	 * Inner class to bundle a registered post notifcation replace operation together with its
+	 * Inner class to bundle a registered post notification replace operation together with its
 	 * owner.
 	 * 
 	 * @since 2.0
@@ -1051,7 +1051,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Flushs all registered post notification changes.
+	 * Flushes all registered post notification changes.
 	 * 
 	 * @since 2.0
 	 */
@@ -1163,7 +1163,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Resumes the document listern notification by sending out the remembered
+	 * Resumes the document listener notification by sending out the remembered
 	 * partition changed and document event.
 	 * 
 	 * @since 2.1

@@ -18,7 +18,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -74,8 +73,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 			if (getDocumentProvider() instanceof IDocumentProviderExtension) {
 				IDocumentProviderExtension extension= (IDocumentProviderExtension) getDocumentProvider();
 				IStatus status= extension.getStatus(input);
-				// see bug 42230
-				if (status.isOK() || status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
+				if (!isErrorStatus(status)) {
 					front= fDefaultComposite;
 				} else {
 					fStatusControl= createStatusControl(fParent, status);
@@ -89,6 +87,17 @@ public class StatusTextEditor extends AbstractTextEditor {
 			fParent.layout();
 			updateStatusFields();
 		}
+	}
+	
+	/**
+	 * Returns whether the given status indicates an error. Subclasses may override.
+	 * 
+	 * @param status the status to be checked
+	 * @return <code>true</code> if the status indicates an error, <code>false</code> otherwise\
+	 * @since 3.0
+	 */
+	protected boolean isErrorStatus(IStatus status) {
+		return status != null && !status.isOK();
 	}
 	
 	/**
@@ -145,8 +154,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (provider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			IStatus status= extension.getStatus(getEditorInput());
-			// see bug 42230
-			if (status != null && !status.isOK() && status.getCode() != IResourceStatus.READ_ONLY_LOCAL) {
+			if (isErrorStatus(status)) {
 				IStatusField field= getStatusField(category);
 				if (field != null) {
 					field.setText(fErrorLabel);
@@ -157,7 +165,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		
 		super.updateStatusField(category);
 	}
-			
+
 	/*
 	 * @see AbstractTextEditor#doSetInput(IEditorInput)
 	 */

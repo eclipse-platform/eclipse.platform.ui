@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.texteditor;
+package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -96,7 +96,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 * Creates a next previous action delegate.
 	 */
 	public NextPreviousPulldownActionDelegate() {
-		fStore= TextEditorPlugin.getDefault().getPreferenceStore();
+		fStore= EditorsPlugin.getDefault().getPreferenceStore();
 	}
 
 	/*

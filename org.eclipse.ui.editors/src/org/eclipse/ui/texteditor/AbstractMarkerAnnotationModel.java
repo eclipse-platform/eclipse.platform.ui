@@ -35,6 +35,8 @@ import org.eclipse.jface.text.source.AnnotationModel;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 
 /**
  * Abstract  implementation of a marker-based annotation model.
@@ -235,7 +237,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			catchupWithMarkers();
 		} catch (CoreException x) {
 			if (x.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
-				handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.connected")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.connected")); //$NON-NLS-1$
 		}
 
 		fireModelChanged();
@@ -251,7 +253,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		fInstantiatedMarkerUpdaters= new ArrayList(2);
 		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.getPluginId(), "markerUpdaters"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++)
@@ -354,7 +356,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 						deleteMarkers(m);
 						
 					} catch (CoreException x) {
-						handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
+						handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
 					}
 					listenToMarkerChanges(true);
 				
@@ -433,7 +435,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		try {
 			return (IMarkerUpdater) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException x) {
-			handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.createMarkerUpdater")); //$NON-NLS-1$
+			handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.createMarkerUpdater")); //$NON-NLS-1$
 		}
 		
 		return null;

@@ -11,7 +11,10 @@
 package org.eclipse.ui.examples.javaeditor.java;
 
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.ITextViewer;
 
 /**
  * Double click strategy aware of Java identifier syntax rules.

@@ -36,6 +36,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -175,10 +176,10 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 		int layer= 1;
 		
 		if (isAnnotationType(fAnnotationType, IMarker.TASK)) {
-			name= ISharedImages.IMG_OBJS_TASK_TSK;
+			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
 			layer= TASK_LAYER;
 		} else if (isAnnotationType(fAnnotationType, IMarker.BOOKMARK)) {
-			name= ISharedImages.IMG_OBJS_BKMRK_TSK;
+			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
 			layer= BOOKMARK_LAYER;
 		} else if (isAnnotationType(fAnnotationType, IMarker.PROBLEM)) {
 			switch (fSeverity) {

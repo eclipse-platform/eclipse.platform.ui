@@ -21,8 +21,11 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.source.ISharedTextColors;
+
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -67,6 +70,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	
 	
 	private FileEditorInputAdapterFactory fFileEditorInputAdapterFactory;
+	private ISharedTextColors fSharedTextColors;
 	
 	
 	public EditorsPlugin(IPluginDescriptor descriptor) {
@@ -79,6 +83,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeDefaultPreferences(org.eclipse.jface.preference.IPreferenceStore)
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		MarkerAnnotationPreferences.initializeDefaultValues(store);
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 	
@@ -98,6 +103,24 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public void shutdown() throws CoreException {
 		IAdapterManager manager= Platform.getAdapterManager();		
 		manager.unregisterAdapters(fFileEditorInputAdapterFactory);
+		
+		if (fSharedTextColors != null) {
+			fSharedTextColors.dispose();
+			fSharedTextColors= null;
+		}
+		
 		super.shutdown();
+	}
+	
+	/**
+	 * Returns the shared text colors of this plug-in.
+	 *
+	 * @since 3.0 
+	 * @return the shared text colors
+	 */
+	public ISharedTextColors getSharedTextColors() {
+		if (fSharedTextColors == null)
+			fSharedTextColors= new SharedTextColors();
+		return fSharedTextColors;
 	}
 }

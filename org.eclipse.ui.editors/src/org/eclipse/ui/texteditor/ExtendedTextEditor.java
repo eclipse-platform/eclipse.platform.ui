@@ -12,6 +12,10 @@ package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
@@ -20,6 +24,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -39,9 +46,14 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -83,14 +95,22 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	private final static String PRINT_MARGIN_COLOR= ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
 	/**
 	 * Preference key for print margin ruler column.
-	 **/
+	 */
 	private final static String PRINT_MARGIN_COLUMN= ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+	
+	/**
+	 * Adapter class for <code>IGotoMarker</code>.
+	 */
+	private class GotoMarkerAdapter implements IGotoMarker {
+		public void gotoMarker(IMarker marker) {
+			ExtendedTextEditor.this.gotoMarker(marker);
+		}
+	}
+	
 	/**
 	 * The annotation preferences.
 	 */
 	private MarkerAnnotationPreferences fAnnotationPreferences;
-	
-
 	/** 
 	 * The overview ruler of this editor.
 	 * 
@@ -99,7 +119,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * {@link #getOverviewRuler()} instead.</p>
 	 */
 	protected IOverviewRuler fOverviewRuler;
-	
 	/**
 	 * Helper for accessing annotation from the perspective of this editor.
 	 * 
@@ -108,7 +127,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * {@link #getAnnotationAccess()} instead.</p>
 	 */
 	protected IAnnotationAccess fAnnotationAccess;
-	
 	/**
 	 * Helper for managing the decoration support of this editor's viewer.
 	 * 
@@ -117,7 +135,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * {@link #getSourceViewerDecorationSupport(ISourceViewer)} instead.</p>
 	 */
 	protected SourceViewerDecorationSupport fSourceViewerDecorationSupport;
-	
 	/**
 	 * The line number column.
 	 * 
@@ -126,7 +143,6 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * {@link AbstractTextEditor#getVerticalRuler()} to access the vertical bar instead.</p>
 	 */
 	protected LineNumberRulerColumn fLineNumberRulerColumn;
-	
 	/**
 	 * The change ruler column.
 	 */
@@ -140,6 +156,17 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @since 3.0
 	 */
 	private AnnotationRulerColumn fAnnotationRulerColumn;
+	/** 
+	 * The editor's implicit document provider.
+	 * @since 3.0
+	 */
+	private IDocumentProvider fImplicitDocumentProvider;
+	/** 
+	 * The editor's goto marker adapter.
+	 * @since 3.0 
+	 */
+	private Object fGotoMarkerAdapter= new GotoMarkerAdapter();
+	
 	
 	/**
 	 * Creates a new text editor.
@@ -156,7 +183,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
-		setPreferenceStore(TextEditorPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
 
 	/**
@@ -207,7 +234,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	}
 
 	protected ISharedTextColors getSharedColors() {
-		ISharedTextColors sharedColors= TextEditorPlugin.getDefault().getSharedTextColors();
+		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
 		return sharedColors;
 	}
 
@@ -849,5 +876,135 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	protected MarkerAnnotationPreferences getAnnotationPreferences() {
 		return fAnnotationPreferences;
 	}
+	
+	
+	/**
+	 * If the editor can be saved all marker ranges have been changed according to
+	 * the text manipulations. However, those changes are not yet propagated to the
+	 * marker manager. Thus, when opening a marker, the marker's position in the editor
+	 * must be determined as it might differ from the position stated in the marker.
+	 * 
+	 * @param marker the marker to go to
+	 * @deprecated visibility will be reduced, use <code>getAdapter(IGotoMarker.class) for accessing this method</code>
+	 */
+	public void gotoMarker(IMarker marker) {
+		
+		if (getSourceViewer() == null)
+			return;
+		
+		int start= MarkerUtilities.getCharStart(marker);
+		int end= MarkerUtilities.getCharEnd(marker);
+		
+		if (start < 0 || end < 0) {
+			
+			// there is only a line number
+			int line= MarkerUtilities.getLineNumber(marker);
+			if (line > -1) {
+				
+				// marker line numbers are 1-based
+				-- line;
+				
+				try {
+					
+					IDocument document= getDocumentProvider().getDocument(getEditorInput());
+					selectAndReveal(document.getLineOffset(line), document.getLineLength(line));
+					
+				} catch (BadLocationException x) {
+					// marker refers to invalid text position -> do nothing
+				}
+			}
+			
+		} else {
+			
+			// look up the current range of the marker when the document has been edited
+			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+			if (model instanceof AbstractMarkerAnnotationModel) {
+				
+				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+				Position pos= markerModel.getMarkerPosition(marker);
+				if (pos != null && !pos.isDeleted()) {
+					// use position instead of marker values
+					start= pos.getOffset();
+					end= pos.getOffset() + pos.getLength();
+				}
+				
+				if (pos != null && pos.isDeleted()) {
+					// do nothing if position has been deleted
+					return;
+				}
+			}
+			
+			IDocument document= getDocumentProvider().getDocument(getEditorInput());
+			int length= document.getLength();
+			if (end - 1 < length && start < length)
+				selectAndReveal(start, end - start);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
+	 * @since 3.0
+	 */
+	protected boolean isErrorStatus(IStatus status) {
+		// see bug 42230
+		return status != null && !status.isOK() && status.getCode() != IResourceStatus.READ_ONLY_LOCAL;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
+	 */
+	protected void createActions() {
+		super.createActions();
+		
+		ResourceAction action= new AddMarkerAction(TextEditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
+		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
+		setAction(IDEActionFactory.BOOKMARK.getId(), action);
 
+		action= new AddTaskAction(TextEditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
+		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
+		setAction(IDEActionFactory.ADD_TASK.getId(), action);		
+	}
+	
+	/*
+	 * @see IAdaptable#getAdapter(java.lang.Class)
+	 * @since 3.0
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IGotoMarker.class.equals(adapter))
+			return fGotoMarkerAdapter;
+		return super.getAdapter(adapter);
+	}
+	
+	/*
+	 * If there is no explicit document provider set, the implicit one is
+	 * re-initialized based on the given editor input.
+	 *
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setDocumentProvider(org.eclipse.ui.IEditorInput)
+	 * @since 3.0
+	 */
+	protected void setDocumentProvider(IEditorInput input) {
+		fImplicitDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);		
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
+	 * @since 3.0
+	 */
+	public IDocumentProvider getDocumentProvider() {
+		IDocumentProvider provider= super.getDocumentProvider();
+		if (provider == null)
+			return fImplicitDocumentProvider;
+		return provider;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#disposeDocumentProvider()
+	 * @since 3.0
+	 */
+	protected void disposeDocumentProvider() {
+		super.disposeDocumentProvider();
+		fImplicitDocumentProvider= null;
+	}
 }

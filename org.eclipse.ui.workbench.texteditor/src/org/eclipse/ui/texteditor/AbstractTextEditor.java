@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -133,14 +132,14 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
+
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -1328,10 +1327,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	
-	/** The editor's internal document provider. */
-	private IDocumentProvider fInternalDocumentProvider;
-	/** The editor's external document provider. */
-	private IDocumentProvider fExternalDocumentProvider;
+	/** The editor's explicit document provider. */
+	private IDocumentProvider fExplicitDocumentProvider;
 	/** The editor's preference store. */
 	private IPreferenceStore fPreferenceStore;
 	/** The editor's range indicator. */
@@ -1546,9 +1543,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#getDocumentProvider()
 	 */
 	public IDocumentProvider getDocumentProvider() {
-		if (fInternalDocumentProvider != null)
-			return fInternalDocumentProvider;
-		return fExternalDocumentProvider;
+		return fExplicitDocumentProvider;
 	}
 		
 	/** 
@@ -1631,7 +1626,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void setDocumentProvider(IDocumentProvider provider) {
 		Assert.isNotNull(provider);
-		fInternalDocumentProvider= provider;
+		fExplicitDocumentProvider= provider;
 	}
 		
 	/**
@@ -2437,7 +2432,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * If there is no implicit document provider set, the external one is
+	 * Hook method for setting the document provider for the given input.
+	 * This default implementation does notthing. Clients may
+	 * reimplement.
+	 * 
+	 * @param input the input of this editor.
+	 * @since 3.0
+	 */
+	protected void setDocumentProvider(IEditorInput input) {
+	}
+		
+	/**
+	 * If there is no explicit document provider set, the implicit one is
 	 * re-initialized based on the given editor input.
 	 *
 	 * @param input the editor input.
@@ -2456,9 +2462,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 		}
 		
-		if (fInternalDocumentProvider == null)
-			fExternalDocumentProvider= DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-		
+		setDocumentProvider(input);
+				
 		provider= getDocumentProvider();	
 		if (provider != null) {
 			provider.addElementStateListener(fElementStateListener);
@@ -2628,21 +2633,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger= null;
 		}
 		
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider != null) {
-			
-			IEditorInput input= getEditorInput();
-			if (input != null)
-				provider.disconnect(input);
-			
-			if (fElementStateListener != null) {
-				provider.removeElementStateListener(fElementStateListener);
-				fElementStateListener= null;
-			}
-			
-			fInternalDocumentProvider= null;
-			fExternalDocumentProvider= null;
-		}
+		disposeDocumentProvider();
 		
 		if (fSourceViewer != null) {
 			
@@ -2704,6 +2695,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		super.dispose();
 	}
 	
+	/**
+	 * Disposes the connection with the document provider. Subclasses
+	 * may extend.
+	 * 
+	 * @since 3.0
+	 */
+	protected void disposeDocumentProvider() {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider != null) {
+			
+			IEditorInput input= getEditorInput();
+			if (input != null)
+				provider.disconnect(input);
+			
+			if (fElementStateListener != null) {
+				provider.removeElementStateListener(fElementStateListener);
+				fElementStateListener= null;
+			}
+			
+			fExplicitDocumentProvider= null;
+		}
+	}
+
 	/**
 	 * Determines whether the given preference change affects the editor's
 	 * presentation. This implementation always returns <code>false</code>.
@@ -2847,69 +2861,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 				if (MessageDialog.openQuestion(shell, title, msg)) {
 					
-					title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
-					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
 					
-					if (provider instanceof IDocumentProviderExtension) {
-						WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
-							protected void execute(final IProgressMonitor monitor) throws CoreException {
-								IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-								extension.synchronize(input);
-							}
-						};
-						
-						try {
-							operation.run(getProgressMonitor());
-						} catch (InterruptedException x) {
-						} catch (InvocationTargetException x) {
-							Throwable t= x.getTargetException();
-							MessageDialog.openError(shell, title, msg + t.getMessage());
-						} 
-					
-					} else {
-						
-						try {
+					try {
+						if (provider instanceof IDocumentProviderExtension) {
+							IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+							extension.synchronize(input);
+						} else {
 							doSetInput(input);
-						} catch (CoreException x) {
-							ErrorDialog.openError(shell, title, msg, x.getStatus());
-						}
+						} 
+					} catch (CoreException x) {
+						title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
+						msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
+						ErrorDialog.openError(shell, title, msg, x.getStatus());
 					}
 				}
-				
-	//			// disabled because of http://bugs.eclipse.org/bugs/show_bug.cgi?id=15166
-	//			else {
-	//				markEditorAsDirty();
-	//			}
-	
 			}
 		}
 
-//	/**
-//	 * Marks this editor and its editor input as dirty.
-//	 * @since 2.0
-//	 */
-//	private void markEditorAsDirty() {
-//		
-//		if (isDirty())
-//			return;
-//			
-//		IDocumentProvider provider= getDocumentProvider();
-//		if (provider instanceof IDocumentProviderExtension) {
-//			
-//			provider.removeElementStateListener(fElementStateListener);
-//			try {
-//				
-//				IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-//				extension.setCanSaveDocument(getEditorInput());
-//				firePropertyChange(PROP_DIRTY);
-//				
-//			} finally {
-//				provider.addElementStateListener(fElementStateListener);
-//			}
-//			
-//		}
-//	}
-			
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IEditorPart</code> method calls <code>performSaveAs</code>. 
@@ -2966,8 +2934,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 		} else {	
-		
-			performSaveOperation(createSaveOperation(false), progressMonitor);
+			performSave(false, progressMonitor);
 		}
 	}
 	
@@ -3155,30 +3122,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Creates a workspace modify operation which saves the content of the editor
-	 * to the editor's input element. <code>overwrite</code> indicates whether
-	 * the editor input element may be overwritten if necessary.
-	 * Clients may reimplement this method.
+	 * Performs the save and handles errors appropriatly.
 	 * 
 	 * @param overwrite indicates whether or not overwrititng is allowed
-	 * @return the save operation
-	 */
-	protected WorkspaceModifyOperation createSaveOperation(final boolean overwrite) {
-		return new WorkspaceModifyOperation() {
-			public void execute(final IProgressMonitor monitor) throws CoreException {
-				IEditorInput input= getEditorInput();
-				getDocumentProvider().saveDocument(monitor, input, getDocumentProvider().getDocument(input), overwrite);
-			}
-		};
-	}
-	
-	/**
-	 * Performs the given save operation and handles errors appropriatly.
-	 * 
-	 * @param operation the operation to be performed
 	 * @param progressMonitor the monitor in which to run the operation
 	 */
-	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
+	protected void performSave(boolean overwrite, IProgressMonitor progressMonitor) {
 		
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider == null)
@@ -3187,22 +3136,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 		
 			provider.aboutToChange(getEditorInput());
-			operation.run(progressMonitor);
+			IEditorInput input= getEditorInput();
+			provider.saveDocument(progressMonitor, input, getDocumentProvider().getDocument(input), overwrite);
 			editorSaved();
 		
-		} catch (InterruptedException x) {
-		} catch (InvocationTargetException x) {
-			
-			Throwable t= x.getTargetException();
-			if (t instanceof CoreException)
-				handleExceptionOnSave((CoreException) t, progressMonitor);
-			else {
-				Shell shell= getSite().getShell();
-				String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
-				MessageDialog.openError(shell, title, msg + t.getMessage());
-			}
-		
+		} catch (CoreException x) {
+			handleExceptionOnSave(x, progressMonitor);
 		} finally {
 			provider.changed(getEditorInput());
 		}
@@ -3241,7 +3180,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
 				
 				if (MessageDialog.openQuestion(shell, title, msg))
-					performSaveOperation(createSaveOperation(true), progressMonitor);
+					performSave(true, progressMonitor);
 				else {
 					/*
 					 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
@@ -3301,46 +3240,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <code>ITextEditor</code> method may be extended by subclasses.
 	 */
 	public void doRevertToSaved() {
-		
 		IDocumentProvider p= getDocumentProvider();
 		if (p == null)
 			return;
 			
-		performRevertOperation(createRevertOperation(), getProgressMonitor());
+		performRevert();
 	}
 	
 	/**
-	 * Creates a workspace modify operation which reverts the content of the editor
-	 * to the last saved state of the editor's input element. Clients may reimplement this method.
+	 * Performs revert and handles errors appropriatly.
 	 * 
-	 * @return the revert operation
-	 * @since 2.1
+	 * @since 3.0
 	 */
-	protected WorkspaceModifyOperation createRevertOperation() {
-		return new WorkspaceModifyOperation() {
-			protected void execute(final IProgressMonitor monitor) throws CoreException {
-				IEditorInput input= getEditorInput();
-				IDocumentProvider provider= getDocumentProvider();
-				
-				provider.resetDocument(input);
-				
-				IAnnotationModel model= provider.getAnnotationModel(input);
-				if (model instanceof AbstractMarkerAnnotationModel) {
-					AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-					markerModel.resetMarkers();
-				}
-			}
-		};
-	}
-	
-	/**
-	 * Performs the given revert operation and handles errors appropriatly.
-	 * 
-	 * @param operation the operation to be performed
-	 * @param progressMonitor the monitor in which to run the operation
-	 * @since 2.1
-	 */
-	protected void performRevertOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
+	protected void performRevert() {
 		
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider == null)
@@ -3349,18 +3261,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 			
 			provider.aboutToChange(getEditorInput());
-			operation.run(progressMonitor);
+			provider.resetDocument(getEditorInput());
 			editorSaved();
 			
-		} catch (InterruptedException x) {
-		} catch (InvocationTargetException x) {
-			
-			Throwable t= x.getTargetException();
+		} catch (CoreException x) {
 			Shell shell= getSite().getShell();
 			String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
 			String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
-			MessageDialog.openError(shell, title, msg + t.getMessage());
-			
+			ErrorDialog.openError(shell, title, msg, x.getStatus());
 		} finally {
 			provider.changed(getEditorInput());
 		}
@@ -3806,18 +3714,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
-		
-		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
-		setAction(ITextEditorActionConstants.BOOKMARK, action);
-
-// FIXME: need another way to contribute this action
-//		action= new AddTaskAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
-//		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
-//		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
-//		setAction(ITextEditorActionConstants.ADD_TASK, action);
-		
+				
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
 		// action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
@@ -4109,70 +4006,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer != null && fSourceViewer.getTextWidget() != null)
 			fSourceViewer.getTextWidget().setFocus();
 	}
-	
-	/**
-	 * If the editor can be saved all marker ranges have been changed according to
-	 * the text manipulations. However, those changes are not yet propagated to the
-	 * marker manager. Thus, when opening a marker, the marker's position in the editor
-	 * must be determined as it might differ from the position stated in the marker.
-	 * 
-	 * @param marker the marker to go to
-	 * @see EditorPart#gotoMarker(org.eclipse.core.resources.IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
-		
-		if (fSourceViewer == null)
-			return;
-		
-		int start= MarkerUtilities.getCharStart(marker);
-		int end= MarkerUtilities.getCharEnd(marker);
-		
-		if (start < 0 || end < 0) {
 			
-			// there is only a line number
-			int line= MarkerUtilities.getLineNumber(marker);
-			if (line > -1) {
-				
-				// marker line numbers are 1-based
-				-- line;
-				
-				try {
-					
-					IDocument document= getDocumentProvider().getDocument(getEditorInput());
-					selectAndReveal(document.getLineOffset(line), document.getLineLength(line));
-				
-				} catch (BadLocationException x) {
-					// marker refers to invalid text position -> do nothing
-				}
-			}
-			
-		} else {
-		
-			// look up the current range of the marker when the document has been edited
-			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
-			if (model instanceof AbstractMarkerAnnotationModel) {
-				
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-				Position pos= markerModel.getMarkerPosition(marker);
-				if (pos != null && !pos.isDeleted()) {
-					// use position instead of marker values
-					start= pos.getOffset();
-					end= pos.getOffset() + pos.getLength();
-				}
-					
-				if (pos != null && pos.isDeleted()) {
-					// do nothing if position has been deleted
-					return;
-				}
-			}
-			
-			IDocument document= getDocumentProvider().getDocument(getEditorInput());
-			int length= document.getLength();
-			if (end - 1 < length && start < length)
-				selectAndReveal(start, end - start);
-		}
-	}
-		
 	/*
 	 * @see ITextEditor#showsHighlightRangeOnly()
 	 */
@@ -4781,6 +4615,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#showChangeInformation(boolean)
+	 * @since 3.0
 	 */
 	public void showChangeInformation(boolean show) {
 		// do nothing
@@ -4788,6 +4623,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#isChangeInformationShowing()
+	 * @since 3.0
 	 */
 	public boolean isChangeInformationShowing() {
 		return false;

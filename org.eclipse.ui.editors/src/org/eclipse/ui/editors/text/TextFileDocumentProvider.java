@@ -52,6 +52,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
@@ -501,6 +502,10 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			info.fTextFileBuffer.commit(monitor, overwrite);
+			if (info.fModel instanceof AbstractMarkerAnnotationModel) {
+				AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
+				model.updateMarkers(info.fTextFileBuffer.getDocument());
+			}
 		} else if (element instanceof IFileEditorInput) {
 			try {
 				monitor.beginTask("Saving", 2000);

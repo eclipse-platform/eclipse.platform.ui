@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+
 
 /**
  * This registry manages shareable document provider. Document
@@ -107,10 +109,10 @@ public class DocumentProviderRegistry {
 	private void initialize() {
 		
 		IExtensionPoint extensionPoint;
-		extensionPoint= Platform.getPluginRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "documentProviders"); //$NON-NLS-1$
+		extensionPoint= Platform.getPluginRegistry().getExtensionPoint(EditorsPlugin.getPluginId(), "documentProviders"); //$NON-NLS-1$
 		
 		if (extensionPoint == null) {
-			String msg= MessageFormat.format(EditorMessages.getString("DocumentProviderRegistry.error.extension_point_not_found"), new Object[] { PlatformUI.PLUGIN_ID }); //$NON-NLS-1$
+			String msg= MessageFormat.format(TextEditorMessages.getString("DocumentProviderRegistry.error.extension_point_not_found"), new Object[] { PlatformUI.PLUGIN_ID }); //$NON-NLS-1$
 			ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, null));
 			return;

@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -407,5 +409,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
 		// Default is to do nothing
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
+		return null;
 	}
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
 	
 	/** Constant for the unknown marker type */
-	public final static String UNKNOWN= TextEditorPlugin.PLUGIN_ID + ".unknown";  //$NON-NLS-1$
+	public final static String UNKNOWN= EditorsPlugin.getPluginId() + ".unknown";  //$NON-NLS-1$
 	
 	/** The marker annotation preferences */
 	protected MarkerAnnotationPreferences fMarkerAnnotationPreferences;

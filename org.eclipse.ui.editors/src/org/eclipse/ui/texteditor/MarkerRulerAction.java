@@ -303,7 +303,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 					}
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, EditorMessages.getString("MarkerRulerAction.getMarker")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.getString("MarkerRulerAction.getMarker")); //$NON-NLS-1$
 			}
 		}
 
@@ -327,7 +327,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		try {
 			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
 		} catch (CoreException x) {
-			handleCoreException(x, EditorMessages.getString("MarkerRulerAction.addMarker")); //$NON-NLS-1$
+			handleCoreException(x, TextEditorMessages.getString("MarkerRulerAction.addMarker")); //$NON-NLS-1$
 		}
 	}
 	
@@ -347,7 +347,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				}
 			}, null);
 		} catch (CoreException x) {
-			handleCoreException(x, EditorMessages.getString("MarkerRulerAction.removeMarkers")); //$NON-NLS-1$
+			handleCoreException(x, TextEditorMessages.getString("MarkerRulerAction.removeMarkers")); //$NON-NLS-1$
 		}
 	}
 	

@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -207,7 +206,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getSeverity()
 		 */
 		public int getSeverity() {
-			return IMarker.SEVERITY_INFO;
+			return 0; // same as IMarker.SEVERITY_INFO;
 		}
 
 		/*

@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
  
 
 /**
@@ -86,14 +87,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Value: <code>"ShiftLeft"</code>
 	 */
 	static final String SHIFT_LEFT= "ShiftLeft"; //$NON-NLS-1$
-	
-	/** 
-	 * Name of the action for re-establishing the state after the 
-	 * most recent save operation. 
-	 * Value: <code>"IWorkbenchActionConstants.REVERT"</code>
-	 */
-	static final String REVERT_TO_SAVED= REVERT;
-	
+		
 	/** 
 	 * Name of the action to delete the current line. 
 	 * Value: <code>"DeleteLine"</code>
@@ -315,11 +309,117 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 */
 	static final String STATUS_CATEGORY_ELEMENT_STATE= "ElementState"; //$NON-NLS-1$
-
+	
 	/**
 	 * Status line category "findField".
 	 * Value: <code>"FindField"</code>
 	 * @since 3.0
 	 */
 	static final String STATUS_CATEGORY_FIND_FIELD= "findField"; //$NON-NLS-1$
+	
+	/**
+	 * Name of standard Copy global action in the Edit menu.
+	 * Value <code>"copy"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#COPY#getId()
+	 */
+	static final String COPY= ActionFactory.COPY.getId();
+	
+	/**
+	 * Name of standard Cut global action in the Edit menu.
+	 * Value <code>"cut"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#CUT#getId()
+	 */
+	static final String CUT= ActionFactory.CUT.getId();
+	
+	/**
+	 * Name of standard Delete global action in the Edit menu.
+	 * Value <code>"delete"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#DELETE#getId()
+	 */
+	static final String DELETE= ActionFactory.DELETE.getId();
+	
+	/**
+	 * Name of standard Find global action in the Edit menu.
+	 * Value <code>"find"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#FIND#getId()
+	 */
+	static final String FIND= ActionFactory.FIND.getId();
+	
+	/**
+	 * Name of standard Paste global action in the Edit menu.
+	 * Value <code>"paste"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#PASTE#getId()
+	 */
+	static final String PASTE= ActionFactory.PASTE.getId();
+	
+	/**
+	 * Name of standard Print global action in the File menu.
+	 * Value <code>"print"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#PRINT#getId()
+	 */
+	static final String PRINT= ActionFactory.PRINT.getId();
+	
+	/**
+	 * Name of standard Redo global action in the Edit menu.
+	 * Value <code>"redo"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#REDO#getId()
+	 */
+	static final String REDO= ActionFactory.REDO.getId();
+	
+	/**
+	 * Name of standard Undo global action in the Edit menu.
+	 * Value <code>"undo"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#UNDO#getId()
+	 */
+	static final String UNDO= ActionFactory.UNDO.getId();
+	
+	/**
+	 * Name of standard Save global action in the File menu.
+	 * Value <code>"save"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#SAVE#getId()
+	 */
+	static final String SAVE= ActionFactory.SAVE.getId();
+	
+	/**
+	 * Name of standard Select All global action in the Edit menu.
+	 * Value <code>"selectAll"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#SELECT_ALL#getId()
+	 */
+	static final String SELECT_ALL= ActionFactory.SELECT_ALL.getId();
+	
+	/**
+	 * Name of standard Revert global action in the File menu.
+	 * Value <code>"revert"</code>
+	 * 
+	 * @since 3.0
+	 * @see org.eclipse.ui.actions.ActionFactory#REVERT#getId()
+	 */
+	static final String REVERT= ActionFactory.REVERT.getId();
+	
+	/** 
+	 * Name of the action for re-establishing the state after the 
+	 * most recent save operation. 
+	 * Value: <code>"ITextEditorActionConstants.REVERT"</code>
+	 */
+	static final String REVERT_TO_SAVED= REVERT;
 }

@@ -9,22 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.texteditor;
+package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.ui.texteditor.AnnotationPreference;
 
 /**
- * The previous pulldown action delegate.
+ * The next pulldown action delegate.
  * 
  * @since 3.0
  */
-public class PreviousPulldownActionDelegate extends NextPreviousPulldownActionDelegate {
+public class NextPulldownActionDelegate extends NextPreviousPulldownActionDelegate {
 
 	/*
 	 * @see org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate#getPreferenceKey(AnnotationPreference)
 	 */
-   public String getPreferenceKey(AnnotationPreference annotationPreference) {
-	   return annotationPreference.getIsGoToPreviousNavigationTargetKey();
-   }
-
+	public String getPreferenceKey(AnnotationPreference annotationPreference) {
+		return annotationPreference.getIsGoToNextNavigationTargetKey();
+	}
 }

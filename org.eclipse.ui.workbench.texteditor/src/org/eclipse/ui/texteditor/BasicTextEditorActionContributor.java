@@ -59,8 +59,6 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.DELETE,
 		ITextEditorActionConstants.SELECT_ALL,
 		ITextEditorActionConstants.FIND,
-		ITextEditorActionConstants.BOOKMARK,
-		ITextEditorActionConstants.ADD_TASK,
 		ITextEditorActionConstants.PRINT,
 		ITextEditorActionConstants.REVERT
 	};

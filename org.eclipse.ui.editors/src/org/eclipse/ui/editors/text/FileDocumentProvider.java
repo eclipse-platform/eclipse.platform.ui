@@ -36,6 +36,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.operation.IRunnableContext;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
@@ -46,6 +48,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
@@ -63,6 +66,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 2.1
 	 */
 	private static final QualifiedName ENCODING_KEY = new QualifiedName("org.eclipse.ui.editors", "encoding"); //$NON-NLS-1$ //$NON-NLS-2$
+	/** 
+	 * The runnable context for that provider.
+	 * @since 3.0
+	 */
+	private WorkspaceOperationRunner fOperationRunner;
 	
 	/**
 	 * Runnable encapsulating an element state change. This runnable ensures 
@@ -391,10 +399,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
-	 * @since 2.0
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSynchronize(java.lang.Object)
 	 */
-	public void synchronize(Object element)  throws CoreException {
+	protected void doSynchronize(Object element, IProgressMonitor monitor)  throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -404,10 +411,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				
 				if (info.fFileSynchronizer != null) { 
 					info.fFileSynchronizer.uninstall();
-					refreshFile(input.getFile());
+					refreshFile(input.getFile(), monitor);
 					info.fFileSynchronizer.install();			
 				} else {
-					refreshFile(input.getFile());
+					refreshFile(input.getFile(), monitor);
 				}
 
 				handleElementContentChanged((IFileEditorInput) element);
@@ -415,7 +422,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return;
 			
 		}
-		super.synchronize(element);
+		super.doSynchronize(element, monitor);
 	}
 	
 	/*
@@ -683,20 +690,25 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	/*
-	 * @see IDocumentProvider#resetDocument(Object)
-	 * @since 2.0
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doResetDocument(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void resetDocument(Object element) throws CoreException {
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
+	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			try {
-				refreshFile(input.getFile());
+				refreshFile(input.getFile(), monitor);
 			} catch (CoreException x) {
 				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.resetDocument")); //$NON-NLS-1$
 			}
 		}
-		super.resetDocument(element);	
+		
+		super.doResetDocument(element, monitor);
+		
+		IAnnotationModel model= getAnnotationModel(element);
+		if (model instanceof AbstractMarkerAnnotationModel) {
+			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+			markerModel.resetMarkers();
+		}
 	}
 	
 	/**
@@ -707,8 +719,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 2.1
 	 */
 	protected void refreshFile(IFile file) throws CoreException {
+		refreshFile(file, getProgressMonitor());
+	}
+	
+	/**
+	 * Refreshes the given file resource.
+	 * 
+	 * @param file the file to be refreshed
+	 * @param monitor the progress monitor
+	 * @throws  a CoreException if the refresh fails
+	 * @since 3.0
+	 */
+	protected void refreshFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		try {
-			file.refreshLocal(IResource.DEPTH_INFINITE, getProgressMonitor());
+			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException x) {
 		}
 	}
@@ -763,5 +787,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			if (file != null)
 				file.setPersistentProperty(ENCODING_KEY, encoding);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
+		if (fOperationRunner == null)
+			fOperationRunner = new WorkspaceOperationRunner();
+		fOperationRunner.setProgressMonitor(monitor);
+		return fOperationRunner;
 	}
 }
