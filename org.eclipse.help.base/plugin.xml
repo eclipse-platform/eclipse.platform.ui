@@ -66,7 +66,7 @@
 <!-- Text Analyzers for search -->
    <extension
          id="org.eclipse.help.Analyzer_en"
-         point="org.eclipse.help.luceneAnalyzer">
+         point="org.eclipse.help.base.luceneAnalyzer">
       <analyzer
             locale="en"
             class="org.eclipse.help.internal.search.Analyzer_en">
@@ -74,7 +74,7 @@
    </extension>
    <extension
          id="org.eclipse.help.Analyzer_de"
-         point="org.eclipse.help.luceneAnalyzer">
+         point="org.eclipse.help.base.luceneAnalyzer">
       <analyzer
             locale="de"
             class="org.apache.lucene.analysis.de.GermanAnalyzer">
@@ -82,7 +82,7 @@
    </extension>
 <!-- Web Browsers -->
    <extension
-         point="org.eclipse.help.browser">
+         point="org.eclipse.help.base.browser">
       <browser
             name="%mozilla_adapter"
             id="org.eclipse.help.mozillaLinux">

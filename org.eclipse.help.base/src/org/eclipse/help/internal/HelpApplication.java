@@ -12,10 +12,9 @@ package org.eclipse.help.internal;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.appserver.*;
 
 /**
  * Help application.

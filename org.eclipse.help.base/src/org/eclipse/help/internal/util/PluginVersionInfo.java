@@ -13,8 +13,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.help.internal.HelpBasePlugin;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.*;
 /**
  * Table of plugins. Records all plugins, their version, corresponding fragments versions
  * The values are String in format:

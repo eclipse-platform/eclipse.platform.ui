@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help.base">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help" id="browser" name="Browser"/>
+         <meta.schema plugin="org.eclipse.help.base" id="browser" name="Browser"/>
       </appInfo>
       <documentation>
          For providing web browsers capable of displaying html documents at a given URL.
@@ -117,7 +117,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.help.browser&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.help.base.browser&quot;&gt;
   &lt;browser 
    id=&quot;org.eclipse.myPlugin.myBrowserID&quot;
    factoryClass=&quot;org.eclipse.myPlugin.myPackage.MyFactoryClass&quot;
@@ -145,7 +145,7 @@ of supplying browser instances, and create browser instances that implement IBro
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help&lt;/samp&gt; and &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-ins contain implementation of browsers on common platforms.
+         The &lt;samp&gt;org.eclipse.help.base&lt;/samp&gt; and &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-ins contain implementation of browsers on common platforms.
 Other plug-ins can provide different implementations.  In the preferences, the user can select the default
 browser from among available browsers.
       </documentation>

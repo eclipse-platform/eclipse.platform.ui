@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help.base">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help" id="luceneAnalyzer" name="Lucene Analyzer"/>
+         <meta.schema plugin="org.eclipse.help.base" id="luceneAnalyzer" name="Lucene Analyzer"/>
       </appInfo>
       <documentation>
          This extension point is used to register text analyzers for use by help when indexing and searching documentation.
@@ -85,7 +85,7 @@ available to all locales of that language.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension id=&quot;com.xyx.XYZ&quot; point=&quot;org.eclipse.help.luceneAnalyzer&quot;&gt;
+ &lt;extension id=&quot;com.xyx.XYZ&quot; point=&quot;org.eclipse.help.base.luceneAnalyzer&quot;&gt;
   &lt;analyzer locale=&quot;ll_CC&quot; class=&quot;com.xyz.ll_CCAnalyzer&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;

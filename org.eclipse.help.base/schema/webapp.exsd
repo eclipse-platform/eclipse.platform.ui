@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help.base">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help" id="webapp" name="webapp"/>
+         <meta.schema plugin="org.eclipse.help.base" id="webapp" name="webapp"/>
       </appInfo>
       <documentation>
          Internal extension point for registering the name of the help web application plugin.
@@ -69,7 +69,7 @@
          The following is a sample usage of the webapp extension point:
 &lt;p&gt;
 &lt;samp&gt;
-&amp;lt;extension  point=&quot;org.eclipse.help.webapp&quot;&amp;gt;
+&amp;lt;extension  point=&quot;org.eclipse.help.base.webapp&quot;&amp;gt;
 &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;    &amp;lt;webapp default=&quot;true&quot; /&amp;gt; 
 &lt;br&gt;   &amp;lt;/extension&amp;gt;
 &lt;/samp&gt;

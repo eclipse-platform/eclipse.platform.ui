@@ -13,7 +13,6 @@ import java.net.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.util.*;

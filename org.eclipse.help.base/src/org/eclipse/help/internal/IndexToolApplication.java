@@ -16,7 +16,6 @@ import java.util.zip.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
 
 /**
  * application org.eclipse.help.indexTool
