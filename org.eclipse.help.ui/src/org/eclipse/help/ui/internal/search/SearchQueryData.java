@@ -5,8 +5,11 @@ package org.eclipse.help.ui.internal.search;
  */
 import java.net.URLEncoder;
 import java.util.*;
-import org.eclipse.help.internal.toc.Toc;
+
+import org.eclipse.help.IToc;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.URLCoder;
+
 /**
  * Help Search Query Data.
  */
@@ -49,6 +52,11 @@ public class SearchQueryData {
 //		fieldNames.add("solution");
 //		fieldNames.add("technology");
 		selectedBooks = new ArrayList(0);
+		
+		IToc tocs[] = HelpSystem.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++)
+			selectedBooks.add(tocs[i]);
+
 	}
 	/**
 	 * Returns the list of books to be excluded from search.
@@ -130,7 +138,7 @@ public class SearchQueryData {
 			q += "&fieldSearch=false";
 		if (bookFiltering && selectedBooks != null)
 			for (Iterator iterator = selectedBooks.iterator(); iterator.hasNext();) {
-				Toc toc = (Toc) iterator.next();
+				IToc toc = (IToc) iterator.next();
 				q += "&scope=" + URLEncoder.encode(toc.getHref());
 			}
 		return q;

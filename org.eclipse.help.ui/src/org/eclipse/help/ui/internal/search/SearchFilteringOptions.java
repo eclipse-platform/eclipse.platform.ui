@@ -33,7 +33,7 @@ public class SearchFilteringOptions extends Dialog {
 		allBooks = new ArrayList(tocs.length);
 		for (int i = 0; i < tocs.length; i++)
 			allBooks.add(tocs[i]);
-		queryData.getSelectedBooks();
+
 		selectedBooks = new ArrayList(queryData.getSelectedBooks().size());
 		selectedBooks.addAll(queryData.getSelectedBooks());
 	}
