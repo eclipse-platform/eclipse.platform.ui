@@ -2,20 +2,21 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Help System extension points: Contexts</title>
 </head>
 <body link="#0000FF" vlink="#800080">
-
+&nbsp;
 <table BORDER COLS=1 WIDTH="100%" >
 <tr>
-<td>
-<b>Note: The help system is still under development and can be expected to change somewhat before 
-reaching stability. It is being made available at this stage to solicit feedback from early adopters, on the 
-understanding that the details of the contribution mechanisms might change in breaking ways.</b>
-</td>
+<td><b>Note: The help system is still under development and can be expected
+to change somewhat before reaching stability. It is being made available
+at this stage to solicit feedback from early adopters, on the understanding
+that the details of the contribution mechanisms might change in breaking
+ways.</b></td>
 </tr>
 </table>
+
 <center>
 <h1>
 Contexts</h1></center>
@@ -24,10 +25,10 @@ Contexts</h1></center>
 individual plug-in.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT contexts EMPTY></tt>
-<br><tt>&nbsp;&nbsp; &lt;!ATTLIST contexts name CDATA #REQUIRED></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST contexts file CDATA #REQUIRED></tt>
 <ul>
 <li>
-<b>name</b> - the name of the manifest file which contains the context-sensitive
+<b>file</b> - the name of the manifest file which contains the context-sensitive
 help documentation for this plug-in.</li>
 </ul>
 <i><b>Configuration Markup for Contexts </b>(this is what goes into the
@@ -43,17 +44,19 @@ contexts manifest file)<b>:</b></i>
 ></tt>
 <p>The contexts manifest files provide all the information needed when
 context-sensitive help is requested by the user. The id is passed by the
-platform to identify the currently active context. The context definition
-with a matching id is then retrieved. This context element contains the
-brief description that is to be displayed to the user, as well as related
-topics that the user might find useful for understanding the current context.
+platform to identify the currently active context. The context definitions
+with matching IDs are then retrieved. The IContext object is then created
+by help system that contains descriptions and topics from all context definitions
+for a given ID.&nbsp; The description is to be displayed to the user, and
+related topics might be useful to the user for understanding the current
+context.
 <br>&nbsp;
 <p><b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>contexts</tt> extension
 point.
 <p>(in file <tt>plugin.xml</tt>)
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.help.contexts"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;contexts name="xyzContexts.xml"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;contexts file="xyzContexts.xml"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <br>&nbsp;
 <p>(in file <tt>xyzContexts.xml</tt>)
@@ -70,18 +73,14 @@ label="Help Related Topic 2"/></tt>
 <br>&nbsp;
 <h4>
 Externalizing Strings</h4>
-Context manifest files externalize their strings by replacing the string
-with a key (e.g. %fooWidget) and creating an entry in the context.properties
+Plugin.xml files externalize their strings by replacing the string with
+a key (e.g. %pluginName) and creating an entry in the plugin.properties
 file of the form:
-<br>&nbsp;&nbsp;&nbsp; fooWidget = "Builds the project "
-<br>The related topic labels are externalized using a similar approach.
-To externalize &lt;topic href="fooHelp.html" label="Building Projects">,
-replace its label with a key %buildingProjects . The topic will look like:
-<br>&nbsp;&nbsp;&nbsp; &lt;topic href="fooHelp.html" label="%buildingProjects">
-<br>Create an entry in the context.properties file containing the entry:
-<br>&nbsp;&nbsp;&nbsp; buildingProjects = Building Projects
-<br>The help system will use context.properties when looking up strings
-externalized by our context help contributions.
+<br>&nbsp;&nbsp;&nbsp; pluginName = "Online Help Sample Plugin"
+<br>The translated property files should be placed in nl/&lt;locale> directory.
+<p>The labels in the contexts XML files can be translated and the resulting
+contexts files placed in nl/&lt;locale> directory. The help system will
+look for the files under this directory before defaulting to plugin directory.
 <br>&nbsp;
 <p><b><i>API Information</i>: </b>No code is required to use this extension
 point. All that is needed is to supply the appropriate manifest file(s)
@@ -90,9 +89,6 @@ mentioned in the <tt>plugin.xml</tt> file.
 <p><b><i>Supplied Implementation: </i></b>The optional default implementation
 of the help system UI supplied with the Eclipse platform fully supports
 the <tt>contexts</tt> extension point.
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
