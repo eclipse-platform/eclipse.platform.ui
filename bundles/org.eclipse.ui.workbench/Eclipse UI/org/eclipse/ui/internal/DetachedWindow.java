@@ -44,7 +44,7 @@ public class DetachedWindow extends Window   {
 	 * Create a new FloatingWindow.
 	 */
 	public DetachedWindow(WorkbenchPage workbenchPage) {
-		super(null);
+		super(workbenchPage.getWorkbenchWindow().getShell());
 		setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
 			SWT.RESIZE );
 		this.page = workbenchPage;
