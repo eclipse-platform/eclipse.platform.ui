@@ -126,8 +126,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * Method folderCreated.
 	 */
 	protected void folderCreated() throws CVSException {
-		Integer count = EclipseSynchronizer.getInstance().getDirtyCount((IContainer)getIResource());
-		if (count != null) {
+		// flush the dirty cache for the ancestors
+		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
+		if (indicator != null) {
 			flushWithAncestors();
 		}
 		EclipseSynchronizer.getInstance().folderCreated((IFolder)getIResource());
@@ -218,14 +219,14 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		setSyncInfo(new ResourceSyncInfo(getName()));
 		// if the sync info changed from null, we may need to adjust the ancestors
 		if (oldInfo == null) {
-			Integer count = synchronizer.getDirtyCount((IContainer)getIResource());
-			if (count == null) {
+			int count = synchronizer.getDirtyCount((IContainer)getIResource());
+			if (count == -1) {
 				// There was no cached count. Flush the ancestors so they are recalculated
 				flushWithAncestors();
 			} else {
 				// There is a count. Decrement the parent's count if the count is zero.
 				// Otherwise, the receiver and it's parents remain dirty.
-				if (count.intValue() == 0) {
+				if (count == 0) {
 					synchronizer.setDirtyIndicator(getIResource(), EclipseSynchronizer.NOT_DIRTY_INDICATOR);
 					((EclipseFolder)getParent()).adjustModifiedCount(false);
 				}
@@ -265,13 +266,13 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			monitor.beginTask(null, 10);
 			monitor.subTask(container.getFullPath().toOSString());
 			EclipseSynchronizer.getInstance().deleteFolderSync(container);
-			EclipseSynchronizer.getInstance().flushModificationCache(container);			
+			EclipseSynchronizer.getInstance().flushDirtyCache(container, IResource.DEPTH_ZERO);			
 			IResource[] members = container.members(true);
 			for (int i = 0; i < members.length; i++) {
 				monitor.worked(1);
 				IResource resource = members[i];
 				if (members[i].getType() == IResource.FILE) {
-					EclipseSynchronizer.getInstance().flushModificationCache((IFile)resource);
+					EclipseSynchronizer.getInstance().flushDirtyCache(resource, IResource.DEPTH_ZERO);
 				} else {
 					recursiveUnmanage((IContainer) resource, monitor);
 				}
@@ -360,17 +361,19 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException {
 		return members(FILE_MEMBERS | FOLDER_MEMBERS);
 	}
+
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#delete()
 	 */
 	public void delete() throws CVSException {
 		if (!exists()) return;
 		if (isCVSFolder()) {
+			// 
 			EclipseSynchronizer.getInstance().prepareForDeletion((IContainer)getIResource());
 		}
 		super.delete();
 	}
-	
+		
 	/**
 	 * Method adjustParentCount.
 	 * @param file
@@ -387,7 +390,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * Flush all cached info for the container and it's ancestors
 	 */
 	protected void flushModificationCache() throws CVSException {
-		EclipseSynchronizer.getInstance().flushModificationCache((IContainer)getIResource());
+		EclipseSynchronizer.getInstance().flushDirtyCache(getIResource(), IResource.DEPTH_ZERO);
 	}
 	
 	/*
@@ -396,8 +399,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 */
 	protected void handleDeletion(IFile file, boolean modified) throws CVSException {
 		boolean adjustParent;
-		Integer dirtyCount = EclipseSynchronizer.getInstance().getDirtyCount((IContainer)getIResource());
-		if (dirtyCount == null) return;
+		int dirtyCount = EclipseSynchronizer.getInstance().getDirtyCount((IContainer)getIResource());
+		if (dirtyCount == -1) {
+			flushWithAncestors();
+			return;
+		}
 		if (modified) {
 			adjustParent = EclipseSynchronizer.getInstance().addDeletedChild((IContainer)getIResource(), file);
 		} else {
@@ -413,8 +419,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		// if (isIgnored()) return false;
 		IContainer container = (IContainer)getIResource();
 		boolean shared = isCVSFolder();
-		Integer count = EclipseSynchronizer.getInstance().getDirtyCount(container);
-		if (count == null) {
+		int count = EclipseSynchronizer.getInstance().getDirtyCount(container);
+		if (count == -1) {
 			if (!exists()) return false;
 			String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(container);
 			if (indicator == null) {
@@ -433,7 +439,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			}
 			return EclipseSynchronizer.IS_DIRTY_INDICATOR.equals(indicator);
 		} else {
-			return isModified(count.intValue(), shared);
+			return isModified(count, shared);
 		}
 	}
 	
@@ -487,16 +493,6 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		return count > 0 || !shared;
 	}
 	
-	/*
-	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseResource#prepareToBeDeleted()
-	 */
-	protected void prepareToBeDeleted() throws CVSException {
-		if (isCVSFolder()) {
-			EclipseSynchronizer.getInstance().prepareForDeletion((IContainer)getIResource());
-		}
-		super.prepareToBeDeleted();
-	}
-	
 	public void syncInfoChanged() throws CVSException {
 		// It hard to deterime the effect of sync info for forlders so just flush the parent info
 		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
@@ -505,7 +501,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		}
 		if (isIgnored()) {
 			// make sure the folder (or any of it's childen are no longer marked
-			EclipseSynchronizer.getInstance().flushModificationCache((IContainer)getIResource(), IResource.DEPTH_INFINITE);
+			EclipseSynchronizer.getInstance().flushDirtyCache((IContainer)getIResource(), IResource.DEPTH_INFINITE);
 		}
 	}
 }

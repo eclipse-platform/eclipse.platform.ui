@@ -32,7 +32,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 /**
  * This class performs several functions related to determining the modified
@@ -185,13 +184,6 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}
-	}
-	/**
-	 * Method prepareToDelete.
-	 * @param resource
-	 */
-	public void prepareToDelete(ICVSResource resource) throws CVSException {
-		((EclipseResource)resource).prepareToBeDeleted();
 	}
 }
 

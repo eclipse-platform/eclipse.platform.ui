@@ -240,4 +240,16 @@ public class Util {
 		result.add(next);
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+	
+	public static String getSubstring(byte[] bytes, byte delimiter, int index, boolean includeRest) {
+		String string = new String(bytes);
+		int start = 0;
+		for (int i = 0; i < index; i++) {
+			start = string.indexOf(delimiter, start);
+			if (start == -1) return null;
+		}
+		int end = string.indexOf(delimiter, start);
+		if (end == -1 || includeRest) return string.substring(start + 1);
+		return string.substring(start + 1, end);
+	}
 }

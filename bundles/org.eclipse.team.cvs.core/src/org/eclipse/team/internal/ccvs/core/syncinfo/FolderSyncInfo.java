@@ -48,7 +48,8 @@ public class FolderSyncInfo {
 		Assert.isNotNull(repo);
 		Assert.isNotNull(root);
 		this.repository = repo;
-		this.root = root;
+		// intern the root so that caching of FolderSyncInfos for folders will use less space
+		this.root = root.intern();
 		ensureRepositoryRelativeToRoot();
 		this.isStatic = isStatic;
 		setTag(tag);
