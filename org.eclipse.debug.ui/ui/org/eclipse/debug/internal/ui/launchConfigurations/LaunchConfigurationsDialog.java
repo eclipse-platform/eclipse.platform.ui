@@ -1312,13 +1312,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see #restoreUIState
 	 */
 	private Map saveUIState() {
-		Map savedState= new HashMap(10);
-		if (getButtonActionNew() != null) {
-			saveEnableStateAndSet(getButtonActionNew().getButton(), savedState, "new", false);//$NON-NLS-1$
-		}
-		if (getButtonActionDelete() != null) {
-			saveEnableStateAndSet(getButtonActionDelete().getButton(), savedState, "delete", false);//$NON-NLS-1$
-		}
+		Map savedState= new HashMap(4);
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_CLOSE_BUTTON), savedState, "close", false);//$NON-NLS-1$
 		if (getSelectionArea() != null) {
@@ -1356,12 +1350,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see #saveUIState
 	 */
 	private void restoreUIState(Map state) {
-		if (getButtonActionNew() != null) {
-			restoreEnableState(getButtonActionNew().getButton(), state, "new");//$NON-NLS-1$
-		}
-		if (getButtonActionDelete() != null) {
-			restoreEnableState(getButtonActionDelete().getButton(), state, "delete");//$NON-NLS-1$
-		}
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_CLOSE_BUTTON), state, "close");//$NON-NLS-1$
 		ControlEnableState treeState = (ControlEnableState) state.get("selectionarea");//$NON-NLS-1$
