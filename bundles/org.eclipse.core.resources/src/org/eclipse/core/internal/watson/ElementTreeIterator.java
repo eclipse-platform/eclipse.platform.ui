@@ -18,48 +18,107 @@ import org.eclipse.core.runtime.Path;
  * A class for performing operations on each element in an element tree.
  * For example, this can be used to print the contents of a tree.
  * <p>
- * A traversal order can optionally be specified if the user wants to iterate over the
- * tree in a certain way.  The traversal order may be passed to the constructor.
- * Note that in-order traversal does not make sense for non-binary trees, so the
- * only traversal orders available are pre-order and post-order.  The default is
- * pre-order traversal.
+ * When creating an ElementTree iterator, an element tree and root path must be
+ * supplied.  When the <code>iterate()</code> method is called, a visitor object
+ * must be provided.  The visitor is called once for each node of the tree.  For
+ * each node, the visitor is passed the entire tree, the object in the tree at
+ * that node, and a callback for requesting the full path of that node.
  * <p>
- * When using the <code>iterate()</code> function, an element tree 
- * and a visitor object must be
- * provided.  The visitor is called once for each node of the tree.  For each node,
- * the visitor is passed the entire tree, and the complete element ID of the
- * node, and the element object at that node.
+ * NOTE: The constructor of the ElementTreeIterator is NOT thread safe.  This
+ * method must only be called when it is certain that the tree is not being
+ * modified by other threads.  Once the iterator has been created, the
+ * <code>iterate()</code> method is guaranteed to be threadsafe.  The iteration
+ * operates on an immutable tree so modification is not possible.
  * <p>
  * <b>Example:</b>
 <code><pre>
 // printing a crude representation of the posterchild
 IElementContentVisitor visitor=
 	new IElementContentVisitor() {
-	  public void visitElement(ElementTree tree, ElementID elementID, Object elementContents) {
-		 System.out.println(elementID + " -> " + elementContent);
+	  public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+		 System.out.println(requestor.requestPath() + " -> " + elementContent);
 	  }
 	});
-new ElementTreeIterator().iterate(
-	new PosterChild().getWorkspace().getElementTree(), visitor);
+ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
+iterator.iterate(visitor);
 </pre></code>
  */
-public class ElementTreeIterator implements IElementContentVisitor.IPathRequestor {
+public class ElementTreeIterator implements IPathRequestor {
 	//for path requestor
 	private String[] segments = new String[10];
 	private int nextFreeSegment;
 
 	/* the tree being visited */
 	private ElementTree tree;
+	
+	/* the root of the subtree to visit */
+	private IPath path;
+	
+	/* the immutable data tree being visited */
+	private DataTreeNode treeRoot;
 
+	/**
+	 * Creates a new element tree iterator for visiting the given tree starting
+	 * at the given path.
+	 */
+	public ElementTreeIterator(ElementTree tree, IPath path) {
+		this.tree = tree;
+		this.path = path;
+		treeRoot = (DataTreeNode) tree.getDataTree().copyCompleteSubtree(path);
+	}
+	/**
+	 * Iterates through the given element tree and visit each element (node)
+	 * passing in the element's ID and element object.
+	 */
+	private void doIteration(DataTreeNode node, IElementContentVisitor visitor) {
+		//push the name of this node to the requestor stack
+		if (nextFreeSegment >= segments.length) {
+			grow();
+		}
+		segments[nextFreeSegment++] = node.getName();
+
+		//do the visit
+		if (visitor.visitElement(tree, this, node.getData())) {
+			//recurse
+			AbstractDataTreeNode[] children = node.getChildren();
+			for (int i = children.length; --i >= 0;) {
+				doIteration((DataTreeNode) children[i], visitor);
+			}
+		}
+
+		//pop the segment from the requestor stack
+		nextFreeSegment--;
+		if (nextFreeSegment < 0)
+			nextFreeSegment = 0;
+	}
 	/**
 	 * Method grow.
 	 */
 	private void grow() {
 		//grow the segments array
 		int oldLen = segments.length;
-		String[] newPaths = new String[oldLen*2];
+		String[] newPaths = new String[oldLen * 2];
 		System.arraycopy(segments, 0, newPaths, 0, oldLen);
 		segments = newPaths;
+	}
+	/**
+	 * Iterates through this iterator's tree and visits each element in the
+	 * subtree rooted at the given path.  The visitor is passed each element's
+	 * data and a request callback for obtaining the path.
+	 */
+	public void iterate(IElementContentVisitor visitor) {
+		if (path.isRoot()) {
+			//special visit for root element to use special treeData
+			if (visitor.visitElement(tree, this, tree.getTreeData())) {
+				AbstractDataTreeNode[] children = treeRoot.getChildren();
+				for (int i = children.length; --i >= 0;) {
+					doIteration((DataTreeNode) children[i], visitor);
+				}
+			}
+		} else {
+			push(path, path.segmentCount() - 1);
+			doIteration(treeRoot, visitor);
+		}
 	}
 	/**
 	 * Push the first "toPush" segments of this path.
@@ -73,6 +132,11 @@ public class ElementTreeIterator implements IElementContentVisitor.IPathRequesto
 			}
 			segments[nextFreeSegment++] = path.segment(i);
 		}
+	}
+	public String requestName() {
+		if (nextFreeSegment == 0)
+			return ""; //$NON-NLS-1$
+		return segments[nextFreeSegment - 1];
 	}
 	public IPath requestPath() {
 		if (nextFreeSegment == 0)
@@ -88,108 +152,4 @@ public class ElementTreeIterator implements IElementContentVisitor.IPathRequesto
 		}
 		return new Path(null, pathBuf.toString());
 	}
-	
-/**
- * Creates a new element tree iterator that using the default traversal order
- * (<code>PRE_ORDER</code>).
- */
-public ElementTreeIterator() {
-}
-/**
- * Iterates through the given element tree and visit each element (node)
- * passing in the element's ID and element object.
- */
-private void doIteration(DataTreeNode node, IElementContentVisitor visitor) {
-	//push the name of this node to the requestor stack
-	if (nextFreeSegment >= segments.length) {
-		grow();
-	}
-	segments[nextFreeSegment++] = node.getName();
-
-	//do the visit
-	if (visitor.visitElement(tree, this, node.getData())) {
-		//recurse
-		AbstractDataTreeNode[] children = node.getChildren();
-		for (int i = children.length; --i >= 0;) {
-			doIteration((DataTreeNode)children[i], visitor);
-		}
-	}
-	
-	//pop the segment from the requestor stack
-	nextFreeSegment--;
-	if (nextFreeSegment < 0)
-		nextFreeSegment = 0;
-}
-/**
- * Iterates through the given element tree and visit each element (node)
- * passing in the element's ID and element object.
- */
-private void doIterationWithPath(DataTreeNode node, IElementPathContentVisitor visitor, IPath path) {
-	if (visitor.visitElement(tree, path, node.getData())) {
-		AbstractDataTreeNode[] children = node.getChildren();
-		for (int i = children.length; --i >= 0;) {
-			doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
-		}
-	}
-}
-/**
- * Iterates through the given element tree and visit each element (node)
- * passing in the element's ID and element object.
- */
-public void iterate(ElementTree tree, IElementContentVisitor visitor) {
-	iterate(tree, visitor, Path.ROOT);
-}
-/**
- * Iterates through the given element tree and visits each element in the
- * subtree rooted at the given path.  The visitor is passed each element's 
- * data and a request callback for obtaining the path.
- */
-public void iterate(ElementTree tree, IElementContentVisitor visitor, IPath path) {
-	this.tree = tree;
-	try {
-		if (path.isRoot()) {
-			//special visit for root element to use special treeData
-			if (visitor.visitElement(tree, this, tree.getTreeData())) {
-				DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-				AbstractDataTreeNode[] children = node.getChildren();
-				for (int i = children.length; --i >= 0;) {
-					doIteration((DataTreeNode)children[i], visitor);
-				}
-			}
-		} else {
-			push(path, path.segmentCount()-1);
-			DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-			doIteration(node, visitor);
-		}
-	} finally {
-		//make sure someone caching an iterator doesn't accidently cache a whole tree
-		this.tree = null;
-	}
-}/**
- * Iterates through the given element tree and visits each element in the
- * subtree rooted at the given path.  The visitor is passed each element's
- * path and data.
- */
-public void iterateWithPath(ElementTree tree, IElementPathContentVisitor visitor, IPath path) {
-	this.tree = tree;
-	if (path.isRoot()) {
-		//special visit for root element to use special treeData
-		if (visitor.visitElement(tree, path, tree.getTreeData())) {
-			DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-			AbstractDataTreeNode[] children = node.getChildren();
-			for (int i = children.length; --i >= 0;) {
-				doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
-			}
-		}
-	} else {
-		DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-		doIterationWithPath(node, visitor, path);
-	}
-}
-	public String requestName() {
-		if (nextFreeSegment == 0)
-			return "";//$NON-NLS-1$
-		return segments[nextFreeSegment-1];
-	}
-
 }

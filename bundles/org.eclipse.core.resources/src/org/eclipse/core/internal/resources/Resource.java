@@ -34,7 +34,7 @@ protected Resource(IPath path, Workspace workspace) {
 /**
  * @see IResource#accept(IResourceProxyVisitor, int)
  */
-public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException {
+public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
 	final ResourceProxy proxy = new ResourceProxy();
 	final CoreException[] signal = new CoreException[1];
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
@@ -49,7 +49,7 @@ public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) thr
 			proxy.requestor = requestor;
 			proxy.info = info;
 			try {
-				return fastVisitor.visit(proxy);
+				return visitor.visit(proxy);
 			} catch (CoreException e) {
 				signal[0] = e;
 				//throw an exception to bail out of the traversal
@@ -60,15 +60,20 @@ public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) thr
 		}
 	};
 	try {
-		new ElementTreeIterator().iterate(workspace.getElementTree(), elementVisitor, getFullPath());
+		workspace.createTreeIterator(getFullPath()).iterate(elementVisitor);
 	} catch (RuntimeException e) {
 		if (signal[0] != null)
 			throw signal[0];
+		String msg = Policy.bind("resources.errorVisiting");//$NON-NLS-1$
+		IResourceStatus errorStatus = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), msg, e);
+		ResourcesPlugin.getPlugin().getLog().log(errorStatus);
+		throw new ResourceException(errorStatus);
 	} finally {
 		proxy.requestor = null;
 		proxy.info = null;
 	}
 }
+
 
 /**
  * @see IResource#accept(IResourceVisitor)
@@ -910,6 +915,9 @@ public int hashCode() {
 	// the container may be null if the identified resource 
 	// does not exist so don't bother with it in the hash
 	return getFullPath().hashCode();
+}
+protected void internalAccept(ElementTreeIterator iterator, final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException, ResourceException {
+
 }
 /**
  * Sets the M_LOCAL_EXISTS flag. Is internal so we don't have

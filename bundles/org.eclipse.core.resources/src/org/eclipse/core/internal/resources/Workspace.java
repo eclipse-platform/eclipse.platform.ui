@@ -79,15 +79,22 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public static boolean DEBUG = false;
 
 	/**
-		This field is used to control the access to the workspace tree
-	    inside operations. It is useful when calling alien code. Since
-	    we usually are in the same thread as the alien code we are calling,
-	    our concurrency model would allow the alien code to run operations
-	    that could change the tree. If this field is set to true, a
-	    beginOperation(true) fails, so the alien code would fail and be logged
-	    in our SafeRunnable wrappers, not affecting the normal workspace operation.
+	 * This field is used to control the access to the workspace tree inside
+	 * operations. It is useful when calling alien code. Since we usually are in
+	 * the same thread as the alien code we are calling, our concurrency model
+	 * would allow the alien code to run operations that could change the tree.
+	 * If this field is true, a beginOperation(true) fails, so the alien code
+	 * would fail and be logged in our SafeRunnable wrappers, not affecting the
+	 * normal workspace operation.
 	 */
 	protected boolean treeLocked;
+	
+	/**
+	 * We need to override the tree lock mechanism when synchronizing the tree
+	 * to create a workspace tree visitor.  In this case we need the tree to be
+	 * unlocked, but we know that nothing will modify the tree.
+	 */
+	protected volatile boolean overrideTreeLock = false;
 
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
@@ -132,7 +139,7 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 	workManager.incrementNestedOperations();
 	if (!workManager.isBalanced())
 		Assert.isTrue(false, "Operation was not prepared."); //$NON-NLS-1$
-	if (treeLocked && createNewTree) {
+	if (isTreeLocked() && createNewTree) {
 		String message = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, message, null);
 	}
@@ -646,7 +653,7 @@ public int countResources(IPath root, int depth, final boolean phantom) {
 					return true;
 				}
 			};
-			new ElementTreeIterator().iterate(tree, visitor, root);
+			new ElementTreeIterator(tree, root).iterate(visitor);
 			return count[0];
 	}
 	return 0;
@@ -703,6 +710,37 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 		}
 	}
 	return info;
+}
+/**
+ * Creates and returns a new ElementTreeIterator on the current tree.  Takes
+ * care of acquiring the workspace lock for the duration of the time to create
+ * the iterator. This method only needs to be called when creating an iterator
+ * outside of a resource changing operation.
+ */
+protected ElementTreeIterator createTreeIterator(IPath rootPath) {
+	ElementTreeIterator iterator;
+	try {
+		//set tree as unlocked, otherwise the UIWorkspaceLock will complain
+		overrideTreeLock = true;
+		try {
+			workManager.checkIn();
+		} catch (CoreException e) {
+			//can only happen if workspace is closed
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+		}
+		iterator = new ElementTreeIterator(tree, rootPath);
+		//now the lock can be freed
+	} finally {
+		//switch the tree lock back to its previous state
+		overrideTreeLock = false;
+		try {
+			workManager.checkOut();
+		} catch (CoreException e) {
+			//can only happen if workspace is closed
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+		}
+	}
+	return iterator;
 }
 /*
  * Creates the given resource in the tree and returns the new resource info object.  
@@ -826,10 +864,9 @@ public void dumpStats() {
 }
 /**
  * End an operation (group of resource changes).
- * Notify interested parties that some resource changes have taken place.
- * This is used in the middle of batch executions to broadcast intermediate
- * results.  All registered resource change listeners are notified.  If autobuilding
- * is enabled, a build is run.
+ * Notify interested parties that resource changes have taken place.  All
+ * registered resource change listeners are notified.  If autobuilding is
+ * enabled, a build is run.
  */
 public void endOperation(boolean build, IProgressMonitor monitor) throws CoreException {
 	WorkManager workManager = getWorkManager();
@@ -844,14 +881,14 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 		try {
 			// if the tree is locked we likely got here in some finally block after a failed begin.
 			// Since the tree is locked, nothing could have been done so there is nothing to do.
-			Assert.isTrue(!(treeLocked && workManager.shouldBuild()), "The tree should not be locked."); //$NON-NLS-1$
+			Assert.isTrue(!(isTreeLocked() && workManager.shouldBuild()), "The tree should not be locked."); //$NON-NLS-1$
 			// check for a programming error on using beginOperation/endOperation
 			Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
 	
 			// At this time we need to rebalance the nested operations. It is necessary because
 			// build() and snapshot() should not fail if they are called.
 			workManager.rebalanceNestedOperations();
-	
+
 			// If autobuild is on, give each open project a chance to build.  We have to tell each one
 			// because there is no way of knowing whether or not there is a relevant change
 			// for the project without computing the delta for each builder in each project relative
@@ -1265,6 +1302,8 @@ protected boolean isOverlapping(IPath location1, IPath location2) {
 	return one.isPrefixOf(two) || two.isPrefixOf(one);
 }
 public boolean isTreeLocked() {
+	if (overrideTreeLock)
+		return false;
 	return treeLocked;
 }
 /**
@@ -1730,14 +1769,13 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
-	ElementTreeIterator iterator = new ElementTreeIterator();
-	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
-		public boolean visitElement(ElementTree tree, IPath path, Object elementContents) {
-			buffer.append("\n  " + path + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+			buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 	};
-	iterator.iterateWithPath(tree, visitor, Path.ROOT);
+	new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
 	return buffer.toString();
 }
 public void updateModificationStamp(ResourceInfo info) {

@@ -10,22 +10,12 @@
  **********************************************************************/
 package org.eclipse.core.internal.watson;
 
-import org.eclipse.core.runtime.IPath;
-
 /**
  * An interface for objects which can visit an element of
  * an element tree and access that element's node info.
  * @see ElementTreeIterator
  */
 public interface IElementContentVisitor {
-	/**
-	 * Callback interface so visitors can request the path of the object they
-	 * are visiting. This avoids creating paths when they are not needed.
-	 */
-	public interface IPathRequestor {
-		public IPath requestPath();
-		public String requestName();
-	}
 /** Visits a node (element).
  * <p> Note that <code>elementContents</code> is equal to<code>tree.
  * getElement(elementPath)</code> but takes no time.

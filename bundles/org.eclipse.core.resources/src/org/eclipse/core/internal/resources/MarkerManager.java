@@ -9,15 +9,15 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.watson.*;
-import org.eclipse.core.internal.watson.ElementTreeIterator;
-import org.eclipse.core.internal.watson.IElementContentVisitor;
-import org.eclipse.core.internal.localstore.*;
 import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
+import org.eclipse.core.internal.localstore.SafeFileInputStream;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.watson.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * A marker manager stores and retrieves markers on resources in the workspace.
@@ -116,23 +116,19 @@ private MarkerInfo[] basicFindMatching(MarkerSet markers, String type, boolean i
 }
 /**
  * Removes markers of the specified type from the given resource.
- * Returns the resource info object for the given path, if any
- * (this return value is an optimization to allow the caller to
- * determine if recursion is necessary).
+ * Note: this method is protected to avoid creation of a synthetic accessor (it
+ * is called from an anonymous inner class).
  */
-private ResourceInfo basicRemoveMarkers(IPath path, String type, boolean includeSubtypes) {
-	//don't get a modifiable info until we know we need to modify it.
-	ResourceInfo info = workspace.getResourceInfo(path, false, false);
-	//phantoms don't have markers
-	if (info == null)
-		return null;
+protected void basicRemoveMarkers(ResourceInfo info, IPathRequestor requestor, String type, boolean includeSubtypes) {
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
-		return info;
+		return;
 	IMarkerSetElement[] matching;
+	IPath path;
 	if (type == null) {
 		// if the type is null, all markers are to be removed.
 		//now we need to crack open the tree
+		path = requestor.requestPath();
 		info = workspace.getResourceInfo(path, false, true);
 		info.setMarkers(null);
 		matching = markers.elements();
@@ -140,8 +136,9 @@ private ResourceInfo basicRemoveMarkers(IPath path, String type, boolean include
 		matching = basicFindMatching(markers, type, includeSubtypes);
 		// if none match, there is nothing to remove
 		if (matching.length == 0)
-			return info;
+			return;
 		//now we need to crack open the tree
+		path = requestor.requestPath();
 		info = workspace.getResourceInfo(path, false, true);
 		
 		// remove all the matching markers and also the whole 
@@ -155,9 +152,8 @@ private ResourceInfo basicRemoveMarkers(IPath path, String type, boolean include
 	IResource resource = workspace.getRoot().findMember(path);
 	for (int i = 0; i < matching.length; i++)
 		changes[i] = new MarkerDelta(IResourceDelta.REMOVED, resource, (MarkerInfo) matching[i]);
-	if (changes != null)
-		changedMarkers(resource, changes);
-	return info;
+	changedMarkers(resource, changes);
+	return;
 }
 /**
  * Adds the markers on the given target which match the specified type to the list.
@@ -221,7 +217,7 @@ public IMarker[] findMarkers(IResource target, final String type, final boolean 
 	ArrayList result = new ArrayList();
 	//optimize the deep searches with an element tree visitor
 	if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
-		visitorFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
+		visitorFindMarkers(target.getFullPath(), result, type, includeSubtypes);
 	else
 		recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
 	if (result.size() == 0) {
@@ -344,10 +340,11 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
 	for (int i = 0; i < children.length; i++) {
 		recursiveFindMarkers(children[i], list, type, includeSubtypes, depth);
 	}	
-}/**
+}
+/**
  * Adds the markers for a subtree of resources to the list.
  */
-private void visitorFindMarkers(IPath path, final ArrayList list, final String type, final boolean includeSubtypes, int depth) {
+private void visitorFindMarkers(IPath path, final ArrayList list, final String type, final boolean includeSubtypes) {
 	IElementContentVisitor visitor = new IElementContentVisitor() {
 		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 			ResourceInfo info = (ResourceInfo)elementContents;
@@ -367,15 +364,41 @@ private void visitorFindMarkers(IPath path, final ArrayList list, final String t
 			return true;
 		}
 	};
-	new ElementTreeIterator().iterate(workspace.getElementTree(), visitor, path);
+	workspace.createTreeIterator(path).iterate(visitor);
 }
 /**
  * Adds the markers for a subtree of resources to the list.
  */
-private void recursiveRemoveMarkers(IPath path, String type, boolean includeSubtypes, int depth) {
-	ResourceInfo info = basicRemoveMarkers(path, type, includeSubtypes);
+private void visitorRemoveMarkers(IPath path, final String type, final boolean includeSubtypes) {
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+			ResourceInfo info = (ResourceInfo)elementContents;
+			if (info == null)
+				return false;
+			basicRemoveMarkers(info, requestor, type, includeSubtypes);
+			return true;
+		}
+	};
+	new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
+}
+/**
+ * Adds the markers for a subtree of resources to the list.
+ */
+private void recursiveRemoveMarkers(final IPath path, String type, boolean includeSubtypes, int depth) {
+	ResourceInfo info = workspace.getResourceInfo(path, false, false);
+	if (info == null)//phantoms don't have markers
+		return;
+	IPathRequestor requestor = new IPathRequestor() {
+		public IPath requestPath() {
+			return path;
+		}
+		public String requestName() {
+			return path.lastSegment();
+		}
+	};
+	basicRemoveMarkers(info, requestor, type, includeSubtypes);
 	//recurse
-	if (depth == IResource.DEPTH_ZERO || info == null || info.getType() == IResource.FILE)
+	if (depth == IResource.DEPTH_ZERO || info.getType() == IResource.FILE)
 		return;
 	if (depth == IResource.DEPTH_ONE)
 		depth = IResource.DEPTH_ZERO;
@@ -384,6 +407,7 @@ private void recursiveRemoveMarkers(IPath path, String type, boolean includeSubt
 		recursiveRemoveMarkers(children[i], type, includeSubtypes, depth);
 	}	
 }
+
 
 /**
  * Removes the specified marker 
@@ -411,7 +435,7 @@ public void removeMarker(IResource resource, long id) {
  * Remove all markers for the given resource to the specified depth.
  */
 public void removeMarkers(IResource resource, int depth) throws CoreException {
-	recursiveRemoveMarkers(resource.getFullPath(), null, false, depth);
+	removeMarkers(resource, null, false, depth);
 }
 /**
  * Remove all markers with the given type from the node at the given path.
@@ -419,7 +443,10 @@ public void removeMarkers(IResource resource, int depth) throws CoreException {
  * for all types (i.e., <code>null</code> is a wildcard.
  */
 public void removeMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
-	recursiveRemoveMarkers(target.getFullPath(), type, includeSubtypes, depth);
+	if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
+		visitorRemoveMarkers(target.getFullPath(), type, includeSubtypes);
+	else
+		recursiveRemoveMarkers(target.getFullPath(), type, includeSubtypes, depth);
 }
 /**
  * Reset the marker deltas.

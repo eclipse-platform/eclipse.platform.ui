@@ -927,13 +927,13 @@ public void setTreeData(IElementTreeData data) {
  */
 public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
-	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
-		public boolean visitElement(ElementTree tree, IPath elementID, Object elementContents) {
-			buffer.append(elementID + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	IElementContentVisitor visitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor elementID, Object elementContents) {
+			buffer.append(elementID.requestPath() + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 	};
-	new ElementTreeIterator().iterateWithPath(this, visitor, Path.ROOT);
+	new ElementTreeIterator(this, Path.ROOT).iterate(visitor);
 	return buffer.toString();
 }
 public String toString() {

@@ -9,7 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.watson.IElementContentVisitor;
+import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	protected final Workspace workspace = (Workspace)ResourcesPlugin.getWorkspace();
-	protected IElementContentVisitor.IPathRequestor requestor;
+	protected IPathRequestor requestor;
 	protected ResourceInfo info;
 	
 	//cached info
@@ -95,7 +95,7 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 		fullPath = null;
 		resource = null;
 	}
-	protected void setRequestor(IElementContentVisitor.IPathRequestor requestor) {
+	protected void setRequestor(IPathRequestor requestor) {
 		this.requestor = requestor;
 	}
 	protected void setResourceInfo(ResourceInfo info) {
