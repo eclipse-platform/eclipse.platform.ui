@@ -14,7 +14,6 @@ package org.eclipse.jface.progress;
  */
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -77,7 +76,7 @@ public abstract class NotifyingJob extends Job {
 
 	public NotifyingJob() {
 		super();
-		JobManager.getInstance().addJobChangeListener(this.listener);
+		addJobChangeListener(this.listener);
 	}
 
 	public void addCompletionListener(IJobCompletionListener listener) {

@@ -7,13 +7,15 @@
 package org.eclipse.ui.model;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.progress.IPendingPlaceholder;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * The PendingUpdateAdapter is the object the represents an update about to
  * occur.
  */
-public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
+public class PendingUpdateAdapter
+	implements IWorkbenchAdapter, IAdaptable, IPendingPlaceholder {
 
 	public PendingUpdateAdapter() {
 	}

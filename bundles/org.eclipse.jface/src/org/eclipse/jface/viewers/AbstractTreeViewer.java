@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.progress.IPendingPlaceholder;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -121,6 +122,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		// If parent hasn't been realized yet, just ignore the add.
 		if (widget == null)
 			return;
+			
+		Item[] currentItems = getChildren(widget);
+		if(currentItems.length == 1){
+			if(currentItems[0].getData() instanceof IPendingPlaceholder)
+				remove(currentItems[0].getData());
+		}
 
 		Object[] filtered = filter(childElements);
 		for (int i = 0; i < filtered.length; i++) {
