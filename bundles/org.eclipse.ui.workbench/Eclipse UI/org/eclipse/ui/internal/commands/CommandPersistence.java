@@ -101,14 +101,14 @@ public final class CommandPersistence {
 	private static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a parameter.
+	 */
+	private static final String ELEMENT_COMMAND_PARAMETER = "commandParameter"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing a handler submission.
 	 */
 	private static final String ELEMENT_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
-
-	/**
-	 * The name of the element storing a parameter.
-	 */
-	private static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
 
 	/**
 	 * The name of the action definitions extension point.
@@ -503,7 +503,7 @@ public final class CommandPersistence {
 			final IConfigurationElement configurationElement,
 			final List warningsToLog) {
 		final IConfigurationElement[] parameterElements = configurationElement
-				.getChildren(ELEMENT_PARAMETER);
+				.getChildren(ELEMENT_COMMAND_PARAMETER);
 		if ((parameterElements == null) || (parameterElements.length == 0)) {
 			return null;
 		}
