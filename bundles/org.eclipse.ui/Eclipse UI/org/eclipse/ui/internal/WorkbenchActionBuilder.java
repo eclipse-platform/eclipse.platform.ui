@@ -87,7 +87,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
-	
 
 	// retarget actions.
 	private RetargetAction undoAction;
@@ -312,8 +311,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			new ShowViewMenu(subMenu, window, true);
 		}
 		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
-		menu.add(selectWorkingSetAction = new SelectWorkingSetAction(window));
-		menu.add(clearWorkingSetAction = new ClearWorkingSetAction(window));
+		
+		selectWorkingSetAction = new SelectWorkingSetAction(window);
+		clearWorkingSetAction = new ClearWorkingSetAction(window);
+		// Temporary option to enable working sets
+		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean("ENABLE_WORKING_SETS")) {
+			menu.add(selectWorkingSetAction);
+			menu.add(clearWorkingSetAction);
+		}
 		menu.add(new Separator());
 		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
 		menu.add(editActionSetAction = new EditActionSetsAction(window));
