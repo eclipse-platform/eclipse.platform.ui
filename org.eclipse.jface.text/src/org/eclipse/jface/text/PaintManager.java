@@ -226,6 +226,14 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		
 		fTextViewer.addTextInputListener(this);
 		
+		addListeners();
+	}
+	
+	/**
+	 * Installs our listener set on the text viewer and the text widget,
+	 * respectively.
+	 */
+	private void addListeners() {
 		ISelectionProvider provider= fTextViewer.getSelectionProvider();
 		provider.addSelectionChangedListener(this);
 		
@@ -254,6 +262,14 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		
 		fTextViewer.removeTextInputListener(this);
 		
+		removeListeners();
+	}
+	
+	/**
+	 * Removes our set of listeners from the text viewer and widget,
+	 * respectively.
+	 */
+	private void removeListeners() {
 		ISelectionProvider provider= fTextViewer.getSelectionProvider();
 		if (provider != null)
 			provider.removeSelectionChangedListener(this);
@@ -344,6 +360,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			for (Iterator e = fPainters.iterator(); e.hasNext();)
 				((IPainter) e.next()).deactivate(false);				
 			fManager.uninstall(oldInput);
+			removeListeners();
 		}
 	}
 	
@@ -354,6 +371,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		if (newInput != null) {
 			fManager.install(newInput);
 			paint(IPainter.TEXT_CHANGE);
+			addListeners();
 		}
 	}
 }
