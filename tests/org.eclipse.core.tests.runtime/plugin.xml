@@ -2,7 +2,7 @@
 <plugin
   name="Eclipse Core Tests Runtime"
   id="org.eclipse.core.tests.runtime"
-  version="2.1.0"
+  version="3.0"
   provider-name="Eclipse.org">
 
   <requires>

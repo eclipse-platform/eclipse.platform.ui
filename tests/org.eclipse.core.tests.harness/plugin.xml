@@ -2,7 +2,7 @@
 <plugin
   name="Eclipse Core Tests Harness"
   id="org.eclipse.core.tests.harness"
-  version="2.1.0"
+  version="3.0"
   provider-name="Eclipse.org">
 
   <requires>
