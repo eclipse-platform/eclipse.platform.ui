@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -176,6 +177,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 			perspectiveGroup);
 		addField(comboEditor);
 
+		Dialog.applyDialogFont(getFieldEditorParent());
 		updateLayout(displayGroup);
 		updateLayout(perspectiveGroup);
 		updateLayout(refreshGroup);
@@ -185,6 +187,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	private Label createLabel(Composite parent, String title, int spacer) {
 		GridData data;
 		Label l = new Label(parent, SWT.WRAP);
+		l.setFont(parent.getFont());
 		data = new GridData();
 		data.horizontalSpan = 2;
 		if(spacer != 0) {
