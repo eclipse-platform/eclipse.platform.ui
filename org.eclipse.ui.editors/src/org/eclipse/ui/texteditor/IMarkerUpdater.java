@@ -21,7 +21,8 @@ import org.eclipse.core.resources.IMarker;
  * Marker updaters either update markers of a specific types or 
  * any type. Also they either assume update responsibility for a 
  * specific set of marker attributes or any marker attribute.
- * Marker updater must be registered with an <code>AbstractMarkerAnnotationModel</code>.
+ * Marker updater must be registered with an
+ * {@link org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel}.
  */
 public interface IMarkerUpdater {
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,13 +45,14 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 
 	/** 
 	 * The layer in which markers representing problem are located.
+	 * 
 	 * @since 2.0
-	 * @deprecated since 3.0, use <code>IAnnotationAccessExtension</code> instead
+	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension}
 
 	 */
 	public final static int PROBLEM_LAYER= 5;
 	
-	/** Internal image registry */
+	/** Internal image registry. */
 	private static Map fgImageRegistry;
 	
 	/**
@@ -63,9 +62,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * @param display the display
 	 * @param descriptor the image descriptor
 	 * @return an image for the display as specified by the descriptor
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected static Image getImage(Display display, ImageDescriptor descriptor) {
 		Map map= getImageRegistry(display);
@@ -83,9 +82,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * 
 	 * @param display the display
 	 * @return the image registry for the given display
-	 * @deprecated since 3.0, visual presentation is no longer supported, annotation with a
-	 *             visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
+	 *             annotation with a visible presentation should implement
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected static Map getImageRegistry(Display display) {
 		if (fgImageRegistry == null) {
@@ -109,11 +108,11 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	}		
 		
 		
-	/** The image, i.e., visual presentation of this annotation */
+	/** The image, i.e., visual presentation of this annotation. */
 	private Image fImage;
-	/** The image name */
+	/** The image name. */
 	private String fImageName;
-	/** The presentation layer */
+	/** The presentation layer. */
 	private int fPresentationLayer= -1;
 	
 	/**
@@ -141,9 +140,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * Sets the marker image to the given image.
 	 * 
 	 * @param image the new marker image
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected void setImage(Image image) {
 		fImage= image;
@@ -153,9 +152,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * Initializes the annotation's icon representation and its drawing layer
 	 * based upon the properties of the underlying marker.
 	 * 
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected void initialize() {
 		IMarker marker= getMarker();
@@ -187,10 +186,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * Returns the annotations drawing layer.
 	 * <p>
 	 * Note: This is only for backward compatibility.
-	 * 
+	 * </p>
 	 * @return the annotations drawing layer
-	 * @deprecated since 3.0 use
-	 *             <code>IAnnotationAccessExtension.getLayer(Annotation)</code>
+	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension#getLayer(org.eclipse.jface.text.source.Annotation)}
 	 * @since 3.0
 	 */
 	public int getLayer() {
@@ -209,10 +207,10 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * Sets the layer of this annotation.
 	 * <p>
 	 * Note: This is only for backward compatibility.
-	 * 
+	 * </p>
 	 * @param layer the layer of this annotation
-	 * @deprecated since 3.0, annotation with a visible presentation should
-	 *             implement <code>IAnnotationPresentation</code>
+	 * @deprecated As of 3.0, annotation with a visible presentation should implement
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 * 
 	 * @since 3.0
 	 */
@@ -226,12 +224,11 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * nothing.
 	 * <p>
 	 * Note: This is only for backward compatibility.
-	 * 
+	 * </p>
 	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param r the bounds inside the canvas to draw on
-	 * @deprecated since 3.0 use
-	 *             <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>
+	 * @deprecated As of 3.0 replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension#paint(org.eclipse.jface.text.source.Annotation, GC, Canvas, Rectangle)}
 	 * @since 3.0
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
@@ -256,9 +253,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * 
 	 * @param marker the marker of unknown type
 	 * @return the name of an image for markers of unknown type.
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected String getUnknownImageName(IMarker marker) {
 		return null;
@@ -271,9 +268,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * 
 	 * @param name the name of the requested image
 	 * @return the image or <code>null</code> if there is no such image
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected Image getImage(String name) {			
 		if (name != null)
@@ -288,9 +285,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * 
 	 * @param display the display for which the image is requested
 	 * @return the image for this annotation
-	 * @deprecated since 3.0, visual presentation is no longer supported,
+	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
-	 *             <code>IAnnotationPresentation</code>
+	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	protected Image getImage(Display display) {
 		if (fImage == null) {

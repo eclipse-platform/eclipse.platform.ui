@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,7 +40,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * Objects of this class provide access to all extensions declared for the <code>markerAnnotationSpecification</code> extension point.
- * The extensions are represented as instances of <code>AnnotationPreference</code>.
+ * The extensions are represented as instances of {@link org.eclipse.ui.texteditor.AnnotationPreference}.
  * 
  * @since 2.1
  */
@@ -101,11 +99,11 @@ public class MarkerAnnotationPreferences {
 	 * </p>
 	 * <p>
 	 * This method is not part of the API and must only be called
-	 * by {@link EditorsUI}
+	 * by {@link org.eclipse.ui.editors.text.EditorsUI}
 	 * </p>
 	 * 
 	 * @param store the preference store to be initialized
-	 * @throws IllegalStateException if not called by {@link EditorsUI}
+	 * @throws IllegalStateException if not called by {@link org.eclipse.ui.editors.text.EditorsUI}
 	 * @since 3.0
 	 */
 	public static void useAnnotationsPreferencePage(IPreferenceStore store) throws IllegalStateException {
@@ -207,13 +205,14 @@ public class MarkerAnnotationPreferences {
 	}
 
 
-	/** The list of extension fragments */
+	/** The list of extension fragments. */
 	private List fFragments;
-	/** The list of extensions */
+	/** The list of extensions. */
 	private List fPreferences;
 	
 	/**
-	 * Creates a new marker annotation preferences accessor.
+	 * Creates a new marker annotation preferences to access
+	 * marker annotation preferences.
 	 */
 	public MarkerAnnotationPreferences() {
 	}
