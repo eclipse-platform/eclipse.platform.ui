@@ -333,6 +333,17 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				localOptions.add(Checkout.makeDirectoryNameOption(localFolderName));
 			}
 			
+			// Prune empty directories if pruning enabled
+			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
+				localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+			// Add the options related to the CVSTag
+			CVSTag tag = remoteFolder.getTag();
+			if (tag == null) {
+				// A null tag in a remote resource indicates HEAD
+				tag = CVSTag.DEFAULT;
+			}
+			localOptions.add(Update.makeTagOption(tag));
+			
 			// Perform the checkout
 			IStatus status = Command.CHECKOUT.execute(session,
 				Command.NO_GLOBAL_OPTIONS,
