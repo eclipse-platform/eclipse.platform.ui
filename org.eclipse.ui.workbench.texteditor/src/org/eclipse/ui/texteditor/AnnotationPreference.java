@@ -13,14 +13,15 @@ package org.eclipse.ui.texteditor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
@@ -945,8 +946,8 @@ public class AnnotationPreference {
 	public IAnnotationImageProvider getAnnotationImageProvider() {
 		if (fAnnotationImageProvider == null) {
 			if (fConfigurationElement != null && fAnnotationImageProviderAttribute != null) {
-				IPluginDescriptor descriptor = fConfigurationElement.getDeclaringExtension().getDeclaringPluginDescriptor();
-				if (descriptor.isPluginActivated()) {
+				Bundle bundle= Platform.getBundle( fConfigurationElement.getDeclaringExtension().getNamespace());
+				if (bundle != null && bundle.getState() == Bundle.ACTIVE) {
 					try {
 						fAnnotationImageProvider= (IAnnotationImageProvider) fConfigurationElement.createExecutableExtension(fAnnotationImageProviderAttribute);
 					} catch (CoreException x) {

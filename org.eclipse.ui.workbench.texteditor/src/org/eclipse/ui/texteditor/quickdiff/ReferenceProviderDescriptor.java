@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.quickdiff;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.util.Assert;
 
@@ -44,8 +46,8 @@ public class ReferenceProviderDescriptor {
 	private String fId;
 	/** The value of the <code>default</code> attribute, if read. */
 	private Boolean fDefault;
-	/** The plugin id where this extension was defined. */
-	private IPluginDescriptor fPluginDescriptor;
+	/** The bundle where this extension was defined. */
+	private Bundle fBundle;
 
 	/**
 	 * Creates a new descriptor for <code>element</code>.
@@ -109,10 +111,9 @@ public class ReferenceProviderDescriptor {
 	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
-		if (fPluginDescriptor == null)
-			fPluginDescriptor= fConfiguration.getDeclaringExtension().getDeclaringPluginDescriptor();
-			
-		return (fPluginDescriptor != null && fPluginDescriptor.isPluginActivated());
+		if (fBundle == null)
+			fBundle= Platform.getBundle(fConfiguration.getDeclaringExtension().getNamespace());
+		return (fBundle != null && fBundle.getState() == Bundle.ACTIVE);
 	}
 
 	/**
