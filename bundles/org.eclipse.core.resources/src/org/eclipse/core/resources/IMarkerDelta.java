@@ -1,10 +1,10 @@
 package org.eclipse.core.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * A marker delta describes the change to a single marker.
  * A marker can either be added, removed or changed.

@@ -1,9 +1,10 @@
 package org.eclipse.core.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import java.util.EventListener;
 import org.eclipse.core.runtime.CoreException;
 
